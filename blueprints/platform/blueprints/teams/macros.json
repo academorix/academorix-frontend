@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/teams/macros",
+  "id": "stackra://modules/teams/macros",
   "$version": 1,
   "title": "teams — published macros",
   "description": "Two request-level macros that surface the resolved active team from the RequestContext (set by team.resolve_active middleware). Registered by TeamsServiceProvider::boot(). No Blueprint macros — the team-owned tables use standard column shapes.",
@@ -10,7 +10,7 @@
       "signature": "Request::activeTeam(): ?Team",
       "adds": "A single accessor on the framework Request class that returns the resolved Team model (or null when no team context).",
       "description": "Reads from RequestContext::team() set by the team.resolve_active middleware. Lazy-loads the model on first access — subsequent calls in the same request return the cached instance.",
-      "registered_by": "Academorix\\Teams\\Providers\\TeamsServiceProvider::boot()",
+      "registered_by": "Stackra\\Teams\\Providers\\TeamsServiceProvider::boot()",
       "example": "public function store(Request $request): JsonResponse\n{\n    $team = $request->activeTeam();\n    // $team is the resolved Team model, already tenant-scoped by the middleware\n}"
     },
     {

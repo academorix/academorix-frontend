@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/admin-console/relations",
+  "id": "stackra://modules/admin-console/relations",
   "$version": 1,
   "title": "admin-console — model relationships",
   "description": "Eloquent relations rooted at this module's models. `internal` = same-module edges; `outbound` = edges to other modules' models.",

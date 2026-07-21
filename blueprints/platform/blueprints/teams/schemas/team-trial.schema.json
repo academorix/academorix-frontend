@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/teams/schemas/team-trial",
+  "id": "stackra://modules/teams/schemas/team-trial",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "TeamTrial",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "ttr_",
     "incrementing": false,
-    "model": "Academorix\\Teams\\Models\\TeamTrial",
-    "interface": "Academorix\\Teams\\Contracts\\Data\\TeamTrialInterface",
-    "implements": ["Academorix\\Teams\\Contracts\\Data\\TeamTrialInterface"],
+    "model": "Stackra\\Teams\\Models\\TeamTrial",
+    "interface": "Stackra\\Teams\\Contracts\\Data\\TeamTrialInterface",
+    "implements": ["Stackra\\Teams\\Contracts\\Data\\TeamTrialInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

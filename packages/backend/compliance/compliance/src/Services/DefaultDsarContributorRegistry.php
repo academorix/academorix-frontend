@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Services;
+namespace Stackra\Compliance\Services;
 
-use Academorix\Compliance\Attributes\DsarExportable;
-use Academorix\Compliance\Contracts\Services\DsarContributorRegistryInterface;
+use Stackra\Compliance\Attributes\DsarExportable;
+use Stackra\Compliance\Contracts\Services\DsarContributorRegistryInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

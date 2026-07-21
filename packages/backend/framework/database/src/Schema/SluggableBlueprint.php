@@ -49,16 +49,16 @@ declare(strict_types=1);
  *
  * @since    2.0.0
  *
- * @see \Academorix\Database\Concerns\Model\HasSlug
+ * @see \Stackra\Database\Concerns\Model\HasSlug
  * @see \Illuminate\Database\Schema\Blueprint
  * @see \Illuminate\Database\Schema\ColumnDefinition
  */
 
-namespace Academorix\Database\Schema;
+namespace Stackra\Database\Schema;
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\ColumnDefinition;
-use Academorix\Database\Attributes\AsDatabaseBlueprint;
+use Stackra\Database\Attributes\AsDatabaseBlueprint;
 
 /**
  * Registers the sluggable() macro on Blueprint.

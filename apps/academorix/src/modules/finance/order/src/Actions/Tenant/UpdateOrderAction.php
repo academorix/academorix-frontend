@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Order\Actions\Tenant;
+namespace Stackra\Order\Actions\Tenant;
 
-use Academorix\Order\Contracts\Repositories\OrderRepositoryInterface;
-use Academorix\Order\Data\OrderData;
-use Academorix\Order\Data\Requests\UpdateOrderRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\Order\Contracts\Repositories\OrderRepositoryInterface;
+use Stackra\Order\Data\OrderData;
+use Stackra\Order\Data\Requests\UpdateOrderRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Patch;
 
 /**
  * `PATCH /api/v1/orders/{order}` — update action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Patch(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Order

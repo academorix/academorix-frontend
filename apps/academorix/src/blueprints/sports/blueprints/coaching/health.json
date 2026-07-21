@@ -1,67 +1,67 @@
 {
-  "id": "academorix://modules/coaching/health",
+  "id": "stackra://modules/coaching/health",
   "$version": 1,
   "title": "coaching — health probes",
   "probes": [
     {
       "name": "coaching-schema-migrations-applied",
-      "class": "Academorix\\Sports\\Coaching\\Health\\Probes\\SchemaMigrationsAppliedProbe",
+      "class": "Stackra\\Sports\\Coaching\\Health\\Probes\\SchemaMigrationsAppliedProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms coaching_profiles + coach_assignments + coach_certifications + coach_skill_ratings tables + every partial unique index exists."
     },
     {
       "name": "coaching-head-coach-invariant-index-present",
-      "class": "Academorix\\Sports\\Coaching\\Health\\Probes\\HeadCoachInvariantIndexPresentProbe",
+      "class": "Stackra\\Sports\\Coaching\\Health\\Probes\\HeadCoachInvariantIndexPresentProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms the partial unique index on coach_assignments (tenant_id, assignable_type, assignable_id, role='head_coach', deleted_at IS NULL). Without it, concurrent head_coach assignments could both succeed."
     },
     {
       "name": "coaching-unique-profile-per-staff-index-present",
-      "class": "Academorix\\Sports\\Coaching\\Health\\Probes\\UniqueProfilePerStaffIndexPresentProbe",
+      "class": "Stackra\\Sports\\Coaching\\Health\\Probes\\UniqueProfilePerStaffIndexPresentProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms the partial unique index on coaching_profiles (tenant_id, staff_id, deleted_at IS NULL). Enforces one active profile per Staff."
     },
     {
       "name": "coaching-head-coach-invariant-clean",
-      "class": "Academorix\\Sports\\Coaching\\Health\\Probes\\HeadCoachInvariantCleanProbe",
+      "class": "Stackra\\Sports\\Coaching\\Health\\Probes\\HeadCoachInvariantCleanProbe",
       "category": "readiness",
       "critical": false,
       "description": "Runs SELECT (tenant_id, assignable_type, assignable_id) FROM coach_assignments WHERE role='head_coach' AND deleted_at IS NULL AND (end_date IS NULL OR end_date > NOW()) GROUP BY 1,2,3 HAVING COUNT(*) > 1. Any finding is a P1 signal."
     },
     {
       "name": "coaching-orphan-assignment-detection",
-      "class": "Academorix\\Sports\\Coaching\\Health\\Probes\\OrphanAssignmentDetectionProbe",
+      "class": "Stackra\\Sports\\Coaching\\Health\\Probes\\OrphanAssignmentDetectionProbe",
       "category": "readiness",
       "critical": true,
       "description": "Detects active CoachAssignment rows referencing a coaching_profile_id whose profile is is_active=false OR verified_by_admin_at IS NULL. Fires P1 — indicates a cascade failure."
     },
     {
       "name": "coaching-certification-expiration-backlog",
-      "class": "Academorix\\Sports\\Coaching\\Health\\Probes\\CertificationExpirationBacklogProbe",
+      "class": "Stackra\\Sports\\Coaching\\Health\\Probes\\CertificationExpirationBacklogProbe",
       "category": "readiness",
       "critical": false,
       "description": "Count of certifications past expires_at that have NOT fired CoachCertificationExpired (metric-hydration gap). Elevated indicates NotifyCertificationExpiredJob stalled."
     },
     {
       "name": "coaching-verification-backlog",
-      "class": "Academorix\\Sports\\Coaching\\Health\\Probes\\VerificationBacklogProbe",
+      "class": "Stackra\\Sports\\Coaching\\Health\\Probes\\VerificationBacklogProbe",
       "category": "readiness",
       "critical": false,
       "description": "Count of CoachingProfile rows unverified > 7 days after creation. Elevated indicates admin verification queue backlog."
     },
     {
       "name": "coaching-availability-conflict-rate",
-      "class": "Academorix\\Sports\\Coaching\\Health\\Probes\\AvailabilityConflictRateProbe",
+      "class": "Stackra\\Sports\\Coaching\\Health\\Probes\\AvailabilityConflictRateProbe",
       "category": "readiness",
       "critical": false,
       "description": "Percentage of new assignments whose AssignmentConflictDetector fires the soft-warn. Elevated indicates scheduling process gaps."
     },
     {
       "name": "coaching-slot-usage-ratio",
-      "class": "Academorix\\Sports\\Coaching\\Health\\Probes\\SlotUsageRatioProbe",
+      "class": "Stackra\\Sports\\Coaching\\Health\\Probes\\SlotUsageRatioProbe",
       "category": "readiness",
       "critical": false,
       "description": "Per-tenant ratio of active_profiles / coaching_profile_slot. Elevated (> 0.85) indicates tenant approaching cap — upsell signal."

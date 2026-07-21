@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Exceptions;
+namespace Stackra\Coupon\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The target already has a coupon applied AND stacking is not enabled on both coupons OR tenant lacks `coupon_stackable`.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CouponStackingRefusedException extends AcademorixException
+final class CouponStackingRefusedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/sports-registry/relations",
+  "id": "stackra://modules/sports-registry/relations",
   "$version": 1,
   "title": "sports-registry — model relationships",
   "description": "Three-level catalog tree: Sport hasMany Disciplines; Discipline hasMany Positions. Every entity carries `tenant_id` NULLABLE — NULL = platform-scoped (visible to every tenant), non-null = tenant custom (Enterprise-only). Cross-tenant FKs are forbidden. A custom Discipline may hang off a platform Sport (an Enterprise tenant extends the platform taxonomy without shadowing the base row). NO application_id / region_id / branch_id / organization_id / scope_node_id / parent_id on any row (per `.kiro/steering/tenancy-columns.md` §5). Downstream Wave 3 modules DO NOT reference these tables by FK — they carry `sport_key` / `discipline_key` / `position_key` as plain string columns, and the `SportKeyResolver` service maps strings to rows at read time. That's why `extendedBy: []` — every consumer is loosely coupled via slug.",
@@ -91,7 +91,7 @@
       "target": {
         "module": "scope",
         "model": "ScopeNode",
-        "class": "Academorix\\Scope\\Models\\ScopeNode"
+        "class": "Stackra\\Scope\\Models\\ScopeNode"
       },
       "morphType": "entity_type",
       "morphId": "entity_id",

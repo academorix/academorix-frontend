@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/notifications-sms/settings",
+  "id": "stackra://modules/notifications-sms/settings",
   "$version": 1,
   "title": "notifications-sms \u2014 settings",
   "description": "SMS channel settings. Canonical group/section/field taxonomy. One #[AsSetting] class \u2014 `SmsSettings` \u2014 group key `sms`.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "sms",
-      "class": "Academorix\\Notifications\\Sms\\Settings\\SmsSettings",
+      "class": "Stackra\\Notifications\\Sms\\Settings\\SmsSettings",
       "label": "SMS",
       "description": "SMS provider + sender identity + geographic scope + STOP/START/HELP auto-replies.",
       "icon": "chat-bubble-bottom-center-text",

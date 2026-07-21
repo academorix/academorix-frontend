@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/access/requests/observers",
+  "id": "stackra://modules/access/requests/observers",
   "$version": 1,
   "title": "requests \u2014 model observers",
   "description": "This module owns NO models and therefore contributes NO Eloquent observers. State transitions on the underlying `approval_instances` table are observed by workflow/approvals; state transitions on the resulting `access_grants` table are observed by access/grants. This module reacts to those observers' EVENTS via `listeners.json`, not by attaching observers directly.",

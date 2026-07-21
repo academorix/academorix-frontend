@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/user/broadcasts",
+  "id": "stackra://modules/user/broadcasts",
   "$version": 1,
   "title": "user \u2014 realtime broadcasts",
   "description": "The user module does NOT broadcast on realtime channels directly. User + Profile + TenantMember mutations fire domain events (see `events.json`) which downstream modules (notifications, activity) may republish over their own broadcast channels \u2014 but this module ships zero channels of its own. Broadcast surfaces belong to the domain that owns the read side (notifications inbox, activity feed), not the write side.",

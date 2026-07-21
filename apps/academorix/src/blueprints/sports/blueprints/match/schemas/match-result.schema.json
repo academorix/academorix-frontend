@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/match/schemas/match-result",
+  "id": "stackra://modules/match/schemas/match-result",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "MatchResult",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "mre_",
     "incrementing": false,
-    "model": "Academorix\\Sports\\Match\\Models\\MatchResult",
-    "interface": "Academorix\\Sports\\Match\\Contracts\\Data\\MatchResultInterface",
-    "implements": ["Academorix\\Sports\\Match\\Contracts\\Data\\MatchResultInterface"],
+    "model": "Stackra\\Sports\\Match\\Models\\MatchResult",
+    "interface": "Stackra\\Sports\\Match\\Contracts\\Data\\MatchResultInterface",
+    "implements": ["Stackra\\Sports\\Match\\Contracts\\Data\\MatchResultInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

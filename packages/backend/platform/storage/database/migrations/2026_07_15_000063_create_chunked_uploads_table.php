@@ -10,8 +10,8 @@
 
 declare(strict_types=1);
 
-use Academorix\Storage\Contracts\Data\ChunkedUploadInterface;
-use Academorix\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Contracts\Data\ChunkedUploadInterface;
+use Stackra\Storage\Contracts\Data\FileInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

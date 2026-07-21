@@ -1,10 +1,10 @@
 {
-  "name": "academorix/notifications-push",
+  "name": "stackra/notifications-push",
   "type": "library",
   "description": "Push notification channel. Owns the PushSubscription entity (device tokens — RESTRICTED tier, encrypted at rest) + a MultipleInstanceManager wrapping FCM (Android + Web) / APNs (iOS) / Expo (React Native) / OneSignal (enterprise). Provider-agnostic delivery with token validation, invalid-token cleanup, COPPA VPC gate for minors, GDPR Art. 32 encryption controls, per-provider health probes. Consumes webhook module for inbound provider feedback.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "laravel",
     "notifications",
     "push",
@@ -19,22 +19,22 @@
   ],
   "require": {
     "php": "^8.3",
-    "academorix/application": "@dev",
-    "academorix/authorization": "@dev",
-    "academorix/console": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/database": "@dev",
-    "academorix/enum": "@dev",
-    "academorix/events": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
-    "academorix/notifications": "@dev",
-    "academorix/retention": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix/tenancy": "@dev",
-    "academorix/webhook": "@dev",
+    "stackra/application": "@dev",
+    "stackra/authorization": "@dev",
+    "stackra/console": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/database": "@dev",
+    "stackra/enum": "@dev",
+    "stackra/events": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/notifications": "@dev",
+    "stackra/retention": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra/tenancy": "@dev",
+    "stackra/webhook": "@dev",
     "illuminate/contracts": "^13.0",
     "illuminate/database": "^13.0",
     "illuminate/events": "^13.0",
@@ -53,20 +53,20 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Notifications\\Push\\": "src/",
-      "Academorix\\Notifications\\Push\\Database\\Factories\\": "database/factories/",
-      "Academorix\\Notifications\\Push\\Database\\Seeders\\": "database/seeders/"
+      "Stackra\\Notifications\\Push\\": "src/",
+      "Stackra\\Notifications\\Push\\Database\\Factories\\": "database/factories/",
+      "Stackra\\Notifications\\Push\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Notifications\\Push\\Tests\\": "tests/"
+      "Stackra\\Notifications\\Push\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Notifications\\Push\\Providers\\NotificationsPushServiceProvider"
+        "Stackra\\Notifications\\Push\\Providers\\NotificationsPushServiceProvider"
       ],
       "aliases": {}
     }

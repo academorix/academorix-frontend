@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "storage",
   "alias": "storage",
-  "namespace": "Academorix\\Storage",
+  "namespace": "Stackra\\Storage",
   "description": "File upload + attachment substrate. Wraps `spatie/laravel-medialibrary ^11` under the hood + adds our tenant scoping + entitlement enforcement + antivirus pipeline + audited signed-URL orchestrator + chunked-upload state machine. Owns four entities: File (the domain unit, polymorphic via `fileable_type`/`fileable_id`), FileVariant (image + document derivatives generated async on upload), SignedUrlAudit (every signed URL issued, with TTL / IP lock / user lock / hit count for revocation), ChunkedUpload (in-flight multipart / tus.io state). Ships the `HasFiles` trait for consumer models + the `#[Attachable]` + `#[FileKind]` attributes so downstream modules opt in without importing the SDK. Not just a Laravel Storage wrapper — Laravel Storage is a filesystem abstraction; this module is a domain layer on top: tenant-scoped file records, entitlement-metered uploads, content-addressable dedup via SHA-256, driver-agnostic signed URLs, and a variant pipeline that fans out to the image processor. Every read + write goes through this module; NO downstream module talks to `Storage::disk()` directly.",
   "keywords": [
     "storage",
@@ -22,7 +22,7 @@
     "medialibrary"
   ],
   "priority": 24,
-  "providers": ["Academorix\\Storage\\Providers\\StorageServiceProvider"],
+  "providers": ["Stackra\\Storage\\Providers\\StorageServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "entitlements", "activity", "audit"],
   "wraps": {

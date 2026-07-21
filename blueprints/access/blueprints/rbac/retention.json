@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/rbac/retention",
+  "id": "stackra://modules/rbac/retention",
   "$version": 1,
   "title": "rbac \u2014 retention windows",
   "description": "Role + permission rows retained while tenant active. Pivots (role_has_permissions + model_has_roles + model_has_permissions) cascade on parent delete. Soft-deleted custom roles retained 90 days for restore, then hard-purged. RoleDefinition never deleted \u2014 only marked is_active=false. Audit rows in the audit module have their own retention window.",
@@ -15,7 +15,7 @@
       "purge": {
         "trigger": "manual archive by platform admin (super_admin) + zero active model_has_roles references",
         "action": "hard delete",
-        "notes": "System roles are shipped by Academorix. Removing one is a platform decision \u2014 usually happens when a business_type is deprecated."
+        "notes": "System roles are shipped by Stackra. Removing one is a platform decision \u2014 usually happens when a business_type is deprecated."
       }
     },
     {

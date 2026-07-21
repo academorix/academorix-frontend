@@ -1,20 +1,20 @@
 {
-  "id": "academorix://modules/branch/attributes",
+  "id": "stackra://modules/branch/attributes",
   "$version": 1,
   "title": "branch — PHP attribute contracts",
   "description": "One class-level attribute. `#[AsBranchListener]` marks a service class as a subscriber to branch-lifecycle events — the AttributeDiscovery scan picks it up and wires it to the event map declared in `events.json`. No property-level attributes: Branch columns are annotated by ordinary Eloquent + spatie/laravel-data class attributes shipped by foundation.",
-  "namespace": "Academorix\\Branch\\Attributes",
+  "namespace": "Stackra\\Branch\\Attributes",
   "attributes": [
     {
       "name": "AsBranchListener",
-      "class": "Academorix\\Branch\\Attributes\\AsBranchListener",
+      "class": "Stackra\\Branch\\Attributes\\AsBranchListener",
       "targets": ["class"],
       "params": [
         {
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Array of event short names (`BranchCreated`, `BranchClosed`, `BranchCoordinatesUpdated`, …) the class listens to. Empty = subscribe to every event in `Academorix\\Branch\\Events\\*`. Names are resolved against `events.json`; typos surface at boot time when the discovery scan validates them."
+          "description": "Array of event short names (`BranchCreated`, `BranchClosed`, `BranchCoordinatesUpdated`, …) the class listens to. Empty = subscribe to every event in `Stackra\\Branch\\Events\\*`. Names are resolved against `events.json`; typos surface at boot time when the discovery scan validates them."
         },
         {
           "name": "queue",

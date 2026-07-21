@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Services;
+namespace Stackra\Audit\Services;
 
-use Academorix\Audit\Contracts\Data\AuditInterface;
-use Academorix\Audit\Contracts\Services\AuditChainVerifierInterface;
-use Academorix\Audit\Events\AuditChainBroken;
-use Academorix\Audit\Events\AuditChainVerified;
-use Academorix\Audit\Models\Audit;
+use Stackra\Audit\Contracts\Data\AuditInterface;
+use Stackra\Audit\Contracts\Services\AuditChainVerifierInterface;
+use Stackra\Audit\Events\AuditChainBroken;
+use Stackra\Audit\Events\AuditChainVerified;
+use Stackra\Audit\Models\Audit;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Container\Attributes\Scoped;

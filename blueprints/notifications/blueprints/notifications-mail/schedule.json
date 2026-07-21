@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-mail/schedule",
+  "id": "stackra://modules/notifications-mail/schedule",
   "$version": 1,
   "title": "notifications-mail \u2014 scheduled tasks",
   "description": "Two entries: reconcile-suppressions weekly + prune-expired-suppressions daily.",

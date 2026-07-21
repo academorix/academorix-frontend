@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/jobs",
+  "id": "stackra://modules/notifications/jobs",
   "$version": 1,
   "title": "notifications core \u2014 background jobs",
   "description": "Core-owned jobs. Every send goes through SendNotificationJob (the orchestrator), which fans out per resolved channel via NotificationDispatched. Channel modules ship their own transport jobs (SendMailJob, SendSmsJob, SendPushJob, BroadcastInAppNotificationJob). Digests, expunge, reconcile, cache warm are core scheduled work.",
@@ -28,7 +28,7 @@
   },
   "jobs": [
     {
-      "class": "Academorix\\Notifications\\Jobs\\SendNotificationJob",
+      "class": "Stackra\\Notifications\\Jobs\\SendNotificationJob",
       "queue": "resolved-at-dispatch \u2014 notifications-critical if priority=critical, else notifications",
       "purpose": "The orchestrator. Called once per dispatch. Resolves preferences + digest mode + creates NotificationDelivery rows + fires NotificationDispatched per resolved channel. Channel modules pick up the event + send.",
       "steps": [
@@ -43,7 +43,7 @@
       "backoff": "n/a \u2014 orchestrator is thin, per-channel retries live in channel modules"
     },
     {
-      "class": "Academorix\\Notifications\\Jobs\\ProcessDigestJob",
+      "class": "Stackra\\Notifications\\Jobs\\ProcessDigestJob",
       "queue": "notifications-digests",
       "purpose": "Runs at each digest window boundary. Collects pending notifications for (user, category, channel, window), renders through the digest template, dispatches, marks items digest_delivered_at.",
       "shouldQueue": true,
@@ -55,7 +55,7 @@
       "notes": "Skips delivery if the aggregated digest is empty (no empty emails). Priority=critical notifications are NEVER in a digest \u2014 they bypass batching in SendNotificationJob."
     },
     {
-      "class": "Academorix\\Notifications\\Jobs\\ExpungeArchivedNotificationsJob",
+      "class": "Stackra\\Notifications\\Jobs\\ExpungeArchivedNotificationsJob",
       "queue": "notifications",
       "purpose": "Hard-deletes soft-deleted Notification rows past their retention window (30d after user archive OR 90d after cold-archive threshold). Emits audit rows in audit_log tier before delete so the trail survives.",
       "shouldQueue": true,
@@ -65,7 +65,7 @@
       "notes": "Batched by tenant to spread load; scheduled daily 02:15 UTC."
     },
     {
-      "class": "Academorix\\Notifications\\Jobs\\ReconcileDeliveriesJob",
+      "class": "Stackra\\Notifications\\Jobs\\ReconcileDeliveriesJob",
       "queue": "notifications",
       "purpose": "For each provider (mail/sms/push), poll the channel module's provider webhook backfill endpoint OR the provider's own event API for any missed events (Mailgun sometimes drops webhooks). Reconciles NotificationDelivery states.",
       "shouldQueue": true,
@@ -75,7 +75,7 @@
       "notes": "Delegates provider-specific reconciliation to channel modules via ReconciliationContract."
     },
     {
-      "class": "Academorix\\Notifications\\Jobs\\RefreshUserCacheJob",
+      "class": "Stackra\\Notifications\\Jobs\\RefreshUserCacheJob",
       "queue": "notifications",
       "purpose": "Refresh the cached recipient payload (email, phone, locale, timezone) for a user after UserUpdated. Cached to avoid a User query per dispatch.",
       "shouldQueue": true,

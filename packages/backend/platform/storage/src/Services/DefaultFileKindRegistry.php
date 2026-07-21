@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Services;
+namespace Stackra\Storage\Services;
 
-use Academorix\Storage\Attributes\FileKind;
-use Academorix\Storage\Contracts\Services\FileKindRegistryInterface;
+use Stackra\Storage\Attributes\FileKind;
+use Stackra\Storage\Contracts\Services\FileKindRegistryInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**
  * In-memory kind registry.
  *
  * Hydrated at boot by the framework's generic hydration pump
- * ({@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper})
+ * ({@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper})
  * via the `#[HydratesFrom]` declaration on
  * {@see FileKindRegistryInterface::register()}. One row per class
  * carrying `#[FileKind]`. Read on every upload to validate MIME +

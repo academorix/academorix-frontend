@@ -30,7 +30,7 @@
             "email": "alice@example.com",
             "profile": {
               "display_name": "Alice",
-              "avatar_url": "https://cdn.academorix.com/avatars/alice.jpg"
+              "avatar_url": "https://cdn.stackra.com/avatars/alice.jpg"
             },
             "roles": ["owner"],
             "permissions_count": 42
@@ -168,7 +168,7 @@
   },
   "invariants": [
     "Every enumeration-safe path (AUTH_FAILED) returns the SAME body shape regardless of whether the email is unknown, the password wrong, or the identity soft-deleted / disabled. The response CANNOT be distinguished by shape / status / timing.",
-    "Constant-time login: LoginAction's duration histogram (academorix.auth.login_duration_ms) shows unknown_email + password_mismatch + soft_deleted all fall in the same P95 bucket range. The check_lockout middleware runs BEFORE password comparison to preserve this property.",
+    "Constant-time login: LoginAction's duration histogram (stackra.auth.login_duration_ms) shows unknown_email + password_mismatch + soft_deleted all fall in the same P95 bucket range. The check_lockout middleware runs BEFORE password comparison to preserve this property.",
     "The plaintext token + refresh_token are shown ONCE \u2014 subsequent responses (refresh, session-list) never return the plaintexts again."
   ]
 }

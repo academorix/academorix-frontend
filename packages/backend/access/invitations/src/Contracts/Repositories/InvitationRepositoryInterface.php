@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Contracts\Repositories;
+namespace Stackra\Invitations\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Invitations\Models\Invitation;
-use Academorix\Invitations\Repositories\EloquentInvitationRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Invitations\Models\Invitation;
+use Stackra\Invitations\Repositories\EloquentInvitationRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

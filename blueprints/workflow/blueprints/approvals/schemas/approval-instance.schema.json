@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/schemas/approval-instance",
+  "id": "stackra://modules/workflow/approvals/schemas/approval-instance",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ApprovalInstance",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "api_",
     "incrementing": false,
-    "model": "Academorix\\Approval\\Models\\ApprovalInstance",
-    "interface": "Academorix\\Approval\\Contracts\\Data\\ApprovalInstanceInterface",
-    "implements": ["Academorix\\Approval\\Contracts\\Data\\ApprovalInstanceInterface"],
+    "model": "Stackra\\Approval\\Models\\ApprovalInstance",
+    "interface": "Stackra\\Approval\\Contracts\\Data\\ApprovalInstanceInterface",
+    "implements": ["Stackra\\Approval\\Contracts\\Data\\ApprovalInstanceInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

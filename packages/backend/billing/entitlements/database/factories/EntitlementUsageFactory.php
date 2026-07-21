@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Database\Factories;
+namespace Stackra\Entitlements\Database\Factories;
 
-use Academorix\Entitlements\Contracts\Data\EntitlementUsageInterface;
-use Academorix\Entitlements\Models\EntitlementUsage;
+use Stackra\Entitlements\Contracts\Data\EntitlementUsageInterface;
+use Stackra\Entitlements\Models\EntitlementUsage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

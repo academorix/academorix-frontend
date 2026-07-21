@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Services;
+namespace Stackra\Auth\Services;
 
-use Academorix\Auth\Contracts\Data\AuthJwtSigningKeyInterface;
-use Academorix\Auth\Contracts\Repositories\AuthJwtSigningKeyRepositoryInterface;
-use Academorix\Auth\Contracts\Services\JwtSignerInterface;
-use Academorix\Auth\Data\JwtPayloadData;
-use Academorix\Auth\Data\SignedJwtData;
-use Academorix\Auth\Exceptions\JwtSecretMisconfiguredException;
-use Academorix\Auth\Exceptions\JwtSigningKeyUnavailableException;
-use Academorix\Auth\Models\AuthJwtSigningKey;
+use Stackra\Auth\Contracts\Data\AuthJwtSigningKeyInterface;
+use Stackra\Auth\Contracts\Repositories\AuthJwtSigningKeyRepositoryInterface;
+use Stackra\Auth\Contracts\Services\JwtSignerInterface;
+use Stackra\Auth\Data\JwtPayloadData;
+use Stackra\Auth\Data\SignedJwtData;
+use Stackra\Auth\Exceptions\JwtSecretMisconfiguredException;
+use Stackra\Auth\Exceptions\JwtSigningKeyUnavailableException;
+use Stackra\Auth\Models\AuthJwtSigningKey;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Contracts\Encryption\DecryptException;

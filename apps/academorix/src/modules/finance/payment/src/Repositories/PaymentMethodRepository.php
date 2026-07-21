@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Repositories;
+namespace Stackra\Payment\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Payment\Contracts\Data\PaymentMethodInterface;
-use Academorix\Payment\Contracts\Repositories\PaymentMethodRepositoryInterface;
-use Academorix\Payment\Models\PaymentMethod;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Payment\Contracts\Data\PaymentMethodInterface;
+use Stackra\Payment\Contracts\Repositories\PaymentMethodRepositoryInterface;
+use Stackra\Payment\Models\PaymentMethod;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Payment\Models\PaymentMethod}.
+ * Attribute-first Eloquent repository for {@see Stackra\Payment\Models\PaymentMethod}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(PaymentMethodInterface::class)]` which resolves to
  * `PaymentMethod` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Payment\Models\PaymentMethod>
+ * @extends Repository<\Stackra\Payment\Models\PaymentMethod>
  *
  * @category Payment
  *

@@ -15,13 +15,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceProvider\Console;
+namespace Stackra\ServiceProvider\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\ServiceProvider\Bootstrappers\AbstractBootstrapper;
-use Academorix\ServiceProvider\Contracts\BootstrapperInterface;
-use Academorix\ServiceProvider\Registry\BootstrapperRegistry;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\ServiceProvider\Bootstrappers\AbstractBootstrapper;
+use Stackra\ServiceProvider\Contracts\BootstrapperInterface;
+use Stackra\ServiceProvider\Registry\BootstrapperRegistry;
 use Illuminate\Cache\RedisStore;
 use Illuminate\Container\Attributes\Cache;
 use Illuminate\Contracts\Cache\Repository;

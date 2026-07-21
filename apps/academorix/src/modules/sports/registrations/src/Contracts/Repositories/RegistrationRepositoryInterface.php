@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registrations\Contracts\Repositories;
+namespace Stackra\Registrations\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Registrations\Models\Registration}.
+ * Repository contract for {@see Stackra\Registrations\Models\Registration}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `RegistrationRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Registrations\Models\Registration>
+ * @extends RepositoryInterface<\Stackra\Registrations\Models\Registration>
  *
  * @category Registrations
  *

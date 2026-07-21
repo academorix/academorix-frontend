@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/service-accounts/features",
+  "id": "stackra://modules/service-accounts/features",
   "$version": 1,
   "title": "service-accounts \u2014 feature keys",
   "reference": {

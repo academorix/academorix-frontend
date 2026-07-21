@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/theme/helpers",
+  "id": "stackra://modules/theme/helpers",
   "$version": 1,
   "title": "theme — global helpers",
   "description": "Global function helpers registered via the module's service provider. Kept small — theme is not a helper-heavy module.",

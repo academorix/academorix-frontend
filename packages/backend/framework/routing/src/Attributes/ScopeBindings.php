@@ -11,7 +11,7 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use Spatie\RouteAttributes\Attributes\ScopeBindings as SpatieScopeBindings;
@@ -29,8 +29,8 @@ use Spatie\RouteAttributes\Attributes\ScopeBindings as SpatieScopeBindings;
  *
  * ## Usage:
  * ```php
- * use Academorix\Routing\Attributes\ScopeBindings;
- * use Academorix\Routing\Attributes\Get;
+ * use Stackra\Routing\Attributes\ScopeBindings;
+ * use Stackra\Routing\Attributes\Get;
  *
  * class CommentController
  * {

@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/attribution/policies",
+  "id": "stackra://modules/attribution/policies",
   "$version": 1,
   "title": "attribution — authorization policies",
   "description": "Two policies, one per owned model. Every ability defers to spatie/laravel-permission for the permission check, then layers own-only vs all-in-tenant narrowing. Confidential-field redaction (click IDs, ip_hash) happens at the data-class layer per data-classes.json — the policy authorises access to the ROW; the redactor authorises access to individual FIELDS.",
   "policies": [
     {
       "model": "Attribution",
-      "class": "Academorix\\Growth\\Attribution\\Policies\\AttributionPolicy",
+      "class": "Stackra\\Growth\\Attribution\\Policies\\AttributionPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -65,7 +65,7 @@
     },
     {
       "model": "AttributionTouchpoint",
-      "class": "Academorix\\Growth\\Attribution\\Policies\\AttributionTouchpointPolicy",
+      "class": "Stackra\\Growth\\Attribution\\Policies\\AttributionTouchpointPolicy",
       "abilities": [
         {
           "action": "viewAny",

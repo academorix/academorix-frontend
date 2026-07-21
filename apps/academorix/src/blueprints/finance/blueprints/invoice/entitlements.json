@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invoice/entitlements",
+  "id": "stackra://modules/invoice/entitlements",
   "$version": 1,
   "title": "invoice — declared entitlements",
   "description": "Nine entitlement keys. `invoice_capture` is the boolean master gate. `invoice_slot_per_month` caps invoice creation per rolling calendar month. `invoice_custom_series` (Medium+) unlocks tenant-configurable series (INV / SO / RECEIPT). `invoice_multi_currency` (Medium+) allows invoices in currencies other than tenant.default_currency. `invoice_tenant_branded_pdf` (Medium+) applies the tenant's branding to the invoice PDF. `invoice_dunning_advanced` (Enterprise) unlocks custom dunning cadences + collection agency integration. `invoice_collections_integration` (Enterprise) enables third-party collections API dispatch. `invoice_extended_retention` (Enterprise) extends retention from 7 → 10 years. `credit_note_issuance` (Small+) enables credit note creation for refunds/adjustments.",
@@ -50,7 +50,7 @@
       "key": "invoice_tenant_branded_pdf",
       "kind": "boolean",
       "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
-      "description": "Enables the tenant's branding (logo, colors, footer) on invoice PDFs via the branding module. Small tenants get the default Academorix-branded PDF template.",
+      "description": "Enables the tenant's branding (logo, colors, footer) on invoice PDFs via the branding module. Small tenants get the default Stackra-branded PDF template.",
       "enforcedBy": [
         "InvoicePDFRenderer checks the gate + selects template accordingly",
         "SDUI branding preview disabled when gate is closed"

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/chargeback/config",
+  "id": "stackra://modules/chargeback/config",
   "$version": 1,
   "title": "chargeback — developer configuration",
   "configFile": "config/chargeback.php",

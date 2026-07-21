@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Contracts;
+namespace Stackra\Geofencing\Contracts;
 
 /**
  * Stable surface every fenceable model implements.
@@ -12,7 +12,7 @@ namespace Academorix\Geofencing\Contracts;
  * table, external service) can plug in by implementing the interface without
  * the trait.
  *
- * The default {@see \Academorix\Geofencing\Concerns\HasGeofence} trait
+ * The default {@see \Stackra\Geofencing\Concerns\HasGeofence} trait
  * provides column-backed implementations of every method — models that
  * follow the standard schema get all seven methods for free.
  *

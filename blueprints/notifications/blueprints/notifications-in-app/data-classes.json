@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-in-app/data-classes",
+  "id": "stackra://modules/notifications-in-app/data-classes",
   "$version": 1,
   "title": "notifications-in-app \u2014 field classification",
   "description": "Zero owned persistent columns. The broadcast payloads carry transient copies of fields from core's Notification model \u2014 those fields' classifications are declared in core's data-classes.json. This file exists for uniform module shape + to document the ephemeral socket-borne data.",

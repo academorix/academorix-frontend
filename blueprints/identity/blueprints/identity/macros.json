@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/identity/macros",
+  "id": "stackra://modules/identity/macros",
   "$version": 1,
   "title": "identity \u2014 published macros",
   "description": "Two macros. `Str::password_strength` scores a plaintext password against the current policy without persisting anything (useful for the SPA's live strength indicator). `Blueprint::identity_fields` is the migration shorthand for the credential + audit columns that every Identity-shaped table carries.",
@@ -124,5 +124,5 @@
       "usage_example": "Schema::create('identities', function (Blueprint $t) {\n    $t->ulidPrefixed('id', 'idn');\n    $t->identity_fields();\n    $t->timestamps();\n    $t->softDeletes();\n    $t->userstamps();\n});"
     }
   ],
-  "registered_by": "Academorix\\Identity\\Providers\\IdentityServiceProvider::boot()"
+  "registered_by": "Stackra\\Identity\\Providers\\IdentityServiceProvider::boot()"
 }

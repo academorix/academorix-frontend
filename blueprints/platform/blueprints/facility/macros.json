@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/facility/macros",
+  "id": "stackra://modules/facility/macros",
   "$version": 1,
   "title": "facility — published macros",
   "description": "Two request-level macros that surface the resolved active facility from the RequestContext (set by facility.resolve_active middleware). Registered by FacilityServiceProvider::boot(). No Blueprint macros — the facility-owned tables use standard column shapes.",
@@ -10,7 +10,7 @@
       "signature": "Request::activeFacility(): ?Facility",
       "adds": "A single accessor on the framework Request class that returns the resolved Facility model (or null when no facility context).",
       "description": "Reads from RequestContext::facility() set by the facility.resolve_active middleware. Lazy-loads the model on first access — subsequent calls in the same request return the cached instance.",
-      "registered_by": "Academorix\\Facility\\Providers\\FacilityServiceProvider::boot()",
+      "registered_by": "Stackra\\Facility\\Providers\\FacilityServiceProvider::boot()",
       "example": "public function store(Request $request): JsonResponse\n{\n    $facility = $request->activeFacility();\n    // $facility is the resolved Facility model, already tenant-scoped by the middleware\n}"
     },
     {

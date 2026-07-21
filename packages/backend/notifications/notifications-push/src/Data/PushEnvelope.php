@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Data;
+namespace Stackra\Notifications\Push\Data;
 
-use Academorix\Notifications\Push\Enums\PushPlatform;
-use Academorix\Notifications\Push\Enums\PushProvider;
+use Stackra\Notifications\Push\Enums\PushPlatform;
+use Stackra\Notifications\Push\Enums\PushProvider;
 use Spatie\LaravelData\Data;
 
 /**

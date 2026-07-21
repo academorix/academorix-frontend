@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Console\Commands;
+namespace Stackra\Notifications\Sms\Console\Commands;
 
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Notifications\Sms\Enums\SmsOptOutReason;
-use Academorix\Notifications\Sms\Jobs\RecordSmsOptOutJob;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Notifications\Sms\Enums\SmsOptOutReason;
+use Stackra\Notifications\Sms\Jobs\RecordSmsOptOutJob;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 /**

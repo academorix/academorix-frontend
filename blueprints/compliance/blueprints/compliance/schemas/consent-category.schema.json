@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/compliance/schemas/consent-category",
+  "id": "stackra://modules/compliance/schemas/consent-category",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ConsentCategory",
@@ -12,9 +12,9 @@
     "keyType": "string",
     "keyPrefix": "ccg_",
     "incrementing": false,
-    "model": "Academorix\\Compliance\\Models\\ConsentCategory",
-    "interface": "Academorix\\Compliance\\Contracts\\Data\\ConsentCategoryInterface",
-    "implements": ["Academorix\\Compliance\\Contracts\\Data\\ConsentCategoryInterface"],
+    "model": "Stackra\\Compliance\\Models\\ConsentCategory",
+    "interface": "Stackra\\Compliance\\Contracts\\Data\\ConsentCategoryInterface",
+    "implements": ["Stackra\\Compliance\\Contracts\\Data\\ConsentCategoryInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

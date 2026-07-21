@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/activity/schemas/activity-retention-policy",
+  "id": "stackra://modules/activity/schemas/activity-retention-policy",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ActivityRetentionPolicy",
@@ -13,10 +13,10 @@
     "keyType": "string",
     "keyPrefix": "art_",
     "incrementing": false,
-    "model": "Academorix\\Observability\\Activity\\Models\\ActivityRetentionPolicy",
-    "interface": "Academorix\\Observability\\Activity\\Contracts\\Data\\ActivityRetentionPolicyInterface",
+    "model": "Stackra\\Observability\\Activity\\Models\\ActivityRetentionPolicy",
+    "interface": "Stackra\\Observability\\Activity\\Contracts\\Data\\ActivityRetentionPolicyInterface",
     "implements": [
-      "Academorix\\Observability\\Activity\\Contracts\\Data\\ActivityRetentionPolicyInterface",
+      "Stackra\\Observability\\Activity\\Contracts\\Data\\ActivityRetentionPolicyInterface",
       "OwenIt\\Auditing\\Contracts\\Auditable"
     ],
     "traits": [

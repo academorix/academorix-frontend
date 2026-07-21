@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Tests;
+namespace Stackra\Chargeback\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/chargeback.
+ * Base test case for stackra/chargeback.
  *
  * @category Chargeback
  *

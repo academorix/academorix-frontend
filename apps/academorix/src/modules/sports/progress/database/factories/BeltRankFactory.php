@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Progress\Database\Factories;
+namespace Stackra\Progress\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Progress\Contracts\Data\BeltRankInterface;
-use Academorix\Progress\Models\BeltRank;
+use Stackra\Progress\Contracts\Data\BeltRankInterface;
+use Stackra\Progress\Models\BeltRank;
 
 /**
- * Factory for {@see \Academorix\Progress\Models\BeltRank}.
+ * Factory for {@see \Stackra\Progress\Models\BeltRank}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Progress\Models\BeltRank>
+ * @extends Factory<\Stackra\Progress\Models\BeltRank>
  *
  * @category Progress
  *

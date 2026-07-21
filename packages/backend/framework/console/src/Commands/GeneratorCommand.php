@@ -12,14 +12,14 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Console\Commands;
+namespace Stackra\Console\Commands;
 
 use Exception;
 use Illuminate\Support\Facades\File;
 use Override;
-use Academorix\Exceptions\RuntimeException;
-use Academorix\Console\StubGenerator;
-use Academorix\Support\Str;
+use Stackra\Exceptions\RuntimeException;
+use Stackra\Console\StubGenerator;
+use Stackra\Support\Str;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -29,7 +29,7 @@ use function dirname;
  * Base class for all make:* generator commands.
  *
  * Provides a complete code generation pipeline built on top of the
- * `academorix/stub-generator` package. This class handles the full lifecycle
+ * `stackra/stub-generator` package. This class handles the full lifecycle
  * of generating a file from a stub template:
  *
  * 1. Loading a `.stub` template from the module's `stubs/` directory
@@ -135,7 +135,7 @@ abstract class GeneratorCommand extends BaseCommand
      *
      * Override this to specify a namespace segment appended to the base
      * module namespace. For example, returning `'Controllers'` would place
-     * the generated class under `Academorix\{Module}\Controllers\`.
+     * the generated class under `Stackra\{Module}\Controllers\`.
      *
      * Returns an empty string by default (class goes in the module root namespace).
      *
@@ -160,10 +160,10 @@ abstract class GeneratorCommand extends BaseCommand
      * ## Default Placeholders:
      * | Key              | Example Value              | Stub Token          |
      * |------------------|----------------------------|---------------------|
-     * | namespace        | Academorix\User\Controllers | $NAMESPACE$         |
+     * | namespace        | Stackra\User\Controllers | $NAMESPACE$         |
      * | class            | UserController             | $CLASS$             |
      * | package          | user                       | $PACKAGE$           |
-     * | module_namespace | Academorix\User             | $MODULE_NAMESPACE$  |
+     * | module_namespace | Stackra\User             | $MODULE_NAMESPACE$  |
      * | name             | UserController             | $NAME$              |
      * | module           | user                       | $MODULE$            |
      * | lower_name       | user                       | $LOWER_NAME$        |

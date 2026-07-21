@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Exceptions;
+namespace Stackra\Tenancy\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * kind=dpo or kind=legal contact promoted to primary before verified_at is set.

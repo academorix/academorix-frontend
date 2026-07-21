@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Safeguarding\Contracts\Repositories;
+namespace Stackra\Safeguarding\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Safeguarding\Models\PolicyAcknowledgement}.
+ * Repository contract for {@see Stackra\Safeguarding\Models\PolicyAcknowledgement}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `PolicyAcknowledgementRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Safeguarding\Models\PolicyAcknowledgement>
+ * @extends RepositoryInterface<\Stackra\Safeguarding\Models\PolicyAcknowledgement>
  *
  * @category Safeguarding
  *

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Contracts\Services;
+namespace Stackra\Notifications\Push\Contracts\Services;
 
-use Academorix\Notifications\Push\Services\DefaultTokenValidator;
+use Stackra\Notifications\Push\Services\DefaultTokenValidator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

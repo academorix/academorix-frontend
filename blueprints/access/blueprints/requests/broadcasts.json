@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/access/requests/broadcasts",
+  "id": "stackra://modules/access/requests/broadcasts",
   "$version": 1,
   "title": "requests \u2014 broadcast channels",
   "description": "Real-time broadcast channels this module owns. Registered by `AccessRequestServiceProvider::registerBroadcastChannels()`. Two channels: a tenant-wide feed for the admin dashboard, and a per-user feed for the requester's and approvers' inbox updates.",

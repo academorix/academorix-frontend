@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Exceptions;
+namespace Stackra\AgeGroup\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Reached the `age_group_slot` entitlement cap for this tenant (Small=0, Medium=20, Enterprise=unlimited).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AgeGroupQuotaExceededException extends AcademorixException
+final class AgeGroupQuotaExceededException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

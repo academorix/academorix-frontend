@@ -2,7 +2,7 @@
 inclusion: manual
 ---
 
-# Academorix — Module Boot-Order Priority Convention
+# Stackra — Module Boot-Order Priority Convention
 
 **Lower priority = boots earlier.** `priority=0` is the first module to boot;
 `priority=100` is deep-domain surface loaded last. Every module declares its

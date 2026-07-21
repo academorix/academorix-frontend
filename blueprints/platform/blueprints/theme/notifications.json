@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/theme/notifications",
+  "id": "stackra://modules/theme/notifications",
   "$version": 1,
   "title": "theme — user-facing notifications",
   "description": "Laravel notifications (mail / database / broadcast). Every notification carries a consent tier — activated notifications are transactional_optional (admin ops confirmation), accessibility recommendations are functional_optional.",
   "notifications": [
     {
-      "class": "Academorix\\Platform\\Theme\\Notifications\\ThemeActivatedNotification",
+      "class": "Stackra\\Platform\\Theme\\Notifications\\ThemeActivatedNotification",
       "channels": ["database", "mail"],
       "consent_tier": "transactional_optional",
       "audience": "tenant admin + design-role users",
@@ -23,7 +23,7 @@
       "template": "theme::mail.theme-activated"
     },
     {
-      "class": "Academorix\\Platform\\Theme\\Notifications\\ThemePresetPublishedNotification",
+      "class": "Stackra\\Platform\\Theme\\Notifications\\ThemePresetPublishedNotification",
       "channels": ["database"],
       "consent_tier": "functional_optional",
       "audience": "tenant admin + design-role users",
@@ -43,7 +43,7 @@
       "template": "theme::database.theme-preset-published"
     },
     {
-      "class": "Academorix\\Platform\\Theme\\Notifications\\ThemeAccessibilityRecommendationNotification",
+      "class": "Stackra\\Platform\\Theme\\Notifications\\ThemeAccessibilityRecommendationNotification",
       "channels": ["database", "mail"],
       "consent_tier": "functional_optional",
       "audience": "tenant admin + design-role users",

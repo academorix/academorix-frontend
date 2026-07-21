@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Contracts;
+namespace Stackra\FeatureFlags\Contracts;
 
-use Academorix\FeatureFlags\Checkers\PennantFeatureChecker;
-use Academorix\FeatureFlags\Resolver\FeatureResolution;
-use Academorix\Tenancy\Models\Tenant;
-use Academorix\User\Models\User;
+use Stackra\FeatureFlags\Checkers\PennantFeatureChecker;
+use Stackra\FeatureFlags\Resolver\FeatureResolution;
+use Stackra\Tenancy\Models\Tenant;
+use Stackra\User\Models\User;
 use BackedEnum;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Scoped;

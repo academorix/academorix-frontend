@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Console\Commands;
+namespace Stackra\Notifications\Push\Console\Commands;
 
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Notifications\Push\Jobs\PruneExpiredSubscriptionsJob;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Notifications\Push\Jobs\PruneExpiredSubscriptionsJob;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 /**

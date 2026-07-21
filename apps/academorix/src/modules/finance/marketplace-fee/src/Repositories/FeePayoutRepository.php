@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\MarketplaceFee\Repositories;
+namespace Stackra\MarketplaceFee\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\MarketplaceFee\Contracts\Data\FeePayoutInterface;
-use Academorix\MarketplaceFee\Contracts\Repositories\FeePayoutRepositoryInterface;
-use Academorix\MarketplaceFee\Models\FeePayout;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\MarketplaceFee\Contracts\Data\FeePayoutInterface;
+use Stackra\MarketplaceFee\Contracts\Repositories\FeePayoutRepositoryInterface;
+use Stackra\MarketplaceFee\Models\FeePayout;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\MarketplaceFee\Models\FeePayout}.
+ * Attribute-first Eloquent repository for {@see Stackra\MarketplaceFee\Models\FeePayout}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(FeePayoutInterface::class)]` which resolves to
  * `FeePayout` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\MarketplaceFee\Models\FeePayout>
+ * @extends Repository<\Stackra\MarketplaceFee\Models\FeePayout>
  *
  * @category MarketplaceFee
  *

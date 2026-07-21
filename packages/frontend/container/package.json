@@ -89,8 +89,8 @@
     }
   },
   "devDependencies": {
-    "@academorix/config-tsconfig": "workspace:*",
-    "@academorix/config-tsup": "workspace:*",
+    "@stackra/config-tsconfig": "workspace:*",
+    "@stackra/config-tsup": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/support": "workspace:*",
     "@stackra/testing": "workspace:*",

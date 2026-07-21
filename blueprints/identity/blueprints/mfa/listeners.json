@@ -1,66 +1,66 @@
 {
-  "id": "academorix://modules/mfa/listeners",
+  "id": "stackra://modules/mfa/listeners",
   "$version": 1,
   "title": "mfa — subscribed events",
   "description": "MFA listeners connect the module to the identity substrate (secret + recovery-code lifecycle), the auth flows (challenge initiation on login), and its own internal signal-processing pipeline (suspicious-activity aggregation, low-recovery-codes debouncing).",
   "listeners": [
     {
       "event": "identity::MfaEnrolled",
-      "listener": "Academorix\\Mfa\\Listeners\\HandleIdentityMfaEnrolled",
+      "listener": "Stackra\\Mfa\\Listeners\\HandleIdentityMfaEnrolled",
       "queue": null,
       "purpose": "Synchronous. Invalidate the `mfa:posture:{identity_id}` cache + emit the mfa module's `MfaEnrollmentConfirmed` event so downstream listeners on the mfa-namespace can react. identity/identity fires MfaEnrolled on the storage substrate; this listener bridges it into the mfa namespace so consumers can subscribe once (to mfa::MfaEnrollmentConfirmed) rather than tracking two events."
     },
     {
       "event": "identity::MfaDisabled",
-      "listener": "Academorix\\Mfa\\Listeners\\HandleIdentityMfaDisabled",
+      "listener": "Stackra\\Mfa\\Listeners\\HandleIdentityMfaDisabled",
       "queue": "notifications-critical",
       "purpose": "Fires when identity/identity's storage-substrate MfaDisabled event fires (TOTP secret nulled). If ANY active WebauthnCredential remains, disables it all in the same transaction (cumulative MFA policy — a partial disable is not supported). Then fires mfa::MfaDisabled cumulative event."
     },
     {
       "event": "identity::IdentityErased",
-      "listener": "Academorix\\Mfa\\Listeners\\CascadeMfaOnIdentityErasure",
+      "listener": "Stackra\\Mfa\\Listeners\\CascadeMfaOnIdentityErasure",
       "queue": "notifications-critical",
       "purpose": "When identity/identity soft-deletes an Identity (start of GDPR hold-period), fire mfa::MfaDisabled(trigger=identity_erasure) so notifications + audit-log emit. Then, when the hard-delete phase fires (erasure_phase='hard_delete'), the FK cascade will drop every WebauthnCredential in the same transaction. This listener writes the compliance-audit summary counting how many credentials cascade-purged."
     },
     {
       "event": "mfa::MfaChallengeFailed",
-      "listener": "Academorix\\Mfa\\Listeners\\EvaluateSuspiciousActivitySignal",
+      "listener": "Stackra\\Mfa\\Listeners\\EvaluateSuspiciousActivitySignal",
       "queue": "notifications-critical",
-      "purpose": "Push the failure into the `mfa:suspicious_activity:window:{identity_id}` sorted-set. Compute the current window's aggregate (count + distinct IPs). When both thresholds are crossed AND the notification-debounce hasn't fired recently, dispatch MfaChallengeSuspiciousActivityNotification + emit the `academorix.mfa.suspicious_activity.signals` metric with disposition=notification_dispatched."
+      "purpose": "Push the failure into the `mfa:suspicious_activity:window:{identity_id}` sorted-set. Compute the current window's aggregate (count + distinct IPs). When both thresholds are crossed AND the notification-debounce hasn't fired recently, dispatch MfaChallengeSuspiciousActivityNotification + emit the `stackra.mfa.suspicious_activity.signals` metric with disposition=notification_dispatched."
     },
     {
       "event": "mfa::MfaRecoveryCodeConsumed",
-      "listener": "Academorix\\Mfa\\Listeners\\EvaluateLowRecoveryCodesSignal",
+      "listener": "Stackra\\Mfa\\Listeners\\EvaluateLowRecoveryCodesSignal",
       "queue": "notifications",
       "purpose": "When a recovery code is consumed AND the resulting remaining_count is less than `config('mfa.recovery_codes.low_water_threshold')`, fire the mfa::MfaBackupCodeCountLow event (which the notification listener consumes). Debounced 24h per Identity so a burst-consumption user isn't spammed."
     },
     {
       "event": "mfa::WebauthnCredentialRegistered",
-      "listener": "Academorix\\Mfa\\Listeners\\HandleWebauthnCredentialRegistered",
+      "listener": "Stackra\\Mfa\\Listeners\\HandleWebauthnCredentialRegistered",
       "queue": null,
       "purpose": "Synchronous. Invalidate `mfa:credentials:{identity_id}` + `mfa:posture:{identity_id}` so subsequent /me/mfa reads see the new credential immediately. Emit an MfaEnrollmentConfirmed event (method=webauthn) so downstream consumers see a uniform event regardless of enrolment method."
     },
     {
       "event": "mfa::WebauthnCredentialDeleted",
-      "listener": "Academorix\\Mfa\\Listeners\\HandleWebauthnCredentialDeleted",
+      "listener": "Stackra\\Mfa\\Listeners\\HandleWebauthnCredentialDeleted",
       "queue": null,
       "purpose": "Synchronous. Invalidate the credential cache + posture cache. When this deletion drops the caller's active-credential count to zero AND their Identity has no TOTP secret, fire mfa::MfaDisabled cumulative event."
     },
     {
       "event": "mfa::MfaChallengeSucceeded",
-      "listener": "Academorix\\Mfa\\Listeners\\UpdateLastUsedTimestamps",
+      "listener": "Stackra\\Mfa\\Listeners\\UpdateLastUsedTimestamps",
       "queue": null,
       "purpose": "Synchronous. When method=webauthn, updates WebauthnCredential.last_used_at + increments the credential's sign_count monotonically (respecting the observer's replay-detection invariant). Invalidate the credentials cache."
     },
     {
       "event": "identity::PasswordChanged",
-      "listener": "Academorix\\Mfa\\Listeners\\ClearMfaChallengeSessionStateOnPasswordChange",
+      "listener": "Stackra\\Mfa\\Listeners\\ClearMfaChallengeSessionStateOnPasswordChange",
       "queue": null,
       "purpose": "When the Identity's password changes, clear ANY in-progress MFA challenge state on every session for the referring Users. Prevents a mid-flight challenge issued before the password change from being verified after. Redundant with identity/auth's RevokeAllActiveSessions listener (which destroys the sessions entirely) but declared here for defence-in-depth: if session revocation misses one, this listener clears MFA state directly."
     },
     {
       "event": "compliance::TenantErasureRequested",
-      "listener": "Academorix\\Mfa\\Listeners\\CascadeMfaForTenantErasure",
+      "listener": "Stackra\\Mfa\\Listeners\\CascadeMfaForTenantErasure",
       "queue": "notifications-critical",
       "purpose": "When a Tenant is being erased and identity/user's UserErased cascade runs on every User in that Tenant, this listener processes the mfa cascade in aggregate — WebauthnCredentials whose ONLY Identity is inside the erased Tenant are disabled + queued for 90-day retention purge (or immediate hard delete on `compliance.erasure.aggressive_purge`). Complements identity's EnumerateIdentitiesForCascadingErasure listener."
     }

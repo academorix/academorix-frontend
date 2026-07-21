@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Order\Services;
+namespace Stackra\Order\Services;
 
-use Academorix\Order\Contracts\Services\OrderStateMachineInterface;
+use Stackra\Order\Contracts\Services\OrderStateMachineInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Order\Contracts\Repositories\OrderAdjustmentRepositoryInterface;
+use Stackra\Order\Contracts\Repositories\OrderAdjustmentRepositoryInterface;
 
 /**
  * Concrete service — OrderStateMachine.

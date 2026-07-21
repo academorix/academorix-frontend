@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Nightwatch\Contexts;
 
-use Academorix\Nightwatch\Attributes\AsNightwatchContext;
-use Academorix\Nightwatch\Contracts\NightwatchContext;
+use Stackra\Nightwatch\Attributes\AsNightwatchContext;
+use Stackra\Nightwatch\Contracts\NightwatchContext;
 
 /**
  * Example: Tenant Context.

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/session/data-classes",
+  "id": "stackra://modules/session/data-classes",
   "$version": 1,
   "title": "session — field classification",
   "description": "Session tracks physical attendance including minors. HIGH child-safeguarding responsibility: session_notes may contain incident narrative + minor's identifying details. safeguarding_incident_flag is regulator-facing. Attendance pivot rows carry minor athletes' presence — regulator-relevant.",

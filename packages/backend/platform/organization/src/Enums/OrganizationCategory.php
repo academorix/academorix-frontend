@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Organization\Enums;
+namespace Stackra\Organization\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `category` on `organization`.

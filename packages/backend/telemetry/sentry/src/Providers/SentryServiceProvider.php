@@ -16,25 +16,25 @@ declare(strict_types=1);
  *
  * The `SentryContext` middleware auto-registers via
  * `#[AsMiddleware]` — discovered by
- * {@see \Academorix\Routing\Providers\RoutingServiceProvider}.
+ * {@see \Stackra\Routing\Providers\RoutingServiceProvider}.
  *
  * @category Providers
  *
  * @since    1.0.0
  *
- * @see \Academorix\Sentry\Compiler\SentryCompiler
- * @see \Academorix\Sentry\Services\SentryContextRegistry
+ * @see \Stackra\Sentry\Compiler\SentryCompiler
+ * @see \Stackra\Sentry\Services\SentryContextRegistry
  */
 
-namespace Academorix\Sentry\Providers;
+namespace Stackra\Sentry\Providers;
 
 use Override;
-use Academorix\Foundation\Enums\ContainerToken;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
-use Academorix\Support\Str;
+use Stackra\Foundation\Enums\ContainerToken;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
+use Stackra\Support\Str;
 use Throwable;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
 
 /**
  * Sentry module service provider.

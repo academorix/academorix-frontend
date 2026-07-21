@@ -18,7 +18,7 @@
 ### Middleware
 
 - **`RouteVersionMiddleware`** — reads the
-  `Accept: application/vnd.academorix.v<n>+json` header (OR `?api_version=<n>`
+  `Accept: application/vnd.stackra.v<n>+json` header (OR `?api_version=<n>`
   query param); routes the request to the correct v<n> controller. Currently a
   scaffold — the actual route rewiring needs the routing package's
   `RouteRegistrar` to become version-aware.

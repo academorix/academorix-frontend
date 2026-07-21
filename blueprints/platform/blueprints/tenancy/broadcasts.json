@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tenancy/broadcasts",
+  "id": "stackra://modules/tenancy/broadcasts",
   "$version": 1,
   "title": "tenants — broadcast channels",
   "description": "Real-time broadcast channels this module owns. Registered by `TenancyServiceProvider::registerBroadcastChannels()`. Authorization callbacks live on the Broadcast facade and are declared here so a channel change stays discoverable. Uses Laravel Reverb / Pusher over Sanctum-authenticated WebSockets.",

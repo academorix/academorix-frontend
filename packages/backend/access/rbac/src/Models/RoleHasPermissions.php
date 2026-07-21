@@ -4,16 +4,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Models;
+namespace Stackra\Rbac\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Rbac\Contracts\Data\RoleHasPermissionsInterface;
-use Academorix\Rbac\Database\Factories\RoleHasPermissionsFactory;
-use Academorix\Tenancy\Concerns\BelongsToTenantOptional;
+use Stackra\Rbac\Contracts\Data\RoleHasPermissionsInterface;
+use Stackra\Rbac\Database\Factories\RoleHasPermissionsFactory;
+use Stackra\Tenancy\Concerns\BelongsToTenantOptional;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Requests\Console;
+namespace Stackra\Requests\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan access-requests:approve` — Approve — access requests command.

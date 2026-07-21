@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "mfa",
   "alias": "mfa",
-  "namespace": "Academorix\\Mfa",
+  "namespace": "Stackra\\Mfa",
   "description": "Multi-factor authentication challenge protocols. Composes on top of identity/identity's MFA secret storage — this module OWNS the CHALLENGE + VERIFICATION lifecycle; the identity module owns SECRET STORAGE. Ships three challenge types: TOTP (RFC 6238 time-based codes, 30s period, 6-digit, SHA1 HMAC), WebAuthn (FIDO2 platform authenticator or roaming hardware key — used as a second factor only in Wave 1a per spec §12 non-goals), and recovery codes (10 single-use codes, 10 chars from a Crockford base32 alphabet ≈ 48 bits entropy per code, bcrypt-hashed at rest, plaintext returned ONCE at enrolment / regeneration). Every challenge transits the shared auth_mfa_challenges table (owned by identity/auth) — this module dispatches verification actions and manages device registrations (`webauthn_credentials` table). Enrolment flow is two-round: preview (generate secret, return once for QR display) → confirm (submit secret + verification code to prove the scan). Recovery codes are generated at first enrolment; consumable by any subsequent MFA challenge as a fallback when the TOTP device is unavailable. Constant-time comparisons throughout (`hash_equals()` for recovery codes, timing-safe TOTP window comparison, `hash_equals()` on the WebAuthn assertion challenge). KMS-backed secret encryption is delegated to identity/identity via `MfaSecretEncryptor`. This module is the PROTOCOL layer; identity/identity is the STORAGE substrate.",
   "keywords": [
     "mfa",
@@ -21,7 +21,7 @@
     "aal2"
   ],
   "priority": 20,
-  "providers": ["Academorix\\Mfa\\Providers\\MfaServiceProvider"],
+  "providers": ["Stackra\\Mfa\\Providers\\MfaServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "identity"],
   "extendedBy": ["auth", "user", "platform-user"],

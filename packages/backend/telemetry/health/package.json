@@ -1,8 +1,8 @@
 {
-  "name": "@academorix/health",
+  "name": "@stackra/health",
   "version": "0.0.0",
   "private": true,
-  "description": "Turborepo shim for the PHP `academorix/health` package. Ships attribute-driven health check discovery + notification channel routing on top of spatie/laravel-health. NOTE: composer install is exposed as `install:composer` — never plain `install` — so pnpm's lifecycle does not run it during a root `pnpm install`.",
+  "description": "Turborepo shim for the PHP `stackra/health` package. Ships attribute-driven health check discovery + notification channel routing on top of spatie/laravel-health. NOTE: composer install is exposed as `install:composer` — never plain `install` — so pnpm's lifecycle does not run it during a root `pnpm install`.",
   "scripts": {
     "install:composer": "composer install --no-interaction --prefer-dist",
     "lint": "../../apps/ai-service/vendor/bin/pint --test --config=../../config/pint.json src",

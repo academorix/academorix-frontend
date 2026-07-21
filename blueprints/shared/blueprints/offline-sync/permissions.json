@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/offline-sync/permissions",
+  "id": "stackra://modules/offline-sync/permissions",
   "$version": 1,
   "title": "offline-sync — permissions",
-  "seeder": "Academorix\\Shared\\OfflineSync\\Database\\Seeders\\OfflineSyncPermissionSeeder",
+  "seeder": "Stackra\\Shared\\OfflineSync\\Database\\Seeders\\OfflineSyncPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

@@ -1,10 +1,10 @@
 {
-  "name": "academorix/notifications-sdk",
+  "name": "stackra/notifications-sdk",
   "type": "library",
   "description": "Typed Saloon SDK for the Notifications service — email, SMS, push, in-app, WhatsApp, templates, digests.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "sdk",
     "saloon",
     "api-client",
@@ -12,10 +12,10 @@
   ],
   "require": {
     "php": "^8.3",
-    "academorix/api-sdk": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
-    "academorix/service-provider": "@dev",
+    "stackra/api-sdk": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/service-provider": "@dev",
     "illuminate/contracts": "^13.0",
     "illuminate/support": "^13.0",
     "saloonphp/saloon": "^3.10",
@@ -30,18 +30,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\NotificationsSdk\\": "src/"
+      "Stackra\\NotificationsSdk\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\NotificationsSdk\\Tests\\": "tests/"
+      "Stackra\\NotificationsSdk\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\NotificationsSdk\\Providers\\NotificationsSdkServiceProvider"
+        "Stackra\\NotificationsSdk\\Providers\\NotificationsSdkServiceProvider"
       ],
       "aliases": {}
     }

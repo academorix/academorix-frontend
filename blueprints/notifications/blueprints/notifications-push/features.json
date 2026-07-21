@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-push/features",
+  "id": "stackra://modules/notifications-push/features",
   "$version": 1,
   "title": "notifications-push \u2014 feature keys",
   "reference": {

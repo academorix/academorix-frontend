@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Exceptions;
+namespace Stackra\Facility\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Raised when the domain rule `BOOKING_OUTSIDE_BRANCH_HOURS` fires.

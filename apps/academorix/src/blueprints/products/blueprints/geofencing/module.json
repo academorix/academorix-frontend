@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "geofencing",
   "alias": "geofencing",
-  "namespace": "Academorix\\Geofencing",
+  "namespace": "Stackra\\Geofencing",
   "description": "Model-agnostic point-in-polygon primitive. **Any** Eloquent model can carry a geofence by using the `HasGeofence` trait + declaring itself with the `#[Geofenceable]` attribute — no hard-wired coupling to Branch or any other entity. Owns the audited `geofence_checks` log (immutable, insert-only, `gfc_` prefix) which references the fenced entity polymorphically via `fenceable_type` + `fenceable_id`. Consumer modules add the standard geometry columns to their own table via the `$table->addGeofenceColumns()` blueprint macro. Ships the polygon + radius evaluator, the override flow, the mobile pre-flight endpoint (no persistence), and 5 Spatie Health probes. Consuming features never run their own point-in-polygon math — they call `$fenceable->evaluateGeofence($lat, $lng, $accuracyM, $subject)` or `GeofenceService::evaluate($fenceable, $data)` and stamp the returned check id on their own entity. Fires `GeofenceEvaluated` events that consuming modules subscribe to via a `subject_type` filter. PostGIS required (enabled by our own migration `enable_postgis_extension`) + `clickbar/laravel-magellan` for spatial column types + `spinen/laravel-geometry` for runtime geometry math (with a hand-rolled ray-cast + haversine fallback so the module works without the geoPHP classmap in tests).",
   "keywords": [
     "geofencing",
@@ -25,10 +25,10 @@
   ],
   "priority": 70,
   "providers": [
-    "Academorix\\Geofencing\\Providers\\GeofencingServiceProvider",
-    "Academorix\\Geofencing\\Providers\\GeofencingHealthProvider",
-    "Academorix\\Geofencing\\Providers\\RouteServiceProvider",
-    "Academorix\\Geofencing\\Providers\\EventServiceProvider"
+    "Stackra\\Geofencing\\Providers\\GeofencingServiceProvider",
+    "Stackra\\Geofencing\\Providers\\GeofencingHealthProvider",
+    "Stackra\\Geofencing\\Providers\\RouteServiceProvider",
+    "Stackra\\Geofencing\\Providers\\EventServiceProvider"
   ],
   "files": [],
   "dependencies": ["foundation", "tenancy", "activity", "audit", "entitlements"],

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/foundation/config",
+  "id": "stackra://modules/foundation/config",
   "$version": 1,
   "title": "foundation — developer configuration",
   "description": "Developer / operator configuration. Mirrors `config/foundation.php`. Static per deploy; changing requires redeploy + `config:cache`. Foundation's config is the base — every module extends its own config keys under its module name.",
@@ -48,7 +48,7 @@
         {
           "path": "foundation.api.accept_pattern",
           "type": "string",
-          "default": "application/vnd.academorix.{version}+json"
+          "default": "application/vnd.stackra.{version}+json"
         },
         {
           "path": "foundation.api.envelope_strict",

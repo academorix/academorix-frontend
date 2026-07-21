@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Contracts\Repositories;
+namespace Stackra\Newsletter\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Newsletter\Models\NewsletterCampaign;
-use Academorix\Newsletter\Repositories\EloquentNewsletterCampaignRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Newsletter\Models\NewsletterCampaign;
+use Stackra\Newsletter\Repositories\EloquentNewsletterCampaignRepository;
 use DateTimeInterface;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;

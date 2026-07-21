@@ -4,7 +4,7 @@
  * @file packages/exceptions/tests/Unit/HandlerTest.php
  *
  * @description
- * Unit coverage for {@see \Academorix\Exceptions\Handler}, the custom
+ * Unit coverage for {@see \Stackra\Exceptions\Handler}, the custom
  * exception handler that replaces Laravel's default via the
  * `Illuminate\Contracts\Debug\ExceptionHandler` container binding.
  *
@@ -36,9 +36,9 @@
 
 declare(strict_types=1);
 
-use Academorix\Exceptions\Contracts\ErrorFormatterInterface;
-use Academorix\Exceptions\Contracts\ExceptionReporterInterface;
-use Academorix\Exceptions\Handler;
+use Stackra\Exceptions\Contracts\ErrorFormatterInterface;
+use Stackra\Exceptions\Contracts\ExceptionReporterInterface;
+use Stackra\Exceptions\Handler;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Http\Request;
 use Orchestra\Testbench\TestCase;

@@ -11,9 +11,9 @@
 
 declare(strict_types=1);
 
-use Academorix\Localization\Contracts\Data\PlatformLanguageInterface;
-use Academorix\Localization\Contracts\Data\TranslationInterface;
-use Academorix\Localization\Contracts\Data\TranslationJobInterface;
+use Stackra\Localization\Contracts\Data\PlatformLanguageInterface;
+use Stackra\Localization\Contracts\Data\TranslationInterface;
+use Stackra\Localization\Contracts\Data\TranslationJobInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

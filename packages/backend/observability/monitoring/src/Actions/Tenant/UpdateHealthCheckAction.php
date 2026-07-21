@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Actions\Tenant;
+namespace Stackra\Monitoring\Actions\Tenant;
 
-use Academorix\Monitoring\Contracts\Repositories\HealthCheckRepositoryInterface;
-use Academorix\Monitoring\Data\HealthCheckData;
-use Academorix\Monitoring\Data\Requests\UpdateHealthCheckRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\Monitoring\Contracts\Repositories\HealthCheckRepositoryInterface;
+use Stackra\Monitoring\Data\HealthCheckData;
+use Stackra\Monitoring\Data\Requests\UpdateHealthCheckRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Patch;
 
 /**
  * `PATCH /api/v1/monitoring/health-checks/{check}` — update action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Patch(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Monitoring

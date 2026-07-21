@@ -13,10 +13,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Middleware;
+namespace Stackra\Scope\Middleware;
 
-use Academorix\Scope\Contracts\ScopeContextInterface;
-use Academorix\Scope\Contracts\ScopeResolverChainInterface;
+use Stackra\Scope\Contracts\ScopeContextInterface;
+use Stackra\Scope\Contracts\ScopeResolverChainInterface;
 use Closure;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Http\Request;

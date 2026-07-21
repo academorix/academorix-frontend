@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Staff\Console;
+namespace Stackra\Staff\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan staff:offboard` — Offboard — staff command.

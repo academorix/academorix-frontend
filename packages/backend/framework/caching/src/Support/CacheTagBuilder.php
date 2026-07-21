@@ -6,7 +6,7 @@
  * @description
  * Composes deterministic cache-tag lists from a base table name
  * (or list of tables) plus every registered
- * {@see \Academorix\Caching\Contracts\CacheTagResolver}'s output.
+ * {@see \Stackra\Caching\Contracts\CacheTagResolver}'s output.
  *
  * ## Design goals
  *
@@ -28,18 +28,18 @@
  * preserving first-occurrence order.
  *
  * The `$context` map is passed straight through to every
- * resolver — see the {@see \Academorix\Caching\Contracts\CacheTagResolver}
+ * resolver — see the {@see \Stackra\Caching\Contracts\CacheTagResolver}
  * docblock for the canonical keys.
  *
- * @see \Academorix\Caching\Registry\CacheTagResolverRegistry Source of the resolver chain.
- * @see \Academorix\Caching\Contracts\CacheTagResolver Resolver contract.
+ * @see \Stackra\Caching\Registry\CacheTagResolverRegistry Source of the resolver chain.
+ * @see \Stackra\Caching\Contracts\CacheTagResolver Resolver contract.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Caching\Support;
+namespace Stackra\Caching\Support;
 
-use Academorix\Caching\Registry\CacheTagResolverRegistry;
+use Stackra\Caching\Registry\CacheTagResolverRegistry;
 
 /**
  * Immutable, injectable tag composer. Consumers keep an instance
@@ -109,8 +109,8 @@ final readonly class CacheTagBuilder
     }
 
     /**
-     * Apply the configured static prefix if set. `'academorix'`
-     * + `'athletes'` → `'academorix:athletes'`. When no prefix is
+     * Apply the configured static prefix if set. `'stackra'`
+     * + `'athletes'` → `'stackra:athletes'`. When no prefix is
      * configured the segment is returned as-is.
      */
     private function prefixed(string $segment): string

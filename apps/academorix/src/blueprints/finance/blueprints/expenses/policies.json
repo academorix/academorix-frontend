@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/expenses/policies",
+  "id": "stackra://modules/expenses/policies",
   "$version": 1,
   "title": "expenses — authorization policies",
   "description": "Four policies. Approval threshold gated by expense.approve.threshold entitlement — coaches approve <$500, branch_manager <$5000, admin/owner unlimited. Approvers CANNOT approve their own submissions (self-approval blocked by policy).",
   "policies": [
     {
       "model": "Expense",
-      "class": "Academorix\\Finance\\Expenses\\Policies\\ExpensePolicy",
+      "class": "Stackra\\Finance\\Expenses\\Policies\\ExpensePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -36,7 +36,7 @@
     },
     {
       "model": "ExpenseAttachment",
-      "class": "Academorix\\Finance\\Expenses\\Policies\\ExpenseAttachmentPolicy",
+      "class": "Stackra\\Finance\\Expenses\\Policies\\ExpenseAttachmentPolicy",
       "abilities": [
         { "action": "view", "permission": "expenses.attachments.view" },
         {
@@ -53,7 +53,7 @@
     },
     {
       "model": "PayrollBatch",
-      "class": "Academorix\\Finance\\Expenses\\Policies\\PayrollBatchPolicy",
+      "class": "Stackra\\Finance\\Expenses\\Policies\\PayrollBatchPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "expenses.payroll.viewAny", "scope": "admin + owner" },
         { "action": "view", "permission": "expenses.payroll.view" },
@@ -67,7 +67,7 @@
     },
     {
       "model": "Vendor",
-      "class": "Academorix\\Finance\\Expenses\\Policies\\VendorPolicy",
+      "class": "Stackra\\Finance\\Expenses\\Policies\\VendorPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "expenses.vendors.viewAny" },
         { "action": "view", "permission": "expenses.vendors.view" },

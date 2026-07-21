@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsPush\Contracts\Services;
+namespace Stackra\NotificationsPush\Contracts\Services;
 
-use Academorix\NotificationsPush\Services\PushChannel;
+use Stackra\NotificationsPush\Services\PushChannel;
 use Illuminate\Container\Attributes\Bind;
 
 /**

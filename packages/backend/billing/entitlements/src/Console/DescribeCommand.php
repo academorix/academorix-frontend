@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Console;
+namespace Stackra\Entitlements\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan entitlements:describe` — Describe the entitlements surface.

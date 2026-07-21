@@ -1,14 +1,14 @@
 # platform-user
 
-Academorix-staff principal. Wave 1a substrate for the `platform_admin` guard —
+Stackra-staff principal. Wave 1a substrate for the `platform_admin` guard —
 distinct from the `sanctum` guard that tenant Users use. One PlatformUser per
-real Academorix employee.
+real Stackra employee.
 
 ## 1. What this module owns
 
 | Concern                              | Owned artefact                                                                                         |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------ |
-| Academorix-staff principal           | `PlatformUser` (identity_id + employment metadata: hire_date, department, employment_type, manager_id) |
+| Stackra-staff principal           | `PlatformUser` (identity_id + employment metadata: hire_date, department, employment_type, manager_id) |
 | PII satellite (1:1)                  | `PlatformProfile` (first + last name, phone, avatar, timezone, Slack + GitHub handles)                 |
 | Employment lifecycle transitions     | `HasEmploymentLifecycle` trait (pending → active → suspended? → offboarded)                            |
 | Audit stamping (heavier than tenant) | `platform.audit` middleware                                                                            |
@@ -24,7 +24,7 @@ PlatformUser sits at the top of the identity tier's three-guard model:
 
 - `identities` → global credential record (email + password + MFA)
 - `users` → tenant-plane projection (`sanctum` guard, per-Application scope)
-- `platform_users` → Academorix-staff projection (`platform_admin` guard,
+- `platform_users` → Stackra-staff projection (`platform_admin` guard,
   cross-plane by construction)
 - `service_accounts` → machine-credential row (bearer / HS256 JWT)
 
@@ -34,8 +34,8 @@ action layer + at every write path via `GuardMismatch` (422) on the RBAC tables.
 
 ### Why platform_users is a distinct row from users
 
-A single human at Academorix can be both an Academorix engineer (PlatformUser)
-AND a tenant customer on one of Academorix's products (a User row in some
+A single human at Stackra can be both an Stackra engineer (PlatformUser)
+AND a tenant customer on one of Stackra's products (a User row in some
 Application). The Identity substrate is shared — one email, one password, one
 MFA secret. The **guard boundary** is what separates the two projections at
 request time. A Sanctum PAT issued for the tenant-plane User never inherits the
@@ -141,7 +141,7 @@ T=0h→24h: RevokePlatformUserAccessJob runs
           ├─ adds outstanding JWT jtis to auth::JwtDenyList
           ├─ terminates active impersonation sessions
           ├─ unregisters from on-call rotation
-          └─ emits academorix.platform_user.offboarding.access_revoked.duration_seconds
+          └─ emits stackra.platform_user.offboarding.access_revoked.duration_seconds
 
 T=12h: half-SLA alert (if not yet complete) → PagerDuty page to on-call
 T=24h: SLA breach alert (if not yet complete) → critical audit row + Slack alert to compliance
@@ -176,7 +176,7 @@ Retention: 365 days hot, 7 years cold (matches SOC 2 attestation windows).
 
 - **`internal`**: reads the `on_call_rotation_entries` table (owned by this
   module but populated per-environment by ops). Simple + free; suitable when
-  Academorix has fewer than ~5 staff on rotation.
+  Stackra has fewer than ~5 staff on rotation.
 - **`pagerduty`**: calls the PagerDuty REST API v2
   (`GET /oncalls? escalation_policy_id=<id>`). Preferred at scale. Adds ~200ms
   per uncached lookup; cache TTL 60s so a rotation change propagates within a

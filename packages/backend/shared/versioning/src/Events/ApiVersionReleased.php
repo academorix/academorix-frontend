@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Events;
+namespace Stackra\Versioning\Events;
 
-use Academorix\Events\Attributes\AsEvent;
-use Academorix\Versioning\Models\ApiVersion;
+use Stackra\Events\Attributes\AsEvent;
+use Stackra\Versioning\Models\ApiVersion;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 

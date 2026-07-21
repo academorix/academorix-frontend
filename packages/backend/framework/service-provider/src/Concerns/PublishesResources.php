@@ -17,10 +17,10 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\ServiceProvider\Concerns;
+namespace Stackra\ServiceProvider\Concerns;
 
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\ModuleConstants;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\ModuleConstants;
 
 /**
  * Registers publishable module resources with Laravel's publish system.
@@ -60,7 +60,7 @@ trait PublishesResources
      * Register publishable module assets (CSS, JS, images, fonts).
      *
      * Assets from {modulePath}/resources/ are published to
-     * public/academorix/{module_slug}/{asset_version}/.
+     * public/stackra/{module_slug}/{asset_version}/.
      *
      * Tag: '{module_slug}-assets'
      *

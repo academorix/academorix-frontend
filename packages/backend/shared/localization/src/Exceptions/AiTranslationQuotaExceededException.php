@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Exceptions;
+namespace Stackra\Localization\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * localization.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AiTranslationQuotaExceededException extends AcademorixException
+final class AiTranslationQuotaExceededException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

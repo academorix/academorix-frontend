@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Services;
+namespace Stackra\Storage\Services;
 
-use Academorix\Storage\Contracts\Data\ChunkedUploadInterface;
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Contracts\Services\ChunkedUploadCoordinatorInterface;
-use Academorix\Storage\Enums\ChunkedUploadState;
-use Academorix\Storage\Events\ChunkedUploadAborted;
-use Academorix\Storage\Events\ChunkedUploadCompleted;
-use Academorix\Storage\Events\ChunkedUploadInitiated;
-use Academorix\Storage\Models\ChunkedUpload;
-use Academorix\Storage\Models\File;
+use Stackra\Storage\Contracts\Data\ChunkedUploadInterface;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Contracts\Services\ChunkedUploadCoordinatorInterface;
+use Stackra\Storage\Enums\ChunkedUploadState;
+use Stackra\Storage\Events\ChunkedUploadAborted;
+use Stackra\Storage\Events\ChunkedUploadCompleted;
+use Stackra\Storage\Events\ChunkedUploadInitiated;
+use Stackra\Storage\Models\ChunkedUpload;
+use Stackra\Storage\Models\File;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Support\Str;
 

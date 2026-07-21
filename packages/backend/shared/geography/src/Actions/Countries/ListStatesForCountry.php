@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Actions\Countries;
+namespace Stackra\Geography\Actions\Countries;
 
-use Academorix\Geography\Contracts\Repositories\StateRepositoryInterface;
-use Academorix\Geography\Data\Resources\StateResourceData;
-use Academorix\Geography\Models\Country;
-use Academorix\Geography\Models\State;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Geography\Contracts\Repositories\StateRepositoryInterface;
+use Stackra\Geography\Data\Resources\StateResourceData;
+use Stackra\Geography\Models\Country;
+use Stackra\Geography\Models\State;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 use Spatie\LaravelData\DataCollection;
 
 /**

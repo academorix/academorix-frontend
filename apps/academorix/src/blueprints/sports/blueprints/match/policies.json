@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/match/policies",
+  "id": "stackra://modules/match/policies",
   "$version": 1,
   "title": "match — authorization policies",
   "description": "Seven policies, one per owned model. Every ability resolves through spatie/laravel-permission then narrows by tenant scope + role-specific rules. Parent role visibility is narrowed to matches whose squad contains one of the parent's child athletes. Note visibility is filtered by MatchNoteVisibility at query time (parents see public + parents; anonymous sees public only).",
   "policies": [
     {
       "model": "MatchFixture",
-      "class": "Academorix\\Sports\\Match\\Policies\\MatchFixturePolicy",
+      "class": "Stackra\\Sports\\Match\\Policies\\MatchFixturePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -63,7 +63,7 @@
     },
     {
       "model": "MatchParticipant",
-      "class": "Academorix\\Sports\\Match\\Policies\\MatchParticipantPolicy",
+      "class": "Stackra\\Sports\\Match\\Policies\\MatchParticipantPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "match-participants.viewAny" },
         { "action": "view", "permission": "match-participants.view" },
@@ -82,7 +82,7 @@
     },
     {
       "model": "MatchSquadEntry",
-      "class": "Academorix\\Sports\\Match\\Policies\\MatchSquadEntryPolicy",
+      "class": "Stackra\\Sports\\Match\\Policies\\MatchSquadEntryPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -105,7 +105,7 @@
     },
     {
       "model": "MatchResult",
-      "class": "Academorix\\Sports\\Match\\Policies\\MatchResultPolicy",
+      "class": "Stackra\\Sports\\Match\\Policies\\MatchResultPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "match-results.viewAny" },
         { "action": "view", "permission": "match-results.view" },
@@ -128,7 +128,7 @@
     },
     {
       "model": "MatchEvent",
-      "class": "Academorix\\Sports\\Match\\Policies\\MatchEventPolicy",
+      "class": "Stackra\\Sports\\Match\\Policies\\MatchEventPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "match-events.viewAny" },
         { "action": "view", "permission": "match-events.view" },
@@ -151,7 +151,7 @@
     },
     {
       "model": "MatchNote",
-      "class": "Academorix\\Sports\\Match\\Policies\\MatchNotePolicy",
+      "class": "Stackra\\Sports\\Match\\Policies\\MatchNotePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -192,7 +192,7 @@
     },
     {
       "model": "OpponentLogo",
-      "class": "Academorix\\Sports\\Match\\Policies\\OpponentLogoPolicy",
+      "class": "Stackra\\Sports\\Match\\Policies\\OpponentLogoPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "opponent-logos.viewAny" },
         { "action": "view", "permission": "opponent-logos.view" },

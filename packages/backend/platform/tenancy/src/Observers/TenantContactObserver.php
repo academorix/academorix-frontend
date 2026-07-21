@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Observers;
+namespace Stackra\Tenancy\Observers;
 
-use Academorix\Tenancy\Contracts\Data\TenantContactInterface;
-use Academorix\Tenancy\Enums\TenantContactKind;
-use Academorix\Tenancy\Events\TenantContactAdded;
-use Academorix\Tenancy\Events\TenantContactRemoved;
-use Academorix\Tenancy\Events\TenantContactUpdated;
-use Academorix\Tenancy\Exceptions\TenantContactVerificationRequiredException;
-use Academorix\Tenancy\Models\TenantContact;
+use Stackra\Tenancy\Contracts\Data\TenantContactInterface;
+use Stackra\Tenancy\Enums\TenantContactKind;
+use Stackra\Tenancy\Events\TenantContactAdded;
+use Stackra\Tenancy\Events\TenantContactRemoved;
+use Stackra\Tenancy\Events\TenantContactUpdated;
+use Stackra\Tenancy\Exceptions\TenantContactVerificationRequiredException;
+use Stackra\Tenancy\Models\TenantContact;
 
 /**
  * Lifecycle side effects on {@see TenantContact}.

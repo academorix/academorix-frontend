@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Awards\Actions\Tenant;
+namespace Stackra\Awards\Actions\Tenant;
 
-use Academorix\Awards\Contracts\Repositories\AwardRepositoryInterface;
-use Academorix\Awards\Data\AwardData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Awards\Contracts\Repositories\AwardRepositoryInterface;
+use Stackra\Awards\Data\AwardData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 
 /**
  * `GET /api/v1/awards/{award}` — show action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Awards

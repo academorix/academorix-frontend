@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Crud\Events;
+namespace Stackra\Crud\Events;
 
 use Illuminate\Database\Eloquent\Model;
 

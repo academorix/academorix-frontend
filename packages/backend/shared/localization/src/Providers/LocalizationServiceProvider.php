@@ -24,25 +24,25 @@
  *   - Translator drivers: `#[AsTranslatorDriver('name')]` on each
  *     driver class → discovered via
  *     `#[HydratesFrom]` on
- *     {@see \Academorix\Localization\Contracts\Services\TranslatorDriverRegistryInterface::register()}.
+ *     {@see \Stackra\Localization\Contracts\Services\TranslatorDriverRegistryInterface::register()}.
  *   - Locale-resolution strategies: `#[AsLocaleResolutionStrategy('name')]`
  *     on each strategy class → discovered via
  *     `#[HydratesFrom]` on
- *     {@see \Academorix\Localization\Contracts\Services\LocaleResolutionStrategyRegistryInterface::register()}.
+ *     {@see \Stackra\Localization\Contracts\Services\LocaleResolutionStrategyRegistryInterface::register()}.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Providers;
+namespace Stackra\Localization\Providers;
 
-use Academorix\Localization\Contracts\Repositories\PlatformLanguageRepositoryInterface;
-use Academorix\Localization\Contracts\Repositories\TranslationRepositoryInterface;
-use Academorix\Localization\Contracts\Services\TranslationCacheInterface;
-use Academorix\Localization\Services\CachedTranslator;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Attributes\OnBoot;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\Localization\Contracts\Repositories\PlatformLanguageRepositoryInterface;
+use Stackra\Localization\Contracts\Repositories\TranslationRepositoryInterface;
+use Stackra\Localization\Contracts\Services\TranslationCacheInterface;
+use Stackra\Localization\Services\CachedTranslator;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\OnBoot;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Translation\Loader as TranslationLoader;
 

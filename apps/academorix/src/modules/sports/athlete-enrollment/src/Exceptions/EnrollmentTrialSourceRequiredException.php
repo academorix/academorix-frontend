@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AthleteEnrollment\Exceptions;
+namespace Stackra\AthleteEnrollment\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `ENROLLMENT_TRIAL_SOURCE_REQUIRED` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class EnrollmentTrialSourceRequiredException extends AcademorixException
+final class EnrollmentTrialSourceRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

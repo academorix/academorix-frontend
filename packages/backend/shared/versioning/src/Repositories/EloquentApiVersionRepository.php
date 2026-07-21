@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Repositories;
+namespace Stackra\Versioning\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Versioning\Contracts\Data\ApiVersionInterface;
-use Academorix\Versioning\Contracts\Repositories\ApiVersionRepositoryInterface;
-use Academorix\Versioning\Enums\ApiVersionStatus;
-use Academorix\Versioning\Models\ApiVersion;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Versioning\Contracts\Data\ApiVersionInterface;
+use Stackra\Versioning\Contracts\Repositories\ApiVersionRepositoryInterface;
+use Stackra\Versioning\Enums\ApiVersionStatus;
+use Stackra\Versioning\Models\ApiVersion;
 use Illuminate\Support\Collection;
 
 /**

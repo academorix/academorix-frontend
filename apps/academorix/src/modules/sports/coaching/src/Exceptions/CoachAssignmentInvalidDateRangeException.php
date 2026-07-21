@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Exceptions;
+namespace Stackra\Coaching\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * start_date must be less than end_date when both are set.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CoachAssignmentInvalidDateRangeException extends AcademorixException
+final class CoachAssignmentInvalidDateRangeException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

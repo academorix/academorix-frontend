@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Concerns;
+namespace Stackra\Tenancy\Concerns;
 
-use Academorix\Tenancy\Exceptions\CrossTenantWriteException;
-use Academorix\Tenancy\Models\Tenant;
-use Academorix\Tenancy\Scopes\TenantScope;
+use Stackra\Tenancy\Exceptions\CrossTenantWriteException;
+use Stackra\Tenancy\Models\Tenant;
+use Stackra\Tenancy\Scopes\TenantScope;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Facade;
 

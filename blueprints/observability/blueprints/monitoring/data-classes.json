@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/monitoring/data-classes",
+  "id": "stackra://modules/monitoring/data-classes",
   "$version": 1,
   "title": "monitoring — field classification",
   "description": "Monitoring carries system-health signals + hashed tenant identifiers. NO customer PII on any monitoring row — the health_check_runs.response_body is scanned + redacted at write time. Provider credentials in monitoring_provider_configs.config are RESTRICTED (financial-critical). Alert + incident context is confidential (may reference internal service names + error messages that leak account structure).",

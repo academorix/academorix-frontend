@@ -11,7 +11,7 @@
  *
  * ## Semantics
  *
- *   - **Error** — hard failure. `artisan academorix:architecture:check`
+ *   - **Error** — hard failure. `artisan stackra:architecture:check`
  *     exits non-zero when at least one Error is present. Blocks
  *     CI.
  *
@@ -25,9 +25,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Violations;
+namespace Stackra\Architecture\Violations;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Two-level severity — human-facing, not a log level.

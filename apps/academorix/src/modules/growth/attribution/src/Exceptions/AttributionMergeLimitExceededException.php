@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Exceptions;
+namespace Stackra\Attribution\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to absorb more than max_anonymous_absorbed (default 10) profiles into one identified profile in a single merge.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AttributionMergeLimitExceededException extends AcademorixException
+final class AttributionMergeLimitExceededException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

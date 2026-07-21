@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Events;
+namespace Stackra\Tax\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog (retention: 7 years / 10 for Enterprise)
  * - tax::InvalidateCalculationCountCache
- * - monitoring::MetricsCollector (increments academorix.tax.calculations.completed_total; records dispatch duration)
+ * - monitoring::MetricsCollector (increments stackra.tax.calculations.completed_total; records dispatch duration)
  *
  * @category Tax
  *

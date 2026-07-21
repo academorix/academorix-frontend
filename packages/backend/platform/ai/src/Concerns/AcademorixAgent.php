@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Ai\Concerns;
+namespace Stackra\Ai\Concerns;
 
 /**
- * Trait — AcademorixAgent.
+ * Trait — StackraAgent.
  *
  * TODO(gen): describe the compositional intent. Common patterns:
  * BelongsTo<X> (adds an `$x_id` FK + `x()` relation), Has<X>
@@ -18,7 +18,7 @@ namespace Academorix\Ai\Concerns;
  *
  * @since    0.1.0
  */
-trait AcademorixAgent
+trait StackraAgent
 {
     // TODO(gen): implement the trait's composition surface.
 }

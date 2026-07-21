@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-mail/middleware",
+  "id": "stackra://modules/notifications-mail/middleware",
   "$version": 1,
   "title": "notifications-mail \u2014 HTTP middleware",
   "description": "No owned middleware. The `webhooks.verify` middleware for inbound provider webhooks is owned by the `webhook` module. This module contributes only its per-provider signature-verification STRATEGIES that plug into webhook's registry at boot.",
@@ -11,35 +11,35 @@
     }
   },
   "providerStrategies": {
-    "description": "Per-provider signature verification strategies. Each implements Academorix\\Webhook\\Contracts\\SignatureStrategyInterface and registers with webhook's registry at boot via NotificationsMailServiceProvider.",
+    "description": "Per-provider signature verification strategies. Each implements Stackra\\Webhook\\Contracts\\SignatureStrategyInterface and registers with webhook's registry at boot via NotificationsMailServiceProvider.",
     "strategies": [
       {
         "provider": "mailgun",
-        "class": "Academorix\\Notifications\\Mail\\Signatures\\MailgunSignatureStrategy",
+        "class": "Stackra\\Notifications\\Mail\\Signatures\\MailgunSignatureStrategy",
         "algorithm": "HMAC-SHA256",
         "verifies": "timestamp + token via body params"
       },
       {
         "provider": "sendgrid",
-        "class": "Academorix\\Notifications\\Mail\\Signatures\\SendgridSignatureStrategy",
+        "class": "Stackra\\Notifications\\Mail\\Signatures\\SendgridSignatureStrategy",
         "algorithm": "Ed25519",
         "verifies": "X-Twilio-Email-Event-Webhook-Signature header vs SendGrid webhook public key"
       },
       {
         "provider": "aws-ses",
-        "class": "Academorix\\Notifications\\Mail\\Signatures\\SesSignatureStrategy",
+        "class": "Stackra\\Notifications\\Mail\\Signatures\\SesSignatureStrategy",
         "algorithm": "SNS message signature",
         "verifies": "signature + signing_cert_url on SNS envelope"
       },
       {
         "provider": "postmark",
-        "class": "Academorix\\Notifications\\Mail\\Signatures\\PostmarkSignatureStrategy",
+        "class": "Stackra\\Notifications\\Mail\\Signatures\\PostmarkSignatureStrategy",
         "algorithm": "Basic auth header pair",
         "verifies": "Authorization header vs configured basic pair"
       },
       {
         "provider": "resend",
-        "class": "Academorix\\Notifications\\Mail\\Signatures\\ResendSignatureStrategy",
+        "class": "Stackra\\Notifications\\Mail\\Signatures\\ResendSignatureStrategy",
         "algorithm": "Bearer token",
         "verifies": "svix-signature header (Resend uses Svix)"
       }

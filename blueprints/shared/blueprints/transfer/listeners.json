@@ -1,42 +1,42 @@
 {
-  "id": "academorix://modules/transfer/listeners",
+  "id": "stackra://modules/transfer/listeners",
   "$version": 1,
   "title": "transfer \u2014 subscribed events",
   "description": "Subscribes to core lifecycle events + tenants / user erasure + subscription plan changes for retention tier reconciliation. Laravel Excel's own events (BeforeImport / BeforeExport / BeforeSheet / AfterSheet / AfterImport / AfterExport / ImportFailed / ExportFailed) are wired dynamically inside AbstractDynamicImport / AbstractDynamicExport via WithEvents \u2014 not as static listeners here.",
   "listeners": [
     {
       "event": "foundation::ApplicationBooted",
-      "listener": "Academorix\\Transfer\\Listeners\\WarmEntityRegistry",
+      "listener": "Stackra\\Transfer\\Listeners\\WarmEntityRegistry",
       "queue": null,
       "purpose": "Hydrate EntityRegistry with every #[Importable] / #[Exportable] / #[SampleData]-decorated model + every #[ImportableWorkbook] / #[ExportableWorkbook] composer. Uses foundation's DiscoversAttributes seam via olvlvl/composer-attribute-collector. Cached under `transfer:registry` (see caches.json)."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Transfer\\Listeners\\PurgeTransferForErasedTenant",
+      "listener": "Stackra\\Transfer\\Listeners\\PurgeTransferForErasedTenant",
       "queue": "transfer",
       "purpose": "Cascade-delete every xfer_jobs / xfer_shards / xfer_artifacts / xfer_mapping_profiles row for the tenant. Foundation's FK cascade handles the row delete; this listener dispatches PruneXferArtifactsJob(force=true, tenantId=...) to also purge the disk files."
     },
     {
       "event": "user::UserErased",
-      "listener": "Academorix\\Transfer\\Listeners\\AnonymiseTransferForErasedUser",
+      "listener": "Stackra\\Transfer\\Listeners\\AnonymiseTransferForErasedUser",
       "queue": "transfer",
       "purpose": "GDPR Art. 17 \u2014 replace causer_id / created_by_id / owner_id references with anonymised placeholder + hash of original for chain continuity. XferJob rows themselves are retained as operational evidence. Shared mapping profiles owned by the deleted user transfer to a tenant admin; private profiles are soft-deleted."
     },
     {
       "event": "subscription::SubscriptionUpgraded",
-      "listener": "Academorix\\Transfer\\Listeners\\ReconcileRetentionTierForTenant",
+      "listener": "Stackra\\Transfer\\Listeners\\ReconcileRetentionTierForTenant",
       "queue": "transfer",
       "purpose": "Bulk UPDATE xfer_jobs.retention_tier for the tenant based on the new plan's `transfer.retention_tier` entitlement. Rows now eligible for longer retention are 'promoted'; rows eligible for shorter are not demoted below their current value to avoid surprising deletions on downgrade."
     },
     {
       "event": "subscription::SubscriptionDowngraded",
-      "listener": "Academorix\\Transfer\\Listeners\\ReconcileRetentionTierForTenant",
+      "listener": "Stackra\\Transfer\\Listeners\\ReconcileRetentionTierForTenant",
       "queue": "transfer",
       "purpose": "Same listener, downgrade branch \u2014 new rows will be classified under the lower tier; existing rows keep the higher tier until natural expiry."
     },
     {
       "event": "auth::UserLoggedIn",
-      "listener": "Academorix\\Transfer\\Listeners\\ReconcileStaleJobsForUser",
+      "listener": "Stackra\\Transfer\\Listeners\\ReconcileStaleJobsForUser",
       "queue": "transfer",
       "purpose": "Cheap opportunistic check: any of this user's jobs that are stuck in `running` with last_progress_at older than the stale threshold get transitioned to cancelled. Better than waiting for the 15-minute scheduled sweep when the user just returned to check their history."
     }

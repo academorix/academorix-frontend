@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Models;
+namespace Stackra\Compliance\Models;
 
-use Academorix\Compliance\Contracts\Data\ConsentRecordInterface;
-use Academorix\Compliance\Database\Factories\ConsentRecordFactory;
-use Academorix\Compliance\Enums\ConsentDecision;
-use Academorix\Compliance\Observers\ConsentRecordObserver;
-use Academorix\Compliance\Policies\ConsentRecordPolicy;
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Compliance\Contracts\Data\ConsentRecordInterface;
+use Stackra\Compliance\Database\Factories\ConsentRecordFactory;
+use Stackra\Compliance\Enums\ConsentDecision;
+use Stackra\Compliance\Observers\ConsentRecordObserver;
+use Stackra\Compliance\Policies\ConsentRecordPolicy;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

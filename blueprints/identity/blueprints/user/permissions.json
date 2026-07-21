@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/user/permissions",
+  "id": "stackra://modules/user/permissions",
   "$version": 1,
   "title": "user \u2014 permissions",
-  "seeder": "Academorix\\User\\Database\\Seeders\\UserPermissionSeeder",
+  "seeder": "Stackra\\User\\Database\\Seeders\\UserPermissionSeeder",
   "isSystem": true,
   "scope_suffix_convention": "Every read + list permission may be seeded WITH a scope suffix (`.any`, `.tenant`, `.branch`, `.team`, `.own`). The base permission (no suffix) is the highest-tier variant, effectively `.tenant`. The ScopeSuffixResolver (shipped by this module, consumed by every base repository) applies the corresponding WHERE clause at query build time. See design.md §9 for the pattern.",
   "permissions": [

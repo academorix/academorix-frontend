@@ -57,7 +57,7 @@ conditional rules) override
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Data;
+namespace Stackra\Auth\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Email;
@@ -155,9 +155,9 @@ avoid N+1 and over-fetching.
 
 declare(strict_types=1);
 
-namespace Academorix\User\Data;
+namespace Stackra\User\Data;
 
-use Academorix\User\Models\User;
+use Stackra\User\Models\User;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;

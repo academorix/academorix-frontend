@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Models;
+namespace Stackra\Newsletter\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Newsletter\Contracts\Data\NewsletterAudienceInterface;
-use Academorix\Newsletter\Contracts\Data\NewsletterCampaignInterface;
-use Academorix\Newsletter\Contracts\Data\NewsletterInterface;
-use Academorix\Newsletter\Contracts\Data\NewsletterIssueInterface;
-use Academorix\Newsletter\Database\Factories\NewsletterCampaignFactory;
-use Academorix\Newsletter\Enums\NewsletterCampaignStatus;
-use Academorix\Newsletter\Observers\NewsletterCampaignObserver;
-use Academorix\Newsletter\Policies\NewsletterCampaignPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Newsletter\Contracts\Data\NewsletterAudienceInterface;
+use Stackra\Newsletter\Contracts\Data\NewsletterCampaignInterface;
+use Stackra\Newsletter\Contracts\Data\NewsletterInterface;
+use Stackra\Newsletter\Contracts\Data\NewsletterIssueInterface;
+use Stackra\Newsletter\Database\Factories\NewsletterCampaignFactory;
+use Stackra\Newsletter\Enums\NewsletterCampaignStatus;
+use Stackra\Newsletter\Observers\NewsletterCampaignObserver;
+use Stackra\Newsletter\Policies\NewsletterCampaignPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

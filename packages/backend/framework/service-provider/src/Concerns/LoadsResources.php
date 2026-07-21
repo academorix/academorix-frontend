@@ -29,10 +29,10 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\ServiceProvider\Concerns;
+namespace Stackra\ServiceProvider\Concerns;
 
-use Academorix\ServiceProvider\Attributes\LoadsResources as LoadsResourcesAttribute;
-use Academorix\ServiceProvider\ModuleConstants;
+use Stackra\ServiceProvider\Attributes\LoadsResources as LoadsResourcesAttribute;
+use Stackra\ServiceProvider\ModuleConstants;
 
 /**
  * Loads module resources based on `#[LoadsResources]` attribute
@@ -112,7 +112,7 @@ trait LoadsResources
      *
      *   config/tenancy.php        →  config('tenancy.*')
      *   config/health.php         →  config('health.*')
-     *   config/academorix_ai.php  →  config('academorix_ai.*')
+     *   config/stackra_ai.php  →  config('stackra_ai.*')
      *
      * The old backend used a per-module `config/config.php` file
      * merged under `{slug}.config` — a non-standard nesting that

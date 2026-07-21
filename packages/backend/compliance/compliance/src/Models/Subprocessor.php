@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Models;
+namespace Stackra\Compliance\Models;
 
-use Academorix\Compliance\Contracts\Data\SubprocessorInterface;
-use Academorix\Compliance\Database\Factories\SubprocessorFactory;
-use Academorix\Compliance\Enums\SubprocessorRole;
-use Academorix\Compliance\Observers\SubprocessorObserver;
-use Academorix\Compliance\Policies\SubprocessorPolicy;
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
+use Stackra\Compliance\Contracts\Data\SubprocessorInterface;
+use Stackra\Compliance\Database\Factories\SubprocessorFactory;
+use Stackra\Compliance\Enums\SubprocessorRole;
+use Stackra\Compliance\Observers\SubprocessorObserver;
+use Stackra\Compliance\Policies\SubprocessorPolicy;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/auth/config",
+  "id": "stackra://modules/auth/config",
   "$version": 1,
   "title": "auth \u2014 developer configuration",
   "configFile": "config/auth.php",
@@ -158,7 +158,7 @@
           "path": "auth.jwt.issuer",
           "type": "string",
           "env": "AUTH_JWT_ISSUER",
-          "default": "https://identity.academorix.com",
+          "default": "https://identity.stackra.com",
           "description": "`iss` claim on every JWT. Downstream verifiers check this."
         },
         {

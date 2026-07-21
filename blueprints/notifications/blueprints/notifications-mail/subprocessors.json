@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/notifications-mail/subprocessors",
+  "id": "stackra://modules/notifications-mail/subprocessors",
   "$version": 1,
   "title": "notifications-mail \u2014 subprocessors (GDPR Art. 28)",
-  "description": "Third-party mail providers that process tenant subject data on behalf of Academorix. Each requires a signed DPA + is disclosed to tenants per Art. 28. Tenant admins see this list on the Compliance Center screen; DPO exports via DSAR orchestrator.",
+  "description": "Third-party mail providers that process tenant subject data on behalf of Stackra. Each requires a signed DPA + is disclosed to tenants per Art. 28. Tenant admins see this list on the Compliance Center screen; DPO exports via DSAR orchestrator.",
   "regulatoryBasis": ["gdpr Art. 28", "uk_gdpr Art. 28"],
   "subprocessors": [
     {

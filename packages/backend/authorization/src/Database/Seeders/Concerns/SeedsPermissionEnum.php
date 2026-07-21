@@ -6,7 +6,7 @@ declare(strict_types=1);
  * @file packages/authorization/src/Database/Seeders/Concerns/SeedsPermissionEnum.php
  *
  * @description
- * Level-2 composition of {@see \Academorix\Database\Concerns\Enumable}
+ * Level-2 composition of {@see \Stackra\Database\Concerns\Enumable}
  * that pre-fills every permission-specific detail: the target model
  * (spatie's {@see \Spatie\Permission\Contracts\Permission}), the
  * lookup key shape (`name` + `guard_name`), and the post-seed cache
@@ -21,7 +21,7 @@ declare(strict_types=1);
  *
  *   - Subclass provides {@see permissionEnums()} — the list of
  *     enums to project. Every enum MUST implement
- *     {@see \Academorix\Authorization\Contracts\PermissionEnum}
+ *     {@see \Stackra\Authorization\Contracts\PermissionEnum}
  *     and, per platform convention, expose a `guard(): Guard`
  *     method returning the {@see Guard} case each permission
  *     binds to.
@@ -34,11 +34,11 @@ declare(strict_types=1);
  * @since    0.1.0
  */
 
-namespace Academorix\Authorization\Database\Seeders\Concerns;
+namespace Stackra\Authorization\Database\Seeders\Concerns;
 
-use Academorix\Authorization\Contracts\PermissionEnum;
-use Academorix\Authorization\Enums\Guard;
-use Academorix\Database\Concerns\Enumable;
+use Stackra\Authorization\Contracts\PermissionEnum;
+use Stackra\Authorization\Enums\Guard;
+use Stackra\Database\Concerns\Enumable;
 use Spatie\Permission\Contracts\Permission as PermissionContract;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
@@ -52,8 +52,8 @@ use UnitEnum;
  * ## Usage
  *
  * ```php
- * use Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
- * use Academorix\ServiceProvider\Attributes\AsSeeder;
+ * use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
+ * use Stackra\ServiceProvider\Attributes\AsSeeder;
  * use Illuminate\Database\Seeder;
  *
  * #[AsSeeder(priority: 44, environments: [])]

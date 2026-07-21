@@ -2,28 +2,28 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Settings\Contracts;
+namespace Stackra\Settings\Contracts;
 
-use Academorix\Settings\Services\SettingsService;
+use Stackra\Settings\Services\SettingsService;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Scoped;
 
 /**
  * Contract for the settings management service.
  *
- * Reads + writes flow through the `academorix/scope` substrate —
+ * Reads + writes flow through the `stackra/scope` substrate —
  * every operation is scoped to the active context established by
  * the `scope` middleware. Callers don't pass tenant / user
  * arguments; the substrate handles the cascade.
  *
- * Preset application lives in the sibling `academorix/theme`
+ * Preset application lives in the sibling `stackra/theme`
  * package's `ApplyThemePreset` action, which reads the preset row
  * and calls `updateGroup()` on this service.
  *
  * Audit trail is written by two `SettingsChangeEvent` listeners
  * shipped in this package — one persists to `activity_log` (via
- * `academorix/activity`), the other to `audits` (via
- * `academorix/audit`). No configuration knobs; both fire on every
+ * `stackra/activity`), the other to `audits` (via
+ * `stackra/audit`). No configuration knobs; both fire on every
  * successful update.
  *
  * Bound to {@see SettingsService} as a request-scoped singleton
@@ -49,7 +49,7 @@ interface SettingsServiceInterface
      * @return array<string, mixed>
      *
      * @throws \InvalidArgumentException When the group is not registered.
-     * @throws \Academorix\Scope\Exceptions\ScopeContextRequiredException When there's no active scope context.
+     * @throws \Stackra\Scope\Exceptions\ScopeContextRequiredException When there's no active scope context.
      */
     public function getGroup(string $group): array;
 
@@ -65,7 +65,7 @@ interface SettingsServiceInterface
      * @return array<string, mixed>  The full merged result after write.
      *
      * @throws \InvalidArgumentException When the group is not registered.
-     * @throws \Academorix\Scope\Exceptions\ScopeContextRequiredException When there's no active scope context.
+     * @throws \Stackra\Scope\Exceptions\ScopeContextRequiredException When there's no active scope context.
      */
     public function updateGroup(string $group, array $values): array;
 

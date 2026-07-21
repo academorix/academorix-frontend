@@ -6,7 +6,7 @@
  * @description
  * Declarative metadata: which API versions a controller or method
  * supports. Read by
- * {@see \Academorix\Routing\Middleware\DetectApiVersion} during the
+ * {@see \Stackra\Routing\Middleware\DetectApiVersion} during the
  * request pipeline to decide whether the resolved request version
  * is acceptable for the target route.
  *
@@ -43,8 +43,8 @@
  * ## Usage
  *
  * ```php
- * use Academorix\Routing\Attributes\ApiVersion;
- * use Academorix\Routing\Attributes\Get;
+ * use Stackra\Routing\Attributes\ApiVersion;
+ * use Stackra\Routing\Attributes\Get;
  *
  * // Whole controller pinned to v1.
  * #[ApiVersion(['v1'])]
@@ -76,7 +76,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use InvalidArgumentException;
@@ -87,7 +87,7 @@ use InvalidArgumentException;
  * The attribute stores its versions verbatim (as passed by the
  * user) so the DetectApiVersion middleware can echo the requested
  * label back in headers. Normalisation for comparison happens in
- * {@see \Academorix\Routing\Services\VersionComparator}.
+ * {@see \Stackra\Routing\Services\VersionComparator}.
  *
  * @final
  */

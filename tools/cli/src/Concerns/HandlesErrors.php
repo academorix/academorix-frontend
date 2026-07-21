@@ -2,25 +2,25 @@
 
 /**
  * @file HandlesErrors.php
- * @module Academorix\Cli\Concerns
+ * @module Stackra\Cli\Concerns
  * @description Central exception rendering. Every command's `execute()`
  *   wraps the concrete `handle()` in `try { ... } catch (Throwable $e) {
  *   return $this->renderFatalError(...); }`. This trait unpacks a
- *   {@see \Academorix\Cli\Exceptions\CliException} into a formatted error
+ *   {@see \Stackra\Cli\Exceptions\CliException} into a formatted error
  *   card, and falls back to a generic "unexpected error" for any other
  *   `Throwable`.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Concerns;
+namespace Stackra\Cli\Concerns;
 
-use Academorix\Cli\Exceptions\CliException;
+use Stackra\Cli\Exceptions\CliException;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
 /**
- * Composed by every command through {@see \Academorix\Cli\Commands\AbstractCommand}.
+ * Composed by every command through {@see \Stackra\Cli\Commands\AbstractCommand}.
  */
 trait HandlesErrors
 {
@@ -57,7 +57,7 @@ trait HandlesErrors
                 'Unexpected error',
                 $e->getMessage() !== '' ? $e->getMessage() : $e::class,
                 [
-                    'This is a bug in the Academorix CLI, not in your project.',
+                    'This is a bug in the Stackra CLI, not in your project.',
                     'Re-run with -vvv to capture the full stack trace and file a report.',
                 ],
             );

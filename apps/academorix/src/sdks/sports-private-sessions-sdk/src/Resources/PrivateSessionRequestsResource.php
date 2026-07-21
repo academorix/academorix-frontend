@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsPrivateSessionsSdk\Resources;
+namespace Stackra\SportsPrivateSessionsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsPrivateSessionsSdk\Data\PrivateSessionRequestData;
-use Academorix\SportsPrivateSessionsSdk\Requests\PrivateSessionRequests\CreatePrivateSessionRequestRequest;
-use Academorix\SportsPrivateSessionsSdk\Requests\PrivateSessionRequests\ListPrivateSessionRequestsRequest;
-use Academorix\SportsPrivateSessionsSdk\Requests\PrivateSessionRequests\ShowPrivateSessionRequestRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsPrivateSessionsSdk\Data\PrivateSessionRequestData;
+use Stackra\SportsPrivateSessionsSdk\Requests\PrivateSessionRequests\CreatePrivateSessionRequestRequest;
+use Stackra\SportsPrivateSessionsSdk\Requests\PrivateSessionRequests\ListPrivateSessionRequestsRequest;
+use Stackra\SportsPrivateSessionsSdk\Requests\PrivateSessionRequests\ShowPrivateSessionRequestRequest;
 use Saloon\Http\Response;
 
 /**
@@ -56,7 +56,7 @@ final readonly class PrivateSessionRequestsResource
      *
      * @return PrivateSessionRequestData
      */
-    public function create(\Academorix\SportsPrivateSessionsSdk\Payloads\PrivateSessionRequests\CreatePrivateSessionRequestPayload $payload, ?string $idempotencyKey = null): PrivateSessionRequestData
+    public function create(\Stackra\SportsPrivateSessionsSdk\Payloads\PrivateSessionRequests\CreatePrivateSessionRequestPayload $payload, ?string $idempotencyKey = null): PrivateSessionRequestData
     {
         return $this->connector->send(new CreatePrivateSessionRequestRequest($payload, $idempotencyKey))->dto();
     }

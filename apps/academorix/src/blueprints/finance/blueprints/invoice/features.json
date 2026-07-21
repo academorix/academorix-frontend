@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invoice/features",
+  "id": "stackra://modules/invoice/features",
   "$version": 1,
   "title": "invoice — feature keys",
   "reference": {
@@ -38,7 +38,7 @@
     {
       "key": "invoice.tenant_branded_pdf",
       "displayName": "Tenant-branded invoice PDFs",
-      "description": "Apply tenant branding (logo, colors, footer) to invoice PDFs. Small tenants get the default Academorix-branded template.",
+      "description": "Apply tenant branding (logo, colors, footer) to invoice PDFs. Small tenants get the default Stackra-branded template.",
       "defaultEnabled": false,
       "planTiers": ["medium", "enterprise"]
     },

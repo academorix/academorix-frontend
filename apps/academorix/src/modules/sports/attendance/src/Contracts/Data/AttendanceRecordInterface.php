@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attendance\Contracts\Data;
+namespace Stackra\Attendance\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Attendance\Models\AttendanceRecord;
+use Stackra\Attendance\Models\AttendanceRecord;
 
 /**
  * Table shape for the `attendance_records` table.

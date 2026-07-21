@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/rbac/policies",
+  "id": "stackra://modules/rbac/policies",
   "$version": 1,
   "title": "rbac \u2014 authorization policies",
   "description": "Four policies. RolePolicy covers CRUD on tenant + platform role rows. PermissionPolicy covers read-only for tenant admins + platform-admin CRUD. RoleAssignmentPolicy is separate because assignment carries its own gate (an admin can VIEW every role but can only ASSIGN roles whose permissions the actor themselves holds). RoleDefinitionPolicy covers the platform-admin metadata layer.",
   "policies": [
     {
       "model": "Role",
-      "class": "Academorix\\Rbac\\Policies\\RolePolicy",
+      "class": "Stackra\\Rbac\\Policies\\RolePolicy",
       "guard": "sanctum",
       "abilities": [
         {
@@ -48,7 +48,7 @@
     },
     {
       "model": "Role \u2014 platform_admin guard",
-      "class": "Academorix\\Rbac\\Policies\\RolePolicy",
+      "class": "Stackra\\Rbac\\Policies\\RolePolicy",
       "guard": "platform_admin",
       "abilities": [
         {
@@ -79,7 +79,7 @@
     },
     {
       "model": "Permission",
-      "class": "Academorix\\Rbac\\Policies\\PermissionPolicy",
+      "class": "Stackra\\Rbac\\Policies\\PermissionPolicy",
       "guard": "sanctum",
       "abilities": [
         {
@@ -100,7 +100,7 @@
     },
     {
       "model": "Permission \u2014 platform_admin guard",
-      "class": "Academorix\\Rbac\\Policies\\PermissionPolicy",
+      "class": "Stackra\\Rbac\\Policies\\PermissionPolicy",
       "guard": "platform_admin",
       "abilities": [
         {
@@ -121,7 +121,7 @@
     },
     {
       "model": "RoleAssignment (ModelHasRoles pivot)",
-      "class": "Academorix\\Rbac\\Policies\\RoleAssignmentPolicy",
+      "class": "Stackra\\Rbac\\Policies\\RoleAssignmentPolicy",
       "guard": "sanctum",
       "abilities": [
         {
@@ -153,7 +153,7 @@
     },
     {
       "model": "RoleDefinition \u2014 platform_admin guard",
-      "class": "Academorix\\Rbac\\Policies\\RoleDefinitionPolicy",
+      "class": "Stackra\\Rbac\\Policies\\RoleDefinitionPolicy",
       "guard": "platform_admin",
       "abilities": [
         {

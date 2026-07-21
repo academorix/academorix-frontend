@@ -6,11 +6,11 @@
  * @description
  * Configuration for the scheduling package. Merged into the host
  * app's config under the `scheduling.*` key by
- * {@see \Academorix\Scheduling\Providers\SchedulingServiceProvider}.
+ * {@see \Stackra\Scheduling\Providers\SchedulingServiceProvider}.
  *
  * ## Consumers at a glance
  *
- *   - `discovery.paths`   — {@see \Academorix\Scheduling\Support\ScheduleDiscovery}
+ *   - `discovery.paths`   — {@see \Stackra\Scheduling\Support\ScheduleDiscovery}
  *                           uses this only when the
  *                           `olvlvl/composer-attribute-collector`
  *                           manifest is empty (no build ran) as a
@@ -19,7 +19,7 @@
  *                           and the paths list is ignored.
  *
  *   - `discovery.cache`   — When `true`,
- *                           {@see \Academorix\Scheduling\Support\ScheduleRegistrar}
+ *                           {@see \Stackra\Scheduling\Support\ScheduleRegistrar}
  *                           writes the discovered task set to
  *                           `bootstrap/cache/scheduling.php` so the
  *                           next boot skips the attribute walk.
@@ -67,7 +67,7 @@ return [
         |----------------------------------------------------------------------
         |
         | Absolute filesystem path to the on-disk cache produced by
-        | {@see \Academorix\Scheduling\Support\ScheduleRegistrar}.
+        | {@see \Stackra\Scheduling\Support\ScheduleRegistrar}.
         | Read via `#[Config('scheduling.discovery.cache_path')]` on
         | the registrar's constructor so the value is snapshotted at
         | boot; no per-request container reach.

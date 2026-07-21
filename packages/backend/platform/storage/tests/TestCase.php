@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Tests;
+namespace Stackra\Storage\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/storage.
+ * Base test case for stackra/storage.
  *
  * @category Storage
  *

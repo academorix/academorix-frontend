@@ -1,16 +1,16 @@
 {
-  "id": "academorix://modules/versioning/data/api-versions",
+  "id": "stackra://modules/versioning/data/api-versions",
   "$version": 1,
   "title": "versioning \u2014 bootstrap ApiVersion seed",
   "description": "Bootstrap the initial platform API version at deploy time. Only one row: v1 in state=released, is_default=true. Later versions are created via `versioning:release` command, not via seed.",
-  "seeder": "Academorix\\Versioning\\Database\\Seeders\\BootstrapApiVersionsSeeder",
+  "seeder": "Stackra\\Versioning\\Database\\Seeders\\BootstrapApiVersionsSeeder",
   "target_table": "api_versions",
   "upsertKey": ["slug"],
   "versions": [
     {
       "slug": "v1",
       "name": "v1 (Initial Release)",
-      "description": "The first stable API version. All REST endpoints (`/api/v1/...`), all webhook payloads, and the initial GraphQL schema converge on this version.\n\nSee [/docs/api/v1](https://docs.academorix.com/api/v1) for reference.",
+      "description": "The first stable API version. All REST endpoints (`/api/v1/...`), all webhook payloads, and the initial GraphQL schema converge on this version.\n\nSee [/docs/api/v1](https://docs.stackra.com/api/v1) for reference.",
       "scheme": "semver",
       "state": "released",
       "released_at": "auto",

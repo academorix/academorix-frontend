@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Medical\Database\Seeders;
+namespace Stackra\Medical\Database\Seeders;
 
-use Academorix\Medical\Enums\MedicalPermission;
-use Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
-use Academorix\ServiceProvider\Attributes\AsSeeder;
+use Stackra\Medical\Enums\MedicalPermission;
+use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;
 
 /**

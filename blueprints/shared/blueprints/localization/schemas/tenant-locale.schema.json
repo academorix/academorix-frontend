@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/localization/schemas/tenant-locale",
+  "id": "stackra://modules/localization/schemas/tenant-locale",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "TenantLocale",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "wsl_",
     "incrementing": false,
-    "model": "Academorix\\Localization\\Models\\TenantLocale",
-    "interface": "Academorix\\Localization\\Contracts\\Data\\TenantLocaleInterface",
-    "implements": ["Academorix\\Localization\\Contracts\\Data\\TenantLocaleInterface"],
+    "model": "Stackra\\Localization\\Models\\TenantLocale",
+    "interface": "Stackra\\Localization\\Contracts\\Data\\TenantLocaleInterface",
+    "implements": ["Stackra\\Localization\\Contracts\\Data\\TenantLocaleInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

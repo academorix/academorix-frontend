@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/safeguarding/subprocessors",
+  "id": "stackra://modules/safeguarding/subprocessors",
   "$version": 1,
   "title": "safeguarding — subprocessors used",
   "description": "Third-party subprocessors this module uses for its own operation.",

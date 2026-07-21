@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Models;
+namespace Stackra\Leads\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Leads\Contracts\Data\LeadTaskInterface;
-use Academorix\Leads\Database\Factories\LeadTaskFactory;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Leads\Enums\LeadTaskPriority;
-use Academorix\Leads\Enums\LeadTaskStatus;
-use Academorix\Leads\Policies\LeadTaskPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Leads\Contracts\Data\LeadTaskInterface;
+use Stackra\Leads\Database\Factories\LeadTaskFactory;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Leads\Enums\LeadTaskPriority;
+use Stackra\Leads\Enums\LeadTaskStatus;
+use Stackra\Leads\Policies\LeadTaskPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

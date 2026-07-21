@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/mfa/sdui/resources/mfa/recovery-codes",
+  "id": "stackra://modules/mfa/sdui/resources/mfa/recovery-codes",
   "$version": 1,
   "kind": "screen",
   "route": "/me/mfa/recovery-codes",

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tasks\Repositories;
+namespace Stackra\Tasks\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Tasks\Contracts\Data\TaskAssignmentInterface;
-use Academorix\Tasks\Contracts\Repositories\TaskAssignmentRepositoryInterface;
-use Academorix\Tasks\Models\TaskAssignment;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Tasks\Contracts\Data\TaskAssignmentInterface;
+use Stackra\Tasks\Contracts\Repositories\TaskAssignmentRepositoryInterface;
+use Stackra\Tasks\Models\TaskAssignment;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Tasks\Models\TaskAssignment}.
+ * Attribute-first Eloquent repository for {@see Stackra\Tasks\Models\TaskAssignment}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(TaskAssignmentInterface::class)]` which resolves to
  * `TaskAssignment` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Tasks\Models\TaskAssignment>
+ * @extends Repository<\Stackra\Tasks\Models\TaskAssignment>
  *
  * @category Tasks
  *

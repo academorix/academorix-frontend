@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Services;
+namespace Stackra\Webhook\Services;
 
-use Academorix\Webhook\Attributes\AsWebhookEvent;
-use Academorix\Webhook\Contracts\Services\WebhookRegistryInterface;
+use Stackra\Webhook\Attributes\AsWebhookEvent;
+use Stackra\Webhook\Contracts\Services\WebhookRegistryInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**
  * In-memory registry of every `#[AsWebhookEvent]`-marked class.
  *
  * Hydrated at boot by the framework's generic hydration pump
- * ({@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper})
+ * ({@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper})
  * via the `#[HydratesFrom]` declaration on
  * {@see WebhookRegistryInterface::register()}. Consumed by the
  * dispatcher, the tenant admin UI, and the `webhook:test` command.

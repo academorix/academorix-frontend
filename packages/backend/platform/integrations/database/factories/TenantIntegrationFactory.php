@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Database\Factories;
+namespace Stackra\Integrations\Database\Factories;
 
-use Academorix\Integrations\Contracts\Data\TenantIntegrationInterface;
-use Academorix\Integrations\Enums\IntegrationKind;
-use Academorix\Integrations\Enums\IntegrationSyncStatus;
-use Academorix\Integrations\Models\TenantIntegration;
+use Stackra\Integrations\Contracts\Data\TenantIntegrationInterface;
+use Stackra\Integrations\Enums\IntegrationKind;
+use Stackra\Integrations\Enums\IntegrationSyncStatus;
+use Stackra\Integrations\Models\TenantIntegration;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Observers;
+namespace Stackra\Newsletter\Observers;
 
-use Academorix\Newsletter\Contracts\Data\NewsletterIssueInterface;
-use Academorix\Newsletter\Enums\NewsletterIssueStatus;
-use Academorix\Newsletter\Events\NewsletterIssueCancelled;
-use Academorix\Newsletter\Events\NewsletterIssueDrafted;
-use Academorix\Newsletter\Events\NewsletterIssuePublished;
-use Academorix\Newsletter\Models\NewsletterIssue;
+use Stackra\Newsletter\Contracts\Data\NewsletterIssueInterface;
+use Stackra\Newsletter\Enums\NewsletterIssueStatus;
+use Stackra\Newsletter\Events\NewsletterIssueCancelled;
+use Stackra\Newsletter\Events\NewsletterIssueDrafted;
+use Stackra\Newsletter\Events\NewsletterIssuePublished;
+use Stackra\Newsletter\Models\NewsletterIssue;
 
 /**
  * Observer for the {@see NewsletterIssue} model.
@@ -21,7 +21,7 @@ use Academorix\Newsletter\Models\NewsletterIssue;
  *     and fire {@see NewsletterIssuePublished}. On transition to
  *     `cancelled`, fire {@see NewsletterIssueCancelled}.
  *     Scheduled-transition events are fired by the
- *     {@see \Academorix\Newsletter\Services\NewsletterServiceInterface::scheduleIssue()}
+ *     {@see \Stackra\Newsletter\Services\NewsletterServiceInterface::scheduleIssue()}
  *     path because the campaign row is created there in one
  *     transaction.
  *

@@ -206,13 +206,13 @@ in the **Identity** and **Access** services respectively.
 
 ## 9. Open decisions (require explicit sign-off — NOT actioned by this record)
 
-1. **Naming & namespace: `Academorix` → `Figentra`.** The company/platform is
-   Figentra Tech LLC; "Academorix" reads as the Sports/Education product
-   lineage. The entire current codebase is `Academorix\` namespaced (repo
-   `academorix-frontend`, 23 modules, all traits/attributes). Renaming is a
+1. **Naming & namespace: `Stackra` → `Figentra`.** The company/platform is
+   Figentra Tech LLC; "Stackra" reads as the Sports/Education product
+   lineage. The entire current codebase is `Stackra\` namespaced (repo
+   `stackra-frontend`, 23 modules, all traits/attributes). Renaming is a
    large, deliberate migration — it is **out of scope for this decision** and
    must be sequenced as its own migration with a rename plan + codemod, not done
-   opportunistically. Until then, code stays `Academorix\`.
+   opportunistically. Until then, code stays `Stackra\`.
 2. **Newsletter extraction trigger.** Starts inside Notifications; extract to
    its own service only if newsletter send volume dominates the notification
    queue.

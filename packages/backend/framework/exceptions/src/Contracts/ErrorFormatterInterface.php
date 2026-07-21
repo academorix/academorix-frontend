@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Contracts;
+namespace Stackra\Exceptions\Contracts;
 
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,17 +20,17 @@ use Throwable;
  *
  * Shipped implementations:
  *
- *   - {@see \Academorix\Exceptions\Formatters\JsonErrorFormatter}
+ *   - {@see \Stackra\Exceptions\Formatters\JsonErrorFormatter}
  *     — RFC 7807-flavoured envelope for API clients.
- *   - {@see \Academorix\Exceptions\Formatters\HtmlErrorFormatter}
+ *   - {@see \Stackra\Exceptions\Formatters\HtmlErrorFormatter}
  *     — Blade-rendered pages for browser navigation.
  *
  * Applications can register their own by tagging them
- * `academorix.exception.formatters` in the container:
+ * `stackra.exception.formatters` in the container:
  *
- *     $this->app->tag(MyFormatter::class, 'academorix.exception.formatters');
+ *     $this->app->tag(MyFormatter::class, 'stackra.exception.formatters');
  *
- * The tag is drained by the {@see \Academorix\Exceptions\Handler}
+ * The tag is drained by the {@see \Stackra\Exceptions\Handler}
  * at boot time.
  */
 interface ErrorFormatterInterface

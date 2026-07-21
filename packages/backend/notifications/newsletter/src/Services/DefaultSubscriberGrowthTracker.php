@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Services;
+namespace Stackra\Newsletter\Services;
 
-use Academorix\Newsletter\Contracts\Data\NewsletterSubscriptionInterface;
-use Academorix\Newsletter\Contracts\Services\SubscriberGrowthTrackerInterface;
-use Academorix\Newsletter\Enums\NewsletterSubscriptionStatus;
-use Academorix\Newsletter\Models\NewsletterSubscription;
+use Stackra\Newsletter\Contracts\Data\NewsletterSubscriptionInterface;
+use Stackra\Newsletter\Contracts\Services\SubscriberGrowthTrackerInterface;
+use Stackra\Newsletter\Enums\NewsletterSubscriptionStatus;
+use Stackra\Newsletter\Models\NewsletterSubscription;
 use DateTimeInterface;
 use Illuminate\Container\Attributes\Singleton;
 

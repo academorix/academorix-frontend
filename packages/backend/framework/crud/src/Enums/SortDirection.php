@@ -12,11 +12,11 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Crud\Enums;
+namespace Stackra\Crud\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Enum;
 
 /**
  * Sort Direction Enum.
@@ -27,7 +27,7 @@ use Academorix\Enum\Enum;
  *
  * ## Usage:
  * ```php
- * use Academorix\Crud\Enums\SortDirection;
+ * use Stackra\Crud\Enums\SortDirection;
  *
  * // Parse sort direction from request
  * $direction = SortDirection::from('desc');

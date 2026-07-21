@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Jobs;
+namespace Stackra\Storage\Jobs;
 
-use Academorix\Storage\Contracts\Data\ChunkedUploadInterface;
-use Academorix\Storage\Contracts\Repositories\ChunkedUploadRepositoryInterface;
-use Academorix\Storage\Contracts\Services\ChunkedUploadCoordinatorInterface;
-use Academorix\Storage\Enums\ChunkedUploadState;
+use Stackra\Storage\Contracts\Data\ChunkedUploadInterface;
+use Stackra\Storage\Contracts\Repositories\ChunkedUploadRepositoryInterface;
+use Stackra\Storage\Contracts\Services\ChunkedUploadCoordinatorInterface;
+use Stackra\Storage\Enums\ChunkedUploadState;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -18,7 +18,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 /**
- * Mark every expired {@see \Academorix\Storage\Models\ChunkedUpload}
+ * Mark every expired {@see \Stackra\Storage\Models\ChunkedUpload}
  * as `expired`, release provider-side resources, and hard-delete
  * the row.
  *

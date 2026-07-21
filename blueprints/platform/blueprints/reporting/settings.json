@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/reporting/settings",
+  "id": "stackra://modules/reporting/settings",
   "$version": 1,
   "title": "reporting — tenant-editable settings",
   "description": "Settings this module registers against the settings substrate.",

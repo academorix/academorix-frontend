@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Messaging\Data;
+namespace Stackra\Messaging\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Server-side output DTO for {@see \Academorix\Messaging\Models\ConversationParticipant}.
+ * Server-side output DTO for {@see \Stackra\Messaging\Models\ConversationParticipant}.
  *
  * Consumed by controllers + services on the SERVER side. This is
  * distinct from the wire SDK's DTO (which sits under
- * `Academorix\NotificationsMessagingSdk\Data`) — the wire DTO travels across the HTTP
+ * `Stackra\NotificationsMessagingSdk\Data`) — the wire DTO travels across the HTTP
  * boundary; this one stays in-process.
  *
  * @category Messaging

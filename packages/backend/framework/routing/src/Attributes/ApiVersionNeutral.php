@@ -65,7 +65,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 

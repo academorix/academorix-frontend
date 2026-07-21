@@ -1,4 +1,4 @@
-# academorix/scope
+# stackra/scope
 
 Framework-tier hierarchical scope platform. Provides the substrate every
 configuration-owning module builds on — settings, permissions, feature flags,
@@ -30,7 +30,7 @@ nodes.
 ```
 scope_definitions  → what levels EXIST per owner (per-tenant configurable
                       hierarchy: MNGO uses global→owner→region→venue,
-                      Academorix uses global→owner→academy→team)
+                      Stackra uses global→owner→academy→team)
 scope_nodes        → concrete instances mapped to real entity ids, carrying
                       a materialised_path column for O(1) ancestor traversal
 scope_values       → key-value store, namespaced by consumer, JSONB payload
@@ -87,8 +87,8 @@ per method with `#[BypassScope(reason: 'audit report')]`.
 
 ## Non-goals
 
-- **Not** a settings storage engine — that's `academorix/settings`, which is a
+- **Not** a settings storage engine — that's `stackra/settings`, which is a
   consumer.
-- **Not** an ACL — that's `academorix/authorization`, also a consumer.
-- **Not** a tenancy resolver — that's `academorix-api/tenancy`. Scope only knows
+- **Not** an ACL — that's `stackra/authorization`, also a consumer.
+- **Not** a tenancy resolver — that's `stackra-api/tenancy`. Scope only knows
   about `scope_nodes`; the tenancy module wires its Tenant row → scope node.

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Exceptions;
+namespace Stackra\Storage\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Reconstructed byte count != declared total_size_bytes on finalize.

@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Actions\CentralAdmin;
+namespace Stackra\Entitlements\Actions\CentralAdmin;
 
-use Academorix\Entitlements\Contracts\Repositories\EntitlementRepositoryInterface;
-use Academorix\Entitlements\Data\EntitlementData;
-use Academorix\Entitlements\Data\Requests\UpdateEntitlementRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\Entitlements\Contracts\Repositories\EntitlementRepositoryInterface;
+use Stackra\Entitlements\Data\EntitlementData;
+use Stackra\Entitlements\Data\Requests\UpdateEntitlementRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Patch;
 
 /**
  * `PATCH /api/v1/platform/entitlements/{tenant}/{key}` — update action (central_admin audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Patch(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Entitlements

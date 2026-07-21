@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Enums;
+namespace Stackra\Invitations\Enums;
 
-use Academorix\Authorization\Contracts\PermissionEnum;
-use Academorix\Authorization\Enums\Guard;
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Authorization\Contracts\PermissionEnum;
+use Stackra\Authorization\Enums\Guard;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
  * Permissions the Invitations module contributes.
  *
  * Dual-guard — the `sanctum` guard covers tenant-scoped
  * management (view / send / resend / revoke); the `platform_admin`
- * guard covers cross-tenant audit + revoke for Academorix ops
+ * guard covers cross-tenant audit + revoke for Stackra ops
  * (abuse investigation, support tickets).
  *
  * No `Accept` / `Decline` permission ships — the token IS the
@@ -60,7 +60,7 @@ enum InvitationsPermission: string implements PermissionEnum
     case Revoke = 'invitations.revoke';
 
     /**
-     * `invitations.manage_any` — cross-tenant read + audit-revoke for Academorix ops.
+     * `invitations.manage_any` — cross-tenant read + audit-revoke for Stackra ops.
      */
     #[Label('Manage Invitations (platform)')]
     #[Description('Cross-tenant read and audit-revoke for platform support and abuse response.')]

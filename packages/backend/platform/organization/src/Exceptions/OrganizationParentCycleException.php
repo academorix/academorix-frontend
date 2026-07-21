@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Organization\Exceptions;
+namespace Stackra\Organization\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Proposed parent_id is a descendant of the current node — would create a cycle.

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/messaging/rules",
+  "id": "stackra://modules/messaging/rules",
   "$version": 1,
   "title": "messaging — validation rules",
   "description": "Named validation rules this module ships (registered via Validator::extend).",

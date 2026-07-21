@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Listeners;
+namespace Stackra\Notifications\Mail\Listeners;
 
-use Academorix\Events\Attributes\OnEvent;
-use Academorix\Notifications\Mail\Jobs\SendMailJob;
+use Stackra\Events\Attributes\OnEvent;
+use Stackra\Notifications\Mail\Jobs\SendMailJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Psr\Log\LoggerInterface;
 
@@ -62,7 +62,7 @@ final class HandleMailDispatch implements ShouldQueue
      * events for other channels. Dispatches `SendMailJob` with just
      * the notification id — the job re-loads it.
      */
-    #[OnEvent(event: 'Academorix\Notifications\Events\NotificationDispatched')]
+    #[OnEvent(event: 'Stackra\Notifications\Events\NotificationDispatched')]
     public function handle(object $event): void
     {
         if (! (bool) \config('notifications-mail.enabled', true)) {

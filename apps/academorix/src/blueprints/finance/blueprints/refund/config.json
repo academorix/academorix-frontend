@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/refund/config",
+  "id": "stackra://modules/refund/config",
   "$version": 1,
   "title": "refund — developer configuration",
   "configFile": "config/refund.php",
@@ -38,7 +38,7 @@
           "path": "refund.approval.approval_sla_hours",
           "type": "int",
           "default": 24,
-          "description": "Hours after which an unapproved refund fires a P2 signal (academorix.refund.approvals_stale_total). Actionable for ops — consumer-protection-law SLAs often require refund resolution within 14-30 days from request; this signal flags approaching SLA breaches."
+          "description": "Hours after which an unapproved refund fires a P2 signal (stackra.refund.approvals_stale_total). Actionable for ops — consumer-protection-law SLAs often require refund resolution within 14-30 days from request; this signal flags approaching SLA breaches."
         }
       ]
     },

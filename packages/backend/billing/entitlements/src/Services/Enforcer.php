@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Services;
+namespace Stackra\Entitlements\Services;
 
-use Academorix\Entitlements\Contracts\Services\EnforcerInterface;
+use Stackra\Entitlements\Contracts\Services\EnforcerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Entitlements\Contracts\Repositories\EntitlementUsageRepositoryInterface;
+use Stackra\Entitlements\Contracts\Repositories\EntitlementUsageRepositoryInterface;
 
 /**
  * Concrete service — Enforcer.

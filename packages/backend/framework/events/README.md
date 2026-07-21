@@ -1,11 +1,11 @@
-# academorix/events
+# stackra/events
 
 Attribute-based event listener discovery and broadcasting wiring for every
-Academorix app and package. Ships the attributes packages use in place of
+Stackra app and package. Ships the attributes packages use in place of
 `EventServiceProvider::$listen` maps and hand-rolled `broadcastOn()` /
 `broadcastAs()` methods on event classes.
 
-Depends on [`academorix/foundation`](../foundation) and hooks into
+Depends on [`stackra/foundation`](../foundation) and hooks into
 [`olvlvl/composer-attribute-collector`](https://github.com/olvlvl/composer-attribute-collector)
 so listener discovery is a near-zero-cost hashmap lookup at boot — no
 per-request reflection.
@@ -33,10 +33,10 @@ per-request reflection.
 
 declare(strict_types=1);
 
-namespace Academorix\Billing\Listeners;
+namespace Stackra\Billing\Listeners;
 
-use Academorix\Billing\Events\{InvoicePaid, InvoiceRefunded};
-use Academorix\Events\Attributes\{AfterCommit, ListensFor, OnEvent};
+use Stackra\Billing\Events\{InvoicePaid, InvoiceRefunded};
+use Stackra\Events\Attributes\{AfterCommit, ListensFor, OnEvent};
 
 #[OnEvent(InvoicePaid::class, priority: 100)]
 #[AfterCommit]
@@ -75,10 +75,10 @@ final class InvoiceAuditor
 
 declare(strict_types=1);
 
-namespace Academorix\Orders\Events;
+namespace Stackra\Orders\Events;
 
-use Academorix\Events\Attributes\{Broadcastable, BroadcastAs, BroadcastOn, BroadcastQueue};
-use Academorix\Orders\Models\Order;
+use Stackra\Events\Attributes\{Broadcastable, BroadcastAs, BroadcastOn, BroadcastQueue};
+use Stackra\Orders\Models\Order;
 
 #[Broadcastable(channelType: 'private')]
 #[BroadcastOn('orders.{order->id}')]
@@ -95,7 +95,7 @@ Query the resolved metadata at runtime from anywhere — a shipped listener, a
 bespoke broadcaster, or a custom `ShouldBroadcast` implementation:
 
 ```php
-use Academorix\Events\Support\BroadcastConfigurator;
+use Stackra\Events\Support\BroadcastConfigurator;
 
 $configurator = app(BroadcastConfigurator::class);
 
@@ -163,24 +163,24 @@ cleanup required.
 
 | Namespace                                           | Purpose                                                        |
 | --------------------------------------------------- | -------------------------------------------------------------- |
-| `Academorix\Events\Attributes\OnEvent`              | Class-level, repeatable listener declaration.                  |
-| `Academorix\Events\Attributes\ListensFor`           | Method-level, repeatable listener declaration.                 |
-| `Academorix\Events\Attributes\AfterCommit`          | Class-level marker — fire only after DB commit.                |
-| `Academorix\Events\Attributes\Broadcastable`        | Marks an event for broadcasting.                               |
-| `Academorix\Events\Attributes\BroadcastOn`          | Class-level, repeatable channel declaration.                   |
-| `Academorix\Events\Attributes\BroadcastAs`          | Custom broadcast name (wire-name).                             |
-| `Academorix\Events\Attributes\BroadcastQueue`       | Custom broadcast queue.                                        |
-| `Academorix\Events\Support\EventDiscovery`          | Scanner that produces the `DiscoveryManifest`.                 |
-| `Academorix\Events\Support\BroadcastConfigurator`   | Runtime resolver for broadcasting metadata.                    |
-| `Academorix\Events\Support\DiscoveryManifest`       | Value object grouping listener bindings + broadcast metadata.  |
-| `Academorix\Events\Support\ListenerBinding`         | Value object — one resolved listener registration.             |
-| `Academorix\Events\Support\BroadcastMetadata`       | Value object — resolved broadcasting metadata for one event.   |
-| `Academorix\Events\Providers\EventsServiceProvider` | Package entry point — extends `AbstractModuleServiceProvider`. |
+| `Stackra\Events\Attributes\OnEvent`              | Class-level, repeatable listener declaration.                  |
+| `Stackra\Events\Attributes\ListensFor`           | Method-level, repeatable listener declaration.                 |
+| `Stackra\Events\Attributes\AfterCommit`          | Class-level marker — fire only after DB commit.                |
+| `Stackra\Events\Attributes\Broadcastable`        | Marks an event for broadcasting.                               |
+| `Stackra\Events\Attributes\BroadcastOn`          | Class-level, repeatable channel declaration.                   |
+| `Stackra\Events\Attributes\BroadcastAs`          | Custom broadcast name (wire-name).                             |
+| `Stackra\Events\Attributes\BroadcastQueue`       | Custom broadcast queue.                                        |
+| `Stackra\Events\Support\EventDiscovery`          | Scanner that produces the `DiscoveryManifest`.                 |
+| `Stackra\Events\Support\BroadcastConfigurator`   | Runtime resolver for broadcasting metadata.                    |
+| `Stackra\Events\Support\DiscoveryManifest`       | Value object grouping listener bindings + broadcast metadata.  |
+| `Stackra\Events\Support\ListenerBinding`         | Value object — one resolved listener registration.             |
+| `Stackra\Events\Support\BroadcastMetadata`       | Value object — resolved broadcasting metadata for one event.   |
+| `Stackra\Events\Providers\EventsServiceProvider` | Package entry point — extends `AbstractModuleServiceProvider`. |
 
 ## Testing
 
 ```bash
-pnpm turbo run test --filter=@academorix/events
+pnpm turbo run test --filter=@stackra/events
 ```
 
 Unit tests live under `tests/Unit/` and run without booting a container. See

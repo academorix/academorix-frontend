@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/coupon/health",
+  "id": "stackra://modules/coupon/health",
   "$version": 1,
   "title": "coupon — health probes",
   "probes": [
     {
       "name": "coupon-schema-migrations-applied",
-      "class": "Academorix\\Finance\\Coupon\\Health\\Probes\\SchemaMigrationsAppliedProbe",
+      "class": "Stackra\\Finance\\Coupon\\Health\\Probes\\SchemaMigrationsAppliedProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms both migrations this module ships have run: coupons + coupon_redemptions, plus their composite unique indexes.",
@@ -13,7 +13,7 @@
     },
     {
       "name": "coupon-unique-indexes-present",
-      "class": "Academorix\\Finance\\Coupon\\Health\\Probes\\UniqueIndexesPresentProbe",
+      "class": "Stackra\\Finance\\Coupon\\Health\\Probes\\UniqueIndexesPresentProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms the composite unique indexes exist: partial (tenant_id, code) WHERE deleted_at IS NULL AND active window on coupons; (tenant_id, coupon_id, customer_type, customer_id, applied_to_type, applied_to_id) on coupon_redemptions. Missing any index risks double-redemption races that bypass the SELECT FOR UPDATE row lock.",
@@ -21,15 +21,15 @@
     },
     {
       "name": "coupon-usage-count-drift-clean",
-      "class": "Academorix\\Finance\\Coupon\\Health\\Probes\\UsageCountDriftCleanProbe",
+      "class": "Stackra\\Finance\\Coupon\\Health\\Probes\\UsageCountDriftCleanProbe",
       "category": "readiness",
       "critical": false,
-      "description": "Reads academorix.coupon.usage_count.drift_ratio gauge. Any non-zero value indicates a counter-increment bug — CouponRedeemer's atomic increment leaked. P2 signal.",
+      "description": "Reads stackra.coupon.usage_count.drift_ratio gauge. Any non-zero value indicates a counter-increment bug — CouponRedeemer's atomic increment leaked. P2 signal.",
       "timeoutMs": 200
     },
     {
       "name": "coupon-clawback-backlog",
-      "class": "Academorix\\Finance\\Coupon\\Health\\Probes\\ClawbackBacklogProbe",
+      "class": "Stackra\\Finance\\Coupon\\Health\\Probes\\ClawbackBacklogProbe",
       "category": "readiness",
       "critical": false,
       "description": "Warns when > 50 rows in coupon_clawbacks_pending_queue are stuck > 30 min. Indicates ProcessCouponClawbackJob has stalled OR Finance module refund cascade isn't firing.",
@@ -37,15 +37,15 @@
     },
     {
       "name": "coupon-atomicity-counter-clean",
-      "class": "Academorix\\Finance\\Coupon\\Health\\Probes\\AtomicityCounterCleanProbe",
+      "class": "Stackra\\Finance\\Coupon\\Health\\Probes\\AtomicityCounterCleanProbe",
       "category": "readiness",
       "critical": true,
-      "description": "Reads academorix.coupons.atomicity.failures_total counter. Any non-zero value in the last 24h is a P1 signal — the redemption + counter-increment transaction failed somewhere.",
+      "description": "Reads stackra.coupons.atomicity.failures_total counter. Any non-zero value in the last 24h is a P1 signal — the redemption + counter-increment transaction failed somewhere.",
       "timeoutMs": 200
     },
     {
       "name": "coupon-slot-quota-headroom",
-      "class": "Academorix\\Finance\\Coupon\\Health\\Probes\\SlotQuotaHeadroomProbe",
+      "class": "Stackra\\Finance\\Coupon\\Health\\Probes\\SlotQuotaHeadroomProbe",
       "category": "readiness",
       "critical": false,
       "description": "Warns when any tenant has > 95% of their `coupon_slot` cap consumed. Actionable — the tenant is about to hit COUPON_SLOT_QUOTA_EXCEEDED on their next create.",
@@ -53,7 +53,7 @@
     },
     {
       "name": "coupon-reconcile-recent",
-      "class": "Academorix\\Finance\\Coupon\\Health\\Probes\\ReconcileRecentProbe",
+      "class": "Stackra\\Finance\\Coupon\\Health\\Probes\\ReconcileRecentProbe",
       "category": "readiness",
       "critical": false,
       "description": "Confirms ReconcileUsageCountJob completed within the last 25 hours (nightly cadence + 1h slop). Stale reconciler indicates scheduler drift.",
@@ -61,7 +61,7 @@
     },
     {
       "name": "coupon-preview-rate-limit-warm",
-      "class": "Academorix\\Finance\\Coupon\\Health\\Probes\\PreviewRateLimitWarmProbe",
+      "class": "Stackra\\Finance\\Coupon\\Health\\Probes\\PreviewRateLimitWarmProbe",
       "category": "readiness",
       "critical": false,
       "description": "Confirms the coupon.rate_limit middleware cache is warm + reachable. Cold cache = every preview call takes an extra Redis roundtrip. Not a critical failure but a latency signal.",

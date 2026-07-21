@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Tests;
+namespace Stackra\Attribution\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/attribution.
+ * Base test case for stackra/attribution.
  *
  * @category Attribution
  *

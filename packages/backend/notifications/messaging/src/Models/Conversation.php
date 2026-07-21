@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Messaging\Models;
+namespace Stackra\Messaging\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Messaging\Contracts\Data\ConversationInterface;
-use Academorix\Messaging\Database\Factories\ConversationFactory;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Messaging\Policies\ConversationPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Messaging\Contracts\Data\ConversationInterface;
+use Stackra\Messaging\Database\Factories\ConversationFactory;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Messaging\Policies\ConversationPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;

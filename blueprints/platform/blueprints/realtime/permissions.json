@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/realtime/permissions",
+  "id": "stackra://modules/realtime/permissions",
   "$version": 1,
   "title": "realtime — permissions",
-  "seeder": "Academorix\\Realtime\\Database\\Seeders\\RealtimePermissionSeeder",
+  "seeder": "Stackra\\Realtime\\Database\\Seeders\\RealtimePermissionSeeder",
   "isSystem": true,
   "description": "Broadcast auth is via the channel's own authorize callback. These permissions govern the ADMIN surface for channel + subscription inventory.",
   "permissions": [

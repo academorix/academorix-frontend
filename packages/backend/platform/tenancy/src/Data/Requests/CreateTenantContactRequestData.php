@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Data\Requests;
+namespace Stackra\Tenancy\Data\Requests;
 
-use Academorix\Tenancy\Enums\TenantContactKind;
+use Stackra\Tenancy\Enums\TenantContactKind;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Email;
 use Spatie\LaravelData\Attributes\Validation\Enum;

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/auth/schemas/auth-cross-app-grant",
+  "id": "stackra://modules/auth/schemas/auth-cross-app-grant",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "CrossAppGrant",
@@ -13,7 +13,7 @@
     "keyType": "string",
     "keyPrefix": "acg_",
     "incrementing": false,
-    "model": "Academorix\\Auth\\Models\\CrossAppGrant",
+    "model": "Stackra\\Auth\\Models\\CrossAppGrant",
     "traits": ["HasFactory", "HasUlids", "HasUserstamps", "HasActivityLog", "Filterable"],
     "casts": {
       "expires_at": "datetime",

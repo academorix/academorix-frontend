@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsMedicalSdk\Resources;
+namespace Stackra\SportsMedicalSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsMedicalSdk\Data\AllergyData;
-use Academorix\SportsMedicalSdk\Requests\Allergies\AllergiesAllergyRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsMedicalSdk\Data\AllergyData;
+use Stackra\SportsMedicalSdk\Requests\Allergies\AllergiesAllergyRequest;
 use Saloon\Http\Response;
 
 /**

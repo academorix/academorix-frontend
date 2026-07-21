@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Exceptions;
+namespace Stackra\Notifications\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Signed unsubscribe token failed verification OR expired.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsUnsubscribeTokenInvalidException extends AcademorixException
+final class NotificationsUnsubscribeTokenInvalidException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Models;
+namespace Stackra\FeatureFlags\Models;
 
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\FeatureFlags\Contracts\Data\FeatureInterface;
-use Academorix\FeatureFlags\Database\Factories\FeatureFactory;
-use Academorix\FeatureFlags\Enums\FlagKind;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\FeatureFlags\Contracts\Data\FeatureInterface;
+use Stackra\FeatureFlags\Database\Factories\FeatureFactory;
+use Stackra\FeatureFlags\Enums\FlagKind;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;

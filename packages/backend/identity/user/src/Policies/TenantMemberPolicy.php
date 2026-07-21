@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\User\Policies;
+namespace Stackra\User\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\User\Models\TenantMember;
+use Stackra\User\Models\User;
+use Stackra\User\Models\TenantMember;
 
 /**
- * Authorization policy for {@see \Academorix\User\Models\TenantMember}.
+ * Authorization policy for {@see \Stackra\User\Models\TenantMember}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

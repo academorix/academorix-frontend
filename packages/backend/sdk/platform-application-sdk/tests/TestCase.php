@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformApplicationSdk\Tests;
+namespace Stackra\PlatformApplicationSdk\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
@@ -13,7 +13,7 @@ use Orchestra\Testbench\TestCase as OrchestraTestCase;
  * for tests that need to resolve `Spatie\LaravelData` pipeline
  * dependencies or Saloon fixtures. No package providers are wired
  * — the SDK ships no provider of its own; discovery lives inside
- * the umbrella `academorix/platform-sdk` package.
+ * the umbrella `stackra/platform-sdk` package.
  *
  * @category PlatformApplicationSdk
  *

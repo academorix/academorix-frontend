@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Services;
+namespace Stackra\Notifications\Services;
 
-use Academorix\Notifications\Contracts\Data\NotificationPreferenceInterface;
-use Academorix\Notifications\Contracts\Repositories\NotificationCategoryRepositoryInterface;
-use Academorix\Notifications\Contracts\Repositories\NotificationPreferenceRepositoryInterface;
-use Academorix\Notifications\Contracts\Services\NotificationPreferenceResolverInterface;
-use Academorix\Notifications\Enums\ConsentTier;
-use Academorix\Notifications\Enums\DigestMode;
-use Academorix\Notifications\Enums\PreferenceSource;
-use Academorix\Notifications\Support\NotificationPreferenceDecision;
+use Stackra\Notifications\Contracts\Data\NotificationPreferenceInterface;
+use Stackra\Notifications\Contracts\Repositories\NotificationCategoryRepositoryInterface;
+use Stackra\Notifications\Contracts\Repositories\NotificationPreferenceRepositoryInterface;
+use Stackra\Notifications\Contracts\Services\NotificationPreferenceResolverInterface;
+use Stackra\Notifications\Enums\ConsentTier;
+use Stackra\Notifications\Enums\DigestMode;
+use Stackra\Notifications\Enums\PreferenceSource;
+use Stackra\Notifications\Support\NotificationPreferenceDecision;
 use Illuminate\Container\Attributes\Scoped;
 
 /**

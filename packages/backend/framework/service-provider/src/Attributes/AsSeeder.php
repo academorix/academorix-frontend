@@ -7,7 +7,7 @@
  * Class-level marker attribute for database seeders. Discovered
  * at composer-dump time via `olvlvl/composer-attribute-collector`
  * and consumed by the shared `DatabaseSeeder` base class + a
- * planned `academorix:db:seed` artisan command.
+ * planned `stackra:db:seed` artisan command.
  *
  * ## Purpose (ADR 0011)
  *
@@ -47,7 +47,7 @@
  * ## Usage
  *
  * ```php
- * use Academorix\ServiceProvider\Attributes\AsSeeder;
+ * use Stackra\ServiceProvider\Attributes\AsSeeder;
  * use Illuminate\Database\Seeder;
  *
  * #[AsSeeder(priority: 30)]
@@ -63,7 +63,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceProvider\Attributes;
+namespace Stackra\ServiceProvider\Attributes;
 
 use Attribute;
 

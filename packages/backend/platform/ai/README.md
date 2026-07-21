@@ -1,4 +1,4 @@
-# academorix/ai
+# stackra/ai
 
 Server-side Laravel package for the `ai` module. Auto-generated from the
 blueprint at `modules/platform/blueprints/ai/`.
@@ -48,6 +48,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-platform/ai-sdk` under `sdk/platform-ai-sdk/`. Consumers cross the
+`stackra-platform/ai-sdk` under `sdk/platform-ai-sdk/`. Consumers cross the
 service boundary through the SDK; this package is the SERVER-side owner of the
 domain.

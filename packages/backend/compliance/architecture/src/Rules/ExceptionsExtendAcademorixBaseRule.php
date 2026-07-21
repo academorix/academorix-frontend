@@ -1,16 +1,16 @@
 <?php
 
 /**
- * @file packages/architecture/src/Rules/ExceptionsExtendAcademorixBaseRule.php
+ * @file packages/architecture/src/Rules/ExceptionsExtendStackraBaseRule.php
  *
  * @description
  * Source rule: every concrete exception class must extend
- * {@see \Academorix\Exceptions\AcademorixException}, not one of
+ * {@see \Stackra\Exceptions\StackraException}, not one of
  * PHP's standard-library exception classes directly.
  *
  * ## Why
  *
- * ADR 0002 + 0006 fix `AcademorixException` as the sole trunk of
+ * ADR 0002 + 0006 fix `StackraException` as the sole trunk of
  * the exception hierarchy:
  *
  *   - Central JSON renderer treats every subclass uniformly.
@@ -32,10 +32,10 @@
  *
  * ## Exceptions
  *
- *   - The `academorix/exceptions` package itself (defines the
+ *   - The `stackra/exceptions` package itself (defines the
  *     base — can't extend itself).
- *   - Classes that extend an intermediate Academorix subclass
- *     (already implicitly extending `AcademorixException`).
+ *   - Classes that extend an intermediate Stackra subclass
+ *     (already implicitly extending `StackraException`).
  *
  * ## Paired migrator
  *
@@ -46,19 +46,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Support\SourceFile;
-use Academorix\Architecture\Violations\Severity;
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Support\SourceFile;
+use Stackra\Architecture\Violations\Severity;
+use Stackra\Architecture\Violations\Violation;
 
 /**
  * Enforce that every exception extends
- * {@see \Academorix\Exceptions\AcademorixException}.
+ * {@see \Stackra\Exceptions\StackraException}.
  *
  * @final
  */
-final class ExceptionsExtendAcademorixBaseRule extends AbstractRule
+final class ExceptionsExtendStackraBaseRule extends AbstractRule
 {
     /**
      * PHP-standard exception names disallowed as direct parents.
@@ -74,12 +74,12 @@ final class ExceptionsExtendAcademorixBaseRule extends AbstractRule
 
     public function id(): string
     {
-        return 'architecture.exceptions_extend_academorix_base';
+        return 'architecture.exceptions_extend_stackra_base';
     }
 
     public function description(): string
     {
-        return 'Every exception must extend `Academorix\\Exceptions\\AcademorixException`, not one of PHP\'s standard-library exception classes.';
+        return 'Every exception must extend `Stackra\\Exceptions\\StackraException`, not one of PHP\'s standard-library exception classes.';
     }
 
     protected function defaultSeverity(): Severity
@@ -98,7 +98,7 @@ final class ExceptionsExtendAcademorixBaseRule extends AbstractRule
 
         // The framework's exceptions package defines the base.
         $fqcn = $file->classFqcn ?? '';
-        if (str_starts_with($fqcn, 'Academorix\\Exceptions\\')) {
+        if (str_starts_with($fqcn, 'Stackra\\Exceptions\\')) {
             return [];
         }
 
@@ -121,12 +121,12 @@ final class ExceptionsExtendAcademorixBaseRule extends AbstractRule
                 file: $file,
                 offender: $fqcn !== '' ? $fqcn : $file->className,
                 message: \sprintf(
-                    'Exception "%s" extends "%s" directly — every exception must extend AcademorixException.',
+                    'Exception "%s" extends "%s" directly — every exception must extend StackraException.',
                     $fqcn !== '' ? $fqcn : $file->className,
                     $file->extends,
                 ),
                 line: null,
-                hint: 'Run `php dev-tools/migrations/bin/academorix-migrate exceptions --apply` to fix every violation of this rule automatically.',
+                hint: 'Run `php dev-tools/migrations/bin/stackra-migrate exceptions --apply` to fix every violation of this rule automatically.',
             ),
         ];
     }

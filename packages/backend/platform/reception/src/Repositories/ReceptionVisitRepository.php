@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Reception\Repositories;
+namespace Stackra\Reception\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Reception\Contracts\Data\ReceptionVisitInterface;
-use Academorix\Reception\Contracts\Repositories\ReceptionVisitRepositoryInterface;
-use Academorix\Reception\Models\ReceptionVisit;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Reception\Contracts\Data\ReceptionVisitInterface;
+use Stackra\Reception\Contracts\Repositories\ReceptionVisitRepositoryInterface;
+use Stackra\Reception\Models\ReceptionVisit;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Reception\Models\ReceptionVisit}.
+ * Attribute-first Eloquent repository for {@see Stackra\Reception\Models\ReceptionVisit}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ReceptionVisitInterface::class)]` which resolves to
  * `ReceptionVisit` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Reception\Models\ReceptionVisit>
+ * @extends Repository<\Stackra\Reception\Models\ReceptionVisit>
  *
  * @category Reception
  *

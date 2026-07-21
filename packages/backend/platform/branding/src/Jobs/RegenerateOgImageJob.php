@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Jobs;
+namespace Stackra\Branding\Jobs;
 
-use Academorix\Branding\Contracts\Repositories\BrandingRepositoryInterface;
-use Academorix\Branding\Contracts\Services\OgImageRendererInterface;
+use Stackra\Branding\Contracts\Repositories\BrandingRepositoryInterface;
+use Stackra\Branding\Contracts\Services\OgImageRendererInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Contracts\Services;
+namespace Stackra\Storage\Contracts\Services;
 
-use Academorix\Storage\Models\File;
-use Academorix\Storage\Models\FileVariant;
-use Academorix\Storage\Services\NullVariantGenerator;
+use Stackra\Storage\Models\File;
+use Stackra\Storage\Models\FileVariant;
+use Stackra\Storage\Services\NullVariantGenerator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

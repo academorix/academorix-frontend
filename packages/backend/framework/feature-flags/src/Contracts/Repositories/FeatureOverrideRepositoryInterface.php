@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Contracts\Repositories;
+namespace Stackra\FeatureFlags\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\FeatureFlags\Models\FeatureOverride;
-use Academorix\FeatureFlags\Repositories\EloquentFeatureOverrideRepository;
-use Academorix\FeatureFlags\Support\ScopePath;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\FeatureFlags\Models\FeatureOverride;
+use Stackra\FeatureFlags\Repositories\EloquentFeatureOverrideRepository;
+use Stackra\FeatureFlags\Support\ScopePath;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Scoped;
 

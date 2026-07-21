@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Tests;
+namespace Stackra\Transfer\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/transfer.
+ * Base test case for stackra/transfer.
  *
  * @category Transfer
  *

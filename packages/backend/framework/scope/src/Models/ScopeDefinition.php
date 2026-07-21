@@ -6,17 +6,17 @@
  * @description
  * Eloquent model for the `scope_definitions` table. Each row is one
  * level in a specific owner's hierarchy — MNGO uses
- * `global → owner → region → venue`, Academorix uses
+ * `global → owner → region → venue`, Stackra uses
  * `global → owner → academy → team`. Levels form a strict tree via
  * `parent_slug`; roots have `parent_slug = null`.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Models;
+namespace Stackra\Scope\Models;
 
-use Academorix\Scope\Contracts\Data\ScopeDefinitionInterface;
-use Academorix\Scope\Database\Factories\ScopeDefinitionFactory;
+use Stackra\Scope\Contracts\Data\ScopeDefinitionInterface;
+use Stackra\Scope\Database\Factories\ScopeDefinitionFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;

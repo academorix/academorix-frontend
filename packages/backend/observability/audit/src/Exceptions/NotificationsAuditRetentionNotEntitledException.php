@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Exceptions;
+namespace Stackra\Audit\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Tenant lacks audit_retention_extended entitlement (Enterprise-only).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsAuditRetentionNotEntitledException extends AcademorixException
+final class NotificationsAuditRetentionNotEntitledException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

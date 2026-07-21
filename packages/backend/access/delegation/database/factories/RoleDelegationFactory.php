@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Delegation\Database\Factories;
+namespace Stackra\Delegation\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Delegation\Contracts\Data\RoleDelegationInterface;
-use Academorix\Delegation\Models\RoleDelegation;
+use Stackra\Delegation\Contracts\Data\RoleDelegationInterface;
+use Stackra\Delegation\Models\RoleDelegation;
 
 /**
- * Factory for {@see \Academorix\Delegation\Models\RoleDelegation}.
+ * Factory for {@see \Stackra\Delegation\Models\RoleDelegation}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Delegation\Models\RoleDelegation>
+ * @extends Factory<\Stackra\Delegation\Models\RoleDelegation>
  *
  * @category Delegation
  *

@@ -4,7 +4,7 @@
  * @file modules/platform/integrations/lang/en/integrations.php
  *
  * @description
- * English translations for the `academorix/integrations` module.
+ * English translations for the `stackra/integrations` module.
  */
 
 declare(strict_types=1);

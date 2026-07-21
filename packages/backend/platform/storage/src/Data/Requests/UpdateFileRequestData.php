@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Data\Requests;
+namespace Stackra\Storage\Data\Requests;
 
-use Academorix\Storage\Enums\FileVisibility;
+use Stackra\Storage\Enums\FileVisibility;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Enum;
 use Spatie\LaravelData\Attributes\Validation\Max;

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Jobs;
+namespace Stackra\Localization\Jobs;
 
-use Academorix\Localization\Contracts\Data\TranslationInterface;
-use Academorix\Localization\Contracts\Repositories\TranslationRepositoryInterface;
-use Academorix\Localization\Contracts\Services\TranslationCacheInterface;
+use Stackra\Localization\Contracts\Data\TranslationInterface;
+use Stackra\Localization\Contracts\Repositories\TranslationRepositoryInterface;
+use Stackra\Localization\Contracts\Services\TranslationCacheInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

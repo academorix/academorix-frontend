@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Jobs;
+namespace Stackra\Activity\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

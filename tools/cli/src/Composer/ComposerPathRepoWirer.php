@@ -2,7 +2,7 @@
 
 /**
  * @file ComposerPathRepoWirer.php
- * @module Academorix\Cli\Composer
+ * @module Stackra\Cli\Composer
  * @description Composer path-repository wiring service. Walks every
  *   composer.json in the workspace, builds a canonical `name -> path`
  *   map, and wires a `type: path` repositories entry for every `@dev`
@@ -16,7 +16,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Composer;
+namespace Stackra\Cli\Composer;
 
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;

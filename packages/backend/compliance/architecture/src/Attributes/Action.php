@@ -28,7 +28,7 @@
  * ## Usage
  *
  * ```php
- * use Academorix\Architecture\Attributes\Action;
+ * use Stackra\Architecture\Attributes\Action;
  *
  * #[Action]
  * final class SendPasswordResetEmail
@@ -51,12 +51,12 @@
  * ```
  *
  * @see Service                                       Broader orchestrator marker.
- * @see \Academorix\Architecture\Contracts\Action     Interface alternative.
+ * @see \Stackra\Architecture\Contracts\Action     Interface alternative.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Attributes;
+namespace Stackra\Architecture\Attributes;
 
 use Attribute;
 

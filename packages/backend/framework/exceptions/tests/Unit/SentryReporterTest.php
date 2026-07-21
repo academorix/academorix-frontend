@@ -4,8 +4,8 @@
  * @file packages/exceptions/tests/Unit/SentryReporterTest.php
  *
  * @description
- * Unit coverage for {@see \Academorix\Exceptions\Reporters\SentryReporter},
- * the reporter that enriches Sentry scope with Academorix-structured
+ * Unit coverage for {@see \Stackra\Exceptions\Reporters\SentryReporter},
+ * the reporter that enriches Sentry scope with Stackra-structured
  * metadata BEFORE Sentry's own SDK ships the event.
  *
  * ## What these tests protect
@@ -15,7 +15,7 @@
  *      `shouldReport()` returns `false` in that case so `report()`
  *      is never called — every internal-only app pays no cost.
  *
- *   2. **Tag construction** — for `AcademorixException` instances,
+ *   2. **Tag construction** — for `StackraException` instances,
  *      the reporter builds tags like `error.code`, `error.category`,
  *      `error.severity`, `correlation_id`, plus request-derived
  *      tags like `tenant_id` / `route`. These are the fields
@@ -37,10 +37,10 @@
 
 declare(strict_types=1);
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Auth\ForbiddenException;
-use Academorix\Exceptions\Reporters\SentryReporter;
-use Academorix\Exceptions\Support\Redactor;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Auth\ForbiddenException;
+use Stackra\Exceptions\Reporters\SentryReporter;
+use Stackra\Exceptions\Support\Redactor;
 use Orchestra\Testbench\TestCase;
 
 uses(TestCase::class);
@@ -68,7 +68,7 @@ it('shouldReport returns false when the Sentry SDK is not loaded', function (): 
 
     $reporter = makeSentryReporter();
 
-    // Even for a bona-fide Academorix exception, `shouldReport`
+    // Even for a bona-fide Stackra exception, `shouldReport`
     // returns false — the SDK is the gate.
     expect($reporter->shouldReport(ForbiddenException::make()))->toBeFalse();
 });
@@ -99,7 +99,7 @@ function invokeSentryReporterTags(
     return $tags;
 }
 
-it('builds tags with error.code, error.category, error.severity for an AcademorixException', function (): void {
+it('builds tags with error.code, error.category, error.severity for an StackraException', function (): void {
     // The three tags Sentry indexes hardest for search + alerting.
     $reporter = makeSentryReporter();
 
@@ -116,8 +116,8 @@ it('builds tags with error.code, error.category, error.severity for an Academori
     ]);
 });
 
-it('omits Academorix-specific tags when the throwable is a bare framework exception', function (): void {
-    // Non-Academorix exception → no `error.*` tags. Sentry still
+it('omits Stackra-specific tags when the throwable is a bare framework exception', function (): void {
+    // Non-Stackra exception → no `error.*` tags. Sentry still
     // captures it via the framework path; we just don't attach
     // metadata we don't have.
     $reporter = makeSentryReporter();
@@ -169,7 +169,7 @@ it('omits tenant_id and route when the request context does not carry them', fun
 });
 
 // -----------------------------------------------------------------
-// Concrete tag values for every Academorix subclass shape
+// Concrete tag values for every Stackra subclass shape
 // -----------------------------------------------------------------
 
 it('tags include the anonymous subclass severity as a string', function (): void {
@@ -177,12 +177,12 @@ it('tags include the anonymous subclass severity as a string', function (): void
     // severity — the tag value MUST be the enum's `->value` string.
     $reporter = makeSentryReporter();
 
-    $exception = new class extends AcademorixException
+    $exception = new class extends StackraException
     {
         public const CODE = 'test.pagable';
 
-        protected \Academorix\Exceptions\Enums\ErrorSeverity $severity
-            = \Academorix\Exceptions\Enums\ErrorSeverity::Emergency;
+        protected \Stackra\Exceptions\Enums\ErrorSeverity $severity
+            = \Stackra\Exceptions\Enums\ErrorSeverity::Emergency;
     };
 
     $tags = invokeSentryReporterTags($reporter, $exception, []);

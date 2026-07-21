@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Middleware;
+namespace Stackra\Application\Middleware;
 
-use Academorix\Application\Contracts\Repositories\ApplicationRepositoryInterface;
-use Academorix\Application\Services\ApplicationResolver;
-use Academorix\Routing\Attributes\AsMiddleware;
+use Stackra\Application\Contracts\Repositories\ApplicationRepositoryInterface;
+use Stackra\Application\Services\ApplicationResolver;
+use Stackra\Routing\Attributes\AsMiddleware;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -27,7 +27,7 @@ use Illuminate\Http\Response;
  * routes; central + guest routes may proceed unbound.
  *
  * Discovered via `#[AsMiddleware]` (per `.kiro/steering/php-attributes.md`).
- * Alias `resolve.application` — routes opt in via the `Academorix\Routing`
+ * Alias `resolve.application` — routes opt in via the `Stackra\Routing`
  * middleware group.
  *
  * @category Application
@@ -70,7 +70,7 @@ final class ResolveApplication
     /**
      * Actual resolution — header → host → default.
      */
-    private function resolveFromRequest(Request $request): ?\Academorix\Application\Models\Application
+    private function resolveFromRequest(Request $request): ?\Stackra\Application\Models\Application
     {
         // 1. Explicit X-Application-Id header (JWT-bound service callers).
         $headerId = $request->header('X-Application-Id');

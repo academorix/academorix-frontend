@@ -12,11 +12,11 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Foundation\Enums;
+namespace Stackra\Foundation\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Enum;
 
 /**
  * Database Driver Enum.
@@ -26,7 +26,7 @@ use Academorix\Enum\Enum;
  *
  * ## Usage:
  * ```php
- * use Academorix\Foundation\Enums\DatabaseDriver;
+ * use Stackra\Foundation\Enums\DatabaseDriver;
  *
  * // Check current database driver
  * if ($dbDriver === DatabaseDriver::MYSQL()) {

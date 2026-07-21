@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/marketing/observers",
+  "id": "stackra://modules/marketing/observers",
   "$version": 1,
   "title": "marketing — Eloquent observers",
   "description": "Four observers enforce the module's write-time invariants: event capture integrity (dedup, consent gate, attribution snapshot, eligible-provider computation), delivery lifecycle (per-attempt bookkeeping + circuit-breaker + retry scheduling), provider config validation (per-provider JSON Schema + entitlement + test-mode dispatch), and dead-letter creation (P1 notification + audit).",
   "observers": [
     {
       "model": "MarketingEvent",
-      "observer": "Academorix\\Growth\\Marketing\\Observers\\MarketingEventObserver",
+      "observer": "Stackra\\Growth\\Marketing\\Observers\\MarketingEventObserver",
       "handles": [
         "creating → populate ULID prefix `mev_`",
         "creating → refuse when tenant does NOT hold `marketing_capture` entitlement (returns `MARKETING_FEATURE_NOT_ENTITLED`)",
@@ -33,7 +33,7 @@
     },
     {
       "model": "MarketingDelivery",
-      "observer": "Academorix\\Growth\\Marketing\\Observers\\MarketingDeliveryObserver",
+      "observer": "Stackra\\Growth\\Marketing\\Observers\\MarketingDeliveryObserver",
       "handles": [
         "creating → populate ULID prefix `mdv_`",
         "creating → verify parent event.status IN ('pending', 'dispatching') — refuse otherwise (returns `MARKETING_DELIVERY_EVENT_TERMINAL`)",
@@ -62,7 +62,7 @@
     },
     {
       "model": "MarketingProviderConfig",
-      "observer": "Academorix\\Growth\\Marketing\\Observers\\MarketingProviderConfigObserver",
+      "observer": "Stackra\\Growth\\Marketing\\Observers\\MarketingProviderConfigObserver",
       "handles": [
         "creating → populate ULID prefix `mpc_`",
         "creating → refuse when tenant does NOT hold `marketing_provider_slot` capacity (returns `MARKETING_PROVIDER_QUOTA_EXCEEDED` — Small: 1, Medium: 3, Enterprise: unlimited)",
@@ -94,7 +94,7 @@
     },
     {
       "model": "MarketingDeadLetter",
-      "observer": "Academorix\\Growth\\Marketing\\Observers\\MarketingDeadLetterObserver",
+      "observer": "Stackra\\Growth\\Marketing\\Observers\\MarketingDeadLetterObserver",
       "handles": [
         "creating → populate ULID prefix `mdl_`",
         "creating → verify parent marketing_event exists + at least one delivery reached terminal-failure with matching provider (defense-in-depth against orphan dead-letters)",

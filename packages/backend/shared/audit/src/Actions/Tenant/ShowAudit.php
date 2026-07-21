@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Actions\Tenant;
+namespace Stackra\Audit\Actions\Tenant;
 
-use Academorix\Audit\Data\AuditData;
-use Academorix\Audit\Enums\AuditPermission;
-use Academorix\Audit\Models\Audit;
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Audit\Data\AuditData;
+use Stackra\Audit\Enums\AuditPermission;
+use Stackra\Audit\Models\Audit;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `GET /api/v1/audits/{audit}` — tenant DPO reads a single
  * own-tenant audit row.
  *
  * Sensitive fields are masked. The
- * {@see \Academorix\Audit\Policies\AuditPolicy::view()} check further
+ * {@see \Stackra\Audit\Policies\AuditPolicy::view()} check further
  * enforces the tenant scoping — even if a caller supplies an id
  * outside their tenant, the policy denies before serialisation.
  *

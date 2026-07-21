@@ -29,13 +29,13 @@
  * public function search(string $tenantId, FilterBag $filters): Collection { … }
  * ```
  *
- * @see \Academorix\Caching\Support\CacheKeyBuilder Consumer.
- * @see \Academorix\Caching\Attributes\Cacheable Uses this template when `$key` is unset.
+ * @see \Stackra\Caching\Support\CacheKeyBuilder Consumer.
+ * @see \Stackra\Caching\Attributes\Cacheable Uses this template when `$key` is unset.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Caching\Attributes;
+namespace Stackra\Caching\Attributes;
 
 use Attribute;
 

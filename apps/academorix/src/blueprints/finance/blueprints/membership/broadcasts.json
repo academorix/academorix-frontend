@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/membership/broadcasts",
+  "id": "stackra://modules/membership/broadcasts",
   "$version": 1,
   "title": "membership — realtime broadcast channels",
   "description": "Five broadcast channels: tenant / branch / athlete / user + a per-membership channel for live pass-usage widgets during check-in.",
   "channels": [
     {
       "name": "tenant.{tenantId}.memberships",
-      "class": "Academorix\\Finance\\Membership\\Broadcasts\\TenantMembershipsChannel",
+      "class": "Stackra\\Finance\\Membership\\Broadcasts\\TenantMembershipsChannel",
       "description": "Tenant-wide membership lifecycle stream. Powers admin dashboards + finance widgets.",
       "authorization": "sanctum::authed AND tenant_matches AND permission `memberships.viewAny`",
       "events": [
@@ -25,7 +25,7 @@
     },
     {
       "name": "branch.{branchId}.memberships",
-      "class": "Academorix\\Finance\\Membership\\Broadcasts\\BranchMembershipsChannel",
+      "class": "Stackra\\Finance\\Membership\\Broadcasts\\BranchMembershipsChannel",
       "description": "Branch-scoped stream — powers branch-manager real-time views.",
       "authorization": "sanctum::authed AND (permission `memberships.viewAny` scoped to branch OR branch_manager on branch)",
       "events": [
@@ -39,7 +39,7 @@
     },
     {
       "name": "athlete.{athleteId}.memberships",
-      "class": "Academorix\\Finance\\Membership\\Broadcasts\\AthleteMembershipsChannel",
+      "class": "Stackra\\Finance\\Membership\\Broadcasts\\AthleteMembershipsChannel",
       "description": "Per-athlete lifecycle stream. Powers the athlete detail page's membership indicator.",
       "authorization": "sanctum::authed AND (permission `memberships.view` scoped to athlete OR guardian OR self)",
       "events": [
@@ -53,7 +53,7 @@
     },
     {
       "name": "user.{userId}.memberships",
-      "class": "Academorix\\Finance\\Membership\\Broadcasts\\UserMembershipsChannel",
+      "class": "Stackra\\Finance\\Membership\\Broadcasts\\UserMembershipsChannel",
       "description": "Per-user stream — powers the /me/memberships live widget for guardians + adult athletes. Filters events where athlete.user_id = userId OR guardian.user_id = userId.",
       "authorization": "sanctum::authed AND user_matches",
       "events": [
@@ -70,7 +70,7 @@
     },
     {
       "name": "membership.{membershipId}.passes",
-      "class": "Academorix\\Finance\\Membership\\Broadcasts\\MembershipPassesChannel",
+      "class": "Stackra\\Finance\\Membership\\Broadcasts\\MembershipPassesChannel",
       "description": "Per-membership pass stream. Fires each PassIssued / PassConsumed / PassExpired / PassRefunded so kiosk + coach UIs see live pass-count updates during check-in.",
       "authorization": "sanctum::authed AND (permission `passes.view.own` scoped to membership OR permission `passes.viewAny` on tenant)",
       "events": ["PassIssued", "PassConsumed", "PassExpired", "PassRefunded"],

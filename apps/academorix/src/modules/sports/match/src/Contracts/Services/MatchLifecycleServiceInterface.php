@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Contracts\Services;
+namespace Stackra\Match\Contracts\Services;
 
-use Academorix\Match\Services\MatchLifecycleService;
+use Stackra\Match\Services\MatchLifecycleService;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/telemetry",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/telemetry",
   "tier": "saas",
   "surfaces": ["core"],
   "kind": "feature",
@@ -8,17 +8,17 @@
   "capabilities": [
     "Shared telemetry contracts + PII redactor",
     "Attribute-first Providers + Contracts + Services",
-    "Wire SDK companion at academorix-shared/telemetry-sdk"
+    "Wire SDK companion at stackra-shared/telemetry-sdk"
   ],
   "when_to_use": "A module emits telemetry payloads (metrics, traces, translation source strings) that must pass through a shared redactor before hitting a third party.",
-  "when_not_to_use": "For structured user-facing activity or compliance-grade audit trails, use academorix/activity or academorix/audit.",
+  "when_not_to_use": "For structured user-facing activity or compliance-grade audit trails, use stackra/activity or stackra/audit.",
   "peer_deps": [
-    "academorix-shared/telemetry-sdk",
-    "academorix/crud",
-    "academorix/foundation",
-    "academorix/routing",
-    "academorix/service-provider",
-    "academorix/support",
+    "stackra-shared/telemetry-sdk",
+    "stackra/crud",
+    "stackra/foundation",
+    "stackra/routing",
+    "stackra/service-provider",
+    "stackra/support",
     "spatie/laravel-data"
   ],
   "backend_pair": null,

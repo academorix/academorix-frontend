@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Jobs;
+namespace Stackra\Notifications\InApp\Jobs;
 
-use Academorix\Notifications\Contracts\Repositories\NotificationRepositoryInterface;
-use Academorix\Notifications\InApp\Contracts\Services\InAppChannelInterface;
+use Stackra\Notifications\Contracts\Repositories\NotificationRepositoryInterface;
+use Stackra\Notifications\InApp\Contracts\Services\InAppChannelInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -20,7 +20,7 @@ use Illuminate\Queue\SerializesModels;
 use Psr\Log\LoggerInterface;
 
 /**
- * Consume {@see \Academorix\Notifications\Events\NotificationDispatched}
+ * Consume {@see \Stackra\Notifications\Events\NotificationDispatched}
  * for the `in_app` channel: create the delivery row via the channel
  * driver + emit the Reverb broadcast.
  *

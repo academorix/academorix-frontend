@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/branch/config",
+  "id": "stackra://modules/branch/config",
   "$version": 1,
   "title": "branch — developer configuration",
   "configFile": "config/branch.php",

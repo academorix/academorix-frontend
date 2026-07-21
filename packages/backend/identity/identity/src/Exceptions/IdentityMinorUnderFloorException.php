@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Identity\Exceptions;
+namespace Stackra\Identity\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * CompliantAgePolicy refused the Identity creation because dob resolves the applicant below the effective compliance floor (COPPA 13 in US; GDPR 13–16 per EU country).

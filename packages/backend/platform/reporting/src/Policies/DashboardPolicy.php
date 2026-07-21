@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Reporting\Policies;
+namespace Stackra\Reporting\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Reporting\Models\Dashboard;
+use Stackra\User\Models\User;
+use Stackra\Reporting\Models\Dashboard;
 
 /**
- * Authorization policy for {@see \Academorix\Reporting\Models\Dashboard}.
+ * Authorization policy for {@see \Stackra\Reporting\Models\Dashboard}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

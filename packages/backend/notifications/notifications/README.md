@@ -1,6 +1,6 @@
-# academorix/notifications
+# stackra/notifications
 
-Notification substrate for Academorix. Owns six aggregates and the single
+Notification substrate for Stackra. Owns six aggregates and the single
 dispatch entry point (`DispatchGatewayInterface`) every consumer goes through.
 Channel-agnostic — provider transports live in sibling modules
 (`notifications-in-app`, `notifications-mail`, `notifications-push`,
@@ -20,7 +20,7 @@ Channel-agnostic — provider transports live in sibling modules
 ## Install
 
 ```bash
-composer require academorix/notifications
+composer require stackra/notifications
 ```
 
 ## Contributes

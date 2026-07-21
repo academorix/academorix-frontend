@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/region/analytics",
+  "id": "stackra://modules/region/analytics",
   "$version": 1,
   "title": "region — product analytics",
   "sink": "segment",

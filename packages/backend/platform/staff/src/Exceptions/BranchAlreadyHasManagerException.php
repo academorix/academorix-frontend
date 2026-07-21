@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Staff\Exceptions;
+namespace Stackra\Staff\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Another active Staff for this branch already has is_branch_manager=true.

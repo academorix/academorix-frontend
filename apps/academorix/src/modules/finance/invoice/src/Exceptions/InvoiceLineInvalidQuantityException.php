@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invoice\Exceptions;
+namespace Stackra\Invoice\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `INVOICE_LINE_INVALID_QUANTITY` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvoiceLineInvalidQuantityException extends AcademorixException
+final class InvoiceLineInvalidQuantityException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

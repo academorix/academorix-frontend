@@ -36,13 +36,13 @@
  * appropriate — the generator itself SHOULD stay app-scope
  * agnostic.
  *
- * @see \Academorix\Caching\Attributes\Cacheable Attribute that dispatches to a generator.
- * @see \Academorix\Caching\Support\CacheKeyBuilder Default template-based implementation.
+ * @see \Stackra\Caching\Attributes\Cacheable Attribute that dispatches to a generator.
+ * @see \Stackra\Caching\Support\CacheKeyBuilder Default template-based implementation.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Caching\Contracts;
+namespace Stackra\Caching\Contracts;
 
 interface CacheKeyGenerator
 {

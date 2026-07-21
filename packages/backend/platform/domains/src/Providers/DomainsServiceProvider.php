@@ -17,7 +17,7 @@
  *     `#[RequirePermission]`.
  *   - Console commands: `#[AsCommand]` extending `BaseCommand`.
  *   - Seeder: `#[AsSeeder(priority: 35)]` — composes
- *     {@see \Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
+ *     {@see \Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
  *   - Events: `#[AsEvent]` on every class.
  *   - Observers: `#[ObservedBy]` on the models.
  *   - Policies: `#[UsePolicy]` on the models.
@@ -30,11 +30,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Providers;
+namespace Stackra\Domains\Providers;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * Domains module service provider.

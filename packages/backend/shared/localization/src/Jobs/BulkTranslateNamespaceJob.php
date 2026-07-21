@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Jobs;
+namespace Stackra\Localization\Jobs;
 
-use Academorix\Localization\Contracts\Data\TranslationInterface;
-use Academorix\Localization\Contracts\Data\TranslationJobInterface;
-use Academorix\Localization\Contracts\Repositories\TranslationJobRepositoryInterface;
-use Academorix\Localization\Contracts\Repositories\TranslationRepositoryInterface;
-use Academorix\Localization\Enums\TranslationJobStatus;
+use Stackra\Localization\Contracts\Data\TranslationInterface;
+use Stackra\Localization\Contracts\Data\TranslationJobInterface;
+use Stackra\Localization\Contracts\Repositories\TranslationJobRepositoryInterface;
+use Stackra\Localization\Contracts\Repositories\TranslationRepositoryInterface;
+use Stackra\Localization\Enums\TranslationJobStatus;
 use Carbon\CarbonImmutable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

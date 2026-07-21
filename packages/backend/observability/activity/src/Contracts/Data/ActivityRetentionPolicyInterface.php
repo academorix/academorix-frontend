@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Contracts\Data;
+namespace Stackra\Activity\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Activity\Models\ActivityRetentionPolicy;
+use Stackra\Activity\Models\ActivityRetentionPolicy;
 
 /**
  * Table shape for the `activity_retention_policies` table.

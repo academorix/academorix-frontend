@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Contracts\Services;
+namespace Stackra\Transfer\Contracts\Services;
 
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
-use Academorix\Transfer\Attributes\ExportableWorkbook;
-use Academorix\Transfer\Attributes\ImportableWorkbook;
-use Academorix\Transfer\Services\WorkbookRegistry;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Transfer\Attributes\ExportableWorkbook;
+use Stackra\Transfer\Attributes\ImportableWorkbook;
+use Stackra\Transfer\Services\WorkbookRegistry;
 use Illuminate\Container\Attributes\Bind;
 
 /**

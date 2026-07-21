@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Repositories;
+namespace Stackra\Compliance\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Compliance\Contracts\Data\DsarArtefactInterface;
-use Academorix\Compliance\Contracts\Repositories\DsarArtefactRepositoryInterface;
-use Academorix\Compliance\Models\DsarArtefact;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Compliance\Contracts\Data\DsarArtefactInterface;
+use Stackra\Compliance\Contracts\Repositories\DsarArtefactRepositoryInterface;
+use Stackra\Compliance\Models\DsarArtefact;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Compliance\Models\DsarArtefact}.
+ * Attribute-first Eloquent repository for {@see Stackra\Compliance\Models\DsarArtefact}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(DsarArtefactInterface::class)]` which resolves to
  * `DsarArtefact` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Compliance\Models\DsarArtefact>
+ * @extends Repository<\Stackra\Compliance\Models\DsarArtefact>
  *
  * @category Compliance
  *

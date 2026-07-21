@@ -1,6 +1,6 @@
 ---
 description: >-
-  Product Designer for Academorix — owns IA, user flows, wireframes-as-
+  Product Designer for Stackra — owns IA, user flows, wireframes-as-
   markdown, and screen contracts at Phase 3. Emits design artefacts under
   docs/design/. Composes HeroUI OSS + HeroUI Pro primitives; does not restyle.
   Reports to design-lead.

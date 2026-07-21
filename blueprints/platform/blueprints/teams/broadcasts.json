@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/teams/broadcasts",
+  "id": "stackra://modules/teams/broadcasts",
   "$version": 1,
   "title": "teams — realtime broadcast channels",
   "description": "Three broadcast channel families for live UI updates. Tenant-level channel for cross-branch admin dashboards; team-scoped channels for roster + trial live updates on the team detail screen; per-team member/trial streams feed live-updating rosters + trial pipelines. Reverb driver (Laravel Reverb) is the default transport; the notifications module handles fanout.",
   "channels": [
     {
       "name": "tenant.{tenantId}.teams",
-      "class": "Academorix\\Teams\\Broadcasts\\TenantTeamsChannel",
+      "class": "Stackra\\Teams\\Broadcasts\\TenantTeamsChannel",
       "description": "Tenant-wide team + roster + trial + event-team stream. Sink for admin dashboards showing cross-branch activity.",
       "authorization": "sanctum::authed AND tenant_matches",
       "events": [
@@ -29,7 +29,7 @@
     },
     {
       "name": "team.{teamId}.members",
-      "class": "Academorix\\Teams\\Broadcasts\\TeamMembersChannel",
+      "class": "Stackra\\Teams\\Broadcasts\\TeamMembersChannel",
       "description": "Team-scoped roster activity. Powers the live-roster widget on the team detail screen — a coach sees new members appear + status changes as they happen.",
       "authorization": "sanctum::authed AND (teams.view for team_id OR platform_admin)",
       "events": [
@@ -49,7 +49,7 @@
     },
     {
       "name": "team.{teamId}.trials",
-      "class": "Academorix\\Teams\\Broadcasts\\TeamTrialsChannel",
+      "class": "Stackra\\Teams\\Broadcasts\\TeamTrialsChannel",
       "description": "Team-scoped trial pipeline. Powers the trial-pipeline board on the team detail screen — a coach sees new trials appear + decisions in real time.",
       "authorization": "sanctum::authed AND (trials.view for team_id OR platform_admin)",
       "events": [

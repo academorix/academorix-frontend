@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/reception/events",
+  "id": "stackra://modules/reception/events",
   "$version": 1,
   "title": "reception — published events",
-  "namespace": "Academorix\\Platform\\Reception\\Events",
+  "namespace": "Stackra\\Platform\\Reception\\Events",
   "dispatchMode": "afterCommit",
   "description": "Front-desk orchestration surface. Walk-in visits + day-pass sales + credential issuance on-the-fly. Every event is broadcast to the tenant's reception dashboard for realtime.",
   "events": [

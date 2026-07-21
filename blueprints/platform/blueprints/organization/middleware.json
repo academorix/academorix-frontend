@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/organization/middleware",
+  "id": "stackra://modules/organization/middleware",
   "$version": 1,
   "title": "organization — HTTP middleware",
   "middleware": [
     {
       "alias": "organization.resolve_active",
-      "class": "Academorix\\Organization\\Http\\Middleware\\ResolveActiveOrganization",
+      "class": "Stackra\\Organization\\Http\\Middleware\\ResolveActiveOrganization",
       "priority": 14,
       "description": "Resolves the caller's active Organization. Precedence: (1) `X-Organization-Id` header — accepts ULID (`org_<26>`) OR slug (case-insensitive) — validated against `WHERE tenant_id=? AND (id=? OR slug=?) AND deleted_at IS NULL`; (2) me.profile.default_organization_id when the user has pinned one; (3) tenant.default_organization via cache (fallback). Refuses paused OR archived Organizations on write routes (405 ORGANIZATION_NOT_WRITABLE); allows them on read routes so members can inspect their state.",
       "auto_applied": true,
@@ -19,14 +19,14 @@
     },
     {
       "alias": "organization.require",
-      "class": "Academorix\\Organization\\Http\\Middleware\\RequireOrganization",
+      "class": "Stackra\\Organization\\Http\\Middleware\\RequireOrganization",
       "priority": 15,
       "description": "Refuses the request unless the resolved Organization is non-null AND active. Used on domain routes that MUST scope to an org (Branch creation, Team creation). Off for tenant-wide routes (Region, Subscription).",
       "auto_applied": false
     },
     {
       "alias": "organization.enforce_scoped_read",
-      "class": "Academorix\\Organization\\Http\\Middleware\\EnforceScopedRead",
+      "class": "Stackra\\Organization\\Http\\Middleware\\EnforceScopedRead",
       "priority": 20,
       "description": "For routes that read descendants of an Organization: refuses when the caller's authorised org is not an ancestor of the requested subtree (uses tree_path prefix scan). Prevents cross-org data leaks when a caller has multiple org memberships but is scoped to only one.",
       "auto_applied": false

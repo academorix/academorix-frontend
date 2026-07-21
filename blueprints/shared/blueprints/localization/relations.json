@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/localization/relations",
+  "id": "stackra://modules/localization/relations",
   "$version": 1,
   "title": "localization \u2014 model relationships",
   "description": "PlatformLanguage is the aggregate root for the locale catalogue. It references geography for ISO-639 + ISO-3166 truth (replacing the previous field duplication). TenantLocale + Translation FK to PlatformLanguage via `language_id` (concept-name column; target table is `platform_languages`).",
@@ -84,7 +84,7 @@
       "foreignKey": "tenant_id",
       "nullable": true,
       "onDelete": "cascade",
-      "description": "Null = platform-level default translation (Academorix-shipped). Non-null = tenant override."
+      "description": "Null = platform-level default translation (Stackra-shipped). Non-null = tenant override."
     },
     {
       "from": "TranslationJob",

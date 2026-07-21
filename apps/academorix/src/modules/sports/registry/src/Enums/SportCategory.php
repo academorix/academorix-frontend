@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Enums;
+namespace Stackra\Registry\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `category` on `sport`.

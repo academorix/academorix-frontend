@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/safeguarding/entitlements",
+  "id": "stackra://modules/safeguarding/entitlements",
   "$version": 1,
   "title": "safeguarding — entitlements consumed",
   "description": "Entitlements this module reads (slot / pool / boolean / unlimited).",

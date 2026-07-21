@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Repositories;
+namespace Stackra\Geography\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Geography\Contracts\Data\StateInterface;
-use Academorix\Geography\Contracts\Repositories\StateRepositoryInterface;
-use Academorix\Geography\Models\State;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Geography\Contracts\Data\StateInterface;
+use Stackra\Geography\Contracts\Repositories\StateRepositoryInterface;
+use Stackra\Geography\Models\State;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Geography\Models\State}.
+ * Attribute-first Eloquent repository for {@see Stackra\Geography\Models\State}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(StateInterface::class)]` which resolves to
  * `State` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Geography\Models\State>
+ * @extends Repository<\Stackra\Geography\Models\State>
  *
  * @category Geography
  *

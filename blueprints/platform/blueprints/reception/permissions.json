@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/reception/permissions",
+  "id": "stackra://modules/reception/permissions",
   "$version": 1,
   "title": "reception — permissions",
-  "seeder": "Academorix\\Platform\\Reception\\Database\\Seeders\\ReceptionPermissionSeeder",
+  "seeder": "Stackra\\Platform\\Reception\\Database\\Seeders\\ReceptionPermissionSeeder",
   "isSystem": true,
   "description": "Reception permissions gate the front-desk UI. Underlying operations (credential issuance, day pass sale, registration creation) also check their own module permissions.",
   "permissions": [

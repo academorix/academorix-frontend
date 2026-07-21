@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Exceptions;
+namespace Stackra\Transfer\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a lookup expects an xfer_shards row but none is visible.
@@ -13,7 +13,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TransferShardNotFoundException extends AcademorixException
+final class TransferShardNotFoundException extends StackraException
 {
     public const CODE = 'TRANSFER_SHARD_NOT_FOUND';
 

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Exceptions;
+namespace Stackra\Mfa\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * DELETE /me/mfa/totp refused because the caller is trying to disable TOTP with a TOTP challenge (would leave them locked out).

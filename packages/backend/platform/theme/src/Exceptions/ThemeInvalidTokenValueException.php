@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Exceptions;
+namespace Stackra\Theme\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Token value does not match the token_type's value schema (e.

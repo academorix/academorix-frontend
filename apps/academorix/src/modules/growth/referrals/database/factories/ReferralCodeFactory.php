@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Database\Factories;
+namespace Stackra\Referrals\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Referrals\Contracts\Data\ReferralCodeInterface;
-use Academorix\Referrals\Models\ReferralCode;
+use Stackra\Referrals\Contracts\Data\ReferralCodeInterface;
+use Stackra\Referrals\Models\ReferralCode;
 
 /**
- * Factory for {@see \Academorix\Referrals\Models\ReferralCode}.
+ * Factory for {@see \Stackra\Referrals\Models\ReferralCode}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Referrals\Models\ReferralCode>
+ * @extends Factory<\Stackra\Referrals\Models\ReferralCode>
  *
  * @category Referrals
  *

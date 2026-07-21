@@ -1,7 +1,7 @@
-# academorix-sports/private-sessions-sdk
+# stackra-sports/private-sessions-sdk
 
 Wire-visible SDK surface for the `private-sessions` module of the Sports
-service. Auto-discovered by `academorix/sports-sdk` (the service umbrella) via
+service. Auto-discovered by `stackra/sports-sdk` (the service umbrella) via
 `#[AsSdkResource(name: 'private-sessions', service: 'sports')]`.
 
 ## Aggregates
@@ -26,7 +26,7 @@ src/
 Consumed only over HTTP via the umbrella client:
 
 ```php
-app(\Academorix\SportsSdk\Client\SportsSdk::class)
+app(\Stackra\SportsSdk\Client\SportsSdk::class)
     ->privateSessions()
     ->privateSessionRequests()
     ->list();

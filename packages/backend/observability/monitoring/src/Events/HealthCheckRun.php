@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Events;
+namespace Stackra\Monitoring\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - monitoring::EvaluateAlertPolicies (checks whether this run triggers any threshold breaches)
  * - monitoring::UpdateHealthCheckDenormalizedState (updates last_run_at + last_run_status + consecutive_failure_count on the parent)
- * - monitoring::MetricsCollector (increments academorix.monitoring.health_check_runs.total{status=...})
+ * - monitoring::MetricsCollector (increments stackra.monitoring.health_check_runs.total{status=...})
  *
  * @category Monitoring
  *

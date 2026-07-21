@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Contracts\Data;
+namespace Stackra\Tenancy\Contracts\Data;
 
-use Academorix\Tenancy\Models\Tenant;
+use Stackra\Tenancy\Models\Tenant;
 use Illuminate\Container\Attributes\Bind;
 
 /**
  * Table shape for the `tenants` table.
  *
- * Customer of an Academorix Application — one of the eight rows
+ * Customer of an Stackra Application — one of the eight rows
  * that carry `application_id` directly (per `.kiro/steering/
  * tenancy-columns.md` §2). Every domain row below the tenancy
  * boundary FKs into this table via `BelongsToTenant`.
@@ -42,7 +42,7 @@ interface TenantInterface
     public const string KEY_TYPE = 'string';
 
     /**
-     * Prefix for the {@see \Academorix\Database\Concerns\HasPrefixedUlid}
+     * Prefix for the {@see \Stackra\Database\Concerns\HasPrefixedUlid}
      * trait — the trait joins `<ID_PREFIX>_<ulid>` to produce the
      * primary key (e.g. `ten_01HZQK8YXBR3MDMP6QT9NR8N4F`).
      */

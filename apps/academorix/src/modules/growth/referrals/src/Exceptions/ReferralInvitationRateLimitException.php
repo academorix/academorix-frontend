@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Exceptions;
+namespace Stackra\Referrals\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * > 100 invitations/day per user.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ReferralInvitationRateLimitException extends AcademorixException
+final class ReferralInvitationRateLimitException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

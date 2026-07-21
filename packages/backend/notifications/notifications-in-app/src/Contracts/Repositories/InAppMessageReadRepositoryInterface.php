@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Contracts\Repositories;
+namespace Stackra\Notifications\InApp\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Notifications\InApp\Models\InAppMessageRead;
-use Academorix\Notifications\InApp\Repositories\EloquentInAppMessageReadRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Notifications\InApp\Models\InAppMessageRead;
+use Stackra\Notifications\InApp\Repositories\EloquentInAppMessageReadRepository;
 use Illuminate\Container\Attributes\Bind;
 
 /**

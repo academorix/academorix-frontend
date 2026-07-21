@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/facility/schemas/pass",
+  "id": "stackra://modules/facility/schemas/pass",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Pass",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "pas_",
     "incrementing": false,
-    "model": "Academorix\\Facility\\Models\\Pass",
-    "interface": "Academorix\\Facility\\Contracts\\Data\\PassInterface",
-    "implements": ["Academorix\\Facility\\Contracts\\Data\\PassInterface"],
+    "model": "Stackra\\Facility\\Models\\Pass",
+    "interface": "Stackra\\Facility\\Contracts\\Data\\PassInterface",
+    "implements": ["Stackra\\Facility\\Contracts\\Data\\PassInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

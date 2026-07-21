@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Gateway\Exceptions;
+namespace Stackra\Gateway\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * mode=connect requires connect_account_id.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GatewayConnectAccountRequiredException extends AcademorixException
+final class GatewayConnectAccountRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

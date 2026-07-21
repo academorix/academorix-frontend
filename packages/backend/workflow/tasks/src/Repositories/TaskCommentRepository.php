@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tasks\Repositories;
+namespace Stackra\Tasks\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Tasks\Contracts\Data\TaskCommentInterface;
-use Academorix\Tasks\Contracts\Repositories\TaskCommentRepositoryInterface;
-use Academorix\Tasks\Models\TaskComment;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Tasks\Contracts\Data\TaskCommentInterface;
+use Stackra\Tasks\Contracts\Repositories\TaskCommentRepositoryInterface;
+use Stackra\Tasks\Models\TaskComment;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Tasks\Models\TaskComment}.
+ * Attribute-first Eloquent repository for {@see Stackra\Tasks\Models\TaskComment}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(TaskCommentInterface::class)]` which resolves to
  * `TaskComment` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Tasks\Models\TaskComment>
+ * @extends Repository<\Stackra\Tasks\Models\TaskComment>
  *
  * @category Tasks
  *

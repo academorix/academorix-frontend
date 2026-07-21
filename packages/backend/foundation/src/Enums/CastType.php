@@ -12,12 +12,12 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Foundation\Enums;
+namespace Stackra\Foundation\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Enum;
-use Academorix\Support\Str;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Enum;
+use Stackra\Support\Str;
 
 use function in_array;
 
@@ -36,7 +36,7 @@ use function in_array;
  * ## Usage:
  *
  * ```php
- * use Academorix\Foundation\Enums\CastType;
+ * use Stackra\Foundation\Enums\CastType;
  *
  * protected $casts = [
  *     self::EMAIL_VERIFIED_AT => CastType::DATETIME(),

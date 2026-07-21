@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Database\Attributes;
+namespace Stackra\Database\Attributes;
 
 use Attribute;
 
@@ -20,7 +20,7 @@ use Attribute;
  * StatusColumn Attribute for Model Classes.
  *
  * Configures enum-based status management for the
- * {@see \Academorix\Database\Concerns\Model\HasStatus} trait. When applied,
+ * {@see \Stackra\Database\Concerns\Model\HasStatus} trait. When applied,
  * the attribute values override the trait's method-based defaults,
  * removing the need for the abstract `statusEnum()` method.
  *
@@ -50,7 +50,7 @@ use Attribute;
  *
  * @since    2.0.0
  *
- * @see \Academorix\Database\Concerns\Model\HasStatus
+ * @see \Stackra\Database\Concerns\Model\HasStatus
  */
 #[Attribute(Attribute::TARGET_CLASS)]
 final readonly class StatusColumn

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Actions\Tenant;
+namespace Stackra\Transfer\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Patch;
-use Academorix\Routing\Attributes\WhereUlid;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Transfer\Contracts\Data\XferMappingProfileInterface;
-use Academorix\Transfer\Data\Requests\UpdateMappingProfileRequestData;
-use Academorix\Transfer\Data\XferMappingProfileData;
-use Academorix\Transfer\Enums\TransferPermission;
-use Academorix\Transfer\Models\XferMappingProfile;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Patch;
+use Stackra\Routing\Attributes\WhereUlid;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Transfer\Contracts\Data\XferMappingProfileInterface;
+use Stackra\Transfer\Data\Requests\UpdateMappingProfileRequestData;
+use Stackra\Transfer\Data\XferMappingProfileData;
+use Stackra\Transfer\Enums\TransferPermission;
+use Stackra\Transfer\Models\XferMappingProfile;
 
 /**
  * `PATCH /api/v1/transfer/mapping-profiles/{profile}` — update.

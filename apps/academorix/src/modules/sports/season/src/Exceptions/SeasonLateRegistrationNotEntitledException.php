@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Season\Exceptions;
+namespace Stackra\Season\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * allows_late_registration=true attempted without the `season_late_registration` entitlement (Medium + Enterprise).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SeasonLateRegistrationNotEntitledException extends AcademorixException
+final class SeasonLateRegistrationNotEntitledException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Data;
+namespace Stackra\Newsletter\Data;
 
-use Academorix\Newsletter\Contracts\Data\NewsletterIssueInterface;
-use Academorix\Newsletter\Enums\NewsletterIssueStatus;
-use Academorix\Newsletter\Models\NewsletterIssue;
+use Stackra\Newsletter\Contracts\Data\NewsletterIssueInterface;
+use Stackra\Newsletter\Enums\NewsletterIssueStatus;
+use Stackra\Newsletter\Models\NewsletterIssue;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

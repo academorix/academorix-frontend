@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/newsletter/webhooks",
+  "id": "stackra://modules/newsletter/webhooks",
   "$version": 1,
   "title": "newsletter \u2014 webhook namespaces",
   "description": "No inbound webhook receiver. Newsletter-specific outbound webhook events (newsletter.issue.published, newsletter.campaign.completed) go through the universal webhook module.",

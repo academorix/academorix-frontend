@@ -1,10 +1,10 @@
 {
-  "name": "academorix/service-provider",
+  "name": "stackra/service-provider",
   "type": "library",
   "description": "Attribute-driven module service provider for Laravel — declarative resource loading, olvlvl-cached discovery, lifecycle hooks. The enterprise-grade replacement for hand-rolled boot() / register() methods.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "laravel",
     "service-provider",
     "attributes",
@@ -12,9 +12,9 @@
   ],
   "require": {
     "php": "^8.3",
-    "academorix/console": "@dev",
-    "academorix/enum": "@dev",
-    "academorix/foundation": "@dev",
+    "stackra/console": "@dev",
+    "stackra/enum": "@dev",
+    "stackra/foundation": "@dev",
     "illuminate/console": "^13.0",
     "illuminate/contracts": "^13.0",
     "illuminate/routing": "^13.0",
@@ -31,18 +31,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\ServiceProvider\\": "src/"
+      "Stackra\\ServiceProvider\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\ServiceProvider\\Tests\\": "tests/"
+      "Stackra\\ServiceProvider\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\ServiceProvider\\Providers\\ServiceProviderServiceProvider"
+        "Stackra\\ServiceProvider\\Providers\\ServiceProviderServiceProvider"
       ]
     }
   },

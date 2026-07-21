@@ -1,69 +1,69 @@
 {
-  "id": "academorix://modules/coupon/rules",
+  "id": "stackra://modules/coupon/rules",
   "$version": 1,
   "title": "coupon — validation rules",
   "description": "Custom Laravel validation rules published by CouponServiceProvider::boot(). All rules are used both by the observer chain (authoritative refusal on write) AND by FormRequest data classes (early request-time validation with clear error surfaces).",
-  "namespace": "Academorix\\Finance\\Coupon\\Rules",
+  "namespace": "Stackra\\Finance\\Coupon\\Rules",
   "rules": [
     {
       "name": "valid_code",
-      "class": "Academorix\\Finance\\Coupon\\Rules\\ValidCode",
+      "class": "Stackra\\Finance\\Coupon\\Rules\\ValidCode",
       "signature": "valid_code",
       "description": "Coupon code format: uppercase alphanumeric + dash + underscore, 4..64 chars. Regex: `^[A-Z0-9][A-Z0-9_-]{3,63}$`. Codes are normalised to uppercase on create — lowercase input is auto-uppercased but subsequent duplicate checks compare against the normalised form.",
       "default_message": "The :attribute value must be uppercase alphanumeric with dashes/underscores, 4..64 characters."
     },
     {
       "name": "valid_discount_type_amount_combo",
-      "class": "Academorix\\Finance\\Coupon\\Rules\\ValidDiscountTypeAmountCombo",
+      "class": "Stackra\\Finance\\Coupon\\Rules\\ValidDiscountTypeAmountCombo",
       "signature": "valid_discount_type_amount_combo",
       "description": "Coupon discount config internal consistency. `percent` requires discount_amount 0..1 (0.25 = 25%); NO currency. `fixed_amount` requires positive integer + required currency. `free_period` requires days 1..365; NO currency. `first_month_free` requires NO discount_amount + NO currency. `bogo` requires NO discount_amount + NO currency (applicability=specific_membership_plans required). `free_shipping` requires NO discount_amount + NO currency.",
       "default_message": "The :attribute discount configuration is invalid. See docs/discount-type-catalog for allowed combinations of discount_type + amount + currency."
     },
     {
       "name": "valid_currency",
-      "class": "Academorix\\Finance\\Coupon\\Rules\\ValidCurrency",
+      "class": "Stackra\\Finance\\Coupon\\Rules\\ValidCurrency",
       "signature": "valid_currency",
       "description": "ISO 4217 three-letter uppercase currency code (USD / EUR / GBP / etc.). Validates against foundation's shared ISO 4217 registry.",
       "default_message": "The :attribute must be a valid ISO 4217 currency code."
     },
     {
       "name": "valid_applicability_consistency",
-      "class": "Academorix\\Finance\\Coupon\\Rules\\ValidApplicabilityConsistency",
+      "class": "Stackra\\Finance\\Coupon\\Rules\\ValidApplicabilityConsistency",
       "signature": "valid_applicability_consistency",
       "description": "applicability + applicable_plan_ids + minimum_order_amount internal consistency. `any` requires NO applicable_plan_ids + NO minimum_order_amount. `membership_only` requires NO applicable_plan_ids + NO minimum_order_amount. `specific_membership_plans` requires non-empty applicable_plan_ids array. `minimum_order_value` requires minimum_order_amount > 0 + required minimum_order_currency. bogo discount_type additionally forces applicability=specific_membership_plans.",
       "default_message": "The applicability :applicability requires additional fields: :missing_fields."
     },
     {
       "name": "valid_positive_usage_cap",
-      "class": "Academorix\\Finance\\Coupon\\Rules\\ValidPositiveUsageCap",
+      "class": "Stackra\\Finance\\Coupon\\Rules\\ValidPositiveUsageCap",
       "signature": "valid_positive_usage_cap",
       "description": "usage_cap must be NULL (unlimited) OR positive integer. Zero is refused (a coupon with usage_cap=0 is unusable — that's a deactivate, not a cap).",
       "default_message": "The :attribute must be a positive integer or unset."
     },
     {
       "name": "valid_positive_per_customer_limit",
-      "class": "Academorix\\Finance\\Coupon\\Rules\\ValidPositivePerCustomerLimit",
+      "class": "Stackra\\Finance\\Coupon\\Rules\\ValidPositivePerCustomerLimit",
       "signature": "valid_positive_per_customer_limit",
       "description": "per_customer_limit must be >= 1. Default 1 (each customer can redeem at most once). Higher values (e.g. 3 for a 3-uses-per-customer campaign) allowed.",
       "default_message": "The :attribute must be at least 1."
     },
     {
       "name": "valid_effective_range",
-      "class": "Academorix\\Finance\\Coupon\\Rules\\ValidEffectiveRange",
+      "class": "Stackra\\Finance\\Coupon\\Rules\\ValidEffectiveRange",
       "signature": "valid_effective_range",
       "description": "valid_from < valid_until (when valid_until is set). valid_until nullable (open-ended coupon). valid_from defaults to NOW() when unset.",
       "default_message": "The coupon end date must be after the start date."
     },
     {
       "name": "unique_active_code_per_tenant",
-      "class": "Academorix\\Finance\\Coupon\\Rules\\UniqueActiveCodePerTenant",
+      "class": "Stackra\\Finance\\Coupon\\Rules\\UniqueActiveCodePerTenant",
       "signature": "unique_active_code_per_tenant",
       "description": "Enforces the composite partial unique index (tenant_id, code) WHERE deleted_at IS NULL AND valid_from <= NOW() AND (valid_until IS NULL OR valid_until >= NOW()). Two active coupons with the same code for the same tenant refuse — but two coupons with the same code where one is expired are allowed (permits re-issue of a campaign code after its window closes). Rule runs both at request-validation time (early feedback) + the observer re-checks under the DB unique index (authoritative).",
       "default_message": "An active coupon with this code already exists for this tenant."
     },
     {
       "name": "redemption_within_valid_window",
-      "class": "Academorix\\Finance\\Coupon\\Rules\\RedemptionWithinValidWindow",
+      "class": "Stackra\\Finance\\Coupon\\Rules\\RedemptionWithinValidWindow",
       "signature": "redemption_within_valid_window",
       "description": "Post-lookup guard on redemption path. Refuses when Coupon.is_active=false OR Coupon.valid_from > NOW() OR (Coupon.valid_until IS NOT NULL AND Coupon.valid_until < NOW()). Fires the appropriate refusal_reason: COUPON_INACTIVE / COUPON_NOT_YET_VALID / COUPON_EXPIRED.",
       "default_message": "This coupon is not currently redeemable."

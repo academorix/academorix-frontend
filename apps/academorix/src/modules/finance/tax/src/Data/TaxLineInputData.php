@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Data;
+namespace Stackra\Tax\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
@@ -10,7 +10,7 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
  * One input line to
- * {@see \Academorix\Tax\Services\TaxCalculator::calculate}.
+ * {@see \Stackra\Tax\Services\TaxCalculator::calculate}.
  *
  * Payload shape callers assemble before invoking the calculator —
  * a simplified projection of an invoice line item. Only the

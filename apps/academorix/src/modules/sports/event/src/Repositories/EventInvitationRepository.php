@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Event\Repositories;
+namespace Stackra\Event\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Event\Contracts\Data\EventInvitationInterface;
-use Academorix\Event\Contracts\Repositories\EventInvitationRepositoryInterface;
-use Academorix\Event\Models\EventInvitation;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Event\Contracts\Data\EventInvitationInterface;
+use Stackra\Event\Contracts\Repositories\EventInvitationRepositoryInterface;
+use Stackra\Event\Models\EventInvitation;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Event\Models\EventInvitation}.
+ * Attribute-first Eloquent repository for {@see Stackra\Event\Models\EventInvitation}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(EventInvitationInterface::class)]` which resolves to
  * `EventInvitation` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Event\Models\EventInvitation>
+ * @extends Repository<\Stackra\Event\Models\EventInvitation>
  *
  * @category Event
  *

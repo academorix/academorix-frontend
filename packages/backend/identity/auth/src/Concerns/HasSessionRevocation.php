@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Concerns;
+namespace Stackra\Auth\Concerns;
 
 /**
  * Trait — HasSessionRevocation.

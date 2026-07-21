@@ -31,16 +31,16 @@
  * (and thus through every middleware) and `dtoOrFail()` returns
  * whatever the request's `createDtoFromResponse()` produced.
  *
- * @see \Academorix\ApiSdk\Contracts\SdkResource Contract.
- * @see \Academorix\ApiSdk\Attributes\AsSdkResource Discovery marker.
+ * @see \Stackra\ApiSdk\Contracts\SdkResource Contract.
+ * @see \Stackra\ApiSdk\Attributes\AsSdkResource Discovery marker.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Resources;
+namespace Stackra\ApiSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Contracts\SdkResource;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Contracts\SdkResource;
 use LogicException;
 
 /**
@@ -78,7 +78,7 @@ abstract class BaseSdkResource implements SdkResource
         }
 
         $reflection = new \ReflectionClass($class);
-        $attribute  = $reflection->getAttributes(\Academorix\ApiSdk\Attributes\AsSdkResource::class);
+        $attribute  = $reflection->getAttributes(\Stackra\ApiSdk\Attributes\AsSdkResource::class);
         if ($attribute === []) {
             throw new LogicException(
                 "Resource [{$class}] must carry `#[AsSdkResource(name: ...)]` "

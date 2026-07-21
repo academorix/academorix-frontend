@@ -4,17 +4,17 @@
  * @file tests/Unit/Services/ScopeRegistryTest.php
  *
  * @description
- * Unit tests for {@see \Academorix\Scope\Services\ScopeRegistry}
+ * Unit tests for {@see \Stackra\Scope\Services\ScopeRegistry}
  * — namespace validation, duplicate rejection, deterministic
  * enumeration.
  */
 
 declare(strict_types=1);
 
-use Academorix\Scope\Data\ScopeConsumerConfig;
-use Academorix\Scope\Exceptions\ScopeConflictException;
-use Academorix\Scope\Exceptions\ScopeValidationException;
-use Academorix\Scope\Services\ScopeRegistry;
+use Stackra\Scope\Data\ScopeConsumerConfig;
+use Stackra\Scope\Exceptions\ScopeConflictException;
+use Stackra\Scope\Exceptions\ScopeValidationException;
+use Stackra\Scope\Services\ScopeRegistry;
 use Illuminate\Config\Repository as ConfigRepository;
 
 uses()->group('unit', 'scope');

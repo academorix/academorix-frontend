@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Actions\Tenant\TranslationJobs;
+namespace Stackra\Localization\Actions\Tenant\TranslationJobs;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Localization\Contracts\Data\TranslationJobInterface;
-use Academorix\Localization\Data\Resources\TranslationJobData;
-use Academorix\Localization\Enums\LocalizationPermission;
-use Academorix\Localization\Enums\TranslationJobStatus;
-use Academorix\Localization\Models\TranslationJob;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Localization\Contracts\Data\TranslationJobInterface;
+use Stackra\Localization\Data\Resources\TranslationJobData;
+use Stackra\Localization\Enums\LocalizationPermission;
+use Stackra\Localization\Enums\TranslationJobStatus;
+use Stackra\Localization\Models\TranslationJob;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `POST /api/v1/translation-jobs/{translationJob}/cancel` — cancel

@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/theme/permissions",
+  "id": "stackra://modules/theme/permissions",
   "$version": 1,
   "title": "theme — permissions",
-  "seeder": "Academorix\\Platform\\Theme\\Database\\Seeders\\ThemePermissionSeeder",
+  "seeder": "Stackra\\Platform\\Theme\\Database\\Seeders\\ThemePermissionSeeder",
   "isSystem": true,
   "permissions": [
     {
@@ -32,7 +32,7 @@
     {
       "name": "platform.theme.manage-presets",
       "guard": "platform_admin",
-      "description": "CRUD on platform-provided ThemePreset rows (tenant_id = NULL). Academorix staff only. Every write triggers MigrateThemeTokensOnPresetUpdateJob for tenants referencing the preset.",
+      "description": "CRUD on platform-provided ThemePreset rows (tenant_id = NULL). Stackra staff only. Every write triggers MigrateThemeTokensOnPresetUpdateJob for tenants referencing the preset.",
       "seededOn": ["super_admin", "platform_designer"]
     }
   ]

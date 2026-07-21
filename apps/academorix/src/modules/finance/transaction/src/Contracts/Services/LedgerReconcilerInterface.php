@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transaction\Contracts\Services;
+namespace Stackra\Transaction\Contracts\Services;
 
-use Academorix\Transaction\Services\LedgerReconciler;
+use Stackra\Transaction\Services\LedgerReconciler;
 use Illuminate\Container\Attributes\Bind;
 
 /**

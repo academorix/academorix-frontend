@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Services;
+namespace Stackra\Tenancy\Services;
 
-use Academorix\Tenancy\Contracts\Services\TenantResolverInterface;
+use Stackra\Tenancy\Contracts\Services\TenantResolverInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Tenancy\Contracts\Repositories\TenantContactRepositoryInterface;
+use Stackra\Tenancy\Contracts\Repositories\TenantContactRepositoryInterface;
 
 /**
  * Concrete service — TenantResolver.

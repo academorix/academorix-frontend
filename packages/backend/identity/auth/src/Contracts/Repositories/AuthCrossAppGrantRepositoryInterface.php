@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Contracts\Repositories;
+namespace Stackra\Auth\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Auth\Models\AuthCrossAppGrant}.
+ * Repository contract for {@see Stackra\Auth\Models\AuthCrossAppGrant}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `AuthCrossAppGrantRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Auth\Models\AuthCrossAppGrant>
+ * @extends RepositoryInterface<\Stackra\Auth\Models\AuthCrossAppGrant>
  *
  * @category Auth
  *

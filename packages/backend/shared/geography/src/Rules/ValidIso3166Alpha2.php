@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Rules;
+namespace Stackra\Geography\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Actions\Central;
+namespace Stackra\Versioning\Actions\Central;
 
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Versioning\Contracts\Repositories\ApiVersionRepositoryInterface;
-use Academorix\Versioning\Data\ApiVersionData;
-use Academorix\Versioning\Exceptions\ApiVersionNotFoundException;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Versioning\Contracts\Repositories\ApiVersionRepositoryInterface;
+use Stackra\Versioning\Data\ApiVersionData;
+use Stackra\Versioning\Exceptions\ApiVersionNotFoundException;
 
 /**
  * `GET /api/versions/{slug}` — public detail view for a single API

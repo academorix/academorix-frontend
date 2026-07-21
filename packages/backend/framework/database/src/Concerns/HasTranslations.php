@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Database\Concerns;
+namespace Stackra\Database\Concerns;
 
 use Spatie\Translatable\HasTranslations as SpatieHasTranslations;
 
 /**
  * Adds per-locale translations to a model's text attributes
- * (spatie/laravel-translatable v6) — the Academorix standard for user-facing
+ * (spatie/laravel-translatable v6) — the Stackra standard for user-facing
  * text that varies by locale (en/ar).
  *
  * Wraps the vendor trait so the codebase references one Foundation concern,
@@ -26,7 +26,7 @@ use Spatie\Translatable\HasTranslations as SpatieHasTranslations;
  * $table->translatable('name', 'description');
  *
  * // model
- * use Academorix\Database\Concerns\HasTranslations;
+ * use Stackra\Database\Concerns\HasTranslations;
  *
  * final class Discipline extends Model
  * {

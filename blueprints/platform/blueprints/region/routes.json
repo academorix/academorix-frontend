@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/region/routes",
+  "id": "stackra://modules/region/routes",
   "$version": 1,
   "title": "region — HTTP routes",
   "description": "Tenant-facing region CRUD + lifecycle actions (set-default, pause, resume, archive) + tax-config detail. Platform-admin cross-tenant read + the country-defaults reference table.",
@@ -26,84 +26,84 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Region\\Http\\Controllers\\Tenant\\RegionController@index",
+          "controller": "Stackra\\Region\\Http\\Controllers\\Tenant\\RegionController@index",
           "permission": "regions.viewAny",
           "description": "filter[status], filter[is_default], filter[country_code], filter[currency], sort[]=sort_order,name,created_at, include=tax_config. Default sort: sort_order asc, name asc."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Region\\Http\\Controllers\\Tenant\\RegionController@store",
+          "controller": "Stackra\\Region\\Http\\Controllers\\Tenant\\RegionController@store",
           "permission": "regions.create",
           "description": "Admin-triggered creation. Body: { country_code (required), name, slug, currency, timezone, locale, weekend_days, tax_config, subdivision_code, fiscal_year_start_month, is_default, sort_order }. Only country_code is required — every other field auto-fills from `data/country-defaults.json`. Consumes 1 `region_slot` entitlement."
         },
         {
           "method": "GET",
           "path": "/{region}",
-          "controller": "Academorix\\Region\\Http\\Controllers\\Tenant\\RegionController@show",
+          "controller": "Stackra\\Region\\Http\\Controllers\\Tenant\\RegionController@show",
           "permission": "regions.view",
           "description": "Full Region row. `tax_config.registration_number` returned only when caller carries `regions.view.tax_registration`."
         },
         {
           "method": "PATCH",
           "path": "/{region}",
-          "controller": "Academorix\\Region\\Http\\Controllers\\Tenant\\RegionController@update",
+          "controller": "Stackra\\Region\\Http\\Controllers\\Tenant\\RegionController@update",
           "permission": "regions.update",
           "description": "Update mutable fields. Body: { name, slug, timezone, locale, weekend_days, sort_order, subdivision_code, fiscal_year_start_month }. tax_config edits go via PATCH /{region}/tax-config (higher-privilege). country_code + currency are immutable once any inbound row references the Region."
         },
         {
           "method": "PATCH",
           "path": "/{region}/tax-config",
-          "controller": "Academorix\\Region\\Http\\Controllers\\Tenant\\RegionController@updateTaxConfig",
+          "controller": "Stackra\\Region\\Http\\Controllers\\Tenant\\RegionController@updateTaxConfig",
           "permission": "regions.update.tax_config",
           "description": "Update tax_config blob. Body: full tax_config object (default_rate_percent, name, inclusive, rates, registration_number). Fires RegionTaxConfigUpdated with before + after snapshots. Retroactive impact on future invoices only unless the tenant carries `region_time_travel` entitlement."
         },
         {
           "method": "DELETE",
           "path": "/{region}",
-          "controller": "Academorix\\Region\\Http\\Controllers\\Tenant\\RegionController@destroy",
+          "controller": "Stackra\\Region\\Http\\Controllers\\Tenant\\RegionController@destroy",
           "permission": "regions.delete",
           "description": "Soft-delete (transitions to archived + fires RegionArchived). Refused with 409 CANNOT_DELETE_DEFAULT_REGION when is_default=true. Refused with 409 REGION_IN_USE when any inbound row references. Hard-delete via PurgeArchivedRegionsJob after retention window (730 days)."
         },
         {
           "method": "POST",
           "path": "/{region}/set-default",
-          "controller": "Academorix\\Region\\Http\\Controllers\\Tenant\\RegionController@setDefault",
+          "controller": "Stackra\\Region\\Http\\Controllers\\Tenant\\RegionController@setDefault",
           "permission": "regions.set_default",
           "description": "Flip is_default=true (auto-demotes the previous default in same transaction). Fires RegionDefaultChanged. Body may be empty. Refused when target Region is not active."
         },
         {
           "method": "POST",
           "path": "/{region}/pause",
-          "controller": "Academorix\\Region\\Http\\Controllers\\Tenant\\RegionController@pause",
+          "controller": "Stackra\\Region\\Http\\Controllers\\Tenant\\RegionController@pause",
           "permission": "regions.pause",
           "description": "Status → paused. Body: { reason, expected_resume_at }. Refused with 409 CANNOT_PAUSE_DEFAULT_REGION when is_default=true. Fires RegionPaused."
         },
         {
           "method": "POST",
           "path": "/{region}/resume",
-          "controller": "Academorix\\Region\\Http\\Controllers\\Tenant\\RegionController@resume",
+          "controller": "Stackra\\Region\\Http\\Controllers\\Tenant\\RegionController@resume",
           "permission": "regions.resume",
           "description": "Status → active. Fires RegionResumed."
         },
         {
           "method": "POST",
           "path": "/{region}/archive",
-          "controller": "Academorix\\Region\\Http\\Controllers\\Tenant\\RegionController@archive",
+          "controller": "Stackra\\Region\\Http\\Controllers\\Tenant\\RegionController@archive",
           "permission": "regions.archive",
           "description": "Status → archived. Body: { reason }. Refused with 409 when is_default=true OR when any inbound row references."
         },
         {
           "method": "POST",
           "path": "/{region}/restore",
-          "controller": "Academorix\\Region\\Http\\Controllers\\Tenant\\RegionController@restore",
+          "controller": "Stackra\\Region\\Http\\Controllers\\Tenant\\RegionController@restore",
           "permission": "regions.restore",
           "description": "Archived → active. Only within the 730-day archived retention window (past that, the row has been hard-deleted)."
         },
         {
           "method": "GET",
           "path": "/{region}/tax-config",
-          "controller": "Academorix\\Region\\Http\\Controllers\\Tenant\\RegionController@taxConfig",
+          "controller": "Stackra\\Region\\Http\\Controllers\\Tenant\\RegionController@taxConfig",
           "permission": "regions.view",
           "description": "Audit-facing detail with all rate breakdowns + the last 10 RegionTaxConfigUpdated audit entries. `registration_number` returned only when caller carries `regions.view.tax_registration`."
         }
@@ -126,14 +126,14 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Region\\Http\\Controllers\\Platform\\RegionController@index",
+          "controller": "Stackra\\Region\\Http\\Controllers\\Platform\\RegionController@index",
           "permission": "platform.regions.viewAny",
           "description": "Cross-tenant filterable list. filter[tenant_id], filter[country_code], filter[currency], filter[status], filter[is_default]."
         },
         {
           "method": "GET",
           "path": "/{region}",
-          "controller": "Academorix\\Region\\Http\\Controllers\\Platform\\RegionController@show",
+          "controller": "Stackra\\Region\\Http\\Controllers\\Platform\\RegionController@show",
           "permission": "platform.regions.view",
           "description": "Single-region cross-tenant read. `tax_config.registration_number` returned only when the platform operator carries `platform.regions.view.tax_registration`."
         }
@@ -156,14 +156,14 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Region\\Http\\Controllers\\Platform\\CountryDefaultsController@index",
+          "controller": "Stackra\\Region\\Http\\Controllers\\Platform\\CountryDefaultsController@index",
           "permission": null,
           "description": "Full country-defaults table. Cached at the edge (public reference data). Etag-based revalidation."
         },
         {
           "method": "GET",
           "path": "/{country_code}",
-          "controller": "Academorix\\Region\\Http\\Controllers\\Platform\\CountryDefaultsController@show",
+          "controller": "Stackra\\Region\\Http\\Controllers\\Platform\\CountryDefaultsController@show",
           "permission": null,
           "description": "Single country's defaults. 404 when country_code is not in the shipped table."
         }

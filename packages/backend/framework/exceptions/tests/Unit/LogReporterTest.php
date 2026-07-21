@@ -4,7 +4,7 @@
  * @file packages/exceptions/tests/Unit/LogReporterTest.php
  *
  * @description
- * Unit coverage for {@see \Academorix\Exceptions\Reporters\LogReporter},
+ * Unit coverage for {@see \Stackra\Exceptions\Reporters\LogReporter},
  * the structured-log reporter that writes one JSON-shaped log line per
  * exception at the PSR-3 level derived from the exception's declared
  * severity.
@@ -41,16 +41,16 @@
 
 declare(strict_types=1);
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Auth\ForbiddenException;
-use Academorix\Exceptions\Domain\TenantException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
-use Academorix\Exceptions\Infrastructure\IntegrationException;
-use Academorix\Exceptions\Reporters\LogReporter;
-use Academorix\Exceptions\Support\ExceptionMapper;
-use Academorix\Exceptions\Support\Redactor;
-use Academorix\Exceptions\Support\TraceCleaner;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Auth\ForbiddenException;
+use Stackra\Exceptions\Domain\TenantException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\Infrastructure\IntegrationException;
+use Stackra\Exceptions\Reporters\LogReporter;
+use Stackra\Exceptions\Support\ExceptionMapper;
+use Stackra\Exceptions\Support\Redactor;
+use Stackra\Exceptions\Support\TraceCleaner;
 use Orchestra\Testbench\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -177,15 +177,15 @@ function makeLogReporter(): LogReporter
 // shouldReport
 // -----------------------------------------------------------------
 
-it('shouldReport returns true for a bare AcademorixException by default', function (): void {
-    // Baseline: an Academorix exception has no `report()` method
+it('shouldReport returns true for a bare StackraException by default', function (): void {
+    // Baseline: an Stackra exception has no `report()` method
     // override, so the reporter fires.
     $reporter = makeLogReporter();
 
     expect($reporter->shouldReport(ForbiddenException::make()))->toBeTrue();
 });
 
-it('shouldReport returns true for a non-AcademorixException throwable', function (): void {
+it('shouldReport returns true for a non-StackraException throwable', function (): void {
     // Framework `dontReport` handles the coarse skip list —
     // reporter defaults to `true` so wrapped RuntimeExceptions get
     // seen.
@@ -198,7 +198,7 @@ it('shouldReport returns false when the exception subclass report() returns fals
     // A subclass can opt out of reporting by declaring
     // `public function report(): bool { return false; }`. The
     // reporter checks for that hook via `method_exists` + call.
-    $silent = new class extends AcademorixException
+    $silent = new class extends StackraException
     {
         public const CODE = 'test.silent';
 
@@ -224,7 +224,7 @@ it('logs a 4xx exception at info level', function (): void {
 
     $reporter = makeLogReporter();
 
-    $exception = new class extends AcademorixException
+    $exception = new class extends StackraException
     {
         public const CODE = 'test.info_case';
 
@@ -245,7 +245,7 @@ it('logs a 5xx exception at critical level', function (): void {
 
     $reporter = makeLogReporter();
 
-    $exception = new class extends AcademorixException
+    $exception = new class extends StackraException
     {
         public const CODE = 'test.critical_case';
 
@@ -263,7 +263,7 @@ it('logs at emergency level for an Emergency severity', function (): void {
 
     $reporter = makeLogReporter();
 
-    $exception = new class extends AcademorixException
+    $exception = new class extends StackraException
     {
         public const CODE = 'test.emergency_case';
 
@@ -326,7 +326,7 @@ it('falls back to the default channel when no category override applies', functi
 
     $reporter = makeLogReporter();
 
-    $exception = new class extends AcademorixException
+    $exception = new class extends StackraException
     {
         public const CODE = 'test.default_channel';
 
@@ -391,7 +391,7 @@ it('runs the message through the redactor', function (): void {
 
     $reporter = makeLogReporter();
 
-    $exception = new class extends AcademorixException
+    $exception = new class extends StackraException
     {
         public const CODE = 'test.leaky';
 

@@ -305,16 +305,16 @@ importers:
 
   .:
     devDependencies:
-      '@academorix/config-eslint':
+      '@stackra/config-eslint':
         specifier: workspace:*
         version: link:packages/config/eslint
-      '@academorix/config-prettier':
+      '@stackra/config-prettier':
         specifier: workspace:*
         version: link:packages/config/prettier
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:packages/config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:packages/config/tsup
       '@changesets/cli':
@@ -396,13 +396,13 @@ importers:
         specifier: ^5.5.2
         version: 5.8.0(react-native@0.86.0(@babel/core@7.29.7)(@react-native-community/cli@20.1.0(typescript@5.6.3))(@react-native/jest-preset@0.86.0(@babel/core@7.29.7)(react@19.2.7))(@react-native/metro-config@0.86.0(@babel/core@7.29.7))(@types/react@19.2.17)(react@19.2.7))(react@19.2.7)
     devDependencies:
-      '@academorix/config-eslint':
+      '@stackra/config-eslint':
         specifier: workspace:*
         version: link:../../packages/config/eslint
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../packages/config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../packages/config/tsup
       '@babel/core':
@@ -484,10 +484,10 @@ importers:
         specifier: 6.23.0
         version: 6.23.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../packages/config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../packages/config/tsup
       '@eslint/compat':
@@ -631,7 +631,7 @@ importers:
 
   packages/config/tsup:
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
       '@types/node':
@@ -651,10 +651,10 @@ importers:
 
   packages/frontend/actions:
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/container':
@@ -723,10 +723,10 @@ importers:
 
   packages/frontend/ai:
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/actions':
@@ -802,10 +802,10 @@ importers:
         specifier: 'catalog:'
         version: 1.0.5(reflect-metadata@0.2.2)
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/container':
@@ -857,10 +857,10 @@ importers:
         specifier: 'catalog:'
         version: 1.0.5(reflect-metadata@0.2.2)
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@heroicons/react':
@@ -917,10 +917,10 @@ importers:
 
   packages/frontend/collaboration:
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/container':
@@ -993,10 +993,10 @@ importers:
         specifier: 'catalog:'
         version: 13.0.0
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/container':
@@ -1035,10 +1035,10 @@ importers:
 
   packages/frontend/consent:
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/container':
@@ -1102,13 +1102,13 @@ importers:
         specifier: 'catalog:'
         version: 5.0.0
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
-      '@academorix/typescript-config':
+      '@stackra/typescript-config':
         specifier: workspace:*
         version: link:../../config/typescript
       '@stackra/container':
@@ -1154,10 +1154,10 @@ importers:
         specifier: 'catalog:'
         version: 0.2.2
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/contracts':
@@ -1193,10 +1193,10 @@ importers:
 
   packages/frontend/contracts:
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/testing':
@@ -1229,10 +1229,10 @@ importers:
 
   packages/frontend/coordinator:
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/container':
@@ -1278,10 +1278,10 @@ importers:
         specifier: 'catalog:'
         version: 1.0.5(reflect-metadata@0.2.2)
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/container':
@@ -1327,10 +1327,10 @@ importers:
         specifier: 'catalog:'
         version: 1.0.5(reflect-metadata@0.2.2)
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/container':
@@ -1391,10 +1391,10 @@ importers:
         specifier: 'catalog:'
         version: 1.0.5(reflect-metadata@0.2.2)
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/container':
@@ -1427,10 +1427,10 @@ importers:
 
   packages/frontend/devtools:
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@heroicons/react':
@@ -1508,10 +1508,10 @@ importers:
 
   packages/frontend/error:
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@heroui/react':
@@ -1566,10 +1566,10 @@ importers:
         specifier: 'catalog:'
         version: 1.0.5(reflect-metadata@0.2.2)
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/config':
@@ -1624,10 +1624,10 @@ importers:
         specifier: 'catalog:'
         version: 1.0.5(reflect-metadata@0.2.2)
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/actions':
@@ -1691,10 +1691,10 @@ importers:
         specifier: '>=5.0.0'
         version: 8.0.16(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.23.1)(yaml@2.9.0)
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/container':
@@ -1742,10 +1742,10 @@ importers:
 
   packages/frontend/kbd:
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@heroui-pro/react':
@@ -1848,10 +1848,10 @@ importers:
         specifier: 'catalog:'
         version: 3.4.2
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/config':
@@ -1906,10 +1906,10 @@ importers:
         specifier: 'catalog:'
         version: 1.0.5(reflect-metadata@0.2.2)
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/container':
@@ -1961,10 +1961,10 @@ importers:
         specifier: '*'
         version: 0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(@react-native-community/cli@20.1.0(typescript@5.6.3))(@types/react@19.2.17)(react@19.2.7)
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/config':
@@ -2019,10 +2019,10 @@ importers:
         specifier: '*'
         version: 57.0.5(expo@57.0.6)(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(@react-native-community/cli@20.1.0(typescript@5.6.3))(@types/react@19.2.17)(react@19.2.7))(react@19.2.7)(typescript@5.6.3)
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@heroicons/react':
@@ -2097,10 +2097,10 @@ importers:
 
   packages/frontend/pipeline:
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/container':
@@ -2146,10 +2146,10 @@ importers:
         specifier: '*'
         version: 1.3.0(@vite-pwa/assets-generator@1.0.2)(vite@8.0.16(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.23.1)(yaml@2.9.0))(workbox-build@7.4.1(@types/babel__core@7.20.5))(workbox-window@7.4.1)
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/container':
@@ -2209,10 +2209,10 @@ importers:
 
   packages/frontend/query:
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/actions':
@@ -2300,10 +2300,10 @@ importers:
         specifier: 'catalog:'
         version: 1.0.5(reflect-metadata@0.2.2)
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/config':
@@ -2360,10 +2360,10 @@ importers:
 
   packages/frontend/realtime:
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/actions':
@@ -2415,10 +2415,10 @@ importers:
         specifier: 'catalog:'
         version: 1.0.5(reflect-metadata@0.2.2)
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/console':
@@ -2503,10 +2503,10 @@ importers:
         specifier: 'catalog:'
         version: 1.0.5(reflect-metadata@0.2.2)
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/container':
@@ -2548,10 +2548,10 @@ importers:
 
   packages/frontend/scope:
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/container':
@@ -2617,10 +2617,10 @@ importers:
 
   packages/frontend/sdui:
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/actions':
@@ -2684,10 +2684,10 @@ importers:
         specifier: 'catalog:'
         version: 1.0.5(reflect-metadata@0.2.2)
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/container':
@@ -2762,10 +2762,10 @@ importers:
 
   packages/frontend/state:
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/actions':
@@ -2838,10 +2838,10 @@ importers:
         specifier: '*'
         version: 0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(@react-native-community/cli@20.1.0(typescript@5.6.3))(@types/react@19.2.17)(react@19.2.7)
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@react-native-async-storage/async-storage':
@@ -2914,10 +2914,10 @@ importers:
         specifier: 19.2.7
         version: 19.2.7
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/testing':
@@ -2947,10 +2947,10 @@ importers:
 
   packages/frontend/sync:
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/container':
@@ -3026,10 +3026,10 @@ importers:
         specifier: 'catalog:'
         version: 1.5.9(@swc/core@1.15.43(@swc/helpers@0.5.23))(rollup@4.62.2)
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@types/node':
@@ -3057,10 +3057,10 @@ importers:
         specifier: '>=3.0.0'
         version: 4.5.1(react-native-worklets@0.10.2(@babel/core@7.29.7)(@react-native/metro-config@0.86.0(@babel/core@7.29.7))(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(@react-native-community/cli@20.1.0(typescript@5.6.3))(@types/react@19.2.17)(react@19.2.7))(react@19.2.7))(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(@react-native-community/cli@20.1.0(typescript@5.6.3))(@types/react@19.2.17)(react@19.2.7))(react@19.2.7)
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@heroui/react':
@@ -3127,10 +3127,10 @@ importers:
         specifier: 'catalog:'
         version: 4.3.1
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@heroicons/react':
@@ -3274,10 +3274,10 @@ importers:
 
   packages/frontend/vite:
     devDependencies:
-      '@academorix/config-tsconfig':
+      '@stackra/config-tsconfig':
         specifier: workspace:*
         version: link:../../config/tsconfig
-      '@academorix/config-tsup':
+      '@stackra/config-tsup':
         specifier: workspace:*
         version: link:../../config/tsup
       '@stackra/testing':

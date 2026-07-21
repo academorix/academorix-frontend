@@ -1,4 +1,4 @@
-# academorix/chargeback
+# stackra/chargeback
 
 Server-side Laravel package for the `chargeback` module. Auto-generated from the
 blueprint at `modules/finance/blueprints/chargeback/`.
@@ -44,6 +44,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-finance/chargeback-sdk` under `sdk/finance-chargeback-sdk/`.
+`stackra-finance/chargeback-sdk` under `sdk/finance-chargeback-sdk/`.
 Consumers cross the service boundary through the SDK; this package is the
 SERVER-side owner of the domain.

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Actions\Platform;
+namespace Stackra\Webhook\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Webhook\Contracts\Data\WebhookSubscriptionInterface;
-use Academorix\Webhook\Contracts\Repositories\WebhookSubscriptionRepositoryInterface;
-use Academorix\Webhook\Data\WebhookSubscriptionData;
-use Academorix\Webhook\Enums\WebhookPermission;
-use Academorix\Webhook\Enums\WebhookSubscriptionStatus;
-use Academorix\Webhook\Exceptions\WebhookSubscriptionNotFoundException;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Webhook\Contracts\Data\WebhookSubscriptionInterface;
+use Stackra\Webhook\Contracts\Repositories\WebhookSubscriptionRepositoryInterface;
+use Stackra\Webhook\Data\WebhookSubscriptionData;
+use Stackra\Webhook\Enums\WebhookPermission;
+use Stackra\Webhook\Enums\WebhookSubscriptionStatus;
+use Stackra\Webhook\Exceptions\WebhookSubscriptionNotFoundException;
 
 /**
  * `POST /api/v1/platform/webhook/subscriptions/{id}/resume` — platform

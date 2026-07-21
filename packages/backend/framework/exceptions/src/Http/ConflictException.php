@@ -36,20 +36,20 @@
  *   exceptions::http.conflict_optimistic_lock     ({@see optimisticLock()})
  *   exceptions::http.conflict_invalid_transition  ({@see invalidTransition()})
  *
- * @see \Academorix\Exceptions\AcademorixException  Base class.
- * @see \Academorix\Exceptions\Concerns\TranslatesMessages  Trait powering the translation setters.
+ * @see \Stackra\Exceptions\StackraException  Base class.
+ * @see \Stackra\Exceptions\Concerns\TranslatesMessages  Trait powering the translation setters.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Http;
+namespace Stackra\Exceptions\Http;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class ConflictException extends AcademorixException
+class ConflictException extends StackraException
 {
     /**
      * Stable machine-readable code exposed on the wire as

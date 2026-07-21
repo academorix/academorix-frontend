@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/facility/schemas/availability",
+  "id": "stackra://modules/facility/schemas/availability",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Facility availability_json — sub-shape",

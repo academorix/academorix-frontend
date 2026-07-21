@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Contracts\Repositories;
+namespace Stackra\Notifications\Sms\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Notifications\Sms\Models\SmsOptOut;
-use Academorix\Notifications\Sms\Repositories\EloquentSmsOptOutRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Notifications\Sms\Models\SmsOptOut;
+use Stackra\Notifications\Sms\Repositories\EloquentSmsOptOutRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

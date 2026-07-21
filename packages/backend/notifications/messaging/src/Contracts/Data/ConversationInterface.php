@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Messaging\Contracts\Data;
+namespace Stackra\Messaging\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Messaging\Models\Conversation;
+use Stackra\Messaging\Models\Conversation;
 
 /**
  * Table shape for the `conversations` table.

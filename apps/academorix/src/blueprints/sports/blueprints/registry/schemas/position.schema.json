@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/sports-registry/schemas/position",
+  "id": "stackra://modules/sports-registry/schemas/position",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Position",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "pos_",
     "incrementing": false,
-    "model": "Academorix\\Sports\\Registry\\Models\\Position",
-    "interface": "Academorix\\Sports\\Registry\\Contracts\\Data\\PositionInterface",
-    "implements": ["Academorix\\Sports\\Registry\\Contracts\\Data\\PositionInterface"],
+    "model": "Stackra\\Sports\\Registry\\Models\\Position",
+    "interface": "Stackra\\Sports\\Registry\\Contracts\\Data\\PositionInterface",
+    "implements": ["Stackra\\Sports\\Registry\\Contracts\\Data\\PositionInterface"],
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",

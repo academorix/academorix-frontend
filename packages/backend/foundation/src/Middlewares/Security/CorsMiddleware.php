@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Foundation\Middlewares\Security;
+namespace Stackra\Foundation\Middlewares\Security;
 
 use Closure;
 use Illuminate\Container\Attributes\Config;
@@ -20,7 +20,7 @@ use Illuminate\Http\Request;
 
 use function in_array;
 
-use Academorix\Routing\Attributes\AsMiddleware;
+use Stackra\Routing\Attributes\AsMiddleware;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -78,7 +78,7 @@ use Symfony\Component\HttpFoundation\Response;
  * ```php
  * // In app/Http/Kernel.php
  * protected $middleware = [
- *     \Academorix\Foundation\Middlewares\Security\CorsMiddleware::class,
+ *     \Stackra\Foundation\Middlewares\Security\CorsMiddleware::class,
  * ];
  * ```
  *
@@ -87,7 +87,7 @@ use Symfony\Component\HttpFoundation\Response;
  * // In app/Http/Kernel.php
  * protected $middlewareGroups = [
  *     'api' => [
- *         \Academorix\Foundation\Middlewares\Security\CorsMiddleware::class,
+ *         \Stackra\Foundation\Middlewares\Security\CorsMiddleware::class,
  *     ],
  * ];
  * ```

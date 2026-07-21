@@ -1,20 +1,20 @@
 {
-  "id": "academorix://modules/rbac/attributes",
+  "id": "stackra://modules/rbac/attributes",
   "$version": 1,
   "title": "rbac \u2014 PHP attribute contracts",
   "description": "Two attributes. `#[AsRbacListener]` marks a class as a subscriber to RBAC-lifecycle events (role/permission mutation, principal role change, cache invalidation, system-role modification refused, application/guard mismatch). `#[ProvidesPermissions]` on a service provider signals the boot-time discovery loader (`PermissionCatalogueLoader`) that this module contributes to the seed permission catalogue \u2014 read from the module's `permissions.json` blueprint. NOTE: `#[RequirePermission]` and `#[RequireRole]` are FRAMEWORK primitives owned by `backend-packages/authorization/` \u2014 they are NOT re-declared here (design.md \u00a72 D-A1 framework/business split). This file declares only the BUSINESS-tier attributes.",
-  "namespace": "Academorix\\Rbac\\Attributes",
+  "namespace": "Stackra\\Rbac\\Attributes",
   "attributes": [
     {
       "name": "AsRbacListener",
-      "class": "Academorix\\Rbac\\Attributes\\AsRbacListener",
+      "class": "Stackra\\Rbac\\Attributes\\AsRbacListener",
       "targets": ["class"],
       "params": [
         {
           "name": "events",
           "type": "array<string>",
           "default": ["*"],
-          "description": "Which RBAC events this class reacts to. Wildcard `*` = every event under `Academorix\\Rbac\\Events\\*`. Specific list e.g. `['RoleAssignedToPrincipal', 'RoleRevokedFromPrincipal']` subscribes to those only. Validated against the events map at boot; typos abort application boot."
+          "description": "Which RBAC events this class reacts to. Wildcard `*` = every event under `Stackra\\Rbac\\Events\\*`. Specific list e.g. `['RoleAssignedToPrincipal', 'RoleRevokedFromPrincipal']` subscribes to those only. Validated against the events map at boot; typos abort application boot."
         },
         {
           "name": "queue",
@@ -33,7 +33,7 @@
     },
     {
       "name": "ProvidesPermissions",
-      "class": "Academorix\\Rbac\\Attributes\\ProvidesPermissions",
+      "class": "Stackra\\Rbac\\Attributes\\ProvidesPermissions",
       "targets": ["class"],
       "params": [
         {

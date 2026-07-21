@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/staff/schemas/staff",
+  "id": "stackra://modules/staff/schemas/staff",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Staff",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "stf_",
     "incrementing": false,
-    "model": "Academorix\\Staff\\Models\\Staff",
-    "interface": "Academorix\\Staff\\Contracts\\Data\\StaffInterface",
-    "implements": ["Academorix\\Staff\\Contracts\\Data\\StaffInterface"],
+    "model": "Stackra\\Staff\\Models\\Staff",
+    "interface": "Stackra\\Staff\\Contracts\\Data\\StaffInterface",
+    "implements": ["Stackra\\Staff\\Contracts\\Data\\StaffInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Data;
+namespace Stackra\Versioning\Data;
 
-use Academorix\Versioning\Contracts\Data\ApiVersionInterface;
-use Academorix\Versioning\Enums\ApiVersionStatus;
-use Academorix\Versioning\Enums\VersionScheme;
-use Academorix\Versioning\Models\ApiVersion;
+use Stackra\Versioning\Contracts\Data\ApiVersionInterface;
+use Stackra\Versioning\Enums\ApiVersionStatus;
+use Stackra\Versioning\Enums\VersionScheme;
+use Stackra\Versioning\Models\ApiVersion;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

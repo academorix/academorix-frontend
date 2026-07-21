@@ -13,12 +13,12 @@
  *   - MAY inject: Repositories, other Services, Actions, DTOs,
  *     Enums, plain-value objects.
  *   - MUST NOT import: Model classes (domain layer). Enforced by
- *     {@see \Academorix\Architecture\Rules\NoDirectModelAccessRule}.
+ *     {@see \Stackra\Architecture\Rules\NoDirectModelAccessRule}.
  *
  * ## Usage
  *
  * ```php
- * use Academorix\Architecture\Attributes\Service;
+ * use Stackra\Architecture\Attributes\Service;
  *
  * #[Service]
  * final class InvoiceService
@@ -36,12 +36,12 @@
  * }
  * ```
  *
- * @see \Academorix\Architecture\Contracts\Service  Interface alternative.
+ * @see \Stackra\Architecture\Contracts\Service  Interface alternative.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Attributes;
+namespace Stackra\Architecture\Attributes;
 
 use Attribute;
 

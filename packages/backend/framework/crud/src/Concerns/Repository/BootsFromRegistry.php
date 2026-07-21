@@ -12,17 +12,17 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Crud\Concerns\Repository;
+namespace Stackra\Crud\Concerns\Repository;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
-use Academorix\Crud\Attributes\OrderBy;
-use Academorix\Database\Attributes\Translatable;
-use Academorix\Crud\Attributes\UseQueryScope;
-use Academorix\Crud\Attributes\UseScope;
-use Academorix\Crud\Attributes\WithCount;
-use Academorix\Crud\Attributes\WithRelations;
-use Academorix\Crud\Registries\RepositoryConfigRegistry;
+use Stackra\Crud\Attributes\OrderBy;
+use Stackra\Database\Attributes\Translatable;
+use Stackra\Crud\Attributes\UseQueryScope;
+use Stackra\Crud\Attributes\UseScope;
+use Stackra\Crud\Attributes\WithCount;
+use Stackra\Crud\Attributes\WithRelations;
+use Stackra\Crud\Registries\RepositoryConfigRegistry;
 
 /**
  * BootsFromRegistry Trait.

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Delegation\Contracts\Repositories;
+namespace Stackra\Delegation\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Delegation\Models\ImpersonationSession}.
+ * Repository contract for {@see Stackra\Delegation\Models\ImpersonationSession}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `ImpersonationSessionRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Delegation\Models\ImpersonationSession>
+ * @extends RepositoryInterface<\Stackra\Delegation\Models\ImpersonationSession>
  *
  * @category Delegation
  *

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Grants\Contracts\Repositories;
+namespace Stackra\Grants\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Grants\Models\AccessGrant}.
+ * Repository contract for {@see Stackra\Grants\Models\AccessGrant}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `AccessGrantRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Grants\Models\AccessGrant>
+ * @extends RepositoryInterface<\Stackra\Grants\Models\AccessGrant>
  *
  * @category Grants
  *

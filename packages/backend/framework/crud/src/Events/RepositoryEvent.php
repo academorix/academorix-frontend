@@ -20,13 +20,13 @@ declare(strict_types=1);
  * @since    2.0.0
  */
 
-namespace Academorix\Crud\Events;
+namespace Stackra\Crud\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithBroadcasting;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 
 /**
  * Generic repository event carrying a name and payload.

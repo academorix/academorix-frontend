@@ -19,7 +19,7 @@
  * ## What implementers look like
  *
  * ```php
- * use Academorix\Authorization\Contracts\PermissionEnum;
+ * use Stackra\Authorization\Contracts\PermissionEnum;
  *
  * enum UserPermission: string implements PermissionEnum
  * {
@@ -42,13 +42,13 @@
  * The dot separator lets the admin dashboard group permissions by
  * domain and keeps names greppable across the codebase.
  *
- * @see \Academorix\Authorization\Attributes\RequirePermission Consumer.
- * @see \Academorix\Authorization\Contracts\PermissionContributor Registry seam.
+ * @see \Stackra\Authorization\Attributes\RequirePermission Consumer.
+ * @see \Stackra\Authorization\Contracts\PermissionContributor Registry seam.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Authorization\Contracts;
+namespace Stackra\Authorization\Contracts;
 
 /**
  * Marker interface for domain permission enums.

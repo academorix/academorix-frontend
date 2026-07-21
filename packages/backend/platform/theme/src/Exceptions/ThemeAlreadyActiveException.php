@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Exceptions;
+namespace Stackra\Theme\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Attempted to activate a theme that is already the active theme for its (tenant, mode).

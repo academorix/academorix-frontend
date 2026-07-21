@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/safeguarding/schemas/policy-acknowledgement",
+  "id": "stackra://modules/safeguarding/schemas/policy-acknowledgement",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "PolicyAcknowledgement",

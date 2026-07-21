@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Dunning\Contracts\Services;
+namespace Stackra\Dunning\Contracts\Services;
 
-use Academorix\Dunning\Services\DunningEngine;
+use Stackra\Dunning\Services\DunningEngine;
 use Illuminate\Container\Attributes\Bind;
 
 /**

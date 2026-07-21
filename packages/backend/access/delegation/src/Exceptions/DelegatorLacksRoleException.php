@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Delegation\Exceptions;
+namespace Stackra\Delegation\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * The delegator does not hold the role_id they are attempting to delegate.

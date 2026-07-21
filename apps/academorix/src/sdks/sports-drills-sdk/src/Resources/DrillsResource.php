@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDrillsSdk\Resources;
+namespace Stackra\SportsDrillsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsDrillsSdk\Data\DrillData;
-use Academorix\SportsDrillsSdk\Requests\Drills\CreateDrillRequest;
-use Academorix\SportsDrillsSdk\Requests\Drills\ListDrillsRequest;
-use Academorix\SportsDrillsSdk\Requests\Drills\ShowDrillRequest;
-use Academorix\SportsDrillsSdk\Requests\Drills\UpdateDrillRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsDrillsSdk\Data\DrillData;
+use Stackra\SportsDrillsSdk\Requests\Drills\CreateDrillRequest;
+use Stackra\SportsDrillsSdk\Requests\Drills\ListDrillsRequest;
+use Stackra\SportsDrillsSdk\Requests\Drills\ShowDrillRequest;
+use Stackra\SportsDrillsSdk\Requests\Drills\UpdateDrillRequest;
 use Saloon\Http\Response;
 
 /**
@@ -57,7 +57,7 @@ final readonly class DrillsResource
      *
      * @return DrillData
      */
-    public function create(\Academorix\SportsDrillsSdk\Payloads\Drills\CreateDrillPayload $payload, ?string $idempotencyKey = null): DrillData
+    public function create(\Stackra\SportsDrillsSdk\Payloads\Drills\CreateDrillPayload $payload, ?string $idempotencyKey = null): DrillData
     {
         return $this->connector->send(new CreateDrillRequest($payload, $idempotencyKey))->dto();
     }
@@ -85,7 +85,7 @@ final readonly class DrillsResource
      *
      * @return DrillData
      */
-    public function update(string $drill, \Academorix\SportsDrillsSdk\Payloads\Drills\UpdateDrillPayload $payload, ?string $idempotencyKey = null): DrillData
+    public function update(string $drill, \Stackra\SportsDrillsSdk\Payloads\Drills\UpdateDrillPayload $payload, ?string $idempotencyKey = null): DrillData
     {
         return $this->connector->send(new UpdateDrillRequest($drill, $payload, $idempotencyKey))->dto();
     }

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Contracts\Services;
+namespace Stackra\Subscription\Contracts\Services;
 
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
-use Academorix\Subscription\Attributes\AsPlanTier;
-use Academorix\Subscription\Enums\PlanTier;
-use Academorix\Subscription\Services\PlanRegistry;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Subscription\Attributes\AsPlanTier;
+use Stackra\Subscription\Enums\PlanTier;
+use Stackra\Subscription\Services\PlanRegistry;
 use Illuminate\Container\Attributes\Bind;
 
 /**
  * In-memory registry of every `#[AsPlanTier]`-declared tier profile.
  *
  * Hydrated at boot by the framework's generic
- * {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ * {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  * pump via the {@see HydratesFrom} attribute on {@see register()}.
  * Consumers of the registry read the shipped defaults (label, rank,
  * bundled features) when provisioning a plan or comparing tiers.

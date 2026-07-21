@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Models;
+namespace Stackra\Compliance\Models;
 
-use Academorix\Compliance\Contracts\Data\DsarInterface;
-use Academorix\Compliance\Database\Factories\DsarFactory;
-use Academorix\Compliance\Enums\DsarAction;
-use Academorix\Compliance\Enums\DsarState;
-use Academorix\Compliance\Observers\DsarObserver;
-use Academorix\Compliance\Policies\DsarPolicy;
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Compliance\Contracts\Data\DsarInterface;
+use Stackra\Compliance\Database\Factories\DsarFactory;
+use Stackra\Compliance\Enums\DsarAction;
+use Stackra\Compliance\Enums\DsarState;
+use Stackra\Compliance\Observers\DsarObserver;
+use Stackra\Compliance\Policies\DsarPolicy;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -101,7 +101,7 @@ final class Dsar extends Model implements AuditableContract, DsarInterface
     {
         return $this->hasMany(
             DsarArtefact::class,
-            \Academorix\Compliance\Contracts\Data\DsarArtefactInterface::ATTR_DSAR_ID,
+            \Stackra\Compliance\Contracts\Data\DsarArtefactInterface::ATTR_DSAR_ID,
         );
     }
 }

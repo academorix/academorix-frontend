@@ -2,10 +2,10 @@
 inclusion: auto
 ---
 
-# Foundation Package (`academorix/foundation`)
+# Foundation Package (`stackra/foundation`)
 
-**Namespace:** `Academorix\Console\` **Location:** `modules/ab/foundation/`
-**Composer:** `academorix/foundation` **PHP:** ^8.4|^8.5
+**Namespace:** `Stackra\Console\` **Location:** `modules/ab/foundation/`
+**Composer:** `stackra/foundation` **PHP:** ^8.4|^8.5
 
 ## Purpose
 
@@ -26,13 +26,13 @@ headless API backends.
 | `pixielity/stub-generator`       | ^1.0    | Code generation            |
 | `spatie/backtrace`               | ^1.6    | Stack trace analysis       |
 | `spatie/laravel-error-solutions` | ^1.1    | Error solution suggestions |
-| `academorix/framework`           | @dev    | Core framework             |
+| `stackra/framework`           | @dev    | Core framework             |
 
 ## Key Components
 
 ### Custom Application Class
 
-`Academorix\Console\Application` — extends Laravel's Application with:
+`Stackra\Console\Application` — extends Laravel's Application with:
 
 - Custom directory structure support
 - Configurable project path

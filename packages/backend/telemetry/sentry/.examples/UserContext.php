@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Sentry\Examples;
+namespace Stackra\Sentry\Examples;
 
-use Academorix\Sentry\Attributes\AsSentryContext;
+use Stackra\Sentry\Attributes\AsSentryContext;
 use Sentry\State\Scope;
 
 /**

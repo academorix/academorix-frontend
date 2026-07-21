@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Services;
+namespace Stackra\Subscription\Services;
 
-use Academorix\Subscription\Attributes\AsPlanTier;
-use Academorix\Subscription\Contracts\Services\PlanRegistryInterface;
-use Academorix\Subscription\Enums\PlanTier;
+use Stackra\Subscription\Attributes\AsPlanTier;
+use Stackra\Subscription\Contracts\Services\PlanRegistryInterface;
+use Stackra\Subscription\Enums\PlanTier;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

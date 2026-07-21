@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\User\Console;
+namespace Stackra\User\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan user:restore` — Restore — user command.

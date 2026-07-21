@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/branding/relations",
+  "id": "stackra://modules/branding/relations",
   "$version": 1,
   "title": "branding — model relationships",
   "description": "Branding is a single-entity module; the only relation is Tenant -> Branding (1:1 or 1:N depending on future multi-profile design; single row per Tenant at v0.3).",

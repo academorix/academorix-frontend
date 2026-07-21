@@ -394,7 +394,7 @@ import { router } from "@stackra/routing/vite";
 export default defineConfig({
   plugins: [
     router({
-      rootDomain: "academorix.app",
+      rootDomain: "stackra.app",
       devMode: "localhost", // 'localhost' | 'hosts-file' | 'proxy'
       devSubdomains: ["admin", "tenant-alpha", "ops"], // banner only
       allowDevSubdomainQuery: false,
@@ -407,7 +407,7 @@ Startup banner example:
 
 ```
 ┌─ Stackra Routing ────────────────────────────────
-│  Root:           academorix.app
+│  Root:           stackra.app
 │  Dev URL (root): http://localhost:5173
 │  Subdomains (*.localhost — zero setup):
 │    admin        → http://admin.localhost:5173
@@ -418,7 +418,7 @@ Startup banner example:
 
 **`@stackra/routing/scripts/dev-hosts` — CLI does:**
 
-For users who need real domain testing (`admin.local.academorix.app` etc.), we
+For users who need real domain testing (`admin.local.stackra.app` etc.), we
 ship `pnpm stackra dev-hosts` — a Node CLI that:
 
 - Reads `RoutingModule.forRoot({rootDomain})` config
@@ -551,7 +551,7 @@ defineRoute({
   match: {
     subdomain: (s) => s.notIn(["www", "admin"]),
     query: (q) => q.has("preview"),
-    header: (h) => h.equals("x-tenant", "academorix"),
+    header: (h) => h.equals("x-tenant", "stackra"),
     hash: (h) => h.startsWith("#/"),
     custom: async (ctx) =>
       ctx.container.get(TENANT_SERVICE).exists(ctx.subdomain),
@@ -3194,12 +3194,12 @@ export const routes = [
     ErrorComponent: GlobalErrorFallback,
     NotFoundComponent: GlobalNotFoundFallback,
     seo: {
-      titleTemplate: "%s | Academorix",
-      openGraph: { siteName: "Academorix", locale: "en_US" },
-      twitter: { card: "summary_large_image", site: "@academorix" },
+      titleTemplate: "%s | Stackra",
+      openGraph: { siteName: "Stackra", locale: "en_US" },
+      twitter: { card: "summary_large_image", site: "@stackra" },
       robots: { index: true, follow: true, maxImagePreview: "large" },
       jsonLd: [
-        organization({ name: "Academorix", url: "https://academorix.app" }),
+        organization({ name: "Stackra", url: "https://stackra.app" }),
       ],
     },
     middleware: ["@web"],
@@ -3398,8 +3398,8 @@ export class AppModule {}
 ```typescript
 import type {ReactNode} from 'react';
 import {ContainerProvider} from '@stackra/container/react';
-import {RealtimeProvider} from '@academorix/realtime';
-import {NotificationTransportProvider} from '@academorix/notifications';
+import {RealtimeProvider} from '@stackra/realtime';
+import {NotificationTransportProvider} from '@stackra/notifications';
 
 // The former `<ThemeProvider>` / `<LocaleProvider>` are gone — theme
 // and locale live as services on the DI container (see
@@ -3536,7 +3536,7 @@ Executed in order. Each step green before moving to the next.
 - Build every promoted package in dep order:
   `contracts → testing → container → decorators → support → pipeline → logger → events → analytics → ui → error → network → cache → queue → routing`
 - Build dashboard.
-- Run `pnpm --filter @academorix/dashboard exec vite build`.
+- Run `pnpm --filter @stackra/dashboard exec vite build`.
 
 ---
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Exceptions;
+namespace Stackra\Entitlements\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a consumption would exceed the entitlement cap.
@@ -17,7 +17,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class EntitlementExceededException extends AcademorixException
+final class EntitlementExceededException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

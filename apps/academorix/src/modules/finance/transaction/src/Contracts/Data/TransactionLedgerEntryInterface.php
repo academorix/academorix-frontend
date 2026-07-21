@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transaction\Contracts\Data;
+namespace Stackra\Transaction\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Transaction\Models\TransactionLedgerEntry;
+use Stackra\Transaction\Models\TransactionLedgerEntry;
 
 /**
  * Table shape for the `transaction_ledger_entries` table.

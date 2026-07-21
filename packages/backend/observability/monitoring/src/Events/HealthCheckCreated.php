@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Events;
+namespace Stackra\Monitoring\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog (retention: 7 years — infrastructure config is compliance-relevant)
  * - monitoring::ScheduleFirstRun (dispatches RunHealthCheckJob delayed by interval_seconds/2 so the check doesn't fire at boot burst)
- * - monitoring::MetricsCollector (increments academorix.monitoring.health_checks.created_total)
+ * - monitoring::MetricsCollector (increments stackra.monitoring.health_checks.created_total)
  *
  * @category Monitoring
  *

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Contracts\Services;
+namespace Stackra\Storage\Contracts\Services;
 
-use Academorix\Storage\Enums\SignedUrlPurpose;
-use Academorix\Storage\Models\File;
-use Academorix\Storage\Models\SignedUrlAudit;
-use Academorix\Storage\Services\DefaultSignedUrlIssuer;
+use Stackra\Storage\Enums\SignedUrlPurpose;
+use Stackra\Storage\Models\File;
+use Stackra\Storage\Models\SignedUrlAudit;
+use Stackra\Storage\Services\DefaultSignedUrlIssuer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

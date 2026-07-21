@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/storage/events",
+  "id": "stackra://modules/storage/events",
   "$version": 1,
   "title": "storage \u2014 published events",
-  "namespace": "Academorix\\Storage\\Events",
+  "namespace": "Stackra\\Storage\\Events",
   "dispatchMode": "afterCommit",
   "dispatchModeRationale": "Every event fires only AFTER the initiating DB transaction commits. Subscribers reading the File / FileVariant / SignedUrlAudit / ChunkedUpload row must see it. Without after-commit, a race condition surfaces where the subscriber queries a not-yet-visible row.",
   "events": [
     {
       "name": "FileUploading",
-      "class": "Academorix\\Storage\\Events\\FileUploading",
+      "class": "Stackra\\Storage\\Events\\FileUploading",
       "trigger": "The upload byte stream reached the server + is being persisted. Fires INSIDE the DB transaction that creates the File row (afterCommit=false) so same-transaction sub-work (audit trail insert, quota reservation) lands atomically.",
       "afterCommit": false,
       "queue": null,
@@ -23,7 +23,7 @@
     },
     {
       "name": "FileUploaded",
-      "class": "Academorix\\Storage\\Events\\FileUploaded",
+      "class": "Stackra\\Storage\\Events\\FileUploaded",
       "trigger": "File row committed with virus_scan_state=pending. AV scan queued.",
       "afterCommit": true,
       "queue": "notifications",
@@ -54,7 +54,7 @@
     },
     {
       "name": "FileScanned",
-      "class": "Academorix\\Storage\\Events\\FileScanned",
+      "class": "Stackra\\Storage\\Events\\FileScanned",
       "trigger": "ScanFileForVirusesJob completed (regardless of outcome).",
       "afterCommit": true,
       "queue": "notifications",
@@ -70,7 +70,7 @@
     },
     {
       "name": "FileVirusFound",
-      "class": "Academorix\\Storage\\Events\\FileVirusFound",
+      "class": "Stackra\\Storage\\Events\\FileVirusFound",
       "trigger": "AV scan returned a virus signature. File moved to quarantine disk; virus_scan_state=infected.",
       "afterCommit": true,
       "queue": "notifications-critical",
@@ -92,7 +92,7 @@
     },
     {
       "name": "FileVariantGenerated",
-      "class": "Academorix\\Storage\\Events\\FileVariantGenerated",
+      "class": "Stackra\\Storage\\Events\\FileVariantGenerated",
       "trigger": "GenerateFileVariantsJob successfully produced ONE variant. Multiple events per file (one per variant_key).",
       "afterCommit": true,
       "queue": "notifications",
@@ -110,7 +110,7 @@
     },
     {
       "name": "FileVariantsCompleted",
-      "class": "Academorix\\Storage\\Events\\FileVariantsCompleted",
+      "class": "Stackra\\Storage\\Events\\FileVariantsCompleted",
       "trigger": "Every variant declared by the file's kind has been generated. Broadcast to the tenant so client-side galleries refresh their previews.",
       "afterCommit": true,
       "queue": "notifications",
@@ -125,7 +125,7 @@
     },
     {
       "name": "FileArchived",
-      "class": "Academorix\\Storage\\Events\\FileArchived",
+      "class": "Stackra\\Storage\\Events\\FileArchived",
       "trigger": "archived_at was set (single=true replacement OR user-initiated archive). Distinct from FileErased \u2014 archive keeps the blob until retention window elapses.",
       "afterCommit": true,
       "queue": "notifications",
@@ -139,7 +139,7 @@
     },
     {
       "name": "FileErased",
-      "class": "Academorix\\Storage\\Events\\FileErased",
+      "class": "Stackra\\Storage\\Events\\FileErased",
       "trigger": "File hard-deleted (row + blob refcount decremented; on refcount=0 the physical byte is removed).",
       "afterCommit": true,
       "queue": "notifications",
@@ -165,7 +165,7 @@
     },
     {
       "name": "SignedUrlIssued",
-      "class": "Academorix\\Storage\\Events\\SignedUrlIssued",
+      "class": "Stackra\\Storage\\Events\\SignedUrlIssued",
       "trigger": "A signed URL was issued and its SignedUrlAudit row committed. High-volume; sampled to config('storage.telemetry.signed_url_issued_sample_ratio', 0.1).",
       "afterCommit": true,
       "queue": null,
@@ -181,7 +181,7 @@
     },
     {
       "name": "SignedUrlRevoked",
-      "class": "Academorix\\Storage\\Events\\SignedUrlRevoked",
+      "class": "Stackra\\Storage\\Events\\SignedUrlRevoked",
       "trigger": "A signed URL was revoked \u2014 either by admin bulk-revoke, by one_time_use consumption, by sweep after expiration, or by file erasure.",
       "afterCommit": true,
       "queue": "notifications",
@@ -196,7 +196,7 @@
     },
     {
       "name": "ChunkedUploadInitiated",
-      "class": "Academorix\\Storage\\Events\\ChunkedUploadInitiated",
+      "class": "Stackra\\Storage\\Events\\ChunkedUploadInitiated",
       "trigger": "ChunkedUpload row committed with state=initiating. Quota reservation held for total_size_bytes.",
       "afterCommit": true,
       "queue": "notifications",
@@ -211,7 +211,7 @@
     },
     {
       "name": "ChunkedUploadCompleted",
-      "class": "Academorix\\Storage\\Events\\ChunkedUploadCompleted",
+      "class": "Stackra\\Storage\\Events\\ChunkedUploadCompleted",
       "trigger": "state transitioned to completed. resulting_file_id set. FileUploaded fires alongside for the newly-materialised File row.",
       "afterCommit": true,
       "queue": "notifications",
@@ -224,7 +224,7 @@
     },
     {
       "name": "ChunkedUploadAborted",
-      "class": "Academorix\\Storage\\Events\\ChunkedUploadAborted",
+      "class": "Stackra\\Storage\\Events\\ChunkedUploadAborted",
       "trigger": "state transitioned to aborted or expired. Quota reservation released.",
       "afterCommit": true,
       "queue": "notifications",
@@ -238,7 +238,7 @@
     },
     {
       "name": "StorageQuotaApproaching",
-      "class": "Academorix\\Storage\\Events\\StorageQuotaApproaching",
+      "class": "Stackra\\Storage\\Events\\StorageQuotaApproaching",
       "trigger": "Post-upload, the tenant's storage.bytes.consumed usage crossed the 80% threshold (configurable per plan).",
       "afterCommit": true,
       "queue": "notifications",
@@ -253,7 +253,7 @@
     },
     {
       "name": "StorageQuotaExceeded",
-      "class": "Academorix\\Storage\\Events\\StorageQuotaExceeded",
+      "class": "Stackra\\Storage\\Events\\StorageQuotaExceeded",
       "trigger": "An upload was rejected by storage.quota.enforce middleware. Fired for observability + notification.",
       "afterCommit": true,
       "queue": "notifications-critical",

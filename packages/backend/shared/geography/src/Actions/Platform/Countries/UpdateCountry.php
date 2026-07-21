@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Actions\Platform\Countries;
+namespace Stackra\Geography\Actions\Platform\Countries;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Geography\Contracts\Repositories\CountryRepositoryInterface;
-use Academorix\Geography\Data\Requests\UpdateCountryRequestData;
-use Academorix\Geography\Data\Resources\CountryResourceData;
-use Academorix\Geography\Enums\GeographyPermission;
-use Academorix\Geography\Models\Country;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Patch;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Geography\Contracts\Repositories\CountryRepositoryInterface;
+use Stackra\Geography\Data\Requests\UpdateCountryRequestData;
+use Stackra\Geography\Data\Resources\CountryResourceData;
+use Stackra\Geography\Enums\GeographyPermission;
+use Stackra\Geography\Models\Country;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Patch;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `PATCH /api/v1/platform/geography/countries/{country}` — platform

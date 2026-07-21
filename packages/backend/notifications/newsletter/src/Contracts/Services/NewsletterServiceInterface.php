@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Contracts\Services;
+namespace Stackra\Newsletter\Contracts\Services;
 
-use Academorix\Newsletter\Models\NewsletterCampaign;
-use Academorix\Newsletter\Models\NewsletterIssue;
-use Academorix\Newsletter\Models\NewsletterSubscription;
-use Academorix\Newsletter\Services\DefaultNewsletterService;
+use Stackra\Newsletter\Models\NewsletterCampaign;
+use Stackra\Newsletter\Models\NewsletterIssue;
+use Stackra\Newsletter\Models\NewsletterSubscription;
+use Stackra\Newsletter\Services\DefaultNewsletterService;
 use DateTimeInterface;
 use Illuminate\Container\Attributes\Bind;
 

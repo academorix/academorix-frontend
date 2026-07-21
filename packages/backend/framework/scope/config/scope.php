@@ -4,7 +4,7 @@
  * @file config/scope.php
  *
  * @description
- * Runtime configuration for the `academorix/scope` framework package.
+ * Runtime configuration for the `stackra/scope` framework package.
  * Merged into Laravel's config repository under the `scope.*` key by
  * ScopeServiceProvider. Every entry is documented in place so a
  * fresh contributor can reason about the knob before touching it.

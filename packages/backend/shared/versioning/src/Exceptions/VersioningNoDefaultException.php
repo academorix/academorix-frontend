@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Exceptions;
+namespace Stackra\Versioning\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * No ApiVersion has is_default=true.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class VersioningNoDefaultException extends AcademorixException
+final class VersioningNoDefaultException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

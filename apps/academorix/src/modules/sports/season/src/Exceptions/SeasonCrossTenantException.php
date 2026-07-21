@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Season\Exceptions;
+namespace Stackra\Season\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The `X-Season-Id` header points at a Season in a different tenant.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SeasonCrossTenantException extends AcademorixException
+final class SeasonCrossTenantException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

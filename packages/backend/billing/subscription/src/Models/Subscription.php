@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Models;
+namespace Stackra\Subscription\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Subscription\Contracts\Data\SubscriptionInterface;
-use Academorix\Subscription\Database\Factories\SubscriptionFactory;
-use Academorix\Subscription\Enums\BillingCycle;
-use Academorix\Subscription\Enums\SubscriptionProvider;
-use Academorix\Subscription\Enums\SubscriptionState;
-use Academorix\Subscription\Observers\SubscriptionObserver;
-use Academorix\Subscription\Policies\SubscriptionPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Subscription\Contracts\Data\SubscriptionInterface;
+use Stackra\Subscription\Database\Factories\SubscriptionFactory;
+use Stackra\Subscription\Enums\BillingCycle;
+use Stackra\Subscription\Enums\SubscriptionProvider;
+use Stackra\Subscription\Enums\SubscriptionState;
+use Stackra\Subscription\Observers\SubscriptionObserver;
+use Stackra\Subscription\Policies\SubscriptionPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -44,7 +44,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  *    can cross-reference back to the payment provider without a
  *    lookup table.
  *  * `grace_ends_at` extends the provider's default lifecycle —
- *    computed by {@see \Academorix\Subscription\Services\DefaultGracePeriodResolver}
+ *    computed by {@see \Stackra\Subscription\Services\DefaultGracePeriodResolver}
  *    at every state transition.
  *  * `consecutive_failures` feeds the DunningOrchestrator's
  *    stage-advancement logic.
@@ -138,7 +138,7 @@ final class Subscription extends Model implements AuditableContract, Subscriptio
     {
         return $this->hasMany(
             SubscriptionEvent::class,
-            \Academorix\Subscription\Contracts\Data\SubscriptionEventInterface::ATTR_SUBSCRIPTION_ID,
+            \Stackra\Subscription\Contracts\Data\SubscriptionEventInterface::ATTR_SUBSCRIPTION_ID,
         );
     }
 

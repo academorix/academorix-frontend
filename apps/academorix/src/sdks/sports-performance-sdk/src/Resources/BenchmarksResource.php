@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsPerformanceSdk\Resources;
+namespace Stackra\SportsPerformanceSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsPerformanceSdk\Data\BenchmarkData;
-use Academorix\SportsPerformanceSdk\Requests\Benchmarks\ListBenchmarksAdminRequest;
-use Academorix\SportsPerformanceSdk\Requests\Benchmarks\ListBenchmarksRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsPerformanceSdk\Data\BenchmarkData;
+use Stackra\SportsPerformanceSdk\Requests\Benchmarks\ListBenchmarksAdminRequest;
+use Stackra\SportsPerformanceSdk\Requests\Benchmarks\ListBenchmarksRequest;
 use Saloon\Http\Response;
 
 /**

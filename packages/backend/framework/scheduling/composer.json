@@ -1,12 +1,12 @@
 {
-  "name": "academorix/scheduling",
+  "name": "stackra/scheduling",
   "type": "library",
-  "description": "Attribute-based task scheduling for the Academorix monorepo. Register schedules declaratively on Job and Command classes via #[Schedule], #[Cron], #[WithoutOverlapping], etc. — no more edits to app/Console/Kernel.php or routes/console.php.",
+  "description": "Attribute-based task scheduling for the Stackra monorepo. Register schedules declaratively on Job and Command classes via #[Schedule], #[Cron], #[WithoutOverlapping], etc. — no more edits to app/Console/Kernel.php or routes/console.php.",
   "license": "proprietary",
   "require": {
     "php": "^8.3",
-    "academorix/foundation": "*",
-    "academorix/service-provider": "@dev",
+    "stackra/foundation": "*",
+    "stackra/service-provider": "@dev",
     "illuminate/console": "^13.0",
     "illuminate/contracts": "^13.0",
     "illuminate/support": "^13.0",
@@ -20,18 +20,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Scheduling\\": "src/"
+      "Stackra\\Scheduling\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Scheduling\\Tests\\": "tests/"
+      "Stackra\\Scheduling\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Scheduling\\Providers\\SchedulingServiceProvider"
+        "Stackra\\Scheduling\\Providers\\SchedulingServiceProvider"
       ],
       "aliases": {}
     }

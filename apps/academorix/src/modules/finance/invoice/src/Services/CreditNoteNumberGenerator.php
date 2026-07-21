@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invoice\Services;
+namespace Stackra\Invoice\Services;
 
-use Academorix\Invoice\Contracts\Services\CreditNoteNumberGeneratorInterface;
+use Stackra\Invoice\Contracts\Services\CreditNoteNumberGeneratorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Invoice\Contracts\Repositories\CreditNoteRepositoryInterface;
+use Stackra\Invoice\Contracts\Repositories\CreditNoteRepositoryInterface;
 
 /**
  * Concrete service — CreditNoteNumberGenerator.

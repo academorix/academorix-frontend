@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/mfa/sdui/widgets/mfa-status-chip",
+  "id": "stackra://modules/mfa/sdui/widgets/mfa-status-chip",
   "$version": 1,
   "kind": "widget",
   "name": "mfa-status-chip",

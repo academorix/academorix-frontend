@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Gateway\Services;
+namespace Stackra\Gateway\Services;
 
-use Academorix\Gateway\Contracts\Data\GatewayWebhookEventInterface;
-use Academorix\Gateway\Contracts\Repositories\GatewayWebhookEventRepositoryInterface;
-use Academorix\Gateway\Contracts\Services\WebhookHandlerInterface;
-use Academorix\Gateway\Data\WebhookEnvelope;
-use Academorix\Gateway\Exceptions\WebhookAlreadyProcessedException;
+use Stackra\Gateway\Contracts\Data\GatewayWebhookEventInterface;
+use Stackra\Gateway\Contracts\Repositories\GatewayWebhookEventRepositoryInterface;
+use Stackra\Gateway\Contracts\Services\WebhookHandlerInterface;
+use Stackra\Gateway\Data\WebhookEnvelope;
+use Stackra\Gateway\Exceptions\WebhookAlreadyProcessedException;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Reference implementation of
- * {@see \Academorix\Gateway\Contracts\Services\WebhookHandlerInterface}.
+ * {@see \Stackra\Gateway\Contracts\Services\WebhookHandlerInterface}.
  *
  * Owns the two invariants that make webhook processing safe:
  *
@@ -56,12 +56,12 @@ final class WebhookHandler implements WebhookHandlerInterface
      * @var array<string, class-string>
      */
     private const array EVENT_MAP = [
-        // 'payment_intent.succeeded'   => \Academorix\Payment\Events\PaymentSucceeded::class,
-        // 'payment_intent.payment_failed' => \Academorix\Payment\Events\PaymentFailed::class,
-        // 'charge.refunded'             => \Academorix\Refund\Events\RefundProcessed::class,
-        // 'charge.dispute.created'      => \Academorix\Chargeback\Events\ChargebackFiled::class,
-        // 'payout.paid'                 => \Academorix\Payout\Events\PayoutPaid::class,
-        // 'payout.failed'               => \Academorix\Payout\Events\PayoutFailed::class,
+        // 'payment_intent.succeeded'   => \Stackra\Payment\Events\PaymentSucceeded::class,
+        // 'payment_intent.payment_failed' => \Stackra\Payment\Events\PaymentFailed::class,
+        // 'charge.refunded'             => \Stackra\Refund\Events\RefundProcessed::class,
+        // 'charge.dispute.created'      => \Stackra\Chargeback\Events\ChargebackFiled::class,
+        // 'payout.paid'                 => \Stackra\Payout\Events\PayoutPaid::class,
+        // 'payout.failed'               => \Stackra\Payout\Events\PayoutFailed::class,
     ];
 
     public function __construct(

@@ -6,12 +6,12 @@
  * @description
  * Unit coverage for the domain-layer exception family:
  *
- *   - {@see \Academorix\Exceptions\Domain\DomainException} — the base.
- *   - {@see \Academorix\Exceptions\Domain\BusinessRuleException} — a
+ *   - {@see \Stackra\Exceptions\Domain\DomainException} — the base.
+ *   - {@see \Stackra\Exceptions\Domain\BusinessRuleException} — a
  *     named rule with a `rule_id`.
- *   - {@see \Academorix\Exceptions\Domain\InvariantViolationException}
+ *   - {@see \Stackra\Exceptions\Domain\InvariantViolationException}
  *     — an impossible state was reached (5xx bugs, `Critical`).
- *   - {@see \Academorix\Exceptions\Domain\TenantException} — tenancy
+ *   - {@see \Stackra\Exceptions\Domain\TenantException} — tenancy
  *     scope errors, escalating to `Security` on cross-tenant access.
  *
  * ## Why the tenancy tests matter
@@ -31,13 +31,13 @@
 
 declare(strict_types=1);
 
-use Academorix\Exceptions\Domain\BusinessRuleException;
-use Academorix\Exceptions\Domain\DomainException;
-use Academorix\Exceptions\Domain\InvariantViolationException;
-use Academorix\Exceptions\Domain\TenantException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
-use Academorix\Foundation\Support\CorrelationId;
+use Stackra\Exceptions\Domain\BusinessRuleException;
+use Stackra\Exceptions\Domain\DomainException;
+use Stackra\Exceptions\Domain\InvariantViolationException;
+use Stackra\Exceptions\Domain\TenantException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
+use Stackra\Foundation\Support\CorrelationId;
 
 afterEach(function (): void {
     CorrelationId::forget();

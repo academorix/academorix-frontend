@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Console;
+namespace Stackra\Transfer\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Transfer\Contracts\Data\XferJobInterface;
-use Academorix\Transfer\Contracts\Repositories\XferJobRepositoryInterface;
-use Academorix\Transfer\Enums\XferKind;
-use Academorix\Transfer\Jobs\ImportEntityJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Transfer\Contracts\Data\XferJobInterface;
+use Stackra\Transfer\Contracts\Repositories\XferJobRepositoryInterface;
+use Stackra\Transfer\Enums\XferKind;
+use Stackra\Transfer\Jobs\ImportEntityJob;
 
 /**
  * `php artisan transfer:import` — CLI import.
@@ -33,7 +33,7 @@ final class TransferImportCommand extends BaseCommand
     {
         $this->omni->titleBar('Transfer Import', 'sky');
 
-        /** @var \Academorix\Transfer\Models\XferJob $job */
+        /** @var \Stackra\Transfer\Models\XferJob $job */
         $job = $jobs->create([
             XferJobInterface::ATTR_KIND       => XferKind::Import->value,
             XferJobInterface::ATTR_ENTITY_KEY => (string) $this->argument('entity'),

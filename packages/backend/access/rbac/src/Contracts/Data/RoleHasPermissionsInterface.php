@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Contracts\Data;
+namespace Stackra\Rbac\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Rbac\Models\RoleHasPermissions;
+use Stackra\Rbac\Models\RoleHasPermissions;
 
 /**
  * Table shape for the `role_has_permissionses` table.

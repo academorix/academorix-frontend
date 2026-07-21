@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Session\Concerns;
+namespace Stackra\Session\Concerns;
 
 /**
  * Trait — HasSessionAttendance.

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Observers;
+namespace Stackra\Geography\Observers;
 
-use Academorix\Geography\Contracts\Data\CityInterface;
-use Academorix\Geography\Events\Domain\CityCreated;
-use Academorix\Geography\Events\Domain\CityDeleted;
-use Academorix\Geography\Events\Domain\CityUpdated;
-use Academorix\Geography\Models\City;
+use Stackra\Geography\Contracts\Data\CityInterface;
+use Stackra\Geography\Events\Domain\CityCreated;
+use Stackra\Geography\Events\Domain\CityDeleted;
+use Stackra\Geography\Events\Domain\CityUpdated;
+use Stackra\Geography\Models\City;
 
 /**
  * Lifecycle side effects for {@see City}.

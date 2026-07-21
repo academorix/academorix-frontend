@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/features",
+  "id": "stackra://modules/notifications/features",
   "$version": 1,
   "title": "notifications core \u2014 feature keys",
   "description": "Features exposed at `/auth/me` \u2192 `data.features`. Per-channel enablement lives in the respective channel module's features.json. This file publishes only the CORE capabilities (digest engine, template renderer, in-app live updates, marketing consent capture).",

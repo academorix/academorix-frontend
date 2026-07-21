@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Actions\Platform;
+namespace Stackra\Invitations\Actions\Platform;
 
-use Academorix\Invitations\Contracts\Repositories\InvitationRepositoryInterface;
-use Academorix\Invitations\Data\InvitationData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Invitations\Contracts\Repositories\InvitationRepositoryInterface;
+use Stackra\Invitations\Data\InvitationData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 
 /**
  * `GET /api/v1/invitations/{invitation}` — show action (platform-admin audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Invitations

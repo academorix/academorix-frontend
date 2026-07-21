@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "attendance",
   "alias": "attendance",
-  "namespace": "Academorix\\Sports\\Attendance",
+  "namespace": "Stackra\\Sports\\Attendance",
   "description": "The Attendance lane. Answers 'did this athlete show up at this session, when, and did they use a pass?'. Ships FOUR aggregates: `AttendanceRecord` (per-athlete-per-session check-in event carrying checked_in_at + checked_in_via IN self_kiosk/coach_verified/admin_recorded/geofence/qr_scan + status IN present/late/left_early/present_with_note; linked to consumed_pass_id via finance::Pass consumption; consumed atomically at check-in), `AttendancePolicy` (per-branch OR per-membership-plan rules — grace_period_minutes for late arrivals, no_show_fee_cents for missed sessions, max_absences_per_period before enrollment freeze, late_arrival_penalty pattern), `AbsenceRecord` (per-athlete-per-session absence — status IN excused/unexcused/no_show_advance_notice_given/vacation, absence_reason enum + free-text explanation, excused_by_user_id when admin excuses), `LateArrival` (per-attendance-record satellite tracking WHEN in the grace-period an athlete arrived — for coaching feedback + policy enforcement). Check-in flow: (1) validate athlete has active Membership + unconsumed Pass for the period, (2) create AttendanceRecord with atomic Pass.consume(), (3) if late (past grace period): also create LateArrival, (4) fire AttendanceRecorded event which cascades to growth::analytics + notifications. If athlete doesn't check in by session.ends_at: (5) create AbsenceRecord (status=unexcused) via nightly ReconcileAttendanceJob. Absences can be later excused by admin — flips status to excused + records reason. Attendance policy enforcement: (a) N unexcused absences in rolling window → notify athlete + admin, (b) N unexcused past threshold → freeze membership (via membership::MembershipObserver.setStatus('paused')), (c) late arrival penalty per late_penalty_rule. Distinct from `Pass.consumed_at` which is the raw money-movement — AttendanceRecord is the domain-level check-in event with device_fingerprint + ip + gps for fraud correlation on self-kiosk paths.",
   "keywords": [
     "attendance",
@@ -33,7 +33,7 @@
     "wave-7"
   ],
   "priority": 69,
-  "providers": ["Academorix\\Sports\\Attendance\\Providers\\AttendanceServiceProvider"],
+  "providers": ["Stackra\\Sports\\Attendance\\Providers\\AttendanceServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

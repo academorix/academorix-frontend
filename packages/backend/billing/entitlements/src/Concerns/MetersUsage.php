@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Concerns;
+namespace Stackra\Entitlements\Concerns;
 
-use Academorix\Entitlements\Attributes\EnforcesEntitlement;
-use Academorix\Entitlements\Contracts\Services\EnforcerInterface;
-use Academorix\Entitlements\Exceptions\EntitlementExceededException;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Entitlements\Attributes\EnforcesEntitlement;
+use Stackra\Entitlements\Contracts\Services\EnforcerInterface;
+use Stackra\Entitlements\Exceptions\EntitlementExceededException;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 
 /**
  * Mixed into models that consume metered features.

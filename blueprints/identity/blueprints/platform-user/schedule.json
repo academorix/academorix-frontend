@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/platform-user/schedule",
+  "id": "stackra://modules/platform-user/schedule",
   "$version": 1,
   "title": "platform-user \u2014 scheduled tasks",
   "entries": [
@@ -13,7 +13,7 @@
     {
       "name": "platform-user-retention-purge",
       "command": "queue:dispatch",
-      "arguments": ["Academorix\\PlatformUser\\Jobs\\PurgeOffboardedPlatformUsersJob"],
+      "arguments": ["Stackra\\PlatformUser\\Jobs\\PurgeOffboardedPlatformUsersJob"],
       "cron": "0 4 * * 0",
       "timezone": "UTC",
       "purpose": "Weekly Sunday 04:00 UTC: dispatch PurgeOffboardedPlatformUsersJob to hard-delete PlatformUser rows past the 90-day retention hold. Weekly cadence is enough because the retention window is long \u2014 a delay of up to 7 days beyond the 90th day is compliance-safe."
@@ -30,14 +30,14 @@
       "command": "platform-user:mfa-coverage-check",
       "cron": "*/5 * * * *",
       "timezone": "UTC",
-      "purpose": "Every 5 minutes: compute the ratio of active PlatformUsers with mfa_secret_encrypted NOT NULL on their Identity. Emit the `academorix.platform_user.mfa.coverage_ratio` gauge. Ratio < 1.0 alerts security within one polling interval."
+      "purpose": "Every 5 minutes: compute the ratio of active PlatformUsers with mfa_secret_encrypted NOT NULL on their Identity. Emit the `stackra.platform_user.mfa.coverage_ratio` gauge. Ratio < 1.0 alerts security within one polling interval."
     },
     {
       "name": "platform-user-active-headcount-metric",
       "command": "platform-user:emit-active-headcount",
       "cron": "0 * * * *",
       "timezone": "UTC",
-      "purpose": "Hourly: emit `academorix.platform_user.active.count` gauge per department. Cheap query; feeds the ops dashboard."
+      "purpose": "Hourly: emit `stackra.platform_user.active.count` gauge per department. Cheap query; feeds the ops dashboard."
     },
     {
       "name": "platform-user-on-call-warmup",

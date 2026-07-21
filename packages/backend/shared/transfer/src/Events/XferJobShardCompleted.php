@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Events;
+namespace Stackra\Transfer\Events;
 
-use Academorix\Events\Attributes\AsEvent;
-use Academorix\Transfer\Models\XferShard;
+use Stackra\Events\Attributes\AsEvent;
+use Stackra\Transfer\Models\XferShard;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 
 /**
  * Fired when a {@see XferShard} transitions to `succeeded` or
  * `failed`. Coordinator jobs listen to aggregate counters into the
- * parent {@see \Academorix\Transfer\Models\XferJob}.
+ * parent {@see \Stackra\Transfer\Models\XferJob}.
  *
  * @category Transfer
  *

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Drills\Contracts\Repositories;
+namespace Stackra\Drills\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Drills\Models\SessionPlanItem}.
+ * Repository contract for {@see Stackra\Drills\Models\SessionPlanItem}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `SessionPlanItemRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Drills\Models\SessionPlanItem>
+ * @extends RepositoryInterface<\Stackra\Drills\Models\SessionPlanItem>
  *
  * @category Drills
  *

@@ -1,10 +1,10 @@
 {
-  "name": "academorix/telemetry",
+  "name": "stackra/telemetry",
   "type": "library",
-  "description": "Academorix Telemetry module — server-side Laravel package emitted from the module blueprint at `modules/shared/blueprints/telemetry/`. Complements the wire SDK at `academorix-shared/telemetry-sdk`.",
+  "description": "Stackra Telemetry module — server-side Laravel package emitted from the module blueprint at `modules/shared/blueprints/telemetry/`. Complements the wire SDK at `stackra-shared/telemetry-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "shared",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-shared/telemetry-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-shared/telemetry-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Telemetry\\": "src/"
+      "Stackra\\Telemetry\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Telemetry\\Tests\\": "tests/"
+      "Stackra\\Telemetry\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Telemetry\\Providers\\TelemetryServiceProvider"
+        "Stackra\\Telemetry\\Providers\\TelemetryServiceProvider"
       ],
       "aliases": {}
     }

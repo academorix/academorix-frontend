@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Exceptions;
+namespace Stackra\Search\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a `SearchSynonym` lookup fails.
@@ -13,7 +13,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SearchSynonymNotFoundException extends AcademorixException
+final class SearchSynonymNotFoundException extends StackraException
 {
     public const CODE = 'SEARCH_SYNONYM_NOT_FOUND';
 

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Actions\Tenant;
+namespace Stackra\Storage\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Storage\Contracts\Services\ChunkedUploadCoordinatorInterface;
-use Academorix\Storage\Data\ChunkedUploadData;
-use Academorix\Storage\Data\Requests\InitiateChunkedUploadRequestData;
-use Academorix\Storage\Enums\StoragePermission;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Storage\Contracts\Services\ChunkedUploadCoordinatorInterface;
+use Stackra\Storage\Data\ChunkedUploadData;
+use Stackra\Storage\Data\Requests\InitiateChunkedUploadRequestData;
+use Stackra\Storage\Enums\StoragePermission;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 
 /**
  * `POST /api/v1/files/chunked` — initiate a chunked upload.

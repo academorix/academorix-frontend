@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/search/permissions",
+  "id": "stackra://modules/search/permissions",
   "$version": 1,
   "title": "search \u2014 permissions",
-  "seeder": "Academorix\\Search\\Database\\Seeders\\SearchPermissionSeeder",
+  "seeder": "Stackra\\Search\\Database\\Seeders\\SearchPermissionSeeder",
   "isSystem": true,
   "description": "Operational permissions on the search surface itself. Per-ENTITY search permissions (e.g. `athletes.viewAny`) come from each domain module \u2014 they compose via `requiredPermission` on the #[Searchable] attribute (the query engine filters out models the caller can't see).",
   "permissions": [

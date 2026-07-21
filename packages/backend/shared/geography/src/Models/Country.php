@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Models;
+namespace Stackra\Geography\Models;
 
-use Academorix\Geography\Concerns\HasWorldLocalizedName;
-use Academorix\Geography\Contracts\Data\CountryInterface;
-use Academorix\Geography\Database\Factories\CountryFactory;
-use Academorix\Geography\Observers\CountryObserver;
-use Academorix\Geography\Policies\CountryPolicy;
+use Stackra\Geography\Concerns\HasWorldLocalizedName;
+use Stackra\Geography\Contracts\Data\CountryInterface;
+use Stackra\Geography\Database\Factories\CountryFactory;
+use Stackra\Geography\Observers\CountryObserver;
+use Stackra\Geography\Policies\CountryPolicy;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;

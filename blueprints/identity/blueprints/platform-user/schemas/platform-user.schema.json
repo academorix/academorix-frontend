@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/platform-user/schemas/platform-user",
+  "id": "stackra://modules/platform-user/schemas/platform-user",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "PlatformUser",
-  "description": "Academorix-staff principal. Cross-tenant, cross-application. Sits on the `platform_admin` guard. Reuses the `identity/identity` substrate for credentials via `identity_id` FK. UNIQUE(identity_id) enforces one PlatformUser per Identity. NEVER carries `tenant_id` or `application_id` \u2014 cross-plane by construction (see design.md \u00a74.3 + tenancy-columns.md \u00a72 exception).",
+  "description": "Stackra-staff principal. Cross-tenant, cross-application. Sits on the `platform_admin` guard. Reuses the `identity/identity` substrate for credentials via `identity_id` FK. UNIQUE(identity_id) enforces one PlatformUser per Identity. NEVER carries `tenant_id` or `application_id` \u2014 cross-plane by construction (see design.md \u00a74.3 + tenancy-columns.md \u00a72 exception).",
   "type": "object",
   "x-module": "platform-user",
   "x-eloquent": {
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "plu_",
     "incrementing": false,
-    "model": "Academorix\\PlatformUser\\Models\\PlatformUser",
-    "interface": "Academorix\\PlatformUser\\Contracts\\Data\\PlatformUserInterface",
-    "implements": ["Academorix\\PlatformUser\\Contracts\\Data\\PlatformUserInterface"],
+    "model": "Stackra\\PlatformUser\\Models\\PlatformUser",
+    "interface": "Stackra\\PlatformUser\\Contracts\\Data\\PlatformUserInterface",
+    "implements": ["Stackra\\PlatformUser\\Contracts\\Data\\PlatformUserInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

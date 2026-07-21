@@ -4,7 +4,7 @@
  * @file packages/database/tests/Pest.php
  *
  * @description
- * Pest bootstrap for the `academorix/database` test suite. Kept
+ * Pest bootstrap for the `stackra/database` test suite. Kept
  * minimal — Feature tests boot Testbench per case, and Unit tests
  * run in isolation without a framework instance.
  *

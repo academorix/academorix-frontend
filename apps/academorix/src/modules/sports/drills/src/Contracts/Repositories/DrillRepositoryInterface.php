@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Drills\Contracts\Repositories;
+namespace Stackra\Drills\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Drills\Models\Drill}.
+ * Repository contract for {@see Stackra\Drills\Models\Drill}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `DrillRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Drills\Models\Drill>
+ * @extends RepositoryInterface<\Stackra\Drills\Models\Drill>
  *
  * @category Drills
  *

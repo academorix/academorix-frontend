@@ -11,9 +11,9 @@
  *
  * ## Contract vs. implementation
  *
- * Consumers depend on {@see \Academorix\ApiSdk\Contracts\ApiClientInterface};
+ * Consumers depend on {@see \Stackra\ApiSdk\Contracts\ApiClientInterface};
  * this class is the default implementation the container binds.
- * Tests bind {@see \Academorix\ApiSdk\Testing\ApiFake} instead.
+ * Tests bind {@see \Stackra\ApiSdk\Testing\ApiFake} instead.
  *
  * ## `__call` semantics
  *
@@ -35,24 +35,24 @@
  * the developer experience decent:
  *
  *   - Consumers can annotate the ApiClient variable's type as
- *     `Academorix\ApiSdk\Contracts\ApiClientInterface` and
+ *     `Stackra\ApiSdk\Contracts\ApiClientInterface` and
  *     invoke `resource('tenancy')` explicitly for a typed return.
  *
- *   - The `academorix:sdk-api:generate-meta` command (planned)
+ *   - The `stackra:sdk-api:generate-meta` command (planned)
  *     emits a `.phpstorm.meta.php` file mapping each resource
  *     name to its concrete class so IDE completion works.
  *
- * @see \Academorix\ApiSdk\Registry\SdkResourceRegistry Underlying registry.
- * @see \Academorix\ApiSdk\Contracts\SdkResource Resource contract.
+ * @see \Stackra\ApiSdk\Registry\SdkResourceRegistry Underlying registry.
+ * @see \Stackra\ApiSdk\Contracts\SdkResource Resource contract.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Client;
+namespace Stackra\ApiSdk\Client;
 
-use Academorix\ApiSdk\Contracts\ApiClientInterface;
-use Academorix\ApiSdk\Contracts\SdkResource;
-use Academorix\ApiSdk\Registry\SdkResourceRegistry;
+use Stackra\ApiSdk\Contracts\ApiClientInterface;
+use Stackra\ApiSdk\Contracts\SdkResource;
+use Stackra\ApiSdk\Registry\SdkResourceRegistry;
 
 /**
  * Default `ApiClientInterface` implementation. Immutable and

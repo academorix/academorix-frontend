@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Region\Repositories;
+namespace Stackra\Region\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Region\Contracts\Data\RegionInterface;
-use Academorix\Region\Contracts\Repositories\RegionRepositoryInterface;
-use Academorix\Region\Models\Region;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Region\Contracts\Data\RegionInterface;
+use Stackra\Region\Contracts\Repositories\RegionRepositoryInterface;
+use Stackra\Region\Models\Region;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Region\Models\Region}.
+ * Attribute-first Eloquent repository for {@see Stackra\Region\Models\Region}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(RegionInterface::class)]` which resolves to
  * `Region` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Region\Models\Region>
+ * @extends Repository<\Stackra\Region\Models\Region>
  *
  * @category Region
  *

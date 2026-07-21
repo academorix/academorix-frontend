@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Console;
+namespace Stackra\Search\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan search:cancel` — Cancel — search command.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Attributes;
+namespace Stackra\Transfer\Attributes;
 
 use Attribute;
 
@@ -13,7 +13,7 @@ use Attribute;
  *
  * Discovered at boot by the framework's generic hydration pump via
  * the `#[HydratesFrom(ImportableWorkbook::class)]` declaration on
- * {@see \Academorix\Transfer\Contracts\Services\WorkbookRegistryInterface::register()}.
+ * {@see \Stackra\Transfer\Contracts\Services\WorkbookRegistryInterface::register()}.
  *
  * ## Example
  *

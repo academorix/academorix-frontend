@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/branch/notifications",
+  "id": "stackra://modules/branch/notifications",
   "$version": 1,
   "title": "branch — notification classes + categories",
-  "namespace": "Academorix\\Branch\\Notifications",
+  "namespace": "Stackra\\Branch\\Notifications",
   "notifications": [
     "BranchCreatedNotification",
     "BranchClosedNotification",

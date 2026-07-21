@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Athlete\Concerns;
+namespace Stackra\Athlete\Concerns;
 
 /**
  * Trait — BelongsToAthlete.

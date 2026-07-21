@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Membership\Database\Factories;
+namespace Stackra\Membership\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Membership\Contracts\Data\PassInterface;
-use Academorix\Membership\Models\Pass;
+use Stackra\Membership\Contracts\Data\PassInterface;
+use Stackra\Membership\Models\Pass;
 
 /**
- * Factory for {@see \Academorix\Membership\Models\Pass}.
+ * Factory for {@see \Stackra\Membership\Models\Pass}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Membership\Models\Pass>
+ * @extends Factory<\Stackra\Membership\Models\Pass>
  *
  * @category Membership
  *

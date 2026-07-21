@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/tax/metrics",
+  "id": "stackra://modules/tax/metrics",
   "$version": 1,
   "title": "tax — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "academorix.tax",
+  "namespace": "stackra.tax",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": [
@@ -31,52 +31,52 @@
   },
   "metrics": [
     {
-      "name": "academorix.tax.rates.created_total",
+      "name": "stackra.tax.rates.created_total",
       "kind": "counter",
       "unit": "rates",
       "labels": ["rate_type", "source", "country_code_bucket"],
       "description": "Number of tax rates created. country_code_bucket = 'US' | 'CA' | 'GB' | 'DE' | 'EU_OTHER' | 'OTHER' (bounded cardinality)."
     },
     {
-      "name": "academorix.tax.rates.expired_total",
+      "name": "stackra.tax.rates.expired_total",
       "kind": "counter",
       "unit": "rates",
       "labels": ["rate_type"],
       "description": "Rates auto-expired by the effective_to sweep."
     },
     {
-      "name": "academorix.tax.jurisdictions.created_total",
+      "name": "stackra.tax.jurisdictions.created_total",
       "kind": "counter",
       "unit": "jurisdictions",
       "labels": ["is_platform_reference", "tax_type", "country_code_bucket"]
     },
     {
-      "name": "academorix.tax.exemptions.created_total",
+      "name": "stackra.tax.exemptions.created_total",
       "kind": "counter",
       "unit": "exemptions",
       "labels": ["exemption_type"]
     },
     {
-      "name": "academorix.tax.exemptions.verified_total",
+      "name": "stackra.tax.exemptions.verified_total",
       "kind": "counter",
       "unit": "exemptions",
       "labels": ["exemption_type", "verification_method"],
       "description": "verification_method = 'manual' | 'automatic_registry_check'."
     },
     {
-      "name": "academorix.tax.exemptions.rejected_total",
+      "name": "stackra.tax.exemptions.rejected_total",
       "kind": "counter",
       "unit": "exemptions",
       "labels": ["exemption_type", "rejection_reason"]
     },
     {
-      "name": "academorix.tax.exemptions.expired_total",
+      "name": "stackra.tax.exemptions.expired_total",
       "kind": "counter",
       "unit": "exemptions",
       "labels": ["exemption_type", "was_warning_sent"]
     },
     {
-      "name": "academorix.tax.exemptions.verification_duration_ms",
+      "name": "stackra.tax.exemptions.verification_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [500, 2000, 10000, 30000, 120000],
@@ -84,21 +84,21 @@
       "description": "Time from TaxExemptionCreated to TaxExemptionVerified/Rejected. Manual verification: hours-days. Auto registry check: seconds."
     },
     {
-      "name": "academorix.tax.calculations.completed_total",
+      "name": "stackra.tax.calculations.completed_total",
       "kind": "counter",
       "unit": "calculations",
       "labels": ["provider", "applied_exemption"],
       "description": "P0 metric — every tax_calculations row created."
     },
     {
-      "name": "academorix.tax.calculations.failed_total",
+      "name": "stackra.tax.calculations.failed_total",
       "kind": "counter",
       "unit": "calculations",
       "labels": ["provider", "failure_reason"],
       "description": "P1 metric — every failure blocks an invoice line."
     },
     {
-      "name": "academorix.tax.calculations.duration_ms",
+      "name": "stackra.tax.calculations.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 200, 1000, 5000, 15000],
@@ -106,7 +106,7 @@
       "description": "End-to-end CalculateTaxForInvoiceLineJob latency (jurisdiction resolve + provider call + persist)."
     },
     {
-      "name": "academorix.tax.calculations.provider_http_duration_ms",
+      "name": "stackra.tax.calculations.provider_http_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 100, 500, 2000, 10000],
@@ -114,54 +114,54 @@
       "description": "Just the HTTP round-trip. response_status_class = '2xx' | '4xx' | '5xx' | 'timeout' | 'network_error'."
     },
     {
-      "name": "academorix.tax.calculations.drift_detected_total",
+      "name": "stackra.tax.calculations.drift_detected_total",
       "kind": "counter",
       "unit": "detections",
       "labels": ["provider", "severity"],
       "description": "ReconcileProviderCalculationsJob spot-check divergence. severity = 'warning' (1% or 100c delta) | 'critical' (5% or 1000c). Every increment is regulator-relevant."
     },
     {
-      "name": "academorix.tax.circuit_breakers.opened_total",
+      "name": "stackra.tax.circuit_breakers.opened_total",
       "kind": "counter",
       "unit": "opens",
       "labels": ["provider"],
       "description": "P1 signal — every opening blocks tenant invoice lines."
     },
     {
-      "name": "academorix.tax.circuit_breakers.currently_open",
+      "name": "stackra.tax.circuit_breakers.currently_open",
       "kind": "gauge",
       "unit": "breakers",
       "labels": ["provider"],
       "description": "Current count of open circuit-breakers per provider across all tenants."
     },
     {
-      "name": "academorix.tax.providers.configured_total",
+      "name": "stackra.tax.providers.configured_total",
       "kind": "counter",
       "unit": "configs",
       "labels": ["provider"]
     },
     {
-      "name": "academorix.tax.providers.test_events_sent_total",
+      "name": "stackra.tax.providers.test_events_sent_total",
       "kind": "counter",
       "unit": "tests",
       "labels": ["provider", "outcome"]
     },
     {
-      "name": "academorix.tax.reports.annual_generated_total",
+      "name": "stackra.tax.reports.annual_generated_total",
       "kind": "counter",
       "unit": "reports",
       "labels": ["year_bucket"],
       "description": "Annual tax reports generated. year_bucket = '2024' | '2025' | '2026+' (bounded)."
     },
     {
-      "name": "academorix.tax.entitlement.gate_refusals_total",
+      "name": "stackra.tax.entitlement.gate_refusals_total",
       "kind": "counter",
       "unit": "refusals",
       "labels": ["entitlement_key"],
       "description": "Number of tax operations refused by the entitlement middleware. Product signal for upgrade-CTA impressions."
     },
     {
-      "name": "academorix.tax.invoice_line_updated_post_calculation",
+      "name": "stackra.tax.invoice_line_updated_post_calculation",
       "kind": "counter",
       "unit": "events",
       "labels": [],

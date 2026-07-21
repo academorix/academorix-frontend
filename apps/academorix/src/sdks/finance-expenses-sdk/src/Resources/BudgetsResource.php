@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FinanceExpensesSdk\Resources;
+namespace Stackra\FinanceExpensesSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\FinanceExpensesSdk\Data\BudgetData;
-use Academorix\FinanceExpensesSdk\Requests\Budgets\CreateBudgetRequest;
-use Academorix\FinanceExpensesSdk\Requests\Budgets\ListBudgetsRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\FinanceExpensesSdk\Data\BudgetData;
+use Stackra\FinanceExpensesSdk\Requests\Budgets\CreateBudgetRequest;
+use Stackra\FinanceExpensesSdk\Requests\Budgets\ListBudgetsRequest;
 use Saloon\Http\Response;
 
 /**
@@ -55,7 +55,7 @@ final readonly class BudgetsResource
      *
      * @return BudgetData
      */
-    public function create(\Academorix\FinanceExpensesSdk\Payloads\Budgets\CreateBudgetPayload $payload, ?string $idempotencyKey = null): BudgetData
+    public function create(\Stackra\FinanceExpensesSdk\Payloads\Budgets\CreateBudgetPayload $payload, ?string $idempotencyKey = null): BudgetData
     {
         return $this->connector->send(new CreateBudgetRequest($payload, $idempotencyKey))->dto();
     }

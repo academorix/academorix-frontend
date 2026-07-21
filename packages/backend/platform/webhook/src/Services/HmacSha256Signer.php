@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Services;
+namespace Stackra\Webhook\Services;
 
-use Academorix\Webhook\Contracts\Services\WebhookSignerInterface;
+use Stackra\Webhook\Contracts\Services\WebhookSignerInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

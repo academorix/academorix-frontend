@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/rbac/schemas/role-has-permissions",
+  "id": "stackra://modules/rbac/schemas/role-has-permissions",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "RoleHasPermissions (spatie pivot, augmented)",

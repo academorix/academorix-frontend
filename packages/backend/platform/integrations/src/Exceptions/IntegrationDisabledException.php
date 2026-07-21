@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Exceptions;
+namespace Stackra\Integrations\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Raised when a caller attempts to sync (or otherwise operate on) an

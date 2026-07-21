@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Teams\Exceptions;
+namespace Stackra\Teams\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * min_age > max_age, or a value outside [3, 100].

@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Actions\Tenant;
+namespace Stackra\Newsletter\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Newsletter\Contracts\Data\NewsletterInterface;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterRepositoryInterface;
-use Academorix\Newsletter\Data\NewsletterData;
-use Academorix\Newsletter\Data\Requests\CreateNewsletterRequestData;
-use Academorix\Newsletter\Enums\NewsletterPermission;
-use Academorix\Newsletter\Enums\NewsletterStatus;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Newsletter\Contracts\Data\NewsletterInterface;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterRepositoryInterface;
+use Stackra\Newsletter\Data\NewsletterData;
+use Stackra\Newsletter\Data\Requests\CreateNewsletterRequestData;
+use Stackra\Newsletter\Enums\NewsletterPermission;
+use Stackra\Newsletter\Enums\NewsletterStatus;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 
 /**
  * `POST /api/v1/newsletters` — create a new newsletter publication.

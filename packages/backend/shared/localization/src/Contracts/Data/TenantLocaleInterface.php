@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Contracts\Data;
+namespace Stackra\Localization\Contracts\Data;
 
-use Academorix\Localization\Models\TenantLocale;
+use Stackra\Localization\Models\TenantLocale;
 use Illuminate\Container\Attributes\Bind;
 
 /**

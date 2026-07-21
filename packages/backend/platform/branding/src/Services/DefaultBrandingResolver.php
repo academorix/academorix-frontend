@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Services;
+namespace Stackra\Branding\Services;
 
-use Academorix\Branding\Contracts\Repositories\BrandingRepositoryInterface;
-use Academorix\Branding\Contracts\Services\BrandingResolverInterface;
-use Academorix\Branding\Models\Branding;
+use Stackra\Branding\Contracts\Repositories\BrandingRepositoryInterface;
+use Stackra\Branding\Contracts\Services\BrandingResolverInterface;
+use Stackra\Branding\Models\Branding;
 use Illuminate\Container\Attributes\Scoped;
 
 /**

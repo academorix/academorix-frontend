@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Formatters;
+namespace Stackra\Exceptions\Formatters;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Contracts\ErrorFormatterInterface;
-use Academorix\Exceptions\Data\ErrorEnvelope;
-use Academorix\Exceptions\Data\FieldError;
-use Academorix\Exceptions\Http\ValidationException;
-use Academorix\Exceptions\Support\ExceptionMapper;
-use Academorix\Exceptions\Support\MaskingPolicy;
-use Academorix\Exceptions\Support\Redactor;
-use Academorix\Exceptions\Support\TraceCleaner;
-use Academorix\Foundation\Enums\AppEnvironment;
-use Academorix\Foundation\Support\CorrelationId;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Contracts\ErrorFormatterInterface;
+use Stackra\Exceptions\Data\ErrorEnvelope;
+use Stackra\Exceptions\Data\FieldError;
+use Stackra\Exceptions\Http\ValidationException;
+use Stackra\Exceptions\Support\ExceptionMapper;
+use Stackra\Exceptions\Support\MaskingPolicy;
+use Stackra\Exceptions\Support\Redactor;
+use Stackra\Exceptions\Support\TraceCleaner;
+use Stackra\Foundation\Enums\AppEnvironment;
+use Stackra\Foundation\Support\CorrelationId;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +22,7 @@ use Throwable;
 
 /**
  * Formatter that renders any `\Throwable` as a JSON response using
- * the {@see \Academorix\Exceptions\Data\ErrorEnvelope} shape
+ * the {@see \Stackra\Exceptions\Data\ErrorEnvelope} shape
  * (RFC 7807-flavoured).
  *
  * ## When it fires
@@ -121,7 +121,7 @@ final class JsonErrorFormatter implements ErrorFormatterInterface
      * message; fall back to the redacted developer message; fall
      * back to the humanised error code.
      */
-    private function title(AcademorixException $e): string
+    private function title(StackraException $e): string
     {
         $userMessage = $e->userMessage();
         if ($userMessage !== null && $userMessage !== '') {
@@ -140,7 +140,7 @@ final class JsonErrorFormatter implements ErrorFormatterInterface
      * suppressed by the masking policy for high-severity errors in
      * production.
      */
-    private function detail(AcademorixException $e): ?string
+    private function detail(StackraException $e): ?string
     {
         $developer = $e->getMessage();
         $user = $e->userMessage();
@@ -162,7 +162,7 @@ final class JsonErrorFormatter implements ErrorFormatterInterface
         $base = (string) (function_exists('config') ? config('exceptions.docs_url', '') : '');
 
         return $base === ''
-            ? "urn:academorix:error:{$code}"
+            ? "urn:stackra:error:{$code}"
             : rtrim($base, '/') . '/' . $code;
     }
 
@@ -173,7 +173,7 @@ final class JsonErrorFormatter implements ErrorFormatterInterface
      *
      * @return list<FieldError>
      */
-    private function extractFields(AcademorixException $e): array
+    private function extractFields(StackraException $e): array
     {
         if (! $e instanceof ValidationException) {
             return [];
@@ -194,7 +194,7 @@ final class JsonErrorFormatter implements ErrorFormatterInterface
      *
      * @return array<string, mixed>
      */
-    private function meta(AcademorixException $e, MaskingPolicy $policy): array
+    private function meta(StackraException $e, MaskingPolicy $policy): array
     {
         $meta = [
             'severity' => $e->severity()->value,
@@ -216,7 +216,7 @@ final class JsonErrorFormatter implements ErrorFormatterInterface
      *
      * @return array<string, mixed>
      */
-    private function debug(AcademorixException $e): array
+    private function debug(StackraException $e): array
     {
         return $this->traceCleaner->describe($e);
     }

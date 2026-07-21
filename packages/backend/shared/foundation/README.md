@@ -1,4 +1,4 @@
-# academorix/foundation
+# stackra/foundation
 
 Server-side Laravel package for the `foundation` module. Auto-generated from the
 blueprint at `modules/shared/blueprints/foundation/`.
@@ -43,6 +43,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-shared/foundation-sdk` under `sdk/shared-foundation-sdk/`. Consumers
+`stackra-shared/foundation-sdk` under `sdk/shared-foundation-sdk/`. Consumers
 cross the service boundary through the SDK; this package is the SERVER-side
 owner of the domain.

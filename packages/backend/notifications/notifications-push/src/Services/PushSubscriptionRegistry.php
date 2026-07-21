@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Services;
+namespace Stackra\Notifications\Push\Services;
 
-use Academorix\Notifications\Push\Attributes\AsPushProvider;
-use Academorix\Notifications\Push\Contracts\Services\PushSubscriptionRegistryInterface;
+use Stackra\Notifications\Push\Attributes\AsPushProvider;
+use Stackra\Notifications\Push\Contracts\Services\PushSubscriptionRegistryInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

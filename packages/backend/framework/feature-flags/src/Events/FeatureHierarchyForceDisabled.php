@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Events;
+namespace Stackra\FeatureFlags\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 
 /**
  * Fired when a platform admin force-disables a hierarchy flag with orphan-risk rows.

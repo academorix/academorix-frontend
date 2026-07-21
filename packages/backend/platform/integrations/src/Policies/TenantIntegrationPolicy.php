@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Policies;
+namespace Stackra\Integrations\Policies;
 
-use Academorix\Integrations\Contracts\Data\TenantIntegrationInterface;
-use Academorix\Integrations\Enums\IntegrationsPermission;
-use Academorix\Integrations\Models\TenantIntegration;
+use Stackra\Integrations\Contracts\Data\TenantIntegrationInterface;
+use Stackra\Integrations\Enums\IntegrationsPermission;
+use Stackra\Integrations\Models\TenantIntegration;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

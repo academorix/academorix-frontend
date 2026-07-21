@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transaction\Attributes;
+namespace Stackra\Transaction\Attributes;
 
 use Attribute;
 

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Services;
+namespace Stackra\Tenancy\Services;
 
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
-use Academorix\Tenancy\Exceptions\TenantNotResolvedException;
-use Academorix\Tenancy\Models\Tenant;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Tenancy\Exceptions\TenantNotResolvedException;
+use Stackra\Tenancy\Models\Tenant;
 use Illuminate\Container\Attributes\Scoped;
 
 /**

@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/localization/settings",
+  "id": "stackra://modules/localization/settings",
   "$version": 1,
   "title": "localization \u2014 settings",
   "description": "Tenant-facing preferences. Two groups: tenant-level defaults + per-user preferences.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "localization",
-      "class": "Academorix\\Localization\\Settings\\LocalizationSettings",
+      "class": "Stackra\\Localization\\Settings\\LocalizationSettings",
       "label": "Languages",
       "description": "Tenant-wide language preferences + AI translation policy.",
       "icon": "language",
@@ -119,7 +119,7 @@
     },
     {
       "key": "localization_user",
-      "class": "Academorix\\Localization\\Settings\\LocalizationUserSettings",
+      "class": "Stackra\\Localization\\Settings\\LocalizationUserSettings",
       "label": "My language",
       "description": "Per-user locale preferences.",
       "icon": "user-circle",

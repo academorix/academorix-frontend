@@ -11,7 +11,7 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use Spatie\RouteAttributes\Attributes\Fallback as SpatieFallback;
@@ -29,7 +29,7 @@ use Spatie\RouteAttributes\Attributes\Fallback as SpatieFallback;
  *
  * ## Usage:
  * ```php
- * use Academorix\Routing\Attributes\Fallback;
+ * use Stackra\Routing\Attributes\Fallback;
  *
  * class FallbackController
  * {

@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Concerns;
+namespace Stackra\Activity\Concerns;
 
 /**
  * Trait — LogsActivity.

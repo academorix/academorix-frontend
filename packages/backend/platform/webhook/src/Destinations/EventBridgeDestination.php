@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Destinations;
+namespace Stackra\Webhook\Destinations;
 
-use Academorix\Webhook\Attributes\AsWebhookDestination;
-use Academorix\Webhook\Contracts\Services\WebhookDestinationInterface;
-use Academorix\Webhook\Models\WebhookDelivery;
-use Academorix\Webhook\Models\WebhookSubscription;
+use Stackra\Webhook\Attributes\AsWebhookDestination;
+use Stackra\Webhook\Contracts\Services\WebhookDestinationInterface;
+use Stackra\Webhook\Models\WebhookDelivery;
+use Stackra\Webhook\Models\WebhookSubscription;
 
 /**
  * AWS EventBridge destination — feature-flag guarded stub.

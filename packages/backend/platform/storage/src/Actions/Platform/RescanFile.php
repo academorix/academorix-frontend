@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Actions\Platform;
+namespace Stackra\Storage\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Storage\Enums\StoragePermission;
-use Academorix\Storage\Jobs\ScanFileForVirusesJob;
-use Academorix\Storage\Models\File;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Storage\Enums\StoragePermission;
+use Stackra\Storage\Jobs\ScanFileForVirusesJob;
+use Stackra\Storage\Models\File;
 use Illuminate\Http\JsonResponse;
 
 /**

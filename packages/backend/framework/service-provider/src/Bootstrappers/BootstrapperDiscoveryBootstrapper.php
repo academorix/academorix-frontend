@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceProvider\Bootstrappers;
+namespace Stackra\ServiceProvider\Bootstrappers;
 
-use Academorix\Foundation\Contracts\DiscoversAttributes;
-use Academorix\ServiceProvider\Attributes\AsBootstrapper;
-use Academorix\ServiceProvider\Contracts\BootstrapperInterface;
-use Academorix\ServiceProvider\Registry\BootstrapperRegistry;
+use Stackra\Foundation\Contracts\DiscoversAttributes;
+use Stackra\ServiceProvider\Attributes\AsBootstrapper;
+use Stackra\ServiceProvider\Contracts\BootstrapperInterface;
+use Stackra\ServiceProvider\Registry\BootstrapperRegistry;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Container\Attributes\Singleton;
 use Psr\Log\LoggerInterface;

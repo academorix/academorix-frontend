@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\DigitalPasses\Services;
+namespace Stackra\DigitalPasses\Services;
 
-use Academorix\DigitalPasses\Contracts\Services\QrPayloadMinterInterface;
+use Stackra\DigitalPasses\Contracts\Services\QrPayloadMinterInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\DigitalPasses\Contracts\Repositories\WalletPassRepositoryInterface;
+use Stackra\DigitalPasses\Contracts\Repositories\WalletPassRepositoryInterface;
 
 /**
  * Concrete service — QrPayloadMinter.

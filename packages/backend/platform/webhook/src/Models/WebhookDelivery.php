@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Models;
+namespace Stackra\Webhook\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
-use Academorix\Webhook\Casts\WebhookPayloadCast;
-use Academorix\Webhook\Contracts\Data\WebhookDeliveryInterface;
-use Academorix\Webhook\Contracts\Data\WebhookSubscriptionInterface;
-use Academorix\Webhook\Database\Factories\WebhookDeliveryFactory;
-use Academorix\Webhook\Enums\WebhookDeliveryStatus;
-use Academorix\Webhook\Observers\WebhookDeliveryObserver;
-use Academorix\Webhook\Policies\WebhookDeliveryPolicy;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Webhook\Casts\WebhookPayloadCast;
+use Stackra\Webhook\Contracts\Data\WebhookDeliveryInterface;
+use Stackra\Webhook\Contracts\Data\WebhookSubscriptionInterface;
+use Stackra\Webhook\Database\Factories\WebhookDeliveryFactory;
+use Stackra\Webhook\Enums\WebhookDeliveryStatus;
+use Stackra\Webhook\Observers\WebhookDeliveryObserver;
+use Stackra\Webhook\Policies\WebhookDeliveryPolicy;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -32,7 +32,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * Eloquent model for a {@see WebhookDeliveryInterface}.
  *
  * Append-only per-attempt audit row. NO soft deletes — retention is
- * handled by {@see \Academorix\Webhook\Jobs\PruneWebhookDeliveriesJob}.
+ * handled by {@see \Stackra\Webhook\Jobs\PruneWebhookDeliveriesJob}.
  * The payload is encrypted-at-rest and hidden from wire responses;
  * consumers read the metadata (status / attempt / latency) instead.
  *

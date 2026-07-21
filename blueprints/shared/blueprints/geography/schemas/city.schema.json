@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geography/schemas/city",
+  "id": "stackra://modules/geography/schemas/city",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "City",
@@ -19,9 +19,9 @@
     "keyType": "int",
     "incrementing": true,
     "timestamps": false,
-    "model": "Academorix\\Geography\\Models\\City",
-    "interface": "Academorix\\Geography\\Contracts\\Data\\CityInterface",
-    "implements": ["Academorix\\Geography\\Contracts\\Data\\CityInterface"],
+    "model": "Stackra\\Geography\\Models\\City",
+    "interface": "Stackra\\Geography\\Contracts\\Data\\CityInterface",
+    "implements": ["Stackra\\Geography\\Contracts\\Data\\CityInterface"],
     "traits": ["HasFactory", "Filterable"],
     "observers": ["CityObserver"]
   },
@@ -55,7 +55,7 @@
     "envelope": "spatie-data",
     "wrap": "data",
     "mapper": "SnakeCaseMapper",
-    "resource_class": "Academorix\\Geography\\Data\\Resources\\CityResourceData"
+    "resource_class": "Stackra\\Geography\\Data\\Resources\\CityResourceData"
   },
   "x-scoping": "Repository refuses index() calls without a country_id OR state_id filter. Prevents full-table scans across 150k rows."
 }

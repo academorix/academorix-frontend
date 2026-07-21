@@ -1,29 +1,29 @@
 we need full prduction and enterprise config and refactoring for the following
-/Users/akouta/Projects/academorix-frontend/turbo.json
-/Users/akouta/Projects/academorix-frontend/tsup.config.base.ts
-/Users/akouta/Projects/academorix-frontend/tsconfig.json
-/Users/akouta/Projects/academorix-frontend/tsconfig.base.json
-/Users/akouta/Projects/academorix-frontend/prettier.config.mjs
-/Users/akouta/Projects/academorix-frontend/playwright.config.ts
-/Users/akouta/Projects/academorix-frontend/eslint.config.mjs
-/Users/akouta/Projects/academorix-frontend/commitlint.config.mjs
-/Users/akouta/Projects/academorix-frontend/.size-limit.json
-/Users/akouta/Projects/academorix-frontend/.prettierignore
-/Users/akouta/Projects/academorix-frontend/.nvmrc
-/Users/akouta/Projects/academorix-frontend/.npmrc
-/Users/akouta/Projects/academorix-frontend/.lintstagedrc.mjs
-/Users/akouta/Projects/academorix-frontend/.gitignore
-/Users/akouta/Projects/academorix-frontend/.editorconfig
-/Users/akouta/Projects/academorix-frontend/knip.json
-/Users/akouta/Projects/academorix-frontend/package.json
+/Users/akouta/Projects/stackra-frontend/turbo.json
+/Users/akouta/Projects/stackra-frontend/tsup.config.base.ts
+/Users/akouta/Projects/stackra-frontend/tsconfig.json
+/Users/akouta/Projects/stackra-frontend/tsconfig.base.json
+/Users/akouta/Projects/stackra-frontend/prettier.config.mjs
+/Users/akouta/Projects/stackra-frontend/playwright.config.ts
+/Users/akouta/Projects/stackra-frontend/eslint.config.mjs
+/Users/akouta/Projects/stackra-frontend/commitlint.config.mjs
+/Users/akouta/Projects/stackra-frontend/.size-limit.json
+/Users/akouta/Projects/stackra-frontend/.prettierignore
+/Users/akouta/Projects/stackra-frontend/.nvmrc
+/Users/akouta/Projects/stackra-frontend/.npmrc
+/Users/akouta/Projects/stackra-frontend/.lintstagedrc.mjs
+/Users/akouta/Projects/stackra-frontend/.gitignore
+/Users/akouta/Projects/stackra-frontend/.editorconfig
+/Users/akouta/Projects/stackra-frontend/knip.json
+/Users/akouta/Projects/stackra-frontend/package.json
 
 for the following shall we create packages under
-/Users/akouta/Projects/academorix-frontend/packages/config foreach ?
-/Users/akouta/Projects/academorix-frontend/tsup.config.base.ts
-/Users/akouta/Projects/academorix-frontend/tsconfig.json
-/Users/akouta/Projects/academorix-frontend/tsconfig.base.json
-/Users/akouta/Projects/academorix-frontend/prettier.config.mjs
-/Users/akouta/Projects/academorix-frontend/eslint.config.mjs
+/Users/akouta/Projects/stackra-frontend/packages/config foreach ?
+/Users/akouta/Projects/stackra-frontend/tsup.config.base.ts
+/Users/akouta/Projects/stackra-frontend/tsconfig.json
+/Users/akouta/Projects/stackra-frontend/tsconfig.base.json
+/Users/akouta/Projects/stackra-frontend/prettier.config.mjs
+/Users/akouta/Projects/stackra-frontend/eslint.config.mjs
 
 Kiro
 
@@ -33,7 +33,7 @@ examine all 17 workspace config files to understand the current setup, then
 evaluate whether pulling out the build, TypeScript, and linting configs into
 separate packages makes sense for their enterprise setup. Est. Credits Used: 0
 (?) Elapsed time: 9s Checkpoint Restore [{ "resource":
-"/Users/akouta/Projects/academorix-frontend/packages/frontend/decorators/src/events/on-event.decorator.ts",
+"/Users/akouta/Projects/stackra-frontend/packages/frontend/decorators/src/events/on-event.decorator.ts",
 "owner": "typescript", "code": "2322", "severity": 8, "message": "Type
 'IOnEventMetadata | readonly IOnEventMetadata[]' is not assignable to type
 'IOnEventMetadata'.\n Property 'event' is missing in type 'readonly
@@ -42,7 +42,7 @@ IOnEventMetadata[]' but required in type 'IOnEventMetadata'.", "source": "ts",
 "relatedInformation": [ { "startLineNumber": 6112, "startColumn": 14,
 "endLineNumber": 6112, "endColumn": 19, "message": "'event' is declared here.",
 "resource":
-"/Users/akouta/Projects/academorix-frontend/packages/frontend/contracts/dist/index.d.ts"
+"/Users/akouta/Projects/stackra-frontend/packages/frontend/contracts/dist/index.d.ts"
 } ], "origin": "extHost2" }]
 
 Kiro
@@ -64,7 +64,7 @@ for the strategic question about extracting root configs into
 analyzing each file to see if moving it would improve the monorepo
 structure—particularly whether `tsconfig.base.json` should move to
 `packages/config/tsconfig/` so workspace packages can reference it as
-`@academorix/config` instead of relative paths. The TS error is blocking the
+`@stackra/config` instead of relative paths. The TS error is blocking the
 build, so that's the immediate priority—I'll fix that first with a single
 replacement. Then I can give a thoughtful answer to the strategic question about
 which of the 5 configs should move to `packages/config/` and how to handle the
@@ -84,19 +84,19 @@ then lay out what "production/enterprise" means for each of the 17.
 
 Extract to packages/config/_? Per file: File Extract? Why tsconfig.base.json Yes
 You already have packages/config/tsconfig/. Move this INTO it. Every package
-extends @academorix/config-tsconfig/base (a resolved package import) instead of
+extends @stackra/config-tsconfig/base (a resolved package import) instead of
 ../../../tsconfig.base.json (path-fragile). The ../../../ mess we just cleaned
 up wouldn't have existed. tsup.config.base.ts Yes Same story. Create
-packages/config/tsup/ → @academorix/config-tsup. Every package imports
+packages/config/tsup/ → @stackra/config-tsup. Every package imports
 defineBaseConfig from a resolved module. No relative-path fragility.
 eslint.config.mjs Partially packages/config/eslint/ exists but I haven't
-confirmed how it's consumed. Standard pattern: @academorix/config-eslint EXPORTS
+confirmed how it's consumed. Standard pattern: @stackra/config-eslint EXPORTS
 the flat-config recipe; the root eslint.config.mjs becomes a 3-line file that
-imports + re-exports it (export { default } from '@academorix/config-eslint').
+imports + re-exports it (export { default } from '@stackra/config-eslint').
 Same for per-package eslint.config.mjs files. prettier.config.mjs Yes, but low
-priority Create packages/config/prettier/ → @academorix/config-prettier. Root
+priority Create packages/config/prettier/ → @stackra/config-prettier. Root
 prettier.config.mjs becomes export { default } from
-'@academorix/config-prettier'. Small benefit (Prettier discovers upward anyway),
+'@stackra/config-prettier'. Small benefit (Prettier discovers upward anyway),
 but consistent with the pattern. tsconfig.json (root) No This is the workspace
 root's own TS config — it references paths + composite project setup for the
 WORKSPACE, not the compilation surface of a package. Stays at root. The pattern
@@ -105,8 +105,8 @@ package with an npm-scoped name. Every root .mjs / .json at the workspace root
 becomes a thin RE-EXPORTER that imports from those packages. This gives you:
 
 No relative-path drift — no ../../ gymnastics when packages move Version pinning
-— @academorix/config-tsup: workspace:* in each package's devDeps declares the
-dependency explicitly Discoverability — pnpm ls @academorix/config-tsup shows
+— @stackra/config-tsup: workspace:* in each package's devDeps declares the
+dependency explicitly Discoverability — pnpm ls @stackra/config-tsup shows
 every consumer Composability — per-package overrides layer on top cleanly
 Production/enterprise sweep across all 17 files Grouping into logical batches so
 we can execute in tractable chunks:
@@ -116,12 +116,12 @@ Batch A — TypeScript + build (highest leverage):
 tsconfig.base.json → move into packages/config/tsconfig/base.json; expose via
 exports map tsup.config.base.ts → move into packages/config/tsup/config.ts;
 expose defineBaseConfig tsconfig.json (root) → keep, but rewrite to reference
-the moved base via @academorix/config-tsconfig/base Every package's
+the moved base via @stackra/config-tsconfig/base Every package's
 tsconfig.json + tsup.config.ts → update imports to use resolved names Kills the
 ../../../ path-depth fragility permanently Batch B — Lint + format:
 
-eslint.config.mjs → thin re-exporter from @academorix/config-eslint
-prettier.config.mjs → thin re-exporter from @academorix/config-prettier (new
+eslint.config.mjs → thin re-exporter from @stackra/config-eslint
+prettier.config.mjs → thin re-exporter from @stackra/config-prettier (new
 package) .prettierignore → keep at root (Prettier convention); tune content
 .editorconfig → keep at root Batch C — Package manager + Node:
 
@@ -151,7 +151,7 @@ they do, we have a green baseline.
 
 Sequence 2 — Batch A (config extraction, the big one):
 
-Create packages/config/tsup/ with @academorix/config-tsup Move
+Create packages/config/tsup/ with @stackra/config-tsup Move
 tsup.config.base.ts into it (as src/config.ts), publish defineBaseConfig Move
 tsconfig.base.json into packages/config/tsconfig/ (which exists) Update all 48
 tsup.config.ts files to import from the resolved name Update all 48
@@ -185,7 +185,7 @@ checking if the build is passing after my previous TypeScript fix, reviewing all
 Big scope — going to work through it systematically. Setting up a task list to
 track progress, then verifying the baseline before starting.
 
-2 tool calls Task List Command /Users/akouta/Projects/academorix-frontend pnpm
+2 tool calls Task List Command /Users/akouta/Projects/stackra-frontend pnpm
 build 2>&1 | tail -12
 
 Thought complete I'm picking up where I left off with the task list. The
@@ -212,7 +212,7 @@ source fixes at the end.
 
 Starting Batch A — reading the current state before I write anything.
 
-2 tool calls Command /Users/akouta/Projects/academorix-frontend echo '===
+2 tool calls Command /Users/akouta/Projects/stackra-frontend echo '===
 current packages/config/ shape ===' ; ls -la packages/config/ ; echo ; echo '---
 packages/config/tsconfig/ contents ---' ; ls -la packages/config/tsconfig/ ;
 echo ; echo '--- packages/config/eslint/ contents ---' ; ls -la
@@ -232,7 +232,7 @@ duplicate `tsconfig.base.json` files at the root and elsewhere that I need to
 reconcile. My extraction strategy is to first audit what's currently in the
 package's base configuration, then sync it with the root's full setup, update
 all workspace packages to reference the shared config, and remove the
-duplicates. I should also create a new `@academorix/config-tsup` package to
+duplicates. I should also create a new `@stackra/config-tsup` package to
 centralize the tsup configuration in the same way. Since I'm facing ~96 file
 updates across tsconfig and tsup files, I'll write a Python script to handle the
 bulk rewrites reliably—updating import paths, adding the new packages to
@@ -249,7 +249,7 @@ react-library.json
 
 vite.json
 
-academorix-frontend/tsconfig.json
+stackra-frontend/tsconfig.json
 
 support/tsconfig.json
 
@@ -286,7 +286,7 @@ building it — that keeps iteration fast and eliminates an extra build step for
 an internal package. The package.json would point `main` and `exports` to
 `src/index.ts` so consumers can import `defineBaseConfig` directly. Now I'm
 working through the module resolution problem: when tsup loads a config file
-that imports from `@academorix/config-tsup`, the loader needs to handle
+that imports from `@stackra/config-tsup`, the loader needs to handle
 TypeScript files. I'm considering whether to pre-build the config package for
 safety or just ship raw TypeScript and rely on the bundler's TS evaluation to
 handle it. The simplest approach is probably to just test shipping the raw
@@ -371,7 +371,7 @@ workspace tsconfig.json, tsup.config.ts, and package.json and rewrites in bulk.
 
 migrate-configs-to-packages.py
 
-Details Command /Users/akouta/Projects/academorix-frontend python3
+Details Command /Users/akouta/Projects/stackra-frontend python3
 scripts/migrate-configs-to-packages.py
 
 Thought complete The migration script has successfully rewritten all the
@@ -387,11 +387,11 @@ sure the extends and imports are pointing to the right places. Migration ran
 clean. Verifying one sample + then deleting the root base files and
 reinstalling.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== sample
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== sample
 migrated tsconfig ===' ; head -8 packages/frontend/support/tsconfig.json ; echo
 ; echo '=== sample migrated tsup.config.ts ===' ; head -3
 packages/frontend/support/tsup.config.ts ; echo ; echo '=== sample devDep
-addition ===' ; grep -E '@academorix/config'
+addition ===' ; grep -E '@stackra/config'
 packages/frontend/support/package.json | head -3 ; echo ; echo '=== deleting
 root base files ===' ; rm -f tsconfig.base.json tsup.config.base.ts && echo ' ✓
 deleted' ; echo ; echo '=== zero remaining refs to root base files ===' ; grep
@@ -405,7 +405,7 @@ other is a source file with a string constant pointing to the base file path,
 likely used as a template hint for consumer configs. Let me examine that one to
 understand what's happening.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend grep -n
+1 tool call Command /Users/akouta/Projects/stackra-frontend grep -n
 'tsconfig.base\|tsup.config.base'
 packages/frontend/vite/src/core/constants/default-vite-config.constant.ts
 
@@ -413,15 +413,15 @@ Thought complete Just noting a docblock comment that won't affect anything, then
 moving on to install and build. Just a docblock comment. Now reinstalling and
 building.
 
-2 tool calls Command /Users/akouta/Projects/academorix-frontend pnpm install
-2>&1 | tail -12 Command /Users/akouta/Projects/academorix-frontend pnpm build
+2 tool calls Command /Users/akouta/Projects/stackra-frontend pnpm install
+2>&1 | tail -12 Command /Users/akouta/Projects/stackra-frontend pnpm build
 2>&1 | grep -E '(ERROR|Tasks:|Failed:|Success)' | tail -20
 
 Thought complete I need to check what went wrong with the
-`@academorix/config-tsup` build.
+`@stackra/config-tsup` build.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend pnpm --filter
-@academorix/config-tsup build 2>&1 | tail -30
+1 tool call Command /Users/akouta/Projects/stackra-frontend pnpm --filter
+@stackra/config-tsup build 2>&1 | tail -30
 
 Thought complete I'm running into a type mismatch with tsup's `swc`
 configuration—the `logger` field is coming through as `undefined` when the type
@@ -440,48 +440,48 @@ required. Adding a targeted cast on the swc field.
 
 index.ts
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm --filter
-@academorix/config-tsup build 2>&1 | tail -10
+Details Command /Users/akouta/Projects/stackra-frontend pnpm --filter
+@stackra/config-tsup build 2>&1 | tail -10
 
 Thought complete The config-tsup build succeeded, so I'll update the todo list
 and kick off the full build process. Marking Batch A tasks complete. Running
 full build to see the workspace-wide result.
 
-2 tool calls Task List Command /Users/akouta/Projects/academorix-frontend pnpm
+2 tool calls Task List Command /Users/akouta/Projects/stackra-frontend pnpm
 build 2>&1 | grep -E '(ERROR|Tasks:|Failed:|error TS|Cannot find|Could not
 resolve)' | head -30
 
 Thought complete I'm resuming from where batch A wrapped up—six tasks done, and
 now moving into batch B which covers eslint and prettier configuration
 extraction. The build failed on `@stackra/testing` because it's looking for
-`@academorix/config-tsup/dist/index.mjs`, which isn't available yet since I
+`@stackra/config-tsup/dist/index.mjs`, which isn't available yet since I
 haven't re-run pnpm install after adding the config-tsup as a devDependency to
 the consumer packages, so the symlinks haven't been created. Looking back at the
 earlier install output, it finished in just 10.2 seconds—way too fast to have
 actually re-linked everything. I need to force a clean reinstall to ensure all
 the workspace dependencies get properly symlinked, then verify the build works
 before tackling batch B. Resuming from checkpoint. Last build failed because
-pnpm didn't re-link the new @academorix/config-tsup into consumer node_modules.
+pnpm didn't re-link the new @stackra/config-tsup into consumer node_modules.
 Let me force a fresh install then continue with Batch B.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== does
-testing/node_modules have @academorix symlinks yet? ===' ; ls -la
-packages/frontend/testing/node_modules/@academorix/ 2>&1 | head -5 ; echo ; echo
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== does
+testing/node_modules have @stackra symlinks yet? ===' ; ls -la
+packages/frontend/testing/node_modules/@stackra/ 2>&1 | head -5 ; echo ; echo
 '=== force reinstall to relink workspace deps ===' ; pnpm install --force 2>&1 |
 tail -8
 
 Thought complete The symlinks are in place, and the earlier build failure was
-likely due to `@academorix/config-tsup/dist/index.mjs` not existing yet since
+likely due to `@stackra/config-tsup/dist/index.mjs` not existing yet since
 config-tsup hadn't been built. Now that we've built it individually, the issue
 should be resolved. Looking back at the error, the problem was that
-`@stackra/testing` runs tsup which imports from `@academorix/config-tsup`, but
+`@stackra/testing` runs tsup which imports from `@stackra/config-tsup`, but
 Turbo hadn't built config-tsup first. The real issue is that the exports map
 expects `dist/index.mjs` for the ESM entry point, but tsup might be outputting
 `dist/index.js` instead depending on how it's configured. I need to verify
 what's actually in the dist directory after the build to see if the filename
 matches what the exports map is declaring.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== what
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== what
 did config-tsup actually output? ===' ; ls -la packages/config/tsup/dist/ 2>&1 ;
 echo ; echo '=== exports map vs actual files ===' ; grep -A5 '"exports"'
 packages/config/tsup/package.json
@@ -497,7 +497,7 @@ Fixing.
 
 package.json
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm build 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm build 2>&1 |
 grep -E '(ERROR|Tasks:|Failed:|error TS|Cannot find|Could not
 resolve|ELIFECYCLE.*with exit)' | head -30
 
@@ -525,7 +525,7 @@ the previous behavior for now — strictness bumps can be a follow-up sweep.
 
 base.json
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm build 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm build 2>&1 |
 grep -E '(ERROR|Tasks:|Failed:|error TS|Cannot find|ELIFECYCLE.*with exit)' |
 head -20
 
@@ -541,7 +541,7 @@ pointing to files that don't exist. I need to verify whether network actually
 lists UI as a dependency and whether UI's exports properly define the `/react`
 entry point.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== does
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== does
 network depend on ui? ===' ; grep -E '"@stackra/ui"'
 packages/frontend/network/package.json | head -3 ; echo ; echo '=== does ui
 expose /react in exports? ===' ; grep -A2 '"./react"'
@@ -560,7 +560,7 @@ the cycle-break, but the react source file still imports from it, causing the
 DTS build to fail silently on that entry point while successfully emitting the
 other type definition files.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== ui
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== ui
 dist/ full listing ===' ; ls -la packages/frontend/ui/dist/ | grep -E
 'react|actions' ; echo ; echo '=== rebuild @stackra/ui with verbose output ==='
 ; pnpm --filter @stackra/ui build 2>&1 | tail -30
@@ -571,7 +571,7 @@ Let me try running the full build again to see if it completes now that the UI
 is ready, since the previous failure seemed to be a network issue. UI built
 cleanly with react.d.ts (53KB). Re-running full build.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend pnpm build 2>&1 |
+1 tool call Command /Users/akouta/Projects/stackra-frontend pnpm build 2>&1 |
 grep -E '(ERROR|Tasks:|Failed:|error TS|Cannot find|ELIFECYCLE.*with exit)' |
 head -30
 
@@ -580,7 +580,7 @@ Thought complete The real problem is that `@stackra/network` is importing from
 its own package.json. I need to look more closely at the network package's
 configuration to understand what's missing.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== every
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== every
 @stackra/* mention in network/package.json ===' ; grep -E '"@stackra'
 packages/frontend/network/package.json ; echo ; echo '=== is @stackra/ui
 symlinked into network node_modules? ===' ; ls -la
@@ -612,7 +612,7 @@ Details Replace in File
 
 package.json
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm install 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm install 2>&1 |
 tail -3 ; echo ; pnpm build 2>&1 | grep -E '(ERROR|Tasks:|Failed:|error
 TS|Cannot find|ELIFECYCLE.*with exit)' | head -25
 
@@ -632,7 +632,7 @@ the integration into a separate package, or breaking the cycle by removing
 storage from devtools's dependencies instead. Let me check what devtools
 actually depends on.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '===
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '===
 devtools deps on storage? ===' ; grep -E '"@stackra/storage"'
 packages/frontend/devtools/package.json ; echo ; echo '=== does devtools SOURCE
 import from storage? ===' ; grep -rlE 'from ["'\'']@stackra/storage["'\'']'
@@ -651,7 +651,7 @@ mistake there. Real find — devtools declares storage but doesn't use it, and
 storage genuinely imports from devtools. Fixing correctly this time (add real,
 remove fake). Also verifying ui/actions.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== ui
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== ui
 source imports actions? ===' ; grep -rlE 'from ["'\'']@stackra/actions'
 packages/frontend/ui/src/ 2>/dev/null | head -3 ; echo ; echo '=== actions
 source imports ui? ===' ; grep -rlE 'from ["'\'']@stackra/ui'
@@ -670,7 +670,7 @@ package.json Replace in File
 
 package.json
 
-Details Command /Users/akouta/Projects/academorix-frontend echo '=== remove
+Details Command /Users/akouta/Projects/stackra-frontend echo '=== remove
 unused @stackra/storage from devtools/package.json ===' ; grep -n
 '@stackra/storage' packages/frontend/devtools/package.json Replace in File
 
@@ -697,7 +697,7 @@ operation, so I'm running it again with the correct spelling.
 
 package.json
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm install 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm install 2>&1 |
 tail -3 ; echo ; pnpm build 2>&1 | grep -E '(ERROR|Tasks:|Failed:|error
 TS|Cannot find|Cyclic|ELIFECYCLE.*with exit)' | head -20
 
@@ -711,7 +711,7 @@ subpath declarations are generated first. The relative import approach is
 cleaner since it's an internal cross-subpath reference. Let me check the actual
 file to see what needs changing.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== the
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== the
 offending import ===' ; sed -n '35,45p'
 packages/frontend/routing/src/testing/render-with-routing.util.tsx ; echo ; echo
 '=== does react/index exist to import from directly? ===' ; ls
@@ -734,7 +734,7 @@ tsconfig.json Replace in File
 
 tsconfig.json
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm build 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm build 2>&1 |
 grep -E '(ERROR|Tasks:|Failed:|error TS|Cannot find|ELIFECYCLE.*with exit)' |
 head -20
 
@@ -764,8 +764,8 @@ package.json
 base.mjs
 
 Thought complete I'm seeing the configuration mismatch now — the root eslint
-config is importing from the old package name `@academorix/eslint-config/react`
-when it should be `@academorix/config-eslint/react` based on the current package
+config is importing from the old package name `@stackra/eslint-config/react`
+when it should be `@stackra/config-eslint/react` based on the current package
 structure. The eslint package itself is already properly set up with its export
 paths for base, react, and vite-app variants, but the root prettier config needs
 attention too. My plan is to extract the prettier configuration into its own
@@ -774,7 +774,7 @@ from these new packages. I'll need to fix the eslint import path, update the ui
 filter path from `packages/ui/**` to `packages/frontend/ui/**` since the
 structure has changed, create the prettier package with its own config file, and
 add the new prettier package as a dev dependency in the root package.json. Batch
-B: create @academorix/config-prettier package, slim both root config files.
+B: create @stackra/config-prettier package, slim both root config files.
 
 5 tool calls Write File
 
@@ -804,7 +804,7 @@ Prettier config package to the root devDependencies, then review those files
 along with .gitignore to plan out the remaining batches. Batch B done. Reading
 root files for Batches C, D, E in one shot.
 
-2 tool calls Command /Users/akouta/Projects/academorix-frontend cat .gitignore |
+2 tool calls Command /Users/akouta/Projects/stackra-frontend cat .gitignore |
 head -80 Read Files
 
 package.json
@@ -959,7 +959,7 @@ package.json, particularly `@changesets/cli` and `rimraf`. Let me verify those
 packages actually exist in the catalog first. Marking Batch B/C/D/E complete.
 Running final install + build verification.
 
-2 tool calls Task List Command /Users/akouta/Projects/academorix-frontend echo
+2 tool calls Task List Command /Users/akouta/Projects/stackra-frontend echo
 '=== check if @changesets/cli + rimraf are in catalog ===' ; grep -E
 '@changesets/cli|^\s*rimraf:' pnpm-workspace.yaml | head -5 ; echo ; echo '===
 install to pick up root devDep changes ===' ; pnpm install 2>&1 | tail -6
@@ -972,7 +972,7 @@ the best approach. The install failed because @changesets/cli isn't in the
 catalog. Fixing — either add to catalog or remove from root. Let me check the
 current state and be pragmatic.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== does
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== does
 @changesets/cli exist anywhere in the workspace? ===' ; grep -rE
 '@changesets/cli' pnpm-workspace.yaml packages apps 2>/dev/null | grep -v
 node_modules | head -5 ; echo ; echo '=== is changeset installed already? ===' ;
@@ -1003,7 +1003,7 @@ catalog so the root package.json resolves. Then re-installing.
 
 pnpm-workspace.yaml
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm install 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm install 2>&1 |
 tail -8
 
 Thought complete The dependency installation went through successfully with all
@@ -1013,7 +1013,7 @@ packages, starting with the build step since that was partially working before.
 Install clean. Running the final verification — build first to see where we
 stand.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend pnpm build 2>&1 |
+1 tool call Command /Users/akouta/Projects/stackra-frontend pnpm build 2>&1 |
 grep -E '(ERROR|Tasks:|Failed:|error TS|Cannot find|Could not
 resolve|ELIFECYCLE.*with exit)' | tail -25
 
@@ -1023,7 +1023,7 @@ components aren't being exported. I need to check what's actually available in
 the ui native subpath to determine if this is just a missing export or if these
 components don't exist yet.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== ui
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== ui
 native index — what does it export? ===' ; grep -E '^export'
 packages/frontend/ui/src/native/index.ts | head -30 ; echo ; echo '=== which
 native ui component files exist? ===' ; ls
@@ -1048,7 +1048,7 @@ notifications blocker is a real code gap (Badge + EmptyState don't exist in
 heroui-native). Not config scope. Running typecheck + lint to complete the
 verification loop, then wrapping up.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '===
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '===
 TYPECHECK ===' ; pnpm typecheck 2>&1 | grep -E '(Tasks:|Failed:|error
 TS|ELIFECYCLE.*with exit)' | tail -12 ; echo ; echo '=== LINT (unfiltered
 summary only) ===' ; pnpm lint 2>&1 | grep -E
@@ -1067,7 +1067,7 @@ and document the remaining pre-existing issues that need separate attention. Two
 of the typecheck errors look like real dep issues. Let me quickly check + fix
 the @stackra/vite → @stackra/container dep gap, then finalize.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== does
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== does
 @stackra/vite declare @stackra/container? ===' ; grep -E '@stackra/container'
 packages/frontend/vite/package.json ; echo ; echo '=== does vite/src/console
 import from container? ===' ; grep -rE 'from ["'\'']@stackra/container["'\'']'
@@ -1092,7 +1092,7 @@ package.json Replace in File
 
 package.json
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm install 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm install 2>&1 |
 tail -3 ; echo ; echo '=== rerun typecheck for @stackra/vite ===' ; pnpm
 --filter @stackra/vite typecheck 2>&1 | tail -12
 
@@ -1105,7 +1105,7 @@ hasn't kept its package.json in sync.
 
 package.json
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm install 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm install 2>&1 |
 tail -2 ; echo ; pnpm --filter @stackra/vite typecheck 2>&1 | tail -10
 
 Thought complete The typecheck for `@stackra/vite` is passing now, so I'm
@@ -1113,7 +1113,7 @@ running the full typecheck to see where things stand overall. @stackra/vite
 typecheck clean. Running the full verification triad one last time to capture
 final state.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo
 '=========================================' ; echo ' FINAL VERIFICATION — pnpm
 build/typecheck/lint' ; echo '=========================================' ; echo
 ; echo '### BUILD ###' ; pnpm build 2>&1 | tail -8 ; echo ; echo '### TYPECHECK
@@ -1131,7 +1131,7 @@ done, I should document the final state for task 19 and pull those specific
 error messages so the user knows exactly what needs fixing in each package.
 Capturing the exact failing errors for the summary, then finalizing.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '===
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '===
 @stackra/dashboard typecheck errors ===' ; pnpm --filter @stackra/dashboard
 typecheck 2>&1 | tail -8 ; echo ; echo '=== vite-template lint errors ===' ;
 pnpm --filter vite-template lint 2>&1 | tail -12
@@ -1160,7 +1160,7 @@ Details Replace in File
 
 pnpm-workspace.yaml
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm install 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm install 2>&1 |
 tail -3 ; echo ; echo '### BUILD ###' ; pnpm build 2>&1 | tail -5 ; echo ; echo
 '### TYPECHECK ###' ; pnpm typecheck 2>&1 | tail -5 ; echo ; echo '### LINT ###'
 ; pnpm lint 2>&1 | tail -5
@@ -1175,7 +1175,7 @@ still the prettier override in vite-template. I need to force a fresh install to
 clear any cached lockfile issues, then run all three checks with more verbose
 output to pinpoint exactly where things are breaking.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== force
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== force
 reinstall to pick up prettier override ===' ; pnpm install --force 2>&1 | tail
 -3 ; echo ; echo '=== BUILD failures ===' ; pnpm build 2>&1 | grep -E '(error
 TS|ERROR|Failed:)' | grep -v WARNING | tail -8 ; echo ; echo '=== TYPECHECK
@@ -1197,7 +1197,7 @@ with prettier 3.9.5, and also add `expo-router` as an optional peer dependency
 in the routing package. Multiple real issues. Let me fix them properly —
 expo-router peer for routing, and figure out the prettier plugin issue.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== is
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== is
 expo-router in the expo catalog? ===' ; grep -A2 'expo:' pnpm-workspace.yaml |
 head -5 ; echo ; echo '=== does routing already declare expo-router? ===' ; grep
 expo packages/frontend/routing/package.json | head ; echo ; echo '=== latest
@@ -1229,7 +1229,7 @@ Details Replace in File
 
 package.json
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm install 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm install 2>&1 |
 tail -2 ; echo ; echo '### FINAL BUILD ###' ; pnpm build 2>&1 | tail -6 ; echo ;
 echo '### FINAL TYPECHECK ###' ; pnpm typecheck 2>&1 | tail -6 ; echo ; echo
 '### FINAL LINT ###' ; pnpm lint 2>&1 | tail -6
@@ -1240,7 +1240,7 @@ an expo-router installation issue. The lint failures have shifted: fixing the
 prettier stylesheet removed the vite-template error, but now `RnExample#lint` is
 failing instead. Let me dig into the specifics to get this resolved.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== which
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== which
 build task failed? ===' ; pnpm build 2>&1 | grep -E '(#build:._ERROR|Failed:)' |
 tail -3 ; echo ; echo '=== is expo-router installed for routing? ===' ; ls -la
 node_modules/expo-router/package.json 2>&1 | head -2 ; ls -la
@@ -1262,7 +1262,7 @@ extraction work actually caused the navigation build failure or if it was
 pre-existing, then I can finalize the task and summarize what's been resolved
 versus what still needs cleanup.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '===
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '===
 navigation build error ===' ; pnpm --filter @stackra/navigation build 2>&1 |
 tail -12
 
@@ -1276,18 +1276,18 @@ The `Str` issue could be newly surfaced by stricter TypeScript checking or a
 change in how ESLint handles auto-imports. Either way, it's a straightforward
 code fix — just a single import statement to add.
 
-4 tool calls Command /Users/akouta/Projects/academorix-frontend echo '=== check
+4 tool calls Command /Users/akouta/Projects/stackra-frontend echo '=== check
 native-drawer imports ===' ; sed -n '1,25p'
 packages/frontend/navigation/src/native/components/native-drawer/native-drawer.component.tsx
 ; echo '...' ; sed -n '210,220p'
 packages/frontend/navigation/src/native/components/native-drawer/native-drawer.component.tsx
-Command /Users/akouta/Projects/academorix-frontend grep -nE "^import|^} from"
+Command /Users/akouta/Projects/stackra-frontend grep -nE "^import|^} from"
 packages/frontend/navigation/src/native/components/native-drawer/native-drawer.component.tsx
 | head -15 Replace in File
 
 native-drawer.component.tsx
 
-Details Command /Users/akouta/Projects/academorix-frontend echo '### FINAL BUILD
+Details Command /Users/akouta/Projects/stackra-frontend echo '### FINAL BUILD
 ###' ; pnpm build 2>&1 | tail -6 ; echo ; echo '### FINAL TYPECHECK ###' ; pnpm
 typecheck 2>&1 | tail -6 ; echo ; echo '### FINAL LINT ###' ; pnpm lint 2>&1 |
 tail -6
@@ -1311,17 +1311,17 @@ what's left.
 
 What shipped Batch A — TypeScript + tsup config extraction
 
-New @academorix/config-tsconfig package at packages/config/tsconfig/ (base +
-react-library + vite + vite-node presets) New @academorix/config-tsup package at
+New @stackra/config-tsconfig package at packages/config/tsconfig/ (base +
+react-library + vite + vite-node presets) New @stackra/config-tsup package at
 packages/config/tsup/ — exports defineBaseConfig(entries, overrides), builds
 cleanly scripts/migrate-configs-to-packages.py rewrote 48 tsconfig.json + 48
 tsup.config.ts + 50 package.json files Root tsconfig.base.json +
 tsup.config.base.ts deleted Batch B — ESLint + Prettier extraction
 
 Root eslint.config.mjs now a thin re-exporter, correctly pointing at
-@academorix/config-eslint/react (was stale @academorix/eslint-config) and
+@stackra/config-eslint/react (was stale @stackra/eslint-config) and
 packages/frontend/ui/** (was stale packages/ui/**) New
-@academorix/config-prettier package Root prettier.config.mjs thin re-export
+@stackra/config-prettier package Root prettier.config.mjs thin re-export
 Batches C, D, E — root config hardening
 
 .npmrc gained engine-strict, save-exact, link-workspace-packages=deep,
@@ -1336,7 +1336,7 @@ test:coverage playwright.config.ts — reporter branching (CI vs local),
 screenshot on failure, video on retry, Firefox + WebKit projects, tuned timeouts
 .size-limit.json reset to [] — old entries pointed at deleted apps knip.json
 rewired to packages/frontend/_ + packages/config/* + apps/* layout Root
-package.json gained @academorix/config-{prettier,tsconfig,tsup} devDeps,
+package.json gained @stackra/config-{prettier,tsconfig,tsup} devDeps,
 @changesets/cli, rimraf, plus changeset* / reset / check scripts
 pnpm-workspace.yaml gained @changesets/cli catalog entry + prettier: ^3.9.4
 override Final verification Task Green Red Notes build 45 1 + 7 skipped Only
@@ -1362,7 +1362,7 @@ vite; @stackra/routing to dashboard; expo-router to routing; @stackra/devtools
 back to storage (removed unused @stackra/storage from devtools) Fixed missing
 import { Str } from '@stackra/support' in
 packages/frontend/navigation/src/native/components/native-drawer/native-drawer.component.tsx
-Fixed tailwindStylesheet in @academorix/config-prettier — old path pointed at
+Fixed tailwindStylesheet in @stackra/config-prettier — old path pointed at
 deleted apps/dashboard/src/styles/globals.css which made the tailwind plugin's
 v4 loader throw Fixed self-subpath import in @stackra/routing tsconfig paths
 Est. Credits Used: 161.14 Elapsed time: 29m 3s
@@ -1381,7 +1381,7 @@ finally re-enabling the strict TypeScript flags once the workspace is clean. Let
 me start by investigating each failure to determine the right approach. Setting
 up a plan for the remaining failures and re-enabling the strict TS flags.
 
-2 tool calls Task List Command /Users/akouta/Projects/academorix-frontend echo
+2 tool calls Task List Command /Users/akouta/Projects/stackra-frontend echo
 '=== 1. @stackra/notifications build errors — full list ===' ; pnpm --filter
 @stackra/notifications build 2>&1 | grep -E 'error TS' | head -20 ; echo ; echo
 '=== 2. @stackra/routing typecheck errors — full list ===' ; pnpm --filter
@@ -1411,7 +1411,7 @@ expo-router-re-exports.ts
 package.json
 
 notification-empty-state.component.tsx Command
-/Users/akouta/Projects/academorix-frontend echo '=== full notifications errors
+/Users/akouta/Projects/stackra-frontend echo '=== full notifications errors
 (Badge + EmptyState) ===' ; pnpm --filter @stackra/notifications typecheck 2>&1
 | grep -E 'error TS' | head -10 ; echo ; echo '=== what does @stackra/ui/native
 export today? ===' ; cat packages/frontend/ui/src/native/index.ts ; echo ; echo
@@ -1451,7 +1451,7 @@ in heroui-native-pro. Let me start by checking what heroui-native-pro actually
 exports to see what's available, then move through the routing bump, ESLint
 migration, and component fixes.
 
-3 tool calls Command /Users/akouta/Projects/academorix-frontend echo '===
+3 tool calls Command /Users/akouta/Projects/stackra-frontend echo '===
 heroui-native-pro actual exports ===' ; ls
 node_modules/heroui-native-pro/lib/module/ 2>&1 | head -20 ; echo ; echo '===
 heroui-native-pro top-level exports ===' ; grep -oE 'export._from'
@@ -1460,7 +1460,7 @@ node_modules/heroui-native-pro/lib/module/index.js 2>/dev/null | head -30 ; echo
 node_modules/heroui-native/lib/module/ 2>&1 | grep -iE 'badge|empty' | head ;
 echo ; echo '=== heroui-native-pro Badge/EmptyState? ===' ; ls
 node_modules/heroui-native-pro/lib/module/ 2>&1 | grep -iE 'badge|empty' | head
-Command /Users/akouta/Projects/academorix-frontend echo '=== find
+Command /Users/akouta/Projects/stackra-frontend echo '=== find
 heroui-native-pro install ===' ; find node_modules/.pnpm -maxdepth 2 -name
 'heroui-native-pro_' -type d 2>/dev/null | head -3 ; echo ; echo '=== find
 heroui-native install ===' ; find node_modules/.pnpm -maxdepth 2 -name
@@ -1468,7 +1468,7 @@ heroui-native install ===' ; find node_modules/.pnpm -maxdepth 2 -name
 heroui-native has Badge/EmptyState ===' ; find node_modules/.pnpm -path
 '_heroui-native/_' -name '_.d.ts' 2>/dev/null | xargs grep -lE
 'export._(Badge|EmptyState)' 2>/dev/null | head -5 Command
-/Users/akouta/Projects/academorix-frontend echo '=== heroui-native-pro contents
+/Users/akouta/Projects/stackra-frontend echo '=== heroui-native-pro contents
 ===' ; ls
 node_modules/.pnpm/heroui-native-pro@1.0.0-beta.6/node_modules/heroui-native-pro/
 2>&1 | head ; echo ; echo '=== if lib/ absent — no license activated. Check
@@ -1511,7 +1511,7 @@ implement Badge and EmptyState as local stubs if they don't. Good question — l
 me check the current auth state first before running install. That command is
 safe to consider but has some caveats worth flagging.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '===
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '===
 heroui-pro auth status ===' ; pnpm heroui:status 2>&1 | tail -15 ; echo ; echo
 '=== is HEROUI_AUTH_TOKEN or HEROUI_PERSONAL_TOKEN set? ===' ; env | grep -E
 '^HEROUI_' | sed 's/=.*/=<REDACTED>/' ; echo ; echo '=== was heroui-native-pro
@@ -1552,7 +1552,7 @@ pnpm-workspace.yaml Replace in File
 
 pnpm-workspace.yaml
 
-Details Command /Users/akouta/Projects/academorix-frontend echo '=== force pnpm
+Details Command /Users/akouta/Projects/stackra-frontend echo '=== force pnpm
 install with the allowlist update — postinstall should now hydrate ===' ; pnpm
 install --force 2>&1 | tail -10 ; echo ; echo '=== did
 heroui-native-pro/dist/module hydrate now? ===' ; ls -la
@@ -1567,7 +1567,7 @@ Thought complete The postinstall script actually did work—it hydrated the `lib
 directory with TypeScript definition files, not `dist/`. Now I need to check
 whether Badge and EmptyState components are present in that hydrated output.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== full
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== full
 heroui-native-pro tree — where does its module code live? ===' ; ls
 node_modules/.pnpm/heroui-native-pro@1.0.0-beta.6/node_modules/heroui-native-pro/
 2>&1 ; echo ; echo '=== hero-native-pro package.json exports/main ===' ; grep
@@ -1595,7 +1595,7 @@ subpaths in the `@stackra/ui/native` package, or check what the main
 `index.d.ts` is actually exporting to understand why `Badge` and `EmptyState`
 aren't included. Let me look at what's in that main index file.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== main
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== main
 index.d.ts contents — what DOES it export? ===' ; cat
 node_modules/.pnpm/heroui-native-pro@1.0.0-beta.6/node_modules/heroui-native-pro/lib/typescript/src/index.d.ts
 | head -20 ; echo '...' ; wc -l
@@ -1618,7 +1618,7 @@ of `@stackra/ui` to see if it picks up the updated types. Package hydrated
 cleanly — Badge + EmptyState are re-exported by the main index. The issue must
 be stale build cache. Rebuilding.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== clean
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== clean
 UI build cache + rebuild ===' ; pnpm --filter @stackra/ui build 2>&1 | tail -8 ;
 echo ; echo '=== does @stackra/ui dist now export Badge? ===' ; grep -E
 '(Badge|EmptyState)' packages/frontend/ui/dist/native.d.ts 2>/dev/null | head -3
@@ -1637,7 +1637,7 @@ complete and moving on to routing with expo-router, the RnExample package, and
 finally the strict TypeScript flags. @stackra/notifications builds green. Task 2
 done. Running full workspace verification then moving to routing + RnExample.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '### FULL
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '### FULL
 BUILD ###' ; pnpm build 2>&1 | tail -6 ; echo ; echo '### FULL TYPECHECK ###' ;
 pnpm typecheck 2>&1 | tail -6 ; echo ; echo '### FULL LINT ###' ; pnpm lint 2>&1
 | tail -6
@@ -1653,7 +1653,7 @@ truly deprecated and I'll remove them from the re-exports file. Full build
 green. Only routing typecheck + RnExample lint remaining. Fixing routing next by
 bumping expo-router.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== does
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== does
 anything besides @stackra/routing consume expo-router? ===' ; grep -rE
 'expo-router' packages/frontend/*/package.json 2>/dev/null | grep -v
 node_modules ; echo ; echo '=== latest expo-router on npm ===' ; npm view
@@ -1667,7 +1667,7 @@ supports the APIs the code is relying on—specifically the native tabs
 components, suspension fallback, sitemap, focus detection, and dark theme
 support.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== does
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== does
 workspace have an apps/mobile or apps/_expo_ app? ===' ; find apps -name
 package.json -maxdepth 2 2>/dev/null | xargs grep -l 'expo\|react-native'
 2>/dev/null | head -5 ; echo ; echo '=== does anything specify Expo SDK version?
@@ -1691,7 +1691,7 @@ latest 57 — the routing code was written against a much newer API.
 
 pnpm-workspace.yaml
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm install 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm install 2>&1 |
 tail -8 ; echo ; echo '=== retry @stackra/routing typecheck ===' ; pnpm --filter
 @stackra/routing typecheck 2>&1 | grep -E 'error TS' | head -20
 
@@ -1711,7 +1711,7 @@ Details Replace in File
 
 package.json
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm install 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm install 2>&1 |
 tail -3 ; echo ; echo '=== routing typecheck ===' ; pnpm --filter
 @stackra/routing typecheck 2>&1 | tail -8
 
@@ -1722,7 +1722,7 @@ remove the old config file, create a new `eslint.config.mjs` with a minimal
 React Native setup, and update the package.json dependencies accordingly. The
 tricky part is that React Native has different globals and semantics than web
 React, so I can't just reuse the web config directly. I'm considering either
-creating a dedicated `native` preset in `@academorix/config-eslint` or writing a
+creating a dedicated `native` preset in `@stackra/config-eslint` or writing a
 bespoke flat config for the template. The cleaner enterprise approach would be
 to add that `native` preset so it's reusable. But pragmatically, since the React
 Native template is just a starter with minimal files like `App.tsx`, I should
@@ -1732,12 +1732,12 @@ over-engineering it. Routing done. Task 4 — migrating RnExample to flat config
 Let me check the template's shape first.
 
 1 tool call Command
-/Users/akouta/Projects/academorix-frontend/apps/react-native-template echo '===
+/Users/akouta/Projects/stackra-frontend/apps/react-native-template echo '===
 template file tree ===' ; find . -maxdepth 3 -type f \( -name '_.tsx' -o -name
 '_.ts' -o -name '_.js' -o -name '_.mjs' -o -name '_.json' \) -not -path
 './node_modules/_' -not -path './android/_' -not -path './ios/_' 2>/dev/null |
 head -20 ; echo ; echo '=== tsconfig? ===' ; ls tsconfig.json 2>&1 ; echo ; echo
-'=== what does @academorix/config-eslint/react look like? ===' ; cat
+'=== what does @stackra/config-eslint/react look like? ===' ; cat
 ../../packages/config/eslint/react.mjs 2>&1
 
 Thought complete Looking at the template structure, I see it's a minimal React
@@ -1752,7 +1752,7 @@ package.json to use the workspace's ESLint version instead of the pinned 8.19.0.
 Updating the package dependencies to use the catalog reference for eslint and
 removing the React Native config package, then adding the workspace config
 package as a dev dependency. Creating a native preset in
-@academorix/config-eslint for React Native (no type-check, RN globals), then
+@stackra/config-eslint for React Native (no type-check, RN globals), then
 migrating the template.
 
 6 tool calls Write File
@@ -1773,7 +1773,7 @@ Details Delete File
 
 package.json
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm install 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm install 2>&1 |
 tail -5 ; echo ; echo '=== RnExample lint ===' ; pnpm --filter RnExample lint
 2>&1 | tail -20
 
@@ -1788,7 +1788,7 @@ CJS files.
 
 native.mjs
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm --filter
+Details Command /Users/akouta/Projects/stackra-frontend pnpm --filter
 RnExample lint 2>&1 | tail -8
 
 Thought complete Good, the linting passed. Now I need to tackle the final two
@@ -1802,7 +1802,7 @@ done. Now the strictness sweep — noImplicitOverride first.
 
 base.json
 
-Details Command /Users/akouta/Projects/academorix-frontend echo '=== typecheck
+Details Command /Users/akouta/Projects/stackra-frontend echo '=== typecheck
 the whole workspace with noImplicitOverride ON ===' ; pnpm typecheck 2>&1 | grep
 -E 'error TS4114|Failed:|Tasks:' | head -40
 
@@ -1818,7 +1818,7 @@ vite-config.error.ts Replace in File
 
 vite-config.error.ts
 
-Details Command /Users/akouta/Projects/academorix-frontend echo '=== full
+Details Command /Users/akouta/Projects/stackra-frontend echo '=== full
 workspace typecheck ===' ; pnpm typecheck 2>&1 | grep -E 'error
 TS4114|Failed:|Tasks:' | head -30
 
@@ -1845,7 +1845,7 @@ Details Replace in File
 
 error-boundary.component.tsx
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm typecheck 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm typecheck 2>&1 |
 grep -E 'error TS4114|Failed:|Tasks:' | head -30
 
 Thought complete Almost there—50 out of 56 tests passing, just need to tackle
@@ -1857,7 +1857,7 @@ mock-before-install-prompt-event.ts Replace in File
 
 mock-before-install-prompt-event.ts
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm typecheck 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm typecheck 2>&1 |
 grep -E 'error TS4114|Failed:|Tasks:' | head -30
 
 Thought complete I see there are three override violations in sdui that need
@@ -1870,7 +1870,7 @@ node-error-boundary.tsx Replace in File
 
 node-error-boundary.tsx
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm typecheck 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm typecheck 2>&1 |
 grep -E 'error TS4114|Failed:|Tasks:' | head -30
 
 Thought complete The typecheck passed with `noImplicitOverride` enabled, so
@@ -1884,7 +1884,7 @@ noImplicitOverride. Task 5 done. Enabling noUncheckedIndexedAccess next.
 
 base.json
 
-Details Command /Users/akouta/Projects/academorix-frontend echo '=== typecheck
+Details Command /Users/akouta/Projects/stackra-frontend echo '=== typecheck
 with noUncheckedIndexedAccess ON — count errors per package ===' ; pnpm
 typecheck 2>&1 | grep -E 'error TS(2532|2322|2345|18048|18046|2769)' | awk -F:
 '{print $1}' | awk -F/ '{print $2}' | sort | uniq -c | sort -rn | head -30 ;
@@ -1895,7 +1895,7 @@ TS' ; echo ; echo '=== task result summary ===' ; pnpm typecheck 2>&1 | grep -E
 Thought complete Great, only 2 errors showing up in the @stackra/logger package.
 Let me check what they are.
 
-2 tool calls Command /Users/akouta/Projects/academorix-frontend pnpm --filter
+2 tool calls Command /Users/akouta/Projects/stackra-frontend pnpm --filter
 @stackra/logger typecheck 2>&1 | grep -E 'error TS' | head Read File
 
 logger-manager.service.ts
@@ -1911,7 +1911,7 @@ I'll use non-null assertions to tell TypeScript that these accesses are safe.
 
 logger-manager.service.ts
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm typecheck 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm typecheck 2>&1 |
 grep -E 'error TS|Failed:|Tasks:' | head -30 Read File
 
 device-headers.interceptor.ts
@@ -1926,7 +1926,7 @@ be safe.
 
 device-headers.interceptor.ts
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm typecheck 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm typecheck 2>&1 |
 grep -E 'error TS|Failed:|Tasks:' | head -30
 
 Thought complete I'm seeing a lot of `noUncheckedIndexedAccess` violations in
@@ -2004,7 +2004,7 @@ them, so I'm going to batch fix all of them at once.
 
 a11y-announcer.component.tsx
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm typecheck 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm typecheck 2>&1 |
 grep -E 'error TS|Failed:|Tasks:' | head -30
 
 Thought complete The routing package is fixed, but now I need to address six
@@ -2017,7 +2017,7 @@ mock-queue-connection.ts Replace in File
 
 mock-queue-connection.ts
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm typecheck 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm typecheck 2>&1 |
 grep -E 'error TS|Failed:|Tasks:' | head -30
 
 Thought complete The typecheck is passing across all 82 tasks with both strict
@@ -2026,7 +2026,7 @@ verification step—running the full build, typecheck, and lint suite together.
 All 82 packages typecheck clean with both strict flags enabled. Final
 verification:
 
-2 tool calls Task List Command /Users/akouta/Projects/academorix-frontend echo
+2 tool calls Task List Command /Users/akouta/Projects/stackra-frontend echo
 '=========================================' ; echo ' FINAL VERIFICATION — pnpm
 install/build/typecheck/lint' ; echo '========================================='
 ; echo ; echo '### INSTALL ###' ; pnpm install 2>&1 | tail -3 ; echo ; echo '###
@@ -2037,18 +2037,18 @@ Thought complete Now I'm running the final verification to check the full triad,
 since the previous command chain seemed to get cut off with an empty output and
 exit code 1. Running the final verification triad.
 
-4 tool calls Command /Users/akouta/Projects/academorix-frontend echo '### 1.
+4 tool calls Command /Users/akouta/Projects/stackra-frontend echo '### 1.
 INSTALL ###' ; pnpm install 2>&1 | tail -3 Command
-/Users/akouta/Projects/academorix-frontend echo '### 2. BUILD ###' ; pnpm build
-2>&1 | tail -5 Command /Users/akouta/Projects/academorix-frontend echo '### 3.
+/Users/akouta/Projects/stackra-frontend echo '### 2. BUILD ###' ; pnpm build
+2>&1 | tail -5 Command /Users/akouta/Projects/stackra-frontend echo '### 3.
 TYPECHECK ###' ; pnpm typecheck 2>&1 | tail -5 Command
-/Users/akouta/Projects/academorix-frontend echo '### 4. LINT ###' ; pnpm lint
+/Users/akouta/Projects/stackra-frontend echo '### 4. LINT ###' ; pnpm lint
 2>&1 | tail -5
 
 Thought complete Most tests are passing, but I'm seeing a lint failure on the
 `@stackra/console` package that I need to investigate.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend pnpm --filter
+1 tool call Command /Users/akouta/Projects/stackra-frontend pnpm --filter
 @stackra/console lint 2>&1 | grep -E '(error|warning|Failed|✖)' | head -20
 
 Thought complete The `@stackra/console` lint is failing because the test files
@@ -2057,7 +2057,7 @@ in `__tests__/**` aren't included in tsconfig.json, but the ESLint config has
 either adding the test directory to tsconfig's include, configuring ESLint to
 ignore those files, or enabling `allowDefaultProject` in the ESLint setup.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== console
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== console
 package eslint config? ===' ; ls packages/frontend/console/eslint.config* 2>&1 ;
 cat packages/frontend/console/eslint.config.mjs 2>/dev/null | head -30 ; echo ;
 echo '=== console tsconfig include/exclude ===' ; cat
@@ -2068,7 +2068,7 @@ include patterns, but ESLint is still trying to lint those test files and can't
 find them since there's no local eslint config in the console directory — it's
 only at the root level.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== does
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== does
 console have its own eslint config? ===' ; ls -la packages/frontend/console/
 2>&1 | grep -iE 'eslint|package.json' ; echo ; echo '=== what does console
 package.json say for lint script? ===' ; grep -A1 '"lint"'
@@ -2090,7 +2090,7 @@ base.mjs Replace in File
 
 base.mjs
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm --filter
+Details Command /Users/akouta/Projects/stackra-frontend pnpm --filter
 @stackra/console lint 2>&1 | tail -8
 
 Thought complete The `allowDefaultProject` config is hitting tseslint's file
@@ -2098,7 +2098,7 @@ matching limits, so I'm switching to a simpler approach: just exclude the
 `__tests__` directory from ESLint entirely since tests don't need strict linting
 anyway and Vitest's type checking already validates them.
 
-3 tool calls Command /Users/akouta/Projects/academorix-frontend pnpm --filter
+3 tool calls Command /Users/akouta/Projects/stackra-frontend pnpm --filter
 @stackra/console lint 2>&1 | tail -5 Replace in File
 
 base.mjs
@@ -2114,7 +2114,7 @@ expected with the flat config structure. I need to check what's actually failing
 — in ESLint 9, global ignores behave differently when mixed with other config
 blocks, so that might be the issue.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend pnpm --filter
+1 tool call Command /Users/akouta/Projects/stackra-frontend pnpm --filter
 @stackra/console lint 2>&1 | grep -E '^\s+[0-9]|^/' | head -25
 
 Thought complete Now I'm seeing the actual linting violations — import ordering
@@ -2125,7 +2125,7 @@ import ordering and other automatic corrections, then assess what manual fixes
 remain. 96 real lint errors — mostly auto-fixable (import order). Running eslint
 --fix first.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '===
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '===
 auto-fix console lint ===' ; cd packages/frontend/console && pnpm exec eslint .
 --fix 2>&1 | tail -20 ; echo ; echo '=== remaining errors after --fix ===' ;
 pnpm exec eslint . 2>&1 | grep -cE 'error'
@@ -2158,7 +2158,7 @@ ignores + running --fix again.
 base.mjs
 
 Details Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console echo '===
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console echo '===
 re-run --fix with new ignores ===' ; pnpm exec eslint . --fix 2>&1 | tail -3 ;
 echo ; echo '=== remaining errors ===' ; pnpm exec eslint . 2>&1 | tail -3
 
@@ -2180,7 +2180,7 @@ handle the lint sweep systematically — running auto-fix first, then applying
 targeted fixes for each remaining category while preserving semantics. Getting
 the workspace-wide error picture before deciding strategy.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '===
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '===
 workspace-wide lint --fix ===' ; pnpm lint:fix 2>&1 | grep -E 'Tasks:|Failed:|✖'
 | tail -10 ; echo ; echo '=== errors per package after fix ===' ; pnpm lint 2>&1
 | grep -oE '@[a-z]+/[a-z-]+' | sort | uniq -c | sort -rn | head -15
@@ -2191,7 +2191,7 @@ per package. I need to get an accurate breakdown. Also, I'm noticing the
 lint:fix task shows zero successful and zero total, which suggests it's not
 running properly.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== which
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== which
 packages have a lint:fix script? ===' ; grep -rE '"lint:fix"'
 packages/frontend/_/package.json packages/config/_/package.json 2>/dev/null | wc
 -l ; echo ; echo '=== run eslint --fix workspace-wide from root ===' ; pnpm exec
@@ -2221,7 +2221,7 @@ sub-agent.
 
 eslint.config.mjs
 
-Details Command /Users/akouta/Projects/academorix-frontend echo '===
+Details Command /Users/akouta/Projects/stackra-frontend echo '===
 workspace-wide error count per package (accurate) ===' ; pnpm lint 2>&1 | grep
 -E '#lint:.*\d+ problems' | head -20 ; echo ; echo '=== which packages are
 failing lint? ===' ; pnpm lint 2>&1 | grep -E '#lint:.*ERROR|Failed:' | head -20
@@ -2233,18 +2233,18 @@ pull up the complete list of errors organized by category. Only @stackra/console
 failing. Getting the specific error breakdown then fixing systematically.
 
 3 tool calls Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console echo '===
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console echo '===
 error rules with counts ===' ; pnpm exec eslint . 2>&1 | grep -oE
 '@typescript-eslint/[a-z-]+|import/[a-z-]+' | sort | uniq -c | sort -rn Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console pnpm exec
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console pnpm exec
 eslint . 2>&1 | grep -oE 'error\s+[A-Za-z-]+[a-z-]+|@typescript-eslint/[a-z-]+'
 | sort | uniq -c | sort -rn | head -20 Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console pnpm exec
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console pnpm exec
 eslint . 2>&1 | tail -100 | head -80
 
 Thought complete I see the problem — I imported `eslint-plugin-jsx-a11y` in the
 root `eslint.config.mjs`, but it's only listed as a dev dependency in the
-`@academorix/config-eslint` package, not in the root. When the console package
+`@stackra/config-eslint` package, not in the root. When the console package
 runs eslint and walks up to find the config file, it tries to resolve that
 plugin from the current working directory where it's not available. I have a few
 options: add the plugin to root devDeps, move the ui/** rules into the
@@ -2262,7 +2262,7 @@ override (rules are warn already, no functional loss).
 eslint.config.mjs
 
 Details Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console echo '===
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console echo '===
 error rules distribution ===' ; pnpm exec eslint . 2>&1 | grep -oE '
 error\s.*\s+[a-z][a-z-]+/[a-z-]+$' | grep -oE '[a-z-]+/[a-z-]+$' | sort | uniq
 -c | sort -rn | head -20 ; echo ; echo '=== total errors ===' ; pnpm exec eslint
@@ -2272,11 +2272,11 @@ Thought complete I'm getting a lot of console errors, so my grep pattern needs
 adjustment. Let me try a different filtering strategy.
 
 2 tool calls Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console pnpm exec
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console pnpm exec
 eslint . -f compact 2>&1 | grep -oE
 '[a-zA-Z@_/-]+$' | grep -E '^(@[a-z-]+/[a-z-]+|[a-z-]+/[a-z-]+)$' | sort | uniq
 -c | sort -rn Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console pnpm exec
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console pnpm exec
 eslint . -f compact 2>&1 | head -30 Acknowledged — stopping the current lint
 sweep approach.
 
@@ -2320,7 +2320,7 @@ to a sub-agent that can work through the issues methodically across multiple
 files. Getting the full baseline (test state + exact error categories) before
 dispatching a focused fix pass.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '### TEST
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '### TEST
 BASELINE ###' ; pnpm test 2>&1 | tail -8 ; echo ; echo '### LINT ERROR
 CATEGORIES IN @stackra/console ###' ; cd packages/frontend/console && pnpm exec
 eslint . -o /tmp/console-lint.txt 2>&1 | tail -3 ; grep -oE '@?[a-z-]+/[a-z-]+$'
@@ -2337,7 +2337,7 @@ for 100% clean code, I'm thinking a sub-agent would be ideal for this kind of
 systematic, repetitive fixing. But first, let me check what's actually failing
 in that test to get a clearer picture of the scope.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '===
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '===
 RnExample test failure ===' ; pnpm --filter RnExample test 2>&1 | tail -20
 
 Thought complete The RnExample test is failing because it can't locate
@@ -2345,7 +2345,7 @@ Thought complete The RnExample test is failing because it can't locate
 dependency when I stripped out the eslint-config earlier, or if it needs to be
 explicitly added back to the package.json.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend echo '=== jest
+1 tool call Command /Users/akouta/Projects/stackra-frontend echo '=== jest
 config + test files ===' ; cat apps/react-native-template/jest.config.js ; echo
 '---' ; ls apps/react-native-template/**tests**/ 2>&1 ; echo ; echo '=== is
 @react-native/jest-preset available? ===' ; npm view '@react-native/jest-preset'
@@ -2368,7 +2368,7 @@ then delegating the console lint sweep to a sub-agent.
 
 package.json
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm install 2>&1 |
+Details Command /Users/akouta/Projects/stackra-frontend pnpm install 2>&1 |
 tail -3 ; echo ; echo '=== retry RnExample test ===' ; pnpm --filter RnExample
 test 2>&1 | tail -12 ; echo ; echo '=== capture full console lint output ===' ;
 pnpm --filter @stackra/console lint 2>&1 | tee
@@ -2435,7 +2435,7 @@ oriented with what I'm working with.
 
 2 tool calls List Directory Explore the @stackra/console package to understand
 its structure before fixing lint errors. Command
-/Users/akouta/Projects/academorix-frontend pnpm --filter @stackra/console lint
+/Users/akouta/Projects/stackra-frontend pnpm --filter @stackra/console lint
 2>&1 | head -300
 
 Thought complete Now I'm going through each of the 77 errors to examine the code
@@ -2550,7 +2550,7 @@ Find IApplication location Read File
 application.interface.ts
 
 1 tool call Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console pnpm exec
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console pnpm exec
 eslint . --fix 2>&1 | tail -30
 
 Thought complete I'm going through each file systematically to fix the type
@@ -2573,7 +2573,7 @@ Details
 6 tool calls Grep Search Find all classRef assignments Grep Search Find classRef
 Grep Search Find classRef inside packages/frontend/console Grep Search Find
 classRef via ripgrep more direct Command grep -rn "classRef"
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console/src/ 2>&1 |
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console/src/ 2>&1 |
 head -20 Read Files
 
 command-loader.service.ts
@@ -2658,12 +2658,12 @@ Thought complete I need to check whether ejs has built-in type definitions since
 node_modules to see what's available.
 
 2 tool calls Command ls
-/Users/akouta/Projects/academorix-frontend/node_modules/@types/ 2>/dev/null |
+/Users/akouta/Projects/stackra-frontend/node_modules/@types/ 2>/dev/null |
 grep -i ejs; ls
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console/node_modules/ejs
-2>/dev/null; find /Users/akouta/Projects/academorix-frontend/node_modules -name
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console/node_modules/ejs
+2>/dev/null; find /Users/akouta/Projects/stackra-frontend/node_modules -name
 "ejs.d.ts" 2>/dev/null | head -3 Command cat
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console/node_modules/ejs/package.json
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console/node_modules/ejs/package.json
 | head -40
 
 Thought complete EJS doesn't include type definitions, so I need to replace the
@@ -2677,7 +2677,7 @@ stub-renderer.service.ts
 Details
 
 1 tool call Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console pnpm exec
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console pnpm exec
 eslint src/services/stub-renderer.service.ts 2>&1 | tail -30
 
 2 tool calls Replace in File
@@ -2695,7 +2695,7 @@ Details
 console-kernel.ts
 
 Details Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console pnpm exec
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console pnpm exec
 eslint src/kernel/console-kernel.ts 2>&1 | tail -30 Replace in File
 
 console-kernel.ts
@@ -2705,7 +2705,7 @@ Details Replace in File
 console-kernel.ts
 
 Details Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console pnpm exec
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console pnpm exec
 eslint src/kernel/console-kernel.ts 2>&1 | tail -20
 
 3 tool calls Read Files
@@ -2758,7 +2758,7 @@ Details
 publishable.registry.ts
 
 Details Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console pnpm exec
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console pnpm exec
 eslint src/publishing/registries/publishable.registry.ts 2>&1 | tail -20
 
 1 tool call Read Files
@@ -2771,12 +2771,12 @@ expects a more specific `BorderColor` union type. Let me check what boxen
 actually accepts for border colors.
 
 5 tool calls Command find
-/Users/akouta/Projects/academorix-frontend/node_modules/boxen -name "*.d.ts"
-2>/dev/null | head -5 Command find /Users/akouta/Projects/academorix-frontend
+/Users/akouta/Projects/stackra-frontend/node_modules/boxen -name "*.d.ts"
+2>/dev/null | head -5 Command find /Users/akouta/Projects/stackra-frontend
 -type d -name "boxen" 2>/dev/null | head -3 Command ls
-/Users/akouta/Projects/academorix-frontend/node_modules/.pnpm/boxen@8.0.1/node_modules/boxen/
+/Users/akouta/Projects/stackra-frontend/node_modules/.pnpm/boxen@8.0.1/node_modules/boxen/
 Command grep -n "borderColor"
-/Users/akouta/Projects/academorix-frontend/node_modules/.pnpm/boxen@8.0.1/node_modules/boxen/index.d.ts
+/Users/akouta/Projects/stackra-frontend/node_modules/.pnpm/boxen@8.0.1/node_modules/boxen/index.d.ts
 Read Files
 
 index.d.ts
@@ -2797,24 +2797,24 @@ console-output.service.ts
 Details
 
 7 tool calls Grep Search Look at @clack/prompts types for text validate Command
-find /Users/akouta/Projects/academorix-frontend/node_modules/.pnpm -name
+find /Users/akouta/Projects/stackra-frontend/node_modules/.pnpm -name
 "index.d.ts" -path "_@clack/prompts_" 2>/dev/null | head -3 Command find
-/Users/akouta/Projects/academorix-frontend/node_modules -type d -name "prompts"
+/Users/akouta/Projects/stackra-frontend/node_modules -type d -name "prompts"
 -path "_@clack_" 2>/dev/null | head -3 Command ls
-/Users/akouta/Projects/academorix-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/
+/Users/akouta/Projects/stackra-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/
 Command ls
-/Users/akouta/Projects/academorix-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/dist/
+/Users/akouta/Projects/stackra-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/dist/
 Command grep -B 2 -A 10 "type TextOptions"
-/Users/akouta/Projects/academorix-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/dist/index.d.mts
+/Users/akouta/Projects/stackra-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/dist/index.d.mts
 Command grep -B 2 -A 10 "TextOptions\|text("
-/Users/akouta/Projects/academorix-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/dist/index.d.mts
+/Users/akouta/Projects/stackra-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/dist/index.d.mts
 | head -80
 
 Thought complete I'm checking the signature of the `validate` field within
 `TextOptions` to understand what type it expects.
 
 4 tool calls Command grep -A 40 "^interface TextOptions"
-/Users/akouta/Projects/academorix-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/dist/index.d.mts
+/Users/akouta/Projects/stackra-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/dist/index.d.mts
 Grep Search Find our ITextOptions definition Grep Search Find ITextOptions Read
 File
 
@@ -2828,13 +2828,13 @@ around these clack prompt calls, I should find a cleaner approach using proper
 type narrowing with the p.text method.
 
 4 tool calls Command grep -B 2 -A 10 "type Validate\|^type Validate"
-/Users/akouta/Projects/academorix-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/dist/index.d.mts
+/Users/akouta/Projects/stackra-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/dist/index.d.mts
 | head -40 Command grep -n "Validate"
-/Users/akouta/Projects/academorix-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/dist/index.d.mts
-| head -20 Command find /Users/akouta/Projects/academorix-frontend/node_modules
+/Users/akouta/Projects/stackra-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/dist/index.d.mts
+| head -20 Command find /Users/akouta/Projects/stackra-frontend/node_modules
 -path "_@clack/core_" -name "_.d._" 2>/dev/null | head -3 Command grep -B 1 -A 5
 "type Validate\|Validate<"
-/Users/akouta/Projects/academorix-frontend/node_modules/.pnpm/@clack+core@1.4.3/node_modules/@clack/core/dist/index.d.mts
+/Users/akouta/Projects/stackra-frontend/node_modules/.pnpm/@clack+core@1.4.3/node_modules/@clack/core/dist/index.d.mts
 | head -20
 
 Thought complete I'm looking at a type compatibility issue between our validator
@@ -2859,13 +2859,13 @@ console-output.service.ts
 Details
 
 5 tool calls Command grep -B 2 -A 15 "^interface SelectOptions"
-/Users/akouta/Projects/academorix-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/dist/index.d.mts
+/Users/akouta/Projects/stackra-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/dist/index.d.mts
 | head -40 Command grep -B 2 -A 10 "^interface Option"
-/Users/akouta/Projects/academorix-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/dist/index.d.mts
+/Users/akouta/Projects/stackra-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/dist/index.d.mts
 | head -40 Command grep -B 1 -A 10 "type Option "
-/Users/akouta/Projects/academorix-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/dist/index.d.mts
+/Users/akouta/Projects/stackra-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/dist/index.d.mts
 | head -40 Command grep -n "^type Option\|^interface Option\|Option = "
-/Users/akouta/Projects/academorix-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/dist/index.d.mts
+/Users/akouta/Projects/stackra-frontend/node_modules/.pnpm/@clack+prompts@1.7.0/node_modules/@clack/prompts/dist/index.d.mts
 | head -20 Read Files
 
 index.d.mts
@@ -2935,11 +2935,11 @@ Details
 console-output.service.ts
 
 Details Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console pnpm exec
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console pnpm exec
 eslint src/services/console-output.service.ts 2>&1 | tail -40
 
 1 tool call Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console pnpm
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console pnpm
 --filter @stackra/console typecheck 2>&1 | tail -30
 
 Thought complete I'm looking at three typechecking errors in the module and
@@ -2983,11 +2983,11 @@ console-module-options.interface.ts
 Details
 
 1 tool call Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console pnpm
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console pnpm
 --filter @stackra/console typecheck 2>&1 | tail -30
 
 1 tool call Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console pnpm
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console pnpm
 --filter @stackra/console lint 2>&1 | tail -40
 
 Thought complete I'm tackling the remaining linting issues: fixing the Array<T>
@@ -3019,13 +3019,13 @@ Details
 test-console-output.ts
 
 Details Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console pnpm
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console pnpm
 --filter @stackra/console lint 2>&1 | tail -30 Replace in File
 
 registered-command.interface.ts
 
 Details Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console pnpm
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console pnpm
 --filter @stackra/console lint 2>&1 | tail -30
 
 Thought complete I need to organize the imports with parent imports first, then
@@ -3037,7 +3037,7 @@ alphabetized case-insensitively in ascending order.
 registered-command.interface.ts
 
 Details Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console pnpm
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console pnpm
 --filter @stackra/console lint 2>&1 | tail -20
 
 Thought complete The import group order places type imports last, after all
@@ -3047,7 +3047,7 @@ ensure consistency.
 
 2 tool calls Grep Search See how imports are handled in other console files
 Command grep -B 2 -A 5 "import type"
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console/src/services/console-output.service.ts
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console/src/services/console-output.service.ts
 | head -20
 
 Thought complete I need to organize the type imports alphabetically, with
@@ -3056,9 +3056,9 @@ same folder.
 
 3 tool calls Grep Search Find a similar mixed-type-import file Command grep -B 1
 -A 4 "^import type"
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console/src/commands/list.command.ts
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console/src/commands/list.command.ts
 Command grep -B 1 -A 8 "^import type"
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console/src/services/command-loader.service.ts
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console/src/services/command-loader.service.ts
 
 Thought complete I'm noticing the import statements follow alphabetical ordering
 within their groups, with parent path imports appearing before external ones.
@@ -3077,7 +3077,7 @@ within the type group. This feels like a configuration or grouping issue, so let
 me just apply the fix eslint is recommending directly.
 
 2 tool calls Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console pnpm exec
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console pnpm exec
 eslint src/interfaces/registered-command.interface.ts --fix 2>&1 | tail -10 Read
 Files
 
@@ -3096,10 +3096,10 @@ paths differently than I'd expect, so I'll just accept the auto-fix and move
 forward rather than dig into the exact sorting logic.
 
 1 tool call Command
-/Users/akouta/Projects/academorix-frontend/packages/frontend/console pnpm
+/Users/akouta/Projects/stackra-frontend/packages/frontend/console pnpm
 --filter @stackra/console lint 2>&1 | tail -20
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend pnpm --filter
+1 tool call Command /Users/akouta/Projects/stackra-frontend pnpm --filter
 @stackra/console typecheck 2>&1 | tail -10 & pnpm --filter @stackra/console
 build 2>&1 | tail -20
 
@@ -3112,7 +3112,7 @@ babel.config.js
 
 package.json List Directory Look at test dir Read File
 
-App.test.tsx Command /Users/akouta/Projects/academorix-frontend pnpm --filter
+App.test.tsx Command /Users/akouta/Projects/stackra-frontend pnpm --filter
 RnExample test 2>&1 | tail -60
 
 Thought complete The issue is that the ESM imports in the React Native preset
@@ -3121,7 +3121,7 @@ by default. I need to configure Jest to whitelist `@react-native` and
 `react-native` so their code gets properly transformed. Writing Jest config...
 
 2 tool calls Command find
-/Users/akouta/Projects/academorix-frontend/node_modules/.pnpm -name
+/Users/akouta/Projects/stackra-frontend/node_modules/.pnpm -name
 "jest-preset.js" -path "_@react-native/jest-preset_" 2>/dev/null | head -3 Read
 File
 
@@ -3146,19 +3146,19 @@ transformed instead of ignored.
 
 jest.config.js
 
-Details Command /Users/akouta/Projects/academorix-frontend pnpm --filter
+Details Command /Users/akouta/Projects/stackra-frontend pnpm --filter
 RnExample test 2>&1 | tail -40
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend pnpm build 2>&1 |
+1 tool call Command /Users/akouta/Projects/stackra-frontend pnpm build 2>&1 |
 tail -40
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend pnpm typecheck
+1 tool call Command /Users/akouta/Projects/stackra-frontend pnpm typecheck
 2>&1 | tail -30
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend pnpm lint 2>&1 |
+1 tool call Command /Users/akouta/Projects/stackra-frontend pnpm lint 2>&1 |
 tail -30 Lint passes 36/36! Now the tests:
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend pnpm test 2>&1 |
+1 tool call Command /Users/akouta/Projects/stackra-frontend pnpm test 2>&1 |
 tail -50
 
 Thought complete I'm seeing test failures across several packages —
@@ -3167,7 +3167,7 @@ Thought complete I'm seeing test failures across several packages —
 actually related to my changes or if they were already failing. Let me dig into
 the actual error messages to understand what's going on.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend pnpm --filter
+1 tool call Command /Users/akouta/Projects/stackra-frontend pnpm --filter
 @stackra/container test 2>&1 | tail -30
 
 Thought complete Looking at the test failures, this seems to be a pre-existing
@@ -3175,7 +3175,7 @@ issue where the container test suite is referencing a devtools panel path that
 no longer exists—likely it was renamed at some point. I should verify the other
 failures aren't caused by my changes either.
 
-1 tool call Command /Users/akouta/Projects/academorix-frontend pnpm --filter
+1 tool call Command /Users/akouta/Projects/stackra-frontend pnpm --filter
 @stackra/events test 2>&1 | tail -20 & pnpm --filter @stackra/logger test 2>&1 |
 tail -20 & wait
 
@@ -3184,6 +3184,6 @@ they were transient issues or actual failures. I should also check the container
 test specifically since that one seems to be consistently failing, and verify
 whether these are pre-existing problems.
 
-3 tool calls Command /Users/akouta/Projects/academorix-frontend git status 2>&1
-| head -30 Command /Users/akouta/Projects/academorix-frontend git stash -u 2>&1
+3 tool calls Command /Users/akouta/Projects/stackra-frontend git status 2>&1
+| head -30 Command /Users/akouta/Projects/stackra-frontend git stash -u 2>&1
 | head -5 Invoke Agent Est. Credits Used: 23

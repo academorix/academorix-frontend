@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Observers;
+namespace Stackra\Geography\Observers;
 
-use Academorix\Geography\Contracts\Data\TimezoneInterface;
-use Academorix\Geography\Events\Domain\TimezoneCreated;
-use Academorix\Geography\Events\Domain\TimezoneDeleted;
-use Academorix\Geography\Events\Domain\TimezoneUpdated;
-use Academorix\Geography\Models\Timezone;
+use Stackra\Geography\Contracts\Data\TimezoneInterface;
+use Stackra\Geography\Events\Domain\TimezoneCreated;
+use Stackra\Geography\Events\Domain\TimezoneDeleted;
+use Stackra\Geography\Events\Domain\TimezoneUpdated;
+use Stackra\Geography\Models\Timezone;
 use DateTimeZone;
 use InvalidArgumentException;
 

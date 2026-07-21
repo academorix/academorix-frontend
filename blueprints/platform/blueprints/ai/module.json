@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "ai",
   "alias": "ai",
-  "namespace": "Academorix\\AI",
+  "namespace": "Stackra\\AI",
   "description": "Tenant-scoped AI personas + tools + draft-then-confirm flow, built on top of the first-party `laravel/ai` SDK. Reference implementation lives at `.ref/AI` and is the source of truth for this blueprint. Every persona is a vendor `Laravel\\Ai\\Contracts\\Agent` implementer using `Laravel\\Ai\\Promptable`. Every custom tool implements `Laravel\\Ai\\Contracts\\Tool` via our `SensitiveTool` abstract base which adds compliance concerns (sensitivity classification, write-mode routing, role-gated authorization). Compliance concerns land as vendor `AgentMiddleware` classes returned from each persona's `middleware()` method. Streaming uses `->stream()->usingVercelDataProtocol()` (vendor-native). Conversation persistence uses `Conversational` + `RememberConversation` — vendor tables at `agent_conversations`. Failover cascades declared per persona via `#[Provider([Lab::Anthropic, Lab::OpenAI])]` and recorded to `ai_runs.provider_fallbacks_json`. Ships THREE owned entities: `AiRun` (single model invocation — model / provider / tokens_in / tokens_out / latency_ms / cost_minor / status per RunStatus enum; audit trail per conversation), `AiToolCall` (individual tool invocation inside an AiRun — tool_name + args_hash + result_summary + ms + error?), `AiDraft` (draft-then-confirm envelope for `WriteMode::Draft` tool invocations — payload + preview + expires_at + status per DraftStatus enum; separate `POST /ai/drafts/{id}/confirm` endpoint applies the draft after human review). Conversations are vendor-owned (`agent_conversations`, no owned entity). Optional `AiEmbedding` (pgvector RAG for SearchIndexerPersona). MCP support via `Mcp/AiToolAdapter` + `Mcp/ToolServer` — exposes tenant AI as an MCP endpoint for external agents (Claude Desktop, Cursor). Backend-first per D6 locked — browser NEVER holds provider keys.",
   "keywords": [
     "ai",
@@ -23,8 +23,8 @@
   ],
   "priority": 92,
   "providers": [
-    "Academorix\\AI\\Providers\\AiServiceProvider",
-    "Academorix\\AI\\Providers\\AiHealthProvider"
+    "Stackra\\AI\\Providers\\AiServiceProvider",
+    "Stackra\\AI\\Providers\\AiHealthProvider"
   ],
   "files": [],
   "dependencies": [
@@ -72,7 +72,7 @@
     }
   ],
   "contributes": {
-    "traits": ["AcademorixAgent"],
+    "traits": ["StackraAgent"],
     "attributes": [
       "AsAiTool",
       "Sensitivity",

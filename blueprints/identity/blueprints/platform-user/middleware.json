@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/platform-user/middleware",
+  "id": "stackra://modules/platform-user/middleware",
   "$version": 1,
   "title": "platform-user \u2014 HTTP middleware",
   "description": "Two middleware unique to the platform_admin plane. `platform.audit` stamps EVERY platform-plane write with an audit row + correlation id \u2014 heavier than the tenant plane's default, per SOC 2 CC7.2. `platform.mfa_required` enforces MFA at request time regardless of the underlying user's MFA state \u2014 the platform_admin guard has no opt-out.",
   "middleware": [
     {
       "alias": "platform.audit",
-      "class": "Academorix\\PlatformUser\\Http\\Middleware\\PlatformAuditMiddleware",
+      "class": "Stackra\\PlatformUser\\Http\\Middleware\\PlatformAuditMiddleware",
       "priority": 42,
       "description": "Wraps the response cycle. On every request that reaches this middleware (mounted on all /api/v1/platform/* routes), a correlation_id UUID is generated + attached to the request context. Every audit + activity row written during the request lifecycle inherits that correlation_id (foundation::HasActivityLog + audit::HasAudit read from the request context on write). On response emission, a single `platform.request.audit` activity_log entry is written with the method, path, status code, actor_id (PlatformUser.id), correlation_id, duration_ms, and IP (truncated to /24 per GDPR). Compliance evidence for SOC 2 CC7.2 \u2014 shows the full stream of platform-admin actions with per-request grouping. Skips on GETs that touch no PII AND resolve in < 100ms (audit-row volume optimisation \u2014 read-only telemetry is captured via metrics instead).",
       "auto_applied": true,
@@ -15,7 +15,7 @@
     },
     {
       "alias": "platform.mfa_required",
-      "class": "Academorix\\PlatformUser\\Http\\Middleware\\PlatformMfaRequiredMiddleware",
+      "class": "Stackra\\PlatformUser\\Http\\Middleware\\PlatformMfaRequiredMiddleware",
       "priority": 40,
       "description": "Refuses the request when the authenticated PlatformUser's referenced Identity has NULL mfa_secret_encrypted. Fires BEFORE the route matches so a request with a stale token (issued when the Identity had MFA, then MFA disabled server-side) fails at the middleware layer before reaching the controller. Distinct from the identity/auth login flow which requires MFA at token-issuance time \u2014 this middleware handles the runtime enforcement (config('platform-user.mfa.require_on_every_request')). Refusal shape: HTTP 401 with body `{ error: { code: 'PLATFORM_MFA_REQUIRED', message: 'Platform admin sessions require enrolled MFA; please re-enrol via the identity-service.' } }`.",
       "auto_applied": true,

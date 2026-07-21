@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/user/rules",
+  "id": "stackra://modules/user/rules",
   "$version": 1,
   "title": "user \u2014 validation rules",
   "description": "Four custom Laravel validation rules published by UserServiceProvider::boot() so any FormRequest / Data class can validate profile-adjacent fields. Composes the compliance floor for `age_meets_min` \u2014 the tenant setting is clamped up to the region's COPPA / GDPR minimum before comparison.",
-  "namespace": "Academorix\\User\\Rules",
+  "namespace": "Stackra\\User\\Rules",
   "rules": [
     {
       "name": "valid_e164_phone",
-      "class": "Academorix\\User\\Rules\\ValidE164Phone",
+      "class": "Stackra\\User\\Rules\\ValidE164Phone",
       "signature": "valid_e164_phone",
       "description": "Ensures the value is a valid E.164 international phone number. Accepts `+` prefix + 1\u201315 digits, no separators. Delegates to `giggsey/libphonenumber-for-php` for the country-aware parse + validate step.",
       "params": [],
@@ -17,7 +17,7 @@
     },
     {
       "name": "valid_iana_timezone",
-      "class": "Academorix\\User\\Rules\\ValidIanaTimezone",
+      "class": "Stackra\\User\\Rules\\ValidIanaTimezone",
       "signature": "valid_iana_timezone",
       "description": "Ensures the value is a member of PHP's `\\DateTimeZone::listIdentifiers()` \u2014 the full IANA tz database. Rejects deprecated aliases (e.g. `US/Pacific`) in strict mode.",
       "params": [
@@ -34,7 +34,7 @@
     },
     {
       "name": "valid_bcp47_locale",
-      "class": "Academorix\\User\\Rules\\ValidBcp47Locale",
+      "class": "Stackra\\User\\Rules\\ValidBcp47Locale",
       "signature": "valid_bcp47_locale[:tenant_enabled_only]",
       "description": "Ensures the value is a syntactically valid BCP-47 language tag AND (in the default `tenant_enabled_only` mode) resolves to a `TenantLocale where is_enabled=true` on the caller's tenant. Pass `any` to accept any BCP-47 tag from the platform catalogue.",
       "params": [
@@ -50,7 +50,7 @@
     },
     {
       "name": "age_meets_min",
-      "class": "Academorix\\User\\Rules\\AgeMeetsMin",
+      "class": "Stackra\\User\\Rules\\AgeMeetsMin",
       "signature": "age_meets_min[:override]",
       "description": "Compares the value (interpreted as a date-of-birth) against the effective compliance minimum age resolved by `auth::CompliantAgePolicy::resolveEffectiveMinimum($region)`. The `override` argument names a tenant setting whose value is clamped UP by the compliance floor \u2014 tenants may raise the minimum but never lower it. Rejects when the DOB puts the subject under the resolved floor.",
       "params": [

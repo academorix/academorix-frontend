@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsFormationsSdk\Resources;
+namespace Stackra\SportsFormationsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsFormationsSdk\Data\FormationSlotData;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsFormationsSdk\Data\FormationSlotData;
 use Saloon\Http\Response;
 
 /**

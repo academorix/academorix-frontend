@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Jobs;
+namespace Stackra\Activity\Jobs;
 
-use Academorix\Activity\Contracts\Repositories\ActivityRepositoryInterface;
+use Stackra\Activity\Contracts\Repositories\ActivityRepositoryInterface;
 use Carbon\CarbonImmutable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

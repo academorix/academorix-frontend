@@ -1,4 +1,4 @@
-# academorix/grants
+# stackra/grants
 
 Server-side Laravel package for the `grants` module. Auto-generated from the
 blueprint at `modules/access/blueprints/grants/`.
@@ -43,6 +43,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-access/grants-sdk` under `sdk/access-grants-sdk/`. Consumers cross
+`stackra-access/grants-sdk` under `sdk/access-grants-sdk/`. Consumers cross
 the service boundary through the SDK; this package is the SERVER-side owner of
 the domain.

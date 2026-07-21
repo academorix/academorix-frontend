@@ -20,21 +20,21 @@
  *   exceptions::infrastructure.unavailable             (class default)
  *   exceptions::infrastructure.unavailable_dependency  ({@see dependency()})
  *
- * @see \Academorix\Exceptions\AcademorixException  Base class.
+ * @see \Stackra\Exceptions\StackraException  Base class.
  * @see IntegrationException  For third-party (vendor) outages.
  * @see MaintenanceModeException  Subclass for the "planned downtime" flavour.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Infrastructure;
+namespace Stackra\Exceptions\Infrastructure;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class ServiceUnavailableException extends AcademorixException
+class ServiceUnavailableException extends StackraException
 {
     /**
      * Machine-readable code — treat as public API. Distinct from
@@ -68,7 +68,7 @@ class ServiceUnavailableException extends AcademorixException
     /**
      * 503 — the standard "service unavailable" status. Paired with
      * a `Retry-After:` header by the renderer, sourced from
-     * {@see AcademorixException::retryAfter()}.
+     * {@see StackraException::retryAfter()}.
      */
     protected int $httpStatus = Response::HTTP_SERVICE_UNAVAILABLE;
 

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SharedAttributesSdk\Resources;
+namespace Stackra\SharedAttributesSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SharedAttributesSdk\Data\AttributeSetData;
-use Academorix\SharedAttributesSdk\Requests\AttributeSets\CreateAttributeSetRequest;
-use Academorix\SharedAttributesSdk\Requests\AttributeSets\ListAttributeSetsAdminRequest;
-use Academorix\SharedAttributesSdk\Requests\AttributeSets\ListAttributeSetsRequest;
-use Academorix\SharedAttributesSdk\Requests\AttributeSets\ShowAttributeSetAdminRequest;
-use Academorix\SharedAttributesSdk\Requests\AttributeSets\ShowAttributeSetRequest;
-use Academorix\SharedAttributesSdk\Requests\AttributeSets\UpdateAttributeSetRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SharedAttributesSdk\Data\AttributeSetData;
+use Stackra\SharedAttributesSdk\Requests\AttributeSets\CreateAttributeSetRequest;
+use Stackra\SharedAttributesSdk\Requests\AttributeSets\ListAttributeSetsAdminRequest;
+use Stackra\SharedAttributesSdk\Requests\AttributeSets\ListAttributeSetsRequest;
+use Stackra\SharedAttributesSdk\Requests\AttributeSets\ShowAttributeSetAdminRequest;
+use Stackra\SharedAttributesSdk\Requests\AttributeSets\ShowAttributeSetRequest;
+use Stackra\SharedAttributesSdk\Requests\AttributeSets\UpdateAttributeSetRequest;
 use Saloon\Http\Response;
 
 /**
@@ -59,7 +59,7 @@ final readonly class AttributeSetsResource
      *
      * @return AttributeSetData
      */
-    public function create(\Academorix\SharedAttributesSdk\Payloads\AttributeSets\CreateAttributeSetPayload $payload, ?string $idempotencyKey = null): AttributeSetData
+    public function create(\Stackra\SharedAttributesSdk\Payloads\AttributeSets\CreateAttributeSetPayload $payload, ?string $idempotencyKey = null): AttributeSetData
     {
         return $this->connector->send(new CreateAttributeSetRequest($payload, $idempotencyKey))->dto();
     }
@@ -87,7 +87,7 @@ final readonly class AttributeSetsResource
      *
      * @return AttributeSetData
      */
-    public function update(string $set, \Academorix\SharedAttributesSdk\Payloads\AttributeSets\UpdateAttributeSetPayload $payload, ?string $idempotencyKey = null): AttributeSetData
+    public function update(string $set, \Stackra\SharedAttributesSdk\Payloads\AttributeSets\UpdateAttributeSetPayload $payload, ?string $idempotencyKey = null): AttributeSetData
     {
         return $this->connector->send(new UpdateAttributeSetRequest($set, $payload, $idempotencyKey))->dto();
     }

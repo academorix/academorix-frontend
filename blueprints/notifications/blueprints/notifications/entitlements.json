@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/entitlements",
+  "id": "stackra://modules/notifications/entitlements",
   "$version": 1,
   "title": "notifications core \u2014 entitlements",
   "description": "Aggregate entitlements resolved at `/auth/me` \u2192 `data.quota_summary`. Actual per-channel usage counters live in the respective channel module. Core aggregates them for a single-pane UX and enforces the aggregate caps (e.g. custom-templates.count applies platform-wide).",

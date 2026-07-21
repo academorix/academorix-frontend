@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transfer/schemas/xfer-mapping-profile",
+  "id": "stackra://modules/transfer/schemas/xfer-mapping-profile",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "XferMappingProfile",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "xmap_",
     "incrementing": false,
-    "model": "Academorix\\Transfer\\Models\\XferMappingProfile",
-    "interface": "Academorix\\Transfer\\Contracts\\Data\\XferMappingProfileInterface",
-    "implements": ["Academorix\\Transfer\\Contracts\\Data\\XferMappingProfileInterface"],
+    "model": "Stackra\\Transfer\\Models\\XferMappingProfile",
+    "interface": "Stackra\\Transfer\\Contracts\\Data\\XferMappingProfileInterface",
+    "implements": ["Stackra\\Transfer\\Contracts\\Data\\XferMappingProfileInterface"],
     "traits": ["HasUlids", "BelongsToTenant", "HasActivityLog", "SoftDeletes"],
     "casts": {
       "header_map": "array",

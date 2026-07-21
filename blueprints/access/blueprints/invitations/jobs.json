@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invitations/jobs",
+  "id": "stackra://modules/invitations/jobs",
   "$version": 1,
   "title": "invitations — queued jobs",
   "description": "Five queued jobs. All models re-hydrated from DB on handle (no stale-payload risk). ShouldBeUnique guards on jobs whose duplicate execution would over-send.",
@@ -7,7 +7,7 @@
   "defaultConnection": "redis",
   "jobs": [
     {
-      "class": "Academorix\\Invitations\\Jobs\\SendInvitationJob",
+      "class": "Stackra\\Invitations\\Jobs\\SendInvitationJob",
       "description": "Renders the outbound message + hands off to the configured mail transport. Requires access to the raw token (stashed on the Invitation model at create-time; if lost — e.g. job re-hydrates from a stale queue — the job refuses to run and marks the invitation `state=send_failed` with error_code=`token_unavailable`).",
       "queue": "invitations",
       "tries": 5,
@@ -22,7 +22,7 @@
       }
     },
     {
-      "class": "Academorix\\Invitations\\Jobs\\ExpireInvitationsJob",
+      "class": "Stackra\\Invitations\\Jobs\\ExpireInvitationsJob",
       "description": "Sweeps invitations whose `expires_at < now()` and are still in a non-terminal state. Transitions them to `expired`, dispatches InvitationExpired. Batched — max 500 per run to avoid blocking the queue.",
       "queue": "retention",
       "tries": 3,
@@ -31,7 +31,7 @@
       "input": { "batch_size": "integer (default 500)" }
     },
     {
-      "class": "Academorix\\Invitations\\Jobs\\CleanupAcceptedInvitationsJob",
+      "class": "Stackra\\Invitations\\Jobs\\CleanupAcceptedInvitationsJob",
       "description": "After the accepted-retention window (default P90D), soft-deletes accepted + declined invitations. InvitationEvent rows are retained separately per their own retention window.",
       "queue": "retention",
       "tries": 3,
@@ -39,7 +39,7 @@
       "input": { "older_than": "ISO-8601 duration" }
     },
     {
-      "class": "Academorix\\Invitations\\Jobs\\RetryBounceJob",
+      "class": "Stackra\\Invitations\\Jobs\\RetryBounceJob",
       "description": "For soft-bounced invitations (transient email failures), waits for the transport-recommended retry delay + resends. Refused for hard bounces + complaints (terminal). Tracks attempt count on the InvitationEvent metadata to avoid infinite retry.",
       "queue": "invitations",
       "tries": 3,
@@ -48,7 +48,7 @@
       "input": { "invitation_id": "string" }
     },
     {
-      "class": "Academorix\\Invitations\\Jobs\\RecordInboundEventJob",
+      "class": "Stackra\\Invitations\\Jobs\\RecordInboundEventJob",
       "description": "Handles the queued portion of mail-transport webhook processing. The webhook controller validates signature synchronously then enqueues this job to write InvitationEvent rows + trigger state transitions. Idempotent on (signal_id, transport) — the DB unique index catches duplicates.",
       "queue": "webhooks",
       "tries": 5,

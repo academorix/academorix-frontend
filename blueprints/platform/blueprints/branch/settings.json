@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/branch/settings",
+  "id": "stackra://modules/branch/settings",
   "$version": 1,
   "title": "branch — settings",
   "description": "Tenant-scoped policy for branch provisioning + geocoding + hours enforcement + capacity + closure notifications. Compliance floors clamp every value where they apply (e.g. minimum notification lead time on closure is set by regional labor-notice law).",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "branch",
-      "class": "Academorix\\Branch\\Settings\\BranchSettings",
+      "class": "Stackra\\Branch\\Settings\\BranchSettings",
       "label": "Branches",
       "description": "Tenant-wide policy for branch provisioning + operational-hours enforcement + geocoding preferences.",
       "icon": "building-storefront",

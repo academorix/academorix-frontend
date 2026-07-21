@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AthleteGuardian\Exceptions;
+namespace Stackra\AthleteGuardian\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Another guardian is already primary.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GuardianAthleteAlreadyHasPrimaryException extends AcademorixException
+final class GuardianAthleteAlreadyHasPrimaryException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

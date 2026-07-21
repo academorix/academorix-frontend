@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Exceptions;
+namespace Stackra\Marketing\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Caller lacks the owner/admin/marketing role required to access the marketing surface.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MarketingInsufficientRoleException extends AcademorixException
+final class MarketingInsufficientRoleException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

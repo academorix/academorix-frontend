@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformPublicSiteSdk\Requests\PublicPages;
+namespace Stackra\PlatformPublicSiteSdk\Requests\PublicPages;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\PlatformPublicSiteSdk\Data\PublicPageData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\PlatformPublicSiteSdk\Data\PublicPageData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

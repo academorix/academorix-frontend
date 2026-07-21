@@ -1,84 +1,84 @@
 {
-  "id": "academorix://modules/auth/listeners",
+  "id": "stackra://modules/auth/listeners",
   "$version": 1,
   "title": "auth \u2014 subscribed events",
   "description": "Auth is BOTH a heavy publisher AND a heavy listener. It reacts to identity-substrate events (session revocation on credential mutation) + tenancy events (session revocation on tenant erasure) + user events (session revocation on user suspension) + auth's own events (breach lockdown, JWT key rotation cache invalidation).",
   "listeners": [
     {
       "event": "identity::PasswordChanged",
-      "listener": "Academorix\\Auth\\Listeners\\RevokeAllActiveSessionsListener",
+      "listener": "Stackra\\Auth\\Listeners\\RevokeAllActiveSessionsListener",
       "queue": "notifications-critical",
       "purpose": "The canonical session-revocation-on-credential-mutation listener. Dispatches RevokeAllActiveSessionsJob \u2014 revokes every active PAT for every User referencing the Identity, cross-Application. Fires AllSessionsRevoked once with the aggregated count."
     },
     {
       "event": "identity::MfaDisabled",
-      "listener": "Academorix\\Auth\\Listeners\\RevokeAllActiveSessionsListener",
+      "listener": "Stackra\\Auth\\Listeners\\RevokeAllActiveSessionsListener",
       "queue": "notifications-critical",
       "purpose": "Same as PasswordChanged \u2014 disabling MFA is a security-material credential mutation. Same job, different trigger event."
     },
     {
       "event": "identity::IdentityLocked",
-      "listener": "Academorix\\Auth\\Listeners\\RevokeAllActiveSessionsListener",
+      "listener": "Stackra\\Auth\\Listeners\\RevokeAllActiveSessionsListener",
       "queue": "notifications-critical",
       "purpose": "Lockout revokes sessions to prevent an attacker who obtained a valid PAT from continuing to use it during the lockout window."
     },
     {
       "event": "user::UserSuspended",
-      "listener": "Academorix\\Auth\\Listeners\\RevokeSessionsForUserListener",
+      "listener": "Stackra\\Auth\\Listeners\\RevokeSessionsForUserListener",
       "queue": "notifications-critical",
       "purpose": "Per-Application suspension \u2014 revokes ONLY the sessions issued to this particular User (not cross-Application, unlike PasswordChanged). Fires AllSessionsRevoked with user_id set."
     },
     {
       "event": "user::UserDisabled",
-      "listener": "Academorix\\Auth\\Listeners\\RevokeSessionsForUserListener",
+      "listener": "Stackra\\Auth\\Listeners\\RevokeSessionsForUserListener",
       "queue": "notifications-critical",
       "purpose": "Same as UserSuspended \u2014 disabled Users cannot hold active sessions."
     },
     {
       "event": "identity::IdentityErased",
-      "listener": "Academorix\\Auth\\Listeners\\LockdownOnIdentityErased",
+      "listener": "Stackra\\Auth\\Listeners\\LockdownOnIdentityErased",
       "queue": "notifications-critical",
       "purpose": "On IdentityErased(erasure_phase='soft_delete'), revoke every active session cross-Application. On erasure_phase='hard_delete', the cascade already fired (via onDelete=cascade on the FK) \u2014 this listener is idempotent."
     },
     {
       "event": "auth::RefreshTokenReuseDetected",
-      "listener": "Academorix\\Auth\\Listeners\\LockdownOnBreachDetected",
+      "listener": "Stackra\\Auth\\Listeners\\LockdownOnBreachDetected",
       "queue": "notifications-critical",
       "purpose": "The BREACH-response listener. On refresh reuse: invalidate every refresh token in the family_id chain + revoke every active PAT for the User + dispatch a security notification to the User + write a compliance-audit entry naming the reuse. Idempotent."
     },
     {
       "event": "auth::JwtSigningKeyRotated",
-      "listener": "Academorix\\Auth\\Listeners\\InvalidateJwksCacheListener",
+      "listener": "Stackra\\Auth\\Listeners\\InvalidateJwksCacheListener",
       "queue": null,
       "purpose": "Synchronous cache eviction of auth:jwks:response. Downstream verifiers pulling the JWKS after this point receive the new key on their next refresh."
     },
     {
       "event": "auth::JwtRevoked",
-      "listener": "Academorix\\Auth\\Listeners\\PropagateJwtDenyToVerifiersListener",
+      "listener": "Stackra\\Auth\\Listeners\\PropagateJwtDenyToVerifiersListener",
       "queue": "notifications-critical",
       "purpose": "Publish the new deny-list entry via the platform's pubsub bus so every downstream service's auth.jwt_verify middleware refreshes its in-memory deny-list cache within seconds (faster than the natural 15-minute TTL)."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Auth\\Listeners\\RevokeAllSessionsForTenantListener",
+      "listener": "Stackra\\Auth\\Listeners\\RevokeAllSessionsForTenantListener",
       "queue": "notifications-critical",
       "purpose": "On full-tenant erasure: revoke every active session for every User under that tenant. Fires AllSessionsRevoked with tenant_id set."
     },
     {
       "event": "access::PermissionRevoked",
-      "listener": "Academorix\\Auth\\Listeners\\InvalidateSessionScopeCacheListener",
+      "listener": "Stackra\\Auth\\Listeners\\InvalidateSessionScopeCacheListener",
       "queue": null,
       "purpose": "Synchronous cache eviction of auth:session_scope:token:{token_id} for every active PAT held by Users whose role/permission mutated. Ensures the next request from that PAT re-resolves permissions from the current RBAC snapshot (rather than the cached compact array from PAT issue-time)."
     },
     {
       "event": "auth::UserLoggedIn",
-      "listener": "Academorix\\Auth\\Listeners\\MaybeDispatchNewDeviceNotification",
+      "listener": "Stackra\\Auth\\Listeners\\MaybeDispatchNewDeviceNotification",
       "queue": "notifications",
       "purpose": "Composes DeviceFingerprinter's per-User fingerprint cache. If the login's fingerprint doesn't match any seen in the last new_device_lookback_days, fires LoginFromNewDeviceDetected which the notification pipeline picks up."
     },
     {
       "event": "auth::UserLoggedIn",
-      "listener": "Academorix\\Auth\\Listeners\\UpdateUserLastLoginAt",
+      "listener": "Stackra\\Auth\\Listeners\\UpdateUserLastLoginAt",
       "queue": null,
       "purpose": "Synchronous update of users.last_login_at + identities.last_login_at. Same transaction as the audit-log write so partial state is impossible."
     }

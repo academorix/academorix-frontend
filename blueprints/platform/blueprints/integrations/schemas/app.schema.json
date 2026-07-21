@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/integrations/schemas/app",
+  "id": "stackra://modules/integrations/schemas/app",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "App",
@@ -49,7 +49,7 @@
         "type": "boolean",
         "nullable": false,
         "default": "false",
-        "description": "True for apps built by Academorix or a vetted partner. Bypasses public app review; still subject to child-data consent flow."
+        "description": "True for apps built by Stackra or a vetted partner. Bypasses public app review; still subject to child-data consent flow."
       },
       "oauth_client_id": {
         "type": "string",
@@ -97,7 +97,7 @@
       "partner_share_bps": {
         "type": "integer",
         "nullable": true,
-        "description": "Basis points of app revenue paid to the developer (10000 = 100%). Academorix keeps 10000 - partner_share_bps."
+        "description": "Basis points of app revenue paid to the developer (10000 = 100%). Stackra keeps 10000 - partner_share_bps."
       },
       "approved_at": { "type": "timestamptz", "nullable": true },
       "approved_by_platform_user_id": {

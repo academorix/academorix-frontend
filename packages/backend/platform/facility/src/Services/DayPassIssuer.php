@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Services;
+namespace Stackra\Facility\Services;
 
-use Academorix\Facility\Contracts\Services\DayPassIssuerInterface;
+use Stackra\Facility\Contracts\Services\DayPassIssuerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Facility\Contracts\Repositories\DayPassRepositoryInterface;
+use Stackra\Facility\Contracts\Repositories\DayPassRepositoryInterface;
 
 /**
  * Concrete service — DayPassIssuer.

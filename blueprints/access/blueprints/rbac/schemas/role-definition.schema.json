@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/rbac/schemas/role-definition",
+  "id": "stackra://modules/rbac/schemas/role-definition",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "RoleDefinition",
-  "description": "Academorix metadata layer FK-linked to system roles. Pins which business_types default-provision the role, bilingual labels, min-tier gate, default_permissions[] compact array, is_customisable + max_custom_permissions. Populated by `rbac:sync-role-definitions` from `data/role-catalogue.json`. Distinct from spatie's `roles` table \u2014 that's the storage layer; this is the platform-owned metadata layer.",
+  "description": "Stackra metadata layer FK-linked to system roles. Pins which business_types default-provision the role, bilingual labels, min-tier gate, default_permissions[] compact array, is_customisable + max_custom_permissions. Populated by `rbac:sync-role-definitions` from `data/role-catalogue.json`. Distinct from spatie's `roles` table \u2014 that's the storage layer; this is the platform-owned metadata layer.",
   "type": "object",
   "x-module": "rbac",
   "x-eloquent": {
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "rdf_",
     "incrementing": false,
-    "model": "Academorix\\Rbac\\Models\\RoleDefinition",
-    "interface": "Academorix\\Rbac\\Contracts\\Data\\RoleDefinitionInterface",
-    "implements": ["Academorix\\Rbac\\Contracts\\Data\\RoleDefinitionInterface"],
+    "model": "Stackra\\Rbac\\Models\\RoleDefinition",
+    "interface": "Stackra\\Rbac\\Contracts\\Data\\RoleDefinitionInterface",
+    "implements": ["Stackra\\Rbac\\Contracts\\Data\\RoleDefinitionInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

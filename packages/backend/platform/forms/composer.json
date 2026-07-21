@@ -1,10 +1,10 @@
 {
-  "name": "academorix/forms",
+  "name": "stackra/forms",
   "type": "library",
-  "description": "Academorix Forms module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/forms/`. Complements the wire SDK at `academorix-platform/forms-sdk`.",
+  "description": "Stackra Forms module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/forms/`. Complements the wire SDK at `stackra-platform/forms-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "platform",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-platform/forms-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-platform/forms-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Forms\\": "src/"
+      "Stackra\\Forms\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Forms\\Tests\\": "tests/"
+      "Stackra\\Forms\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Forms\\Providers\\FormsServiceProvider"
+        "Stackra\\Forms\\Providers\\FormsServiceProvider"
       ],
       "aliases": {}
     }
@@ -68,7 +68,7 @@
   "repositories": [
     {
       "type": "path",
-      "url": "../../../../apps/academorix/src/sdks/platform-forms-sdk",
+      "url": "../../../../apps/stackra/src/sdks/platform-forms-sdk",
       "options": {
         "symlink": true
       }

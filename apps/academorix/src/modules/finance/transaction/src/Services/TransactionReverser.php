@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transaction\Services;
+namespace Stackra\Transaction\Services;
 
-use Academorix\Transaction\Contracts\Services\TransactionReverserInterface;
+use Stackra\Transaction\Contracts\Services\TransactionReverserInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Transaction\Contracts\Repositories\TransactionLedgerEntryRepositoryInterface;
+use Stackra\Transaction\Contracts\Repositories\TransactionLedgerEntryRepositoryInterface;
 
 /**
  * Concrete service — TransactionReverser.

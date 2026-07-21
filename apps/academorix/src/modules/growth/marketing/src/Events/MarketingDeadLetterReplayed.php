@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Events;
+namespace Stackra\Marketing\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**

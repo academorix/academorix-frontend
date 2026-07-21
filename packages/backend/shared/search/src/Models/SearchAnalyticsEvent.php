@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Models;
+namespace Stackra\Search\Models;
 
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Search\Contracts\Data\SearchAnalyticsEventInterface;
-use Academorix\Search\Database\Factories\SearchAnalyticsEventFactory;
-use Academorix\Search\Enums\AnalyticsEventKind;
-use Academorix\Search\Enums\SearchEngine;
-use Academorix\Search\Policies\SearchAnalyticsEventPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Search\Contracts\Data\SearchAnalyticsEventInterface;
+use Stackra\Search\Database\Factories\SearchAnalyticsEventFactory;
+use Stackra\Search\Enums\AnalyticsEventKind;
+use Stackra\Search\Enums\SearchEngine;
+use Stackra\Search\Policies\SearchAnalyticsEventPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\Table;

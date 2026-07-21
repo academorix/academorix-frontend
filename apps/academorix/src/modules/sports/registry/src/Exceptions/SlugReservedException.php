@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Exceptions;
+namespace Stackra\Registry\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to create a row with a reserved slug ('platform', 'system', 'admin', 'seeded', 'default', 'any', 'all').
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SlugReservedException extends AcademorixException
+final class SlugReservedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

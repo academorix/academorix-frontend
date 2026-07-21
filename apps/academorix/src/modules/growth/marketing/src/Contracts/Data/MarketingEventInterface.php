@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Contracts\Data;
+namespace Stackra\Marketing\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Marketing\Models\MarketingEvent;
+use Stackra\Marketing\Models\MarketingEvent;
 
 /**
  * Table shape for the `marketing_events` table.

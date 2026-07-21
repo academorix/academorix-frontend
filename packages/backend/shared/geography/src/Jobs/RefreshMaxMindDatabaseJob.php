@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Jobs;
+namespace Stackra\Geography\Jobs;
 
-use Academorix\Geography\Contracts\Services\GeolocateServiceInterface;
-use Academorix\Geography\Notifications\MaxMindRefreshFailedNotification;
+use Stackra\Geography\Contracts\Services\GeolocateServiceInterface;
+use Stackra\Geography\Notifications\MaxMindRefreshFailedNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;

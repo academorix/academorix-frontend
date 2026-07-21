@@ -1,21 +1,21 @@
 {
-  "id": "academorix://modules/telemetry/middleware",
+  "id": "stackra://modules/telemetry/middleware",
   "$version": 1,
   "title": "telemetry \u2014 HTTP middleware",
   "description": "keepsuit handles the HTTP-server auto-instrumentation. We add three thin middleware: two for OTel (span-attribute enrichment + baggage extraction), one for logs (RequestContext population). Order matters \u2014 request.id must run first so downstream middleware can attach it.",
   "middleware": [
     {
       "alias": "otel.trace",
-      "class": "Academorix\\Telemetry\\Otel\\Http\\Middleware\\StartOrJoinTrace",
+      "class": "Stackra\\Telemetry\\Otel\\Http\\Middleware\\StartOrJoinTrace",
       "signal": "traces",
       "priority": 8,
-      "description": "Extracts W3C Trace Context / B3 from inbound headers via keepsuit's propagator; joins existing trace if present, else starts a new root span. Adds academorix.request_id + academorix.tenant_id as span attributes.",
+      "description": "Extracts W3C Trace Context / B3 from inbound headers via keepsuit's propagator; joins existing trace if present, else starts a new root span. Adds stackra.request_id + stackra.tenant_id as span attributes.",
       "auto_applied": true,
       "auto_applied_to": ["api", "web"]
     },
     {
       "alias": "otel.baggage",
-      "class": "Academorix\\Telemetry\\Otel\\Http\\Middleware\\PropagateBaggage",
+      "class": "Stackra\\Telemetry\\Otel\\Http\\Middleware\\PropagateBaggage",
       "signal": "traces",
       "priority": 9,
       "description": "Extracts W3C Baggage header + populates our RequestContext with (tenant_id, causer_id, org_id, branch_id). Used by downstream modules to correlate cross-service work.",
@@ -24,17 +24,17 @@
     },
     {
       "alias": "logs.context",
-      "class": "Academorix\\Telemetry\\Logs\\Http\\Middleware\\PopulateRequestContext",
+      "class": "Stackra\\Telemetry\\Logs\\Http\\Middleware\\PopulateRequestContext",
       "signal": "logs",
       "priority": 10,
-      "description": "Populates RequestContext with request_id + resolved tenant_id + resolved causer_id for the AcademorixContextProcessor. Idempotent \u2014 if otel.baggage already populated the fields, this middleware is a no-op.",
+      "description": "Populates RequestContext with request_id + resolved tenant_id + resolved causer_id for the StackraContextProcessor. Idempotent \u2014 if otel.baggage already populated the fields, this middleware is a no-op.",
       "auto_applied": true,
       "auto_applied_to": ["api", "web"]
     }
   ],
   "consumed": [{ "middleware": "foundation::request.id" }],
   "notes": [
-    "keepsuit's own middleware (Keepsuit\\LaravelOpenTelemetry\\Http\\Middleware\\TraceRequest) handles the raw span lifecycle. Our StartOrJoinTrace runs AFTER it, only to add academorix-specific attributes.",
+    "keepsuit's own middleware (Keepsuit\\LaravelOpenTelemetry\\Http\\Middleware\\TraceRequest) handles the raw span lifecycle. Our StartOrJoinTrace runs AFTER it, only to add stackra-specific attributes.",
     "The bus middleware for queue propagation is registered via config \u2014 not exposed as an HTTP middleware alias."
   ]
 }

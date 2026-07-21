@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/audit/compliance",
+  "id": "stackra://modules/audit/compliance",
   "$version": 1,
   "title": "audit — compliance evidence",
   "description": "Primary control points for GDPR (Art. 5, 17, 30), SOX §404, HIPAA §164.312(b), PCI-DSS Requirement 10, ISO 27001 A.12.4, SOC 2 CC7.1, and CCPA §1798.185. Audit is the AUTHORITATIVE compliance evidence surface — regulators, DPOs, and forensic investigators consume this module.",
@@ -115,7 +115,7 @@
         {
           "criterion": "CC7.1",
           "principle": "logs for anomaly detection",
-          "evidence": "AuditQuery surface supports the anomaly-detection queries (unusual actor volume, unusual mutation rate per tenant, off-hours access). Monitoring metrics (academorix.audit.records_total, records_by_event, records_by_actor) feed the Grafana anomaly dashboard."
+          "evidence": "AuditQuery surface supports the anomaly-detection queries (unusual actor volume, unusual mutation rate per tenant, off-hours access). Monitoring metrics (stackra.audit.records_total, records_by_event, records_by_actor) feed the Grafana anomaly dashboard."
         },
         {
           "criterion": "CC7.3",

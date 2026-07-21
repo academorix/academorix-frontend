@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Policies;
+namespace Stackra\Notifications\Push\Policies;
 
-use Academorix\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
-use Academorix\Notifications\Push\Enums\NotificationsPushPermission;
-use Academorix\Notifications\Push\Models\PushSubscription;
+use Stackra\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
+use Stackra\Notifications\Push\Enums\NotificationsPushPermission;
+use Stackra\Notifications\Push\Models\PushSubscription;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

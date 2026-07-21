@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/private-sessions/permissions",
+  "id": "stackra://modules/private-sessions/permissions",
   "$version": 1,
   "title": "private-sessions — permissions",
-  "seeder": "Academorix\\Sports\\PrivateSessions\\Database\\Seeders\\PrivateSessionsPermissionSeeder",
+  "seeder": "Stackra\\Sports\\PrivateSessions\\Database\\Seeders\\PrivateSessionsPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

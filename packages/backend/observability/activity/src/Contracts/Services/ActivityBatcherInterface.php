@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Contracts\Services;
+namespace Stackra\Activity\Contracts\Services;
 
-use Academorix\Activity\Services\ActivityBatcher;
+use Stackra\Activity\Services\ActivityBatcher;
 use Illuminate\Container\Attributes\Bind;
 
 /**

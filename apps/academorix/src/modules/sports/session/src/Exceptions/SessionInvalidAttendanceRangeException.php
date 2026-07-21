@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Session\Exceptions;
+namespace Stackra\Session\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * attendance_min > attendance_capacity.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SessionInvalidAttendanceRangeException extends AcademorixException
+final class SessionInvalidAttendanceRangeException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

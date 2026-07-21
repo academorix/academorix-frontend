@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Organization\Services;
+namespace Stackra\Organization\Services;
 
-use Academorix\Organization\Contracts\Services\TreePathBuilderInterface;
+use Stackra\Organization\Contracts\Services\TreePathBuilderInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Organization\Contracts\Repositories\OrganizationRepositoryInterface;
+use Stackra\Organization\Contracts\Repositories\OrganizationRepositoryInterface;
 
 /**
  * Concrete service — TreePathBuilder.

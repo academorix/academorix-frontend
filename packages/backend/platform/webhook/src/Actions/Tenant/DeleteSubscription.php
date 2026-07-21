@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Actions\Tenant;
+namespace Stackra\Webhook\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Delete;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
-use Academorix\Webhook\Contracts\Data\WebhookSubscriptionInterface;
-use Academorix\Webhook\Contracts\Repositories\WebhookSubscriptionRepositoryInterface;
-use Academorix\Webhook\Enums\WebhookPermission;
-use Academorix\Webhook\Exceptions\WebhookSubscriptionNotFoundException;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Delete;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Webhook\Contracts\Data\WebhookSubscriptionInterface;
+use Stackra\Webhook\Contracts\Repositories\WebhookSubscriptionRepositoryInterface;
+use Stackra\Webhook\Enums\WebhookPermission;
+use Stackra\Webhook\Exceptions\WebhookSubscriptionNotFoundException;
 use Illuminate\Http\Response;
 
 /**

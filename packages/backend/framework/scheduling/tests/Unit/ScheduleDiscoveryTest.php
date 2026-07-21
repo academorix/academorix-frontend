@@ -5,7 +5,7 @@
  *
  * @description
  * Exercises the collation logic in
- * {@see \Academorix\Scheduling\Support\ScheduleDiscovery}. The
+ * {@see \Stackra\Scheduling\Support\ScheduleDiscovery}. The
  * discovery layer's own manifest read is provided by
  * `olvlvl/composer-attribute-collector`, which we treat as an
  * external dependency — instead of stubbing the manifest, this
@@ -31,20 +31,20 @@
 
 declare(strict_types=1);
 
-use Academorix\Scheduling\Attributes\Cron;
-use Academorix\Scheduling\Attributes\Environments;
-use Academorix\Scheduling\Attributes\OnOneServer;
-use Academorix\Scheduling\Attributes\RunInBackground;
-use Academorix\Scheduling\Attributes\RunInMaintenanceMode;
-use Academorix\Scheduling\Attributes\Schedule;
-use Academorix\Scheduling\Attributes\ScheduleName;
-use Academorix\Scheduling\Attributes\ScheduleWhen;
-use Academorix\Scheduling\Attributes\Timezone;
-use Academorix\Scheduling\Attributes\WithoutOverlapping;
-use Academorix\Scheduling\Contracts\ScheduleGate;
-use Academorix\Scheduling\Enums\Frequency;
-use Academorix\Scheduling\Support\ScheduleDiscovery;
-use Academorix\Scheduling\Support\ScheduledTask;
+use Stackra\Scheduling\Attributes\Cron;
+use Stackra\Scheduling\Attributes\Environments;
+use Stackra\Scheduling\Attributes\OnOneServer;
+use Stackra\Scheduling\Attributes\RunInBackground;
+use Stackra\Scheduling\Attributes\RunInMaintenanceMode;
+use Stackra\Scheduling\Attributes\Schedule;
+use Stackra\Scheduling\Attributes\ScheduleName;
+use Stackra\Scheduling\Attributes\ScheduleWhen;
+use Stackra\Scheduling\Attributes\Timezone;
+use Stackra\Scheduling\Attributes\WithoutOverlapping;
+use Stackra\Scheduling\Contracts\ScheduleGate;
+use Stackra\Scheduling\Enums\Frequency;
+use Stackra\Scheduling\Support\ScheduleDiscovery;
+use Stackra\Scheduling\Support\ScheduledTask;
 use Illuminate\Console\Command;
 
 // -----------------------------------------------------------------

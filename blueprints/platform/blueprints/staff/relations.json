@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/staff/relations",
+  "id": "stackra://modules/staff/relations",
   "$version": 1,
   "title": "staff — model relationships",
   "description": "Two owned entities. Staff wraps User (like Profile wraps User in the user module — 1:1 satellite with RESTRICT protecting the parent from premature delete). Coach satellites Staff (again 1:1 with RESTRICT — a Coach row must be archived before its Staff can be offboarded). No `application_id` on any row — cascades through `tenant_id → tenants.application_id`. No `organization_id` or `region_id` — cascades through `branch_id → branches.organization_id / branches.region_id`. Every outbound FK stays same-tenant per tenancy-columns.md §5.",

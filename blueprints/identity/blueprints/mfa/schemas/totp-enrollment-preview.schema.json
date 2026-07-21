@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/mfa/schemas/totp-enrollment-preview",
+  "id": "stackra://modules/mfa/schemas/totp-enrollment-preview",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "TotpEnrollmentPreview",
@@ -28,7 +28,7 @@
     },
     "issuer": {
       "type": "string",
-      "description": "Human-readable issuer string that appears in the authenticator app's account list (e.g. 'Academorix'). Tenant admins can override via config('mfa.totp.issuer') settings; caller-facing string only, no security material.",
+      "description": "Human-readable issuer string that appears in the authenticator app's account list (e.g. 'Stackra'). Tenant admins can override via config('mfa.totp.issuer') settings; caller-facing string only, no security material.",
       "x-classification": "public"
     },
     "account_label": {

@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tasks\Models;
+namespace Stackra\Tasks\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Tasks\Contracts\Data\TaskCommentInterface;
-use Academorix\Tasks\Database\Factories\TaskCommentFactory;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Tasks\Policies\TaskCommentPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Tasks\Contracts\Data\TaskCommentInterface;
+use Stackra\Tasks\Database\Factories\TaskCommentFactory;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Tasks\Policies\TaskCommentPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

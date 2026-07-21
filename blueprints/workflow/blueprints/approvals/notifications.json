@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/workflow/approvals/notifications",
+  "id": "stackra://modules/workflow/approvals/notifications",
   "$version": 1,
   "title": "approvals — notification classes + categories",
-  "namespace": "Academorix\\Approval\\Notifications",
+  "namespace": "Stackra\\Approval\\Notifications",
   "description": "Eight notification classes serve three audiences: approvers (requested + reminder + cancelled), requesters (granted + rejected + expired), and admins (execution-failed + template-changed). Every notification is templated per (tenant, action_key) via the localization::NotificationTemplate mechanism so tenant admins can tune copy without redeploying. Consent tiers follow the compliance module's four-tier model: `transactional_required` (mandatory; no opt-out) for lifecycle-critical notifications, `functional_optional` (opt-out allowed) for reminders + template-change awareness.",
   "notifications": [
     "ApprovalRequestedNotification",

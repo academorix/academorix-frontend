@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/newsletter/schemas/newsletter-issue",
+  "id": "stackra://modules/newsletter/schemas/newsletter-issue",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "NewsletterIssue",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "nli_",
     "incrementing": false,
-    "model": "Academorix\\Newsletter\\Models\\NewsletterIssue",
-    "interface": "Academorix\\Newsletter\\Contracts\\Data\\NewsletterIssueInterface",
-    "implements": ["Academorix\\Newsletter\\Contracts\\Data\\NewsletterIssueInterface"],
+    "model": "Stackra\\Newsletter\\Models\\NewsletterIssue",
+    "interface": "Stackra\\Newsletter\\Contracts\\Data\\NewsletterIssueInterface",
+    "implements": ["Stackra\\Newsletter\\Contracts\\Data\\NewsletterIssueInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -199,7 +199,7 @@
     "updated_at"
   ],
   "x-translatable": {
-    "trait": "Academorix\\Localization\\Concerns\\HasTranslations",
+    "trait": "Stackra\\Localization\\Concerns\\HasTranslations",
     "column": "translations",
     "fields": ["subject"],
     "underlying_package": "spatie/laravel-translatable ^6.0",

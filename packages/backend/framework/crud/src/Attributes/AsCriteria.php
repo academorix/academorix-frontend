@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Crud\Attributes;
+namespace Stackra\Crud\Attributes;
 
 use Attribute;
 
@@ -25,9 +25,9 @@ use Attribute;
  *
  * ## Usage:
  * ```php
- * use Academorix\Crud\Attributes\AsCriteria;
- * use Academorix\Crud\Contracts\CriteriaInterface;
- * use Academorix\Crud\Contracts\RepositoryInterface;
+ * use Stackra\Crud\Attributes\AsCriteria;
+ * use Stackra\Crud\Contracts\CriteriaInterface;
+ * use Stackra\Crud\Contracts\RepositoryInterface;
  *
  * // Global criteria - applied to ALL repositories automatically
  * #[AsCriteria(

@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/athlete-enrollment/broadcasts",
+  "id": "stackra://modules/athlete-enrollment/broadcasts",
   "$version": 1,
   "title": "athlete-enrollment — realtime broadcast channels",
   "description": "Four broadcast channels: tenant / team / athlete / user. Powers live roster views + parent-facing enrollment status dashboards.",
   "channels": [
     {
       "name": "tenant.{tenantId}.enrollments",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Broadcasts\\TenantEnrollmentsChannel",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Broadcasts\\TenantEnrollmentsChannel",
       "description": "Tenant-wide enrollment lifecycle stream.",
       "authorization": "sanctum::authed AND tenant_matches AND permission `enrollments.viewAny`",
       "events": [
@@ -24,7 +24,7 @@
     },
     {
       "name": "team.{teamId}.enrollments",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Broadcasts\\TeamEnrollmentsChannel",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Broadcasts\\TeamEnrollmentsChannel",
       "description": "Team-scoped roster + waitlist stream.",
       "authorization": "sanctum::authed AND (permission `enrollments.viewAny` scoped to team OR team member OR coach on team)",
       "events": [
@@ -39,7 +39,7 @@
     },
     {
       "name": "athlete.{athleteId}.enrollments",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Broadcasts\\AthleteEnrollmentsChannel",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Broadcasts\\AthleteEnrollmentsChannel",
       "description": "Per-athlete enrollment stream. Powers the athlete detail page's live roster indicator.",
       "authorization": "sanctum::authed AND (permission `enrollments.view` scoped to athlete OR athlete's guardian OR self)",
       "events": [
@@ -56,7 +56,7 @@
     },
     {
       "name": "user.{userId}.enrollments",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Broadcasts\\UserEnrollmentsChannel",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Broadcasts\\UserEnrollmentsChannel",
       "description": "Per-user enrollment stream — powers the /me/enrollments live widget for guardians + adult athletes.",
       "authorization": "sanctum::authed AND user_matches",
       "events": [

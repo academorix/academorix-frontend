@@ -54,10 +54,10 @@ declare(strict_types=1);
  * @see \Illuminate\Database\Schema\Blueprint
  */
 
-namespace Academorix\Database\Schema;
+namespace Stackra\Database\Schema;
 
 use Illuminate\Database\Schema\Blueprint;
-use Academorix\Database\Attributes\AsDatabaseBlueprint;
+use Stackra\Database\Attributes\AsDatabaseBlueprint;
 
 /**
  * Registers the gpsable() macro on Blueprint.

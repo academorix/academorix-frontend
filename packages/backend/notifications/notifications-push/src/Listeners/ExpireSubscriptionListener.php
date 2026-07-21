@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Listeners;
+namespace Stackra\Notifications\Push\Listeners;
 
-use Academorix\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
-use Academorix\Notifications\Push\Contracts\Repositories\PushSubscriptionRepositoryInterface;
-use Academorix\Notifications\Push\Events\PushInvalidToken;
+use Stackra\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
+use Stackra\Notifications\Push\Contracts\Repositories\PushSubscriptionRepositoryInterface;
+use Stackra\Notifications\Push\Events\PushInvalidToken;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 /**
@@ -14,7 +14,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
  *
  * Runs asynchronously on the `notifications` queue. Sets `is_active = false`
  * + `invalid_token_reported_at = now()` — the observer's `updating` hook then
- * fires {@see \Academorix\Notifications\Push\Events\PushSubscriptionExpired}
+ * fires {@see \Stackra\Notifications\Push\Events\PushSubscriptionExpired}
  * with the reason carried on the invalid-token event.
  *
  * @category NotificationsPush

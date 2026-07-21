@@ -6,7 +6,7 @@
 
 Initial blueprint authoring for the `service-accounts` module — the machine
 credential substrate that carries inter-service authentication for every
-Academorix Application. Codifies the design.md §3 (principal architecture)
+Stackra Application. Codifies the design.md §3 (principal architecture)
 
 - §4.4 (`service_accounts` table shape) + §8 (token contracts) decisions locked
   in the identity spec.

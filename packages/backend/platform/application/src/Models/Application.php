@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Models;
+namespace Stackra\Application\Models;
 
-use Academorix\Application\Contracts\Data\ApplicationInterface;
-use Academorix\Application\Database\Factories\ApplicationFactory;
-use Academorix\Application\Enums\BusinessTypeEnum;
-use Academorix\Application\Observers\ApplicationObserver;
-use Academorix\Application\Policies\ApplicationPolicy;
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Database\Concerns\HasSystemFlag;
-use Academorix\Retention\Attributes\AsRetentionPolicy;
-use Academorix\Retention\Enums\RetentionAction;
+use Stackra\Application\Contracts\Data\ApplicationInterface;
+use Stackra\Application\Database\Factories\ApplicationFactory;
+use Stackra\Application\Enums\BusinessTypeEnum;
+use Stackra\Application\Observers\ApplicationObserver;
+use Stackra\Application\Policies\ApplicationPolicy;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Database\Concerns\HasSystemFlag;
+use Stackra\Retention\Attributes\AsRetentionPolicy;
+use Stackra\Retention\Enums\RetentionAction;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -30,7 +30,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 /**
  * Eloquent model for an {@see ApplicationInterface}.
  *
- * Global cross-tenant product registry — one row per Academorix
+ * Global cross-tenant product registry — one row per Stackra
  * deployment. Applications rarely change (~1-8 rows lifetime).
  * Composes `HasSystemFlag` — the observer refuses mutations on
  * `is_system = true` rows outside a sanctioned mutation scope.
@@ -101,7 +101,7 @@ final class Application extends Model implements ApplicationInterface, Auditable
     }
 
     /**
-     * Computed accessor — the Academorix staff surface URL.
+     * Computed accessor — the Stackra staff surface URL.
      */
     public function getPlatformAdminUrlAttribute(): string
     {

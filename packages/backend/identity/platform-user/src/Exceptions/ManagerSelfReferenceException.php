@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformUser\Exceptions;
+namespace Stackra\PlatformUser\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * A PlatformUser cannot manage themselves (unless the `allow_self` bootstrap flag is passed to `manager_belongs_to_platform`, reserved for founder-only edge cases).

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invitations/data-classes",
+  "id": "stackra://modules/invitations/data-classes",
   "$version": 1,
   "title": "invitations — field-level data classification",
   "description": "Every column on both schemas classified by sensitivity tier. Drives DSAR export scope, right-to-erasure behaviour, encryption-at-rest policy. Field paths: `Model.field` — dotted paths reference JSONB inner properties.",

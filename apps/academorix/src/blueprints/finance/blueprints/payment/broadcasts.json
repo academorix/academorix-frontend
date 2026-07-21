@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/payment/broadcasts",
+  "id": "stackra://modules/payment/broadcasts",
   "$version": 1,
   "title": "payment — realtime broadcast channels",
   "description": "Five broadcast channel families for live UI updates. Tenant-level channels for admin dashboards; customer-scoped channels for the customer's own payment method + payment status UI. Reverb driver (Laravel Reverb) is the default transport; the notifications module handles fanout. Provider config broadcasts NEVER carry decrypted config values.",
   "channels": [
     {
       "name": "tenant.{tenantId}.payments",
-      "class": "Academorix\\Finance\\Payment\\Broadcasts\\TenantPaymentsChannel",
+      "class": "Stackra\\Finance\\Payment\\Broadcasts\\TenantPaymentsChannel",
       "description": "Tenant-wide payment activity stream. Sink for the payment dashboard showing captures + intent lifecycle + disputes.",
       "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner)",
       "events": [
@@ -23,7 +23,7 @@
     },
     {
       "name": "tenant.{tenantId}.payments.disputes",
-      "class": "Academorix\\Finance\\Payment\\Broadcasts\\TenantPaymentDisputesChannel",
+      "class": "Stackra\\Finance\\Payment\\Broadcasts\\TenantPaymentDisputesChannel",
       "description": "Dispute lifecycle live updates. Powers the ops dispute queue view.",
       "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner)",
       "events": [
@@ -39,7 +39,7 @@
     },
     {
       "name": "tenant.{tenantId}.payments.providers",
-      "class": "Academorix\\Finance\\Payment\\Broadcasts\\TenantPaymentProvidersChannel",
+      "class": "Stackra\\Finance\\Payment\\Broadcasts\\TenantPaymentProvidersChannel",
       "description": "Provider-scoped health + config activity. Powers the per-provider status chip + circuit-breaker state indicator in the payment dashboard.",
       "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner)",
       "events": [
@@ -53,7 +53,7 @@
     },
     {
       "name": "customer.{customerId}.payments",
-      "class": "Academorix\\Finance\\Payment\\Broadcasts\\CustomerPaymentsChannel",
+      "class": "Stackra\\Finance\\Payment\\Broadcasts\\CustomerPaymentsChannel",
       "description": "Per-customer payment activity stream. Sinks the customer's own payment SDK — used to reactively update the customer UI when a 3DS2 challenge completes or a background async provider event resolves the intent state.",
       "authorization": "sanctum::authed AND user_matches (or athlete guardian matches)",
       "events": [
@@ -67,7 +67,7 @@
     },
     {
       "name": "customer.{customerId}.payment-methods",
-      "class": "Academorix\\Finance\\Payment\\Broadcasts\\CustomerPaymentMethodsChannel",
+      "class": "Stackra\\Finance\\Payment\\Broadcasts\\CustomerPaymentMethodsChannel",
       "description": "Per-customer saved payment method events. Powers the customer's payment methods UI live-updates.",
       "authorization": "sanctum::authed AND user_matches (or athlete guardian matches)",
       "events": [

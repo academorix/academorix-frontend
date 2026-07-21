@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Identity\Database\Factories;
+namespace Stackra\Identity\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Identity\Contracts\Data\IdentityInterface;
-use Academorix\Identity\Models\Identity;
+use Stackra\Identity\Contracts\Data\IdentityInterface;
+use Stackra\Identity\Models\Identity;
 
 /**
- * Factory for {@see \Academorix\Identity\Models\Identity}.
+ * Factory for {@see \Stackra\Identity\Models\Identity}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Identity\Models\Identity>
+ * @extends Factory<\Stackra\Identity\Models\Identity>
  *
  * @category Identity
  *

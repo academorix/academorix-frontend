@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Data\Requests;
+namespace Stackra\ServiceAccounts\Data\Requests;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\ArrayType;

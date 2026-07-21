@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Contracts\Data;
+namespace Stackra\Mfa\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Mfa\Models\WebauthnCredential;
+use Stackra\Mfa\Models\WebauthnCredential;
 
 /**
  * Table shape for the `webauthn_credentials` table.

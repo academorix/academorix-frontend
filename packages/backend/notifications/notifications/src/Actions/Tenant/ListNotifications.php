@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Actions\Tenant;
+namespace Stackra\Notifications\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Notifications\Contracts\Repositories\NotificationRepositoryInterface;
-use Academorix\Notifications\Data\NotificationData;
-use Academorix\Notifications\Enums\NotificationsPermission;
-use Academorix\Notifications\Models\Notification;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Notifications\Contracts\Repositories\NotificationRepositoryInterface;
+use Stackra\Notifications\Data\NotificationData;
+use Stackra\Notifications\Enums\NotificationsPermission;
+use Stackra\Notifications\Models\Notification;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Spatie\LaravelData\DataCollection;
 

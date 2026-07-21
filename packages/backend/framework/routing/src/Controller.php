@@ -11,7 +11,7 @@
  * The full HTTP surface (request accessors, response builders,
  * auth helpers, pagination, resource transformation, bulk
  * operations) is now packaged in the
- * {@see \Academorix\Routing\Concerns\HttpAction} trait; that
+ * {@see \Stackra\Routing\Concerns\HttpAction} trait; that
  * trait is the recommended way to opt into the surface for a
  * single-invoke action class.
  *
@@ -54,16 +54,16 @@
  * `HttpAction`-using action expose IDENTICAL helper method
  * names — the migration is truly mechanical.
  *
- * @see \Academorix\Routing\Concerns\HttpAction Canonical composite trait for new code.
- * @see \Academorix\Routing\Attributes\AsAction Marker attribute for action discovery.
+ * @see \Stackra\Routing\Concerns\HttpAction Canonical composite trait for new code.
+ * @see \Stackra\Routing\Attributes\AsAction Marker attribute for action discovery.
  * @deprecated since 3.0 — per ADR 0016, use `HttpAction` trait on a `final class` action instead.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Routing;
+namespace Stackra\Routing;
 
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Routing\Controller as LaravelController;
 
 /**

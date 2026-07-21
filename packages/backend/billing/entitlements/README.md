@@ -61,7 +61,7 @@ Subscription plan changed (from subscription module)
 Modules opt in via attributes on their service methods:
 
 ```php
-use Academorix\Entitlements\Attributes\ConsumesEntitlement;
+use Stackra\Entitlements\Attributes\ConsumesEntitlement;
 
 final class WebhookDispatcher
 {
@@ -104,7 +104,7 @@ anomaly, not just a slow request.
 
 **Fail open (`entitlements.graceful_degradation_mode=on`).** The hot-path error
 is swallowed; the operation is permitted;
-`academorix.entitlement.fail_open_total{key,reason}` increments. Reason labels:
+`stackra.entitlement.fail_open_total{key,reason}` increments. Reason labels:
 `redis_timeout`, `redis_unreachable`, `redis_evicted`,
 `postgres_fallback_failed`. Every fail-open event is logged at WARN with the
 tenant + key + failure mode. Turn on only during declared incidents where

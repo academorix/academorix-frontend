@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/marketing/policies",
+  "id": "stackra://modules/marketing/policies",
   "$version": 1,
   "title": "marketing — authorization policies",
   "description": "Four policies, one per owned model. Every ability resolves through spatie/laravel-permission, then narrows by tenant scope. Write actions on MarketingEvent are NEVER allowed via API — events are captured only from the domain-event listener path (prevents replay attacks). Support-tool re-dispatch endpoints run through the platform plane.",
   "policies": [
     {
       "model": "MarketingEvent",
-      "class": "Academorix\\Growth\\Marketing\\Policies\\MarketingEventPolicy",
+      "class": "Stackra\\Growth\\Marketing\\Policies\\MarketingEventPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -45,7 +45,7 @@
     },
     {
       "model": "MarketingDelivery",
-      "class": "Academorix\\Growth\\Marketing\\Policies\\MarketingDeliveryPolicy",
+      "class": "Stackra\\Growth\\Marketing\\Policies\\MarketingDeliveryPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -73,7 +73,7 @@
     },
     {
       "model": "MarketingProviderConfig",
-      "class": "Academorix\\Growth\\Marketing\\Policies\\MarketingProviderConfigPolicy",
+      "class": "Stackra\\Growth\\Marketing\\Policies\\MarketingProviderConfigPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -119,7 +119,7 @@
     },
     {
       "model": "MarketingDeadLetter",
-      "class": "Academorix\\Growth\\Marketing\\Policies\\MarketingDeadLetterPolicy",
+      "class": "Stackra\\Growth\\Marketing\\Policies\\MarketingDeadLetterPolicy",
       "abilities": [
         {
           "action": "viewAny",

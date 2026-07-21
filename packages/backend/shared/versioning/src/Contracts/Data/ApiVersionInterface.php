@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Contracts\Data;
+namespace Stackra\Versioning\Contracts\Data;
 
-use Academorix\Versioning\Models\ApiVersion;
+use Stackra\Versioning\Models\ApiVersion;
 use Illuminate\Container\Attributes\Bind;
 
 /**

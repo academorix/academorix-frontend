@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Exceptions;
+namespace Stackra\Storage\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * File was moved to quarantine (infected or manual quarantine).

@@ -43,7 +43,7 @@ import { computeHostDiff, renderHostBlock } from "../utils";
  * sudo pnpm stackra host --remove
  *
  * # Override the root domain from the CLI.
- * sudo pnpm stackra host --rootDomain=academorix.app
+ * sudo pnpm stackra host --rootDomain=stackra.app
  * ```
  */
 @Command({

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Database\Factories;
+namespace Stackra\FeatureFlags\Database\Factories;
 
-use Academorix\FeatureFlags\Contracts\Data\FeatureInterface;
-use Academorix\FeatureFlags\Enums\FlagKind;
-use Academorix\FeatureFlags\Models\Feature;
+use Stackra\FeatureFlags\Contracts\Data\FeatureInterface;
+use Stackra\FeatureFlags\Enums\FlagKind;
+use Stackra\FeatureFlags\Models\Feature;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

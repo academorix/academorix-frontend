@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Console\Commands;
+namespace Stackra\Notifications\Sms\Console\Commands;
 
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Notifications\Sms\Contracts\Data\SmsOptOutInterface;
-use Academorix\Notifications\Sms\Contracts\Repositories\SmsOptOutRepositoryInterface;
-use Academorix\Notifications\Sms\Enums\SmsOptOutReason;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Notifications\Sms\Contracts\Data\SmsOptOutInterface;
+use Stackra\Notifications\Sms\Contracts\Repositories\SmsOptOutRepositoryInterface;
+use Stackra\Notifications\Sms\Enums\SmsOptOutReason;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 /**

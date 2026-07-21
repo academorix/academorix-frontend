@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Staff\Contracts\Services;
+namespace Stackra\Staff\Contracts\Services;
 
-use Academorix\Staff\Services\CoachProfileFactory;
+use Stackra\Staff\Services\CoachProfileFactory;
 use Illuminate\Container\Attributes\Bind;
 
 /**

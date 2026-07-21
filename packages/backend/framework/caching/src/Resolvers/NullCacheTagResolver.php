@@ -15,7 +15,7 @@
  * constructor. An empty registry would still work (the `for()`
  * / `forMany()` loops handle zero resolvers) but registering a
  * concrete null makes the injected graph explicit — a debugger
- * or `php artisan academorix:caching:diagnose` command lists
+ * or `php artisan stackra:caching:diagnose` command lists
  * every registered resolver, and the null shows up as
  * "expected no-op" rather than "silently absent".
  *
@@ -28,16 +28,16 @@
  * `#[AsCacheTagResolver]` with a higher priority simply pushes
  * the null further down the chain.
  *
- * @see \Academorix\Caching\Contracts\CacheTagResolver Contract.
- * @see \Academorix\Caching\Attributes\AsCacheTagResolver Discovery marker.
+ * @see \Stackra\Caching\Contracts\CacheTagResolver Contract.
+ * @see \Stackra\Caching\Attributes\AsCacheTagResolver Discovery marker.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Caching\Resolvers;
+namespace Stackra\Caching\Resolvers;
 
-use Academorix\Caching\Attributes\AsCacheTagResolver;
-use Academorix\Caching\Contracts\CacheTagResolver;
+use Stackra\Caching\Attributes\AsCacheTagResolver;
+use Stackra\Caching\Contracts\CacheTagResolver;
 
 /**
  * Contributes zero tag segments. Present so the resolver

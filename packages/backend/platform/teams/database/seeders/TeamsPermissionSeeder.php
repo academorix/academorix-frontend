@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Teams\Database\Seeders;
+namespace Stackra\Teams\Database\Seeders;
 
-use Academorix\Teams\Enums\TeamsPermission;
-use Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
-use Academorix\ServiceProvider\Attributes\AsSeeder;
+use Stackra\Teams\Enums\TeamsPermission;
+use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;
 
 /**

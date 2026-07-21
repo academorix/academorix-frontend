@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Events;
+namespace Stackra\Facility\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog
  * - activity::WriteToActivityLog
- * - observability::MetricsCollector (increments academorix.facility.pass_credits.consumed)
+ * - observability::MetricsCollector (increments stackra.facility.pass_credits.consumed)
  *
  * @category Facility
  *

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Athlete\Exceptions;
+namespace Stackra\Athlete\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Tenant has not enabled medical tracking.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AthleteMedicalTrackingNotEnabledException extends AcademorixException
+final class AthleteMedicalTrackingNotEnabledException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

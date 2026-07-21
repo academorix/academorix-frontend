@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file apps/academorix/src/sdks/platform-application-sdk/src/Resources/ApplicationsResource.php
+ * @file apps/stackra/src/sdks/platform-application-sdk/src/Resources/ApplicationsResource.php
  *
  * @description
  * Public / central Applications surface. Wraps the two central-tier
@@ -18,13 +18,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformApplicationSdk\Resources;
+namespace Stackra\PlatformApplicationSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\PlatformApplicationSdk\Data\ApplicationData;
-use Academorix\PlatformApplicationSdk\Requests\Applications\ListApplicationsRequest;
-use Academorix\PlatformApplicationSdk\Requests\Applications\ShowApplicationRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\PlatformApplicationSdk\Data\ApplicationData;
+use Stackra\PlatformApplicationSdk\Requests\Applications\ListApplicationsRequest;
+use Stackra\PlatformApplicationSdk\Requests\Applications\ShowApplicationRequest;
 
 /**
  * Public / central-audience Applications surface.
@@ -38,11 +38,11 @@ use Academorix\PlatformApplicationSdk\Requests\Applications\ShowApplicationReque
  * ## Example
  *
  * ```php
- * use Academorix\PlatformSdk\Client\PlatformSdk;
+ * use Stackra\PlatformSdk\Client\PlatformSdk;
  *
  * $platform = app(PlatformSdk::class);
  * $sports = $platform->application()->applications()->show('sports');
- * $sports->centralUrl;   // 'https://sports.academorix.app'
+ * $sports->centralUrl;   // 'https://sports.stackra.app'
  * ```
  *
  * @category PlatformApplicationSdk
@@ -52,7 +52,7 @@ use Academorix\PlatformApplicationSdk\Requests\Applications\ShowApplicationReque
 final readonly class ApplicationsResource
 {
     /**
-     * @param  ApiConnector  $connector  The Platform service's shared Saloon connector, wired once by {@see \Academorix\PlatformSdk\Providers\PlatformSdkServiceProvider}.
+     * @param  ApiConnector  $connector  The Platform service's shared Saloon connector, wired once by {@see \Stackra\PlatformSdk\Providers\PlatformSdkServiceProvider}.
      */
     public function __construct(
         private ApiConnector $connector,
@@ -67,7 +67,7 @@ final readonly class ApplicationsResource
      * @param  int|null  $perPage  Items per page; server default = 15.
      * @return PaginatedResponse<ApplicationData>  Hydrated page + `meta` + `links`.
      *
-     * @throws \Academorix\ApiSdk\Exceptions\ApiRequestException  On any 4xx/5xx or network failure — subclasses narrow to `RateLimitException`, `ServerException`, etc.
+     * @throws \Stackra\ApiSdk\Exceptions\ApiRequestException  On any 4xx/5xx or network failure — subclasses narrow to `RateLimitException`, `ServerException`, etc.
      *
      * @example ```php
      * $page = app(PlatformSdk::class)->application()->applications()->list(page: 2, perPage: 25);
@@ -91,8 +91,8 @@ final readonly class ApplicationsResource
      * @param  string  $slug  URL-safe application identifier.
      * @return ApplicationData
      *
-     * @throws \Academorix\ApiSdk\Exceptions\ResourceNotFoundException  When no Application matches `$slug`.
-     * @throws \Academorix\ApiSdk\Exceptions\ApiRequestException        On any other 4xx/5xx or network failure.
+     * @throws \Stackra\ApiSdk\Exceptions\ResourceNotFoundException  When no Application matches `$slug`.
+     * @throws \Stackra\ApiSdk\Exceptions\ApiRequestException        On any other 4xx/5xx or network failure.
      *
      * @example ```php
      * $app = app(PlatformSdk::class)->application()->applications()->show('education');

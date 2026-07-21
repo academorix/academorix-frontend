@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/competition/attributes",
+  "id": "stackra://modules/competition/attributes",
   "$version": 1,
   "title": "competition — PHP attributes",
   "description": "PHP attributes owned by this module. Empty at scaffold time; fill in with each new `#[As...]` class the module ships.",
-  "namespace": "Academorix\\\\Competition\\\\Attributes",
+  "namespace": "Stackra\\\\Competition\\\\Attributes",
   "attributes": []
 }

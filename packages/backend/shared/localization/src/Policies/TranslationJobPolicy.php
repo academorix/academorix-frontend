@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Policies;
+namespace Stackra\Localization\Policies;
 
-use Academorix\Localization\Contracts\Data\TranslationJobInterface;
-use Academorix\Localization\Enums\LocalizationPermission;
-use Academorix\Localization\Models\TranslationJob;
+use Stackra\Localization\Contracts\Data\TranslationJobInterface;
+use Stackra\Localization\Enums\LocalizationPermission;
+use Stackra\Localization\Models\TranslationJob;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

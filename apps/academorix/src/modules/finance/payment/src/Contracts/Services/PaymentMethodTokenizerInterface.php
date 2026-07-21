@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Contracts\Services;
+namespace Stackra\Payment\Contracts\Services;
 
-use Academorix\Payment\Services\PaymentMethodTokenizer;
+use Stackra\Payment\Services\PaymentMethodTokenizer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

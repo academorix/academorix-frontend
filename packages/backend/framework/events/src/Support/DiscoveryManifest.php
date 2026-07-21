@@ -13,7 +13,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Events\Support;
+namespace Stackra\Events\Support;
 
 final class DiscoveryManifest
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Exceptions;
+namespace Stackra\Transfer\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised on an underlying filesystem disk error.
@@ -13,7 +13,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TransferStorageFailureException extends AcademorixException
+final class TransferStorageFailureException extends StackraException
 {
     public const CODE = 'TRANSFER_STORAGE_FAILURE';
 

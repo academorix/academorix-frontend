@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Actions\Platform;
+namespace Stackra\Subscription\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Subscription\Contracts\Data\SubscriptionInterface;
-use Academorix\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
-use Academorix\Subscription\Data\Requests\ForceSubscriptionStateRequestData;
-use Academorix\Subscription\Data\SubscriptionData;
-use Academorix\Subscription\Enums\SubscriptionPermission;
-use Academorix\Subscription\Exceptions\SubscriptionNotFoundException;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Subscription\Contracts\Data\SubscriptionInterface;
+use Stackra\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
+use Stackra\Subscription\Data\Requests\ForceSubscriptionStateRequestData;
+use Stackra\Subscription\Data\SubscriptionData;
+use Stackra\Subscription\Enums\SubscriptionPermission;
+use Stackra\Subscription\Exceptions\SubscriptionNotFoundException;
 
 /**
  * `POST /api/v1/platform/subscriptions/{tenant}/force-state` —

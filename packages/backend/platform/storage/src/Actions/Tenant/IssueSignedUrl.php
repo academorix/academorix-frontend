@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Actions\Tenant;
+namespace Stackra\Storage\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Storage\Contracts\Services\SignedUrlIssuerInterface;
-use Academorix\Storage\Data\Requests\IssueSignedUrlRequestData;
-use Academorix\Storage\Data\SignedUrlAuditData;
-use Academorix\Storage\Enums\StoragePermission;
-use Academorix\Storage\Models\File;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Storage\Contracts\Services\SignedUrlIssuerInterface;
+use Stackra\Storage\Data\Requests\IssueSignedUrlRequestData;
+use Stackra\Storage\Data\SignedUrlAuditData;
+use Stackra\Storage\Enums\StoragePermission;
+use Stackra\Storage\Models\File;
 
 /**
  * `POST /api/v1/files/{file}/signed-url` — issue a signed URL.
  *
  * TTL is capped against the per-plan-tier maximum. Every issuance
- * writes a {@see \Academorix\Storage\Models\SignedUrlAudit} row.
+ * writes a {@see \Stackra\Storage\Models\SignedUrlAudit} row.
  *
  * @category Storage
  *

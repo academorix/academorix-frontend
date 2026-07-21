@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Actions\Tenant;
+namespace Stackra\Storage\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Patch;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Data\FileData;
-use Academorix\Storage\Data\Requests\UpdateFileRequestData;
-use Academorix\Storage\Enums\StoragePermission;
-use Academorix\Storage\Models\File;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Patch;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Data\FileData;
+use Stackra\Storage\Data\Requests\UpdateFileRequestData;
+use Stackra\Storage\Enums\StoragePermission;
+use Stackra\Storage\Models\File;
 
 /**
  * `PATCH /api/v1/files/{file}` — update display name / visibility

@@ -1,7 +1,7 @@
 # Workspace — Enterprise Hardening Task Tracker
 
 Living task tracker for the production/enterprise refactor of the
-`academorix-frontend` monorepo.
+`stackra-frontend` monorepo.
 
 **Status: ✅ COMPLETE — all 14 tasks green.**
 
@@ -30,10 +30,10 @@ All 17 root files hardened — see §5.
 
 ### 1.2 Extract 5 configs into `packages/config/*` ✅
 
-- ✅ `tsup.config.base.ts` → `@academorix/config-tsup`
-- ✅ `tsconfig.base.json` → `@academorix/config-tsconfig`
-- ✅ `prettier.config.mjs` → `@academorix/config-prettier`
-- ✅ `eslint.config.mjs` → thin re-exporter of `@academorix/config-eslint`
+- ✅ `tsup.config.base.ts` → `@stackra/config-tsup`
+- ✅ `tsconfig.base.json` → `@stackra/config-tsconfig`
+- ✅ `prettier.config.mjs` → `@stackra/config-prettier`
+- ✅ `eslint.config.mjs` → thin re-exporter of `@stackra/config-eslint`
 - ✅ `tsconfig.json` (root) — kept as workspace anchor
 
 ---
@@ -56,13 +56,13 @@ All 17 root files hardened — see §5.
 
 ### 3.1 Config packages under `packages/config/*` ✅
 
-- ✅ `@academorix/config-tsconfig` — base preset + react-library / vite /
+- ✅ `@stackra/config-tsconfig` — base preset + react-library / vite /
   vite-node presets
-- ✅ `@academorix/config-tsup` — `defineBaseConfig(entries, overrides)` helper
-- ✅ `@academorix/config-eslint` — base / react / native / vite-app flat presets
-- ✅ `@academorix/config-prettier` — canonical Prettier config
-- ✅ `@academorix/config-tailwind` — Tailwind config
-- ✅ `@academorix/typescript-config` — legacy preset (kept, in-use)
+- ✅ `@stackra/config-tsup` — `defineBaseConfig(entries, overrides)` helper
+- ✅ `@stackra/config-eslint` — base / react / native / vite-app flat presets
+- ✅ `@stackra/config-prettier` — canonical Prettier config
+- ✅ `@stackra/config-tailwind` — Tailwind config
+- ✅ `@stackra/typescript-config` — legacy preset (kept, in-use)
 
 ### 3.2 Root files hardened ✅
 
@@ -100,7 +100,7 @@ All 17 root files hardened — see §5.
 
 - ✅ Deleted `.eslintrc.js` (ESLint 8 legacy)
 - ✅ Created `eslint.config.mjs` (ESLint 9 flat)
-- ✅ Added `@academorix/config-eslint/native` preset
+- ✅ Added `@stackra/config-eslint/native` preset
 - ✅ Catalog-pinned eslint / typescript / prettier / @babel/core / @types/react
 - ✅ Fixed `jest.config.js` `transformIgnorePatterns` for pnpm `.pnpm/` layout
 
@@ -145,7 +145,7 @@ All 17 root files hardened — see §5.
 
 77 → 0 errors. Key fixes:
 
-- ✅ Extended test-file relaxations in `@academorix/config-eslint/base.mjs`
+- ✅ Extended test-file relaxations in `@stackra/config-eslint/base.mjs`
   (projectService off, disableTypeChecked config, no-unsafe-\* / require-await /
   no-this-alias / no-empty / no-console off)
 - ✅ Added `**/src/testing/**` to test-file glob (published test helpers = test
@@ -215,11 +215,11 @@ single-command pass.
 
 ### Enterprise hardening (this task) — 14 subtasks
 
-- P0: Unblock `pnpm install` — fixed root `@academorix/eslint-config` →
-  `@academorix/config-eslint`
-- P1: Batch A — created `@academorix/config-tsup`, migrated 42 tsconfig + 42
+- P0: Unblock `pnpm install` — fixed root `@stackra/eslint-config` →
+  `@stackra/config-eslint`
+- P1: Batch A — created `@stackra/config-tsup`, migrated 42 tsconfig + 42
   tsup.config + package.json devDeps
-- P2: Batch B — created `@academorix/config-prettier`, slimmed root prettier +
+- P2: Batch B — created `@stackra/config-prettier`, slimmed root prettier +
   eslint to re-exporters
 - P3: Batch C/D/E — hardened all 10 remaining root config files
 - P4: Batch F — enabled both strict TS flags + fixed all 27 violations

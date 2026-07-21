@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Exceptions;
+namespace Stackra\Mfa\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * POST /me/mfa/recovery-codes/download refused because the Identity's recovery-code array is empty (all consumed OR not yet generated).

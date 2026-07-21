@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Actions\Platform\States;
+namespace Stackra\Geography\Actions\Platform\States;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Geography\Contracts\Data\StateInterface;
-use Academorix\Geography\Contracts\Repositories\StateRepositoryInterface;
-use Academorix\Geography\Data\Requests\CreateStateRequestData;
-use Academorix\Geography\Data\Resources\StateResourceData;
-use Academorix\Geography\Enums\GeographyPermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Geography\Contracts\Data\StateInterface;
+use Stackra\Geography\Contracts\Repositories\StateRepositoryInterface;
+use Stackra\Geography\Data\Requests\CreateStateRequestData;
+use Stackra\Geography\Data\Resources\StateResourceData;
+use Stackra\Geography\Enums\GeographyPermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `POST /api/v1/platform/geography/states` — platform admin creates

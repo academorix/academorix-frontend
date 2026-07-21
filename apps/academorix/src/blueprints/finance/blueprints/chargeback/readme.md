@@ -336,7 +336,7 @@ rate = chargebacks_count / transactions_count over 60 days
 When rate ≥ 0.9% (or per-network threshold): fires
 `ChargebackRateThresholdExceeded` (P1) + dispatches
 `ChargebackRateThresholdExceededNotification` (P1 admin). Tenant admin sees the
-alert in the SDUI rate-report dashboard. Academorix platform ops receives the
+alert in the SDUI rate-report dashboard. Stackra platform ops receives the
 cross-tenant alert via GET /api/v1/platform/chargebacks/rate-threshold-alerts.
 
 Thresholds are configurable per tenant via

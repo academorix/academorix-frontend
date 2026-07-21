@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payout\Policies;
+namespace Stackra\Payout\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Payout\Models\PayoutItem;
+use Stackra\User\Models\User;
+use Stackra\Payout\Models\PayoutItem;
 
 /**
- * Authorization policy for {@see \Academorix\Payout\Models\PayoutItem}.
+ * Authorization policy for {@see \Stackra\Payout\Models\PayoutItem}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

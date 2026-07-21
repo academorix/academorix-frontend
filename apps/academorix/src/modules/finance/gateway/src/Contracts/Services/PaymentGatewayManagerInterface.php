@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Gateway\Contracts\Services;
+namespace Stackra\Gateway\Contracts\Services;
 
-use Academorix\Gateway\Services\PaymentGatewayManager;
+use Stackra\Gateway\Services\PaymentGatewayManager;
 use Illuminate\Container\Attributes\Bind;
 
 /**

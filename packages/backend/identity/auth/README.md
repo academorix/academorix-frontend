@@ -1,4 +1,4 @@
-# academorix/auth
+# stackra/auth
 
 Server-side Laravel package for the `auth` module. Auto-generated from the
 blueprint at `modules/identity/blueprints/auth/`.
@@ -55,6 +55,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-identity/auth-sdk` under `sdk/identity-auth-sdk/`. Consumers cross
+`stackra-identity/auth-sdk` under `sdk/identity-auth-sdk/`. Consumers cross
 the service boundary through the SDK; this package is the SERVER-side owner of
 the domain.

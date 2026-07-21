@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Console;
+namespace Stackra\Geography\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan geography:warm-cache` — Warm cache — geography command.

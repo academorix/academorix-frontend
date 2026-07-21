@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Identity\Models;
+namespace Stackra\Identity\Models;
 
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Identity\Concerns\CanResetPassword;
-use Academorix\Identity\Concerns\HasCredentialLifecycle;
-use Academorix\Identity\Concerns\IsIdentity;
-use Academorix\Identity\Contracts\Data\IdentityInterface;
-use Academorix\Identity\Database\Factories\IdentityFactory;
-use Academorix\Identity\Policies\IdentityPolicy;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Identity\Concerns\CanResetPassword;
+use Stackra\Identity\Concerns\HasCredentialLifecycle;
+use Stackra\Identity\Concerns\IsIdentity;
+use Stackra\Identity\Contracts\Data\IdentityInterface;
+use Stackra\Identity\Database\Factories\IdentityFactory;
+use Stackra\Identity\Policies\IdentityPolicy;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
@@ -41,9 +41,9 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *     `getAuthPassword` (via `password_hash` column, remapped in
  *     `authPasswordName()`), and remember-token accessors.
  *   - `CanResetPassword` — bridges Laravel's password broker to
- *     the Academorix column contract.
+ *     the Stackra column contract.
  *   - `HasApiTokens` — Sanctum PAT surface. The token-issuance
- *     path lives in {@see \Academorix\Auth\Services\SanctumTokenIssuer};
+ *     path lives in {@see \Stackra\Auth\Services\SanctumTokenIssuer};
  *     the model just carries the relation.
  *   - `IsIdentity` — lockout / verified checks.
  *   - `HasCredentialLifecycle` — failed-attempt counter management.

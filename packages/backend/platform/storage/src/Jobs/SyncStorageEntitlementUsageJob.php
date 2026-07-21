@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Jobs;
+namespace Stackra\Storage\Jobs;
 
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Models\File;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Models\File;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

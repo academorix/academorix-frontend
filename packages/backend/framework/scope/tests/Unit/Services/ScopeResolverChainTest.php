@@ -4,7 +4,7 @@
  * @file tests/Unit/Services/ScopeResolverChainTest.php
  *
  * @description
- * Unit tests for {@see \Academorix\Scope\Services\ScopeResolverChain}
+ * Unit tests for {@see \Stackra\Scope\Services\ScopeResolverChain}
  * — priority sorting (descending), name-based replacement,
  * first-non-null-wins short-circuit, and later-registration
  * ties.
@@ -12,9 +12,9 @@
 
 declare(strict_types=1);
 
-use Academorix\Scope\Contracts\ScopeResolverInterface;
-use Academorix\Scope\Data\ScopeContextData;
-use Academorix\Scope\Services\ScopeResolverChain;
+use Stackra\Scope\Contracts\ScopeResolverInterface;
+use Stackra\Scope\Data\ScopeContextData;
+use Stackra\Scope\Services\ScopeResolverChain;
 use Illuminate\Http\Request;
 
 uses()->group('unit', 'scope');

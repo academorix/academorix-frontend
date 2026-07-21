@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Events;
+namespace Stackra\Chargeback\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog (retention: 7 years)
  * - chargeback::HandleChargebackWebhook (creates or reconciles the local chargeback)
- * - observability::MetricsCollector (academorix.chargeback.webhooks_received_total labelled by provider + webhook_type)
+ * - observability::MetricsCollector (stackra.chargeback.webhooks_received_total labelled by provider + webhook_type)
  *
  * @category Chargeback
  *

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Event\Exceptions;
+namespace Stackra\Event\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Cannot change dates on a completed Event — corrupts historical calendar attribution.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class EventDatesLockedAfterCompletionException extends AcademorixException
+final class EventDatesLockedAfterCompletionException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

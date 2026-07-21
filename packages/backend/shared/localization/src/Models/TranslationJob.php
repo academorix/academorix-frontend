@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Models;
+namespace Stackra\Localization\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Database\Concerns\Model\HasUserStamp;
-use Academorix\Localization\Contracts\Data\TranslationJobInterface;
-use Academorix\Localization\Database\Factories\TranslationJobFactory;
-use Academorix\Localization\Enums\TranslationJobKind;
-use Academorix\Localization\Enums\TranslationJobStatus;
-use Academorix\Localization\Enums\TranslatorDriverName;
-use Academorix\Localization\Observers\TranslationJobObserver;
-use Academorix\Localization\Policies\TranslationJobPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Database\Concerns\Model\HasUserStamp;
+use Stackra\Localization\Contracts\Data\TranslationJobInterface;
+use Stackra\Localization\Database\Factories\TranslationJobFactory;
+use Stackra\Localization\Enums\TranslationJobKind;
+use Stackra\Localization\Enums\TranslationJobStatus;
+use Stackra\Localization\Enums\TranslatorDriverName;
+use Stackra\Localization\Observers\TranslationJobObserver;
+use Stackra\Localization\Policies\TranslationJobPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -98,7 +98,7 @@ final class TranslationJob extends Model implements AuditableContract, Translati
     {
         return $this->hasMany(
             Translation::class,
-            \Academorix\Localization\Contracts\Data\TranslationInterface::ATTR_TRANSLATION_JOB_ID,
+            \Stackra\Localization\Contracts\Data\TranslationInterface::ATTR_TRANSLATION_JOB_ID,
         );
     }
 

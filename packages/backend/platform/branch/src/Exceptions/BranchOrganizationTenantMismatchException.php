@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branch\Exceptions;
+namespace Stackra\Branch\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to create a Branch under an Organization belonging to a different tenant.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class BranchOrganizationTenantMismatchException extends AcademorixException
+final class BranchOrganizationTenantMismatchException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

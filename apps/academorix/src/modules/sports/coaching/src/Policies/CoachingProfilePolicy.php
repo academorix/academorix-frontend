@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Policies;
+namespace Stackra\Coaching\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Coaching\Models\CoachingProfile;
+use Stackra\User\Models\User;
+use Stackra\Coaching\Models\CoachingProfile;
 
 /**
- * Authorization policy for {@see \Academorix\Coaching\Models\CoachingProfile}.
+ * Authorization policy for {@see \Stackra\Coaching\Models\CoachingProfile}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

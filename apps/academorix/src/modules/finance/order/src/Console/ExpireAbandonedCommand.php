@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Order\Console;
+namespace Stackra\Order\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan order:expire-abandoned` — Expire abandoned — order command.

@@ -2,7 +2,7 @@
 
 /**
  * @file BlueprintValidator.php
- * @module Academorix\Cli\Blueprint
+ * @module Stackra\Cli\Blueprint
  * @description Shells out to the workspace Python validator
  *   (`validate-module-graph.py --json`) and parses its report. The
  *   validator itself lives in the workspace, not in the CLI — the CLI
@@ -11,11 +11,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Blueprint;
+namespace Stackra\Cli\Blueprint;
 
-use Academorix\Cli\Exceptions\BlueprintException;
-use Academorix\Cli\Support\PathResolver;
-use Academorix\Cli\Support\ProcessRunner;
+use Stackra\Cli\Exceptions\BlueprintException;
+use Stackra\Cli\Support\PathResolver;
+use Stackra\Cli\Support\ProcessRunner;
 use Symfony\Component\Process\Process;
 
 /**

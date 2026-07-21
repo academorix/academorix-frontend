@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Services;
+namespace Stackra\AgeGroup\Services;
 
-use Academorix\AgeGroup\Contracts\Services\AgeGroupResolverInterface;
+use Stackra\AgeGroup\Contracts\Services\AgeGroupResolverInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\AgeGroup\Contracts\Repositories\AgeGroupRepositoryInterface;
+use Stackra\AgeGroup\Contracts\Repositories\AgeGroupRepositoryInterface;
 
 /**
  * Concrete service — AgeGroupResolver.

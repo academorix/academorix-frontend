@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Exceptions;
+namespace Stackra\Coaching\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * languages_spoken must be an array of ISO 639-1 codes.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CoachingProfileInvalidLanguagesException extends AcademorixException
+final class CoachingProfileInvalidLanguagesException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

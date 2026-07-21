@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tasks\Exceptions;
+namespace Stackra\Tasks\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `TASK_COMMENT_NOT_FOUND` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TaskCommentNotFoundException extends AcademorixException
+final class TaskCommentNotFoundException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

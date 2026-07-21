@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Events;
+namespace Stackra\Approvals\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -17,7 +17,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - notifications::NotifyApproversJob (dispatches ApprovalRequestedNotification to each resolved approver)
  * - activity::WriteToActivityLog
  * - audit::WriteAuditRecord
- * - observability::MetricsCollector (increments academorix.approvals.instances.total)
+ * - observability::MetricsCollector (increments stackra.approvals.instances.total)
  *
  * @category Approvals
  *

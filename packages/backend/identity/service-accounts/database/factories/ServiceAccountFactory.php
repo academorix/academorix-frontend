@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Database\Factories;
+namespace Stackra\ServiceAccounts\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\ServiceAccounts\Contracts\Data\ServiceAccountInterface;
-use Academorix\ServiceAccounts\Models\ServiceAccount;
+use Stackra\ServiceAccounts\Contracts\Data\ServiceAccountInterface;
+use Stackra\ServiceAccounts\Models\ServiceAccount;
 
 /**
- * Factory for {@see \Academorix\ServiceAccounts\Models\ServiceAccount}.
+ * Factory for {@see \Stackra\ServiceAccounts\Models\ServiceAccount}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\ServiceAccounts\Models\ServiceAccount>
+ * @extends Factory<\Stackra\ServiceAccounts\Models\ServiceAccount>
  *
  * @category ServiceAccounts
  *

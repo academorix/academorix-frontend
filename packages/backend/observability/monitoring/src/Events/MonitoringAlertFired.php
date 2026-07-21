@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Events;
+namespace Stackra\Monitoring\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -18,7 +18,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - monitoring::GroupIntoIncident (dispatches GroupAlertsIntoIncidentJob to attach or open an incident)
  * - monitoring::NotifyProviders (dispatches NotifyProvidersJob for the policy's notify_provider_configs)
  * - notifications::DispatchMonitoringAlertFiredNotification (P1: page on-call, P2: alert primary, P3+P4: dashboard-only)
- * - monitoring::MetricsCollector (increments academorix.monitoring.alerts.fired_total{severity=...})
+ * - monitoring::MetricsCollector (increments stackra.monitoring.alerts.fired_total{severity=...})
  *
  * @category Monitoring
  *

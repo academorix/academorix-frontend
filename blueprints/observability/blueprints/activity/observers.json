@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/activity/observers",
+  "id": "stackra://modules/activity/observers",
   "$version": 1,
   "title": "activity — Eloquent observers",
   "description": "Two observers. `ActivityObserver` on the vendor-adapted `Activity` model — enforces tenant_id + application_id fill-in, truncates descriptions, dispatches ActivityRecorded post-persist, and refuses illegal deletes. `ActivityRetentionPolicyObserver` on the retention policy model — validates entitlement, retention_days range, log_name existence.",
   "observers": [
     {
-      "class": "Academorix\\Observability\\Activity\\Observers\\ActivityObserver",
-      "target": "Academorix\\Observability\\Activity\\Models\\Activity",
+      "class": "Stackra\\Observability\\Activity\\Observers\\ActivityObserver",
+      "target": "Stackra\\Observability\\Activity\\Models\\Activity",
       "hooks": [
         {
           "event": "creating",
@@ -27,8 +27,8 @@
       ]
     },
     {
-      "class": "Academorix\\Observability\\Activity\\Observers\\ActivityRetentionPolicyObserver",
-      "target": "Academorix\\Observability\\Activity\\Models\\ActivityRetentionPolicy",
+      "class": "Stackra\\Observability\\Activity\\Observers\\ActivityRetentionPolicyObserver",
+      "target": "Stackra\\Observability\\Activity\\Models\\ActivityRetentionPolicy",
       "hooks": [
         {
           "event": "creating",

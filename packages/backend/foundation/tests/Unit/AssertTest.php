@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Foundation\Support\Assert;
+use Stackra\Foundation\Support\Assert;
 
 it('passes notEmpty when value is set', function (): void {
     Assert::notEmpty('  hello  ', 'name');

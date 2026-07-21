@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Gateway\Data;
+namespace Stackra\Gateway\Data;
 
 /**
  * Provider-agnostic request DTO for creating a payment intent.

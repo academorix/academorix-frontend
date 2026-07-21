@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/user/routes",
+  "id": "stackra://modules/user/routes",
   "$version": 1,
   "title": "user \u2014 HTTP routes",
   "description": "Tenant-facing user CRUD, self-service /me endpoints, and multi-tenant switching + platform-admin cross-tenant read.",
@@ -25,55 +25,55 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserController@index",
+          "controller": "Stackra\\User\\Http\\Controllers\\Tenant\\UserController@index",
           "permission": "users.viewAny",
           "description": "filter[status], filter[role_id], filter[email_contains], filter[created_after], sort[]=last_login_at, include=profile,memberships"
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserController@store",
+          "controller": "Stackra\\User\\Http\\Controllers\\Tenant\\UserController@store",
           "permission": "users.create",
           "description": "Admin-triggered creation. Body: { email, first_name, last_name, role_slug, send_invitation }. Consumes user_slot entitlement."
         },
         {
           "method": "GET",
           "path": "/{user}",
-          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserController@show",
+          "controller": "Stackra\\User\\Http\\Controllers\\Tenant\\UserController@show",
           "permission": "users.view"
         },
         {
           "method": "PATCH",
           "path": "/{user}",
-          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserController@update",
+          "controller": "Stackra\\User\\Http\\Controllers\\Tenant\\UserController@update",
           "permission": "users.update",
           "description": "Body: { status, default_role_id, preferred_locale }. Profile-side fields go via `PATCH /me/profile` (self) or `PATCH /users/{user}/profile` (admin, gated on profile.update.pii)."
         },
         {
           "method": "DELETE",
           "path": "/{user}",
-          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserController@destroy",
+          "controller": "Stackra\\User\\Http\\Controllers\\Tenant\\UserController@destroy",
           "permission": "users.delete",
           "description": "Soft-delete. Hard-delete via `POST /{user}/erase` (see below)."
         },
         {
           "method": "POST",
           "path": "/{user}/suspend",
-          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserController@suspend",
+          "controller": "Stackra\\User\\Http\\Controllers\\Tenant\\UserController@suspend",
           "permission": "users.suspend",
           "description": "Body: { reason, reactivate_at }."
         },
         {
           "method": "POST",
           "path": "/{user}/restore",
-          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserController@restore",
+          "controller": "Stackra\\User\\Http\\Controllers\\Tenant\\UserController@restore",
           "permission": "users.restore",
           "description": "Restore within the erasure hold window."
         },
         {
           "method": "POST",
           "path": "/{user}/erase",
-          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserController@erase",
+          "controller": "Stackra\\User\\Http\\Controllers\\Tenant\\UserController@erase",
           "permission": "users.erase",
           "description": "GDPR Art. 17 erasure. Soft-deletes + schedules PurgeErasedUsersJob."
         }
@@ -99,56 +99,56 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\MeController@show",
+          "controller": "Stackra\\User\\Http\\Controllers\\Tenant\\MeController@show",
           "permission": null,
           "description": "The bootstrap manifest. Payload: identity, user (this tenant + application), profile, roles, permissions, features, terminology, active_tenant, available_tenants."
         },
         {
           "method": "PATCH",
           "path": "/",
-          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\MeController@update",
+          "controller": "Stackra\\User\\Http\\Controllers\\Tenant\\MeController@update",
           "permission": null,
           "description": "Self-update. Allowed fields: preferred_locale. Everything Profile-shaped goes via `/me/profile`."
         },
         {
           "method": "GET",
           "path": "/profile",
-          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\MyProfileController@show",
+          "controller": "Stackra\\User\\Http\\Controllers\\Tenant\\MyProfileController@show",
           "permission": null,
           "description": "The caller's own Profile. PII cluster returned unredacted (subject reads their own data)."
         },
         {
           "method": "PATCH",
           "path": "/profile",
-          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\MyProfileController@update",
+          "controller": "Stackra\\User\\Http\\Controllers\\Tenant\\MyProfileController@update",
           "permission": null,
           "description": "Body: any of { first_name, last_name, display_name, phone_e164, locale, timezone }. DOB is admin-only \u2014 subjects cannot self-mutate their birth date."
         },
         {
           "method": "POST",
           "path": "/avatar",
-          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\MyProfileController@uploadAvatar",
+          "controller": "Stackra\\User\\Http\\Controllers\\Tenant\\MyProfileController@uploadAvatar",
           "permission": null,
           "description": "Multipart upload. Gated by `avatar_upload` entitlement + tier size cap."
         },
         {
           "method": "DELETE",
           "path": "/avatar",
-          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\MyProfileController@resetAvatar",
+          "controller": "Stackra\\User\\Http\\Controllers\\Tenant\\MyProfileController@resetAvatar",
           "permission": null,
           "description": "Clears avatar_url. Fires AvatarUpdated. Old S3 object pruned after the 24h grace window by `media::PruneOldAvatar`."
         },
         {
           "method": "GET",
           "path": "/tenants",
-          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\MyTenantsController@index",
+          "controller": "Stackra\\User\\Http\\Controllers\\Tenant\\MyTenantsController@index",
           "permission": null,
           "description": "Every TenantMember row the caller holds within the current Application. Includes tenant name, role, is_default, is_staff_only."
         },
         {
           "method": "POST",
           "path": "/tenants/{tenant}/switch",
-          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\MyTenantsController@switch",
+          "controller": "Stackra\\User\\Http\\Controllers\\Tenant\\MyTenantsController@switch",
           "permission": null,
           "description": "Switch active tenant for THIS session. Refused when the caller has no TenantMember row on the target."
         }
@@ -175,27 +175,27 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserMembershipsController@index",
+          "controller": "Stackra\\User\\Http\\Controllers\\Tenant\\UserMembershipsController@index",
           "permission": "tenant_members.viewAny"
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserMembershipsController@store",
+          "controller": "Stackra\\User\\Http\\Controllers\\Tenant\\UserMembershipsController@store",
           "permission": "tenant_members.manage",
           "description": "Body: { tenant_id, role_id, is_default, is_staff_only }. Refused when the target tenant's application_id differs from the User's."
         },
         {
           "method": "PATCH",
           "path": "/{tenant}",
-          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserMembershipsController@update",
+          "controller": "Stackra\\User\\Http\\Controllers\\Tenant\\UserMembershipsController@update",
           "permission": "tenant_members.manage",
           "description": "Body: { role_id, is_default, is_staff_only }."
         },
         {
           "method": "DELETE",
           "path": "/{tenant}",
-          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserMembershipsController@destroy",
+          "controller": "Stackra\\User\\Http\\Controllers\\Tenant\\UserMembershipsController@destroy",
           "permission": "tenant_members.manage",
           "description": "Refused when the target is the User's default AND they have no other memberships."
         }
@@ -218,14 +218,14 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\User\\Http\\Controllers\\Platform\\UserController@index",
+          "controller": "Stackra\\User\\Http\\Controllers\\Platform\\UserController@index",
           "permission": "platform.users.viewAny",
           "description": "Cross-tenant filterable list. filter[email_exact], filter[identity_id], filter[application_id], filter[tenant_id], filter[status]."
         },
         {
           "method": "GET",
           "path": "/{user}",
-          "controller": "Academorix\\User\\Http\\Controllers\\Platform\\UserController@show",
+          "controller": "Stackra\\User\\Http\\Controllers\\Platform\\UserController@show",
           "permission": "platform.users.view",
           "description": "Single-user cross-tenant read. Profile returned redacted unless the operator carries platform.profile.view.pii."
         }

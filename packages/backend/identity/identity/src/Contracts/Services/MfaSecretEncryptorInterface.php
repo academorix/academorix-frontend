@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Identity\Contracts\Services;
+namespace Stackra\Identity\Contracts\Services;
 
-use Academorix\Identity\Services\MfaSecretEncryptor;
+use Stackra\Identity\Services\MfaSecretEncryptor;
 use Illuminate\Container\Attributes\Bind;
 
 /**

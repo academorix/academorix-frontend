@@ -1,7 +1,7 @@
-# academorix/notifications-mail
+# stackra/notifications-mail
 
-Mail notification channel for Academorix. Registers the `mail` channel driver
-with the parent `academorix/notifications` module's channel registry and
+Mail notification channel for Stackra. Registers the `mail` channel driver
+with the parent `stackra/notifications` module's channel registry and
 subscribes to `NotificationDispatched` events. On dispatch: renders the template
 through Laravel Blade, injects CAN-SPAM footer + RFC 8058 `List-Unsubscribe`
 headers, hands off to Laravel Mail's `MailManager`, and captures the provider

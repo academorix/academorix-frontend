@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Console\Commands;
+namespace Stackra\Geofencing\Console\Commands;
 
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Geofencing\Jobs\ReconcileGeofenceCheckImmutabilityJob;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Geofencing\Jobs\ReconcileGeofenceCheckImmutabilityJob;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 /**

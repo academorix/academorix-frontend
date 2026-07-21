@@ -1,36 +1,36 @@
 {
-  "id": "academorix://modules/invitations/listeners",
+  "id": "stackra://modules/invitations/listeners",
   "$version": 1,
   "title": "invitations \u2014 subscribed events",
   "description": "Cross-module reactions handled by the invitations module. The core invitation lifecycle events (InvitationSent, InvitationAccepted, InvitationRevoked, InvitationExpired) are PUBLISHED by this module \u2014 consumers listen to those. This file captures events that invitations SUBSCRIBES to from other modules.",
   "listeners": [
     {
       "event": "tenancy::TenantProvisioned",
-      "listener": "Academorix\\Invitations\\Listeners\\SeedOwnerInvitation",
+      "listener": "Stackra\\Invitations\\Listeners\\SeedOwnerInvitation",
       "queue": "notifications",
       "purpose": "On a fresh tenant, seed the owner's placeholder invitation record so the tenant's invite-history view has a start-state entry. Idempotent: no-op when the tenant was created by an existing user rather than a fresh signup."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Invitations\\Listeners\\PurgeInvitationsForErasedTenant",
+      "listener": "Stackra\\Invitations\\Listeners\\PurgeInvitationsForErasedTenant",
       "queue": "notifications",
       "purpose": "Cascade-delete outstanding invitations for the erased tenant. Cascade FK already handles the DB rows; this listener writes the compliance audit trail entry + emits count metric."
     },
     {
       "event": "user::UserDeleted",
-      "listener": "Academorix\\Invitations\\Listeners\\RevokeInvitationsFromDeletedInviter",
+      "listener": "Stackra\\Invitations\\Listeners\\RevokeInvitationsFromDeletedInviter",
       "queue": "notifications",
       "purpose": "When an inviter is deleted, revoke any pending invitations they issued so the invitee can't accept an invitation from a non-existent user. Sets state=revoked with `revoke_reason='inviter_removed'`."
     },
     {
       "event": "auth::EmailVerified",
-      "listener": "Academorix\\Invitations\\Listeners\\ClaimPendingInvitationsForVerifiedEmail",
+      "listener": "Stackra\\Invitations\\Listeners\\ClaimPendingInvitationsForVerifiedEmail",
       "queue": "notifications",
       "purpose": "When a user verifies their email (post-signup or on email change), auto-claim any pending invitations targeting that email so they surface in the user's dashboard without a manual `?token=...` follow-through. Debounced at 5s to survive rapid retries."
     },
     {
       "event": "notifications::NotificationDelivered",
-      "listener": "Academorix\\Invitations\\Listeners\\RecordInvitationDeliveryReceipt",
+      "listener": "Stackra\\Invitations\\Listeners\\RecordInvitationDeliveryReceipt",
       "queue": "notifications",
       "purpose": "When a notifications::NotificationDelivered event fires with a source_module=invitations tag, write a matching InvitationEvent row for the audit trail (delivery timestamp + provider message id)."
     }

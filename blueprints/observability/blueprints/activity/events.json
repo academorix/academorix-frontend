@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/activity/events",
+  "id": "stackra://modules/activity/events",
   "$version": 1,
   "title": "activity — domain events",
   "description": "Seven events. `ActivityRecorded` is the primary fanout signal — fires on every vendor row insert and drives broadcast to WebSocket + digest queueing + downstream reactions. `ActivityBatchStarted / Completed` bracket a single HTTP request so collapsed feed rendering can group same-batch activities. `ActivityRetentionPolicyCreated / Updated` are admin CRUD signals. `ActivityPurgeExecuted` is retention plumbing. `ActivityFeedSubscribed` captures reads for feed-engagement analytics (functional consent tier). All events implement `ShouldDispatchAfterCommit` — activity rows must be durably persisted before downstream reactions fire.",
@@ -7,7 +7,7 @@
   "events": [
     {
       "name": "ActivityRecorded",
-      "class": "Academorix\\Observability\\Activity\\Events\\ActivityRecorded",
+      "class": "Stackra\\Observability\\Activity\\Events\\ActivityRecorded",
       "trigger": "ActivityObserver@created fires after the vendor row is persisted + tenant_id / application_id are stamped. The primary broadcast + reaction signal — every downstream consumer that wants to react to activity subscribes here.",
       "afterCommit": true,
       "payload": {
@@ -26,7 +26,7 @@
     },
     {
       "name": "ActivityRetentionPolicyCreated",
-      "class": "Academorix\\Observability\\Activity\\Events\\ActivityRetentionPolicyCreated",
+      "class": "Stackra\\Observability\\Activity\\Events\\ActivityRetentionPolicyCreated",
       "trigger": "POST /api/v1/activity-retention-policies completed successfully — a new retention override just landed.",
       "afterCommit": true,
       "payload": {
@@ -41,7 +41,7 @@
     },
     {
       "name": "ActivityRetentionPolicyUpdated",
-      "class": "Academorix\\Observability\\Activity\\Events\\ActivityRetentionPolicyUpdated",
+      "class": "Stackra\\Observability\\Activity\\Events\\ActivityRetentionPolicyUpdated",
       "trigger": "PATCH /api/v1/activity-retention-policies/{policy} completed — retention_days or override_reason or expires_at changed. Fires only when the diff is non-trivial (skipping when only updated_at / updated_by moved).",
       "afterCommit": true,
       "payload": {
@@ -58,7 +58,7 @@
     },
     {
       "name": "ActivityBatchStarted",
-      "class": "Academorix\\Observability\\Activity\\Events\\ActivityBatchStarted",
+      "class": "Stackra\\Observability\\Activity\\Events\\ActivityBatchStarted",
       "trigger": "ActivityBatcher.beginBatch(requestId) at the start of an HTTP request that WILL generate multiple related activities. Dispatched by the `activity.enforce_scope` middleware on tenant routes.",
       "afterCommit": false,
       "note": "NOT afterCommit — the batch start signals the beginning of a transactional group. Rolled-back requests emit the ActivityBatchStarted but no ActivityRecorded rows for that batch — this is fine (empty batch); ReconcileActivityBatchesJob sweeps empty batches on schedule.",
@@ -72,7 +72,7 @@
     },
     {
       "name": "ActivityBatchCompleted",
-      "class": "Academorix\\Observability\\Activity\\Events\\ActivityBatchCompleted",
+      "class": "Stackra\\Observability\\Activity\\Events\\ActivityBatchCompleted",
       "trigger": "ActivityBatcher.completeBatch(requestId) on request terminate. Fires when the request wrote at least one activity — empty batches emit no completion event.",
       "afterCommit": true,
       "payload": {
@@ -89,7 +89,7 @@
     },
     {
       "name": "ActivityPurgeExecuted",
-      "class": "Academorix\\Observability\\Activity\\Events\\ActivityPurgeExecuted",
+      "class": "Stackra\\Observability\\Activity\\Events\\ActivityPurgeExecuted",
       "trigger": "PurgeExpiredActivitiesJob or ArchiveActivitiesToColdStorageJob finished a sweep. Fires once per job run (not per row deleted / archived) so downstream metrics can aggregate correctly.",
       "afterCommit": true,
       "payload": {
@@ -107,7 +107,7 @@
     },
     {
       "name": "ActivityFeedSubscribed",
-      "class": "Academorix\\Observability\\Activity\\Events\\ActivityFeedSubscribed",
+      "class": "Stackra\\Observability\\Activity\\Events\\ActivityFeedSubscribed",
       "trigger": "A user opened the activity feed dashboard OR subscribed to a specific tenant.{tenantId}.activity WebSocket channel. Dispatched by the /api/v1/activities/feed endpoint on successful subscription auth. Sampled at 10% (feed opens are frequent — full-rate capture would dominate analytics volume).",
       "afterCommit": true,
       "payload": {

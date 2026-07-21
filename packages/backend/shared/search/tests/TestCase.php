@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Tests;
+namespace Stackra\Search\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/search.
+ * Base test case for stackra/search.
  *
  * @category Search
  *

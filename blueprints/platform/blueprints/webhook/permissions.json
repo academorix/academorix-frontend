@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/webhook/permissions",
+  "id": "stackra://modules/webhook/permissions",
   "$version": 1,
   "title": "webhook \u2014 permissions",
   "description": "Two guards. Sanctum permissions are tenant-facing (subscription + delivery admin). platform_admin permissions gate cross-tenant inspection + emergency pause.",
-  "seeder": "Academorix\\Webhook\\Database\\Seeders\\WebhookPermissionSeeder",
+  "seeder": "Stackra\\Webhook\\Database\\Seeders\\WebhookPermissionSeeder",
   "isSystem": true,
   "permissions": [
     { "name": "webhook.subscriptions.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner"] },

@@ -4,19 +4,19 @@
  * @file packages/sdk/api-sdk/src/Attributes/AsSdkResource.php
  *
  * @description
- * Discovery marker for every {@see \Academorix\ApiSdk\Contracts\SdkResource}
+ * Discovery marker for every {@see \Stackra\ApiSdk\Contracts\SdkResource}
  * implementation. Every module's SDK sibling ships one resource
  * class that carries this attribute. The `ApiSdkServiceProvider`
  * walks `olvlvl/composer-attribute-collector` at boot, resolves
  * each target out of the container, wires the connector into it,
- * and stores it in {@see \Academorix\ApiSdk\Registry\SdkResourceRegistry}
+ * and stores it in {@see \Stackra\ApiSdk\Registry\SdkResourceRegistry}
  * keyed by `$name`.
  *
  * ## Discovery flow
  *
  *   1. Module SDK ships `TenancySdkResource` with
  *      `#[AsSdkResource(name: 'tenancy')]` and extends
- *      {@see \Academorix\ApiSdk\Resources\BaseSdkResource}.
+ *      {@see \Stackra\ApiSdk\Resources\BaseSdkResource}.
  *
  *   2. Provider's `boot()` runs discovery:
  *      ```
@@ -48,13 +48,13 @@
  *
  * The default (100) suits every typical resource.
  *
- * @see \Academorix\ApiSdk\Contracts\SdkResource Contract implementers satisfy.
- * @see \Academorix\ApiSdk\Registry\SdkResourceRegistry Discovery target.
+ * @see \Stackra\ApiSdk\Contracts\SdkResource Contract implementers satisfy.
+ * @see \Stackra\ApiSdk\Registry\SdkResourceRegistry Discovery target.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Attributes;
+namespace Stackra\ApiSdk\Attributes;
 
 use Attribute;
 

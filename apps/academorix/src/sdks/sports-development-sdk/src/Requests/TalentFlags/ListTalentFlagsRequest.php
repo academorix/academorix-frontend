@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDevelopmentSdk\Requests\TalentFlags;
+namespace Stackra\SportsDevelopmentSdk\Requests\TalentFlags;
 
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\ApiSdk\Data\PaginationLinks;
-use Academorix\ApiSdk\Data\PaginationMeta;
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsDevelopmentSdk\Data\TalentFlagData;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\ApiSdk\Data\PaginationLinks;
+use Stackra\ApiSdk\Data\PaginationMeta;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsDevelopmentSdk\Data\TalentFlagData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

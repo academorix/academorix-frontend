@@ -5,10 +5,10 @@
  *
  * @description
  * Locks in the end-to-end behaviour of
- * {@see \Academorix\Foundation\Middleware\AssignCorrelationId}:
+ * {@see \Stackra\Foundation\Middleware\AssignCorrelationId}:
  * how it accepts / rejects inbound ids, when it mints its own, and
  * how the id is exposed to downstream code via
- * {@see \Academorix\Foundation\Support\CorrelationId::current()}.
+ * {@see \Stackra\Foundation\Support\CorrelationId::current()}.
  *
  * ## Why every branch is worth locking in
  *
@@ -29,9 +29,9 @@
 
 declare(strict_types=1);
 
-use Academorix\Foundation\Middleware\AssignCorrelationId;
-use Academorix\Foundation\Providers\FoundationServiceProvider;
-use Academorix\Foundation\Support\CorrelationId;
+use Stackra\Foundation\Middleware\AssignCorrelationId;
+use Stackra\Foundation\Providers\FoundationServiceProvider;
+use Stackra\Foundation\Support\CorrelationId;
 use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

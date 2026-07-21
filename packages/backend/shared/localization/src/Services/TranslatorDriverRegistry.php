@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Services;
+namespace Stackra\Localization\Services;
 
-use Academorix\Localization\Attributes\AsTranslatorDriver;
-use Academorix\Localization\Contracts\Services\TranslatorDriverInterface;
-use Academorix\Localization\Contracts\Services\TranslatorDriverRegistryInterface;
+use Stackra\Localization\Attributes\AsTranslatorDriver;
+use Stackra\Localization\Contracts\Services\TranslatorDriverInterface;
+use Stackra\Localization\Contracts\Services\TranslatorDriverRegistryInterface;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;

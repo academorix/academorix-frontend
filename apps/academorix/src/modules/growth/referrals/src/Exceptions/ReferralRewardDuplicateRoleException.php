@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Exceptions;
+namespace Stackra\Referrals\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The (referral_id, recipient_role) unique index refused a second reward for the same role.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ReferralRewardDuplicateRoleException extends AcademorixException
+final class ReferralRewardDuplicateRoleException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

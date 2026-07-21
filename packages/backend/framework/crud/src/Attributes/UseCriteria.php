@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Crud\Attributes;
+namespace Stackra\Crud\Attributes;
 
 use Attribute;
 
@@ -24,9 +24,9 @@ use Attribute;
  *
  * ## Usage:
  * ```php
- * use Academorix\Crud\Attributes\UseCriteria;
- * use Academorix\Users\Criteria\ActiveCriteria;
- * use Academorix\Users\Criteria\VerifiedCriteria;
+ * use Stackra\Crud\Attributes\UseCriteria;
+ * use Stackra\Users\Criteria\ActiveCriteria;
+ * use Stackra\Users\Criteria\VerifiedCriteria;
  *
  * #[UseCriteria([ActiveCriteria::class, VerifiedCriteria::class])]
  * class UserRepository extends Repository implements UserRepositoryInterface

@@ -1,11 +1,11 @@
-# academorix/scheduling
+# stackra/scheduling
 
-Attribute-first task scheduling for the Academorix monorepo. Attach
+Attribute-first task scheduling for the Stackra monorepo. Attach
 `#[Schedule]`, `#[Cron]` and their modifier attributes to a Job or Command class
 and it is registered on Laravel's scheduler at boot time — no edits to
 `app/Console/Kernel.php` and no `routes/console.php` entries.
 
-Depends on [`academorix/foundation`](../foundation).
+Depends on [`stackra/foundation`](../foundation).
 
 ## What you get in one line
 
@@ -16,13 +16,13 @@ Drop an attribute on a Job:
 
 declare(strict_types=1);
 
-namespace Academorix\Billing\Jobs;
+namespace Stackra\Billing\Jobs;
 
-use Academorix\Scheduling\Attributes\Environments;
-use Academorix\Scheduling\Attributes\OnOneServer;
-use Academorix\Scheduling\Attributes\Schedule;
-use Academorix\Scheduling\Attributes\WithoutOverlapping;
-use Academorix\Scheduling\Enums\Frequency;
+use Stackra\Scheduling\Attributes\Environments;
+use Stackra\Scheduling\Attributes\OnOneServer;
+use Stackra\Scheduling\Attributes\Schedule;
+use Stackra\Scheduling\Attributes\WithoutOverlapping;
+use Stackra\Scheduling\Enums\Frequency;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -52,7 +52,7 @@ Nothing else to do.
 
 ## Attributes
 
-All attributes live under `Academorix\Scheduling\Attributes\`.
+All attributes live under `Stackra\Scheduling\Attributes\`.
 
 ### Class-level — pick one cadence source
 
@@ -77,7 +77,7 @@ All attributes live under `Academorix\Scheduling\Attributes\`.
 ## The `ScheduleGate` contract
 
 `#[ScheduleWhen]` points at any class implementing
-`Academorix\Scheduling\Contracts\ScheduleGate`:
+`Stackra\Scheduling\Contracts\ScheduleGate`:
 
 ```php
 final class InsideBusinessHours implements ScheduleGate
@@ -103,18 +103,18 @@ repositories are all fair game.
 
 | Namespace                                                   | Purpose                                                   |
 | ----------------------------------------------------------- | --------------------------------------------------------- |
-| `Academorix\Scheduling\Attributes\*`                        | The class-level attributes callers actually apply.        |
-| `Academorix\Scheduling\Enums\Frequency`                     | Named cadence backing `#[Schedule(...)]`.                 |
-| `Academorix\Scheduling\Support\ScheduledTask`               | Readonly value object describing one registered schedule. |
-| `Academorix\Scheduling\Support\ScheduleDiscovery`           | Scans the `olvlvl/composer-attribute-collector` manifest. |
-| `Academorix\Scheduling\Support\ScheduleRegistrar`           | Applies discovered tasks to Laravel's `Schedule`.         |
-| `Academorix\Scheduling\Contracts\ScheduleGate`              | Invokable predicate for `#[ScheduleWhen]`.                |
-| `Academorix\Scheduling\Providers\SchedulingServiceProvider` | Wires everything up on Laravel boot.                      |
+| `Stackra\Scheduling\Attributes\*`                        | The class-level attributes callers actually apply.        |
+| `Stackra\Scheduling\Enums\Frequency`                     | Named cadence backing `#[Schedule(...)]`.                 |
+| `Stackra\Scheduling\Support\ScheduledTask`               | Readonly value object describing one registered schedule. |
+| `Stackra\Scheduling\Support\ScheduleDiscovery`           | Scans the `olvlvl/composer-attribute-collector` manifest. |
+| `Stackra\Scheduling\Support\ScheduleRegistrar`           | Applies discovered tasks to Laravel's `Schedule`.         |
+| `Stackra\Scheduling\Contracts\ScheduleGate`              | Invokable predicate for `#[ScheduleWhen]`.                |
+| `Stackra\Scheduling\Providers\SchedulingServiceProvider` | Wires everything up on Laravel boot.                      |
 
 ## Testing
 
 ```bash
-pnpm turbo run test --filter=@academorix/scheduling
+pnpm turbo run test --filter=@stackra/scheduling
 ```
 
 See parent [`docs/package-authoring.md`](../../docs/package-authoring.md).

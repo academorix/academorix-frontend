@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/newsletter/notifications",
+  "id": "stackra://modules/newsletter/notifications",
   "$version": 1,
   "title": "newsletter \u2014 notification classes + categories",
-  "namespace": "Academorix\\Newsletter\\Notifications",
+  "namespace": "Stackra\\Newsletter\\Notifications",
   "notifications": [
     "NewsletterCampaignCompletedNotification",
     "NewsletterCampaignFailedNotification",

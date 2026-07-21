@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Actions\Platform;
+namespace Stackra\Search\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Attributes\WhereUlid;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Search\Contracts\Services\IndexOrchestratorInterface;
-use Academorix\Search\Data\SearchSyncJobData;
-use Academorix\Search\Enums\SearchPermission;
-use Academorix\Search\Models\SearchIndex;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Attributes\WhereUlid;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Search\Contracts\Services\IndexOrchestratorInterface;
+use Stackra\Search\Data\SearchSyncJobData;
+use Stackra\Search\Enums\SearchPermission;
+use Stackra\Search\Models\SearchIndex;
 
 /**
  * `POST /api/v1/platform/search/indexes/{index}/flush` — drop an index.

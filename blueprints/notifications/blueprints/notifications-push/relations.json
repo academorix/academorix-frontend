@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-push/relations",
+  "id": "stackra://modules/notifications-push/relations",
   "$version": 1,
   "title": "notifications-push \u2014 model relationships",
   "internal": [],

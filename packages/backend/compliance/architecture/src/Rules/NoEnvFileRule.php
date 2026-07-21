@@ -5,7 +5,7 @@
  *
  * @description
  * Path rule: forbids `.env` (and configured variants) at any
- * app root. Academorix wraps every command with Doppler.
+ * app root. Stackra wraps every command with Doppler.
  *
  * ## Why
  *
@@ -46,9 +46,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Violations\Violation;
 
 /**
  * Enforce "Doppler-only — no .env files on disk".
@@ -70,7 +70,7 @@ final class NoEnvFileRule extends AbstractPathRule
      */
     public function description(): string
     {
-        return '.env files are forbidden — Academorix apps wrap every command via `doppler run --` for secrets.';
+        return '.env files are forbidden — Stackra apps wrap every command via `doppler run --` for secrets.';
     }
 
     /**

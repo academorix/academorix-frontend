@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Models;
+namespace Stackra\Tenancy\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
-use Academorix\Tenancy\Contracts\Data\TenantContactInterface;
-use Academorix\Tenancy\Database\Factories\TenantContactFactory;
-use Academorix\Tenancy\Enums\TenantContactKind;
-use Academorix\Tenancy\Observers\TenantContactObserver;
-use Academorix\Tenancy\Policies\TenantContactPolicy;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Tenancy\Contracts\Data\TenantContactInterface;
+use Stackra\Tenancy\Database\Factories\TenantContactFactory;
+use Stackra\Tenancy\Enums\TenantContactKind;
+use Stackra\Tenancy\Observers\TenantContactObserver;
+use Stackra\Tenancy\Policies\TenantContactPolicy;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

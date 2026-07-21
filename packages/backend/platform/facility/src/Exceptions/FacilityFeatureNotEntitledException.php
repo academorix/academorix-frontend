@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Exceptions;
+namespace Stackra\Facility\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Tenant is on Small tier (or `facilities` entitlement is otherwise off).

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Event\Exceptions;
+namespace Stackra\Event\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Cannot narrow min_age / max_age / age_group_ids post-registration_open without events.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class EventEligibilityNarrowingLockedException extends AcademorixException
+final class EventEligibilityNarrowingLockedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

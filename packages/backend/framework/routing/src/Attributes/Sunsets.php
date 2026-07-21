@@ -40,7 +40,7 @@
  *
  *   - Does not BLOCK access after the sunset date. Enforcement is
  *     the middleware's job — after the date, the version detector
- *     raises {@see \Academorix\Routing\Http\Exceptions\SunsetApiVersionException}
+ *     raises {@see \Stackra\Routing\Http\Exceptions\SunsetApiVersionException}
  *     (410 Gone) when the app is configured to enforce sunsets.
  *   - Does not emit console noise / logs on every hit. Sunset
  *     tracking happens through the emitted headers; observability
@@ -64,14 +64,14 @@
  * ```
  *
  * @see ApiVersion Version metadata the emitter reads alongside this.
- * @see \Academorix\Routing\Http\Exceptions\SunsetApiVersionException
+ * @see \Stackra\Routing\Http\Exceptions\SunsetApiVersionException
  *      Thrown by the detector when a sunset endpoint is hit past
  *      its date AND enforcement is enabled.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use DateTimeImmutable;

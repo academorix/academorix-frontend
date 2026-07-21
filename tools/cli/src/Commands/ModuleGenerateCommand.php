@@ -2,15 +2,15 @@
 
 /**
  * @file ModuleGenerateCommand.php
- * @module Academorix\Cli\Commands
- * @description `academorix module:generate <tier/name>` — v0.1
+ * @module Stackra\Cli\Commands
+ * @description `stackra module:generate <tier/name>` — v0.1
  *   placeholder. v0.2 will regenerate the module across backend +
  *   frontend + mobile from its blueprint.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Commands;
+namespace Stackra\Cli\Commands;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;

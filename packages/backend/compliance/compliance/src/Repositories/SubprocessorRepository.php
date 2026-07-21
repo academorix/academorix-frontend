@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Repositories;
+namespace Stackra\Compliance\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Compliance\Contracts\Data\SubprocessorInterface;
-use Academorix\Compliance\Contracts\Repositories\SubprocessorRepositoryInterface;
-use Academorix\Compliance\Models\Subprocessor;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Compliance\Contracts\Data\SubprocessorInterface;
+use Stackra\Compliance\Contracts\Repositories\SubprocessorRepositoryInterface;
+use Stackra\Compliance\Models\Subprocessor;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Compliance\Models\Subprocessor}.
+ * Attribute-first Eloquent repository for {@see Stackra\Compliance\Models\Subprocessor}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(SubprocessorInterface::class)]` which resolves to
  * `Subprocessor` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Compliance\Models\Subprocessor>
+ * @extends Repository<\Stackra\Compliance\Models\Subprocessor>
  *
  * @category Compliance
  *

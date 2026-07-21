@@ -81,8 +81,8 @@ boot and registers with the `FileKindRegistry` + attaches the `HasFiles` trait's
 runtime plumbing.
 
 ```php
-use Academorix\Storage\Attributes\{FileKind, Attachable, GeneratesVariants};
-use Academorix\Storage\Concerns\HasFiles;
+use Stackra\Storage\Attributes\{FileKind, Attachable, GeneratesVariants};
+use Stackra\Storage\Concerns\HasFiles;
 
 #[FileKind(
     key: 'avatar',
@@ -206,10 +206,10 @@ Every File on the wire looks like:
   "filename": "profile.jpg",
   "mime_type": "image/jpeg",
   "size_bytes": 84329,
-  "url": "https://cdn.academorix.app/…?signature=…&expires=…",
+  "url": "https://cdn.stackra.app/…?signature=…&expires=…",
   "variants": {
-    "thumbnail": "https://cdn.academorix.app/…thumb…?signature=…",
-    "medium": "https://cdn.academorix.app/…medium…?signature=…"
+    "thumbnail": "https://cdn.stackra.app/…thumb…?signature=…",
+    "medium": "https://cdn.stackra.app/…medium…?signature=…"
   },
   "virus_scan_state": "clean",
   "created_at": "2026-07-14T18:52:03.421Z"
@@ -222,7 +222,7 @@ signature per response). `sha256`, `disk`, `path`, `owner_id` are
 
 ## 11. What this module does NOT do
 
-- **Doesn't own the SDUI file-uploader widget.** That's `@academorix/ui` on the
+- **Doesn't own the SDUI file-uploader widget.** That's `@stackra/ui` on the
   frontend; this module only owns the wire surface it consumes.
 - **Doesn't do document search / OCR.** Full-text extraction from PDFs / DOCX
   lives in the `search` module (which subscribes to `FileUploaded` and extracts

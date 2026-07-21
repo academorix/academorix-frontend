@@ -52,11 +52,11 @@ function isRelevantStorageEvent(event: StorageEvent): boolean {
   }
 
   return (
-    event.key.startsWith("academorix.dashboards.") ||
-    event.key === "academorix.dashboard-share-grants.v1" ||
-    event.key === "academorix.dashboard-versions.v1" ||
-    event.key === "academorix.dashboard-annotations.v1" ||
-    event.key === "academorix.broadcast-templates.v1"
+    event.key.startsWith("stackra.dashboards.") ||
+    event.key === "stackra.dashboard-share-grants.v1" ||
+    event.key === "stackra.dashboard-versions.v1" ||
+    event.key === "stackra.dashboard-annotations.v1" ||
+    event.key === "stackra.broadcast-templates.v1"
   );
 }
 

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Database\Factories;
+namespace Stackra\Storage\Database\Factories;
 
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Enums\FileKind as FileKindEnum;
-use Academorix\Storage\Enums\FileVisibility;
-use Academorix\Storage\Enums\VirusScanState;
-use Academorix\Storage\Models\File;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Enums\FileKind as FileKindEnum;
+use Stackra\Storage\Enums\FileVisibility;
+use Stackra\Storage\Enums\VirusScanState;
+use Stackra\Storage\Models\File;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

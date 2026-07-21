@@ -2,7 +2,7 @@
 
 /**
  * @file TemplateManager.php
- * @module Academorix\Cli\Templates
+ * @module Stackra\Cli\Templates
  * @description Orchestrates a template clone: registry -> hydrator ->
  *   optional post-install hook (e.g. `composer install` for backend-app,
  *   `pnpm install` for web-app).
@@ -10,9 +10,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Templates;
+namespace Stackra\Cli\Templates;
 
-use Academorix\Cli\Exceptions\TemplateException;
+use Stackra\Cli\Exceptions\TemplateException;
 
 /**
  * Facade over {@see TemplateRegistry} + {@see TemplateHydrator}. This is

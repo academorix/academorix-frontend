@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Console;
+namespace Stackra\Webhook\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Webhook\Contracts\Data\WebhookSubscriptionInterface;
-use Academorix\Webhook\Contracts\Repositories\WebhookSubscriptionRepositoryInterface;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Webhook\Contracts\Data\WebhookSubscriptionInterface;
+use Stackra\Webhook\Contracts\Repositories\WebhookSubscriptionRepositoryInterface;
 
 /**
  * `php artisan webhook:list` — print every webhook subscription in

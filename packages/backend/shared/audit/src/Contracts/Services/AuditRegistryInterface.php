@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Contracts\Services;
+namespace Stackra\Audit\Contracts\Services;
 
-use Academorix\Audit\Attributes\Auditable;
-use Academorix\Audit\Services\AuditRegistry;
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Audit\Attributes\Auditable;
+use Stackra\Audit\Services\AuditRegistry;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Singleton;
 
@@ -15,9 +15,9 @@ use Illuminate\Container\Attributes\Singleton;
  * declared encrypt-field list.
  *
  * Hydrated at boot by the framework's generic
- * {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ * {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  * pump via the {@see HydratesFrom} attribute on {@see register()}.
- * The {@see \Academorix\Audit\Casts\EncryptedAuditValueCast} queries
+ * The {@see \Stackra\Audit\Casts\EncryptedAuditValueCast} queries
  * the registry at cast time to decide whether a field's value should
  * be routed through the KMS cipher.
  *

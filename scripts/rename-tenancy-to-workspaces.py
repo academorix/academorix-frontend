@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Rename tenancy \u2192 workspaces across the Academorix modules blueprint.
+Rename tenancy \u2192 workspaces across the Stackra modules blueprint.
 
 WHAT IT DOES
     File contents (in every JSON / MD / PHP / TS file under modules/):
@@ -50,7 +50,7 @@ from pathlib import Path
 # Config
 # --------------------------------------------------------------------------
 
-DEFAULT_SCOPE = Path("/Users/akouta/Projects/academorix-frontend/modules")
+DEFAULT_SCOPE = Path("/Users/akouta/Projects/stackra-frontend/modules")
 
 # File extensions to scan + rewrite.
 SCAN_EXTENSIONS = {

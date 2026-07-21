@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Enums;
+namespace Stackra\Webhook\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `disabled_reason` on `webhook-subscription`.

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Nightwatch\Redactors;
 
-use Academorix\Nightwatch\Attributes\AsNightwatchRedactor;
-use Academorix\Nightwatch\Contracts\NightwatchRedactor;
-use Academorix\Nightwatch\Enums\NightwatchEventType;
+use Stackra\Nightwatch\Attributes\AsNightwatchRedactor;
+use Stackra\Nightwatch\Contracts\NightwatchRedactor;
+use Stackra\Nightwatch\Enums\NightwatchEventType;
 
 /**
  * Example: IP Redactor.

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Actions\Tenant;
+namespace Stackra\Transfer\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Transfer\Contracts\Data\XferMappingProfileInterface;
-use Academorix\Transfer\Contracts\Repositories\XferMappingProfileRepositoryInterface;
-use Academorix\Transfer\Data\Requests\CreateMappingProfileRequestData;
-use Academorix\Transfer\Data\XferMappingProfileData;
-use Academorix\Transfer\Enums\TransferPermission;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Transfer\Contracts\Data\XferMappingProfileInterface;
+use Stackra\Transfer\Contracts\Repositories\XferMappingProfileRepositoryInterface;
+use Stackra\Transfer\Data\Requests\CreateMappingProfileRequestData;
+use Stackra\Transfer\Data\XferMappingProfileData;
+use Stackra\Transfer\Enums\TransferPermission;
 
 /**
  * `POST /api/v1/transfer/mapping-profiles` — create a saved profile.
@@ -37,7 +37,7 @@ final class CreateMappingProfile
 
     public function __invoke(CreateMappingProfileRequestData $data): XferMappingProfileData
     {
-        /** @var \Academorix\Transfer\Models\XferMappingProfile $profile */
+        /** @var \Stackra\Transfer\Models\XferMappingProfile $profile */
         $profile = $this->profiles->create([
             XferMappingProfileInterface::ATTR_ENTITY_KEY => $data->entity,
             XferMappingProfileInterface::ATTR_NAME       => $data->name,

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PublicSite\Repositories;
+namespace Stackra\PublicSite\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\PublicSite\Contracts\Data\ContentBlockInterface;
-use Academorix\PublicSite\Contracts\Repositories\ContentBlockRepositoryInterface;
-use Academorix\PublicSite\Models\ContentBlock;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\PublicSite\Contracts\Data\ContentBlockInterface;
+use Stackra\PublicSite\Contracts\Repositories\ContentBlockRepositoryInterface;
+use Stackra\PublicSite\Models\ContentBlock;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\PublicSite\Models\ContentBlock}.
+ * Attribute-first Eloquent repository for {@see Stackra\PublicSite\Models\ContentBlock}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ContentBlockInterface::class)]` which resolves to
  * `ContentBlock` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\PublicSite\Models\ContentBlock>
+ * @extends Repository<\Stackra\PublicSite\Models\ContentBlock>
  *
  * @category PublicSite
  *

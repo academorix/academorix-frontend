@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsInApp\Exceptions;
+namespace Stackra\NotificationsInApp\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Reverb dispatch raised an exception.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsInappBroadcastFailedException extends AcademorixException
+final class NotificationsInappBroadcastFailedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

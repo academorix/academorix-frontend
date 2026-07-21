@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invoice/errors",
+  "id": "stackra://modules/invoice/errors",
   "$version": 1,
   "title": "invoice — error codes",
   "namespace": "invoice",

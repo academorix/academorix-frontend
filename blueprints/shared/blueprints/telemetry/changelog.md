@@ -8,8 +8,8 @@
   `telemetry-otel` (Wave 6, OTel spans + metrics) and `telemetry-logs` (Wave 6,
   structured logs) modules.
 - Two internal sub-namespaces preserve separation of concerns without splitting
-  the module: `Academorix\Telemetry\Otel\*` (traces + metrics via
-  `keepsuit/laravel-opentelemetry`) and `Academorix\Telemetry\Logs\*` (Monolog
+  the module: `Stackra\Telemetry\Otel\*` (traces + metrics via
+  `keepsuit/laravel-opentelemetry`) and `Stackra\Telemetry\Logs\*` (Monolog
   processor pipeline).
 - Consolidated 10 PHP attributes: `AsSpan`, `AsCounter`, `AsHistogram`,
   `AsGauge`, `AsUpDownCounter`, `AsContext`, `AsBaggage` (OTel) plus
@@ -25,9 +25,9 @@
 
 Every consumer must update:
 
-- **Composer namespaces.** `Academorix\TelemetryOtel\*` →
-  `Academorix\Telemetry\Otel\*`. `Academorix\TelemetryLogs\*` →
-  `Academorix\Telemetry\Logs\*`.
+- **Composer namespaces.** `Stackra\TelemetryOtel\*` →
+  `Stackra\Telemetry\Otel\*`. `Stackra\TelemetryLogs\*` →
+  `Stackra\Telemetry\Logs\*`.
 - **Config paths.** `config('telemetry-otel.exporter.endpoint')` →
   `config('telemetry.otel.exporter.endpoint')`.
   `config('telemetry-logs.sinks.loki.endpoint')` →

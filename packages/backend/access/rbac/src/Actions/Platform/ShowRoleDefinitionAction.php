@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Actions\Platform;
+namespace Stackra\Rbac\Actions\Platform;
 
-use Academorix\Rbac\Contracts\Repositories\RoleDefinitionRepositoryInterface;
-use Academorix\Rbac\Data\RoleDefinitionData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Rbac\Contracts\Repositories\RoleDefinitionRepositoryInterface;
+use Stackra\Rbac\Data\RoleDefinitionData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 
 /**
  * `GET /api/v1/platform/rbac/role-definitions/{roleDefinition}` — show action (platform-admin audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Rbac

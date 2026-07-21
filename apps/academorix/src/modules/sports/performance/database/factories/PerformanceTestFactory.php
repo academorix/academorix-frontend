@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Performance\Database\Factories;
+namespace Stackra\Performance\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Performance\Contracts\Data\PerformanceTestInterface;
-use Academorix\Performance\Models\PerformanceTest;
+use Stackra\Performance\Contracts\Data\PerformanceTestInterface;
+use Stackra\Performance\Models\PerformanceTest;
 
 /**
- * Factory for {@see \Academorix\Performance\Models\PerformanceTest}.
+ * Factory for {@see \Stackra\Performance\Models\PerformanceTest}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Performance\Models\PerformanceTest>
+ * @extends Factory<\Stackra\Performance\Models\PerformanceTest>
  *
  * @category Performance
  *

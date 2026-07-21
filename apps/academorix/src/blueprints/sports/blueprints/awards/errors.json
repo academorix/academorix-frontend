@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/awards/errors",
+  "id": "stackra://modules/awards/errors",
   "$version": 1,
   "title": "awards — error catalogue",
   "description": "Domain exception classes + HTTP status + translation keys.",

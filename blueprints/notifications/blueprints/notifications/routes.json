@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/routes",
+  "id": "stackra://modules/notifications/routes",
   "$version": 1,
   "title": "notifications core \u2014 HTTP routes",
   "description": "Core routes only. Grouped by host tier: central (unsubscribe), platform-admin (cross-tenant search), tenant (inbox + preferences + templates). Provider webhooks + push subscription registration live in the respective channel modules \u2014 notifications-mail, notifications-sms, notifications-push. Every route lists its middleware pipeline in foundation's canonical priority order + its permission gate.",
@@ -20,14 +20,14 @@
         {
           "method": "GET",
           "path": "/unsubscribe/{token}",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\UnsubscribeController@show",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\UnsubscribeController@show",
           "middleware": ["signed"],
           "description": "Render the confirmation page. The token is a signed URL with the (user_id, category_slug, channel) claim triple."
         },
         {
           "method": "POST",
           "path": "/unsubscribe/{token}",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\UnsubscribeController@store",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\UnsubscribeController@store",
           "middleware": ["signed"],
           "description": "One-click unsubscribe per RFC 8058 List-Unsubscribe-Post. Sets NotificationPreference.enabled=false + fires PreferenceUpdated. Honoured immediately."
         }
@@ -51,38 +51,38 @@
         {
           "method": "GET",
           "path": "/notifications",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Platform\\NotificationController@index",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\Platform\\NotificationController@index",
           "permission": "platform.notifications.viewAny"
         },
         {
           "method": "GET",
           "path": "/notifications/{notification}",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Platform\\NotificationController@show",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\Platform\\NotificationController@show",
           "permission": "platform.notifications.view"
         },
         {
           "method": "GET",
           "path": "/notifications/{notification}/deliveries",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Platform\\NotificationDeliveryController@index",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\Platform\\NotificationDeliveryController@index",
           "permission": "platform.notifications.view"
         },
         {
           "method": "POST",
           "path": "/notifications/{notification}/deliveries/{delivery}/retry",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Platform\\NotificationDeliveryController@retry",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\Platform\\NotificationDeliveryController@retry",
           "permission": "platform.notifications.retry",
           "description": "Enqueue a retry via the delivery's channel module. Rate-limited to prevent replay abuse."
         },
         {
           "method": "GET",
           "path": "/notification-templates",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Platform\\NotificationTemplateController@index",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\Platform\\NotificationTemplateController@index",
           "permission": "platform.notifications.templates.viewAny"
         },
         {
           "method": "GET",
           "path": "/notification-categories",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Platform\\NotificationCategoryController@index",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\Platform\\NotificationCategoryController@index",
           "permission": "platform.notifications.categories.viewAny"
         }
       ]
@@ -105,34 +105,34 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\InboxController@index",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\Tenant\\InboxController@index",
           "permission": "notifications.viewAny",
           "description": "Auth user's inbox with filters (category, channel, state, seen)."
         },
         {
           "method": "GET",
           "path": "/{notification}",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\InboxController@show",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\Tenant\\InboxController@show",
           "permission": "notifications.view"
         },
         {
           "method": "POST",
           "path": "/{notification}/seen",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\InboxController@markSeen",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\Tenant\\InboxController@markSeen",
           "middleware": ["throttle.mark-seen"],
           "permission": "notifications.markSeen"
         },
         {
           "method": "POST",
           "path": "/mark-all-seen",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\InboxController@markAllSeen",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\Tenant\\InboxController@markAllSeen",
           "middleware": ["throttle.mark-seen"],
           "permission": "notifications.markSeen"
         },
         {
           "method": "POST",
           "path": "/{notification}/archive",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\InboxController@archive",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\Tenant\\InboxController@archive",
           "permission": "notifications.archive"
         }
       ]
@@ -155,14 +155,14 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\PreferenceController@index",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\Tenant\\PreferenceController@index",
           "permission": "notifications.preferences.view",
           "description": "Grid of (category, channel) toggles for the auth user."
         },
         {
           "method": "PATCH",
           "path": "/",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\PreferenceController@update",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\Tenant\\PreferenceController@update",
           "permission": "notifications.preferences.update",
           "description": "Bulk upsert (category, channel, enabled, digest_mode, quiet_hours_*)."
         }
@@ -186,37 +186,37 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@index",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@index",
           "permission": "notifications.templates.viewAny"
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@store",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@store",
           "permission": "notifications.templates.create"
         },
         {
           "method": "GET",
           "path": "/{template}",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@show",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@show",
           "permission": "notifications.templates.view"
         },
         {
           "method": "PATCH",
           "path": "/{template}",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@update",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@update",
           "permission": "notifications.templates.update"
         },
         {
           "method": "POST",
           "path": "/{template}/publish",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@publish",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@publish",
           "permission": "notifications.templates.publish"
         },
         {
           "method": "POST",
           "path": "/{template}/test",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@test",
+          "controller": "Stackra\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@test",
           "permission": "notifications.templates.test",
           "description": "Send a rendered template to a test recipient via the appropriate channel module. Rate-limited to 10/day per template."
         }

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Policies;
+namespace Stackra\Application\Policies;
 
-use Academorix\Application\Contracts\Data\ApplicationInterface;
-use Academorix\Application\Enums\ApplicationPermission;
-use Academorix\Application\Models\Application;
+use Stackra\Application\Contracts\Data\ApplicationInterface;
+use Stackra\Application\Enums\ApplicationPermission;
+use Stackra\Application\Models\Application;
 use Illuminate\Foundation\Auth\User;
 
 /**

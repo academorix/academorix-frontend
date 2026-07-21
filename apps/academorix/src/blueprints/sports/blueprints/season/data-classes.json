@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/season/data-classes",
+  "id": "stackra://modules/season/data-classes",
   "$version": 1,
   "title": "season — field classification",
   "description": "Season carries commercial + calendrical reference data. No PII. The bulk of compliance responsibility is around FINANCIAL-record retention (late_registration_fee_cents changes generate 7-year audit rows) + SOC 2 CC6.3 change tracking (SeasonCurrentChanged is audit-critical because year-over-year reports pivot on the current season). Domain rows below Season (Team, AthleteEnrollment, Event, Session) inherit their own classification per their owning module.",

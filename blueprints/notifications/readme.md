@@ -4,8 +4,8 @@ The **delivery fan-out hub** — one channel-agnostic notification core plus
 per-channel transports that subscribe to it. Every user-addressed message across
 every product goes through this service.
 
-Deploys to `academorix-backend/apps/notifications-service/` (see
-[`apps/notifications-service/README.md`](../../../academorix/academorix-backend/apps/notifications-service/README.md)).
+Deploys to `stackra-backend/apps/notifications-service/` (see
+[`apps/notifications-service/README.md`](../../../stackra/stackra-backend/apps/notifications-service/README.md)).
 
 ## Modules — on disk
 

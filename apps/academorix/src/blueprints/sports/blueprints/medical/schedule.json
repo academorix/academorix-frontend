@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/medical/schedule",
+  "id": "stackra://modules/medical/schedule",
   "$version": 1,
   "title": "medical — scheduled tasks",
   "description": "Artisan / cron entries this module registers.",

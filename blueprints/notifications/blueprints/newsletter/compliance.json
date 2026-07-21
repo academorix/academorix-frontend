@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/newsletter/compliance",
+  "id": "stackra://modules/newsletter/compliance",
   "$version": 1,
   "title": "newsletter \u2014 compliance evidence",
   "description": "CAN-SPAM + CASL enforcement is central here. Double-opt-in + one-click unsubscribe + consent_evidence per subscription + full audit trail via HasAudit.",

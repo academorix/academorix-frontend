@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Repositories;
+namespace Stackra\Registry\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Registry\Contracts\Data\PositionInterface;
-use Academorix\Registry\Contracts\Repositories\PositionRepositoryInterface;
-use Academorix\Registry\Models\Position;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Registry\Contracts\Data\PositionInterface;
+use Stackra\Registry\Contracts\Repositories\PositionRepositoryInterface;
+use Stackra\Registry\Models\Position;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Registry\Models\Position}.
+ * Attribute-first Eloquent repository for {@see Stackra\Registry\Models\Position}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(PositionInterface::class)]` which resolves to
  * `Position` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Registry\Models\Position>
+ * @extends Repository<\Stackra\Registry\Models\Position>
  *
  * @category Registry
  *

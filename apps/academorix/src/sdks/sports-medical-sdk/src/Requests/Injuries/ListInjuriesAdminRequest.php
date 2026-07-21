@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsMedicalSdk\Requests\Injuries;
+namespace Stackra\SportsMedicalSdk\Requests\Injuries;
 
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\ApiSdk\Data\PaginationLinks;
-use Academorix\ApiSdk\Data\PaginationMeta;
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsMedicalSdk\Data\InjuryData;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\ApiSdk\Data\PaginationLinks;
+use Stackra\ApiSdk\Data\PaginationMeta;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsMedicalSdk\Data\InjuryData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

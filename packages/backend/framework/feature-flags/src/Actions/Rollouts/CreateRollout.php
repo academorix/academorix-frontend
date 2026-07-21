@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Actions\Rollouts;
+namespace Stackra\FeatureFlags\Actions\Rollouts;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\FeatureFlags\Contracts\Data\FeatureRolloutInterface;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureRolloutRepositoryInterface;
-use Academorix\FeatureFlags\Data\FeatureRolloutData;
-use Academorix\FeatureFlags\Data\Requests\CreateRolloutRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\FeatureFlags\Contracts\Data\FeatureRolloutInterface;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureRolloutRepositoryInterface;
+use Stackra\FeatureFlags\Data\FeatureRolloutData;
+use Stackra\FeatureFlags\Data\Requests\CreateRolloutRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\Response;
 
 /**
@@ -49,7 +49,7 @@ final class CreateRollout
             \abort(Response::HTTP_FORBIDDEN, 'feature_flags.cross_tenant_write');
         }
 
-        /** @var \Academorix\FeatureFlags\Models\FeatureRollout $row */
+        /** @var \Stackra\FeatureFlags\Models\FeatureRollout $row */
         $row = $this->repository->create([
             FeatureRolloutInterface::ATTR_TENANT_ID   => $currentTenantId,
             FeatureRolloutInterface::ATTR_FLAG        => $data->flag,

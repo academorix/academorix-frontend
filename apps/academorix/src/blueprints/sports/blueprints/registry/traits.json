@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/sports-registry/traits",
+  "id": "stackra://modules/sports-registry/traits",
   "$version": 1,
   "title": "sports-registry — trait composition",
   "description": "Two owned traits — `ReferencesSport` for downstream models that carry `sport_key` / `discipline_key` / `position_key` strings (Team Wave 2b, AthleteEnrollment Wave 3, Coach Wave 3, Event Wave 3, Session Wave 3, Season Wave 3a, AgeGroup Wave 3a); and `HasSportRegistryCatalog` on the Tenant model exposing per-tenant merged-catalog accessors. `ReferencesSport` is intentionally STRING-based, not FK-based — downstream rows carry `sport_key` as a plain string that resolves through SportKeyResolver at read time. This decouples every consumer from schema changes on this module.",
   "owned": [
     {
-      "trait": "Academorix\\Sports\\Registry\\Concerns\\ReferencesSport",
+      "trait": "Stackra\\Sports\\Registry\\Concerns\\ReferencesSport",
       "description": "Mixed into any domain model that carries `sport_key` (Team, AthleteEnrollment, Coach, Event, Session, Season, AgeGroup, Facility.compatible_sport_keys as array). Adds `sport()` accessor (lazy resolves through SportKeyResolver — NOT an FK relation), `resolveInSport(?string $sport_key = null)` query scope filtering `WHERE sport_key = ?`, `hasResolvedSport()` boolean accessor, and a `booted()` hook that validates the sport_key against the resolver at save time (refuses SPORT_KEY_UNRESOLVED 422 when the key doesn't resolve, unless the row is marked historical). The trait uses the `$sportKeyColumn` static property (default 'sport_key') so models with a differently-named column (e.g. Facility might carry `primary_sport_key`) can override. Also supports optional `$disciplineKeyColumn` + `$positionKeyColumn` — when set, the trait extends validation to the full triple.",
       "public": true,
       "usedBy": [
@@ -27,7 +27,7 @@
       ]
     },
     {
-      "trait": "Academorix\\Sports\\Registry\\Concerns\\HasSportRegistryCatalog",
+      "trait": "Stackra\\Sports\\Registry\\Concerns\\HasSportRegistryCatalog",
       "description": "Mixed into the Tenant model. Adds merged-catalog accessors: `sports()` (hasMany + a platform-scoped hasMany merged into one collection at read time), `platformSports()` (WHERE tenant_id IS NULL — hasMany via a global scope on Sport), `customSports()` (WHERE tenant_id = current tenant), `activeSports()` (all + is_active=true), `resolveSportKey($sport_key)` (delegates to SportKeyResolver::resolve()). Read-only — every write goes through the CustomEntryFactory + Provisioner services. The merged read pattern is unusual — Eloquent hasMany doesn't natively merge tenant_id NULL + tenant_id=current queries, so the trait ships a custom relationship class.",
       "public": true,
       "usedBy": [
@@ -50,34 +50,34 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasSlug" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasSlug" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
     "tenants": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
         "reason": "Applies the tenant scope + auto-fills on save. Nullable tenant_id semantics: NULL = platform (visible to every tenant via the merged scope); non-null = tenant custom (visible only to owner + platform staff)."
       }
     ],
     "audit": [
       {
-        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "trait": "Stackra\\Audit\\Concerns\\Auditable",
         "reason": "Every Sport / Discipline / Position mutation writes to the `audits` table. SportPrefixResolutionFailed rows retained 7 years (dangling-reference signal); other mutations 2 years."
       }
     ],
     "activity": [
       {
-        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
         "reason": "Registry lifecycle events feed the tenant admin's product-facing activity feed."
       }
     ],
     "localization": [
       {
-        "trait": "Academorix\\Localization\\Concerns\\HasTranslations",
+        "trait": "Stackra\\Localization\\Concerns\\HasTranslations",
         "reason": "Sport.name + Sport.description + Discipline.name + Discipline.description + Position.name + Position.description all localize via the JSONB translations column. Platform-seeded rows carry translations for every enabled locale (per SportCatalogSeeder); tenant customs are en-only unless the tenant admin adds translations via the localization module."
       }
     ]

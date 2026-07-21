@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/marketing/schemas/marketing-delivery",
+  "id": "stackra://modules/marketing/schemas/marketing-delivery",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "MarketingDelivery",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "mdv_",
     "incrementing": false,
-    "model": "Academorix\\Growth\\Marketing\\Models\\MarketingDelivery",
-    "interface": "Academorix\\Growth\\Marketing\\Contracts\\Data\\MarketingDeliveryInterface",
-    "implements": ["Academorix\\Growth\\Marketing\\Contracts\\Data\\MarketingDeliveryInterface"],
+    "model": "Stackra\\Growth\\Marketing\\Models\\MarketingDelivery",
+    "interface": "Stackra\\Growth\\Marketing\\Contracts\\Data\\MarketingDeliveryInterface",
+    "implements": ["Stackra\\Growth\\Marketing\\Contracts\\Data\\MarketingDeliveryInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

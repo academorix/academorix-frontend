@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/monitoring/relations",
+  "id": "stackra://modules/monitoring/relations",
   "$version": 1,
   "title": "monitoring — model relationships",
   "description": "Six owned entities. HealthCheck is the parent of HealthCheckRun. MonitoringAlertPolicy is the parent of MonitoringAlert. MonitoringIncident groups MonitoringAlert rows (nullable — an alert may not yet be grouped). MonitoringProviderConfig is standalone (tenant-scoped) — alerts reference providers via the policy's notify_provider_configs jsonb array, not a direct FK. Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / region_id / organization_id / scope_node_id on any owned row.",

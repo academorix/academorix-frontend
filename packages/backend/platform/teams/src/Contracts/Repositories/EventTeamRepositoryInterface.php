@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Teams\Contracts\Repositories;
+namespace Stackra\Teams\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Teams\Models\EventTeam}.
+ * Repository contract for {@see Stackra\Teams\Models\EventTeam}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `EventTeamRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Teams\Models\EventTeam>
+ * @extends RepositoryInterface<\Stackra\Teams\Models\EventTeam>
  *
  * @category Teams
  *

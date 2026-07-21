@@ -12,7 +12,7 @@
 * - Required fields missing or invalid
 *
 * @extends foundation::layouts.app
-* @package Academorix\Foundation
+* @package Stackra\Foundation
 */
 --}}
 @extends('foundation::layouts.app')

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Teams\Exceptions;
+namespace Stackra\Teams\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Member's gender doesn't match team.

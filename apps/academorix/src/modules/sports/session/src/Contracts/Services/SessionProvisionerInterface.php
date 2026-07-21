@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Session\Contracts\Services;
+namespace Stackra\Session\Contracts\Services;
 
-use Academorix\Session\Services\SessionProvisioner;
+use Stackra\Session\Services\SessionProvisioner;
 use Illuminate\Container\Attributes\Bind;
 
 /**

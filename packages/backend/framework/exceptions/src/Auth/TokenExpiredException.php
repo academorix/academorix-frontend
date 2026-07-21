@@ -29,7 +29,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Auth;
+namespace Stackra\Exceptions\Auth;
 
 class TokenExpiredException extends AuthenticationException
 {
@@ -44,7 +44,7 @@ class TokenExpiredException extends AuthenticationException
     /**
      * Class-level translation key pointing at
      * `lang/en/auth.php → token_expired`. Overridable per-instance
-     * via {@see \Academorix\Exceptions\Concerns\TranslatesMessages::withTranslationKey()}.
+     * via {@see \Stackra\Exceptions\Concerns\TranslatesMessages::withTranslationKey()}.
      */
     public const TRANSLATION_KEY = 'exceptions::auth.token_expired';
 

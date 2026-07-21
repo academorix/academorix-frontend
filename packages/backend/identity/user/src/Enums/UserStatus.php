@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\User\Enums;
+namespace Stackra\User\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `status` on `user`.

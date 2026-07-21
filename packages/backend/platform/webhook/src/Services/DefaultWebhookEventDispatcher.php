@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Services;
+namespace Stackra\Webhook\Services;
 
-use Academorix\Webhook\Contracts\Data\WebhookSubscriptionInterface;
-use Academorix\Webhook\Contracts\Repositories\WebhookSubscriptionRepositoryInterface;
-use Academorix\Webhook\Contracts\Services\WebhookEventDispatcherInterface;
-use Academorix\Webhook\Contracts\Services\WebhookSenderInterface;
-use Academorix\Webhook\Models\WebhookSubscription;
+use Stackra\Webhook\Contracts\Data\WebhookSubscriptionInterface;
+use Stackra\Webhook\Contracts\Repositories\WebhookSubscriptionRepositoryInterface;
+use Stackra\Webhook\Contracts\Services\WebhookEventDispatcherInterface;
+use Stackra\Webhook\Contracts\Services\WebhookSenderInterface;
+use Stackra\Webhook\Models\WebhookSubscription;
 use Illuminate\Container\Attributes\Scoped;
 
 /**

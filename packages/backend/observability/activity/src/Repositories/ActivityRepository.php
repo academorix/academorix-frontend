@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Repositories;
+namespace Stackra\Activity\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Activity\Contracts\Data\ActivityInterface;
-use Academorix\Activity\Contracts\Repositories\ActivityRepositoryInterface;
-use Academorix\Activity\Models\Activity;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Activity\Contracts\Data\ActivityInterface;
+use Stackra\Activity\Contracts\Repositories\ActivityRepositoryInterface;
+use Stackra\Activity\Models\Activity;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Activity\Models\Activity}.
+ * Attribute-first Eloquent repository for {@see Stackra\Activity\Models\Activity}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ActivityInterface::class)]` which resolves to
  * `Activity` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Activity\Models\Activity>
+ * @extends Repository<\Stackra\Activity\Models\Activity>
  *
  * @category Activity
  *

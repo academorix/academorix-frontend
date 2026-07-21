@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Refund\Exceptions;
+namespace Stackra\Refund\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Reason must be one of the enum values.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class RefundInvalidReasonException extends AcademorixException
+final class RefundInvalidReasonException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

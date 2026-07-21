@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PrivateSessions\Services;
+namespace Stackra\PrivateSessions\Services;
 
-use Academorix\PrivateSessions\Contracts\Services\CoachMatchmakerInterface;
+use Stackra\PrivateSessions\Contracts\Services\CoachMatchmakerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\PrivateSessions\Contracts\Repositories\PrivateSessionRequestRepositoryInterface;
+use Stackra\PrivateSessions\Contracts\Repositories\PrivateSessionRequestRepositoryInterface;
 
 /**
  * Concrete service — CoachMatchmaker.

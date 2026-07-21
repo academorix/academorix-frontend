@@ -206,7 +206,7 @@ Enforced by `tax_capture` (master) + `tax_provider_slot` (config cap) +
 ## 10. What this module does NOT do
 
 - **Tax law interpretation.** The module is an ENGINE — rate values come from
-  the provider or tenant admin. Academorix does not offer tax counsel; tenants
+  the provider or tenant admin. Stackra does not offer tax counsel; tenants
   are responsible for their own compliance advisors.
 - **Historical rate re-computation.** Calculations frozen at snapshot per §4.
 - **Provider fallback chaining.** ONE provider per calculation; failure blocks

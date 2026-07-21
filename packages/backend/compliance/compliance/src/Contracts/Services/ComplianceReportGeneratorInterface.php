@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Contracts\Services;
+namespace Stackra\Compliance\Contracts\Services;
 
-use Academorix\Compliance\Services\ComplianceReportGenerator;
+use Stackra\Compliance\Services\ComplianceReportGenerator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

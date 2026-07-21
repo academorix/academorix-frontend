@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/search/errors",
+  "id": "stackra://modules/search/errors",
   "$version": 1,
   "title": "search \u2014 error codes",
   "namespace": "search",

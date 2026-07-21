@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invoice\Events;
+namespace Stackra\Invoice\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -17,7 +17,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - audit::WriteToAuditLog (retention: 7 years — critical financial event)
  * - activity::WriteToActivityLog
  * - notifications::DispatchInvoicePaidNotification (customer receipt + admin confirmation)
- * - monitoring::MetricsCollector (increments academorix.invoice.paid_total; buckets on total_cents)
+ * - monitoring::MetricsCollector (increments stackra.invoice.paid_total; buckets on total_cents)
  * - growth::marketing::CaptureMembershipPurchasedMarketingEvent (when membership_id present — the load-bearing marketing signal)
  * - membership::ActivateMembershipOnInvoicePaid (when membership_id present — transitions Membership status=active + generates Passes)
  *

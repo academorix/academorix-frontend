@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/service-accounts/retention",
+  "id": "stackra://modules/service-accounts/retention",
   "$version": 1,
   "title": "service-accounts \u2014 retention windows",
   "description": "SA retention is compliance-driven, not product-driven. Soft-deleted SAs carry a 90-day retention hold before hard delete (SOC 2 audit-evidence window; longer than typical human-actor retention because inter-service audit correlation extends further). JWT audit logs live 365 days hot + 7 years cold. Secret hashes are overwritten on rotation (no history). last_used_at + last_used_ip retained for the SA's lifetime.",

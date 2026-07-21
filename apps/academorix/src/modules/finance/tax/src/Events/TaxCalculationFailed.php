@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Events;
+namespace Stackra\Tax\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog
  * - notifications::DispatchTaxCalculationBlockedNotification (P1 — pages finance ops)
- * - monitoring::MetricsCollector (increments academorix.tax.calculations.failed_total)
+ * - monitoring::MetricsCollector (increments stackra.tax.calculations.failed_total)
  * - tax::MaybeOpenCircuitBreaker
  *
  * @category Tax

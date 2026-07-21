@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Exceptions;
+namespace Stackra\Monitoring\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Caller lacks the ops/admin/owner/support role required to access the monitoring surface.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MonitoringInsufficientRoleException extends AcademorixException
+final class MonitoringInsufficientRoleException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

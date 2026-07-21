@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Strategies;
+namespace Stackra\Webhook\Strategies;
 
-use Academorix\Webhook\Models\WebhookSubscription;
+use Stackra\Webhook\Models\WebhookSubscription;
 
 /**
  * Retry-After-aware backoff.

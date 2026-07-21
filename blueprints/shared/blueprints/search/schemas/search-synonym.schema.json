@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/search/schemas/search-synonym",
+  "id": "stackra://modules/search/schemas/search-synonym",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "SearchSynonym",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "syn_",
     "incrementing": false,
-    "model": "Academorix\\Search\\Models\\SearchSynonym",
-    "interface": "Academorix\\Search\\Contracts\\Data\\SearchSynonymInterface",
-    "implements": ["Academorix\\Search\\Contracts\\Data\\SearchSynonymInterface"],
+    "model": "Stackra\\Search\\Models\\SearchSynonym",
+    "interface": "Stackra\\Search\\Contracts\\Data\\SearchSynonymInterface",
+    "implements": ["Stackra\\Search\\Contracts\\Data\\SearchSynonymInterface"],
     "traits": [
       "HasUlids",
       "BelongsToTenant",
@@ -25,10 +25,10 @@
       "SoftDeletes"
     ],
     "casts": {
-      "kind": "Academorix\\Search\\Enums\\SynonymKind",
+      "kind": "Stackra\\Search\\Enums\\SynonymKind",
       "terms": "array",
       "one_way_targets": "array",
-      "source": "Academorix\\Search\\Enums\\SynonymSource",
+      "source": "Stackra\\Search\\Enums\\SynonymSource",
       "is_active": "boolean",
       "is_system": "boolean",
       "metadata": "array"

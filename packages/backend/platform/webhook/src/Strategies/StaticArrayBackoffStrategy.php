@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Strategies;
+namespace Stackra\Webhook\Strategies;
 
-use Academorix\Webhook\Contracts\Data\WebhookSubscriptionInterface;
-use Academorix\Webhook\Models\WebhookSubscription;
+use Stackra\Webhook\Contracts\Data\WebhookSubscriptionInterface;
+use Stackra\Webhook\Models\WebhookSubscription;
 
 /**
  * Fixed-schedule backoff.

@@ -11,7 +11,7 @@
  * Facades hide dependencies. In a Service or Action, every
  * collaborator must be explicit in the constructor signature so
  * the class can be instantiated by the container, mocked in
- * tests, and reasoned about at the type level. The Academorix
+ * tests, and reasoned about at the type level. The Stackra
  * convention is to inject the underlying service via one of the
  * container attributes — `#[Auth]`, `#[Log]`, `#[Cache]`,
  * `#[DB]`, etc. See steering: `octane-first-di.md`.
@@ -47,12 +47,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Enums\LayerType;
-use Academorix\Architecture\Support\SourceFile;
-use Academorix\Architecture\Violations\Severity;
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Enums\LayerType;
+use Stackra\Architecture\Support\SourceFile;
+use Stackra\Architecture\Violations\Severity;
+use Stackra\Architecture\Violations\Violation;
 
 /**
  * Ban Laravel facades inside Service / Action classes.

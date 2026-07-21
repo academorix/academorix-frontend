@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Concerns;
+namespace Stackra\Storage\Concerns;
 
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Models\File;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Models\File;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 

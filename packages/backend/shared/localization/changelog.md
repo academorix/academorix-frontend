@@ -17,7 +17,7 @@
   `LocaleResolutionStrategy` implementations discovered via
   `#[AsLocaleResolutionStrategy]`.
 - Translator decoration — our
-  `Academorix\Localization\Services\CachedTranslator` extends
+  `Stackra\Localization\Services\CachedTranslator` extends
   `Illuminate\Translation\Translator` and overrides `get()` + `choice()` to
   consult the DB cache first via `TranslationRepositoryInterface`.
 - Six machine-translation drivers (OpenAI, Google, DeepL, AWS Translate, Azure,
@@ -43,7 +43,7 @@
 
 ### Compatibility
 
-- Depends on `academorix/foundation`, `academorix/tenancy`,
-  `academorix/activity`, `academorix/entitlements`, `academorix/geography` (adds
+- Depends on `stackra/foundation`, `stackra/tenancy`,
+  `stackra/activity`, `stackra/entitlements`, `stackra/geography` (adds
   ISO reference data at priority 65).
 - Inception release.

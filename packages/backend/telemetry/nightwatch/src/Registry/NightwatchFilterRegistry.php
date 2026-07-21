@@ -14,11 +14,11 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Nightwatch\Registry;
+namespace Stackra\Nightwatch\Registry;
 
 use Illuminate\Support\Collection;
-use Academorix\Nightwatch\Contracts\NightwatchFilter;
-use Academorix\Nightwatch\Enums\NightwatchEventType;
+use Stackra\Nightwatch\Contracts\NightwatchFilter;
+use Stackra\Nightwatch\Enums\NightwatchEventType;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

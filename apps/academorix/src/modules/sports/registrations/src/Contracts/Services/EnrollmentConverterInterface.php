@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registrations\Contracts\Services;
+namespace Stackra\Registrations\Contracts\Services;
 
-use Academorix\Registrations\Services\EnrollmentConverter;
+use Stackra\Registrations\Services\EnrollmentConverter;
 use Illuminate\Container\Attributes\Bind;
 
 /**

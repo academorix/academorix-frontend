@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/ai/attributes",
+  "id": "stackra://modules/ai/attributes",
   "$version": 1,
   "title": "ai — PHP attribute contracts",
   "description": "Five owned attributes discovered at boot. AsAiTool + Sensitivity + RequiresRoles are read by PersonaResolver / ToolDiscoveryBootstrapper at boot. NeverAutoWrite + AllowBackgroundWrite are read at every tool-call by ToolAuthorizerDecorator. All five compile-time-attribute driven; no runtime reflection.",
-  "namespace": "Academorix\\AI\\Attributes",
+  "namespace": "Stackra\\AI\\Attributes",
   "attributes": [
     {
       "name": "AsAiTool",
-      "class": "Academorix\\AI\\Attributes\\AsAiTool",
+      "class": "Stackra\\AI\\Attributes\\AsAiTool",
       "targets": ["class"],
       "description": "Marks a class as an AI tool discoverable by ToolDiscoveryBootstrapper. The bootstrapper scans every enabled module's `Tools/` namespace for classes carrying this attribute and registers them with ToolRegistry under the supplied name. That string is what personas reference in their `toolNames()` array AND what the LLM sees when deciding which tool to invoke.",
       "params": [
@@ -28,7 +28,7 @@
     },
     {
       "name": "Sensitivity",
-      "class": "Academorix\\AI\\Attributes\\Sensitivity",
+      "class": "Stackra\\AI\\Attributes\\Sensitivity",
       "targets": ["class"],
       "description": "Per-persona ceiling — declares the strictest sensitivity class the persona may reach. Values from the Sensitivity enum. A `Public` persona MUST NOT bundle a `Medical` tool (enforced at boot). `Safeguarding` is hard-denied by SensitiveDataGate regardless of consent/role.",
       "params": [
@@ -43,7 +43,7 @@
     },
     {
       "name": "RequiresRoles",
-      "class": "Academorix\\AI\\Attributes\\RequiresRoles",
+      "class": "Stackra\\AI\\Attributes\\RequiresRoles",
       "targets": ["class"],
       "description": "Declares the spatie/permission role(s) required to invoke a persona. Read by AuthorizePersonaRole HTTP middleware BEFORE the request reaches RunPersonaChatController. Caller must hold at least one listed role (OR semantics).",
       "params": [
@@ -58,7 +58,7 @@
     },
     {
       "name": "NeverAutoWrite",
-      "class": "Academorix\\AI\\Attributes\\NeverAutoWrite",
+      "class": "Stackra\\AI\\Attributes\\NeverAutoWrite",
       "targets": ["class"],
       "description": "Persona-level marker (defence-in-depth). When ToolAuthorizerDecorator finds this on the persona currently in scope, every tool call — regardless of the tool's declared WriteMode — routes through the draft-then-confirm flow. Applied on MedicalAssistantPersona + AnomalyDetectorPersona + AthleteAssistantPersona.",
       "params": [],
@@ -66,7 +66,7 @@
     },
     {
       "name": "AllowBackgroundWrite",
-      "class": "Academorix\\AI\\Attributes\\AllowBackgroundWrite",
+      "class": "Stackra\\AI\\Attributes\\AllowBackgroundWrite",
       "targets": ["class"],
       "description": "Tool-level escape hatch. Marks a WriteMode::Write tool that MAY execute a direct write inside a background persona, bypassing the draft-then-confirm flow. Interactive personas MUST NOT bundle a tool carrying this (verified at boot). Loses to `#[NeverAutoWrite]` on the persona.",
       "params": [],
@@ -74,7 +74,7 @@
     }
   ],
   "discovery": {
-    "loader": "Academorix\\AI\\Registry\\ToolDiscoveryBootstrapper",
+    "loader": "Stackra\\AI\\Registry\\ToolDiscoveryBootstrapper",
     "runs_at": "boot (via #[AsAiTool] scan through Foundation's DiscoversAttributes contract)",
     "output_registries": [
       "ToolRegistry — map of tool name → resolved class + Sensitivity + WriteMode",

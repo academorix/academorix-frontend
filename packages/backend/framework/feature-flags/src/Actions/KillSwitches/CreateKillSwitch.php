@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Actions\KillSwitches;
+namespace Stackra\FeatureFlags\Actions\KillSwitches;
 
-use Academorix\Authorization\Attributes\RequireRole;
-use Academorix\FeatureFlags\Contracts\Data\FeatureKillSwitchInterface;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureKillSwitchRepositoryInterface;
-use Academorix\FeatureFlags\Data\FeatureKillSwitchData;
-use Academorix\FeatureFlags\Data\Requests\CreateKillSwitchRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Authorization\Attributes\RequireRole;
+use Stackra\FeatureFlags\Contracts\Data\FeatureKillSwitchInterface;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureKillSwitchRepositoryInterface;
+use Stackra\FeatureFlags\Data\FeatureKillSwitchData;
+use Stackra\FeatureFlags\Data\Requests\CreateKillSwitchRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\Response;
 
 /**
@@ -45,7 +45,7 @@ final class CreateKillSwitch
      */
     public function __invoke(CreateKillSwitchRequestData $data): Response
     {
-        /** @var \Academorix\FeatureFlags\Models\FeatureKillSwitch $row */
+        /** @var \Stackra\FeatureFlags\Models\FeatureKillSwitch $row */
         $row = $this->repository->create([
             FeatureKillSwitchInterface::ATTR_FLAG        => $data->flag,
             FeatureKillSwitchInterface::ATTR_SCOPE_LEVEL => $data->scopeLevel,

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Console;
+namespace Stackra\Geography\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Geography\Contracts\Services\GeolocateServiceInterface;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Geography\Contracts\Services\GeolocateServiceInterface;
 use Throwable;
 
 /**

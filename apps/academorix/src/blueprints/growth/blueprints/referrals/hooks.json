@@ -1,34 +1,34 @@
 {
-  "id": "academorix://modules/referrals/hooks",
+  "id": "stackra://modules/referrals/hooks",
   "$version": 1,
   "title": "referrals — TenancyHook + lifecycle hooks",
   "description": "Cross-module hook implementations. TenancyHooks are the tenancy module's contract for reacting to tenant-lifecycle events (provision / suspend / erase). Referrals does not register a bootstrapper (nothing to hydrate at tenant-boot), but registers nine cascade hooks: user-activation code auto-issue, attribution snapshotter, atomic Finance-materialization, refund + chargeback clawback cascades, user-erasure redaction, tenant-erasure purge, and program-archived cascade.",
-  "namespace": "Academorix\\Growth\\Referrals\\Hooks",
+  "namespace": "Stackra\\Growth\\Referrals\\Hooks",
   "hooks": [
     {
       "name": "IssueUserReferralCodeOnAccountActivated",
-      "class": "Academorix\\Growth\\Referrals\\Hooks\\IssueUserReferralCodeOnAccountActivated",
+      "class": "Stackra\\Growth\\Referrals\\Hooks\\IssueUserReferralCodeOnAccountActivated",
       "kind": "cascade",
       "listens_to": "user::UserAccountActivated",
       "purpose": "Auto-issue a user_scoped referral code for the newly-activated user, for each active referral program on the tenant. Dispatches IssueReferralCodeJob. Idempotent: skips programs the user already has a code for. Runs at priority 60 (after user profile is fully populated, before onboarding-email fanout so the welcome mail can include the code)."
     },
     {
       "name": "SnapshotAttributionOnReferralClaimed",
-      "class": "Academorix\\Growth\\Referrals\\Hooks\\SnapshotAttributionOnReferralClaimed",
+      "class": "Stackra\\Growth\\Referrals\\Hooks\\SnapshotAttributionOnReferralClaimed",
       "kind": "domain_event",
       "listens_to": "referrals::ReferralClaimed",
       "purpose": "Reads Request::attributionSnapshot() (from growth::attribution's AttributionSnapshotBuilder) and freezes it into referral.attribution_snapshot JSONB. Runs synchronously inside the create transaction — MUST commit atomically with the referral row."
     },
     {
       "name": "MaterializeVestedRewardsIntoFinance",
-      "class": "Academorix\\Growth\\Referrals\\Hooks\\MaterializeVestedRewardsIntoFinance",
+      "class": "Stackra\\Growth\\Referrals\\Hooks\\MaterializeVestedRewardsIntoFinance",
       "kind": "cascade",
       "listens_to": "referrals::ReferralVested",
       "purpose": "Dispatches MaterializeVestedRewardsJob for each reward created by the vested transition. The job calls the Finance module (Wave 4) to create a pending Credit. Runs at priority 30 (before notification listeners so notifications reflect materialized state)."
     },
     {
       "name": "ClawbackRewardsOnFinanceRefund",
-      "class": "Academorix\\Growth\\Referrals\\Hooks\\ClawbackRewardsOnFinanceRefund",
+      "class": "Stackra\\Growth\\Referrals\\Hooks\\ClawbackRewardsOnFinanceRefund",
       "kind": "cascade",
       "listens_to": "finance::RefundIssued",
       "purpose": "Cascades: dispatches ClawbackRewardsOnRefundJob for the refunded user + payment. Reverses any ReferralReward tied to the refund via the trigger_event chain (typically first_payment).",
@@ -36,7 +36,7 @@
     },
     {
       "name": "ClawbackRewardsOnFinanceChargeback",
-      "class": "Academorix\\Growth\\Referrals\\Hooks\\ClawbackRewardsOnFinanceChargeback",
+      "class": "Stackra\\Growth\\Referrals\\Hooks\\ClawbackRewardsOnFinanceChargeback",
       "kind": "cascade",
       "listens_to": "finance::ChargebackFiled",
       "purpose": "Higher-severity clawback path. Same shape as refund, but marks the referrer's fraud-flag counters (recurring chargeback abuse = fraud signal on the referrer).",
@@ -44,14 +44,14 @@
     },
     {
       "name": "CancelReferralsOnReferrerErased",
-      "class": "Academorix\\Growth\\Referrals\\Hooks\\CancelReferralsOnReferrerErased",
+      "class": "Stackra\\Growth\\Referrals\\Hooks\\CancelReferralsOnReferrerErased",
       "kind": "cascade",
       "listens_to": "user::UserErased",
       "purpose": "When a referrer user is erased: cancel their pending referrals (transition status -> cancelled with cancellation_reason='manual_admin'). Retains paid rewards (financial obligation) with recipient_id nulled."
     },
     {
       "name": "RedactReferralDataOnUserErasure",
-      "class": "Academorix\\Growth\\Referrals\\Hooks\\RedactReferralDataOnUserErasure",
+      "class": "Stackra\\Growth\\Referrals\\Hooks\\RedactReferralDataOnUserErasure",
       "kind": "cascade",
       "listens_to": "user::UserErased",
       "purpose": "GDPR minimisation. If erased user was a referred party: 90 days post-erasure, redact referral.referred_email + attribution_snapshot's user-identifying fields to [REDACTED]. Retention window unchanged; only PII fields redact.",
@@ -59,14 +59,14 @@
     },
     {
       "name": "PurgeReferralDataForErasedTenant",
-      "class": "Academorix\\Growth\\Referrals\\Hooks\\PurgeReferralDataForErasedTenant",
+      "class": "Stackra\\Growth\\Referrals\\Hooks\\PurgeReferralDataForErasedTenant",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErased",
       "purpose": "Cascade delete via FK; writes compliance audit trail entry + emits count metrics per entity family (programs / codes / referrals / rewards / fraud_flags purged). Paid rewards over $600 (tax threshold) migrate to compliance_archive.referral_rewards prior to cascade. Audit rows outlive the source rows per financial retention."
     },
     {
       "name": "ArchiveReferralsOnProgramArchived",
-      "class": "Academorix\\Growth\\Referrals\\Hooks\\ArchiveReferralsOnProgramArchived",
+      "class": "Stackra\\Growth\\Referrals\\Hooks\\ArchiveReferralsOnProgramArchived",
       "kind": "cascade",
       "listens_to": "referrals::ReferralProgramArchived",
       "purpose": "Cascades: cancels every non-terminal referral referencing the archived program (transition status -> cancelled with cancellation_reason='program_archived'). Materialized-not-yet-paid rewards clawback. Paid rewards retain — the archive doesn't undo already-fulfilled obligations. Runs at priority 50 (before notification-tier listeners)."

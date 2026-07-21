@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Jobs;
+namespace Stackra\Integrations\Jobs;
 
-use Academorix\Integrations\Contracts\Data\TenantIntegrationInterface;
-use Academorix\Integrations\Models\TenantIntegration;
+use Stackra\Integrations\Contracts\Data\TenantIntegrationInterface;
+use Stackra\Integrations\Models\TenantIntegration;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -20,9 +20,9 @@ use Illuminate\Queue\SerializesModels;
  * configured retention window (`integrations.retention.hard_delete_days`).
  *
  * Called by
- * {@see \Academorix\Integrations\Observers\TenantIntegrationObserver}
+ * {@see \Stackra\Integrations\Observers\TenantIntegrationObserver}
  * on the row's `deleted` hook (as the initial delayed trigger) and by
- * {@see \Academorix\Integrations\Console\IntegrationsPurgeDisabledCommand}
+ * {@see \Stackra\Integrations\Console\IntegrationsPurgeDisabledCommand}
  * on the periodic sweep.
  *
  * @category Integrations

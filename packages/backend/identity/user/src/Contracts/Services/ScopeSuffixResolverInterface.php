@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\User\Contracts\Services;
+namespace Stackra\User\Contracts\Services;
 
-use Academorix\User\Services\ScopeSuffixResolver;
+use Stackra\User\Services\ScopeSuffixResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

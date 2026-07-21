@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\People\Contracts\Data;
+namespace Stackra\People\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\People\Models\PersonGuardianLink;
+use Stackra\People\Models\PersonGuardianLink;
 
 /**
  * Table shape for the `person_guardian_links` table.

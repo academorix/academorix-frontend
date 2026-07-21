@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Order\Repositories;
+namespace Stackra\Order\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Order\Contracts\Data\OrderLineInterface;
-use Academorix\Order\Contracts\Repositories\OrderLineRepositoryInterface;
-use Academorix\Order\Models\OrderLine;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Order\Contracts\Data\OrderLineInterface;
+use Stackra\Order\Contracts\Repositories\OrderLineRepositoryInterface;
+use Stackra\Order\Models\OrderLine;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Order\Models\OrderLine}.
+ * Attribute-first Eloquent repository for {@see Stackra\Order\Models\OrderLine}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(OrderLineInterface::class)]` which resolves to
  * `OrderLine` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Order\Models\OrderLine>
+ * @extends Repository<\Stackra\Order\Models\OrderLine>
  *
  * @category Order
  *

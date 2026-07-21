@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/staff/policies",
+  "id": "stackra://modules/staff/policies",
   "$version": 1,
   "title": "staff — authorization policies",
   "description": "Two policies, one per owned model. Each policy composes the ResolveScope middleware's decision: a caller with scope 'branch:X' can only see/act on staff/coaches in branch X. Every ability defers to spatie/laravel-permission for the base check, then layers scope narrowing + PII / compensation gates. Two special permissions carry `staff.` prefix even though they read like actions: `staff.view.compensation` and `staff.view.emergency_contact` (both permission-gated field-access filters, not full policies). The redactor pipeline applies these on egress — a caller with `staff.view` but WITHOUT `staff.view.compensation` sees the Staff row with compensation_* fields stripped from the wire projection.",
   "policies": [
     {
       "model": "Staff",
-      "class": "Academorix\\Staff\\Policies\\StaffPolicy",
+      "class": "Stackra\\Staff\\Policies\\StaffPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -110,7 +110,7 @@
     },
     {
       "model": "Coach",
-      "class": "Academorix\\Staff\\Policies\\CoachPolicy",
+      "class": "Stackra\\Staff\\Policies\\CoachPolicy",
       "abilities": [
         {
           "action": "viewAny",

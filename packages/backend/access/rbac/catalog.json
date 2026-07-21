@@ -1,27 +1,27 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/rbac",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/rbac",
   "tier": "saas",
   "surfaces": ["core"],
   "kind": "feature",
-  "purpose": "Role-based access control storage on spatie/laravel-permission — augmented with (application_id, tenant_id) columns and Academorix scope discipline.",
+  "purpose": "Role-based access control storage on spatie/laravel-permission — augmented with (application_id, tenant_id) columns and Stackra scope discipline.",
   "capabilities": [
     "Role + Permission Eloquent models augmented with scope columns",
     "RoleDefinition metadata layer FK-linked to system roles",
     "ModelHasPermissions / ModelHasRoles / RoleHasPermissions pivots",
     "Application + tenant scoping on every RBAC row",
     "Attribute-first CRUD, Actions, Policies, Events",
-    "Wire SDK companion at academorix-access/rbac-sdk"
+    "Wire SDK companion at stackra-access/rbac-sdk"
   ],
   "when_to_use": "Every app needs role + permission storage, admin CRUD, and spatie-compatible role/permission checks.",
-  "when_not_to_use": "For lightweight controller-attribute gating without DB storage, use academorix/authorization.",
+  "when_not_to_use": "For lightweight controller-attribute gating without DB storage, use stackra/authorization.",
   "peer_deps": [
-    "academorix-access/rbac-sdk",
-    "academorix/crud",
-    "academorix/foundation",
-    "academorix/routing",
-    "academorix/service-provider",
-    "academorix/support",
+    "stackra-access/rbac-sdk",
+    "stackra/crud",
+    "stackra/foundation",
+    "stackra/routing",
+    "stackra/service-provider",
+    "stackra/support",
     "spatie/laravel-data"
   ],
   "backend_pair": null,

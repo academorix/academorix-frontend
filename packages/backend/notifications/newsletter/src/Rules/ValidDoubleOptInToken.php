@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Rules;
+namespace Stackra\Newsletter\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -12,7 +12,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
  * token (base64url-encoded, ≥ 43 chars ≡ 32-byte HMAC).
  *
  * Structural check only — the actual signature verification happens
- * inside {@see \Academorix\Newsletter\Services\DefaultNewsletterService}
+ * inside {@see \Stackra\Newsletter\Services\DefaultNewsletterService}
  * once the token payload is looked up against the row.
  *
  * @category Newsletter

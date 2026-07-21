@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Attributes;
+namespace Stackra\Notifications\Mail\Attributes;
 
 use Attribute;
 
@@ -14,11 +14,11 @@ use Attribute;
  * event into its transport (Reverb broadcast, SMTP mail send, Twilio
  * SMS send, FCM push). Each concrete driver carries this attribute
  * so the framework's generic hydration pump can register it into
- * {@see \Academorix\Notifications\Contracts\Services\NotificationChannelRegistryInterface}
+ * {@see \Stackra\Notifications\Contracts\Services\NotificationChannelRegistryInterface}
  * at boot.
  *
  * **Interop note.** This attribute intentionally MIRRORS the sibling
- * `Academorix\Notifications\InApp\Attributes\AsNotificationChannel`
+ * `Stackra\Notifications\InApp\Attributes\AsNotificationChannel`
  * shape verbatim — same constructor signature, same field names.
  * The parent registry will eventually consume a single canonical
  * attribute; until then each channel module ships its own compatible
@@ -51,7 +51,7 @@ final readonly class AsNotificationChannel
     /**
      * @param  string  $key
      *   Channel identifier (e.g. `in_app`, `mail`, `push`, `sms`).
-     *   Matches {@see \Academorix\Notifications\Enums\NotificationChannel}
+     *   Matches {@see \Stackra\Notifications\Enums\NotificationChannel}
      *   backing values.
      *
      * @param  string  $kind

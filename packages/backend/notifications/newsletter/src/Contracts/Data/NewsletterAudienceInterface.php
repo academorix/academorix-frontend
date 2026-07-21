@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Contracts\Data;
+namespace Stackra\Newsletter\Contracts\Data;
 
-use Academorix\Newsletter\Models\NewsletterAudience;
+use Stackra\Newsletter\Models\NewsletterAudience;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -12,10 +12,10 @@ use Illuminate\Container\Attributes\Bind;
  *
  * An audience segment definition scoped to a single newsletter.
  * `expression` is a rule-based selector evaluated by
- * {@see \Academorix\Newsletter\Contracts\Services\AudienceEvaluatorInterface}
+ * {@see \Stackra\Newsletter\Contracts\Services\AudienceEvaluatorInterface}
  * against active subscriptions. `cached_subscriber_ids` holds the
  * pre-evaluated list produced by
- * {@see \Academorix\Newsletter\Jobs\BuildAudienceSegmentJob} — read
+ * {@see \Stackra\Newsletter\Jobs\BuildAudienceSegmentJob} — read
  * by the campaign orchestrator on send.
  *
  * The `is_default` audience is a system row every newsletter

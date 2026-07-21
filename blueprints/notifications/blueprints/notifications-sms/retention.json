@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-sms/retention",
+  "id": "stackra://modules/notifications-sms/retention",
   "$version": 1,
   "title": "notifications-sms \u2014 retention windows",
   "description": "SmsOptOut retained per TCPA + CASL evidence requirements. Cost aggregation retained for billing.",

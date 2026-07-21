@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Membership\Exceptions;
+namespace Stackra\Membership\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Plan is outside its effective_from/effective_until window.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MembershipPlanNotEffectiveException extends AcademorixException
+final class MembershipPlanNotEffectiveException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

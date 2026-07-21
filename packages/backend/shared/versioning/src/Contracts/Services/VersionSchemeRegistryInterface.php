@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Contracts\Services;
+namespace Stackra\Versioning\Contracts\Services;
 
-use Academorix\Versioning\Services\VersionSchemeRegistry;
+use Stackra\Versioning\Services\VersionSchemeRegistry;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Singleton;
 
@@ -12,7 +12,7 @@ use Illuminate\Container\Attributes\Singleton;
  * Registry of every scheme adapter the app boots with.
  *
  * Populated at boot by
- * {@see \Academorix\Versioning\Bootstrappers\VersionSchemeDiscoveryBootstrapper}
+ * {@see \Stackra\Versioning\Bootstrappers\VersionSchemeDiscoveryBootstrapper}
  * with the two shipped schemes (`semver`, `calver`) and by any
  * additional schemes a consumer app registers.
  *
@@ -38,7 +38,7 @@ interface VersionSchemeRegistryInterface
     /**
      * Resolve a scheme by name to its adapter instance.
      *
-     * @throws \Academorix\Versioning\Exceptions\UnknownVersionSchemeException  When `$name` isn't registered.
+     * @throws \Stackra\Versioning\Exceptions\UnknownVersionSchemeException  When `$name` isn't registered.
      */
     public function resolve(string $name): VersionSchemeInterface;
 

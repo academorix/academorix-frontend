@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Ai\Contracts\Data;
+namespace Stackra\Ai\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Ai\Models\AiToolCall;
+use Stackra\Ai\Models\AiToolCall;
 
 /**
  * Table shape for the `ai_tool_calls` table.

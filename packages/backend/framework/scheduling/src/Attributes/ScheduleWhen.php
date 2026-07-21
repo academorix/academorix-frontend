@@ -13,7 +13,7 @@
  * ## Gate contract
  *
  * The referenced class MUST implement
- * {@see \Academorix\Scheduling\Contracts\ScheduleGate} — a single
+ * {@see \Stackra\Scheduling\Contracts\ScheduleGate} — a single
  * invokable method returning `bool`. Gate classes are resolved
  * from the container, so they get full DI (config, cache,
  * repositories) — never request state.
@@ -31,9 +31,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scheduling\Attributes;
+namespace Stackra\Scheduling\Attributes;
 
-use Academorix\Scheduling\Contracts\ScheduleGate;
+use Stackra\Scheduling\Contracts\ScheduleGate;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]

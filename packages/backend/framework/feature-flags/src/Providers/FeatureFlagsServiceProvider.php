@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Providers;
+namespace Stackra\FeatureFlags\Providers;
 
-use Academorix\FeatureFlags\Registry\FeatureFlagDiscovery;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Attributes\Module;
-use Academorix\ServiceProvider\Attributes\OnBoot;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\FeatureFlags\Registry\FeatureFlagDiscovery;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\Module;
+use Stackra\ServiceProvider\Attributes\OnBoot;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * Feature-flags module provider — attribute-first, zero manual bindings.
@@ -53,7 +53,7 @@ final class FeatureFlagsServiceProvider extends ServiceProvider
 
         /** @var iterable<object{ name: class-string, attribute: object }> $targets */
         $targets = $collectorClass::findTargetClasses(
-            \Academorix\FeatureFlags\Attributes\AsFeatureFlag::class,
+            \Stackra\FeatureFlags\Attributes\AsFeatureFlag::class,
         );
 
         $classNames = [];

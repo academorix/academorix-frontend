@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Contracts\Services;
+namespace Stackra\Branding\Contracts\Services;
 
-use Academorix\Branding\Models\Branding;
-use Academorix\Branding\Services\DefaultBrandingResolver;
+use Stackra\Branding\Models\Branding;
+use Stackra\Branding\Services\DefaultBrandingResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

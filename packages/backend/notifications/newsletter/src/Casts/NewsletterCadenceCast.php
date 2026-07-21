@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Casts;
+namespace Stackra\Newsletter\Casts;
 
-use Academorix\Newsletter\Enums\NewsletterCadence;
+use Stackra\Newsletter\Enums\NewsletterCadence;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 

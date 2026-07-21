@@ -1,10 +1,10 @@
 {
-  "name": "academorix/rbac",
+  "name": "stackra/rbac",
   "type": "library",
-  "description": "Academorix Rbac module — server-side Laravel package emitted from the module blueprint at `modules/access/blueprints/rbac/`. Complements the wire SDK at `academorix-access/rbac-sdk`.",
+  "description": "Stackra Rbac module — server-side Laravel package emitted from the module blueprint at `modules/access/blueprints/rbac/`. Complements the wire SDK at `stackra-access/rbac-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "access",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-access/rbac-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-access/rbac-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Rbac\\": "src/"
+      "Stackra\\Rbac\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Rbac\\Tests\\": "tests/"
+      "Stackra\\Rbac\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Rbac\\Providers\\RbacServiceProvider"
+        "Stackra\\Rbac\\Providers\\RbacServiceProvider"
       ],
       "aliases": {}
     }

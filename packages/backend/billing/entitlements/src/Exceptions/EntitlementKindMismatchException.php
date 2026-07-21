@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Exceptions;
+namespace Stackra\Entitlements\Exceptions;
 
-use Academorix\Entitlements\Enums\EntitlementKind;
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Entitlements\Enums\EntitlementKind;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a consumer expects one kind but the stored row is
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class EntitlementKindMismatchException extends AcademorixException
+final class EntitlementKindMismatchException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/reception/attributes",
+  "id": "stackra://modules/reception/attributes",
   "$version": 1,
   "title": "reception — PHP attributes",
   "description": "PHP attributes owned by this module. Empty at scaffold time; fill in with each new `#[As...]` class the module ships.",
-  "namespace": "Academorix\\\\Reception\\\\Attributes",
+  "namespace": "Stackra\\\\Reception\\\\Attributes",
   "attributes": []
 }

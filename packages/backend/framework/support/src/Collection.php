@@ -12,13 +12,13 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Support;
+namespace Stackra\Support;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection as BaseCollection;
-use Academorix\Foundation\Constants\Paginator as PaginatorConstants;
-use Academorix\Foundation\Exceptions\InvalidArgumentException;
+use Stackra\Foundation\Constants\Paginator as PaginatorConstants;
+use Stackra\Foundation\Exceptions\InvalidArgumentException;
 
 /**
  * Extended Collection Class.

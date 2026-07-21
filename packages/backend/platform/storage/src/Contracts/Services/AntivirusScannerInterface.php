@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Contracts\Services;
+namespace Stackra\Storage\Contracts\Services;
 
-use Academorix\Storage\Models\File;
-use Academorix\Storage\Services\NullAntivirusScanner;
+use Stackra\Storage\Models\File;
+use Stackra\Storage\Services\NullAntivirusScanner;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -36,7 +36,7 @@ interface AntivirusScannerInterface
      * @param  File  $file  The file to scan.
      * @return array{status: string, details: array<string, mixed>|null}
      *         `status` is the backing value of
-     *         {@see \Academorix\Storage\Enums\VirusScanState};
+     *         {@see \Stackra\Storage\Enums\VirusScanState};
      *         `details` is an optional JSON blob the caller writes
      *         to `virus_scan_details`.
      */

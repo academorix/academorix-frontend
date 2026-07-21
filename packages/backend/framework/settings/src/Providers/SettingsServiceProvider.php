@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Settings\Providers;
+namespace Stackra\Settings\Providers;
 
-use Academorix\Scope\Contracts\ScopeRegistryInterface;
-use Academorix\Scope\Data\ScopeConsumerConfig;
-use Academorix\Settings\Bootstrappers\SettingsBootstrapper;
-use Academorix\Settings\Events\SettingsChangeEvent;
-use Academorix\Settings\Listeners\WriteSettingsChangeToActivity;
-use Academorix\Settings\Listeners\WriteSettingsChangeToAudit;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Attributes\OnBoot;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\Scope\Contracts\ScopeRegistryInterface;
+use Stackra\Scope\Data\ScopeConsumerConfig;
+use Stackra\Settings\Bootstrappers\SettingsBootstrapper;
+use Stackra\Settings\Events\SettingsChangeEvent;
+use Stackra\Settings\Listeners\WriteSettingsChangeToActivity;
+use Stackra\Settings\Listeners\WriteSettingsChangeToAudit;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\OnBoot;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 
 /**
- * Root service provider for `academorix/settings`.
+ * Root service provider for `stackra/settings`.
  *
  * Ships three things:
  *
@@ -50,7 +50,7 @@ final class SettingsServiceProvider extends ServiceProvider
      * Bootstrappers this module ships. Registered with the shared
      * `BootstrapperRegistry` during `registerModule()`.
      *
-     * @var list<class-string<\Academorix\ServiceProvider\Bootstrappers\AbstractBootstrapper>>
+     * @var list<class-string<\Stackra\ServiceProvider\Bootstrappers\AbstractBootstrapper>>
      */
     protected array $bootstrappers = [
         SettingsBootstrapper::class,

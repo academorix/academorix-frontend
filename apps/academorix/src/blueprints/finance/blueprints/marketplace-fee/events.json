@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/marketplace-fee/events",
+  "id": "stackra://modules/marketplace-fee/events",
   "$version": 1,
   "title": "marketplace-fee — published events",
-  "namespace": "Academorix\\Finance\\MarketplaceFee\\Events",
+  "namespace": "Stackra\\Finance\\MarketplaceFee\\Events",
   "dispatchMode": "afterCommit",
   "events": [
     {
       "name": "FeeScheduleCreated",
-      "class": "Academorix\\Finance\\MarketplaceFee\\Events\\FeeScheduleCreated",
+      "class": "Stackra\\Finance\\MarketplaceFee\\Events\\FeeScheduleCreated",
       "trigger": "New draft FeeSchedule committed.",
       "queue": "marketplace-fee",
       "consumers": ["audit::WriteToAuditLog"],
@@ -21,7 +21,7 @@
     },
     {
       "name": "FeeScheduleActivated",
-      "class": "Academorix\\Finance\\MarketplaceFee\\Events\\FeeScheduleActivated",
+      "class": "Stackra\\Finance\\MarketplaceFee\\Events\\FeeScheduleActivated",
       "trigger": "FeeSchedule.status draft -> active. Supersedes any prior active version.",
       "queue": "marketplace-fee",
       "consumers": [
@@ -39,7 +39,7 @@
     },
     {
       "name": "FeeScheduleDeactivated",
-      "class": "Academorix\\Finance\\MarketplaceFee\\Events\\FeeScheduleDeactivated",
+      "class": "Stackra\\Finance\\MarketplaceFee\\Events\\FeeScheduleDeactivated",
       "trigger": "FeeSchedule.status active -> archived.",
       "queue": "marketplace-fee",
       "consumers": [
@@ -50,7 +50,7 @@
     },
     {
       "name": "FeeApplied",
-      "class": "Academorix\\Finance\\MarketplaceFee\\Events\\FeeApplied",
+      "class": "Stackra\\Finance\\MarketplaceFee\\Events\\FeeApplied",
       "trigger": "New FeeApplication row committed. Fires from FeeCalculator when a payment succeeds.",
       "queue": "marketplace-fee",
       "consumers": ["audit::WriteToAuditLog"],
@@ -64,7 +64,7 @@
     },
     {
       "name": "FeeReversed",
-      "class": "Academorix\\Finance\\MarketplaceFee\\Events\\FeeReversed",
+      "class": "Stackra\\Finance\\MarketplaceFee\\Events\\FeeReversed",
       "trigger": "FeeApplication.status -> reversed (refund / chargeback).",
       "queue": "marketplace-fee",
       "consumers": ["audit::WriteToAuditLog"],
@@ -77,7 +77,7 @@
     },
     {
       "name": "FeePayoutCreated",
-      "class": "Academorix\\Finance\\MarketplaceFee\\Events\\FeePayoutCreated",
+      "class": "Stackra\\Finance\\MarketplaceFee\\Events\\FeePayoutCreated",
       "trigger": "New FeePayout roll-up committed. Includes N fee_applications.",
       "queue": "marketplace-fee",
       "consumers": ["audit::WriteToAuditLog"],
@@ -93,7 +93,7 @@
     },
     {
       "name": "FeePayoutSettled",
-      "class": "Academorix\\Finance\\MarketplaceFee\\Events\\FeePayoutSettled",
+      "class": "Stackra\\Finance\\MarketplaceFee\\Events\\FeePayoutSettled",
       "trigger": "FeePayout.status pending -> settled. Stripe transfer succeeded.",
       "queue": "marketplace-fee-critical",
       "consumers": [

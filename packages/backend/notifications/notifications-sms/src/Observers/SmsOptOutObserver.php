@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Observers;
+namespace Stackra\Notifications\Sms\Observers;
 
-use Academorix\Notifications\Sms\Contracts\Data\SmsOptOutInterface;
-use Academorix\Notifications\Sms\Enums\SmsOptOutReason;
-use Academorix\Notifications\Sms\Events\SmsOptedOut;
-use Academorix\Notifications\Sms\Events\SmsOptOutRevoked;
-use Academorix\Notifications\Sms\Models\SmsOptOut;
+use Stackra\Notifications\Sms\Contracts\Data\SmsOptOutInterface;
+use Stackra\Notifications\Sms\Enums\SmsOptOutReason;
+use Stackra\Notifications\Sms\Events\SmsOptedOut;
+use Stackra\Notifications\Sms\Events\SmsOptOutRevoked;
+use Stackra\Notifications\Sms\Models\SmsOptOut;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use RuntimeException;

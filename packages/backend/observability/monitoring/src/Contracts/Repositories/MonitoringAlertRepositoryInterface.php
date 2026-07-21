@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Contracts\Repositories;
+namespace Stackra\Monitoring\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Monitoring\Models\MonitoringAlert}.
+ * Repository contract for {@see Stackra\Monitoring\Models\MonitoringAlert}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `MonitoringAlertRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Monitoring\Models\MonitoringAlert>
+ * @extends RepositoryInterface<\Stackra\Monitoring\Models\MonitoringAlert>
  *
  * @category Monitoring
  *

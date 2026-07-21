@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Data\Requests;
+namespace Stackra\Subscription\Data\Requests;
 
-use Academorix\Subscription\Enums\SubscriptionState;
+use Stackra\Subscription\Enums\SubscriptionState;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Enum;
 use Spatie\LaravelData\Attributes\Validation\Max;

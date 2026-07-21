@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Enums;
+namespace Stackra\Audit\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
  * Verification state for a single audit row's chain link.
@@ -20,7 +20,7 @@ use Academorix\Enum\Enum;
  *    stored `chain_hash` matched the recomputed hash. `chain_verified_at`
  *    carries the timestamp of the successful walk.
  *  * {@see self::Broken}   — recomputation disagreed with the stored
- *    `chain_hash`. Emits {@see \Academorix\Audit\Events\AuditChainBroken}
+ *    `chain_hash`. Emits {@see \Stackra\Audit\Events\AuditChainBroken}
  *    and stops the walk.
  *
  * @category Audit

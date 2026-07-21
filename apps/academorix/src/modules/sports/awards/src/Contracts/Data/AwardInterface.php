@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Awards\Contracts\Data;
+namespace Stackra\Awards\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Awards\Models\Award;
+use Stackra\Awards\Models\Award;
 
 /**
  * Table shape for the `awards` table.

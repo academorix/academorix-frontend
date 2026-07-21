@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Organization\Contracts\Services;
+namespace Stackra\Organization\Contracts\Services;
 
-use Academorix\Organization\Services\TreePathBuilder;
+use Stackra\Organization\Services\TreePathBuilder;
 use Illuminate\Container\Attributes\Bind;
 
 /**

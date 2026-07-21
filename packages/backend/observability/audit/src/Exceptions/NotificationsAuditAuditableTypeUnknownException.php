@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Exceptions;
+namespace Stackra\Audit\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * byEntity filter references an auditable_type that does not resolve at boot (not a valid audited model class).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsAuditAuditableTypeUnknownException extends AcademorixException
+final class NotificationsAuditAuditableTypeUnknownException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

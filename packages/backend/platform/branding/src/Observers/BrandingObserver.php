@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Observers;
+namespace Stackra\Branding\Observers;
 
-use Academorix\Branding\Contracts\Data\BrandingInterface;
-use Academorix\Branding\Events\BrandingArchived;
-use Academorix\Branding\Events\BrandingCreated;
-use Academorix\Branding\Events\BrandingUpdated;
-use Academorix\Branding\Jobs\SyncBrandingJob;
-use Academorix\Branding\Models\Branding;
+use Stackra\Branding\Contracts\Data\BrandingInterface;
+use Stackra\Branding\Events\BrandingArchived;
+use Stackra\Branding\Events\BrandingCreated;
+use Stackra\Branding\Events\BrandingUpdated;
+use Stackra\Branding\Jobs\SyncBrandingJob;
+use Stackra\Branding\Models\Branding;
 
 /**
  * Lifecycle side effects on {@see Branding}.

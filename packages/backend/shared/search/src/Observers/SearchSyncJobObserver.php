@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Observers;
+namespace Stackra\Search\Observers;
 
-use Academorix\Search\Contracts\Data\SearchSyncJobInterface;
-use Academorix\Search\Enums\SearchSyncJobStatus;
-use Academorix\Search\Events\SearchSyncJobCancelled;
-use Academorix\Search\Events\SearchSyncJobCompleted;
-use Academorix\Search\Events\SearchSyncJobFailed;
-use Academorix\Search\Events\SearchSyncJobQueued;
-use Academorix\Search\Events\SearchSyncJobStarted;
-use Academorix\Search\Models\SearchSyncJob;
+use Stackra\Search\Contracts\Data\SearchSyncJobInterface;
+use Stackra\Search\Enums\SearchSyncJobStatus;
+use Stackra\Search\Events\SearchSyncJobCancelled;
+use Stackra\Search\Events\SearchSyncJobCompleted;
+use Stackra\Search\Events\SearchSyncJobFailed;
+use Stackra\Search\Events\SearchSyncJobQueued;
+use Stackra\Search\Events\SearchSyncJobStarted;
+use Stackra\Search\Models\SearchSyncJob;
 
 /**
  * Lifecycle side effects on {@see SearchSyncJob}.

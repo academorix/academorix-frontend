@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Season\Exceptions;
+namespace Stackra\Season\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Cannot flip is_current=false when this is the only is_current=true row in its scope tuple.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SeasonLastCurrentException extends AcademorixException
+final class SeasonLastCurrentException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

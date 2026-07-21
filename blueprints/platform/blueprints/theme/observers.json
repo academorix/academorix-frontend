@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/theme/observers",
+  "id": "stackra://modules/theme/observers",
   "$version": 1,
   "title": "theme — Eloquent observers",
   "description": "Three observers — one per aggregate. Each enforces its aggregate's invariants: freeze tokens_snapshot on activate, refuse cross-tenant preset use, validate vocabulary at write time, dispatch RegenerateRenderedCssJob after commit.",
   "observers": [
     {
       "model": "Theme",
-      "observer": "Academorix\\Platform\\Theme\\Observers\\ThemeObserver",
+      "observer": "Stackra\\Platform\\Theme\\Observers\\ThemeObserver",
       "handles": [
         "creating → populate ULID prefix `thm_` + resolve created_by from Sanctum",
         "creating → refuse without `theme_capture` entitlement (EntitlementGate::isFeatureEntitled)",
@@ -24,12 +24,12 @@
     },
     {
       "model": "ThemePreset",
-      "observer": "Academorix\\Platform\\Theme\\Observers\\ThemePresetObserver",
+      "observer": "Stackra\\Platform\\Theme\\Observers\\ThemePresetObserver",
       "handles": [
         "creating → populate ULID prefix `tps_` + resolve created_by_user_id from Sanctum",
         "creating (tenant_id != null) → refuse without `theme_custom_presets` entitlement",
         "creating (tenant_id != null) → count existing tenant custom presets against the entitlement cap (theme_custom_presets); refuse when exceeded",
-        "creating (tenant_id = null) → refuse unless guard is platform_admin (platform preset creation is Academorix-staff-only)",
+        "creating (tenant_id = null) → refuse unless guard is platform_admin (platform preset creation is Stackra-staff-only)",
         "creating → validate tokens jsonb against canonical vocabulary (PresetValidator via valid_token_key + valid_token_value_for_type rules)",
         "creating → validate slug matches ^[a-z][a-z0-9_-]{0,63}$",
         "creating → validate category against ThemePresetCategory enum",
@@ -44,7 +44,7 @@
     },
     {
       "model": "ThemeTokenOverride",
-      "observer": "Academorix\\Platform\\Theme\\Observers\\ThemeTokenOverrideObserver",
+      "observer": "Stackra\\Platform\\Theme\\Observers\\ThemeTokenOverrideObserver",
       "handles": [
         "creating → populate ULID prefix `tto_` + resolve created_by from Sanctum",
         "creating → refuse without `theme_token_overrides` entitlement",

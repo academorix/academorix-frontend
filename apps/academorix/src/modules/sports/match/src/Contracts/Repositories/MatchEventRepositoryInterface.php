@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Contracts\Repositories;
+namespace Stackra\Match\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Match\Models\MatchEvent}.
+ * Repository contract for {@see Stackra\Match\Models\MatchEvent}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `MatchEventRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Match\Models\MatchEvent>
+ * @extends RepositoryInterface<\Stackra\Match\Models\MatchEvent>
  *
  * @category Match
  *

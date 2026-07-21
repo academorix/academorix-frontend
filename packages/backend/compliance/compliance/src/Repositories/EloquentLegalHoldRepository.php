@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Repositories;
+namespace Stackra\Compliance\Repositories;
 
-use Academorix\Compliance\Contracts\Data\LegalHoldInterface;
-use Academorix\Compliance\Contracts\Repositories\LegalHoldRepositoryInterface;
-use Academorix\Compliance\Enums\LegalHoldScope;
-use Academorix\Compliance\Models\LegalHold;
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
+use Stackra\Compliance\Contracts\Data\LegalHoldInterface;
+use Stackra\Compliance\Contracts\Repositories\LegalHoldRepositoryInterface;
+use Stackra\Compliance\Enums\LegalHoldScope;
+use Stackra\Compliance\Models\LegalHold;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
 use DateTimeInterface;
 use Illuminate\Support\Collection;
 

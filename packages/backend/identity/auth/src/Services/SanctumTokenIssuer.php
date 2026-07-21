@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Services;
+namespace Stackra\Auth\Services;
 
-use Academorix\Auth\Contracts\Services\SanctumTokenIssuerInterface;
-use Academorix\Auth\Data\IssuedSanctumTokenData;
-use Academorix\Identity\Models\Identity;
+use Stackra\Auth\Contracts\Services\SanctumTokenIssuerInterface;
+use Stackra\Auth\Data\IssuedSanctumTokenData;
+use Stackra\Identity\Models\Identity;
 use Illuminate\Container\Attributes\Scoped;
 
 /**

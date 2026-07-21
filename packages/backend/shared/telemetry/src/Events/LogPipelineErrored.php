@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Telemetry\Events;
+namespace Stackra\Telemetry\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
- * A processor or formatter threw during record processing. The offending record is dropped; the pipeline continues; the error is exposed via metric `academorix.logs.records_dropped_total{reason="pipeline_error"}`.
+ * A processor or formatter threw during record processing. The offending record is dropped; the pipeline continues; the error is exposed via metric `stackra.logs.records_dropped_total{reason="pipeline_error"}`.
  *
  * @category Telemetry
  *

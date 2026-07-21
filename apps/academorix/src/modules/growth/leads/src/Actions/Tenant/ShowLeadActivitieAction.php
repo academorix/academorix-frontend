@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Actions\Tenant;
+namespace Stackra\Leads\Actions\Tenant;
 
-use Academorix\Leads\Contracts\Repositories\LeadActivityRepositoryInterface;
-use Academorix\Leads\Data\LeadActivityData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Leads\Contracts\Repositories\LeadActivityRepositoryInterface;
+use Stackra\Leads\Data\LeadActivityData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 
 /**
  * `GET /api/v1/lead-activities/{lead_activity}` — show action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Leads

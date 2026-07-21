@@ -15,7 +15,7 @@ declare(strict_types=1);
  *
  * ## Usage:
  * ```php
- * use Academorix\Database\Concerns\Model\HasSlug;
+ * use Stackra\Database\Concerns\Model\HasSlug;
  *
  * class Post extends Model
  * {
@@ -44,7 +44,7 @@ declare(strict_types=1);
  * @see \Illuminate\Database\Eloquent\Model::getRouteKeyName()
  */
 
-namespace Academorix\Database\Concerns\Model;
+namespace Stackra\Database\Concerns\Model;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -67,9 +67,9 @@ trait HasSlug
     {
         // Read attribute configuration (if present)
         $config = null;
-        $forClass = \Academorix\Database\Support\AttributeReader::forClass(static::class);
+        $forClass = \Stackra\Database\Support\AttributeReader::forClass(static::class);
         foreach ($forClass->classAttributes as $attr) {
-            if ($attr instanceof \Academorix\Database\Attributes\Sluggable) {
+            if ($attr instanceof \Stackra\Database\Attributes\Sluggable) {
                 $config = $attr;
                 break;
             }
@@ -241,9 +241,9 @@ trait HasSlug
      */
     protected function resolveSlugColumn(): string
     {
-        $forClass = \Academorix\Database\Support\AttributeReader::forClass(static::class);
+        $forClass = \Stackra\Database\Support\AttributeReader::forClass(static::class);
         foreach ($forClass->classAttributes as $attr) {
-            if ($attr instanceof \Academorix\Database\Attributes\Sluggable) {
+            if ($attr instanceof \Stackra\Database\Attributes\Sluggable) {
                 return $attr->column;
             }
         }
@@ -258,9 +258,9 @@ trait HasSlug
      */
     protected function resolveSlugSeparator(): string
     {
-        $forClass = \Academorix\Database\Support\AttributeReader::forClass(static::class);
+        $forClass = \Stackra\Database\Support\AttributeReader::forClass(static::class);
         foreach ($forClass->classAttributes as $attr) {
-            if ($attr instanceof \Academorix\Database\Attributes\Sluggable) {
+            if ($attr instanceof \Stackra\Database\Attributes\Sluggable) {
                 return $attr->separator;
             }
         }
@@ -301,9 +301,9 @@ trait HasSlug
      */
     public function getRouteKeyName(): string
     {
-        $forClass = \Academorix\Database\Support\AttributeReader::forClass(static::class);
+        $forClass = \Stackra\Database\Support\AttributeReader::forClass(static::class);
         foreach ($forClass->classAttributes as $attr) {
-            if ($attr instanceof \Academorix\Database\Attributes\Sluggable) {
+            if ($attr instanceof \Stackra\Database\Attributes\Sluggable) {
                 if (! $attr->routeBinding) {
                     return parent::getRouteKeyName();
                 }

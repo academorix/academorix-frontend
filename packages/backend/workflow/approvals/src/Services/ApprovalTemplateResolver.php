@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Services;
+namespace Stackra\Approvals\Services;
 
-use Academorix\Approvals\Contracts\Data\ApprovalTemplateInterface;
-use Academorix\Approvals\Contracts\Repositories\ApprovalTemplateRepositoryInterface;
-use Academorix\Approvals\Contracts\Services\ApprovalTemplateResolverInterface;
-use Academorix\Approvals\Contracts\Services\ExpressionLanguageAdapterInterface;
-use Academorix\Approvals\Exceptions\ApprovalExpressionInvalidException;
-use Academorix\Approvals\Exceptions\ApprovalExpressionTimeoutException;
-use Academorix\Approvals\Models\ApprovalTemplate;
+use Stackra\Approvals\Contracts\Data\ApprovalTemplateInterface;
+use Stackra\Approvals\Contracts\Repositories\ApprovalTemplateRepositoryInterface;
+use Stackra\Approvals\Contracts\Services\ApprovalTemplateResolverInterface;
+use Stackra\Approvals\Contracts\Services\ExpressionLanguageAdapterInterface;
+use Stackra\Approvals\Exceptions\ApprovalExpressionInvalidException;
+use Stackra\Approvals\Exceptions\ApprovalExpressionTimeoutException;
+use Stackra\Approvals\Models\ApprovalTemplate;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Container\Attributes\Scoped;
 use Psr\Log\LoggerInterface;
 
 /**
  * Reference implementation of
- * {@see \Academorix\Approvals\Contracts\Services\ApprovalTemplateResolverInterface}.
+ * {@see \Stackra\Approvals\Contracts\Services\ApprovalTemplateResolverInterface}.
  *
  * Fetches every active template for a `(tenant, action_key)` pair,
  * sorts by `(priority DESC, version DESC)`, and returns the first

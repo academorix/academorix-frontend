@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Services;
+namespace Stackra\Localization\Services;
 
-use Academorix\Localization\Contracts\Services\SourceRedactorInterface;
+use Stackra\Localization\Contracts\Services\SourceRedactorInterface;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\Singleton;
 

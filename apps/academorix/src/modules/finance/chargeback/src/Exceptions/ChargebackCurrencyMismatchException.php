@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Exceptions;
+namespace Stackra\Chargeback\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Chargeback currency must match parent payment currency (no multi-currency chargebacks).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ChargebackCurrencyMismatchException extends AcademorixException
+final class ChargebackCurrencyMismatchException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

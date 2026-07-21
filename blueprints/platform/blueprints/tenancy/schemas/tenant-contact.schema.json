@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tenancy/schemas/tenant-contact",
+  "id": "stackra://modules/tenancy/schemas/tenant-contact",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "TenantContact",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "wct_",
     "incrementing": false,
-    "model": "Academorix\\Tenancy\\Models\\TenantContact",
-    "interface": "Academorix\\Tenancy\\Contracts\\Data\\TenantContactInterface",
-    "implements": ["Academorix\\Tenancy\\Contracts\\Data\\TenantContactInterface"],
+    "model": "Stackra\\Tenancy\\Models\\TenantContact",
+    "interface": "Stackra\\Tenancy\\Contracts\\Data\\TenantContactInterface",
+    "implements": ["Stackra\\Tenancy\\Contracts\\Data\\TenantContactInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

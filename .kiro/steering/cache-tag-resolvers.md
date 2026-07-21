@@ -36,7 +36,7 @@ historic entanglement is what ADR-0004 dissolves.
 ## The contract
 
 ```php
-namespace Academorix\Caching\Contracts;
+namespace Stackra\Caching\Contracts;
 
 interface CacheTagResolver
 {
@@ -64,7 +64,7 @@ Non-negotiable:
 ## The attribute
 
 ```php
-namespace Academorix\Caching\Attributes;
+namespace Stackra\Caching\Attributes;
 
 use Attribute;
 
@@ -168,11 +168,11 @@ worker at boot, walked per tag composition. No runtime reflection.
 ## Concrete resolver — the canonical shape
 
 ```php
-namespace Academorix\Tenancy\Cache;
+namespace Stackra\Tenancy\Cache;
 
-use Academorix\Caching\Attributes\AsCacheTagResolver;
-use Academorix\Caching\Contracts\CacheTagResolver;
-use Academorix\Tenancy\Contracts\TenantContext;
+use Stackra\Caching\Attributes\AsCacheTagResolver;
+use Stackra\Caching\Contracts\CacheTagResolver;
+use Stackra\Tenancy\Contracts\TenantContext;
 
 /**
  * Contributes the active tenant's identifier as a `tenant:<id>` segment.

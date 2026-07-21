@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Contracts\Data;
+namespace Stackra\Newsletter\Contracts\Data;
 
-use Academorix\Newsletter\Models\NewsletterSubscription;
+use Stackra\Newsletter\Models\NewsletterSubscription;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -15,7 +15,7 @@ use Illuminate\Container\Attributes\Bind;
  * (truncated to /24), `user_agent`, `subscribed_at`. Signed HMAC
  * tokens for confirmation + unsubscribe. Engagement score is
  * maintained by
- * {@see \Academorix\Newsletter\Jobs\TrackNewsletterEngagementJob}
+ * {@see \Stackra\Newsletter\Jobs\TrackNewsletterEngagementJob}
  * and drives audience segmentation.
  *
  * @category Newsletter

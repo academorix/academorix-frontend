@@ -17,7 +17,7 @@ Tenant admin dashboard + platform-staff console per blueprint §16.4. Wave 2.
 - Recent activity widget (activity feed)
 - Announcement composer widget
 
-**Platform staff (platform_admin)** — Academorix ops see:
+**Platform staff (platform_admin)** — Stackra ops see:
 
 - Tenant provisioning + billing overview
 - System health dashboard

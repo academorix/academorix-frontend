@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Data;
+namespace Stackra\Search\Data;
 
-use Academorix\Search\Contracts\Data\SearchSyncJobInterface;
-use Academorix\Search\Models\SearchSyncJob;
+use Stackra\Search\Contracts\Data\SearchSyncJobInterface;
+use Stackra\Search\Models\SearchSyncJob;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

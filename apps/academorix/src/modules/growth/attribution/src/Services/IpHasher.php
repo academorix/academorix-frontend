@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Services;
+namespace Stackra\Attribution\Services;
 
-use Academorix\Attribution\Contracts\Services\IpHasherInterface;
+use Stackra\Attribution\Contracts\Services\IpHasherInterface;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\Singleton;
 

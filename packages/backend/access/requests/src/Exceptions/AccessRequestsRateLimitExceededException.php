@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Requests\Exceptions;
+namespace Stackra\Requests\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Framework throttle tripped.

@@ -11,8 +11,8 @@
  *
  * Two implementations ship in Foundation:
  *
- *   - {@see \Academorix\Foundation\Support\SystemClock} — real clock.
- *   - {@see \Academorix\Foundation\Support\FrozenClock} — test double.
+ *   - {@see \Stackra\Foundation\Support\SystemClock} — real clock.
+ *   - {@see \Stackra\Foundation\Support\FrozenClock} — test double.
  *
  * `now()` returns Carbon so it fits Laravel-first codebases; consumers
  * that want a plain `DateTimeImmutable` can call `->toImmutable()`.
@@ -20,7 +20,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Contracts;
+namespace Stackra\Foundation\Contracts;
 
 use Illuminate\Support\Carbon;
 

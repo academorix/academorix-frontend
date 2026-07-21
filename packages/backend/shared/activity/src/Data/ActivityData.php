@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Data;
+namespace Stackra\Activity\Data;
 
-use Academorix\Activity\Contracts\Data\ActivityInterface;
-use Academorix\Activity\Models\Activity;
+use Stackra\Activity\Contracts\Data\ActivityInterface;
+use Stackra\Activity\Models\Activity;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

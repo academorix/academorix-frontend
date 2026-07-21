@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Events;
+namespace Stackra\Marketing\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog (retention: 7 years — every failed conversion is a compliance-relevant financial signal)
  * - notifications::DispatchMarketingHighFailureRateNotification (when > 10% failure rate over 15min window)
- * - monitoring::MetricsCollector (increments academorix.marketing.events.failed_total)
+ * - monitoring::MetricsCollector (increments stackra.marketing.events.failed_total)
  *
  * @category Marketing
  *

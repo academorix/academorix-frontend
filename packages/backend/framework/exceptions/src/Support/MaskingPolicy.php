@@ -36,10 +36,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Support;
+namespace Stackra\Exceptions\Support;
 
-use Academorix\Exceptions\Enums\ErrorSeverity;
-use Academorix\Foundation\Enums\AppEnvironment;
+use Stackra\Exceptions\Enums\ErrorSeverity;
+use Stackra\Foundation\Enums\AppEnvironment;
 
 final readonly class MaskingPolicy
 {

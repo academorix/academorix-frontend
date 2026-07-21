@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Concerns;
+namespace Stackra\Localization\Concerns;
 
 /**
  * Trait — HasTranslations.

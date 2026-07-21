@@ -30,14 +30,14 @@ SKIP_DIR_NAMES = {"node_modules", "vendor", "tools/cli/vendor", "tools"}
 # Rename pairs. Left-hand side must NOT appear anywhere after the run.
 RENAMES: List[Tuple[str, str]] = [
     # 6 laravel-* stragglers -> unprefixed (matches workspace convention)
-    ("academorix/debugbar", "academorix/debugbar"),
-    ("academorix/horizon", "academorix/horizon"),
-    ("academorix/nightwatch", "academorix/nightwatch"),
-    ("academorix/omniterm", "academorix/omniterm"),
-    ("academorix/sentry", "academorix/sentry"),
-    ("academorix/serializer", "academorix/serializer"),
+    ("stackra/debugbar", "stackra/debugbar"),
+    ("stackra/horizon", "stackra/horizon"),
+    ("stackra/nightwatch", "stackra/nightwatch"),
+    ("stackra/omniterm", "stackra/omniterm"),
+    ("stackra/sentry", "stackra/sentry"),
+    ("stackra/serializer", "stackra/serializer"),
     # Typo fix — dep name that doesn't exist as a package
-    ("academorix/support", "academorix/support"),
+    ("stackra/support", "stackra/support"),
 ]
 
 

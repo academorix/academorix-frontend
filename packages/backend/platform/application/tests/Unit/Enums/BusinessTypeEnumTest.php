@@ -10,7 +10,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Application\Enums\BusinessTypeEnum;
+use Stackra\Application\Enums\BusinessTypeEnum;
 
 it('resolves known slugs into their enum case', function (): void {
     expect(BusinessTypeEnum::resolve('sports_center'))->toBe(BusinessTypeEnum::SportsCenter);

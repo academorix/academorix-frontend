@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invitations/retention",
+  "id": "stackra://modules/invitations/retention",
   "$version": 1,
   "title": "invitations — data retention windows",
   "description": "Retention per model. Drives CleanupAcceptedInvitationsJob + the compliance module's retention orchestrator. Durations ISO-8601. Compliance tier drives DSAR + right-to-erasure behaviour per data-classes.json.",

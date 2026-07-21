@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/organization/relations",
+  "id": "stackra://modules/organization/relations",
   "$version": 1,
   "title": "organization — model relationships",
   "description": "Organization is the aggregate root of the sub-brand tree. Self-referential parent/children via `parent_id`. Owned by `tenants` (cascade delete). Referenced by `branches` (RESTRICT — cannot delete an Organization while any Branch belongs to it) and future planned aggregates (Teams, Facilities via Branch, Season). NEVER carries region_id or application_id (per tenancy-columns.md §5).",

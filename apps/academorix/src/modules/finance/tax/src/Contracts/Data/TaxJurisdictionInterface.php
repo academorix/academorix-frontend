@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Contracts\Data;
+namespace Stackra\Tax\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Tax\Models\TaxJurisdiction;
+use Stackra\Tax\Models\TaxJurisdiction;
 
 /**
  * Table shape for the `tax_jurisdictions` table.

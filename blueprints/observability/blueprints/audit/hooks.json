@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/audit/hooks",
+  "id": "stackra://modules/audit/hooks",
   "$version": 1,
   "title": "audit — TenancyHook + lifecycle hooks",
   "description": "Cross-module hook implementations. TenancyHooks are the tenancy module's contract for reacting to tenant-lifecycle events (provision / suspend / erase). Audit registers two hooks: the tenant-erasure MIGRATE-to-archive cascade (audit is DIFFERENT from analytics/marketing/activity — no cascade-delete) and the request-context application_id snapshot on audit creating.",
-  "namespace": "Academorix\\Observability\\Audit\\Hooks",
+  "namespace": "Stackra\\Observability\\Audit\\Hooks",
   "hooks": [
     {
       "name": "PurgeAuditDataForErasedTenantHook",
-      "class": "Academorix\\Observability\\Audit\\Hooks\\PurgeAuditDataForErasedTenantHook",
+      "class": "Stackra\\Observability\\Audit\\Hooks\\PurgeAuditDataForErasedTenantHook",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErased",
       "purpose": "MIGRATE audit rows for the erased tenant to a dedicated S3 archive bucket (`AUDIT_ERASURE_ARCHIVE_S3_BUCKET`). Do NOT cascade-delete — regulators may need proof of the erasure years later. The archive object is: (a) named by erasure event id + tenant id; (b) written with S3 object-lock (compliance mode, indefinite); (c) referenced from an ErasureArchiveManifest table for later regulator discovery. AuditRetentionPolicy IS cascade-deleted (its target tenant is gone; the policy no longer applies).",
@@ -25,7 +25,7 @@
     },
     {
       "name": "SnapshotApplicationIdOnAuditCreatingHook",
-      "class": "Academorix\\Observability\\Audit\\Hooks\\SnapshotApplicationIdOnAuditCreatingHook",
+      "class": "Stackra\\Observability\\Audit\\Hooks\\SnapshotApplicationIdOnAuditCreatingHook",
       "kind": "audit_lifecycle",
       "listens_to": "Audit.creating (vendor observer chain)",
       "purpose": "Runs BEFORE our AuditObserver::creating. When the vendor observer produces an audit row without an application_id (which is always — the vendor doesn't know about our column), this hook resolves the current request's application_id from the ResolveApplication middleware's binding (`X-Application-Id` header). Populates audit.application_id from that. Skipped for platform-plane audits (no X-Application-Id header on platform routes) — audit.application_id stays NULL.",

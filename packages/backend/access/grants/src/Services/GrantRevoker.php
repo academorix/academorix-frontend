@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Grants\Services;
+namespace Stackra\Grants\Services;
 
-use Academorix\Grants\Contracts\Services\GrantRevokerInterface;
+use Stackra\Grants\Contracts\Services\GrantRevokerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Grants\Contracts\Repositories\AccessGrantRepositoryInterface;
+use Stackra\Grants\Contracts\Repositories\AccessGrantRepositoryInterface;
 
 /**
  * Concrete service — GrantRevoker.

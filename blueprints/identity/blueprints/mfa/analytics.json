@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/mfa/analytics",
+  "id": "stackra://modules/mfa/analytics",
   "$version": 1,
   "title": "mfa — product analytics",
   "sink": "segment",

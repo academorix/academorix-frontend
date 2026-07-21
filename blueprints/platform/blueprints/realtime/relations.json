@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/realtime/relations",
+  "id": "stackra://modules/realtime/relations",
   "$version": 1,
   "title": "realtime — model relationships",
   "description": "Eloquent relations rooted at this module's models. `internal` = same-module edges; `outbound` = edges to other modules' models.",

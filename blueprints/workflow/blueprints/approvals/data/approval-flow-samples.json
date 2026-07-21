@@ -14,7 +14,7 @@
         "template_version": 1,
         "requester_id": "usr_riverside_cashier_01",
         "status": "pending",
-        "subject_type": "Academorix\\Billing\\Models\\Invoice",
+        "subject_type": "Stackra\\Billing\\Models\\Invoice",
         "subject_id": "inv_01H8KX2P3R4S5T6U7V8W9X0Y1Z",
         "context_json": {
           "invoice_id": "inv_01H8KX2P3R4S5T6U7V8W9X0Y1Z",
@@ -53,7 +53,7 @@
         "template_version": 2,
         "requester_id": "usr_riverside_coach_01",
         "status": "executed",
-        "subject_type": "Academorix\\AccessGrant\\Models\\AccessGrant",
+        "subject_type": "Stackra\\AccessGrant\\Models\\AccessGrant",
         "subject_id": "grn_01K5MATERIALISED_GRANT_001",
         "context_json": {
           "resource_type": "invoice",
@@ -127,7 +127,7 @@
         "template_version": 1,
         "requester_id": "usr_riverside_cashier_01",
         "status": "rejected",
-        "subject_type": "Academorix\\Billing\\Models\\Invoice",
+        "subject_type": "Stackra\\Billing\\Models\\Invoice",
         "subject_id": "inv_01H8KX2P3R4S5T6U7V8W9X0Y2A",
         "context_json": {
           "invoice_id": "inv_01H8KX2P3R4S5T6U7V8W9X0Y2A",
@@ -215,7 +215,7 @@
         "action_key": "identity.impersonation.extend",
         "approval_template_id": "apt_01K5IMPERSONATION_EXTEND_V1",
         "template_version": 1,
-        "requester_id": "usr_academorix_support_01",
+        "requester_id": "usr_stackra_support_01",
         "status": "expired",
         "context_json": {
           "session_id": "imp_01K5IMPSESSION_XYZ",
@@ -234,7 +234,7 @@
           "id": "apr_01K5APVREQ_EXPIRED",
           "sort_order": 0,
           "selector_expression": "role('security_officer')",
-          "resolved_approvers": ["usr_academorix_security_01"],
+          "resolved_approvers": ["usr_stackra_security_01"],
           "quorum_type": "any",
           "status": "failed"
         }

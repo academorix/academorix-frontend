@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Actions\Tenant;
+namespace Stackra\Notifications\InApp\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Notifications\Enums\NotificationsPermission;
-use Academorix\Notifications\InApp\Contracts\Repositories\InAppMessageReadRepositoryInterface;
-use Academorix\Notifications\InApp\Contracts\Repositories\InAppMessageRepositoryInterface;
-use Academorix\Notifications\InApp\Data\InAppMessageData;
-use Academorix\Notifications\InApp\Data\Requests\ListInAppMessagesRequestData;
-use Academorix\Notifications\InApp\Models\InAppMessage;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Notifications\Enums\NotificationsPermission;
+use Stackra\Notifications\InApp\Contracts\Repositories\InAppMessageReadRepositoryInterface;
+use Stackra\Notifications\InApp\Contracts\Repositories\InAppMessageRepositoryInterface;
+use Stackra\Notifications\InApp\Data\InAppMessageData;
+use Stackra\Notifications\InApp\Data\Requests\ListInAppMessagesRequestData;
+use Stackra\Notifications\InApp\Models\InAppMessage;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Illuminate\Container\Attributes\Authenticated;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Spatie\LaravelData\DataCollection;

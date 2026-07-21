@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Enums;
+namespace Stackra\Facility\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `facility_type` on `facility`.

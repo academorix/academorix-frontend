@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attributes\Database\Factories;
+namespace Stackra\Attributes\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Attributes\Contracts\Data\AttributeGroupInterface;
-use Academorix\Attributes\Models\AttributeGroup;
+use Stackra\Attributes\Contracts\Data\AttributeGroupInterface;
+use Stackra\Attributes\Models\AttributeGroup;
 
 /**
- * Factory for {@see \Academorix\Attributes\Models\AttributeGroup}.
+ * Factory for {@see \Stackra\Attributes\Models\AttributeGroup}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Attributes\Models\AttributeGroup>
+ * @extends Factory<\Stackra\Attributes\Models\AttributeGroup>
  *
  * @category Attributes
  *

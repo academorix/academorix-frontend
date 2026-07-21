@@ -12,12 +12,12 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Support;
+namespace Stackra\Support;
 
 use Closure;
 use Illuminate\Support\Reflector as BaseReflector;
-use Academorix\Foundation\Exceptions\Exception;
-use Academorix\Foundation\Exceptions\InvalidArgumentException;
+use Stackra\Foundation\Exceptions\Exception;
+use Stackra\Foundation\Exceptions\InvalidArgumentException;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionClassConstant;

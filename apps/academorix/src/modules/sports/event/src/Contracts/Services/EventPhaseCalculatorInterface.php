@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Event\Contracts\Services;
+namespace Stackra\Event\Contracts\Services;
 
-use Academorix\Event\Services\EventPhaseCalculator;
+use Stackra\Event\Services\EventPhaseCalculator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

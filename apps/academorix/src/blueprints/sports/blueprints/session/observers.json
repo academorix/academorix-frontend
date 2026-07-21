@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/session/observers",
+  "id": "stackra://modules/session/observers",
   "$version": 1,
   "title": "session — Eloquent observers",
   "description": "Two observers — SessionObserver (Session model) + SessionAttendanceObserver (attendance pivot). Together they enforce entitlement gating, scoping-tuple integrity, coach same-tenant invariants, capacity gates, and the safeguarding-flag write path.",
   "observers": [
     {
       "model": "Session",
-      "observer": "Academorix\\Sports\\Session\\Observers\\SessionObserver",
+      "observer": "Stackra\\Sports\\Session\\Observers\\SessionObserver",
       "handles": [
         "creating -> populate ULID prefix `ses_`.",
         "creating -> refuse when tenant lacks `sports_sessions` entitlement (SESSION_FEATURE_NOT_ENTITLED, 402).",
@@ -53,7 +53,7 @@
     },
     {
       "model": "SessionAttendance",
-      "observer": "Academorix\\Sports\\Session\\Observers\\SessionAttendanceObserver",
+      "observer": "Stackra\\Sports\\Session\\Observers\\SessionAttendanceObserver",
       "handles": [
         "creating -> populate ULID prefix `sat_`.",
         "creating -> refuse when session.tenant_id != attendance.tenant_id.",

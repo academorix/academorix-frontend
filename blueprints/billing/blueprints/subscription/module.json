@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "subscription",
   "alias": "subscription",
-  "namespace": "Academorix\\Subscription",
+  "namespace": "Stackra\\Subscription",
   "description": "Tenant subscription lifecycle. Wraps Laravel Cashier for payment-provider-agnostic billing (Stripe + Paddle). Owns Plan (per-Application plan catalogue), Subscription (tenant's active plan with Cashier's Billable trait mixed onto Tenant), and SubscriptionEvent (audit-material lifecycle transitions retained 7 years for SOX). Consumes payment-provider webhooks via Cashier and translates to our own SubscriptionUpgraded/Downgraded/Cancelled events, which the entitlements module consumes to refresh Entitlement rows. Handles trials, grace periods beyond provider default, metered-billing usage export, and enterprise-contract offline billing.",
   "keywords": [
     "subscription",
@@ -17,7 +17,7 @@
     "sox"
   ],
   "priority": 29,
-  "providers": ["Academorix\\Subscription\\Providers\\SubscriptionServiceProvider"],
+  "providers": ["Stackra\\Subscription\\Providers\\SubscriptionServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

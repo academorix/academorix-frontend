@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Competition\Contracts\Repositories;
+namespace Stackra\Competition\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Competition\Models\BracketNode}.
+ * Repository contract for {@see Stackra\Competition\Models\BracketNode}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `BracketNodeRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Competition\Models\BracketNode>
+ * @extends RepositoryInterface<\Stackra\Competition\Models\BracketNode>
  *
  * @category Competition
  *

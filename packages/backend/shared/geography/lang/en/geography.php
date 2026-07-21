@@ -4,7 +4,7 @@
  * @file modules/shared/geography/lang/en/geography.php
  *
  * @description
- * English translations for the `academorix/geography` module.
+ * English translations for the `stackra/geography` module.
  * Every `errors.*` key maps to an error code in `blueprints/geography/errors.json`.
  */
 

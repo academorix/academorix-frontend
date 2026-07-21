@@ -1,4 +1,4 @@
-# academorix/telemetry
+# stackra/telemetry
 
 Server-side Laravel package for the `telemetry` module. Auto-generated from the
 blueprint at `modules/shared/blueprints/telemetry/`.
@@ -43,6 +43,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-shared/telemetry-sdk` under `sdk/shared-telemetry-sdk/`. Consumers
+`stackra-shared/telemetry-sdk` under `sdk/shared-telemetry-sdk/`. Consumers
 cross the service boundary through the SDK; this package is the SERVER-side
 owner of the domain.

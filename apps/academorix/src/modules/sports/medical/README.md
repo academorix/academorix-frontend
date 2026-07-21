@@ -1,4 +1,4 @@
-# academorix/medical
+# stackra/medical
 
 Server-side Laravel package for the `medical` module. Auto-generated from the
 blueprint at `modules/sports/blueprints/medical/`.
@@ -53,6 +53,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-sports/medical-sdk` under `sdk/sports-medical-sdk/`. Consumers cross
+`stackra-sports/medical-sdk` under `sdk/sports-medical-sdk/`. Consumers cross
 the service boundary through the SDK; this package is the SERVER-side owner of
 the domain.

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Destinations;
+namespace Stackra\Webhook\Destinations;
 
-use Academorix\Webhook\Attributes\AsWebhookDestination;
-use Academorix\Webhook\Contracts\Data\WebhookDeliveryInterface;
-use Academorix\Webhook\Contracts\Data\WebhookSubscriptionInterface;
-use Academorix\Webhook\Contracts\Services\WebhookDestinationInterface;
-use Academorix\Webhook\Contracts\Services\WebhookSignerInterface;
-use Academorix\Webhook\Models\WebhookDelivery;
-use Academorix\Webhook\Models\WebhookSubscription;
+use Stackra\Webhook\Attributes\AsWebhookDestination;
+use Stackra\Webhook\Contracts\Data\WebhookDeliveryInterface;
+use Stackra\Webhook\Contracts\Data\WebhookSubscriptionInterface;
+use Stackra\Webhook\Contracts\Services\WebhookDestinationInterface;
+use Stackra\Webhook\Contracts\Services\WebhookSignerInterface;
+use Stackra\Webhook\Models\WebhookDelivery;
+use Stackra\Webhook\Models\WebhookSubscription;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Factory as HttpFactory;
 
@@ -63,7 +63,7 @@ final class HttpsDestination implements WebhookDestinationInterface
 
         $method    = \is_array($config) ? \strtoupper((string) ($config['method'] ?? 'POST')) : 'POST';
         $timeout   = (int) \config('webhook.http.timeout_seconds', 30);
-        $userAgent = (string) \config('webhook.http.user_agent', 'Academorix-Webhook/1.0');
+        $userAgent = (string) \config('webhook.http.user_agent', 'Stackra-Webhook/1.0');
         $maxBody   = (int) \config('webhook.http.max_response_body_bytes', 65536);
 
         $payload   = $delivery->{WebhookDeliveryInterface::ATTR_PAYLOAD} ?? [];

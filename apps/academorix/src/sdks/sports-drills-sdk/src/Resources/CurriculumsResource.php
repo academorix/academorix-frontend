@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDrillsSdk\Resources;
+namespace Stackra\SportsDrillsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsDrillsSdk\Data\CurriculumData;
-use Academorix\SportsDrillsSdk\Requests\Curriculums\CreateCurriculumRequest;
-use Academorix\SportsDrillsSdk\Requests\Curriculums\ListCurriculumsRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsDrillsSdk\Data\CurriculumData;
+use Stackra\SportsDrillsSdk\Requests\Curriculums\CreateCurriculumRequest;
+use Stackra\SportsDrillsSdk\Requests\Curriculums\ListCurriculumsRequest;
 use Saloon\Http\Response;
 
 /**
@@ -55,7 +55,7 @@ final readonly class CurriculumsResource
      *
      * @return CurriculumData
      */
-    public function create(\Academorix\SportsDrillsSdk\Payloads\Curriculums\CreateCurriculumPayload $payload, ?string $idempotencyKey = null): CurriculumData
+    public function create(\Stackra\SportsDrillsSdk\Payloads\Curriculums\CreateCurriculumPayload $payload, ?string $idempotencyKey = null): CurriculumData
     {
         return $this->connector->send(new CreateCurriculumRequest($payload, $idempotencyKey))->dto();
     }

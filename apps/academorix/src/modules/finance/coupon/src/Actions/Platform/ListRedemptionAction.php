@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Actions\Platform;
+namespace Stackra\Coupon\Actions\Platform;
 
-use Academorix\Coupon\Contracts\Repositories\CouponRedemptionRepositoryInterface;
-use Academorix\Coupon\Data\CouponRedemptionData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Coupon\Contracts\Repositories\CouponRedemptionRepositoryInterface;
+use Stackra\Coupon\Data\CouponRedemptionData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\LaravelData\PaginatedDataCollection;
@@ -55,7 +55,7 @@ final class ListRedemptionAction
         // MUST use the `filter[tenant_id]=<id>` query param for tenant-scoped
         // slices — cross-tenant scans without a filter are the whole point of
         // this endpoint.
-        /** @var LengthAwarePaginator<int, \Academorix\Coupon\Models\CouponRedemption> $page */
+        /** @var LengthAwarePaginator<int, \Stackra\Coupon\Models\CouponRedemption> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 25),
         );

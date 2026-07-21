@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Contracts\Services;
+namespace Stackra\Auth\Contracts\Services;
 
-use Academorix\Auth\Data\IssuedSanctumTokenData;
-use Academorix\Identity\Models\Identity;
-use Academorix\Auth\Services\SanctumTokenIssuer;
+use Stackra\Auth\Data\IssuedSanctumTokenData;
+use Stackra\Identity\Models\Identity;
+use Stackra\Auth\Services\SanctumTokenIssuer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

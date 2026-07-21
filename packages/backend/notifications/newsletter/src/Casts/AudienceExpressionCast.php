@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Casts;
+namespace Stackra\Newsletter\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * (AND-combined predicates), `any` (OR-combined predicates), and
  * `none` (NAND-combined predicates), each holding a list of atomic
  * predicates evaluated by
- * {@see \Academorix\Newsletter\Services\DefaultAudienceEvaluator}.
+ * {@see \Stackra\Newsletter\Services\DefaultAudienceEvaluator}.
  *
  * Stored as JSON — the cast normalises a `null` value to an empty
  * `all` map so downstream evaluators can always assume the three

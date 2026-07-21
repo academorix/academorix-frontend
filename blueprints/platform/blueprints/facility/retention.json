@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/facility/retention",
+  "id": "stackra://modules/facility/retention",
   "$version": 1,
   "title": "facility — retention windows",
   "description": "Facilities are permanent while any tenant references them. Bookings + day-passes + passes are financial records retained 7 years (SOC 2 CC6.3 + local tax requirements + PCI-DSS 10.7). Anonymous day-pass profile fields (name + phone) are redacted 90 days post-consumption per GDPR Art. 5(1)(c) minimisation.",

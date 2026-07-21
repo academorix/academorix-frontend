@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/staff/entitlements",
+  "id": "stackra://modules/staff/entitlements",
   "$version": 1,
   "title": "staff — declared entitlements",
   "description": "Six entitlement keys. `staff_slot` + `coach_slot` cap headcount per tenant per tier. `staff_compensation_tracking` is an OPT-IN boolean (off by default even on Enterprise — tenants explicitly enable HR-tier features so we don't accidentally collect regulated_financial data). `staff_org_chart` gates the reports_to hierarchy (Enterprise-only — mid-market tenants don't need reporting chains). `coach_certifications_verified` gates HR-verified certifications for compliance-sensitive tenants (medical, insurance, government contracts). `coach_rating_display` toggles the public rating badge on the tenant website.",
@@ -41,7 +41,7 @@
         "StaffObserver.updating refuses compensation_* writes when gate is off",
         "SDUI compensation edit surface hidden when features array does not include 'staff.compensation'"
       ],
-      "compliance_note": "This gate exists so tenants that don't track compensation in Academorix (they use an external HRIS) never accidentally have regulated_financial data collected. Turning the gate ON is a compliance-relevant tenant decision — the ops team logs the toggle in the compliance audit trail."
+      "compliance_note": "This gate exists so tenants that don't track compensation in Stackra (they use an external HRIS) never accidentally have regulated_financial data collected. Turning the gate ON is a compliance-relevant tenant decision — the ops team logs the toggle in the compliance audit trail."
     },
     {
       "key": "staff_org_chart",

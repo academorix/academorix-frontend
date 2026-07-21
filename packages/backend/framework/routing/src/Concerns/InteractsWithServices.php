@@ -12,12 +12,12 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Concerns;
+namespace Stackra\Routing\Concerns;
 
-use Academorix\Crud\Attributes\UseService;
-use Academorix\Foundation\Exceptions\RuntimeException;
-use Academorix\Support\Reflection;
-use Academorix\Support\Str;
+use Stackra\Crud\Attributes\UseService;
+use Stackra\Foundation\Exceptions\RuntimeException;
+use Stackra\Support\Reflection;
+use Stackra\Support\Str;
 
 /**
  * Interacts With Services Trait.
@@ -33,8 +33,8 @@ use Academorix\Support\Str;
  *
  * ## Usage with Attribute:
  * ```php
- * use Academorix\Crud\Attributes\UseService;
- * use Academorix\Users\Contracts\UserService;
+ * use Stackra\Crud\Attributes\UseService;
+ * use Stackra\Users\Contracts\UserService;
  *
  * #[UseService(UserServiceInterface::class)]
  * class UserController extends BaseController

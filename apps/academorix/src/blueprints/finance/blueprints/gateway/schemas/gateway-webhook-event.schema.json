@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/gateway/schemas/gateway-webhook-event",
+  "id": "stackra://modules/gateway/schemas/gateway-webhook-event",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "GatewayWebhookEvent",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "gwe_",
     "incrementing": false,
-    "model": "Academorix\\Finance\\Gateway\\Models\\GatewayWebhookEvent",
-    "interface": "Academorix\\Finance\\Gateway\\Contracts\\Data\\GatewayWebhookEventInterface",
-    "implements": ["Academorix\\Finance\\Gateway\\Contracts\\Data\\GatewayWebhookEventInterface"],
+    "model": "Stackra\\Finance\\Gateway\\Models\\GatewayWebhookEvent",
+    "interface": "Stackra\\Finance\\Gateway\\Contracts\\Data\\GatewayWebhookEventInterface",
+    "implements": ["Stackra\\Finance\\Gateway\\Contracts\\Data\\GatewayWebhookEventInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

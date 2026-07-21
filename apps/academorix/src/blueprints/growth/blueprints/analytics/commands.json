@@ -1,57 +1,57 @@
 {
-  "id": "academorix://modules/analytics/commands",
+  "id": "stackra://modules/analytics/commands",
   "$version": 1,
   "title": "analytics — Artisan commands",
   "description": "10 ops + support commands. Read-heavy \u2014 tenant admins mostly consume the HTTP surface; these commands are for platform-ops + on-call debugging.",
   "commands": [
     {
       "signature": "analytics:list-events {--tenant=} {--event-name=} {--category=} {--status=} {--since=} {--until=} {--limit=50}",
-      "class": "Academorix\\Growth\\Analytics\\Console\\Commands\\ListEventsCommand",
+      "class": "Stackra\\Growth\\Analytics\\Console\\Commands\\ListEventsCommand",
       "purpose": "Paginated list of AnalyticsEvent rows. Same filters as GET /api/v1/analytics/events. Useful for CLI-based investigation."
     },
     {
       "signature": "analytics:describe-event {event}",
-      "class": "Academorix\\Growth\\Analytics\\Console\\Commands\\DescribeEventCommand",
+      "class": "Stackra\\Growth\\Analytics\\Console\\Commands\\DescribeEventCommand",
       "purpose": "Dump a single AnalyticsEvent + all its AnalyticsDelivery rows (per-provider fan-out). Includes property blob, context, attribution snapshot, consent snapshot. Debugging aid."
     },
     {
       "signature": "analytics:list-deliveries {--tenant=} {--provider=} {--status=} {--since=} {--limit=50}",
-      "class": "Academorix\\Growth\\Analytics\\Console\\Commands\\ListDeliveriesCommand",
+      "class": "Stackra\\Growth\\Analytics\\Console\\Commands\\ListDeliveriesCommand",
       "purpose": "Paginated delivery log across events. Useful for 'why is Amplitude returning 429?' investigation."
     },
     {
       "signature": "analytics:list-providers {--tenant=} {--provider=} {--active-only}",
-      "class": "Academorix\\Growth\\Analytics\\Console\\Commands\\ListProvidersCommand",
+      "class": "Stackra\\Growth\\Analytics\\Console\\Commands\\ListProvidersCommand",
       "purpose": "List AnalyticsProviderConfig rows. Redacts config column by default; --reveal-config flag requires super_admin."
     },
     {
       "signature": "analytics:configure-provider {tenant} {provider} {--name=} {--config=} {--enabled-event-types=} {--sampling-rate=1.0}",
-      "class": "Academorix\\Growth\\Analytics\\Console\\Commands\\ConfigureProviderCommand",
+      "class": "Stackra\\Growth\\Analytics\\Console\\Commands\\ConfigureProviderCommand",
       "purpose": "Create or update an AnalyticsProviderConfig from the CLI. --config accepts a JSON blob or a Doppler secret reference (secret://<path>). Rate-limited to 20/day/operator."
     },
     {
       "signature": "analytics:test-provider {provider_config}",
-      "class": "Academorix\\Growth\\Analytics\\Console\\Commands\\TestProviderCommand",
+      "class": "Stackra\\Growth\\Analytics\\Console\\Commands\\TestProviderCommand",
       "purpose": "Dispatch a synthetic test event to a single provider config. Verifies credentials + endpoint reachability. Uses test_mode=true so events land in the provider's debug view, not production analytics."
     },
     {
       "signature": "analytics:list-identities {--tenant=} {--identified-only} {--anonymous-only} {--limit=50}",
-      "class": "Academorix\\Growth\\Analytics\\Console\\Commands\\ListIdentitiesCommand",
+      "class": "Stackra\\Growth\\Analytics\\Console\\Commands\\ListIdentitiesCommand",
       "purpose": "Paginated AnalyticsIdentity list. Includes first_seen_at + last_seen_at + identified_at + identified_user_id. device_fingerprint_hash hidden by default."
     },
     {
       "signature": "analytics:merge-identities {survivor} {mergee}+ {--reason=}",
-      "class": "Academorix\\Growth\\Analytics\\Console\\Commands\\MergeIdentitiesCommand",
+      "class": "Stackra\\Growth\\Analytics\\Console\\Commands\\MergeIdentitiesCommand",
       "purpose": "Merge one or more AnalyticsIdentity rows INTO a survivor. Rewrites subject_id on historical events. Enterprise-only (analytics_identity_merge entitlement). Refused without --reason. Rate-limited to 10/hour."
     },
     {
       "signature": "analytics:funnel-report {tenant} {funnel_key} {--since=} {--until=} {--group-by=} {--format=table}",
-      "class": "Academorix\\Growth\\Analytics\\Console\\Commands\\FunnelReportCommand",
+      "class": "Stackra\\Growth\\Analytics\\Console\\Commands\\FunnelReportCommand",
       "purpose": "Compute a funnel report for a given funnel_key over a time window. Groups by subject to compute per-step conversion. Emits table or CSV or JSON. Consumes FunnelReportBuilder service."
     },
     {
       "signature": "analytics:experiment-results {tenant} {experiment_key} {--metric=conversion_rate} {--format=table}",
-      "class": "Academorix\\Growth\\Analytics\\Console\\Commands\\ExperimentResultsCommand",
+      "class": "Stackra\\Growth\\Analytics\\Console\\Commands\\ExperimentResultsCommand",
       "purpose": "Compute per-variant results for a running or completed experiment. Metric options: conversion_rate, uplift, sample_size, p_value. Consumes ExperimentAssignmentReportBuilder + a companion outcome-metric resolver."
     }
   ]

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsAwardsSdk\Resources;
+namespace Stackra\SportsAwardsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsAwardsSdk\Data\AwardData;
-use Academorix\SportsAwardsSdk\Requests\Awards\AwardsAwardRequest;
-use Academorix\SportsAwardsSdk\Requests\Awards\CreateAwardRequest;
-use Academorix\SportsAwardsSdk\Requests\Awards\ShowAwardRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsAwardsSdk\Data\AwardData;
+use Stackra\SportsAwardsSdk\Requests\Awards\AwardsAwardRequest;
+use Stackra\SportsAwardsSdk\Requests\Awards\CreateAwardRequest;
+use Stackra\SportsAwardsSdk\Requests\Awards\ShowAwardRequest;
 use Saloon\Http\Response;
 
 /**
@@ -55,7 +55,7 @@ final readonly class AwardsResource
      *
      * @return AwardData
      */
-    public function create(\Academorix\SportsAwardsSdk\Payloads\Awards\CreateAwardPayload $payload, ?string $idempotencyKey = null): AwardData
+    public function create(\Stackra\SportsAwardsSdk\Payloads\Awards\CreateAwardPayload $payload, ?string $idempotencyKey = null): AwardData
     {
         return $this->connector->send(new CreateAwardRequest($payload, $idempotencyKey))->dto();
     }

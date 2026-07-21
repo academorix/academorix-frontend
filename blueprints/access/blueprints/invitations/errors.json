@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invitations/errors",
+  "id": "stackra://modules/invitations/errors",
   "$version": 1,
   "title": "invitations — error catalogue",
   "description": "Error codes this module can emit. `user_facing` controls whether the message renders to end users (translated via i18n). `retryable` signals client-side retry. `audit_severity` routes to the correct log channel — `alert` pages on-call.",

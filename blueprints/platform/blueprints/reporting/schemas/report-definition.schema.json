@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/reporting/schemas/report-definition",
+  "id": "stackra://modules/reporting/schemas/report-definition",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ReportDefinition",

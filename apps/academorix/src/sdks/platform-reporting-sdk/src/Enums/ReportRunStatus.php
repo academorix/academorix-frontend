@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformReportingSdk\Enums;
+namespace Stackra\PlatformReportingSdk\Enums;
 
 /**
  * Wire-visible backed enum for `report-run.status`.

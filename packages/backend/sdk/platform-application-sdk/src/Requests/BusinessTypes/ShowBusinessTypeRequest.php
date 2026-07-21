@@ -13,10 +13,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformApplicationSdk\Requests\BusinessTypes;
+namespace Stackra\PlatformApplicationSdk\Requests\BusinessTypes;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\PlatformApplicationSdk\Data\BusinessTypeData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\PlatformApplicationSdk\Data\BusinessTypeData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

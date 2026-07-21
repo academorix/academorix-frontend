@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PrivateSessions\Actions\Tenant;
+namespace Stackra\PrivateSessions\Actions\Tenant;
 
-use Academorix\PrivateSessions\Contracts\Repositories\PrivateSessionRequestRepositoryInterface;
-use Academorix\PrivateSessions\Data\PrivateSessionRequestData;
-use Academorix\PrivateSessions\Data\Requests\CreatePrivateSessionRequestRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\PrivateSessions\Contracts\Repositories\PrivateSessionRequestRepositoryInterface;
+use Stackra\PrivateSessions\Data\PrivateSessionRequestData;
+use Stackra\PrivateSessions\Data\Requests\CreatePrivateSessionRequestRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/private-session-requests` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category PrivateSessions

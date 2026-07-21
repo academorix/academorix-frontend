@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invoice\Exceptions;
+namespace Stackra\Invoice\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Tenant reached invoice_slot_per_month cap (Small=100, Medium=1000, Enterprise=∞).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvoiceQuotaExceededException extends AcademorixException
+final class InvoiceQuotaExceededException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

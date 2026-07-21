@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/analytics/data/providers/custom_webhook",
+  "id": "stackra://modules/analytics/data/providers/custom_webhook",
   "$version": 1,
   "provider": "custom_webhook",
   "displayName": "Custom Webhook",
@@ -8,7 +8,7 @@
     "endpoint_template": "tenant-configured HTTPS URL",
     "http_method": "POST",
     "content_type": "application/json",
-    "auth_scheme": "HMAC signature in X-Academorix-Signature header",
+    "auth_scheme": "HMAC signature in X-Stackra-Signature header",
     "batching": true,
     "note": "Endpoint URL validated against tenant.allowed_egress_domains (from settings) at CREATE + at every dispatch. Anti-exfiltration control."
   },
@@ -34,12 +34,12 @@
       },
       "signature_header": {
         "type": "string",
-        "default": "X-Academorix-Signature",
+        "default": "X-Stackra-Signature",
         "description": "Header name for the HMAC signature."
       },
       "timestamp_header": {
         "type": "string",
-        "default": "X-Academorix-Timestamp",
+        "default": "X-Stackra-Timestamp",
         "description": "Header for the request timestamp \u2014 caller includes in HMAC computation to prevent replay."
       },
       "custom_headers": {
@@ -58,7 +58,7 @@
   },
   "test_event": {
     "event_kind": "track",
-    "event_name": "test_event_from_academorix",
-    "properties": { "__test": true, "source": "academorix_provider_test" }
+    "event_name": "test_event_from_stackra",
+    "properties": { "__test": true, "source": "stackra_provider_test" }
   }
 }

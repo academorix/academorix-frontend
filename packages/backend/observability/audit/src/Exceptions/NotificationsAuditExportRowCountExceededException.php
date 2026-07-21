@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Exceptions;
+namespace Stackra\Audit\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Export request estimated row count exceeds config.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsAuditExportRowCountExceededException extends AcademorixException
+final class NotificationsAuditExportRowCountExceededException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

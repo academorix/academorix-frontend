@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Policies;
+namespace Stackra\Webhook\Policies;
 
-use Academorix\Webhook\Contracts\Data\WebhookSubscriptionInterface;
-use Academorix\Webhook\Enums\WebhookPermission;
-use Academorix\Webhook\Models\WebhookSubscription;
+use Stackra\Webhook\Contracts\Data\WebhookSubscriptionInterface;
+use Stackra\Webhook\Enums\WebhookPermission;
+use Stackra\Webhook\Models\WebhookSubscription;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

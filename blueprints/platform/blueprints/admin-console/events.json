@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/admin-console/events",
+  "id": "stackra://modules/admin-console/events",
   "$version": 1,
   "title": "admin-console — published events",
-  "namespace": "Academorix\\Platform\\AdminConsole\\Events",
+  "namespace": "Stackra\\Platform\\AdminConsole\\Events",
   "dispatchMode": "afterCommit",
   "description": "Platform admin surface. Every action is HIGHLY audited — retention 7yr for compliance. Impersonation events flag potential support-team abuse.",
   "events": [

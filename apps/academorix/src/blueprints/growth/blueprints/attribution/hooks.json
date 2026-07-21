@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/attribution/hooks",
+  "id": "stackra://modules/attribution/hooks",
   "$version": 1,
   "title": "attribution — TenancyHook + lifecycle hooks",
   "description": "Cross-module hook implementations. TenancyHooks are the tenancy module's contract for reacting to tenant-lifecycle events (provision / suspend / erase). Attribution does not register a bootstrapper (nothing to hydrate at tenant-boot — attribution profiles are on-demand created), but registers three cross-module hooks: merge on identify (Enterprise-only), tenant erasure cascade, and user erasure redaction.",
-  "namespace": "Academorix\\Growth\\Attribution\\Hooks",
+  "namespace": "Stackra\\Growth\\Attribution\\Hooks",
   "hooks": [
     {
       "name": "MergeAnonymousAttributionsOnSubjectIdentified",
-      "class": "Academorix\\Growth\\Attribution\\Hooks\\MergeAnonymousAttributionsOnSubjectIdentified",
+      "class": "Stackra\\Growth\\Attribution\\Hooks\\MergeAnonymousAttributionsOnSubjectIdentified",
       "kind": "merge",
       "listens_to": "attribution::AttributionSubjectIdentified",
       "purpose": "When an anonymous session identifies (becomes a user/athlete/lead), find every anonymous attributions row within the last 30 days that shares a matching signal (session_id / ip_hash / device_hash) with the newly identified profile. Dispatches MergeIdentifiedAttributionsJob to perform the actual merge. Gated by the tenant's `attribution_merge` entitlement — non-Enterprise tenants get a no-op (partial-attribution fallback).",
@@ -17,7 +17,7 @@
     },
     {
       "name": "PurgeAttributionDataForErasedTenant",
-      "class": "Academorix\\Growth\\Attribution\\Hooks\\PurgeAttributionDataForErasedTenant",
+      "class": "Stackra\\Growth\\Attribution\\Hooks\\PurgeAttributionDataForErasedTenant",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErased",
       "purpose": "Cascade delete via FK; writes compliance audit trail entry + emits count metrics (attributions purged, attribution_touchpoints purged). Audit rows outlive the source rows per financial retention.",
@@ -25,7 +25,7 @@
     },
     {
       "name": "RedactAttributionOnUserErasure",
-      "class": "Academorix\\Growth\\Attribution\\Hooks\\RedactAttributionOnUserErasure",
+      "class": "Stackra\\Growth\\Attribution\\Hooks\\RedactAttributionOnUserErasure",
       "kind": "user_erasure",
       "listens_to": "user::UserErased",
       "purpose": "When a user is erased (GDPR Art. 17 individual-subject erasure): for every attributions row with subject_type='user' and subject_id=erased_user_id, redact confidential fields (first/last_touch_* replaced with '[REDACTED]', click_id + device blobs replaced with '{}'), transition lifecycle_state to 'churned', null the subject_id. The row survives for aggregate metrics only. Every associated attribution_touchpoints row's device_snapshot has ip_hash + user_agent_hash replaced with '[REDACTED]'. Full hard-delete happens 90 days later via the audit-hold reset flow.",

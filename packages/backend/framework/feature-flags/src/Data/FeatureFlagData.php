@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Data;
+namespace Stackra\FeatureFlags\Data;
 
-use Academorix\FeatureFlags\Contracts\Data\FeatureInterface;
-use Academorix\FeatureFlags\Models\Feature;
+use Stackra\FeatureFlags\Contracts\Data\FeatureInterface;
+use Stackra\FeatureFlags\Models\Feature;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;

@@ -15,7 +15,7 @@ import { HOST_BLOCK_BEGIN, HOST_BLOCK_END } from "../constants";
  * dev server too. Every additional subdomain gets its own line, tab-
  * separated `127.0.0.1<TAB><host>`.
  *
- * @param rootDomain - Root domain (e.g. `"academorix.app"`).
+ * @param rootDomain - Root domain (e.g. `"stackra.app"`).
  * @param subdomains - Subdomains to register (e.g. `["admin", "tenant-alpha"]`).
  * @returns The full block, including BEGIN / END markers.
  */

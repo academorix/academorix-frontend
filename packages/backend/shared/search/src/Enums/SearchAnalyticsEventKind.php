@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Enums;
+namespace Stackra\Search\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `kind` on `search-analytics-event`.

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/marketing/relations",
+  "id": "stackra://modules/marketing/relations",
   "$version": 1,
   "title": "marketing — model relationships",
   "description": "Four owned entities. MarketingEvent is the aggregate root; MarketingDelivery + MarketingDeadLetter attach to it. MarketingProviderConfig is standalone (tenant-scoped) — deliveries reference it via provider slug + provider_config_id. Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / region_id / organization_id / scope_node_id on any owned row.",

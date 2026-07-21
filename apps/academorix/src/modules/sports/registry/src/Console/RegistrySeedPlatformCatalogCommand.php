@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Console;
+namespace Stackra\Registry\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan sports:registry:seed-platform-catalog` — Registry:seed platform catalog — sports command.

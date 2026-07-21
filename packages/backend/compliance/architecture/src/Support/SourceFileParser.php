@@ -50,7 +50,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Support;
+namespace Stackra\Architecture\Support;
 
 /**
  * Parse a PHP source string into a {@see SourceFile}.

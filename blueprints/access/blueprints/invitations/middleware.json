@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/invitations/middleware",
+  "id": "stackra://modules/invitations/middleware",
   "$version": 1,
   "title": "invitations — HTTP middleware",
   "description": "Middleware this module contributes. Registered by `InvitationsServiceProvider::boot()` via `Router::aliasMiddleware()`. Only `throttle.invitations` is invitation-specific; the module also relies on framework + tenants middleware composed on its route groups.",
   "middleware": [
     {
       "alias": "throttle.invitations",
-      "class": "Academorix\\Invitations\\Middleware\\ThrottleInvitations",
+      "class": "Stackra\\Invitations\\Middleware\\ThrottleInvitations",
       "priority": 50,
       "description": "Per-inviter + per-tenant rate limits. Enforces four counters simultaneously: (1) per (inviter_user_id, day) — default 50; (2) per (inviter_service_account_id, day) — default 500; (3) per (tenant_id, day) — default 250; (4) per (invitee_email, week) — default 5 (anti-harassment). Each limit is configurable via `invitations.throttle.*` settings; a 429 response includes `Retry-After` and the specific limit that tripped in the `X-RateLimit-Trigger` header.",
       "sideEffects": [

@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "region",
   "alias": "region",
-  "namespace": "Academorix\\Region",
+  "namespace": "Stackra\\Region",
   "description": "Commercial + regulatory zone belonging to a Tenant. Answers 'what currency, tax rules, timezone, and locale apply here?'. Orthogonal to Organization (structural sub-brand) — they meet at Branch, which carries FKs to both. Every Tenant provisions exactly one `is_default=true` Region on TenantProvisioned so downstream code never special-cases the single-region case. Multi-region tenants add regions per entitlement. Small tier locked to 1 region; Medium up to 3; Enterprise unlimited. `region_slot` entitlement gate + `RegionQuotaExceeded` refusal on write. Ships: Region model, region CRUD HTTP surface, default-region seeder listener on TenantProvisioned, tax + tz + locale + currency defaults per country_code, is_default enforcement (exactly one per tenant), RegionDeactivated cascade that prevents deletion when any Branch or Membership still references it.",
   "keywords": [
     "region",
@@ -21,7 +21,7 @@
     "regulatory-zone"
   ],
   "priority": 40,
-  "providers": ["Academorix\\Region\\Providers\\RegionServiceProvider"],
+  "providers": ["Stackra\\Region\\Providers\\RegionServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "application", "entitlements"],
   "extendedBy": ["branch"],

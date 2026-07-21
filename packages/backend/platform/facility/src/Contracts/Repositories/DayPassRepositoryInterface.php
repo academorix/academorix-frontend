@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Contracts\Repositories;
+namespace Stackra\Facility\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Facility\Models\DayPass}.
+ * Repository contract for {@see Stackra\Facility\Models\DayPass}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `DayPassRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Facility\Models\DayPass>
+ * @extends RepositoryInterface<\Stackra\Facility\Models\DayPass>
  *
  * @category Facility
  *

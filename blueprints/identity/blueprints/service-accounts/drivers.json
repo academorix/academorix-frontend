@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/service-accounts/drivers",
+  "id": "stackra://modules/service-accounts/drivers",
   "$version": 1,
   "title": "service-accounts \u2014 driver specifications",
   "description": "Two driver contracts. `SecretRotator` wraps password-style bcrypt hashing for the rotation secret (single driver \u2014 bcrypt; alternative drivers reserved for future argon2id migration). `ServiceAccountJwtIssuer` bridges to the auth module's JwtSigner \u2014 there is no local JWT-driver family; this module NEVER signs JWTs directly.",
   "contracts": [
     {
-      "interface": "Academorix\\ServiceAccount\\Contracts\\SecretRotatorInterface",
+      "interface": "Stackra\\ServiceAccount\\Contracts\\SecretRotatorInterface",
       "methods": [
         {
           "signature": "generate(int $lengthBytes = 32): string",
@@ -26,7 +26,7 @@
       ]
     },
     {
-      "interface": "Academorix\\ServiceAccount\\Contracts\\ServiceAccountJwtIssuerInterface",
+      "interface": "Stackra\\ServiceAccount\\Contracts\\ServiceAccountJwtIssuerInterface",
       "methods": [
         {
           "signature": "issue(ServiceAccount $sa, IssueScope $scope): IssuedToken",
@@ -39,7 +39,7 @@
       ]
     },
     {
-      "interface": "Academorix\\ServiceAccount\\Contracts\\DormantAccountDetectorInterface",
+      "interface": "Stackra\\ServiceAccount\\Contracts\\DormantAccountDetectorInterface",
       "methods": [
         {
           "signature": "detect(?string $applicationId = null): Collection<ServiceAccount>",
@@ -48,7 +48,7 @@
       ]
     },
     {
-      "interface": "Academorix\\ServiceAccount\\Contracts\\ServiceAccountFingerprinterInterface",
+      "interface": "Stackra\\ServiceAccount\\Contracts\\ServiceAccountFingerprinterInterface",
       "methods": [
         {
           "signature": "recordObservation(string $saId, string $ipPrefix24, string $userAgentHash): FingerprintDelta",
@@ -64,7 +64,7 @@
   "secret_rotator_drivers": [
     {
       "name": "bcrypt",
-      "class": "Academorix\\ServiceAccount\\Drivers\\BcryptSecretRotator",
+      "class": "Stackra\\ServiceAccount\\Drivers\\BcryptSecretRotator",
       "underlying_package": "laravel/framework Hash::driver('bcrypt')",
       "strengths": [
         "Battle-tested; deterministic; ships with every PHP install",
@@ -87,8 +87,8 @@
   "jwt_issuer_drivers": [
     {
       "name": "hs256-via-auth",
-      "class": "Academorix\\ServiceAccount\\Drivers\\Hs256AuthBridgeJwtIssuer",
-      "underlying_package": "Academorix\\Auth\\Services\\JwtSigner (owned by identity/auth) + firebase/php-jwt (owned by auth transitively)",
+      "class": "Stackra\\ServiceAccount\\Drivers\\Hs256AuthBridgeJwtIssuer",
+      "underlying_package": "Stackra\\Auth\\Services\\JwtSigner (owned by identity/auth) + firebase/php-jwt (owned by auth transitively)",
       "strengths": [
         "Reuses the audited signing routine \u2014 no local re-implementation of JWT signing",
         "Kid rotation + revocation live entirely in the auth module; this module ships only the FK",

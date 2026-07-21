@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Middleware;
+namespace Stackra\Tenancy\Middleware;
 
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
-use Academorix\Tenancy\Exceptions\CrossTenantWriteException;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Tenancy\Exceptions\CrossTenantWriteException;
 use Closure;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Contracts\Services;
+namespace Stackra\Notifications\Sms\Contracts\Services;
 
-use Academorix\Notifications\Sms\Services\DefaultSmsCostCalculator;
+use Stackra\Notifications\Sms\Services\DefaultSmsCostCalculator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

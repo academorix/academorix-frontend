@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Safeguarding\Tests;
+namespace Stackra\Safeguarding\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/safeguarding.
+ * Base test case for stackra/safeguarding.
  *
  * @category Safeguarding
  *

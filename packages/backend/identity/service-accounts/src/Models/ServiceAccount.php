@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Models;
+namespace Stackra\ServiceAccounts\Models;
 
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\ServiceAccounts\Concerns\IsServiceAccount;
-use Academorix\ServiceAccounts\Contracts\Data\ServiceAccountInterface;
-use Academorix\ServiceAccounts\Database\Factories\ServiceAccountFactory;
-use Academorix\ServiceAccounts\Enums\ServiceAccountStatus;
-use Academorix\ServiceAccounts\Observers\ServiceAccountObserver;
-use Academorix\ServiceAccounts\Policies\ServiceAccountPolicy;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\ServiceAccounts\Concerns\IsServiceAccount;
+use Stackra\ServiceAccounts\Contracts\Data\ServiceAccountInterface;
+use Stackra\ServiceAccounts\Database\Factories\ServiceAccountFactory;
+use Stackra\ServiceAccounts\Enums\ServiceAccountStatus;
+use Stackra\ServiceAccounts\Observers\ServiceAccountObserver;
+use Stackra\ServiceAccounts\Policies\ServiceAccountPolicy;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;

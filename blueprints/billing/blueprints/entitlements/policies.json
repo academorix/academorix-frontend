@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/entitlements/policies",
+  "id": "stackra://modules/entitlements/policies",
   "$version": 1,
   "title": "entitlements \u2014 authorization policies",
   "policies": [
     {
       "model": "Entitlement",
-      "class": "Academorix\\Entitlements\\Policies\\EntitlementPolicy",
+      "class": "Stackra\\Entitlements\\Policies\\EntitlementPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -34,7 +34,7 @@
     },
     {
       "model": "EntitlementUsage",
-      "class": "Academorix\\Entitlements\\Policies\\EntitlementUsagePolicy",
+      "class": "Stackra\\Entitlements\\Policies\\EntitlementUsagePolicy",
       "abilities": [
         {
           "action": "viewAny",

@@ -1,4 +1,4 @@
-# academorix/wallet
+# stackra/wallet
 
 Server-side Laravel package for the `wallet` module. Auto-generated from the
 blueprint at `modules/finance/blueprints/wallet/`.
@@ -46,6 +46,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-finance/wallet-sdk` under `sdk/finance-wallet-sdk/`. Consumers cross
+`stackra-finance/wallet-sdk` under `sdk/finance-wallet-sdk/`. Consumers cross
 the service boundary through the SDK; this package is the SERVER-side owner of
 the domain.

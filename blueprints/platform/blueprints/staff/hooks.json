@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/staff/hooks",
+  "id": "stackra://modules/staff/hooks",
   "$version": 1,
   "title": "staff — TenancyHook + lifecycle hooks",
   "description": "Cross-module hook implementations. Staff does not register a bootstrapper (nothing to hydrate at tenant-boot). Registers four cascade hooks: branch-archive prevention, user-archive prevention, tenant-erasure cascade, and coach-status cascade on staff offboarding.",
-  "namespace": "Academorix\\Staff\\Hooks",
+  "namespace": "Stackra\\Staff\\Hooks",
   "hooks": [
     {
       "name": "PreventStaffOrphansOnBranchArchived",
-      "class": "Academorix\\Staff\\Hooks\\PreventStaffOrphansOnBranchArchived",
+      "class": "Stackra\\Staff\\Hooks\\PreventStaffOrphansOnBranchArchived",
       "kind": "cascade_prevention",
       "listens_to": "branch::BranchArchived",
       "purpose": "Refuse the archive when any Staff row referencing the branch still has employment_status IN ('pre_hire', 'active', 'on_leave', 'suspended', 'offboarding'). Distinct from the FK RESTRICT (which only blocks hard-delete) — this blocks the archive transition because staff need a target branch after their manager's branch closes.",
@@ -15,7 +15,7 @@
     },
     {
       "name": "PreventUserArchiveWithActiveStaff",
-      "class": "Academorix\\Staff\\Hooks\\PreventUserArchiveWithActiveStaff",
+      "class": "Stackra\\Staff\\Hooks\\PreventUserArchiveWithActiveStaff",
       "kind": "cascade_prevention",
       "listens_to": "user::UserSoftDeleted (pre-write hook)",
       "purpose": "Refuse the User soft-delete when the User has an active (deleted_at IS NULL) Staff row. The offboard flow must run first — Staff.employment_status → offboarded — which fires StaffOffboarded → UnblockUserArchiveWhenLastStaffOffboarded lifts the block. Enforced BEFORE the RESTRICT FK kicks in (which would surface a less informative error).",
@@ -25,7 +25,7 @@
     },
     {
       "name": "PurgeStaffDataForErasedTenant",
-      "class": "Academorix\\Staff\\Hooks\\PurgeStaffDataForErasedTenant",
+      "class": "Stackra\\Staff\\Hooks\\PurgeStaffDataForErasedTenant",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErased",
       "purpose": "Cascade delete via FK; writes compliance audit trail entry + emits count metrics per entity family (staff purged, coaches purged, staff_compensation_history rows purged). Audit rows outlive the source rows per financial retention (compensation history in particular — retained 7 years even after the tenant is erased, per legal requirement).",
@@ -33,7 +33,7 @@
     },
     {
       "name": "CascadeCoachStatusOnStaffOffboarding",
-      "class": "Academorix\\Staff\\Hooks\\CascadeCoachStatusOnStaffOffboarding",
+      "class": "Stackra\\Staff\\Hooks\\CascadeCoachStatusOnStaffOffboarding",
       "kind": "cascade",
       "listens_to": [
         "staff::StaffPutOnLeave",

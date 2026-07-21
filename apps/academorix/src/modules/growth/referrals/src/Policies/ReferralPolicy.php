@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Policies;
+namespace Stackra\Referrals\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Referrals\Models\Referral;
+use Stackra\User\Models\User;
+use Stackra\Referrals\Models\Referral;
 
 /**
- * Authorization policy for {@see \Academorix\Referrals\Models\Referral}.
+ * Authorization policy for {@see \Stackra\Referrals\Models\Referral}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

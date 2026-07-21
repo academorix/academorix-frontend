@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/scope",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/scope",
   "tier": "framework",
   "surfaces": ["core"],
   "kind": "framework-plumbing",
@@ -17,11 +17,11 @@
   "when_to_use": "Any configuration owner needs a per-tenant hierarchy of override values — settings, permissions, feature flags, pricing, notifications.",
   "when_not_to_use": "For row-level tenant scoping, use the BelongsToTenant trait from the tenancy module instead.",
   "peer_deps": [
-    "academorix/caching",
-    "academorix/database",
-    "academorix/exceptions",
-    "academorix/foundation",
-    "academorix/service-provider",
+    "stackra/caching",
+    "stackra/database",
+    "stackra/exceptions",
+    "stackra/foundation",
+    "stackra/service-provider",
     "olvlvl/composer-attribute-collector"
   ],
   "backend_pair": null,

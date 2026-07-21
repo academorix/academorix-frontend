@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/application/observers",
+  "id": "stackra://modules/application/observers",
   "$version": 1,
   "title": "application — model observers",
   "description": "Eloquent observers this module registers, wired via `#[ObservedBy]` on models.",

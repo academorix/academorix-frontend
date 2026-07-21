@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/theme/middleware",
+  "id": "stackra://modules/theme/middleware",
   "$version": 1,
   "title": "theme — HTTP middleware",
   "description": "One owned middleware for SSR token injection; the rest of the surface consumes foundation + tenancy stack.",
   "middleware": [
     {
       "name": "theme.resolve_tokens_for_ssr",
-      "class": "Academorix\\Platform\\Theme\\Http\\Middleware\\ResolveTokensForSsrMiddleware",
+      "class": "Stackra\\Platform\\Theme\\Http\\Middleware\\ResolveTokensForSsrMiddleware",
       "purpose": "For any SSR request (Blade template, Inertia page, Vite SSR entry), resolve the caller's active theme + mode + accessibility_overrides and inject the compiled CSS URL (and inline token map for above-the-fold rendering) into the response's Content Security Policy + response headers. Downstream frontend code reads the pre-resolved theme without a round-trip.",
       "runs_before": ["response.envelope"],
       "adds_headers": ["X-Theme-Compiled-Css-Url", "X-Theme-Mode", "X-Theme-Snapshot-Hash"],

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/teams/caches",
+  "id": "stackra://modules/teams/caches",
   "$version": 1,
   "title": "teams — cache keys + tags",
   "driver": "redis",

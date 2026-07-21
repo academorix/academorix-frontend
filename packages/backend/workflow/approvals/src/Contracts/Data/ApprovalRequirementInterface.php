@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Contracts\Data;
+namespace Stackra\Approvals\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Approvals\Models\ApprovalRequirement;
+use Stackra\Approvals\Models\ApprovalRequirement;
 
 /**
  * Table shape for the `approval_requirements` table.

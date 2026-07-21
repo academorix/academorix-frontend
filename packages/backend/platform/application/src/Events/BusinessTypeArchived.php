@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Events;
+namespace Stackra\Application\Events;
 
-use Academorix\Application\Models\BusinessType;
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Application\Models\BusinessType;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 

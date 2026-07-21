@@ -16,7 +16,7 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Console\Registry;
+namespace Stackra\Console\Registry;
 
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Contracts\Container\Container;

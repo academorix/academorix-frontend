@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tasks/schemas/task-assignment",
+  "id": "stackra://modules/tasks/schemas/task-assignment",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "TaskAssignment",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "tas_",
     "incrementing": false,
-    "model": "Academorix\\Workflow\\Tasks\\Models\\TaskAssignment",
-    "interface": "Academorix\\Workflow\\Tasks\\Contracts\\Data\\TaskAssignmentInterface",
-    "implements": ["Academorix\\Workflow\\Tasks\\Contracts\\Data\\TaskAssignmentInterface"],
+    "model": "Stackra\\Workflow\\Tasks\\Models\\TaskAssignment",
+    "interface": "Stackra\\Workflow\\Tasks\\Contracts\\Data\\TaskAssignmentInterface",
+    "implements": ["Stackra\\Workflow\\Tasks\\Contracts\\Data\\TaskAssignmentInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

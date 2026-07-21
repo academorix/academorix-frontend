@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Organization\Contracts\Repositories;
+namespace Stackra\Organization\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Organization\Models\Organization}.
+ * Repository contract for {@see Stackra\Organization\Models\Organization}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `OrganizationRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Organization\Models\Organization>
+ * @extends RepositoryInterface<\Stackra\Organization\Models\Organization>
  *
  * @category Organization
  *

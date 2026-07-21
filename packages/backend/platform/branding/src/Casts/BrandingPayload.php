@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Casts;
+namespace Stackra\Branding\Casts;
 
 /**
  * Read-model snapshot of a Branding row, denormalised into

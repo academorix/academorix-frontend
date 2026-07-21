@@ -5,7 +5,7 @@
  *
  * @description
  * DTO returned by
- * {@see \Academorix\Scope\Contracts\ScopeResolutionInterface::resolve()}.
+ * {@see \Stackra\Scope\Contracts\ScopeResolutionInterface::resolve()}.
  * Carries both the resolved value AND provenance (which node stored
  * it) so consumers can render "this setting is inherited from
  * <region>" hints in the admin UI without a second query.
@@ -13,7 +13,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Data;
+namespace Stackra\Scope\Data;
 
 /**
  * A cascading-resolution result.

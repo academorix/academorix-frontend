@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Contracts\Repositories;
+namespace Stackra\Activity\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Activity\Models\ActivityRetentionPolicy}.
+ * Repository contract for {@see Stackra\Activity\Models\ActivityRetentionPolicy}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `ActivityRetentionPolicyRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Activity\Models\ActivityRetentionPolicy>
+ * @extends RepositoryInterface<\Stackra\Activity\Models\ActivityRetentionPolicy>
  *
  * @category Activity
  *

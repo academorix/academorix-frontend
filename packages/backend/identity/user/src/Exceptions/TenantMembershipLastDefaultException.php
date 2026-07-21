@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\User\Exceptions;
+namespace Stackra\User\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Attempted to remove the User's only default TenantMember.

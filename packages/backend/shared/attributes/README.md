@@ -1,4 +1,4 @@
-# academorix/attributes
+# stackra/attributes
 
 Server-side Laravel package for the `attributes` module. Auto-generated from the
 blueprint at `modules/shared/blueprints/attributes/`.
@@ -48,6 +48,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-shared/attributes-sdk` under `sdk/shared-attributes-sdk/`. Consumers
+`stackra-shared/attributes-sdk` under `sdk/shared-attributes-sdk/`. Consumers
 cross the service boundary through the SDK; this package is the SERVER-side
 owner of the domain.

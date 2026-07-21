@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 /**
- * Playwright config for the academorix-frontend workspace.
+ * Playwright config for the stackra-frontend workspace.
  *
  * Targets the vite-template app by default (the dashboard app was
  * retired in the workspace reorg). Override `PLAYWRIGHT_TARGET` to

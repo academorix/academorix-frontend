@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Contracts\Data;
+namespace Stackra\Application\Contracts\Data;
 
-use Academorix\Application\Models\Application;
+use Stackra\Application\Models\Application;
 use Illuminate\Container\Attributes\Bind;
 
 /**
  * Table shape for the `applications` table.
  *
- * Global cross-tenant product registry — one row per Academorix
+ * Global cross-tenant product registry — one row per Stackra
  * deployment (production, EU-production, staging, dev-preview, demo).
  * Every Tenant belongs to exactly one Application. One of the eight
  * rows that carry `application_id` directly (per `.kiro/steering/
@@ -43,7 +43,7 @@ interface ApplicationInterface
     public const string KEY_TYPE = 'string';
 
     /**
-     * Prefix for the {@see \Academorix\Database\Concerns\HasPrefixedUlid}
+     * Prefix for the {@see \Stackra\Database\Concerns\HasPrefixedUlid}
      * trait — the trait joins `<ID_PREFIX>_<ulid>` to produce the
      * primary key (e.g. `app_01HZQK8YXBR3MDMP6QT9NR8N4F`).
      */

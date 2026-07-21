@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/domains/features",
+  "id": "stackra://modules/domains/features",
   "$version": 1,
   "title": "domains — feature keys",
   "description": "Feature keys this module publishes for tenant entitlement gating.",

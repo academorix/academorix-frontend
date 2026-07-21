@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Repositories;
+namespace Stackra\Theme\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Theme\Contracts\Data\ThemePresetInterface;
-use Academorix\Theme\Contracts\Repositories\ThemePresetRepositoryInterface;
-use Academorix\Theme\Models\ThemePreset;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Theme\Contracts\Data\ThemePresetInterface;
+use Stackra\Theme\Contracts\Repositories\ThemePresetRepositoryInterface;
+use Stackra\Theme\Models\ThemePreset;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Theme\Models\ThemePreset}.
+ * Attribute-first Eloquent repository for {@see Stackra\Theme\Models\ThemePreset}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ThemePresetInterface::class)]` which resolves to
  * `ThemePreset` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Theme\Models\ThemePreset>
+ * @extends Repository<\Stackra\Theme\Models\ThemePreset>
  *
  * @category Theme
  *

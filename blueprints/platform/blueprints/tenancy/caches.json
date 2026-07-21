@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tenancy/caches",
+  "id": "stackra://modules/tenancy/caches",
   "$version": 1,
   "title": "tenants — cache keys",
   "description": "Cache keys this module owns. Every key is namespaced by the tenants hook (`CachePrefixTenantHook` prepends `tenant:{tenant_id}:` per request). Keys documented WITHOUT the tenant prefix — that prefix is applied at read/write time.",

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Announcements\Contracts\Services;
+namespace Stackra\Announcements\Contracts\Services;
 
-use Academorix\Announcements\Services\AnnouncementFanoutJob;
+use Stackra\Announcements\Services\AnnouncementFanoutJob;
 use Illuminate\Container\Attributes\Bind;
 
 /**

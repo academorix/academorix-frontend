@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file apps/academorix/src/sdks/platform-application-sdk/src/Requests/Applications/DeleteApplicationRequest.php
+ * @file apps/stackra/src/sdks/platform-application-sdk/src/Requests/Applications/DeleteApplicationRequest.php
  *
  * @description
  * `DELETE /api/v1/applications/{id}` — the **platform-admin** soft
@@ -14,9 +14,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformApplicationSdk\Requests\Applications;
+namespace Stackra\PlatformApplicationSdk\Requests\Applications;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

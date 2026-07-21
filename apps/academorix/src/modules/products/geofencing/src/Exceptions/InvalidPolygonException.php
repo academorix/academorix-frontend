@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Exceptions;
+namespace Stackra\Geofencing\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Geofencing\Enums\PolygonValidationReason;
+use Stackra\Exceptions\StackraException;
+use Stackra\Geofencing\Enums\PolygonValidationReason;
 
 /**
- * Raised by {@see \Academorix\Geofencing\Services\PolygonValidator} when a
+ * Raised by {@see \Stackra\Geofencing\Services\PolygonValidator} when a
  * submitted polygon fails validation.
  *
  * Carries the specific {@see PolygonValidationReason} so the caller can point
@@ -18,7 +18,7 @@ use Academorix\Geofencing\Enums\PolygonValidationReason;
  *
  * @since    0.1.0
  */
-final class InvalidPolygonException extends AcademorixException
+final class InvalidPolygonException extends StackraException
 {
     public const string CODE = 'geofencing.polygon_invalid';
 

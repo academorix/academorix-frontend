@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Services;
+namespace Stackra\Mfa\Services;
 
-use Academorix\Mfa\Contracts\Services\WebauthnAttestationVerifierInterface;
+use Stackra\Mfa\Contracts\Services\WebauthnAttestationVerifierInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Mfa\Contracts\Repositories\MfaChallengeRepositoryInterface;
+use Stackra\Mfa\Contracts\Repositories\MfaChallengeRepositoryInterface;
 
 /**
  * Concrete service — WebauthnAttestationVerifier.

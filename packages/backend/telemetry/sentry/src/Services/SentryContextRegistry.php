@@ -12,13 +12,13 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Sentry\Services;
+namespace Stackra\Sentry\Services;
 
 use Illuminate\Container\Attributes\Tag;
 use Illuminate\Support\Collection;
-use Academorix\Contracts\Telemetry\Sentry\SentryContext as SentryContextContracts;
-use Academorix\Contracts\Telemetry\Sentry\SentryContextRegistry as SentryContextRegistryContracts;
-use Academorix\Foundation\Enums\ContainerToken;
+use Stackra\Contracts\Telemetry\Sentry\SentryContext as SentryContextContracts;
+use Stackra\Contracts\Telemetry\Sentry\SentryContextRegistry as SentryContextRegistryContracts;
+use Stackra\Foundation\Enums\ContainerToken;
 use Sentry\State\Scope;
 use Throwable;
 

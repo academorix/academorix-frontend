@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "safeguarding",
   "alias": "safeguarding",
-  "namespace": "Academorix\\Safeguarding",
+  "namespace": "Stackra\\Safeguarding",
   "description": "Staff vetting + policy compliance per blueprint §14.6. YOUTH-SPORTS MANDATORY. Complements compliance/compliance (which owns SafeguardingIncident report intake); this module owns the STAFF-SIDE — background checks + policy acknowledgements + assignment gate. Ships TWO owned entities: `BackgroundCheck` (per Staff — type IN DBS enhanced/DBS basic/state-BCI/SafeSport/custom; status IN pending/verified/expired; issued_at + expires_at + verification_url; block-assignment gate consumed by coaching/team when unverified), `PolicyAcknowledgement` (Staff acknowledged safeguarding policy version X on date Y — audit-material, never mutable, refresh cadence per policy_version). Emits `CHECK_VERIFIED` / `CHECK_EXPIRING` (90d/30d/7d) / `INCIDENT_REPORTED` (bridges to compliance) / `STAFF_ASSIGNMENT_BLOCKED`.",
   "keywords": [
     "safeguarding",
@@ -17,7 +17,7 @@
     "wave-3"
   ],
   "priority": 80,
-  "providers": ["Academorix\\Safeguarding\\Providers\\SafeguardingServiceProvider"],
+  "providers": ["Stackra\\Safeguarding\\Providers\\SafeguardingServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

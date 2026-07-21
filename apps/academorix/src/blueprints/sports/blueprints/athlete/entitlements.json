@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/athlete/entitlements",
+  "id": "stackra://modules/athlete/entitlements",
   "$version": 1,
   "title": "athlete — declared entitlements",
   "description": "Three entitlement keys. `athlete_slot` caps active-athlete headcount (aligns with user_slot per hierarchy.md §7 — most tenants budget athletes + users together). `athlete_medical_tracking` is an OPT-IN boolean gating the medical cluster (regulated_health-tier data). `athlete_consent_workflow` gates the full recordable consent workflow (Enterprise only — tracks per-purpose expiry + revocation for GDPR Art. 8 audit-ready evidence).",

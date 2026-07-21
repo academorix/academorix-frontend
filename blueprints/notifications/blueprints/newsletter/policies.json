@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/newsletter/policies",
+  "id": "stackra://modules/newsletter/policies",
   "$version": 1,
   "title": "newsletter \u2014 authorization policies",
   "policies": [
     {
       "model": "Newsletter",
-      "class": "Academorix\\Newsletter\\Policies\\NewsletterPolicy",
+      "class": "Stackra\\Newsletter\\Policies\\NewsletterPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "newsletters.viewAny" },
         { "action": "view", "permission": "newsletters.view" },
@@ -33,7 +33,7 @@
     },
     {
       "model": "NewsletterIssue",
-      "class": "Academorix\\Newsletter\\Policies\\NewsletterIssuePolicy",
+      "class": "Stackra\\Newsletter\\Policies\\NewsletterIssuePolicy",
       "abilities": [
         { "action": "viewAny", "permission": "newsletter-issues.viewAny" },
         { "action": "view", "permission": "newsletter-issues.view" },
@@ -57,7 +57,7 @@
     },
     {
       "model": "NewsletterSubscription",
-      "class": "Academorix\\Newsletter\\Policies\\NewsletterSubscriptionPolicy",
+      "class": "Stackra\\Newsletter\\Policies\\NewsletterSubscriptionPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "newsletter-subscriptions.viewAny" },
         { "action": "view", "permission": "newsletter-subscriptions.view" },
@@ -78,7 +78,7 @@
     },
     {
       "model": "NewsletterCampaign",
-      "class": "Academorix\\Newsletter\\Policies\\NewsletterCampaignPolicy",
+      "class": "Stackra\\Newsletter\\Policies\\NewsletterCampaignPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "newsletter-campaigns.viewAny" },
         { "action": "view", "permission": "newsletter-campaigns.view" },
@@ -91,7 +91,7 @@
     },
     {
       "model": "NewsletterAudience",
-      "class": "Academorix\\Newsletter\\Policies\\NewsletterAudiencePolicy",
+      "class": "Stackra\\Newsletter\\Policies\\NewsletterAudiencePolicy",
       "abilities": [
         { "action": "viewAny", "permission": "newsletter-audiences.viewAny" },
         { "action": "view", "permission": "newsletter-audiences.view" },

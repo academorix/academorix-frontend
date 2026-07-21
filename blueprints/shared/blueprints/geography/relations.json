@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geography/relations",
+  "id": "stackra://modules/geography/relations",
   "$version": 1,
   "title": "geography \u2014 model relationships",
   "description": "Vendor `nnjeim/world` ships the base relations. We rebind `config('world.models.*')` so every vendor relation returns our subclasses. No app-level FK migrations are added (vendor owns them).",

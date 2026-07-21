@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Database\Concerns;
+namespace Stackra\Database\Concerns;
 
-use Academorix\Access\Models\Role;
+use Stackra\Access\Models\Role;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Database\Eloquent\Builder;
 

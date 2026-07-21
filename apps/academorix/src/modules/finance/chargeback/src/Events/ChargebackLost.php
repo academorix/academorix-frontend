@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Events;
+namespace Stackra\Chargeback\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -23,7 +23,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - chargeback::ClawbackCoordinator (dispatches ChargebackClawbackReferral + ChargebackClawbackCoupon downstream)
  * - marketing::FireMarketingChargebackFiledOnChargebackLost (negative-value conversion + fraud signal — ad-network ROAS adjustment + fraud model retraining)
  * - notifications::DispatchChargebackLostNotification (P1 admin — includes support-contact + reason breakdown)
- * - observability::MetricsCollector (academorix.chargeback.lost_total labelled by network + reason_category + reason_code)
+ * - observability::MetricsCollector (stackra.chargeback.lost_total labelled by network + reason_category + reason_code)
  *
  * @category Chargeback
  *

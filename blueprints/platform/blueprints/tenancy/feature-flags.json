@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tenancy/feature-flags",
+  "id": "stackra://modules/tenancy/feature-flags",
   "$version": 1,
   "title": "tenants — rollout flags",
   "description": "Rollout / change-management flags for THIS module. DISTINCT from `features.json` (business features — 'does the tenant have athletes at all'). These are delivery controls per SOC 2 CC8.1: canary rollouts, kill switches, cohort gates. Every business change lands behind a flag here; the flag flips 100% on general availability and is removed once burned in.",

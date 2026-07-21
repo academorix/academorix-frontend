@@ -2,7 +2,7 @@
 
 /**
  * @file ProcessRunner.php
- * @module Academorix\Cli\Support
+ * @module Stackra\Cli\Support
  * @description Thin wrapper around `Symfony\Component\Process\Process`.
  *   Streams stdout/stderr live to a callback when supplied; throws a
  *   `CliException::forSubprocessFailure(...)` on non-zero exit.
@@ -10,9 +10,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Support;
+namespace Stackra\Cli\Support;
 
-use Academorix\Cli\Exceptions\CliException;
+use Stackra\Cli\Exceptions\CliException;
 use Symfony\Component\Process\Process;
 
 /**

@@ -12,10 +12,10 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Enum\Attributes;
+namespace Stackra\Enum\Attributes;
 
 use Attribute;
-use Academorix\Enum\Meta\Property;
+use Stackra\Enum\Meta\Property;
 
 /**
  * Description Attribute.
@@ -24,8 +24,8 @@ use Academorix\Enum\Meta\Property;
  *
  * ## Usage:
  * ```php
- * use Academorix\Enum\Attributes\Description;
- * use Academorix\Enum\Meta\Meta;
+ * use Stackra\Enum\Attributes\Description;
+ * use Stackra\Enum\Meta\Meta;
  *
  * #[Meta([Description::class])]
  * enum Status: string
@@ -42,7 +42,7 @@ use Academorix\Enum\Meta\Property;
  * Status::ACTIVE()->description(); // Returns 'The item is currently active and available'
  * ```
  *
- * @author  Academorix Development Team
+ * @author  Stackra Development Team
  *
  * @since   1.0.0
  */

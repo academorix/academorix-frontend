@@ -4,7 +4,7 @@
  * @file packages/framework/service-provider/tests/Unit/BootstrapperRunnerTest.php
  *
  * @description
- * Unit coverage for {@see \Academorix\ServiceProvider\Support\BootstrapperRunner}.
+ * Unit coverage for {@see \Stackra\ServiceProvider\Support\BootstrapperRunner}.
  *
  * ## Strategy — pure PHP fakes, no framework boot
  *
@@ -19,12 +19,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceProvider\Tests\Unit;
+namespace Stackra\ServiceProvider\Tests\Unit;
 
-use Academorix\Foundation\Contracts\Clock;
-use Academorix\ServiceProvider\Bootstrappers\AbstractBootstrapper;
-use Academorix\ServiceProvider\Registry\BootstrapperRegistry;
-use Academorix\ServiceProvider\Support\BootstrapperRunner;
+use Stackra\Foundation\Contracts\Clock;
+use Stackra\ServiceProvider\Bootstrappers\AbstractBootstrapper;
+use Stackra\ServiceProvider\Registry\BootstrapperRegistry;
+use Stackra\ServiceProvider\Support\BootstrapperRunner;
 use Illuminate\Cache\ArrayStore;
 use Illuminate\Cache\Repository;
 use Illuminate\Container\Container;

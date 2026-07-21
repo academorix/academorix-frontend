@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Exceptions;
+namespace Stackra\Match\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Requested state transition is not permitted by the state machine.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MatchInvalidStateTransitionException extends AcademorixException
+final class MatchInvalidStateTransitionException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

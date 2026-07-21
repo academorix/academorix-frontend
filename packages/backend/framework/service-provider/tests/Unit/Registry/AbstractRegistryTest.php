@@ -5,7 +5,7 @@
  *
  * @description
  * Unit coverage for
- * {@see \Academorix\ServiceProvider\Registry\AbstractRegistry}.
+ * {@see \Stackra\ServiceProvider\Registry\AbstractRegistry}.
  *
  * ## Strategy — pure PHP, no framework boot
  *
@@ -20,16 +20,16 @@
  *
  * A second `DerivingRegistry` fixture proves the
  * `resolvePriorityFor()` hook is consulted every time
- * {@see \Academorix\ServiceProvider\Registry\AbstractRegistry::register()}
+ * {@see \Stackra\ServiceProvider\Registry\AbstractRegistry::register()}
  * runs — enabling subclasses to derive priority from the key
  * without overriding `register()` itself.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceProvider\Tests\Unit\Registry;
+namespace Stackra\ServiceProvider\Tests\Unit\Registry;
 
-use Academorix\ServiceProvider\Registry\AbstractRegistry;
+use Stackra\ServiceProvider\Registry\AbstractRegistry;
 use Illuminate\Support\Collection;
 
 /**

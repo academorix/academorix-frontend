@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Database\Factories;
+namespace Stackra\Leads\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Leads\Contracts\Data\LeadInterface;
-use Academorix\Leads\Models\Lead;
+use Stackra\Leads\Contracts\Data\LeadInterface;
+use Stackra\Leads\Models\Lead;
 
 /**
- * Factory for {@see \Academorix\Leads\Models\Lead}.
+ * Factory for {@see \Stackra\Leads\Models\Lead}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Leads\Models\Lead>
+ * @extends Factory<\Stackra\Leads\Models\Lead>
  *
  * @category Leads
  *

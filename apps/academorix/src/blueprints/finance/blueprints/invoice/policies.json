@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/invoice/policies",
+  "id": "stackra://modules/invoice/policies",
   "$version": 1,
   "title": "invoice — authorization policies",
   "description": "Three policies, one per owned model. Every ability resolves through spatie/laravel-permission, then narrows by tenant scope + customer-scope (customers see only their own invoices via invoice.enforce_customer_scope middleware + the viewMine ability). Write actions on finalized invoices are refused at the policy layer (defense-in-depth alongside the observer). Every credit note action requires the credit_note_issuance entitlement gate + admin+finance role.",
   "policies": [
     {
       "model": "Invoice",
-      "class": "Academorix\\Finance\\Invoice\\Policies\\InvoicePolicy",
+      "class": "Stackra\\Finance\\Invoice\\Policies\\InvoicePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -89,7 +89,7 @@
     },
     {
       "model": "InvoiceLine",
-      "class": "Academorix\\Finance\\Invoice\\Policies\\InvoiceLinePolicy",
+      "class": "Stackra\\Finance\\Invoice\\Policies\\InvoiceLinePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -116,7 +116,7 @@
     },
     {
       "model": "CreditNote",
-      "class": "Academorix\\Finance\\Invoice\\Policies\\CreditNotePolicy",
+      "class": "Stackra\\Finance\\Invoice\\Policies\\CreditNotePolicy",
       "abilities": [
         {
           "action": "viewAny",

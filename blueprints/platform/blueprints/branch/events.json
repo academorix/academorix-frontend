@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/branch/events",
+  "id": "stackra://modules/branch/events",
   "$version": 1,
   "title": "branch — published events",
-  "namespace": "Academorix\\Branch\\Events",
+  "namespace": "Stackra\\Branch\\Events",
   "dispatchMode": "afterCommit",
   "events": [
     {
       "name": "BranchCreated",
-      "class": "Academorix\\Branch\\Events\\BranchCreated",
+      "class": "Stackra\\Branch\\Events\\BranchCreated",
       "trigger": "ProvisionBranch action completed. Fires exactly once per new `branches.id`.",
       "queue": "notifications",
       "consumers": [
@@ -29,7 +29,7 @@
     },
     {
       "name": "BranchUpdated",
-      "class": "Academorix\\Branch\\Events\\BranchUpdated",
+      "class": "Stackra\\Branch\\Events\\BranchUpdated",
       "trigger": "Any mutable field on Branch was updated. Distinct from the specific-field events below (BranchAddressUpdated, BranchCoordinatesUpdated, …) — this one fires for everything else (name, description, phone, email, website, sort_order, logo_url).",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -42,7 +42,7 @@
     },
     {
       "name": "BranchStatusChanged",
-      "class": "Academorix\\Branch\\Events\\BranchStatusChanged",
+      "class": "Stackra\\Branch\\Events\\BranchStatusChanged",
       "trigger": "Branch.status transitioned to any new value. A superset event; the specific-state events below fire alongside for the routing case that cares.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -57,7 +57,7 @@
     },
     {
       "name": "BranchPaused",
-      "class": "Academorix\\Branch\\Events\\BranchPaused",
+      "class": "Stackra\\Branch\\Events\\BranchPaused",
       "trigger": "Branch.status transitioned active → paused. New bookings + registrations refused via the enforce_operating_hours middleware.",
       "queue": "notifications",
       "consumers": [
@@ -75,7 +75,7 @@
     },
     {
       "name": "BranchResumed",
-      "class": "Academorix\\Branch\\Events\\BranchResumed",
+      "class": "Stackra\\Branch\\Events\\BranchResumed",
       "trigger": "Branch.status transitioned paused → active.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -88,7 +88,7 @@
     },
     {
       "name": "BranchClosed",
-      "class": "Academorix\\Branch\\Events\\BranchClosed",
+      "class": "Stackra\\Branch\\Events\\BranchClosed",
       "trigger": "Branch.status transitioned to closed. Refused when active downstream rows reference the branch — this event only fires after that check passes.",
       "queue": "notifications",
       "consumers": [
@@ -108,7 +108,7 @@
     },
     {
       "name": "BranchReopened",
-      "class": "Academorix\\Branch\\Events\\BranchReopened",
+      "class": "Stackra\\Branch\\Events\\BranchReopened",
       "trigger": "Branch.status transitioned closed → active. Refused when a successor branch was created under the same (tenant, organization) after the close event.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -122,7 +122,7 @@
     },
     {
       "name": "BranchDefaultChanged",
-      "class": "Academorix\\Branch\\Events\\BranchDefaultChanged",
+      "class": "Stackra\\Branch\\Events\\BranchDefaultChanged",
       "trigger": "The default branch for a (tenant, organization) tuple was reassigned. Fires with both the newly-default row + the previously-default row so downstream caches can drop keys keyed on both.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -136,7 +136,7 @@
     },
     {
       "name": "BranchOpeningHoursUpdated",
-      "class": "Academorix\\Branch\\Events\\BranchOpeningHoursUpdated",
+      "class": "Stackra\\Branch\\Events\\BranchOpeningHoursUpdated",
       "trigger": "Branch.opening_hours was updated. Distinct from BranchUpdated because the notification consumers care about member-facing hours changes specifically.",
       "queue": "notifications",
       "consumers": [
@@ -153,7 +153,7 @@
     },
     {
       "name": "BranchCapacityChanged",
-      "class": "Academorix\\Branch\\Events\\BranchCapacityChanged",
+      "class": "Stackra\\Branch\\Events\\BranchCapacityChanged",
       "trigger": "Branch.capacity was updated (set, changed, or cleared).",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -167,7 +167,7 @@
     },
     {
       "name": "BranchCoordinatesUpdated",
-      "class": "Academorix\\Branch\\Events\\BranchCoordinatesUpdated",
+      "class": "Stackra\\Branch\\Events\\BranchCoordinatesUpdated",
       "trigger": "Branch.coordinates was set OR changed. Distinct from BranchUpdated because the Wave 3 geofencing module subscribes to this event to recompute polygon coverage for every geofence attached to this Branch.",
       "queue": "notifications",
       "consumers": [
@@ -186,7 +186,7 @@
     },
     {
       "name": "BranchAddressUpdated",
-      "class": "Academorix\\Branch\\Events\\BranchAddressUpdated",
+      "class": "Stackra\\Branch\\Events\\BranchAddressUpdated",
       "trigger": "Branch.address was updated. Distinct from BranchUpdated because it optionally triggers a re-geocode when the tenant has `branch_geocoding` entitlement + coordinates.source === 'geocoded' (i.e. the coordinates were auto-derived; a manual pin drop stays pinned).",
       "queue": "notifications",
       "consumers": [
@@ -203,7 +203,7 @@
     },
     {
       "name": "BranchDeleted",
-      "class": "Academorix\\Branch\\Events\\BranchDeleted",
+      "class": "Stackra\\Branch\\Events\\BranchDeleted",
       "trigger": "Hard-delete completed. Wave 2 refuses public hard-delete (closed is terminal); this event only fires on the two-person platform-support CLI path.",
       "queue": "notifications-critical",
       "consumers": [

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
   "name": "@stackra/frontend",
   "tier": "saas",
   "surfaces": ["core"],
@@ -7,7 +7,7 @@
   "purpose": "Internal manifest / registry package — surfaces the workspace's frontend catalogue to tooling and the CLI (placeholder pending real API).",
   "capabilities": [
     "Aggregates the workspace frontend package inventory",
-    "Consumed by the academorix new capability multiselect",
+    "Consumed by the stackra new capability multiselect",
     "Placeholder pending code-side implementation"
   ],
   "when_to_use": "Tooling needs a single import that reflects every registered @stackra/* frontend package.",

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Exceptions;
+namespace Stackra\Auth\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Grant was issued for a different target Application than the current request's X-Application-Id.

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/age-group/data/default-age-groups",
+  "id": "stackra://modules/age-group/data/default-age-groups",
   "$version": 1,
   "title": "age-group — default catalog reference",
   "description": "10-entry seeded catalog dispatched to every tenant on TenantProvisioned. Covers the standard youth-development progression (U6..U18 in 2-year steps) plus adult, senior, and masters divisions. Every entry has sport_key=null (generic — applies across every sport) and organization_id=null (tenant-wide). The `Adult` group is is_default=true for the (tenant, null, null) tuple — every tenant lands with a working default the moment provisioning finishes.",

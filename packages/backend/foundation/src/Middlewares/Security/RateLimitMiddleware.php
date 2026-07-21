@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Foundation\Middlewares\Security;
+namespace Stackra\Foundation\Middlewares\Security;
 
 use Closure;
 use Illuminate\Cache\RateLimiter;
@@ -21,10 +21,10 @@ use Illuminate\Http\Request;
 
 use function max;
 
-use Academorix\Foundation\Enums\HttpStatusCode;
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Support\Reflection;
-use Academorix\Support\Str;
+use Stackra\Foundation\Enums\HttpStatusCode;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Support\Reflection;
+use Stackra\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "digital-passes",
   "alias": "digital-passes",
-  "namespace": "Academorix\\Finance\\DigitalPasses",
+  "namespace": "Stackra\\Finance\\DigitalPasses",
   "description": "Apple Wallet + Google Wallet digital membership passes per blueprint §16.6. Ships ONE owned entity: `WalletPass` (per-holder wallet pass — serial + kind IN membership_card/event_ticket/day_pass_card + provider IN apple/google/generic_qr + status IN issued/installed/updated/revoked/expired; auto-updates on renewal; tenant branding). Distinct from finance/membership `Pass` (session-consumption ticket) — this is a WALLET credential that carries the membership ID + QR code for entry check-in. Cascades: on `MEMBERSHIP_RENEWED` → auto-update pass; on `MEMBERSHIP_CANCELLED` → revoke pass; on `Branding.updated` → regenerate all active passes.\n\n**Underlying package: `spatie/laravel-mobile-pass` v1** (https://spatie.be/docs/laravel-mobile-pass/v1/introduction). Wraps its Apple `.pkpass` generation + Google Wallet Passes API + APNs/FCM push-update pipeline. We add: tenant-scoped issuance, QR-payload signed-JWT verification at gate (via credentials module), Branding-driven regeneration, retention.\n\n**Not built:** the .pkpass certificate + Google Wallet issuer credentials — those come from tenant configuration (per-tenant integration credentials via platform/integrations).",
   "keywords": [
     "wallet-pass",
@@ -17,7 +17,7 @@
     "wave-4"
   ],
   "priority": 88,
-  "providers": ["Academorix\\Finance\\DigitalPasses\\Providers\\DigitalPassesServiceProvider"],
+  "providers": ["Stackra\\Finance\\DigitalPasses\\Providers\\DigitalPassesServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

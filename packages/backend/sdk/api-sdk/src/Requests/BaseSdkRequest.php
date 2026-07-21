@@ -37,7 +37,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Requests;
+namespace Stackra\ApiSdk\Requests;
 
 use Saloon\Http\Request;
 

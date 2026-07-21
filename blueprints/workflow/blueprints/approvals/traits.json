@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/workflow/approvals/traits",
+  "id": "stackra://modules/workflow/approvals/traits",
   "$version": 1,
   "title": "approvals — trait composition",
   "description": "Two owned traits. `HasApprovalHistory` is mixed into the `User` model — exposes convenience relations for the caller's approvals-requested, approvals-pending-review, approvals-decided history without pulling in the whole ApprovalPresenter. `IsApprovable` is a MARKER trait on subject types that CAN be the subject of an approval instance (any resource type an action targets — e.g. Invoice, Grant, Athlete). Optional: most callers don't need it — the `approve` middleware works off the action's `#[AsApprovableAction]` attribute, not the subject. The trait is only used when a subject wants a first-class `->approvals()` inverse relation for admin UIs.",
   "owned": [
     {
-      "trait": "Academorix\\Approval\\Concerns\\HasApprovalHistory",
+      "trait": "Stackra\\Approval\\Concerns\\HasApprovalHistory",
       "description": "Mixed into the `User` model (via user module composition) to expose three convenience relations without materialising the ApprovalPresenter. Read-only accessors — never writes. Every method scopes by tenant + application via the composing model's `BelongsToTenant` global scope so cross-tenant leakage is impossible.",
       "public": true,
       "usedBy": ["user::User (exposes approval-history relations on the caller model)"],
@@ -26,7 +26,7 @@
       "conflicts_with": []
     },
     {
-      "trait": "Academorix\\Approval\\Concerns\\IsApprovable",
+      "trait": "Stackra\\Approval\\Concerns\\IsApprovable",
       "description": "Marker trait on subject types (Invoice, AccessGrant, Athlete, RoleAssignment) that can be referenced by an `approval_instances.subject_type + subject_id` pair. Adds a polymorphic inverse `->approvals()` relation. OPTIONAL — the approval engine doesn't require the subject to compose this trait (subject is just a polymorphic tuple in the DB). Compose only when a subject-type-specific admin UI needs to render 'all approvals touching this resource' without a bespoke query.",
       "public": true,
       "usedBy": [],
@@ -53,15 +53,15 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasSystemFlag" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
-    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
-    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }],
+    "tenants": [{ "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "activity": [{ "trait": "Stackra\\Activity\\Concerns\\HasActivityLog" }],
     "audit": [{ "trait": "OwenIt\\Auditing\\Auditable" }]
   },
   "composition": {

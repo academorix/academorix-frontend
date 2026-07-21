@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/tax/hooks",
+  "id": "stackra://modules/tax/hooks",
   "$version": 1,
   "title": "tax — TenancyHook + lifecycle hooks",
   "description": "Cross-module hook implementations. TenancyHooks are the tenancy module's contract for reacting to tenant-lifecycle events (provision / suspend / erase). Tax registers three hooks: tenant erasure calculation migration, jurisdiction deactivation cascade, and tenant-erasure hard-purge of the other three tables.",
-  "namespace": "Academorix\\Finance\\Tax\\Hooks",
+  "namespace": "Stackra\\Finance\\Tax\\Hooks",
   "hooks": [
     {
       "name": "PurgeTaxDataForErasedTenant",
-      "class": "Academorix\\Finance\\Tax\\Hooks\\PurgeTaxDataForErasedTenant",
+      "class": "Stackra\\Finance\\Tax\\Hooks\\PurgeTaxDataForErasedTenant",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErased",
       "purpose": "Cascade delete via FK CASCADE across tax_rates + tax_jurisdictions (tenant-scoped only — NULL tenant_id platform reference rows survive) + tax_exemptions. This hook writes the compliance audit trail entry + emits count metrics per entity family (tax_rates / tax_jurisdictions / tax_exemptions purged). Deliberately EXCLUDES tax_calculations — those migrate to compliance archive via MigrateCalculationsToArchiveOnTenantErased.",
@@ -15,7 +15,7 @@
     },
     {
       "name": "MigrateCalculationsToArchiveOnTenantErased",
-      "class": "Academorix\\Finance\\Tax\\Hooks\\MigrateCalculationsToArchiveOnTenantErased",
+      "class": "Stackra\\Finance\\Tax\\Hooks\\MigrateCalculationsToArchiveOnTenantErased",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErased",
       "priority": 20,
@@ -24,7 +24,7 @@
     },
     {
       "name": "CascadeExemptionExpiryOnJurisdictionDeactivated",
-      "class": "Academorix\\Finance\\Tax\\Hooks\\CascadeExemptionExpiryOnJurisdictionDeactivated",
+      "class": "Stackra\\Finance\\Tax\\Hooks\\CascadeExemptionExpiryOnJurisdictionDeactivated",
       "kind": "cascade",
       "listens_to": "tax::TaxJurisdictionDeactivated (internal event when effective_to is set to a past date)",
       "purpose": "When a jurisdiction is deactivated (effective_to <= now()), any exemptions issued by that jurisdiction transition to verification_status='expired'. Fires TaxExemptionExpired per exemption + fires notifications via the 60/30/7-day cadence (compressed to immediate when the jurisdiction change is post-hoc)."

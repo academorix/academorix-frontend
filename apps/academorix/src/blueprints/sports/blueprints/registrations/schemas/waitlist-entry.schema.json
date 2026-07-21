@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/registrations/schemas/waitlist-entry",
+  "id": "stackra://modules/registrations/schemas/waitlist-entry",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "WaitlistEntry",

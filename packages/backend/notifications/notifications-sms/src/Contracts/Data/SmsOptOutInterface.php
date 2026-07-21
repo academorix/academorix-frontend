@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Contracts\Data;
+namespace Stackra\Notifications\Sms\Contracts\Data;
 
-use Academorix\Notifications\Sms\Models\SmsOptOut;
+use Stackra\Notifications\Sms\Models\SmsOptOut;
 use Illuminate\Container\Attributes\Bind;
 
 /**

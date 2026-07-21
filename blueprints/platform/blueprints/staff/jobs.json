@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/staff/jobs",
+  "id": "stackra://modules/staff/jobs",
   "$version": 1,
   "title": "staff — background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Staff\\Jobs\\CheckProbationEndingSoonJob",
+      "class": "Stackra\\Staff\\Jobs\\CheckProbationEndingSoonJob",
       "queue": "staff",
       "purpose": "Daily sweep of Staff rows with probation_ends_at approaching. Fires ProbationEndingSoonNotification to HR + branch manager at 14, 7, and 1 day thresholds. De-duplicated per (staff_id, threshold) so the 14-day reminder never re-fires.",
       "steps": [
@@ -18,7 +18,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Staff\\Jobs\\ExpireCoachCertificationsJob",
+      "class": "Stackra\\Staff\\Jobs\\ExpireCoachCertificationsJob",
       "queue": "staff",
       "purpose": "Daily sweep of Coach.certifications. Marks entries past expires_at with expired_at timestamp; fires CoachCertificationExpired per newly-expired entry. Also fires 30/14/7-day pre-expiry notifications for certifications approaching expiry (CoachCertificationExpiringNotification).",
       "steps": [
@@ -33,12 +33,12 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Staff\\Jobs\\ReconcileBranchManagerInvariantJob",
+      "class": "Stackra\\Staff\\Jobs\\ReconcileBranchManagerInvariantJob",
       "queue": "staff",
       "purpose": "Nightly audit: verifies EXACTLY one active branch_manager per active branch (or zero, deliberately). Fires a P1 diagnostic event when the invariant is violated (multiple managers per branch, or a manager with employment_status != 'active').",
       "steps": [
         "SELECT branch_id, COUNT(*) FROM staff WHERE is_branch_manager=true AND employment_status='active' AND deleted_at IS NULL GROUP BY branch_id HAVING COUNT(*) > 1",
-        "For each violating branch: fire a diagnostic event `BranchManagerInvariantViolated` + emit metric academorix.staff.branch_manager.invariant_violations",
+        "For each violating branch: fire a diagnostic event `BranchManagerInvariantViolated` + emit metric stackra.staff.branch_manager.invariant_violations",
         "SELECT branch_id FROM staff WHERE is_branch_manager=true AND employment_status != 'active' AND deleted_at IS NULL",
         "For each: same signal (a demoted-but-not-flipped row) — likely a race the observer's SELECT ... FOR UPDATE should have prevented"
       ],
@@ -48,7 +48,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Staff\\Jobs\\PurgeOffboardedStaffJob",
+      "class": "Stackra\\Staff\\Jobs\\PurgeOffboardedStaffJob",
       "queue": "staff",
       "purpose": "Daily sweep of offboarded Staff rows past the 90-day grace hold on emergency_contact + tax_id_last4. Redacts those confidential fields to '[REDACTED]' while preserving the rest of the row for the 7-year employment record retention. Separately, after 7 years total: hard-deletes rows with no downstream references.",
       "steps": [
@@ -65,14 +65,14 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Staff\\Jobs\\AggregateCoachRatingsJob",
+      "class": "Stackra\\Staff\\Jobs\\AggregateCoachRatingsJob",
       "queue": "staff",
       "purpose": "Nightly recomputation of Coach.rating + Coach.rating_count from Wave 3+ session-rating rows (scheduling::SessionRating table). Wave 2 ships this as a no-op skeleton — the aggregation query returns zero rows because SessionRating doesn't exist yet. Wave 3+ swap the query in and fire CoachRatingUpdated for each Coach whose rating changed.",
       "steps": [
         "For each Coach with status IN ('active', 'paused'):",
         "  Query: SELECT AVG(rating), COUNT(*) FROM session_ratings WHERE coach_id = ? AND created_at >= now() - interval '365 days' (Wave 3+; today Wave 2b returns null / 0)",
         "  If (avg, count) != (coach.rating, coach.rating_count): UPDATE coach + fire CoachRatingUpdated",
-        "Wave 2b: emit metric academorix.staff.aggregate_ratings.wave_3_placeholder to signal the job ran with no effect"
+        "Wave 2b: emit metric stackra.staff.aggregate_ratings.wave_3_placeholder to signal the job ran with no effect"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,

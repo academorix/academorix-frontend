@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Actions\Tenant;
+namespace Stackra\Facility\Actions\Tenant;
 
-use Academorix\Facility\Contracts\Repositories\DayPassRepositoryInterface;
-use Academorix\Facility\Data\DayPassData;
-use Academorix\Facility\Data\Requests\CreateDayPassRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Facility\Contracts\Repositories\DayPassRepositoryInterface;
+use Stackra\Facility\Data\DayPassData;
+use Stackra\Facility\Data\Requests\CreateDayPassRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/day-passes` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Facility

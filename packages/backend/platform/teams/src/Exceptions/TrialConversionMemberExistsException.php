@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Teams\Exceptions;
+namespace Stackra\Teams\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Cannot convert — the trialist already has an active TeamMember row on this team.

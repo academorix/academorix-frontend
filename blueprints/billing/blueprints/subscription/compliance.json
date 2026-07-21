@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/subscription/compliance",
+  "id": "stackra://modules/subscription/compliance",
   "$version": 1,
   "title": "subscription \u2014 compliance evidence",
   "description": "The billing module is the compliance-heaviest surface. SOX 404 for revenue recognition, PCI-DSS delegated to Cashier + provider, GDPR for financial personal data, and consumer-protection regulations for cancellation UX.",

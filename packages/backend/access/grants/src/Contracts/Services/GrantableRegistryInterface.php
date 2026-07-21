@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Grants\Contracts\Services;
+namespace Stackra\Grants\Contracts\Services;
 
-use Academorix\Grants\Services\GrantableRegistry;
+use Stackra\Grants\Services\GrantableRegistry;
 use Illuminate\Container\Attributes\Bind;
 
 /**

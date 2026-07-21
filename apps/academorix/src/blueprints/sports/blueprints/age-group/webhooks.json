@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/age-group/webhooks",
+  "id": "stackra://modules/age-group/webhooks",
   "$version": 1,
   "title": "age-group — outbound webhooks",
   "description": "Tenant admins can subscribe to age-group-lifecycle events via the webhook module (shared/webhooks, Wave 4). This blueprint declares the event types this module publishes. Payload shapes mirror the corresponding entries in `events.json` — the webhook module wraps them in the standard envelope.",

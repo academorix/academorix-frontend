@@ -2,16 +2,16 @@
 
 /**
  * @file CatalogEntry.php
- * @module Academorix\Cli\Catalog
+ * @module Stackra\Cli\Catalog
  * @description Read-only DTO for a single `catalog.json` entry. Fields map
  *   the schema at `.ref/schemas/catalog.v1.json` exactly.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Catalog;
+namespace Stackra\Cli\Catalog;
 
-use Academorix\Cli\Exceptions\CatalogException;
+use Stackra\Cli\Exceptions\CatalogException;
 
 /**
  * A single package's catalogue entry. Constructed only via

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDevelopmentSdk\Requests\PathwayStages;
+namespace Stackra\SportsDevelopmentSdk\Requests\PathwayStages;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsDevelopmentSdk\Data\PathwayStageData;
-use Academorix\SportsDevelopmentSdk\Payloads\PathwayStages\CreatePathwayStagePayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsDevelopmentSdk\Data\PathwayStageData;
+use Stackra\SportsDevelopmentSdk\Payloads\PathwayStages\CreatePathwayStagePayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

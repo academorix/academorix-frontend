@@ -6,7 +6,7 @@
  *   A theme is a full design-token bundle — colors, typography,
  *   spacing, radius, borders, shadows, motion. Every workspace
  *   package (`@stackra/theming`, `@stackra/settings`, `@stackra/sdui`,
- *   `academorix/theming`) references this exact shape; the
+ *   `stackra/theming`) references this exact shape; the
  *   wire payload between server and client is a JSON serialization
  *   of the same fields.
  *

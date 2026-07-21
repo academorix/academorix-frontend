@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attendance\Exceptions;
+namespace Stackra\Attendance\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * This feature requires a higher tier.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AttendanceUpgradeRequiredException extends AcademorixException
+final class AttendanceUpgradeRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

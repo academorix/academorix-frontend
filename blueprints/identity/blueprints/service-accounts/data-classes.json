@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/service-accounts/data-classes",
+  "id": "stackra://modules/service-accounts/data-classes",
   "$version": 1,
   "title": "service-accounts \u2014 field classification",
   "description": "Every credential column is `regulated_secret` (never returned on wire, never logged, never emitted to metrics). Operator-facing metadata (name, description) is `internal`. Machine-context fields (IP, user_agent) are `confidential`. Redactor rules always apply. No PII: SAs have no email, no dob, no phone. See compliance.json for SOC 2 + NIST + OWASP + PCI-DSS mapping.",
@@ -87,7 +87,7 @@
   },
   "input_dtos": [
     {
-      "class": "Academorix\\ServiceAccount\\Data\\CreateServiceAccountInput",
+      "class": "Stackra\\ServiceAccount\\Data\\CreateServiceAccountInput",
       "shape": {
         "application_id": "ULID (required, immutable)",
         "tenant_id": "ULID | null (optional; must match application_id)",
@@ -100,7 +100,7 @@
       "validation_gate": "Before creation, ServiceAccountObserver.creating refuses when: (a) application_id doesn't exist, (b) tenant_id (if non-null) belongs to a different application_id, (c) name is not unique within the application, (d) signer_kid (if provided) doesn't exist in auth::jwt_signing_keys or is disabled."
     },
     {
-      "class": "Academorix\\ServiceAccount\\Data\\UpdateServiceAccountInput",
+      "class": "Stackra\\ServiceAccount\\Data\\UpdateServiceAccountInput",
       "shape": {
         "name": "string | null (validated: valid_service_account_name)",
         "description": "string | null",
@@ -111,7 +111,7 @@
       "validation_gate": "PATCH refuses to mutate application_id, tenant_id, or signer_kid. Attempting any of the three raises 422 SERVICE_ACCOUNT_IMMUTABLE_FIELD."
     },
     {
-      "class": "Academorix\\ServiceAccount\\Data\\TokenExchangeInput",
+      "class": "Stackra\\ServiceAccount\\Data\\TokenExchangeInput",
       "shape": {
         "service_account_id": "ULID (required)",
         "secret": "string (required; the plaintext rotation secret returned at create/rotate)",
@@ -122,7 +122,7 @@
       "validation_gate": "Rate-limit checked BEFORE input parsing (per-SA + per-IP-/24). Hash::check runs constant-time bcrypt comparison. Unknown SA + wrong secret both return the same INVALID_SERVICE_ACCOUNT_CREDENTIALS payload."
     },
     {
-      "class": "Academorix\\ServiceAccount\\Data\\IssueTestJwtInput",
+      "class": "Stackra\\ServiceAccount\\Data\\IssueTestJwtInput",
       "shape": {
         "aud": "string | null (target audience; falls back to SA metadata default)",
         "ttl_seconds": "int | null (bounded; default 300)"
@@ -132,15 +132,15 @@
   ],
   "output_dtos": [
     {
-      "class": "Academorix\\ServiceAccount\\Data\\ServiceAccountAdminData",
+      "class": "Stackra\\ServiceAccount\\Data\\ServiceAccountAdminData",
       "purpose": "Platform-admin listing + detail surface. See wire_projection.platform_admin_wire_shape above. Excludes secret_hash + secret plaintext."
     },
     {
-      "class": "Academorix\\ServiceAccount\\Data\\ServiceAccountCreatedResponse",
+      "class": "Stackra\\ServiceAccount\\Data\\ServiceAccountCreatedResponse",
       "purpose": "Wraps ServiceAccountAdminData + adds the one-time-view plaintext `secret` field. Returned by POST /platform/service-accounts + POST /platform/service-accounts/{id}/rotate-secret."
     },
     {
-      "class": "Academorix\\ServiceAccount\\Data\\TokenExchangeResponse",
+      "class": "Stackra\\ServiceAccount\\Data\\TokenExchangeResponse",
       "shape": {
         "token": "string (encoded HS256 JWT)",
         "expires_in": "int (seconds until JWT `exp`)",
@@ -149,7 +149,7 @@
       "purpose": "Response body for the token-exchange endpoint."
     },
     {
-      "class": "Academorix\\ServiceAccount\\Data\\ServiceAccountUsageReportData",
+      "class": "Stackra\\ServiceAccount\\Data\\ServiceAccountUsageReportData",
       "purpose": "Response body for GET /platform/service-accounts/{id}/audit-usage + the `service-account:audit-usage` command. Includes histogram, distinct IP-/24 count, jti-reuse detections, distinct audiences, top 100 audit-log entries in the window."
     }
   ],

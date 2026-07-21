@@ -4,15 +4,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Contracts\Data;
+namespace Stackra\Rbac\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Rbac\Models\RoleDefinition;
+use Stackra\Rbac\Models\RoleDefinition;
 
 /**
  * Table shape for the `role_definitions` table.
  *
- * Academorix metadata layer FK-linked to system roles.
+ * Stackra metadata layer FK-linked to system roles.
  *
  * @category Rbac
  *

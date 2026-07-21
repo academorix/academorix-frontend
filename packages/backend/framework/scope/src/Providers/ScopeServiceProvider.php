@@ -22,18 +22,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Providers;
+namespace Stackra\Scope\Providers;
 
-use Academorix\Scope\Attributes\AsScopeResolver;
-use Academorix\Scope\Attributes\ScopedTo;
-use Academorix\Scope\Contracts\ScopeResolverChainInterface;
-use Academorix\Scope\Contracts\ScopeResolverInterface;
-use Academorix\Scope\Middleware\ResolveScope;
-use Academorix\Scope\Scopes\ScopedGlobalScope;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\OnBoot;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\Scope\Attributes\AsScopeResolver;
+use Stackra\Scope\Attributes\ScopedTo;
+use Stackra\Scope\Contracts\ScopeResolverChainInterface;
+use Stackra\Scope\Contracts\ScopeResolverInterface;
+use Stackra\Scope\Middleware\ResolveScope;
+use Stackra\Scope\Scopes\ScopedGlobalScope;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\OnBoot;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Router;

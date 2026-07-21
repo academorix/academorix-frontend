@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Exceptions;
+namespace Stackra\Invitations\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * unique_pending_invitation validation rule tripped.

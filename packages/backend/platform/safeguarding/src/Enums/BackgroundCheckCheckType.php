@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Safeguarding\Enums;
+namespace Stackra\Safeguarding\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `check_type` on `background-check`.

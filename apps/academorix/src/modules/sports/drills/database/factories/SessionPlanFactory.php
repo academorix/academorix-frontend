@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Drills\Database\Factories;
+namespace Stackra\Drills\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Drills\Contracts\Data\SessionPlanInterface;
-use Academorix\Drills\Models\SessionPlan;
+use Stackra\Drills\Contracts\Data\SessionPlanInterface;
+use Stackra\Drills\Models\SessionPlan;
 
 /**
- * Factory for {@see \Academorix\Drills\Models\SessionPlan}.
+ * Factory for {@see \Stackra\Drills\Models\SessionPlan}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Drills\Models\SessionPlan>
+ * @extends Factory<\Stackra\Drills\Models\SessionPlan>
  *
  * @category Drills
  *

@@ -12,12 +12,12 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Crud\Concerns\Repository;
+namespace Stackra\Crud\Concerns\Repository;
 
-use Academorix\Crud\Criteria\RequestFilterCriteria;
-use Academorix\Crud\Criteria\RequestSearchCriteria;
-use Academorix\Crud\Criteria\RequestSortCriteria;
-use Academorix\Crud\Registries\RepositoryConfigRegistry;
+use Stackra\Crud\Criteria\RequestFilterCriteria;
+use Stackra\Crud\Criteria\RequestSearchCriteria;
+use Stackra\Crud\Criteria\RequestSortCriteria;
+use Stackra\Crud\Registries\RepositoryConfigRegistry;
 
 /**
  * HasRequestFiltering Trait.

@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invoice\Models;
+namespace Stackra\Invoice\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Invoice\Contracts\Data\CreditNoteInterface;
-use Academorix\Invoice\Database\Factories\CreditNoteFactory;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Invoice\Concerns\BelongsToInvoice;
-use Academorix\Invoice\Enums\CreditNoteReason;
-use Academorix\Invoice\Enums\CreditNoteStatus;
-use Academorix\Invoice\Policies\CreditNotePolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Invoice\Contracts\Data\CreditNoteInterface;
+use Stackra\Invoice\Database\Factories\CreditNoteFactory;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Invoice\Concerns\BelongsToInvoice;
+use Stackra\Invoice\Enums\CreditNoteReason;
+use Stackra\Invoice\Enums\CreditNoteStatus;
+use Stackra\Invoice\Policies\CreditNotePolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

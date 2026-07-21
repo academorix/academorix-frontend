@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/coupon/policies",
+  "id": "stackra://modules/coupon/policies",
   "$version": 1,
   "title": "coupon — authorization policies",
   "description": "Two policies, one per owned entity. Admin-heavy for writes — marketing/admin/owner author coupons, only admin/owner can reverse a redemption (financial reversal — audit-critical). Every ability defers to spatie/laravel-permission for the permission check; scope narrowing runs via the ResolveScope middleware (tenant context; no branch scoping for coupons — they are tenant-wide by design).",
   "policies": [
     {
       "model": "Coupon",
-      "class": "Academorix\\Finance\\Coupon\\Policies\\CouponPolicy",
+      "class": "Stackra\\Finance\\Coupon\\Policies\\CouponPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -64,7 +64,7 @@
     },
     {
       "model": "CouponRedemption",
-      "class": "Academorix\\Finance\\Coupon\\Policies\\CouponRedemptionPolicy",
+      "class": "Stackra\\Finance\\Coupon\\Policies\\CouponRedemptionPolicy",
       "abilities": [
         {
           "action": "viewAny",

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Observers;
+namespace Stackra\Transfer\Observers;
 
-use Academorix\Transfer\Contracts\Data\XferJobInterface;
-use Academorix\Transfer\Enums\XferJobStatus;
-use Academorix\Transfer\Models\XferJob;
+use Stackra\Transfer\Contracts\Data\XferJobInterface;
+use Stackra\Transfer\Enums\XferJobStatus;
+use Stackra\Transfer\Models\XferJob;
 
 /**
  * Observer for {@see XferJob}.

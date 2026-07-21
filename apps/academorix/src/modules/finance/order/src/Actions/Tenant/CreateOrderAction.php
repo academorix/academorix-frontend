@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Order\Actions\Tenant;
+namespace Stackra\Order\Actions\Tenant;
 
-use Academorix\Order\Contracts\Repositories\OrderRepositoryInterface;
-use Academorix\Order\Data\OrderData;
-use Academorix\Order\Data\Requests\CreateOrderRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Order\Contracts\Repositories\OrderRepositoryInterface;
+use Stackra\Order\Data\OrderData;
+use Stackra\Order\Data\Requests\CreateOrderRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/orders` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Order

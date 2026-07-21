@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/teams/middleware",
+  "id": "stackra://modules/teams/middleware",
   "$version": 1,
   "title": "teams — HTTP middleware",
   "middleware": [
     {
       "alias": "team.resolve_active",
-      "class": "Academorix\\Teams\\Http\\Middleware\\ResolveActiveTeam",
+      "class": "Stackra\\Teams\\Http\\Middleware\\ResolveActiveTeam",
       "priority": 42,
       "description": "Reads team_id from the route parameter ({team}), the request body (create-child-resource flows), or the X-Team-Id header. Loads the Team model, checks tenant scoping (refuses when team.tenant_id != request tenant), and stores it on RequestContext::team() so downstream services can call `Request::activeTeam()` without re-fetching. Publishes the `activeTeam` + `activeTeamId` macros on the Request class. Auto-applied on every /api/v1/teams/{team}/** route.",
       "auto_applied": true,

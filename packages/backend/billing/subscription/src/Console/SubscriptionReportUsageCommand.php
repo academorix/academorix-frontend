@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Console;
+namespace Stackra\Subscription\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
-use Academorix\Subscription\Jobs\ReportMeteredUsageJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
+use Stackra\Subscription\Jobs\ReportMeteredUsageJob;
 
 /**
  * `php artisan subscription:report-usage {subscription}` — push

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Tests;
+namespace Stackra\Newsletter\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/newsletter.
+ * Base test case for stackra/newsletter.
  *
  * @category Newsletter
  *

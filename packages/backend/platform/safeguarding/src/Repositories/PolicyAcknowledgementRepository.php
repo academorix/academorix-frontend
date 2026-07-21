@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Safeguarding\Repositories;
+namespace Stackra\Safeguarding\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Safeguarding\Contracts\Data\PolicyAcknowledgementInterface;
-use Academorix\Safeguarding\Contracts\Repositories\PolicyAcknowledgementRepositoryInterface;
-use Academorix\Safeguarding\Models\PolicyAcknowledgement;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Safeguarding\Contracts\Data\PolicyAcknowledgementInterface;
+use Stackra\Safeguarding\Contracts\Repositories\PolicyAcknowledgementRepositoryInterface;
+use Stackra\Safeguarding\Models\PolicyAcknowledgement;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Safeguarding\Models\PolicyAcknowledgement}.
+ * Attribute-first Eloquent repository for {@see Stackra\Safeguarding\Models\PolicyAcknowledgement}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(PolicyAcknowledgementInterface::class)]` which resolves to
  * `PolicyAcknowledgement` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Safeguarding\Models\PolicyAcknowledgement>
+ * @extends Repository<\Stackra\Safeguarding\Models\PolicyAcknowledgement>
  *
  * @category Safeguarding
  *

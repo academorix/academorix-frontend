@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Settings\Actions;
+namespace Stackra\Settings\Actions;
 
-use Academorix\Settings\Contracts\SettingsServiceInterface;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Settings\Contracts\SettingsServiceInterface;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `GET /api/v1/settings/schema` — full settings schema for the

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/identity/retention",
+  "id": "stackra://modules/identity/retention",
   "$version": 1,
   "title": "identity \u2014 retention windows",
   "description": "Identity retention is compliance-driven, not product-driven. Soft-deleted Identities carry a GDPR erasure hold-period (default 30 days) before hard delete. Email-verification tokens live 24 hours; password-reset tokens live 15 minutes; recovery codes never expire (regenerated on demand).",

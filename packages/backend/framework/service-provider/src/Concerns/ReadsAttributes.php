@@ -13,12 +13,12 @@ declare(strict_types=1);
  *
  * When #[AsModule] is absent (third-party base providers), module identity
  * is auto-derived from the provider class name:
- *   - Academorix\Horizon\Providers\HorizonServiceProvider
- *     → name: 'Horizon', namespace: 'Academorix\Horizon'
+ *   - Stackra\Horizon\Providers\HorizonServiceProvider
+ *     → name: 'Horizon', namespace: 'Stackra\Horizon'
  *
  * No properties ($moduleName, $moduleNamespace) need to be set manually.
  *
- * The old backend used `Academorix\Support\Reflection` for its class-basename
+ * The old backend used `Stackra\Support\Reflection` for its class-basename
  * and file-name helpers. This port inlines equivalent `\ReflectionClass`
  * calls — the monorepo has no shared reflection utility (yet) and pulling
  * one in for two callsites would be over-engineering.
@@ -28,10 +28,10 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\ServiceProvider\Concerns;
+namespace Stackra\ServiceProvider\Concerns;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
 use olvlvl\ComposerAttributeCollector\Attributes;
 
 /**
@@ -68,7 +68,7 @@ trait ReadsAttributes
     private string $resolvedModuleName = '';
 
     /**
-     * Resolved module PSR-4 namespace (e.g. 'Academorix\Tenancy').
+     * Resolved module PSR-4 namespace (e.g. 'Stackra\Tenancy').
      */
     private string $resolvedModuleNamespace = '';
 
@@ -211,7 +211,7 @@ trait ReadsAttributes
     /**
      * Get the module PSR-4 namespace.
      *
-     * @return string The module namespace (e.g. 'Academorix\Tenancy').
+     * @return string The module namespace (e.g. 'Stackra\Tenancy').
      */
     public function getModuleNamespace(): string
     {
@@ -300,8 +300,8 @@ trait ReadsAttributes
      * Auto-derive the module namespace from the provider's class namespace.
      *
      * Strips the trailing \Providers segment:
-     *   Academorix\Tenancy\Providers → Academorix\Tenancy
-     *   Academorix\Horizon\Providers → Academorix\Horizon
+     *   Stackra\Tenancy\Providers → Stackra\Tenancy
+     *   Stackra\Horizon\Providers → Stackra\Horizon
      *
      * @return string The derived module namespace.
      */

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformFormsSdk\Resources;
+namespace Stackra\PlatformFormsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\PlatformFormsSdk\Data\FormSubmissionData;
-use Academorix\PlatformFormsSdk\Requests\FormSubmissions\ListFormSubmissionsRequest;
-use Academorix\PlatformFormsSdk\Requests\FormSubmissions\ShowFormSubmissionRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\PlatformFormsSdk\Data\FormSubmissionData;
+use Stackra\PlatformFormsSdk\Requests\FormSubmissions\ListFormSubmissionsRequest;
+use Stackra\PlatformFormsSdk\Requests\FormSubmissions\ShowFormSubmissionRequest;
 use Saloon\Http\Response;
 
 /**

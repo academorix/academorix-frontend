@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformIntegrationsSdk\Requests\AppInstallations;
+namespace Stackra\PlatformIntegrationsSdk\Requests\AppInstallations;
 
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\ApiSdk\Data\PaginationLinks;
-use Academorix\ApiSdk\Data\PaginationMeta;
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\PlatformIntegrationsSdk\Data\AppInstallationData;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\ApiSdk\Data\PaginationLinks;
+use Stackra\ApiSdk\Data\PaginationMeta;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\PlatformIntegrationsSdk\Data\AppInstallationData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

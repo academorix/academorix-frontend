@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Jobs;
+namespace Stackra\Newsletter\Jobs;
 
-use Academorix\Newsletter\Contracts\Repositories\NewsletterRepositoryInterface;
-use Academorix\Newsletter\Contracts\Services\ReputationMonitorInterface;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterRepositoryInterface;
+use Stackra\Newsletter\Contracts\Services\ReputationMonitorInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;

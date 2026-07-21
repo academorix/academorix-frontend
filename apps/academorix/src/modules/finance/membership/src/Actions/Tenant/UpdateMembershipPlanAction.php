@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Membership\Actions\Tenant;
+namespace Stackra\Membership\Actions\Tenant;
 
-use Academorix\Membership\Contracts\Repositories\MembershipPlanRepositoryInterface;
-use Academorix\Membership\Data\MembershipPlanData;
-use Academorix\Membership\Data\Requests\UpdateMembershipPlanRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\Membership\Contracts\Repositories\MembershipPlanRepositoryInterface;
+use Stackra\Membership\Data\MembershipPlanData;
+use Stackra\Membership\Data\Requests\UpdateMembershipPlanRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Patch;
 
 /**
  * `PATCH /api/v1/membership-plans/{plan}` — update action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Patch(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Membership

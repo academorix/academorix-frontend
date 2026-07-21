@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Casts;
+namespace Stackra\Transfer\Casts;
 
-use Academorix\Transfer\Enums\XferJobStatus;
+use Stackra\Transfer\Enums\XferJobStatus;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 

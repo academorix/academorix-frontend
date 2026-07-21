@@ -1,19 +1,19 @@
 {
-  "id": "academorix://modules/geography/middleware",
+  "id": "stackra://modules/geography/middleware",
   "$version": 1,
   "title": "geography \u2014 HTTP middleware",
   "middleware": [
     {
       "alias": "world.locale",
-      "class": "Academorix\\Geography\\Http\\Middleware\\ResolveLocaleForWorld",
+      "class": "Stackra\\Geography\\Http\\Middleware\\ResolveLocaleForWorld",
       "priority": 13,
-      "description": "Thin wrapper over `Nnjeim\\World\\Http\\Middleware\\Locale`. Reads ?locale query, falls back to Accept-Language, then app locale. Sets a request-scoped locale on the vendor's LocaleService so HasWorldLocalizedName resolves correctly. Runs AFTER localization::locale.resolve when both modules are present (deferred to Academorix locale by default).",
+      "description": "Thin wrapper over `Nnjeim\\World\\Http\\Middleware\\Locale`. Reads ?locale query, falls back to Accept-Language, then app locale. Sets a request-scoped locale on the vendor's LocaleService so HasWorldLocalizedName resolves correctly. Runs AFTER localization::locale.resolve when both modules are present (deferred to Stackra locale by default).",
       "auto_applied": false,
       "auto_applied_to": []
     },
     {
       "alias": "geography.cache",
-      "class": "Academorix\\Geography\\Http\\Middleware\\CacheReferenceCatalog",
+      "class": "Stackra\\Geography\\Http\\Middleware\\CacheReferenceCatalog",
       "priority": 45,
       "description": "Response cache for reference-catalog GETs. Keys entries by `${prefix}:${verb}:${path}:${sha1(sortedQuery)}:${locale}` with the default cache store (Redis in production, array in tests). TTL from config('geography.cache.ttl'), default 3600s. Bypassed when config('geography.cache.enabled') is false. NEVER wraps /geolocate (per-user IP-specific responses handled by the vendor's separate cache).",
       "auto_applied": false,
@@ -31,7 +31,7 @@
   "rate_limiter_definitions": [
     {
       "name": "geolocate",
-      "class": "Academorix\\Geography\\RateLimiters\\GeolocateRateLimiter",
+      "class": "Stackra\\Geography\\RateLimiters\\GeolocateRateLimiter",
       "registered_by": "GeographyServiceProvider::registerRateLimiters()",
       "default": "10 req/min per user_id (falls back to per_ip for guests, though guest calls to /geolocate are refused by auth:sanctum before reaching the limiter)",
       "env_override": "GEOGRAPHY_GEOLOCATE_RATE_PER_MINUTE"

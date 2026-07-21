@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Database\Factories;
+namespace Stackra\Approvals\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Approvals\Contracts\Data\ApprovalRequirementInterface;
-use Academorix\Approvals\Models\ApprovalRequirement;
+use Stackra\Approvals\Contracts\Data\ApprovalRequirementInterface;
+use Stackra\Approvals\Models\ApprovalRequirement;
 
 /**
- * Factory for {@see \Academorix\Approvals\Models\ApprovalRequirement}.
+ * Factory for {@see \Stackra\Approvals\Models\ApprovalRequirement}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Approvals\Models\ApprovalRequirement>
+ * @extends Factory<\Stackra\Approvals\Models\ApprovalRequirement>
  *
  * @category Approvals
  *

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/schemas/approval-decision",
+  "id": "stackra://modules/workflow/approvals/schemas/approval-decision",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ApprovalDecision",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "apd_",
     "incrementing": false,
-    "model": "Academorix\\Approval\\Models\\ApprovalDecision",
-    "interface": "Academorix\\Approval\\Contracts\\Data\\ApprovalDecisionInterface",
-    "implements": ["Academorix\\Approval\\Contracts\\Data\\ApprovalDecisionInterface"],
+    "model": "Stackra\\Approval\\Models\\ApprovalDecision",
+    "interface": "Stackra\\Approval\\Contracts\\Data\\ApprovalDecisionInterface",
+    "implements": ["Stackra\\Approval\\Contracts\\Data\\ApprovalDecisionInterface"],
     "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "Filterable"],
     "casts": {
       "decision": "ApprovalDecisionType",

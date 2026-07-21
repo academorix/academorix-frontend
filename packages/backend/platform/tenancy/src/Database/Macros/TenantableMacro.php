@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Database\Macros;
+namespace Stackra\Tenancy\Database\Macros;
 
-use Academorix\Database\Attributes\AsDatabaseBlueprint;
+use Stackra\Database\Attributes\AsDatabaseBlueprint;
 use Illuminate\Database\Schema\Blueprint;
 
 /**
@@ -26,7 +26,7 @@ use Illuminate\Database\Schema\Blueprint;
  * index; `tenantableOptional()` adds a nullable one.
  *
  * Discovered at boot by
- * {@see \Academorix\Database\Providers\DatabaseServiceProvider} —
+ * {@see \Stackra\Database\Providers\DatabaseServiceProvider} —
  * `#[AsDatabaseBlueprint(priority: 30)]` places it after the
  * framework core macros (10) + application-tier macros (20).
  *

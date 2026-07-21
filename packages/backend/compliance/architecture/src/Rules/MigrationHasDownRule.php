@@ -45,9 +45,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Violations\Violation;
 
 /**
  * Enforce "every migration defines a `down()` method".

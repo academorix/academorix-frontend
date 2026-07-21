@@ -4,7 +4,7 @@
  * @file modules/platform/storage/config/storage.php
  *
  * @description
- * Runtime knobs for the `academorix/storage` module. Merged under
+ * Runtime knobs for the `stackra/storage` module. Merged under
  * the `storage.*` key by the base ServiceProvider's LoadsResources
  * concern.
  */
@@ -113,7 +113,7 @@ return [
     | Entitlement keys
     |--------------------------------------------------------------------------
     |
-    | Feature/quota keys used against the `academorix/entitlements`
+    | Feature/quota keys used against the `stackra/entitlements`
     | package. SyncStorageEntitlementUsageJob writes usage back on
     | these keys.
     */

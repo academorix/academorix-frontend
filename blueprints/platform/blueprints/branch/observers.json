@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/branch/observers",
+  "id": "stackra://modules/branch/observers",
   "$version": 1,
   "title": "branch — Eloquent observers",
   "observers": [
     {
       "model": "Branch",
-      "observer": "Academorix\\Branch\\Observers\\BranchObserver",
+      "observer": "Stackra\\Branch\\Observers\\BranchObserver",
       "handles": [
         "creating → populate ULID prefix `brn_`.",
         "creating → refuse when `organization.tenant_id !== branch.tenant_id` (`BRANCH_ORGANIZATION_TENANT_MISMATCH`, 422). Belt-and-braces on top of the DB FK — surfaces a clearer error than a raw FK violation.",

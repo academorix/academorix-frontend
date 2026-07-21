@@ -1,10 +1,10 @@
 {
-  "name": "academorix-sports/development-sdk",
+  "name": "stackra-sports/development-sdk",
   "type": "library",
-  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `development` module of the Sports service. Auto-discovered at boot by academorix/sports-sdk via #[AsSdkResource(name: 'development', service: 'sports')]; consumed by every cross-service caller strictly over HTTP.",
+  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `development` module of the Sports service. Auto-discovered at boot by stackra/sports-sdk via #[AsSdkResource(name: 'development', service: 'sports')]; consumed by every cross-service caller strictly over HTTP.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "sdk",
     "saloon",
     "spatie-data",
@@ -16,10 +16,10 @@
   ],
   "require": {
     "php": "^8.3",
-    "academorix/api-sdk": "@dev",
-    "academorix/enum": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
+    "stackra/api-sdk": "@dev",
+    "stackra/enum": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
     "saloonphp/saloon": "^3.10",
     "spatie/laravel-data": "^4.11"
   },
@@ -32,12 +32,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\\\SportsDevelopmentSdk\\\\": "src/"
+      "Stackra\\\\SportsDevelopmentSdk\\\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\\\SportsDevelopmentSdk\\\\Tests\\\\": "tests/"
+      "Stackra\\\\SportsDevelopmentSdk\\\\Tests\\\\": "tests/"
     }
   },
   "extra": {

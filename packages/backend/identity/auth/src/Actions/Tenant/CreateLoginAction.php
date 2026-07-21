@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Actions\Tenant;
+namespace Stackra\Auth\Actions\Tenant;
 
-use Academorix\Auth\Contracts\Services\SanctumTokenIssuerInterface;
-use Academorix\Auth\Data\LoginResponseData;
-use Academorix\Auth\Data\Requests\LoginRequestData;
-use Academorix\Identity\Contracts\Data\IdentityInterface;
-use Academorix\Identity\Contracts\Repositories\IdentityRepositoryInterface;
-use Academorix\Identity\Exceptions\IdentityLockedException;
-use Academorix\Identity\Exceptions\IdentityNotFoundException;
-use Academorix\Identity\Models\Identity;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Auth\Contracts\Services\SanctumTokenIssuerInterface;
+use Stackra\Auth\Data\LoginResponseData;
+use Stackra\Auth\Data\Requests\LoginRequestData;
+use Stackra\Identity\Contracts\Data\IdentityInterface;
+use Stackra\Identity\Contracts\Repositories\IdentityRepositoryInterface;
+use Stackra\Identity\Exceptions\IdentityLockedException;
+use Stackra\Identity\Exceptions\IdentityNotFoundException;
+use Stackra\Identity\Models\Identity;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Http\JsonResponse;

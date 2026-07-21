@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/activity/health",
+  "id": "stackra://modules/activity/health",
   "$version": 1,
   "title": "activity — health probes",
   "description": "Health probes registered with Foundation's health aggregator (surfaced via `GET /api/health`). Activity is a user-visible surface — a broken feed is a customer-facing bug. Probes have moderate tolerance for latency because activity capture must never block domain writes.",
   "endpoint": "GET /api/health",
-  "aggregator": "Academorix\\Foundation\\Health\\HealthAggregator",
+  "aggregator": "Stackra\\Foundation\\Health\\HealthAggregator",
   "probes": [
     {
       "name": "activity-log-table-reachable",
-      "class": "Academorix\\Observability\\Activity\\Health\\ActivityLogTableReachableProbe",
+      "class": "Stackra\\Observability\\Activity\\Health\\ActivityLogTableReachableProbe",
       "category": "readiness",
       "critical": true,
       "description": "Verifies the `activity_log` table is reachable + accepts writes (dry-run insert wrapped in a rolled-back transaction). Critical — activity capture is a soft dependency for domain writes, but a broken table breaks every LogsActivity trait fire.",
@@ -16,7 +16,7 @@
     },
     {
       "name": "activity-log-name-catalog-loaded",
-      "class": "Academorix\\Observability\\Activity\\Health\\LogNameCatalogLoadedProbe",
+      "class": "Stackra\\Observability\\Activity\\Health\\LogNameCatalogLoadedProbe",
       "category": "startup",
       "critical": true,
       "description": "Verifies data/log-names-catalog.json loaded successfully at boot. LogsActivity trait's boot-time validation depends on it — a missing catalog means every trait fire refuses at model boot.",
@@ -24,7 +24,7 @@
     },
     {
       "name": "activity-vendor-migration-applied",
-      "class": "Academorix\\Observability\\Activity\\Health\\VendorMigrationAppliedProbe",
+      "class": "Stackra\\Observability\\Activity\\Health\\VendorMigrationAppliedProbe",
       "category": "startup",
       "critical": true,
       "description": "Verifies the vendor's `create_activity_log_table` migration ran AND our `add_tenant_id_and_application_id_to_activity_log_table` overlay ran. Missing overlay = activity writes fail (tenant_id NOT NULL constraint violation). Fails startup — halts boot until the migration is applied.",
@@ -32,7 +32,7 @@
     },
     {
       "name": "activity-backfill-complete",
-      "class": "Academorix\\Observability\\Activity\\Health\\BackfillCompleteProbe",
+      "class": "Stackra\\Observability\\Activity\\Health\\BackfillCompleteProbe",
       "category": "readiness",
       "critical": false,
       "description": "Counts rows WHERE tenant_id IS NULL AND properties->>'tenant_id' IS NOT NULL. Should be zero post-Wave-6 upgrade. Non-critical — the backfill job may still be running; the count decreases monotonically. Alerts fire when the count has been non-zero for >48h.",
@@ -40,7 +40,7 @@
     },
     {
       "name": "activity-broadcast-reachable",
-      "class": "Academorix\\Observability\\Activity\\Health\\BroadcastReachableProbe",
+      "class": "Stackra\\Observability\\Activity\\Health\\BroadcastReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "Verifies the reverb broadcast layer is reachable + accepts a synthetic broadcast to the health-check channel. Non-critical because the frontend falls back to polling when broadcast is unavailable — slower but correct.",
@@ -48,7 +48,7 @@
     },
     {
       "name": "activity-jobs-not-stalled",
-      "class": "Academorix\\Observability\\Activity\\Health\\JobsNotStalledProbe",
+      "class": "Stackra\\Observability\\Activity\\Health\\JobsNotStalledProbe",
       "category": "liveness",
       "critical": true,
       "description": "Reads depth + oldest-job age for the `activity` job queue class (subscribers + retention + broadcast + installer + digest). Fails when depth > 10000 pending OR oldest job > 30 minutes on retention OR > 5 minutes on notifications. Stalled queues = retention doesn't purge = disk grows = eventual production incident.",
@@ -56,7 +56,7 @@
     },
     {
       "name": "activity-schedule-registered",
-      "class": "Academorix\\Observability\\Activity\\Health\\ScheduleRegisteredProbe",
+      "class": "Stackra\\Observability\\Activity\\Health\\ScheduleRegisteredProbe",
       "category": "startup",
       "critical": true,
       "description": "Boot-time. Verifies the six scheduled entries (activity:purge daily, activity:archive-cold weekly, activity:reconcile-batches daily, digest:activity daily + weekly, activity:count daily) are registered on the scheduler. Missing entries = activity data never purges = permanent unintended retention.",
@@ -64,7 +64,7 @@
     },
     {
       "name": "activity-orphan-batch-count",
-      "class": "Academorix\\Observability\\Activity\\Health\\OrphanBatchCountProbe",
+      "class": "Stackra\\Observability\\Activity\\Health\\OrphanBatchCountProbe",
       "category": "readiness",
       "critical": false,
       "description": "Emits count of activity batches marked as orphaned in the last 24h. Fed by the daily ReconcileActivityBatchesJob. Non-critical but alerts fire above threshold (default 100 orphans / day — anything higher signals request crashes elsewhere on the platform).",
@@ -72,7 +72,7 @@
     },
     {
       "name": "activity-write-latency-p95",
-      "class": "Academorix\\Observability\\Activity\\Health\\WriteLatencyP95Probe",
+      "class": "Stackra\\Observability\\Activity\\Health\\WriteLatencyP95Probe",
       "category": "readiness",
       "critical": false,
       "description": "Runs a synthetic LogsActivity write with a fixture Booking + timer. Fails when p95 latency > 100ms over the last 60s. Non-critical (informational) — activity writes are the tail on domain writes; latency here directly impacts user-perceived request time.",

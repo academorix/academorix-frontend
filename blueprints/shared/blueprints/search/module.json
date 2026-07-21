@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "search",
   "alias": "search",
-  "namespace": "Academorix\\Search",
+  "namespace": "Stackra\\Search",
   "description": "Enterprise search engine. Thin wrapper around `laravel/scout` with our conventions: attribute-driven registration (#[Searchable] / #[SearchField] / #[SearchFacet] / #[SearchSynonym] / #[SearchBoost]), pluggable engine adapters (Meilisearch default for user-facing, Postgres FTS for internal, pgvector for semantic, Elasticsearch stub for v2), a unified query API (`Search::query('term')->across(Model::class, ...)->boost(...)->filter(...)->get()`) with an engine-native escape hatch (`Search::engine('meilisearch')->raw($body)`), zero-downtime reindex via alias swap, per-tenant + per-language synonym registry, saved queries + smart lists, user-facing autocomplete (`GET /search/suggest`), and full analytics (query volume, no-results, click-through). Every long-running sync produces a persisted `search_sync_jobs` domain record with notifications on finish. Foundation's earlier `Searchable` trait + `->searchable()` blueprint macro + `IndexSearchableJob` + `search:reindex`/`search:flush` commands + `SearchEngineResolver` binding moved here on module inception; foundation retains no search mentions.",
   "keywords": [
     "search",
@@ -20,7 +20,7 @@
     "semantic-search"
   ],
   "priority": 24,
-  "providers": ["Academorix\\Search\\Providers\\SearchServiceProvider"],
+  "providers": ["Stackra\\Search\\Providers\\SearchServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "audit", "activity", "notifications", "settings"],
   "extendedBy": [],
@@ -128,7 +128,7 @@
     "adapters": [
       {
         "key": "meilisearch",
-        "class": "Academorix\\Search\\Engines\\MeilisearchEngine",
+        "class": "Stackra\\Search\\Engines\\MeilisearchEngine",
         "status": "full",
         "role": "default for user-facing indexes",
         "scoutDriver": "laravel/scout — built-in Meilisearch driver",
@@ -150,7 +150,7 @@
       },
       {
         "key": "postgres-fts",
-        "class": "Academorix\\Search\\Engines\\PostgresFtsEngine",
+        "class": "Stackra\\Search\\Engines\\PostgresFtsEngine",
         "status": "full",
         "role": "default for internal-only indexes (audit, activity, admin logs) — no new infrastructure",
         "scoutDriver": "devnoiseconsulting/laravel-scout-postgres-tsvector",
@@ -168,7 +168,7 @@
       },
       {
         "key": "pgvector",
-        "class": "Academorix\\Search\\Engines\\PgvectorEngine",
+        "class": "Stackra\\Search\\Engines\\PgvectorEngine",
         "status": "declared, disabled by default",
         "role": "semantic similarity (v1 stub — activated when the first AI feature lands)",
         "scoutDriver": "benbjurstrom/pgvector-scout",
@@ -179,7 +179,7 @@
       },
       {
         "key": "elasticsearch",
-        "class": "Academorix\\Search\\Engines\\ElasticsearchEngine",
+        "class": "Stackra\\Search\\Engines\\ElasticsearchEngine",
         "status": "v2 stub",
         "role": "future — for the 100M+ document tier or regulated markets that require ES specifically",
         "scoutDriver": "not-yet-selected",

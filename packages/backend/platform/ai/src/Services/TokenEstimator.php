@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Ai\Services;
+namespace Stackra\Ai\Services;
 
-use Academorix\Ai\Contracts\Services\TokenEstimatorInterface;
+use Stackra\Ai\Contracts\Services\TokenEstimatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Ai\Contracts\Repositories\AiConversationRepositoryInterface;
+use Stackra\Ai\Contracts\Repositories\AiConversationRepositoryInterface;
 
 /**
  * Concrete service — TokenEstimator.

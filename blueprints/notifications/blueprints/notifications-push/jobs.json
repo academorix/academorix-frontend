@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/notifications-push/jobs",
+  "id": "stackra://modules/notifications-push/jobs",
   "$version": 1,
   "title": "notifications-push \u2014 background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Notifications\\Push\\Jobs\\SendPushJob",
+      "class": "Stackra\\Notifications\\Push\\Jobs\\SendPushJob",
       "queue": "resolved-at-dispatch \u2014 notifications-critical if priority=critical, else notifications",
       "purpose": "Send a Notification via push to all active subscriptions for the recipient user + application.",
       "steps": [
@@ -26,7 +26,7 @@
       "backoff": [30, 120, 600, 3600]
     },
     {
-      "class": "Academorix\\Notifications\\Push\\Jobs\\PruneExpiredSubscriptionsJob",
+      "class": "Stackra\\Notifications\\Push\\Jobs\\PruneExpiredSubscriptionsJob",
       "queue": "notifications",
       "purpose": "Soft-delete PushSubscription rows with last_seen_at < now() - 90d. Also hard-purges rows soft-deleted > 30d ago.",
       "shouldQueue": true,
@@ -36,7 +36,7 @@
       "notes": "Runs daily from schedule."
     },
     {
-      "class": "Academorix\\Notifications\\Push\\Jobs\\IngestPushProviderWebhookJob",
+      "class": "Stackra\\Notifications\\Push\\Jobs\\IngestPushProviderWebhookJob",
       "queue": "notifications-webhooks",
       "purpose": "Normalises provider webhook payload (APNs Feedback / FCM invalid tokens / OneSignal delivery events) into PushDelivered / PushInvalidToken / PushOpened events.",
       "shouldQueue": true,
@@ -47,7 +47,7 @@
       "backoff": [10, 60, 300]
     },
     {
-      "class": "Academorix\\Notifications\\Push\\Jobs\\ValidatePushTokenJob",
+      "class": "Stackra\\Notifications\\Push\\Jobs\\ValidatePushTokenJob",
       "queue": "notifications",
       "purpose": "Async re-validation of a device token. Dispatched on suspicion of provider revocation (e.g. delivery failed with ambiguous error). Fires PushInvalidToken if token is confirmed invalid.",
       "shouldQueue": true,

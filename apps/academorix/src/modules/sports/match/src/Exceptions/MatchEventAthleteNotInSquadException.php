@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Exceptions;
+namespace Stackra\Match\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to log a match_event referencing an athlete who is not in the match's squad.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MatchEventAthleteNotInSquadException extends AcademorixException
+final class MatchEventAthleteNotInSquadException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

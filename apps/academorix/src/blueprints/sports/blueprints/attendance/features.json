@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/attendance/features",
+  "id": "stackra://modules/attendance/features",
   "$version": 1,
   "title": "attendance — feature keys",
   "reference": {

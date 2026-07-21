@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/notifications-sms/health",
+  "id": "stackra://modules/notifications-sms/health",
   "$version": 1,
   "title": "notifications-sms \u2014 health probes",
   "probes": [
     {
       "name": "notifications-sms-twilio-reachable",
-      "class": "Academorix\\Notifications\\Sms\\Health\\Probes\\TwilioReachableProbe",
+      "class": "Stackra\\Notifications\\Sms\\Health\\Probes\\TwilioReachableProbe",
       "category": "readiness",
       "critical": false,
       "timeoutMs": 5000,
@@ -13,7 +13,7 @@
     },
     {
       "name": "notifications-sms-messagebird-reachable",
-      "class": "Academorix\\Notifications\\Sms\\Health\\Probes\\MessageBirdReachableProbe",
+      "class": "Stackra\\Notifications\\Sms\\Health\\Probes\\MessageBirdReachableProbe",
       "category": "readiness",
       "critical": false,
       "timeoutMs": 5000,
@@ -21,7 +21,7 @@
     },
     {
       "name": "notifications-sms-vonage-reachable",
-      "class": "Academorix\\Notifications\\Sms\\Health\\Probes\\VonageReachableProbe",
+      "class": "Stackra\\Notifications\\Sms\\Health\\Probes\\VonageReachableProbe",
       "category": "readiness",
       "critical": false,
       "timeoutMs": 5000,
@@ -29,7 +29,7 @@
     },
     {
       "name": "notifications-sms-plivo-reachable",
-      "class": "Academorix\\Notifications\\Sms\\Health\\Probes\\PlivoReachableProbe",
+      "class": "Stackra\\Notifications\\Sms\\Health\\Probes\\PlivoReachableProbe",
       "category": "readiness",
       "critical": false,
       "timeoutMs": 5000,
@@ -37,7 +37,7 @@
     },
     {
       "name": "notifications-sms-aws-sns-reachable",
-      "class": "Academorix\\Notifications\\Sms\\Health\\Probes\\AwsSnsReachableProbe",
+      "class": "Stackra\\Notifications\\Sms\\Health\\Probes\\AwsSnsReachableProbe",
       "category": "readiness",
       "critical": false,
       "timeoutMs": 5000,
@@ -45,7 +45,7 @@
     },
     {
       "name": "notifications-sms-cost-cap-approaching",
-      "class": "Academorix\\Notifications\\Sms\\Health\\Probes\\CostCapApproachingProbe",
+      "class": "Stackra\\Notifications\\Sms\\Health\\Probes\\CostCapApproachingProbe",
       "category": "readiness",
       "critical": false,
       "description": "Warns when any tenant is > 80% of monthly cost cap. Alerts admins before refuse threshold.",

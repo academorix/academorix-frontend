@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/organization/permissions",
+  "id": "stackra://modules/organization/permissions",
   "$version": 1,
   "title": "organization — permissions",
-  "seeder": "Academorix\\Organization\\Database\\Seeders\\OrganizationPermissionSeeder",
+  "seeder": "Stackra\\Organization\\Database\\Seeders\\OrganizationPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

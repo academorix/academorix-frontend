@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/audit/features",
+  "id": "stackra://modules/audit/features",
   "$version": 1,
   "title": "audit — feature keys",
   "description": "Feature keys published against feature-flag::FeatureFlag. Distinct from feature-flags.json (which is the pennant kill-switch panel — for ops emergency use). These are tenant-facing capabilities gated by plan tier.",

@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/telemetry/permissions",
+  "id": "stackra://modules/telemetry/permissions",
   "$version": 1,
   "title": "telemetry \u2014 permissions",
-  "seeder": "Academorix\\Telemetry\\Database\\Seeders\\TelemetryPermissionSeeder",
+  "seeder": "Stackra\\Telemetry\\Database\\Seeders\\TelemetryPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

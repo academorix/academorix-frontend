@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Rules;
+namespace Stackra\Integrations\Rules;
 
-use Academorix\Integrations\Enums\IntegrationKind;
+use Stackra\Integrations\Enums\IntegrationKind;
 use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Enums;
+namespace Stackra\Domains\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
  * Method used to verify ownership of a Domain.
@@ -22,7 +22,7 @@ enum DomainVerificationMethod: string
     use Enum;
 
     #[Label('DNS TXT')]
-    #[Description('Expect a TXT record containing our verification token at `_academorix.{host}`.')]
+    #[Description('Expect a TXT record containing our verification token at `_stackra.{host}`.')]
     case DnsTxt = 'dns_txt';
 
     #[Label('DNS CNAME')]

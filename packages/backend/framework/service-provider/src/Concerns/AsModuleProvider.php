@@ -17,14 +17,14 @@ declare(strict_types=1);
  *
  * Module name and namespace are auto-derived from the provider class name
  * when not explicitly set via #[AsModule] attribute or properties:
- *   - `Academorix\Horizon\Providers\HorizonServiceProvider`
- *     → name: 'Horizon', namespace: 'Academorix\Horizon'
- *   - `Academorix\Nightwatch\Providers\NightwatchServiceProvider`
- *     → name: 'Nightwatch', namespace: 'Academorix\Nightwatch'
+ *   - `Stackra\Horizon\Providers\HorizonServiceProvider`
+ *     → name: 'Horizon', namespace: 'Stackra\Horizon'
+ *   - `Stackra\Nightwatch\Providers\NightwatchServiceProvider`
+ *     → name: 'Nightwatch', namespace: 'Stackra\Nightwatch'
  *
  * ## Usage
  *
- * With the Academorix base ServiceProvider:
+ * With the Stackra base ServiceProvider:
  *   ```php
  *   #[AsModule(name: 'Tenancy', priority: 10)]
  *   #[LoadsResources(migrations: true, config: true)]
@@ -44,13 +44,13 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\ServiceProvider\Concerns;
+namespace Stackra\ServiceProvider\Concerns;
 
-use Academorix\ServiceProvider\Bootstrappers\BootstrapperDiscoveryBootstrapper;
-use Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper;
-use Academorix\ServiceProvider\Enums\ModuleLifecycleEvent;
-use Academorix\ServiceProvider\Registry\BootstrapperRegistry;
-use Academorix\ServiceProvider\Support\BootstrapperRunner;
+use Stackra\ServiceProvider\Bootstrappers\BootstrapperDiscoveryBootstrapper;
+use Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper;
+use Stackra\ServiceProvider\Enums\ModuleLifecycleEvent;
+use Stackra\ServiceProvider\Registry\BootstrapperRegistry;
+use Stackra\ServiceProvider\Support\BootstrapperRunner;
 
 /**
  * Complete service provider functionality as a composable trait.

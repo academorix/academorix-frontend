@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsCompetitionSdk\Enums;
+namespace Stackra\SportsCompetitionSdk\Enums;
 
 /**
  * Wire-visible backed enum for `competition-team.registration_status`.

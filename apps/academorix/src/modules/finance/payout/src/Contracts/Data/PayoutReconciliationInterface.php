@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payout\Contracts\Data;
+namespace Stackra\Payout\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Payout\Models\PayoutReconciliation;
+use Stackra\Payout\Models\PayoutReconciliation;
 
 /**
  * Table shape for the `payout_reconciliations` table.

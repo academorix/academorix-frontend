@@ -58,7 +58,7 @@ owning_lead: product-lead
   - Feature slug (kebab-case)
   - Origin (customer PDF / internal brief / market opportunity)
   - Intake artifact path (`.kiro/product/intake/<slug>/`)
-  - Assigned agent (`spec-intake-analyst` for Phase 0, `academorix-product` for
+  - Assigned agent (`spec-intake-analyst` for Phase 0, `stackra-product` for
     Phase 1-2)
   - Phase 0 checkboxes:
     - [ ] `brief.md` written
@@ -238,10 +238,10 @@ sibling_docs:
 ### Structure
 
 - **Intro** — how to use this file; when to read AGENT_ROSTER.md instead
-- **Recipe 0 — Bootstrap a new workspace with `academorix new`** (Day -1)
+- **Recipe 0 — Bootstrap a new workspace with `stackra new`** (Day -1)
   - Prerequisites (Composer 2, Node 22+, pnpm 10, Doppler CLI)
-  - Install the CLI globally OR via `pnpm --filter academorix/cli exec ...`
-  - Run `academorix new my-project`
+  - Install the CLI globally OR via `pnpm --filter stackra/cli exec ...`
+  - Run `stackra new my-project`
   - What gets created (points at three templates)
   - What comes next (Recipe 1)
 - **Recipe 1 — Intake a PDF and emit a project blueprint** (Day 0)
@@ -251,7 +251,7 @@ sibling_docs:
   - Handoff to Recipe 2
 - **Recipe 2 — Turn a brief into a PRD + INVEST stories** (Day 1-3)
   - Invoke `product-lead`
-  - `product-lead` fans out to `academorix-product` (writer) for the actual
+  - `product-lead` fans out to `stackra-product` (writer) for the actual
     authoring
   - Update `tasks-intake-discovery-definition.md` at each phase gate
 - **Recipe 3 — Design phase (5 specialists coordinated in rounds)** (Day 4-7)

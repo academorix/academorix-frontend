@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Jobs;
+namespace Stackra\Notifications\Mail\Jobs;
 
-use Academorix\Notifications\Mail\Contracts\Services\MailProviderWebhookIngestorInterface;
+use Stackra\Notifications\Mail\Contracts\Services\MailProviderWebhookIngestorInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -22,10 +22,10 @@ use Psr\Log\LoggerInterface;
  * `MailClicked` / `MailBounced` / `MailComplaint`).
  *
  * Dispatched by
- * {@see \Academorix\Notifications\Mail\Listeners\IngestMailProviderWebhookListener}
+ * {@see \Stackra\Notifications\Mail\Listeners\IngestMailProviderWebhookListener}
  * when `webhook::InboundWebhookReceived` fires with
  * `namespace=notifications-mail`, OR by
- * {@see \Academorix\Notifications\Mail\Actions\Central\ReceiveMailWebhook}
+ * {@see \Stackra\Notifications\Mail\Actions\Central\ReceiveMailWebhook}
  * when a provider posts directly to this module's central receiver.
  *
  * Blueprint parameters:
@@ -36,7 +36,7 @@ use Psr\Log\LoggerInterface;
  *     DB error; drop after three attempts.
  *
  * Idempotency lives in the ingestor: a payload without a
- * correlation id (`X-Academorix-Notification-Id`) is logged +
+ * correlation id (`X-Stackra-Notification-Id`) is logged +
  * acknowledged as a no-op, so re-delivery is safe.
  *
  * Blueprint reference:

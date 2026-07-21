@@ -14,7 +14,7 @@
 
 project:
   # TODO(observability-engineer): set the Sentry project slug.
-  slug: academorix-app
+  slug: stackra-app
   platform: javascript-react
   team: engineering
 
@@ -66,7 +66,7 @@ alerts:
     actions:
       - id: 'sentry.integrations.slack.notify_action.SlackNotifyServiceAction'
         # TODO(observability-engineer): set to the real workspace + channel.
-        workspace: 'academorix'
+        workspace: 'stackra'
         channel: '#alerts-production'
     action_match: 'all'
     frequency: 30

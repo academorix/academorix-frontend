@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Exceptions;
+namespace Stackra\Referrals\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `REFERRAL_PROGRAM_INVALID_DATE_RANGE` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ReferralProgramInvalidDateRangeException extends AcademorixException
+final class ReferralProgramInvalidDateRangeException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

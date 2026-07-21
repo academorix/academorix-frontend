@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/staff/macros",
+  "id": "stackra://modules/staff/macros",
   "$version": 1,
   "title": "staff — published macros",
   "description": "Two request-level macros that surface the resolved active staff from the RequestContext. Rare — only /me/staff routes load this. Also two Blueprint macros for shared column families across future staff-related tables.",
@@ -10,7 +10,7 @@
       "signature": "Request::activeStaff(): ?Staff",
       "adds": "A single accessor on the framework Request class that returns the resolved Staff model (or null when no staff context).",
       "description": "Reads from RequestContext::staff() set by the /me/staff endpoints. Lazy-loads the model on first access.",
-      "registered_by": "Academorix\\Staff\\Providers\\StaffServiceProvider::boot()",
+      "registered_by": "Stackra\\Staff\\Providers\\StaffServiceProvider::boot()",
       "example": "public function show(Request $request): JsonResponse\n{\n    $staff = $request->activeStaff();\n    if ($staff === null) throw new NoActiveStaffException();\n}"
     },
     {

@@ -18,15 +18,15 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  *
- * @see \Academorix\Nightwatch\Registry\NightwatchContextRegistry
+ * @see \Stackra\Nightwatch\Registry\NightwatchContextRegistry
  */
 
-namespace Academorix\Nightwatch\Middleware;
+namespace Stackra\Nightwatch\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Academorix\Nightwatch\Registry\NightwatchContextRegistry;
-use Academorix\Routing\Attributes\AsMiddleware;
+use Stackra\Nightwatch\Registry\NightwatchContextRegistry;
+use Stackra\Routing\Attributes\AsMiddleware;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

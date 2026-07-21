@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Exceptions;
+namespace Stackra\AgeGroup\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The resolver couldn't find a single matching AgeGroup for the given (DOB, sport_key, on_date).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AgeGroupResolveIndeterminateException extends AcademorixException
+final class AgeGroupResolveIndeterminateException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

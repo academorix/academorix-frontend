@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/schemas/notification-preference",
+  "id": "stackra://modules/notifications/schemas/notification-preference",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "NotificationPreference",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "pref_",
     "incrementing": false,
-    "model": "Academorix\\Notifications\\Models\\NotificationPreference",
-    "interface": "Academorix\\Notifications\\Contracts\\Data\\NotificationPreferenceInterface",
-    "implements": ["Academorix\\Notifications\\Contracts\\Data\\NotificationPreferenceInterface"],
+    "model": "Stackra\\Notifications\\Models\\NotificationPreference",
+    "interface": "Stackra\\Notifications\\Contracts\\Data\\NotificationPreferenceInterface",
+    "implements": ["Stackra\\Notifications\\Contracts\\Data\\NotificationPreferenceInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

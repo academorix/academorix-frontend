@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AdminConsole\Repositories;
+namespace Stackra\AdminConsole\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\AdminConsole\Contracts\Data\AdminDashboardConfigInterface;
-use Academorix\AdminConsole\Contracts\Repositories\AdminDashboardConfigRepositoryInterface;
-use Academorix\AdminConsole\Models\AdminDashboardConfig;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\AdminConsole\Contracts\Data\AdminDashboardConfigInterface;
+use Stackra\AdminConsole\Contracts\Repositories\AdminDashboardConfigRepositoryInterface;
+use Stackra\AdminConsole\Models\AdminDashboardConfig;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\AdminConsole\Models\AdminDashboardConfig}.
+ * Attribute-first Eloquent repository for {@see Stackra\AdminConsole\Models\AdminDashboardConfig}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AdminDashboardConfigInterface::class)]` which resolves to
  * `AdminDashboardConfig` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\AdminConsole\Models\AdminDashboardConfig>
+ * @extends Repository<\Stackra\AdminConsole\Models\AdminDashboardConfig>
  *
  * @category AdminConsole
  *

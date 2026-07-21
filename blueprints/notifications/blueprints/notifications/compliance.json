@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/compliance",
+  "id": "stackra://modules/notifications/compliance",
   "$version": 1,
   "title": "notifications core \u2014 compliance evidence",
   "description": "Core carries the aggregate compliance contract; channel modules produce channel-specific evidence (CAN-SPAM footer + one-click List-Unsubscribe from notifications-mail, TCPA STOP handling from notifications-sms, COPPA VPC gate from notifications-push). This file names the article-level obligations that resolve to core-owned surfaces (consent registry, preference storage, unsubscribe endpoint, retention rules, DSAR aggregation).",

@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Models;
+namespace Stackra\Tax\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Tax\Contracts\Data\TaxRateInterface;
-use Academorix\Tax\Database\Factories\TaxRateFactory;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Tax\Enums\TaxRateAppliesTo;
-use Academorix\Tax\Enums\TaxRateSource;
-use Academorix\Tax\Policies\TaxRatePolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Tax\Contracts\Data\TaxRateInterface;
+use Stackra\Tax\Database\Factories\TaxRateFactory;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Tax\Enums\TaxRateAppliesTo;
+use Stackra\Tax\Enums\TaxRateSource;
+use Stackra\Tax\Policies\TaxRatePolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

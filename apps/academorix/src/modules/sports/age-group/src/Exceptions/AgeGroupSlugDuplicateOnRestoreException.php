@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Exceptions;
+namespace Stackra\AgeGroup\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to restore an archived AgeGroup where the slug now collides with an active row.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AgeGroupSlugDuplicateOnRestoreException extends AcademorixException
+final class AgeGroupSlugDuplicateOnRestoreException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

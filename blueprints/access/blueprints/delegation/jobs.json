@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/delegation/jobs",
+  "id": "stackra://modules/delegation/jobs",
   "$version": 1,
   "title": "delegation — background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Delegation\\Jobs\\ActivateDelegationsJob",
+      "class": "Stackra\\Delegation\\Jobs\\ActivateDelegationsJob",
       "queue": "notifications",
       "purpose": "Hourly. Finds pending delegations whose starts_at has passed but state is still `pending`, transitions them to `active`, fires DelegationActivated. Idempotent — a re-run picks up newly-eligible rows and skips already-activated ones.",
       "steps": [
@@ -19,7 +19,7 @@
       "backoff": [10, 60, 300]
     },
     {
-      "class": "Academorix\\Delegation\\Jobs\\ExpireDelegationsJob",
+      "class": "Stackra\\Delegation\\Jobs\\ExpireDelegationsJob",
       "queue": "notifications",
       "purpose": "Hourly. Finds active delegations whose ends_at has passed (without being revoked), transitions them to `expired`, fires DelegationExpired. Coordinated with ActivateDelegationsJob so a row cannot be both activating + expiring in the same hour (would only happen for a same-hour create-with-past-start-and-past-end, which the observer refuses).",
       "steps": [
@@ -34,7 +34,7 @@
       "backoff": [10, 60, 300]
     },
     {
-      "class": "Academorix\\Delegation\\Jobs\\EndImpersonationSessionsJob",
+      "class": "Stackra\\Delegation\\Jobs\\EndImpersonationSessionsJob",
       "queue": "notifications-critical",
       "purpose": "Every 5 minutes. Finds impersonation sessions past ends_at with ended_at still null, transitions them to ended with end_trigger=ttl_expired, fires ImpersonationSessionEnded. Critical cadence — session TTL enforcement cannot lag.",
       "steps": [
@@ -49,7 +49,7 @@
       "backoff": [5, 15, 30]
     },
     {
-      "class": "Academorix\\Delegation\\Jobs\\PurgeRevokedDelegationsJob",
+      "class": "Stackra\\Delegation\\Jobs\\PurgeRevokedDelegationsJob",
       "queue": "notifications",
       "purpose": "Daily 03:15 UTC. Hard-deletes soft-deleted role_delegations rows past the 730-day retention window. Coordinated with the audit stream retention (also 730 d) so the deletion + the audit purge happen in the same maintenance window.",
       "steps": [
@@ -64,7 +64,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Delegation\\Jobs\\NotifyDelegateOfActivationJob",
+      "class": "Stackra\\Delegation\\Jobs\\NotifyDelegateOfActivationJob",
       "queue": "notifications",
       "purpose": "One-shot dispatched by the DelegationActivated event's consumer chain. Sends the DelegationActivatedNotification to the delegate — 'you can now act as X' — via in-app + email. Idempotent per delegation_id (uniqueFor guards against double-sends).",
       "steps": [
@@ -80,7 +80,7 @@
       "backoff": [30, 300, 900]
     },
     {
-      "class": "Academorix\\Delegation\\Jobs\\NotifyDelegatorOfExpirationJob",
+      "class": "Stackra\\Delegation\\Jobs\\NotifyDelegatorOfExpirationJob",
       "queue": "notifications",
       "purpose": "One-shot dispatched by the DelegationExpired event's consumer chain. Sends the DelegationExpiredNotification to the delegator — 'your delegation to X has ended'. Idempotent per delegation_id.",
       "steps": [
@@ -95,7 +95,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Delegation\\Jobs\\PurgeImpersonationSessionsJob",
+      "class": "Stackra\\Delegation\\Jobs\\PurgeImpersonationSessionsJob",
       "queue": "notifications",
       "purpose": "WEEKLY. NEVER purges the row (rows are append-only compliance evidence). Scrubs session_token_hash from ended sessions > 30 days old — the token is dead anyway, but scrubbing removes hash residue that could be brute-forced if the hashing algorithm is ever compromised.",
       "steps": [

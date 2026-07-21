@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Actions\Tenant;
+namespace Stackra\Newsletter\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Newsletter\Contracts\Data\NewsletterAudienceInterface;
-use Academorix\Newsletter\Contracts\Data\NewsletterInterface;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterAudienceRepositoryInterface;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterRepositoryInterface;
-use Academorix\Newsletter\Data\NewsletterAudienceData;
-use Academorix\Newsletter\Data\Requests\CreateAudienceRequestData;
-use Academorix\Newsletter\Enums\NewsletterPermission;
-use Academorix\Newsletter\Exceptions\NewsletterNotFoundException;
-use Academorix\Newsletter\Jobs\BuildAudienceSegmentJob;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Newsletter\Contracts\Data\NewsletterAudienceInterface;
+use Stackra\Newsletter\Contracts\Data\NewsletterInterface;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterAudienceRepositoryInterface;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterRepositoryInterface;
+use Stackra\Newsletter\Data\NewsletterAudienceData;
+use Stackra\Newsletter\Data\Requests\CreateAudienceRequestData;
+use Stackra\Newsletter\Enums\NewsletterPermission;
+use Stackra\Newsletter\Exceptions\NewsletterNotFoundException;
+use Stackra\Newsletter\Jobs\BuildAudienceSegmentJob;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `POST /api/v1/newsletters/{newsletter}/audiences` — create an

@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/identity/health",
+  "id": "stackra://modules/identity/health",
   "$version": 1,
   "title": "identity \u2014 health probes",
   "probes": [
     {
       "name": "identity-db-writable",
-      "class": "Academorix\\Identity\\Health\\Probes\\DbWritableProbe",
+      "class": "Stackra\\Identity\\Health\\Probes\\DbWritableProbe",
       "category": "startup",
       "critical": true,
       "description": "Identity table is reachable AND writable. Performs a no-op INSERT + ROLLBACK inside a transaction to verify the connection has DDL / DML privileges. Identity being read-only aborts application boot because password rotation + lockout writes would fail silently.",
@@ -13,7 +13,7 @@
     },
     {
       "name": "identity-schema-current",
-      "class": "Academorix\\Identity\\Health\\Probes\\SchemaCurrentProbe",
+      "class": "Stackra\\Identity\\Health\\Probes\\SchemaCurrentProbe",
       "category": "startup",
       "critical": true,
       "description": "The `identities` table has every column the module expects (id, email, password_hash, mfa_secret_encrypted, mfa_recovery_codes_hashed, email_verified_at, email_verification_token_hash, email_verification_expires_at, password_history_hashed, password_changed_at, last_login_at, last_failed_at, locked_until, failed_attempts_count, dob, created_at, updated_at, deleted_at). Catches unmigrated environments before they crash on first login.",
@@ -21,7 +21,7 @@
     },
     {
       "name": "identity-kms-reachable",
-      "class": "Academorix\\Identity\\Health\\Probes\\KmsReachableProbe",
+      "class": "Stackra\\Identity\\Health\\Probes\\KmsReachableProbe",
       "category": "readiness",
       "critical": true,
       "description": "MfaSecretEncryptor's backend (KMS / Vault / local) is reachable. Failure fails-open the MFA enrolment endpoint but keeps login working \u2014 MFA verification depends on decryption which can fall back to a hot-cached data-key. Marked critical because sustained KMS unavailability blocks new MFA enrolments and reduces the security posture.",
@@ -30,7 +30,7 @@
     },
     {
       "name": "identity-hibp-reachable",
-      "class": "Academorix\\Identity\\Health\\Probes\\HibpReachableProbe",
+      "class": "Stackra\\Identity\\Health\\Probes\\HibpReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "haveibeenpwned k-anonymity API reachable. Non-critical because the `strong_password` rule falls back to policy-only checks when HIBP is unavailable. Sustained unavailability degrades the security posture; ops should investigate.",
@@ -39,7 +39,7 @@
     },
     {
       "name": "identity-hasher-configured",
-      "class": "Academorix\\Identity\\Health\\Probes\\HasherConfiguredProbe",
+      "class": "Stackra\\Identity\\Health\\Probes\\HasherConfiguredProbe",
       "category": "startup",
       "critical": true,
       "description": "The configured hasher (argon2id preferred, bcrypt fallback) is available in the current PHP runtime. Argon2id requires libsodium; if config selects argon2id but the extension is missing, boot fails immediately with a clear message rather than degrading silently to bcrypt.",
@@ -47,7 +47,7 @@
     },
     {
       "name": "identity-lockout-scheduler-alive",
-      "class": "Academorix\\Identity\\Health\\Probes\\LockoutSchedulerAliveProbe",
+      "class": "Stackra\\Identity\\Health\\Probes\\LockoutSchedulerAliveProbe",
       "category": "readiness",
       "critical": false,
       "description": "AutoUnlockExpiredLockoutsJob has run within the last 5 minutes. Failure indicates the queue worker is stuck; identities that should have auto-unlocked stay locked.",
@@ -55,7 +55,7 @@
     },
     {
       "name": "identity-retention-current",
-      "class": "Academorix\\Identity\\Health\\Probes\\RetentionCurrentProbe",
+      "class": "Stackra\\Identity\\Health\\Probes\\RetentionCurrentProbe",
       "category": "readiness",
       "critical": false,
       "description": "PurgeSoftDeletedIdentitiesJob has run within the last 25 hours. Missed runs risk breaching the GDPR erasure hold-period commitment.",

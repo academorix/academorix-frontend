@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/platform-user/broadcasts",
+  "id": "stackra://modules/platform-user/broadcasts",
   "$version": 1,
   "title": "platform-user \u2014 broadcast channels",
   "description": "This module publishes NO broadcast channels. Platform-plane events reach subscribers via the standard event bus + queue \u2014 there is no WebSocket-fed live-update surface unique to platform-user. The ops dashboard reads via HTTP polling (30s cadence) on the `/platform-users` + `/platform-users/on-call/current` endpoints. When Wave 1b `access/delegation` lands, it may add a `platform.impersonation.{platform_user_id}` channel for real-time impersonation notification \u2014 that will live in the delegation module's blueprint, not here. This file exists for uniform module shape.",

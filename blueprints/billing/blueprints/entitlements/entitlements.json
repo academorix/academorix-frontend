@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/entitlements/entitlements",
+  "id": "stackra://modules/entitlements/entitlements",
   "$version": 1,
   "title": "entitlements \u2014 meta entitlements about the entitlement platform itself",
   "description": "Very small \u2014 the entitlements platform is infrastructure. Only meta-quotas around usage-history retention length.",

@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Actions\Tenant;
+namespace Stackra\Newsletter\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Newsletter\Contracts\Data\NewsletterAudienceInterface;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterAudienceRepositoryInterface;
-use Academorix\Newsletter\Data\NewsletterAudienceData;
-use Academorix\Newsletter\Data\Requests\UpdateAudienceRequestData;
-use Academorix\Newsletter\Enums\NewsletterPermission;
-use Academorix\Newsletter\Exceptions\NewsletterAudienceNotFoundException;
-use Academorix\Newsletter\Jobs\BuildAudienceSegmentJob;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Patch;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Newsletter\Contracts\Data\NewsletterAudienceInterface;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterAudienceRepositoryInterface;
+use Stackra\Newsletter\Data\NewsletterAudienceData;
+use Stackra\Newsletter\Data\Requests\UpdateAudienceRequestData;
+use Stackra\Newsletter\Enums\NewsletterPermission;
+use Stackra\Newsletter\Exceptions\NewsletterAudienceNotFoundException;
+use Stackra\Newsletter\Jobs\BuildAudienceSegmentJob;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Patch;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `PATCH /api/v1/newsletters/{newsletter}/audiences/{audience}` —

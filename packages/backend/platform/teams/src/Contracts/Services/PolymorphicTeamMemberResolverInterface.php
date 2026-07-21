@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Teams\Contracts\Services;
+namespace Stackra\Teams\Contracts\Services;
 
-use Academorix\Teams\Services\PolymorphicTeamMemberResolver;
+use Stackra\Teams\Services\PolymorphicTeamMemberResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

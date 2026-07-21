@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformUser\Concerns;
+namespace Stackra\PlatformUser\Concerns;
 
 /**
  * Trait — HasEmploymentLifecycle.

@@ -6,11 +6,11 @@
  * @description
  * Immutable value object that captures everything the events package
  * knows about a single listener registration derived from
- * {@see \Academorix\Events\Attributes\OnEvent} or
- * {@see \Academorix\Events\Attributes\ListensFor} attributes.
+ * {@see \Stackra\Events\Attributes\OnEvent} or
+ * {@see \Stackra\Events\Attributes\ListensFor} attributes.
  *
  * Produced by {@see EventDiscovery} and consumed by
- * {@see \Academorix\Events\Providers\EventsServiceProvider} which
+ * {@see \Stackra\Events\Providers\EventsServiceProvider} which
  * translates each binding into an
  * `Illuminate\Contracts\Events\Dispatcher::listen()` call at boot.
  *
@@ -22,7 +22,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Events\Support;
+namespace Stackra\Events\Support;
 
 final class ListenerBinding
 {

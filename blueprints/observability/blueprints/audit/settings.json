@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/audit/settings",
+  "id": "stackra://modules/audit/settings",
   "$version": 1,
   "title": "audit — settings",
   "description": "Tenant-facing audit settings. Small config surface — most audit behavior is central (config.audit.*) or per-policy (AuditRetentionPolicy). This settings group governs tenant-tunable behaviors: PII redaction opt-in, custom event registration inspection, notification preferences.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "audit",
-      "class": "Academorix\\Observability\\Audit\\Settings\\AuditSettings",
+      "class": "Stackra\\Observability\\Audit\\Settings\\AuditSettings",
       "label": "Audit",
       "description": "Compliance-grade audit trail. Field-level diff of every mutation across every module.",
       "icon": "shield-check",

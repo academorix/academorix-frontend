@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Event\Database\Factories;
+namespace Stackra\Event\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Event\Contracts\Data\CalendarSubscriptionInterface;
-use Academorix\Event\Models\CalendarSubscription;
+use Stackra\Event\Contracts\Data\CalendarSubscriptionInterface;
+use Stackra\Event\Models\CalendarSubscription;
 
 /**
- * Factory for {@see \Academorix\Event\Models\CalendarSubscription}.
+ * Factory for {@see \Stackra\Event\Models\CalendarSubscription}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Event\Models\CalendarSubscription>
+ * @extends Factory<\Stackra\Event\Models\CalendarSubscription>
  *
  * @category Event
  *

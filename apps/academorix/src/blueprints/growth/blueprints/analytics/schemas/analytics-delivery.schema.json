@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/analytics/schemas/analytics-delivery",
+  "id": "stackra://modules/analytics/schemas/analytics-delivery",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "AnalyticsDelivery",
@@ -12,9 +12,9 @@
     "keyType": "string",
     "keyPrefix": "and_",
     "incrementing": false,
-    "model": "Academorix\\Growth\\Analytics\\Models\\AnalyticsDelivery",
-    "interface": "Academorix\\Growth\\Analytics\\Contracts\\Data\\AnalyticsDeliveryInterface",
-    "implements": ["Academorix\\Growth\\Analytics\\Contracts\\Data\\AnalyticsDeliveryInterface"],
+    "model": "Stackra\\Growth\\Analytics\\Models\\AnalyticsDelivery",
+    "interface": "Stackra\\Growth\\Analytics\\Contracts\\Data\\AnalyticsDeliveryInterface",
+    "implements": ["Stackra\\Growth\\Analytics\\Contracts\\Data\\AnalyticsDeliveryInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -106,7 +106,7 @@
         "type": "string",
         "length": 64,
         "nullable": true,
-        "description": "Academorix error code from errors.json when status IN (failed, permanently_failed)."
+        "description": "Stackra error code from errors.json when status IN (failed, permanently_failed)."
       },
       "error_message": {
         "type": "text",

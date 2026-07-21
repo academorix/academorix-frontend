@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Policies;
+namespace Stackra\Audit\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Audit\Models\AuditRetentionPolicy;
+use Stackra\User\Models\User;
+use Stackra\Audit\Models\AuditRetentionPolicy;
 
 /**
- * Authorization policy for {@see \Academorix\Audit\Models\AuditRetentionPolicy}.
+ * Authorization policy for {@see \Stackra\Audit\Models\AuditRetentionPolicy}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

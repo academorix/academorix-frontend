@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/monitoring/schemas/monitoring-provider-config",
+  "id": "stackra://modules/monitoring/schemas/monitoring-provider-config",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "MonitoringProviderConfig",
@@ -13,10 +13,10 @@
     "keyType": "string",
     "keyPrefix": "mpr_",
     "incrementing": false,
-    "model": "Academorix\\Observability\\Monitoring\\Models\\MonitoringProviderConfig",
-    "interface": "Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringProviderConfigInterface",
+    "model": "Stackra\\Observability\\Monitoring\\Models\\MonitoringProviderConfig",
+    "interface": "Stackra\\Observability\\Monitoring\\Contracts\\Data\\MonitoringProviderConfigInterface",
     "implements": [
-      "Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringProviderConfigInterface"
+      "Stackra\\Observability\\Monitoring\\Contracts\\Data\\MonitoringProviderConfigInterface"
     ],
     "traits": [
       "HasFactory",

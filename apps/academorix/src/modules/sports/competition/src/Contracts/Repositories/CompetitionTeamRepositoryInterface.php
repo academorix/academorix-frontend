@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Competition\Contracts\Repositories;
+namespace Stackra\Competition\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Competition\Models\CompetitionTeam}.
+ * Repository contract for {@see Stackra\Competition\Models\CompetitionTeam}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `CompetitionTeamRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Competition\Models\CompetitionTeam>
+ * @extends RepositoryInterface<\Stackra\Competition\Models\CompetitionTeam>
  *
  * @category Competition
  *

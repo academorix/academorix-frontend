@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/user/metrics",
+  "id": "stackra://modules/user/metrics",
   "$version": 1,
   "title": "user \u2014 OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "academorix.user",
+  "namespace": "stackra.user",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["status", "source", "outcome"],
@@ -11,14 +11,14 @@
   },
   "metrics": [
     {
-      "name": "academorix.user.provisioned.total",
+      "name": "stackra.user.provisioned.total",
       "kind": "counter",
       "unit": "users",
       "labels": ["source"],
       "description": "source: invitation / self_registration / admin_created / sso_grant / import."
     },
     {
-      "name": "academorix.user.provision.duration_ms",
+      "name": "stackra.user.provision.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 200, 1000, 5000, 30000],
@@ -26,41 +26,41 @@
       "description": "End-to-end provisioning latency (create Identity + Profile + User + TenantMember + fire events). P95 target < 500ms; P99 < 2s."
     },
     {
-      "name": "academorix.user.suspended.total",
+      "name": "stackra.user.suspended.total",
       "kind": "counter",
       "unit": "users",
       "labels": []
     },
     {
-      "name": "academorix.user.erased.total",
+      "name": "stackra.user.erased.total",
       "kind": "counter",
       "unit": "users",
       "labels": ["hard_or_soft"],
       "description": "hard_or_soft: soft (deleted_at set) / hard (PurgeErasedUsersJob completed)."
     },
     {
-      "name": "academorix.user.active.count",
+      "name": "stackra.user.active.count",
       "kind": "gauge",
       "unit": "users",
       "labels": ["status"],
       "description": "Point-in-time count of Users per status. Populated hourly by a metrics-collector task."
     },
     {
-      "name": "academorix.user.tenant_member.count",
+      "name": "stackra.user.tenant_member.count",
       "kind": "gauge",
       "unit": "memberships",
       "labels": [],
       "description": "Global count of TenantMember rows. Feeds the multi-tenant-usage dashboard."
     },
     {
-      "name": "academorix.user.tenant_switch.total",
+      "name": "stackra.user.tenant_switch.total",
       "kind": "counter",
       "unit": "switches",
       "labels": [],
       "description": "How often users switch active tenant via `/me/tenants/{tenant}/switch`."
     },
     {
-      "name": "academorix.user.me_request.duration_ms",
+      "name": "stackra.user.me_request.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1, 5, 20, 100, 500],
@@ -68,21 +68,21 @@
       "description": "`GET /api/v1/me` latency. P99 target < 100ms because the SPA blocks on it for the initial paint."
     },
     {
-      "name": "academorix.user.profile_update.total",
+      "name": "stackra.user.profile_update.total",
       "kind": "counter",
       "unit": "updates",
       "labels": ["outcome"],
       "description": "outcome: success / rejected_pii / rejected_age / rejected_locale."
     },
     {
-      "name": "academorix.user.avatar_upload.total",
+      "name": "stackra.user.avatar_upload.total",
       "kind": "counter",
       "unit": "uploads",
       "labels": ["outcome"],
       "description": "outcome: success / rejected_size / rejected_type / rejected_entitlement."
     },
     {
-      "name": "academorix.user.avatar_upload.size_kb",
+      "name": "stackra.user.avatar_upload.size_kb",
       "kind": "histogram",
       "unit": "kb",
       "buckets": [64, 256, 1024, 2048, 8192],
@@ -90,7 +90,7 @@
       "description": "Distribution of accepted avatar sizes."
     },
     {
-      "name": "academorix.user.last_active_flush.duration_ms",
+      "name": "stackra.user.last_active_flush.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 100, 1000, 5000],
@@ -98,7 +98,7 @@
       "description": "UpdateLastActiveJob flush latency. Sustained > 5s indicates the buffer is oversized."
     },
     {
-      "name": "academorix.user.purge_pending.count",
+      "name": "stackra.user.purge_pending.count",
       "kind": "gauge",
       "unit": "users",
       "labels": [],

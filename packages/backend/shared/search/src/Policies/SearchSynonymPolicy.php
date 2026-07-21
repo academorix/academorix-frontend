@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Policies;
+namespace Stackra\Search\Policies;
 
-use Academorix\Search\Contracts\Data\SearchSynonymInterface;
-use Academorix\Search\Enums\SearchPermission;
-use Academorix\Search\Models\SearchSynonym;
+use Stackra\Search\Contracts\Data\SearchSynonymInterface;
+use Stackra\Search\Enums\SearchPermission;
+use Stackra\Search\Models\SearchSynonym;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Auth\User;
 

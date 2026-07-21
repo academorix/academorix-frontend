@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/user/schemas/tenant-member",
+  "id": "stackra://modules/user/schemas/tenant-member",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "TenantMember",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "tmb_",
     "incrementing": false,
-    "model": "Academorix\\User\\Models\\TenantMember",
-    "interface": "Academorix\\User\\Contracts\\Data\\TenantMemberInterface",
-    "implements": ["Academorix\\User\\Contracts\\Data\\TenantMemberInterface"],
+    "model": "Stackra\\User\\Models\\TenantMember",
+    "interface": "Stackra\\User\\Contracts\\Data\\TenantMemberInterface",
+    "implements": ["Stackra\\User\\Contracts\\Data\\TenantMemberInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

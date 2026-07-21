@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Models;
+namespace Stackra\Entitlements\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Entitlements\Contracts\Data\EntitlementInterface;
-use Academorix\Entitlements\Contracts\Data\EntitlementUsageInterface;
-use Academorix\Entitlements\Database\Factories\EntitlementUsageFactory;
-use Academorix\Entitlements\Observers\EntitlementUsageObserver;
-use Academorix\Entitlements\Policies\EntitlementUsagePolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Entitlements\Contracts\Data\EntitlementInterface;
+use Stackra\Entitlements\Contracts\Data\EntitlementUsageInterface;
+use Stackra\Entitlements\Database\Factories\EntitlementUsageFactory;
+use Stackra\Entitlements\Observers\EntitlementUsageObserver;
+use Stackra\Entitlements\Policies\EntitlementUsagePolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

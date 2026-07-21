@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Delegation\Services;
+namespace Stackra\Delegation\Services;
 
-use Academorix\Delegation\Contracts\Services\DelegationValidatorInterface;
+use Stackra\Delegation\Contracts\Services\DelegationValidatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Delegation\Contracts\Repositories\ImpersonationSessionRepositoryInterface;
+use Stackra\Delegation\Contracts\Repositories\ImpersonationSessionRepositoryInterface;
 
 /**
  * Concrete service — DelegationValidator.

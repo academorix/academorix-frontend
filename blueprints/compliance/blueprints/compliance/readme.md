@@ -110,7 +110,7 @@ Actions (GDPR articles): `export` (Art. 15 + 20), `erase` (Art. 17), `rectify`
 
 **Contributor discovery**. The `DsarOrchestrator` scans classes annotated with
 `#[DsarExportable]` / `#[DsarErasable]` at boot. Each contributor implements
-`Academorix\Compliance\Contracts\DsarContributor`:
+`Stackra\Compliance\Contracts\DsarContributor`:
 
 ```php
 #[DsarExportable(subject: 'owner_id', exclude: ['password_hash', 'mfa_secret'])]
@@ -249,7 +249,7 @@ Every DSAR completion emits a versioned wire event (`compliance.dsar.completed`
     "sla_days": 30,
     "delivered_at": "2026-07-14T03:15:07Z",
     "artefact_count": 8,
-    "artefact_download_url": "https://api.academorix.app/compliance/dsars/<signature>",
+    "artefact_download_url": "https://api.stackra.app/compliance/dsars/<signature>",
     "artefact_expires_at": "2026-08-13T03:15:07Z"
   }
 }

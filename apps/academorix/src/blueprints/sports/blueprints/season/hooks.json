@@ -1,22 +1,22 @@
 {
-  "id": "academorix://modules/season/hooks",
+  "id": "stackra://modules/season/hooks",
   "$version": 1,
   "title": "season — tenancy hooks",
   "description": "This module IS tenant-aware. It participates in tenancy lifecycle via two hooks. Distinct from `listeners.json` (domain-event listeners) — tenancy hooks fire at specific tenancy lifecycle points (provisioning / erasure) and participate in the tenancy transaction where relevant.",
   "reference": {
-    "contract": "academorix://modules/tenancy/hooks",
+    "contract": "stackra://modules/tenancy/hooks",
     "hierarchy_note": "See `hierarchy.md` §12 + `tenancy-columns.md` for the tenant plane the season module lives on."
   },
   "hooks": [
     {
-      "class": "Academorix\\Sports\\Season\\Hooks\\SeedDefaultSeasonOnTenantProvisioned",
+      "class": "Stackra\\Sports\\Season\\Hooks\\SeedDefaultSeasonOnTenantProvisioned",
       "event": "tenancy::TenantProvisioned",
       "lifecycle_phase": "after_commit",
       "queue": "notifications",
       "purpose": "When a new Tenant is provisioned, evaluate whether the tenant qualifies for a default Season (business_type is seasonal per `data/business-type-defaults.json` AND tenant holds `sports_seasons` entitlement). When both conditions hold, dispatch SeedDefaultSeasonForTenantJob (or run SeasonProvisioner synchronously per `season.provisioning.async` config). Skipped when the tenant already has a default season (idempotent). Silently skipped for non-seasonal business_types (sports_center / gym) and for Small-tier tenants."
     },
     {
-      "class": "Academorix\\Sports\\Season\\Hooks\\PreventSeasonOrphansOnTenantErased",
+      "class": "Stackra\\Sports\\Season\\Hooks\\PreventSeasonOrphansOnTenantErased",
       "event": "tenancy::TenantErased",
       "lifecycle_phase": "before_cascade",
       "queue": null,

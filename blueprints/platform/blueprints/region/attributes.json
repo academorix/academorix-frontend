@@ -1,20 +1,20 @@
 {
-  "id": "academorix://modules/region/attributes",
+  "id": "stackra://modules/region/attributes",
   "$version": 1,
   "title": "region — PHP attribute contracts",
   "description": "One attribute. `#[AsRegionListener]` on a service class marks it as a subscriber to region-lifecycle events — the AttributeDiscovery scan picks it up and wires it to the event map declared in `events.json`. No property-level attributes: the Region row uses ordinary Eloquent + spatie/laravel-data class attributes shipped by foundation.",
-  "namespace": "Academorix\\Region\\Attributes",
+  "namespace": "Stackra\\Region\\Attributes",
   "attributes": [
     {
       "name": "AsRegionListener",
-      "class": "Academorix\\Region\\Attributes\\AsRegionListener",
+      "class": "Stackra\\Region\\Attributes\\AsRegionListener",
       "targets": ["class"],
       "params": [
         {
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Array of event short names (`RegionCreated`, `RegionPaused`, `RegionDefaultChanged`, `TenantDefaultRegionSeeded`, …) the class listens to. Empty = subscribe to every event in `Academorix\\Region\\Events\\*`. Names are resolved against `events.json`; typos surface at boot time when the discovery scan validates them."
+          "description": "Array of event short names (`RegionCreated`, `RegionPaused`, `RegionDefaultChanged`, `TenantDefaultRegionSeeded`, …) the class listens to. Empty = subscribe to every event in `Stackra\\Region\\Events\\*`. Names are resolved against `events.json`; typos surface at boot time when the discovery scan validates them."
         },
         {
           "name": "queue",

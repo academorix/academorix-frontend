@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Jobs;
+namespace Stackra\Newsletter\Jobs;
 
-use Academorix\Newsletter\Contracts\Data\NewsletterCampaignInterface;
-use Academorix\Newsletter\Contracts\Data\NewsletterSubscriptionInterface;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterCampaignRepositoryInterface;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterSubscriptionRepositoryInterface;
-use Academorix\Newsletter\Contracts\Services\NewsletterServiceInterface;
-use Academorix\Newsletter\Enums\NewsletterCampaignStatus;
-use Academorix\Newsletter\Enums\NewsletterSubscriptionStatus;
+use Stackra\Newsletter\Contracts\Data\NewsletterCampaignInterface;
+use Stackra\Newsletter\Contracts\Data\NewsletterSubscriptionInterface;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterCampaignRepositoryInterface;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterSubscriptionRepositoryInterface;
+use Stackra\Newsletter\Contracts\Services\NewsletterServiceInterface;
+use Stackra\Newsletter\Enums\NewsletterCampaignStatus;
+use Stackra\Newsletter\Enums\NewsletterSubscriptionStatus;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -116,7 +116,7 @@ final class SendNewsletterIssueBatchJob implements ShouldBeUnique, ShouldQueue
             // TODO: dispatch notifications-mail's SendMailJob with
             // metadata (newsletter_id, campaign_id, subscription_id,
             // issue_id) once the API is available in
-            // `academorix/notifications-mail`. For now we log the
+            // `stackra/notifications-mail`. For now we log the
             // handoff so the wiring is deterministic and observable.
             $log->info('newsletter: batch send handoff (notifications-mail pending)', [
                 'campaign_id'     => $this->campaignId,

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/gateway/schemas/payment-method",
+  "id": "stackra://modules/gateway/schemas/payment-method",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "PaymentMethod",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "pm_",
     "incrementing": false,
-    "model": "Academorix\\Finance\\Gateway\\Models\\PaymentMethod",
-    "interface": "Academorix\\Finance\\Gateway\\Contracts\\Data\\PaymentMethodInterface",
-    "implements": ["Academorix\\Finance\\Gateway\\Contracts\\Data\\PaymentMethodInterface"],
+    "model": "Stackra\\Finance\\Gateway\\Models\\PaymentMethod",
+    "interface": "Stackra\\Finance\\Gateway\\Contracts\\Data\\PaymentMethodInterface",
+    "implements": ["Stackra\\Finance\\Gateway\\Contracts\\Data\\PaymentMethodInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

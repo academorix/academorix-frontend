@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Contracts\Data;
+namespace Stackra\Forms\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Forms\Models\Form;
+use Stackra\Forms\Models\Form;
 
 /**
  * Table shape for the `forms` table.

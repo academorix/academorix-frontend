@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * Debugbar Service Provider.
  *
- * Registers Laravel Debugbar with the Academorix module system.
+ * Registers Laravel Debugbar with the Stackra module system.
  * Extends the vendor Debugbar provider and integrates via the
  * AsModuleProvider trait for module lifecycle management.
  *
@@ -16,22 +16,22 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  *
- * @see \Academorix\Debugbar\Compiler\DebugbarCompiler
+ * @see \Stackra\Debugbar\Compiler\DebugbarCompiler
  */
 
-namespace Academorix\Debugbar\Providers;
+namespace Stackra\Debugbar\Providers;
 
 use Barryvdh\Debugbar\ServiceProvider as BaseDebugbarServiceProvider;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Concerns\AsModuleProvider;
-use Academorix\ServiceProvider\Contracts\ServiceProviderInterface;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Concerns\AsModuleProvider;
+use Stackra\ServiceProvider\Contracts\ServiceProviderInterface;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
 
 /**
  * Debugbar module service provider.
  *
  * Extends the vendor base provider — uses AsModuleProvider trait
- * instead of extending the Academorix ServiceProvider base class.
+ * instead of extending the Stackra ServiceProvider base class.
  *
  * Typically only enabled in local/development environments.
  */

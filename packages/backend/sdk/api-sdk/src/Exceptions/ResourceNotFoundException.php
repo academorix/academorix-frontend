@@ -20,7 +20,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Exceptions;
+namespace Stackra\ApiSdk\Exceptions;
 
 /**
  * HTTP 404 or client-side "unknown SDK resource".

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/errors",
+  "id": "stackra://modules/workflow/approvals/errors",
   "$version": 1,
   "title": "approvals — error codes",
   "namespace": "approvals",

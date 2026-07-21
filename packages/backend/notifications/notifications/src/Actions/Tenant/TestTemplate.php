@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Actions\Tenant;
+namespace Stackra\Notifications\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Notifications\Data\Requests\TestTemplateRequestData;
-use Academorix\Notifications\Enums\NotificationsPermission;
-use Academorix\Notifications\Models\NotificationTemplate;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Attributes\WhereUlid;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Notifications\Data\Requests\TestTemplateRequestData;
+use Stackra\Notifications\Enums\NotificationsPermission;
+use Stackra\Notifications\Models\NotificationTemplate;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Attributes\WhereUlid;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\JsonResponse;
 
 /**

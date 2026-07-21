@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/development/permissions",
+  "id": "stackra://modules/development/permissions",
   "$version": 1,
   "title": "development — permissions",
-  "seeder": "Academorix\\Sports\\Development\\Database\\Seeders\\DevelopmentPermissionSeeder",
+  "seeder": "Stackra\\Sports\\Development\\Database\\Seeders\\DevelopmentPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

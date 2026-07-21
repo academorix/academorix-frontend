@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/expenses",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/expenses",
   "tier": "saas",
   "surfaces": ["core"],
   "kind": "feature",
@@ -11,22 +11,22 @@
     "Budget aggregate (bdg_ prefix) — cap + spent tracking",
     "PayrollRun + PayrollLine aggregates",
     "Attribute-first CRUD, Actions, Policies, Events",
-    "Wire SDK companion at academorix-finance/expenses-sdk"
+    "Wire SDK companion at stackra-finance/expenses-sdk"
   ],
-  "when_to_use": "A tenant tracks operational expenses, budgets, and staff payroll inside Academorix rather than an external accounting system.",
-  "when_not_to_use": "For customer-facing invoicing and revenue, use academorix/invoice + academorix/transaction.",
+  "when_to_use": "A tenant tracks operational expenses, budgets, and staff payroll inside Stackra rather than an external accounting system.",
+  "when_not_to_use": "For customer-facing invoicing and revenue, use stackra/invoice + stackra/transaction.",
   "peer_deps": [
-    "academorix-finance/expenses-sdk",
-    "academorix/crud",
-    "academorix/foundation",
-    "academorix/routing",
-    "academorix/service-provider",
-    "academorix/support",
+    "stackra-finance/expenses-sdk",
+    "stackra/crud",
+    "stackra/foundation",
+    "stackra/routing",
+    "stackra/service-provider",
+    "stackra/support",
     "spatie/laravel-data"
   ],
   "backend_pair": null,
   "size_gzip_kb": {},
   "maturity": "alpha",
   "owning_agent": "laravel-feature-builder",
-  "docs": ["apps/academorix/src/modules/finance/expenses/README.md"]
+  "docs": ["apps/stackra/src/modules/finance/expenses/README.md"]
 }

@@ -2,7 +2,7 @@
 
 /**
  * @file PackageInfo.php
- * @module Academorix\Cli\Composer
+ * @module Stackra\Cli\Composer
  * @description Readonly DTO for a single composer.json entry in the
  *   workspace. Carries the `name` field + the absolute paths to the
  *   composer.json file and its containing directory. Consumed by
@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Composer;
+namespace Stackra\Cli\Composer;
 
 /**
  * Immutable view of a workspace composer.json package.

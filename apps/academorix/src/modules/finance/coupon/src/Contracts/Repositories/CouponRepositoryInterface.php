@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Contracts\Repositories;
+namespace Stackra\Coupon\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Coupon\Models\Coupon}.
+ * Repository contract for {@see Stackra\Coupon\Models\Coupon}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `CouponRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Coupon\Models\Coupon>
+ * @extends RepositoryInterface<\Stackra\Coupon\Models\Coupon>
  *
  * @category Coupon
  *

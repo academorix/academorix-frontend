@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Policies;
+namespace Stackra\Theme\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Theme\Models\ThemeTokenOverride;
+use Stackra\User\Models\User;
+use Stackra\Theme\Models\ThemeTokenOverride;
 
 /**
- * Authorization policy for {@see \Academorix\Theme\Models\ThemeTokenOverride}.
+ * Authorization policy for {@see \Stackra\Theme\Models\ThemeTokenOverride}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

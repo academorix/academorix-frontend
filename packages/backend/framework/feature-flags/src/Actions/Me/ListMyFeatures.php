@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Actions\Me;
+namespace Stackra\FeatureFlags\Actions\Me;
 
-use Academorix\FeatureFlags\Contracts\FeatureCheckerInterface;
-use Academorix\FeatureFlags\Registry\FeatureFlagRegistry;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
+use Stackra\FeatureFlags\Contracts\FeatureCheckerInterface;
+use Stackra\FeatureFlags\Registry\FeatureFlagRegistry;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
 use Illuminate\Http\Response;
 
 /**

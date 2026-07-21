@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/grants/config",
+  "id": "stackra://modules/grants/config",
   "$version": 1,
   "title": "grants — developer configuration",
   "description": "Developer / operator configuration. Mirrors `config/grants.php`. Static per deploy; changing requires redeploy + `config:cache`. Distinct from settings.json (tenant-editable at runtime).",

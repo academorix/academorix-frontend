@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Credentials\Database\Factories;
+namespace Stackra\Credentials\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Credentials\Contracts\Data\GateInterface;
-use Academorix\Credentials\Models\Gate;
+use Stackra\Credentials\Contracts\Data\GateInterface;
+use Stackra\Credentials\Models\Gate;
 
 /**
- * Factory for {@see \Academorix\Credentials\Models\Gate}.
+ * Factory for {@see \Stackra\Credentials\Models\Gate}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Credentials\Models\Gate>
+ * @extends Factory<\Stackra\Credentials\Models\Gate>
  *
  * @category Credentials
  *

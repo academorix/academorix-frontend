@@ -1,10 +1,10 @@
 {
-  "name": "academorix/realtime",
+  "name": "stackra/realtime",
   "type": "library",
-  "description": "Academorix Realtime module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/realtime/`. Complements the wire SDK at `academorix-platform/realtime-sdk`.",
+  "description": "Stackra Realtime module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/realtime/`. Complements the wire SDK at `stackra-platform/realtime-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "platform",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-platform/realtime-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-platform/realtime-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Realtime\\": "src/"
+      "Stackra\\Realtime\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Realtime\\Tests\\": "tests/"
+      "Stackra\\Realtime\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Realtime\\Providers\\RealtimeServiceProvider"
+        "Stackra\\Realtime\\Providers\\RealtimeServiceProvider"
       ],
       "aliases": {}
     }
@@ -68,7 +68,7 @@
   "repositories": [
     {
       "type": "path",
-      "url": "../../../../apps/academorix/src/sdks/platform-realtime-sdk",
+      "url": "../../../../apps/stackra/src/sdks/platform-realtime-sdk",
       "options": {
         "symlink": true
       }

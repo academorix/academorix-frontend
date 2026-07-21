@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Contracts\Services;
+namespace Stackra\Compliance\Contracts\Services;
 
-use Academorix\Compliance\Services\BreachDetector;
+use Stackra\Compliance\Services\BreachDetector;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tasks\Exceptions;
+namespace Stackra\Tasks\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Cannot modify a completed or cancelled task.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TaskTerminalStateException extends AcademorixException
+final class TaskTerminalStateException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

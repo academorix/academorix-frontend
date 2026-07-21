@@ -1,4 +1,4 @@
-# academorix/admin-console
+# stackra/admin-console
 
 Server-side Laravel package for the `admin-console` module. Auto-generated from
 the blueprint at `modules/platform/blueprints/admin-console/`.
@@ -44,6 +44,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-platform/admin-console-sdk` under `sdk/platform-admin-console-sdk/`.
+`stackra-platform/admin-console-sdk` under `sdk/platform-admin-console-sdk/`.
 Consumers cross the service boundary through the SDK; this package is the
 SERVER-side owner of the domain.

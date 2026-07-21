@@ -1,20 +1,20 @@
 {
-  "id": "academorix://modules/age-group/attributes",
+  "id": "stackra://modules/age-group/attributes",
   "$version": 1,
   "title": "age-group — PHP attribute contracts",
   "description": "One attribute. `#[AsAgeGroupListener]` on a service class marks it as a subscriber to age-group-lifecycle events — AttributeDiscovery picks it up and wires it to the event map declared in `events.json`. No property-level attributes: the AgeGroup row uses ordinary Eloquent + spatie/laravel-data class attributes shipped by foundation.",
-  "namespace": "Academorix\\Sports\\AgeGroup\\Attributes",
+  "namespace": "Stackra\\Sports\\AgeGroup\\Attributes",
   "attributes": [
     {
       "name": "AsAgeGroupListener",
-      "class": "Academorix\\Sports\\AgeGroup\\Attributes\\AsAgeGroupListener",
+      "class": "Stackra\\Sports\\AgeGroup\\Attributes\\AsAgeGroupListener",
       "targets": ["class"],
       "params": [
         {
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Array of event short names (`AgeGroupCreated`, `AgeGroupBoundsChanged`, `AgeGroupCatalogSeeded`, …) the class listens to. Empty = subscribe to every event in `Academorix\\Sports\\AgeGroup\\Events\\*`. Names are resolved against `events.json`; typos surface at boot time when the discovery scan validates them."
+          "description": "Array of event short names (`AgeGroupCreated`, `AgeGroupBoundsChanged`, `AgeGroupCatalogSeeded`, …) the class listens to. Empty = subscribe to every event in `Stackra\\Sports\\AgeGroup\\Events\\*`. Names are resolved against `events.json`; typos surface at boot time when the discovery scan validates them."
         },
         {
           "name": "queue",

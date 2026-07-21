@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Events;
+namespace Stackra\Notifications\Push\Events;
 
-use Academorix\Notifications\Push\Enums\PushSubscriptionExpiredReason;
+use Stackra\Notifications\Push\Enums\PushSubscriptionExpiredReason;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 /**
  * Provider reported a device token is no longer valid.
  *

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Progress\Repositories;
+namespace Stackra\Progress\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Progress\Contracts\Data\ProgressCardInterface;
-use Academorix\Progress\Contracts\Repositories\ProgressCardRepositoryInterface;
-use Academorix\Progress\Models\ProgressCard;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Progress\Contracts\Data\ProgressCardInterface;
+use Stackra\Progress\Contracts\Repositories\ProgressCardRepositoryInterface;
+use Stackra\Progress\Models\ProgressCard;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Progress\Models\ProgressCard}.
+ * Attribute-first Eloquent repository for {@see Stackra\Progress\Models\ProgressCard}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ProgressCardInterface::class)]` which resolves to
  * `ProgressCard` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Progress\Models\ProgressCard>
+ * @extends Repository<\Stackra\Progress\Models\ProgressCard>
  *
  * @category Progress
  *

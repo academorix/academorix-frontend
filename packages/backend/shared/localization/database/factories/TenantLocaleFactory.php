@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Database\Factories;
+namespace Stackra\Localization\Database\Factories;
 
-use Academorix\Localization\Contracts\Data\TenantLocaleInterface;
-use Academorix\Localization\Models\PlatformLanguage;
-use Academorix\Localization\Models\TenantLocale;
+use Stackra\Localization\Contracts\Data\TenantLocaleInterface;
+use Stackra\Localization\Models\PlatformLanguage;
+use Stackra\Localization\Models\TenantLocale;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

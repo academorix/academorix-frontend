@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Repositories;
+namespace Stackra\Localization\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Localization\Contracts\Data\PlatformLanguageInterface;
-use Academorix\Localization\Contracts\Repositories\PlatformLanguageRepositoryInterface;
-use Academorix\Localization\Models\PlatformLanguage;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Localization\Contracts\Data\PlatformLanguageInterface;
+use Stackra\Localization\Contracts\Repositories\PlatformLanguageRepositoryInterface;
+use Stackra\Localization\Models\PlatformLanguage;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Localization\Models\PlatformLanguage}.
+ * Attribute-first Eloquent repository for {@see Stackra\Localization\Models\PlatformLanguage}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(PlatformLanguageInterface::class)]` which resolves to
  * `PlatformLanguage` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Localization\Models\PlatformLanguage>
+ * @extends Repository<\Stackra\Localization\Models\PlatformLanguage>
  *
  * @category Localization
  *

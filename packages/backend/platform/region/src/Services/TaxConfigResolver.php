@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Region\Services;
+namespace Stackra\Region\Services;
 
-use Academorix\Region\Contracts\Services\TaxConfigResolverInterface;
+use Stackra\Region\Contracts\Services\TaxConfigResolverInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Region\Contracts\Repositories\RegionRepositoryInterface;
+use Stackra\Region\Contracts\Repositories\RegionRepositoryInterface;
 
 /**
  * Concrete service — TaxConfigResolver.

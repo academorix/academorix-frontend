@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Contracts\Repositories;
+namespace Stackra\Compliance\Contracts\Repositories;
 
-use Academorix\Compliance\Models\DsarArtefact;
-use Academorix\Compliance\Repositories\EloquentDsarArtefactRepository;
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Compliance\Models\DsarArtefact;
+use Stackra\Compliance\Repositories\EloquentDsarArtefactRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

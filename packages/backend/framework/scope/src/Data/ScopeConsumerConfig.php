@@ -12,9 +12,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Data;
+namespace Stackra\Scope\Data;
 
-use Academorix\Scope\Exceptions\ScopeValidationException;
+use Stackra\Scope\Exceptions\ScopeValidationException;
 
 /**
  * Per-consumer configuration.

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/auth/schemas/auth-refresh-token",
+  "id": "stackra://modules/auth/schemas/auth-refresh-token",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "RefreshToken",
@@ -13,7 +13,7 @@
     "keyType": "string",
     "keyPrefix": "atr_",
     "incrementing": false,
-    "model": "Academorix\\Auth\\Models\\RefreshToken",
+    "model": "Stackra\\Auth\\Models\\RefreshToken",
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -40,7 +40,7 @@
       "tokenable_type": {
         "type": "string",
         "nullable": false,
-        "description": "Polymorphic type \u2014 `Academorix\\User\\Models\\User` or `Academorix\\PlatformUser\\Models\\PlatformUser`."
+        "description": "Polymorphic type \u2014 `Stackra\\User\\Models\\User` or `Stackra\\PlatformUser\\Models\\PlatformUser`."
       },
       "tokenable_id": { "type": "string", "length": 30, "nullable": false },
       "token_hash": {

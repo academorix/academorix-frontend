@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Concerns;
+namespace Stackra\Entitlements\Concerns;
 
-use Academorix\Entitlements\Contracts\Data\EntitlementInterface;
-use Academorix\Entitlements\Models\Entitlement;
+use Stackra\Entitlements\Contracts\Data\EntitlementInterface;
+use Stackra\Entitlements\Models\Entitlement;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**

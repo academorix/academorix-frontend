@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Console;
+namespace Stackra\Notifications\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Notifications\Jobs\ReconcileDeliveriesJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Notifications\Jobs\ReconcileDeliveriesJob;
 
 /**
  * `php artisan notifications:reconcile-deliveries` — poll every

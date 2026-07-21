@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Console;
+namespace Stackra\Versioning\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Versioning\Contracts\Data\ApiVersionInterface;
-use Academorix\Versioning\Contracts\Repositories\ApiVersionRepositoryInterface;
-use Academorix\Versioning\Enums\ApiVersionStatus;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Versioning\Contracts\Data\ApiVersionInterface;
+use Stackra\Versioning\Contracts\Repositories\ApiVersionRepositoryInterface;
+use Stackra\Versioning\Enums\ApiVersionStatus;
 
 /**
  * `php artisan versioning:release {slug}` — transition an ApiVersion

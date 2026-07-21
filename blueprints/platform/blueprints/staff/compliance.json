@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/staff/compliance",
+  "id": "stackra://modules/staff/compliance",
   "$version": 1,
   "title": "staff — compliance evidence",
   "description": "Staff module is employment-record adjacent. Every hire, offboard, suspension, and compensation change is a compliance-relevant event. SOC 2 CC6.3 (segregation of duties — HR + owner separate from branch_manager for compensation + suspension), CC6.7 (offboarding SLA — user access revoked within 24h of StaffOffboarded per the user module's cascade), GDPR data-minimisation (emergency contact + tax_id_last4 redacted 90 days post-offboard), anti-discrimination compliance (all suspension + termination reasons audited to detect patterns; not exposed to tenants but analysed platform-side).",
@@ -55,7 +55,7 @@
         {
           "criterion": "CC7.2",
           "principle": "system monitoring",
-          "evidence": "ReconcileBranchManagerInvariantJob is the P1 signal for org-chart data-integrity issues. academorix.staff.branch_manager.invariant_violations counter should stay at 0. academorix.staff.compensation.large_delta_bypass_total counter should be low (large-delta bypass permissions are for approved exceptions only)."
+          "evidence": "ReconcileBranchManagerInvariantJob is the P1 signal for org-chart data-integrity issues. stackra.staff.branch_manager.invariant_violations counter should stay at 0. stackra.staff.compensation.large_delta_bypass_total counter should be low (large-delta bypass permissions are for approved exceptions only)."
         },
         {
           "criterion": "CC9.1",

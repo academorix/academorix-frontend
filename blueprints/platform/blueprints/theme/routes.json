@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/theme/routes",
+  "id": "stackra://modules/theme/routes",
   "$version": 1,
   "title": "theme — HTTP routes",
-  "description": "Two host audiences: tenant (admin + design-role manage themes/presets/overrides; end users manage per-user preference), and platform-admin (Academorix staff manage the cross-tenant preset library). Every action is declared via #[AsAction] on a single-invoke controller — no routes/*.php file required at the app level.",
+  "description": "Two host audiences: tenant (admin + design-role manage themes/presets/overrides; end users manage per-user preference), and platform-admin (Stackra staff manage the cross-tenant preset library). Every action is declared via #[AsAction] on a single-invoke controller — no routes/*.php file required at the app level.",
   "groups": [
     {
       "name": "tenant-themes",
@@ -22,103 +22,103 @@
         {
           "method": "GET",
           "path": "/themes",
-          "controller": "Academorix\\Platform\\Theme\\Http\\Actions\\Themes\\ListThemesAction",
+          "controller": "Stackra\\Platform\\Theme\\Http\\Actions\\Themes\\ListThemesAction",
           "permission": "theme.read",
           "description": "List every theme in the tenant. Paginated."
         },
         {
           "method": "POST",
           "path": "/themes",
-          "controller": "Academorix\\Platform\\Theme\\Http\\Actions\\Themes\\CreateThemeAction",
+          "controller": "Stackra\\Platform\\Theme\\Http\\Actions\\Themes\\CreateThemeAction",
           "permission": "theme.manage",
           "description": "Create a theme referencing a preset. Row starts is_active=false; use /activate to flip."
         },
         {
           "method": "GET",
           "path": "/themes/{theme}",
-          "controller": "Academorix\\Platform\\Theme\\Http\\Actions\\Themes\\ShowThemeAction",
+          "controller": "Stackra\\Platform\\Theme\\Http\\Actions\\Themes\\ShowThemeAction",
           "permission": "theme.read"
         },
         {
           "method": "POST",
           "path": "/themes/{theme}/activate",
-          "controller": "Academorix\\Platform\\Theme\\Http\\Actions\\Themes\\ActivateThemeAction",
+          "controller": "Stackra\\Platform\\Theme\\Http\\Actions\\Themes\\ActivateThemeAction",
           "permission": "theme.activate",
           "description": "Activate the theme for its mode. Deactivates any prior active theme in the same (tenant, mode) in the same DB txn. Freezes tokens_snapshot. Fires ThemeActivated. Dispatches RegenerateRenderedCssJob after commit."
         },
         {
           "method": "POST",
           "path": "/themes/{theme}/preview",
-          "controller": "Academorix\\Platform\\Theme\\Http\\Actions\\Themes\\PreviewThemeAction",
+          "controller": "Stackra\\Platform\\Theme\\Http\\Actions\\Themes\\PreviewThemeAction",
           "permission": "theme.read",
           "description": "Dry-run render. Returns the resolved token map + compiled CSS + contrast audit findings WITHOUT persisting. Useful for the admin UI's preview panel before activate."
         },
         {
           "method": "GET",
           "path": "/themes/current",
-          "controller": "Academorix\\Platform\\Theme\\Http\\Actions\\Themes\\CurrentThemeAction",
+          "controller": "Stackra\\Platform\\Theme\\Http\\Actions\\Themes\\CurrentThemeAction",
           "permission": "theme.read",
           "description": "Returns the currently-active theme (or two rows for tenants with both light+dark active). Resolves per the caller's user-theme-preference (mode + accessibility overrides). Hot path — cached."
         },
         {
           "method": "GET",
           "path": "/theme-presets",
-          "controller": "Academorix\\Platform\\Theme\\Http\\Actions\\ThemePresets\\ListThemePresetsAction",
+          "controller": "Stackra\\Platform\\Theme\\Http\\Actions\\ThemePresets\\ListThemePresetsAction",
           "permission": "theme.read",
           "description": "List platform-provided presets + tenant custom presets. Filter by mode/category."
         },
         {
           "method": "POST",
           "path": "/theme-presets",
-          "controller": "Academorix\\Platform\\Theme\\Http\\Actions\\ThemePresets\\CreateThemePresetAction",
+          "controller": "Stackra\\Platform\\Theme\\Http\\Actions\\ThemePresets\\CreateThemePresetAction",
           "permission": "theme.manage",
           "description": "Create a tenant custom preset. Gated by theme_custom_presets entitlement cap. tenant_id auto-populated; NEVER accepts NULL from a tenant caller."
         },
         {
           "method": "GET",
           "path": "/theme-presets/{preset}",
-          "controller": "Academorix\\Platform\\Theme\\Http\\Actions\\ThemePresets\\ShowThemePresetAction",
+          "controller": "Stackra\\Platform\\Theme\\Http\\Actions\\ThemePresets\\ShowThemePresetAction",
           "permission": "theme.read"
         },
         {
           "method": "POST",
           "path": "/theme-presets/{preset}/duplicate",
-          "controller": "Academorix\\Platform\\Theme\\Http\\Actions\\ThemePresets\\DuplicateThemePresetAction",
+          "controller": "Stackra\\Platform\\Theme\\Http\\Actions\\ThemePresets\\DuplicateThemePresetAction",
           "permission": "theme.manage",
           "description": "Clone any preset (platform or tenant custom) into a new tenant custom preset. Gated by theme_custom_presets entitlement cap."
         },
         {
           "method": "GET",
           "path": "/theme-token-overrides",
-          "controller": "Academorix\\Platform\\Theme\\Http\\Actions\\ThemeTokenOverrides\\ListThemeTokenOverridesAction",
+          "controller": "Stackra\\Platform\\Theme\\Http\\Actions\\ThemeTokenOverrides\\ListThemeTokenOverridesAction",
           "permission": "theme.read",
           "description": "List overrides scoped by ?theme_id=."
         },
         {
           "method": "POST",
           "path": "/theme-token-overrides",
-          "controller": "Academorix\\Platform\\Theme\\Http\\Actions\\ThemeTokenOverrides\\CreateThemeTokenOverrideAction",
+          "controller": "Stackra\\Platform\\Theme\\Http\\Actions\\ThemeTokenOverrides\\CreateThemeTokenOverrideAction",
           "permission": "theme.manage",
           "description": "Create a per-token override on a theme. Gated by theme_token_overrides entitlement cap. Fires RegenerateRenderedCssJob after commit."
         },
         {
           "method": "DELETE",
           "path": "/theme-token-overrides/{override}",
-          "controller": "Academorix\\Platform\\Theme\\Http\\Actions\\ThemeTokenOverrides\\DeleteThemeTokenOverrideAction",
+          "controller": "Stackra\\Platform\\Theme\\Http\\Actions\\ThemeTokenOverrides\\DeleteThemeTokenOverrideAction",
           "permission": "theme.manage",
           "description": "Remove an override; theme falls back to underlying preset value on next resolution. Fires RegenerateRenderedCssJob after commit."
         },
         {
           "method": "GET",
           "path": "/me/theme-preference",
-          "controller": "Academorix\\Platform\\Theme\\Http\\Actions\\UserPreference\\ShowUserThemePreferenceAction",
+          "controller": "Stackra\\Platform\\Theme\\Http\\Actions\\UserPreference\\ShowUserThemePreferenceAction",
           "permission": "authenticated",
           "description": "Caller's own per-user theme preference. Auto-provisioned on first read (preferred_mode='auto', accessibility_overrides={})."
         },
         {
           "method": "PATCH",
           "path": "/me/theme-preference",
-          "controller": "Academorix\\Platform\\Theme\\Http\\Actions\\UserPreference\\UpdateUserThemePreferenceAction",
+          "controller": "Stackra\\Platform\\Theme\\Http\\Actions\\UserPreference\\UpdateUserThemePreferenceAction",
           "permission": "authenticated",
           "description": "Update the caller's preferred_mode + accessibility_overrides. Fires UserThemePreferenceUpdated."
         }
@@ -136,33 +136,33 @@
         "response.envelope"
       ],
       "hosts": ["platform-admin"],
-      "description": "Academorix-staff-only cross-tenant preset library management. Manages the platform preset catalog (tenant_id NULL rows).",
+      "description": "Stackra-staff-only cross-tenant preset library management. Manages the platform preset catalog (tenant_id NULL rows).",
       "routes": [
         {
           "method": "GET",
           "path": "/theme-presets",
-          "controller": "Academorix\\Platform\\Theme\\Http\\Actions\\Platform\\ListPlatformThemePresetsAction",
+          "controller": "Stackra\\Platform\\Theme\\Http\\Actions\\Platform\\ListPlatformThemePresetsAction",
           "permission": "platform.theme.read",
           "description": "List platform presets (tenant_id NULL) + cross-tenant custom preset usage stats."
         },
         {
           "method": "POST",
           "path": "/theme-presets",
-          "controller": "Academorix\\Platform\\Theme\\Http\\Actions\\Platform\\CreatePlatformThemePresetAction",
+          "controller": "Stackra\\Platform\\Theme\\Http\\Actions\\Platform\\CreatePlatformThemePresetAction",
           "permission": "platform.theme.manage-presets",
           "description": "Add a new platform preset. tenant_id NULL. Every tenant sees the preset on next /api/v1/theme-presets read."
         },
         {
           "method": "PATCH",
           "path": "/theme-presets/{preset}",
-          "controller": "Academorix\\Platform\\Theme\\Http\\Actions\\Platform\\UpdatePlatformThemePresetAction",
+          "controller": "Stackra\\Platform\\Theme\\Http\\Actions\\Platform\\UpdatePlatformThemePresetAction",
           "permission": "platform.theme.manage-presets",
           "description": "Update a platform preset. Triggers MigrateThemeTokensOnPresetUpdateJob for every tenant Theme that references this preset."
         },
         {
           "method": "DELETE",
           "path": "/theme-presets/{preset}",
-          "controller": "Academorix\\Platform\\Theme\\Http\\Actions\\Platform\\DeletePlatformThemePresetAction",
+          "controller": "Stackra\\Platform\\Theme\\Http\\Actions\\Platform\\DeletePlatformThemePresetAction",
           "permission": "platform.theme.manage-presets",
           "description": "Soft-delete a platform preset. Refused when any active Theme references it."
         }

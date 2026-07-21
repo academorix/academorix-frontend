@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Exceptions;
+namespace Stackra\Facility\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * The submitted availability_json contains a window outside the parent branch.

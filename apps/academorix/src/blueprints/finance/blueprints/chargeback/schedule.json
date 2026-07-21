@@ -1,74 +1,74 @@
 {
-  "id": "academorix://modules/chargeback/schedule",
+  "id": "stackra://modules/chargeback/schedule",
   "$version": 1,
   "title": "chargeback — scheduled tasks",
   "entries": [
     {
       "name": "chargeback-monitor-rate",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Chargeback\\Jobs\\MonitorChargebackRateJob",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Chargeback\\Jobs\\MonitorChargebackRateJob",
       "cron": "0 4 * * *",
       "timezone": "UTC",
       "purpose": "Nightly 04:00 UTC. Computes rolling 60-day chargeback rate per tenant per network + fires ChargebackRateThresholdExceeded when rate crosses network's VDMP/MDMP threshold. Also dispatches CheckChargebackStatusJob per-provider for reconciliation loop."
     },
     {
       "name": "chargeback-mark-expired",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Chargeback\\Jobs\\MarkExpiredChargebacksJob",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Chargeback\\Jobs\\MarkExpiredChargebacksJob",
       "cron": "0 */2 * * *",
       "timezone": "UTC",
       "purpose": "Every 2 hours. Finds chargebacks past evidence_due_by still in status='pending_evidence' + transitions them to expired (auto-loss). Also dispatches FinalizeChargebackJob for the finalization chain. High cadence — miss no more than 2h between deadline pass + auto-loss transition."
     },
     {
       "name": "chargeback-check-provider-status-stripe",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Chargeback\\Jobs\\CheckChargebackStatusJob --provider=stripe",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Chargeback\\Jobs\\CheckChargebackStatusJob --provider=stripe",
       "cron": "0 * * * *",
       "timezone": "UTC",
       "purpose": "Hourly. Polls Stripe for chargeback status changes. Stripe disputes take 30-45 days to resolve; hourly polling balances timeliness vs API rate limits."
     },
     {
       "name": "chargeback-check-provider-status-paddle",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Chargeback\\Jobs\\CheckChargebackStatusJob --provider=paddle",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Chargeback\\Jobs\\CheckChargebackStatusJob --provider=paddle",
       "cron": "0 */4 * * *",
       "timezone": "UTC",
       "purpose": "Every 4h. Polls Paddle for chargeback status changes."
     },
     {
       "name": "chargeback-check-provider-status-adyen",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Chargeback\\Jobs\\CheckChargebackStatusJob --provider=adyen",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Chargeback\\Jobs\\CheckChargebackStatusJob --provider=adyen",
       "cron": "0 * * * *",
       "timezone": "UTC",
       "purpose": "Hourly. Polls Adyen for chargeback status changes."
     },
     {
       "name": "chargeback-check-provider-status-square",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Chargeback\\Jobs\\CheckChargebackStatusJob --provider=square",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Chargeback\\Jobs\\CheckChargebackStatusJob --provider=square",
       "cron": "0 */4 * * *",
       "timezone": "UTC",
       "purpose": "Every 4h. Polls Square for chargeback status changes."
     },
     {
       "name": "chargeback-check-provider-status-paypal",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Chargeback\\Jobs\\CheckChargebackStatusJob --provider=paypal",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Chargeback\\Jobs\\CheckChargebackStatusJob --provider=paypal",
       "cron": "0 * * * *",
       "timezone": "UTC",
       "purpose": "Hourly. Polls PayPal for chargeback status changes."
     },
     {
       "name": "chargeback-evidence-overdue-notifications",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Chargeback\\Jobs\\NotifyChargebackEvidenceOverdueJob",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Chargeback\\Jobs\\NotifyChargebackEvidenceOverdueJob",
       "cron": "0 9 * * *",
       "timezone": "UTC",
       "purpose": "Daily 09:00 UTC. Sweeps all pending_evidence chargebacks + fires ChargebackEvidenceOverdue at appropriate days_remaining buckets (7 / 3 / 1). Also fires per-chargeback escalating cadence notifications via the observer chain at the exact deadline offsets — this scheduled sweep is a safety net for any that slipped through."
     },
     {
       "name": "chargeback-monthly-rate-report",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Chargeback\\Jobs\\GenerateMonthlyRateReportJob",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Chargeback\\Jobs\\GenerateMonthlyRateReportJob",
       "cron": "0 8 1 * *",
       "timezone": "UTC",
       "purpose": "1st of each month 08:00 UTC. Generates + emails monthly chargeback rate report to admin + finance leaders. Includes rolling rate by network, threshold status, top reason codes, RDR/CE3 metrics, prevention recommendations. Actionable for merchant-account risk awareness."
     },
     {
       "name": "chargeback-purge-expired",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Chargeback\\Jobs\\PurgeExpiredChargebackDataJob",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Chargeback\\Jobs\\PurgeExpiredChargebackDataJob",
       "cron": "0 5 * * 0",
       "timezone": "UTC",
       "purpose": "Weekly Sunday 05:00 UTC. Hard-purge chargebacks + chargeback_evidence past 7-year (or 10-year Enterprise) retention. Invoice-linked chargebacks migrate to compliance_archive.chargebacks + compliance_archive.chargeback_evidence prior to cascade (financial-obligation retention)."

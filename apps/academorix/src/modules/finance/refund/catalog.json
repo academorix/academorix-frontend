@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/refund",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/refund",
   "tier": "saas",
   "surfaces": ["core"],
   "kind": "feature",
@@ -11,22 +11,22 @@
     "Full + partial refund support",
     "State machine (initiated, processed, failed)",
     "Attribute-first CRUD, Actions, Policies, Events",
-    "Wire SDK companion at academorix-finance/refund-sdk"
+    "Wire SDK companion at stackra-finance/refund-sdk"
   ],
   "when_to_use": "A customer receives a refund initiated by the tenant, either full or per-line-item.",
-  "when_not_to_use": "For customer-initiated disputes against the tenant, use academorix/chargeback.",
+  "when_not_to_use": "For customer-initiated disputes against the tenant, use stackra/chargeback.",
   "peer_deps": [
-    "academorix-finance/refund-sdk",
-    "academorix/crud",
-    "academorix/foundation",
-    "academorix/routing",
-    "academorix/service-provider",
-    "academorix/support",
+    "stackra-finance/refund-sdk",
+    "stackra/crud",
+    "stackra/foundation",
+    "stackra/routing",
+    "stackra/service-provider",
+    "stackra/support",
     "spatie/laravel-data"
   ],
   "backend_pair": null,
   "size_gzip_kb": {},
   "maturity": "alpha",
   "owning_agent": "laravel-feature-builder",
-  "docs": ["apps/academorix/src/modules/finance/refund/README.md"]
+  "docs": ["apps/stackra/src/modules/finance/refund/README.md"]
 }

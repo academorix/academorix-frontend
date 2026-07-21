@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/chargeback/traits",
+  "id": "stackra://modules/chargeback/traits",
   "$version": 1,
   "title": "chargeback — trait composition",
   "description": "Two owned traits. `BelongsToChargeback` is the FK trait for downstream models (ChargebackEvidence + future marketing-event rows tied to a specific chargeback). `HasChargebackEvidence` is the inverse-side convenience on the parent Chargeback model. Order matters when composed with `BelongsToTenant`: tenant MUST come first so subsequent traits observe the tenant context.",
   "owned": [
     {
-      "trait": "Academorix\\Finance\\Chargeback\\Concerns\\BelongsToChargeback",
+      "trait": "Stackra\\Finance\\Chargeback\\Concerns\\BelongsToChargeback",
       "description": "Mixed into any domain model that carries a `chargeback_id` FK. Adds the `chargeback()` belongsTo relation and refuses cross-tenant writes at save time. Applied to ChargebackEvidence directly + planned growth::marketing::MarketingEvent (Wave 5) that carries chargeback_id for negative-value + fraud signal attribution.",
       "public": true,
       "usedBy": [
@@ -14,7 +14,7 @@
       ]
     },
     {
-      "trait": "Academorix\\Finance\\Chargeback\\Concerns\\HasChargebackEvidence",
+      "trait": "Stackra\\Finance\\Chargeback\\Concerns\\HasChargebackEvidence",
       "description": "Composed onto the Chargeback model. Adds `->evidence()` (hasMany), `->latestEvidence()` (has max submission_attempt_number), `->evidenceCount()` (count of submission attempts). Convenience: `$chargeback->has_submitted_evidence` for the boolean.",
       "public": true,
       "usedBy": ["chargeback::Chargeback"]
@@ -30,33 +30,33 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
     "tenants": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
         "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
       }
     ],
     "audit": [
       {
-        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "trait": "Stackra\\Audit\\Concerns\\Auditable",
         "reason": "Every write is compliance-relevant (financial-record + card network audit 7-year retention). Every state transition on Chargeback (status, evidence_submitted_at, decision_at, credit_note_id, transaction_id, fee_transaction_id, refund_id) + every ChargebackEvidence creation is audit-critical."
       }
     ],
     "activity": [
       {
-        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
         "reason": "Chargeback lifecycle transitions (filed / evidence_submitted / under_review / won / lost / expired / accepted_refund) feed the staff-visible activity feed. NOT on ChargebackEvidence (immutable append-only row — already covered by parent chargeback activity log)."
       }
     ],
     "encryption": [
       {
-        "trait": "Academorix\\Foundation\\Concerns\\EncryptsSensitiveFields",
+        "trait": "Stackra\\Foundation\\Concerns\\EncryptsSensitiveFields",
         "reason": "Applied on Chargeback for provider_reference_id + provider_metadata (encrypted at rest). Applied on ChargebackEvidence for provider_response (encrypted at rest). NOT on the whole row — column-level encryption via cast."
       }
     ]

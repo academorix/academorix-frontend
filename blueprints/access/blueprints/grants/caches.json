@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/grants/caches",
+  "id": "stackra://modules/grants/caches",
   "$version": 1,
   "title": "grants — cache keys",
   "description": "Cache keys this module owns. Two-tier evaluation cache (L1 in-process per-worker, L2 Redis shared) drives the resolver's hot path — every permission check touches L1 first. Also tenant-scoped counters for entitlement enforcement + a warmable top-grants set.",

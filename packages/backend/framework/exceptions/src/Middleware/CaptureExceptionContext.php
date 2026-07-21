@@ -12,12 +12,12 @@
  * ## Consumers
  *
  * Reporters read the snapshot via
- * `app('academorix.exception_context')`:
+ * `app('stackra.exception_context')`:
  *
- *   - {@see \Academorix\Exceptions\Reporting\LogReporter} — merges
+ *   - {@see \Stackra\Exceptions\Reporting\LogReporter} — merges
  *     into every structured log line.
- *   - {@see \Academorix\Exceptions\Reporting\SentryContextEnricher}
- *     — attaches as a Sentry context under `academorix.request`.
+ *   - {@see \Stackra\Exceptions\Reporting\SentryContextEnricher}
+ *     — attaches as a Sentry context under `stackra.request`.
  *
  * ## Middleware placement
  *
@@ -50,9 +50,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Middleware;
+namespace Stackra\Exceptions\Middleware;
 
-use Academorix\Routing\Attributes\AsMiddleware;
+use Stackra\Routing\Attributes\AsMiddleware;
 use Closure;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
@@ -68,7 +68,7 @@ final class CaptureExceptionContext
      * the Request directly (which would couple domain code to the
      * HTTP layer).
      */
-    public const CONTEXT_KEY = 'academorix.exception_context';
+    public const CONTEXT_KEY = 'stackra.exception_context';
 
     public function __construct(private readonly Application $app)
     {

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/webhook/config",
+  "id": "stackra://modules/webhook/config",
   "$version": 1,
   "title": "webhook \u2014 developer configuration",
   "description": "Deploy-static config. Mirrors `config/webhook.php`. Structure inspired by the stackra reference config with our namespace + tenant integration.",
@@ -136,7 +136,7 @@
           "path": "webhook.defaults.user_agent",
           "type": "string",
           "env": "WEBHOOK_USER_AGENT",
-          "default": "Academorix-Webhook/1.0"
+          "default": "Stackra-Webhook/1.0"
         },
         {
           "path": "webhook.defaults.verify_ssl",

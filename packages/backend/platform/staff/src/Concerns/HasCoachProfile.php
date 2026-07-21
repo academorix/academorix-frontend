@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Staff\Concerns;
+namespace Stackra\Staff\Concerns;
 
 /**
  * Trait — HasCoachProfile.

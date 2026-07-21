@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-push/feature-flags",
+  "id": "stackra://modules/notifications-push/feature-flags",
   "$version": 1,
   "title": "notifications-push \u2014 kill switches",
   "engine": "laravel/pennant",

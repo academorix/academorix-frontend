@@ -12,10 +12,10 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Enum\Concerns;
+namespace Stackra\Enum\Concerns;
 
-use Academorix\Enum\Meta\Property;
-use Academorix\Enum\Meta\Reflection;
+use Stackra\Enum\Meta\Property;
+use Stackra\Enum\Meta\Reflection;
 use ValueError;
 
 /**
@@ -25,9 +25,9 @@ use ValueError;
  *
  * ## Usage:
  * ```php
- * use Academorix\Enum\Attributes\Description;
- * use Academorix\Enum\Attributes\Name;
- * use Academorix\Enum\Meta\Meta;
+ * use Stackra\Enum\Attributes\Description;
+ * use Stackra\Enum\Attributes\Name;
+ * use Stackra\Enum\Meta\Meta;
  *
  * #[Meta([Description::class, Name::class])]
  * enum Status: string
@@ -44,7 +44,7 @@ use ValueError;
  * Status::fromMeta(new Name('Active Status')); // Returns Status::ACTIVE()
  * ```
  *
- * @author  Academorix Development Team
+ * @author  Stackra Development Team
  *
  * @since   1.0.0
  */

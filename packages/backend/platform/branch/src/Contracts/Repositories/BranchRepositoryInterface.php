@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branch\Contracts\Repositories;
+namespace Stackra\Branch\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Branch\Models\Branch}.
+ * Repository contract for {@see Stackra\Branch\Models\Branch}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `BranchRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Branch\Models\Branch>
+ * @extends RepositoryInterface<\Stackra\Branch\Models\Branch>
  *
  * @category Branch
  *

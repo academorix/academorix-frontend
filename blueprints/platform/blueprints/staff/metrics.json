@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/staff/metrics",
+  "id": "stackra://modules/staff/metrics",
   "$version": 1,
   "title": "staff — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "academorix.staff",
+  "namespace": "stackra.staff",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": [
@@ -26,72 +26,72 @@
   },
   "metrics": [
     {
-      "name": "academorix.staff.roster.count",
+      "name": "stackra.staff.roster.count",
       "kind": "gauge",
       "unit": "staff",
       "labels": ["employment_status", "employment_type"],
       "description": "Count of staff per (status, employment_type). Sampled hourly. Powers headcount dashboards."
     },
     {
-      "name": "academorix.staff.hired_total",
+      "name": "stackra.staff.hired_total",
       "kind": "counter",
       "unit": "staff",
       "labels": ["employment_type", "position_bucket", "was_branch_manager_at_hire"]
     },
     {
-      "name": "academorix.staff.offboarded_total",
+      "name": "stackra.staff.offboarded_total",
       "kind": "counter",
       "unit": "staff",
       "labels": ["termination_reason", "days_of_service_bucket", "cascade_used"]
     },
     {
-      "name": "academorix.staff.suspended_total",
+      "name": "stackra.staff.suspended_total",
       "kind": "counter",
       "unit": "staff",
       "labels": [],
       "description": "Suspension frequency. Never labelled by reason to prevent aggregation-based leakage. Retention-critical metric for anti-discrimination compliance."
     },
     {
-      "name": "academorix.staff.reinstated_total",
+      "name": "stackra.staff.reinstated_total",
       "kind": "counter",
       "unit": "staff",
       "labels": []
     },
     {
-      "name": "academorix.staff.reactivated_total",
+      "name": "stackra.staff.reactivated_total",
       "kind": "counter",
       "unit": "staff",
       "labels": ["days_since_offboarding_bucket"]
     },
     {
-      "name": "academorix.staff.branch_manager.promotions_total",
+      "name": "stackra.staff.branch_manager.promotions_total",
       "kind": "counter",
       "unit": "promotions",
       "labels": ["was_prior_manager_demoted"]
     },
     {
-      "name": "academorix.staff.branch_manager.invariant_violations",
+      "name": "stackra.staff.branch_manager.invariant_violations",
       "kind": "counter",
       "unit": "violations",
       "labels": [],
       "description": "CRITICAL. Every increment indicates one-active-branch-manager-per-branch invariant broke. Should stay at 0. Fired by ReconcileBranchManagerInvariantJob."
     },
     {
-      "name": "academorix.staff.compensation.changes_total",
+      "name": "stackra.staff.compensation.changes_total",
       "kind": "counter",
       "unit": "changes",
       "labels": ["compensation_type"],
       "description": "Never labelled by amount — only compensation_type category (hourly / salary / stipend / volunteer / commission)."
     },
     {
-      "name": "academorix.staff.compensation.large_delta_bypass_total",
+      "name": "stackra.staff.compensation.large_delta_bypass_total",
       "kind": "counter",
       "unit": "bypasses",
       "labels": [],
       "description": "Frequency of `staff.manage.compensation.large-delta` bypass permission use. Should be low; elevated indicates over-granted permission."
     },
     {
-      "name": "academorix.staff.compensation.write_duration_ms",
+      "name": "stackra.staff.compensation.write_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 50, 200, 1000],
@@ -99,86 +99,86 @@
       "description": "P99 target < 200ms. Compensation writes fire the CompensationChanged event + write to staff_compensation_history + write to normal audits — chain of writes."
     },
     {
-      "name": "academorix.staff.coach.created_total",
+      "name": "stackra.staff.coach.created_total",
       "kind": "counter",
       "unit": "coaches",
       "labels": ["coaching_level", "sport_key_bucket"],
       "description": "sport_key_bucket buckets high-cardinality sport keys into categories (team_sport / individual_sport / studio_sport / other) to keep label cardinality bounded."
     },
     {
-      "name": "academorix.staff.coach.archived_total",
+      "name": "stackra.staff.coach.archived_total",
       "kind": "counter",
       "unit": "coaches",
       "labels": []
     },
     {
-      "name": "academorix.staff.coach.certifications.added_total",
+      "name": "stackra.staff.coach.certifications.added_total",
       "kind": "counter",
       "unit": "certifications",
       "labels": ["requires_verification"]
     },
     {
-      "name": "academorix.staff.coach.certifications.verified_total",
+      "name": "stackra.staff.coach.certifications.verified_total",
       "kind": "counter",
       "unit": "certifications",
       "labels": []
     },
     {
-      "name": "academorix.staff.coach.certifications.expired_total",
+      "name": "stackra.staff.coach.certifications.expired_total",
       "kind": "counter",
       "unit": "certifications",
       "labels": ["was_verified"]
     },
     {
-      "name": "academorix.staff.coach.rating_updates_total",
+      "name": "stackra.staff.coach.rating_updates_total",
       "kind": "counter",
       "unit": "updates",
       "labels": ["delta_direction"],
       "description": "delta_direction: up_significant / up_minor / flat / down_minor / down_significant."
     },
     {
-      "name": "academorix.staff.probation.reminders_dispatched_total",
+      "name": "stackra.staff.probation.reminders_dispatched_total",
       "kind": "counter",
       "unit": "reminders",
       "labels": ["threshold_days"]
     },
     {
-      "name": "academorix.staff.probation.ending_soon_backlog",
+      "name": "stackra.staff.probation.ending_soon_backlog",
       "kind": "gauge",
       "unit": "staff",
       "labels": [],
       "description": "Count of Staff whose probation_ends_at is within 14 days. Sampled hourly. Powers the HR dashboard."
     },
     {
-      "name": "academorix.staff.reconcile.branch_manager_findings",
+      "name": "stackra.staff.reconcile.branch_manager_findings",
       "kind": "counter",
       "unit": "findings",
       "labels": [],
       "description": "ReconcileBranchManagerInvariantJob finding count. Should stay at 0."
     },
     {
-      "name": "academorix.staff.retention.pii_redactions_total",
+      "name": "stackra.staff.retention.pii_redactions_total",
       "kind": "counter",
       "unit": "redactions",
       "labels": [],
       "description": "PurgeOffboardedStaffJob phase 1 redaction count. Baseline: ~1 per offboarded staff per 90 days."
     },
     {
-      "name": "academorix.staff.retention.hard_purges_total",
+      "name": "stackra.staff.retention.hard_purges_total",
       "kind": "counter",
       "unit": "purges",
       "labels": [],
       "description": "PurgeOffboardedStaffJob phase 2 hard-purge count. Baseline: ~1 per offboarded staff per 7 years."
     },
     {
-      "name": "academorix.staff.retention.blocked_total",
+      "name": "stackra.staff.retention.blocked_total",
       "kind": "counter",
       "unit": "blocks",
       "labels": ["reason"],
       "description": "Hard-purge attempts blocked by FK RESTRICT. reason: coach_still_present / payroll_line_reference / other. Elevated indicates downstream retention drift."
     },
     {
-      "name": "academorix.staff.entitlement.gate_refusals_total",
+      "name": "stackra.staff.entitlement.gate_refusals_total",
       "kind": "counter",
       "unit": "refusals",
       "labels": ["entitlement_key"],

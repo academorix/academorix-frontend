@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/messaging/entitlements",
+  "id": "stackra://modules/messaging/entitlements",
   "$version": 1,
   "title": "messaging — entitlements consumed",
   "description": "Entitlements this module reads (slot / pool / boolean / unlimited).",

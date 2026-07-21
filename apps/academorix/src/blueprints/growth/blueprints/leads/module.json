@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "leads",
   "alias": "leads",
-  "namespace": "Academorix\\Growth\\Leads",
+  "namespace": "Stackra\\Growth\\Leads",
   "description": "Pre-enrollment CRM funnel. Answers 'which prospective family is at which stage of our sales pipeline?'. Captures leads from web forms, referrals, walk-ins, calls, imports, and API pushes; owns the pipeline state machine (NEW -> CONTACTED -> QUALIFIED -> TRIAL -> WON / LOST); tracks staff assignments, follow-up tasks, and per-lead activity timelines. On conversion, hands off athlete records to the sports/registrations module (via the LeadConversionService) and materialises the attribution snapshot from growth/attribution frozen at capture time. Complements enrollment (§12.4 in the domain blueprint) with the top-of-funnel + follow-up story that enrollment does not own. Owns three tables: `leads` (canonical row per prospective family; 7-year retention for conversion audit + regulator lookback), `lead_activities` (append-only timeline of every touchpoint per lead; 2-year retention), `lead_tasks` (follow-up work with priority + due date + assignee). Every row cascades tenant scoping through `tenant_id`; NO row carries application_id, region_id, organization_id, or scope_node_id per tenancy-columns.md §5. Attribution snapshot is captured once at lead creation and IMMUTABLE thereafter (matches marketing's frozen-at-capture pattern) so ROAS + funnel conversion reporting stays stable across attribution resets. Notifications module fires reminder emails / push for stale leads + tasks; the `leads:reassign-stale` command surfaces leads without recent activity for round-robin re-assignment.",
   "keywords": [
     "leads",
@@ -28,7 +28,7 @@
     "wave-5"
   ],
   "priority": 55,
-  "providers": ["Academorix\\Growth\\Leads\\Providers\\LeadsServiceProvider"],
+  "providers": ["Stackra\\Growth\\Leads\\Providers\\LeadsServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "application", "attribution", "notifications"],
   "extendedBy": [],

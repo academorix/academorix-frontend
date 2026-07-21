@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/athlete-enrollment/compliance",
+  "id": "stackra://modules/athlete-enrollment/compliance",
   "$version": 1,
   "title": "athlete-enrollment — compliance evidence",
   "description": "AthleteEnrollment is safeguarding-adjacent (roster tracking) + consent-adjacent (consent snapshot at confirm) + audit-critical (atomic conversion + expulsion tracking). GDPR Art. 8, Art. 17, SOC 2 CC6.3 + CC7.2, anti-discrimination (expulsion audit).",
@@ -30,7 +30,7 @@
         {
           "criterion": "CC7.2",
           "principle": "system monitoring",
-          "evidence": "ReconcileEnrollmentTeamMemberInvariantJob P1 signal — every finding investigated. `academorix.athlete_enrollment.atomicity.failures_total` should stay at 0. `academorix.athlete_enrollment.invariant.broken` should stay at 0."
+          "evidence": "ReconcileEnrollmentTeamMemberInvariantJob P1 signal — every finding investigated. `stackra.athlete_enrollment.atomicity.failures_total` should stay at 0. `stackra.athlete_enrollment.invariant.broken` should stay at 0."
         }
       ]
     },

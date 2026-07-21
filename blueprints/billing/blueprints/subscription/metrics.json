@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/subscription/metrics",
+  "id": "stackra://modules/subscription/metrics",
   "$version": 1,
   "title": "subscription \u2014 OpenTelemetry metrics",
   "instrumentation": "open-telemetry/sdk",
-  "namespace": "academorix.subscription",
+  "namespace": "stackra.subscription",
   "labelConventions": {
     "always": ["provider"],
     "commonlyAvailable": ["plan_key", "tier", "outcome"],
@@ -11,63 +11,63 @@
   },
   "metrics": [
     {
-      "name": "academorix.subscription.checkout.total",
+      "name": "stackra.subscription.checkout.total",
       "kind": "counter",
       "unit": "checkouts",
       "labels": ["provider", "plan_key", "outcome"],
       "description": "outcome: initiated / completed / abandoned / errored."
     },
     {
-      "name": "academorix.subscription.swap.total",
+      "name": "stackra.subscription.swap.total",
       "kind": "counter",
       "unit": "swaps",
       "labels": ["provider", "from_tier", "to_tier", "direction"],
       "description": "direction: upgrade / downgrade / lateral. Feeds pricing analytics."
     },
     {
-      "name": "academorix.subscription.cancel.total",
+      "name": "stackra.subscription.cancel.total",
       "kind": "counter",
       "unit": "cancellations",
       "labels": ["provider", "plan_key", "reason_bucket"],
       "description": "reason_bucket: price / feature_missing / bug / competitor / other. Feeds retention analytics."
     },
     {
-      "name": "academorix.subscription.trial.conversion_ratio",
+      "name": "stackra.subscription.trial.conversion_ratio",
       "kind": "gauge",
       "unit": "ratio",
       "labels": ["plan_key"],
       "description": "% of trials that converted to paid. Computed nightly."
     },
     {
-      "name": "academorix.subscription.mrr",
+      "name": "stackra.subscription.mrr",
       "kind": "gauge",
       "unit": "micro_currency",
       "labels": ["currency", "tier"],
       "description": "Monthly recurring revenue. Computed nightly."
     },
     {
-      "name": "academorix.subscription.dunning.transitions_total",
+      "name": "stackra.subscription.dunning.transitions_total",
       "kind": "counter",
       "unit": "transitions",
       "labels": ["from_state", "to_state"],
       "description": "State transitions in the dunning pipeline."
     },
     {
-      "name": "academorix.subscription.dunning.recovery_ratio",
+      "name": "stackra.subscription.dunning.recovery_ratio",
       "kind": "gauge",
       "unit": "ratio",
       "labels": [],
       "description": "% of past_due subscriptions that recovered to active vs progressed to suspended."
     },
     {
-      "name": "academorix.subscription.webhook.consumed_total",
+      "name": "stackra.subscription.webhook.consumed_total",
       "kind": "counter",
       "unit": "webhooks",
       "labels": ["provider", "event_type", "outcome"],
       "description": "outcome: processed / duplicate / errored / skipped."
     },
     {
-      "name": "academorix.subscription.webhook.processing_ms",
+      "name": "stackra.subscription.webhook.processing_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 50, 200, 1000, 5000, 30000],
@@ -75,7 +75,7 @@
       "description": "SyncFromCashierWebhookJob duration."
     },
     {
-      "name": "academorix.subscription.usage_export.total",
+      "name": "stackra.subscription.usage_export.total",
       "kind": "counter",
       "unit": "exports",
       "labels": ["provider", "outcome"],

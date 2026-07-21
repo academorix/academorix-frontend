@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Data\Requests;
+namespace Stackra\Webhook\Data\Requests;
 
-use Academorix\Webhook\Rules\SupportedBackoffStrategy;
+use Stackra\Webhook\Rules\SupportedBackoffStrategy;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Max;
 use Spatie\LaravelData\Attributes\Validation\Min;

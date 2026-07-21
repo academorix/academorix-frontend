@@ -1012,8 +1012,8 @@ Verify: `pnpm --filter @stackra/contracts typecheck / build / test`
 ### Task 2 — Build `@stackra/config` v0.1.0
 
 Delegate to `framework-core-builder` with absolute paths under
-`/Users/akouta/Projects/academorix-frontend/` (the agent is hardcoded to
-`/Users/akouta/Projects/academorix-frontend/` — always pass absolute paths).
+`/Users/akouta/Projects/stackra-frontend/` (the agent is hardcoded to
+`/Users/akouta/Projects/stackra-frontend/` — always pass absolute paths).
 
 Scope:
 
@@ -1166,8 +1166,8 @@ Per config file (`application`, `container`, `cache`, `events`, `network`,
 
 Verify:
 
-- `pnpm --filter @academorix/dashboard typecheck` clean
-- `pnpm --filter @academorix/dashboard build` succeeds
+- `pnpm --filter @stackra/dashboard typecheck` clean
+- `pnpm --filter @stackra/dashboard build` succeeds
 - Runtime smoke: Vite dev server boots; `ApplicationFactory.create(AppModule)`
   succeeds; `ConfigService.get('cache.prefix')` returns the overridden value
 

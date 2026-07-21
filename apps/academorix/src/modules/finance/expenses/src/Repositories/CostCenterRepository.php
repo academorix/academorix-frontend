@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Expenses\Repositories;
+namespace Stackra\Expenses\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Expenses\Contracts\Data\CostCenterInterface;
-use Academorix\Expenses\Contracts\Repositories\CostCenterRepositoryInterface;
-use Academorix\Expenses\Models\CostCenter;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Expenses\Contracts\Data\CostCenterInterface;
+use Stackra\Expenses\Contracts\Repositories\CostCenterRepositoryInterface;
+use Stackra\Expenses\Models\CostCenter;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Expenses\Models\CostCenter}.
+ * Attribute-first Eloquent repository for {@see Stackra\Expenses\Models\CostCenter}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(CostCenterInterface::class)]` which resolves to
  * `CostCenter` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Expenses\Models\CostCenter>
+ * @extends Repository<\Stackra\Expenses\Models\CostCenter>
  *
  * @category Expenses
  *

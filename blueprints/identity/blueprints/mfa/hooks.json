@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/mfa/hooks",
+  "id": "stackra://modules/mfa/hooks",
   "$version": 1,
   "title": "mfa — tenancy hooks",
   "description": "MFA has NO tenancy hooks. The module is GLOBAL by design — WebauthnCredential is owned by the Identity (which is global, not tenant-scoped), and no per-tenant state materialises on tenant provisioning. Downstream cascade (e.g. TenantErased → UserErased → identity/user cascade → optional identity/identity → mfa cascade) flows through the listener chain in listeners.json, not through tenancy hooks.",

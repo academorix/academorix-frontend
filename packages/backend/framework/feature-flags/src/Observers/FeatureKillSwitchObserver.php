@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Observers;
+namespace Stackra\FeatureFlags\Observers;
 
-use Academorix\FeatureFlags\Contracts\Data\FeatureKillSwitchInterface;
-use Academorix\FeatureFlags\Events\FeatureFlagKillSwitchDisabled;
-use Academorix\FeatureFlags\Events\FeatureFlagKillSwitchEnabled;
-use Academorix\FeatureFlags\Models\FeatureKillSwitch;
+use Stackra\FeatureFlags\Contracts\Data\FeatureKillSwitchInterface;
+use Stackra\FeatureFlags\Events\FeatureFlagKillSwitchDisabled;
+use Stackra\FeatureFlags\Events\FeatureFlagKillSwitchEnabled;
+use Stackra\FeatureFlags\Models\FeatureKillSwitch;
 use Illuminate\Cache\Repository as CacheRepository;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 

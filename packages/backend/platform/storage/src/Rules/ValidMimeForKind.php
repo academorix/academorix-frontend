@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Rules;
+namespace Stackra\Storage\Rules;
 
-use Academorix\Storage\Contracts\Services\MimeTypeAllowlistInterface;
+use Stackra\Storage\Contracts\Services\MimeTypeAllowlistInterface;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Http\UploadedFile;

@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Concerns;
+namespace Stackra\Compliance\Concerns;
 
 /**
  * Trait — IsDsarContributor.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Data\Requests;
+namespace Stackra\FeatureFlags\Data\Requests;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Between;

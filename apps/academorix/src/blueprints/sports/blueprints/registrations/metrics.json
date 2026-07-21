@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/registrations/metrics",
+  "id": "stackra://modules/registrations/metrics",
   "$version": 1,
   "title": "registrations — OpenTelemetry metrics",
   "description": "OTel / Prometheus metrics this module emits.",

@@ -5,8 +5,8 @@
  *
  * @description
  * Marker interface — repositories can implement this to declare
- * themselves to the {@see \Academorix\Architecture\Support\LayerResolver}
- * without carrying the {@see \Academorix\Architecture\Attributes\Repository}
+ * themselves to the {@see \Stackra\Architecture\Support\LayerResolver}
+ * without carrying the {@see \Stackra\Architecture\Attributes\Repository}
  * attribute.
  *
  * ## Interface vs attribute
@@ -23,12 +23,12 @@
  * Nothing prevents you from using BOTH; the resolver only checks
  * that at least one is present.
  *
- * @see \Academorix\Architecture\Attributes\Repository  Attribute alternative.
+ * @see \Stackra\Architecture\Attributes\Repository  Attribute alternative.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Contracts;
+namespace Stackra\Architecture\Contracts;
 
 /**
  * Empty marker interface — no methods to implement.

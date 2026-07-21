@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/admin-console/health",
+  "id": "stackra://modules/admin-console/health",
   "$version": 1,
   "title": "admin-console — health probes",
   "description": "Health checks aggregated by foundation's /api/health.",

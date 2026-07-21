@@ -10,41 +10,41 @@
     array (
       0 => 
       array (
-        0 => 'Academorix\\Scope\\Services\\ScopeResolver',
+        0 => 'Stackra\\Scope\\Services\\ScopeResolver',
       ),
-      1 => 'Academorix\\Scope\\Contracts\\ScopeResolutionInterface',
+      1 => 'Stackra\\Scope\\Contracts\\ScopeResolutionInterface',
     ),
     1 => 
     array (
       0 => 
       array (
-        0 => 'Academorix\\Scope\\Services\\ScopeContext',
+        0 => 'Stackra\\Scope\\Services\\ScopeContext',
       ),
-      1 => 'Academorix\\Scope\\Contracts\\ScopeContextInterface',
+      1 => 'Stackra\\Scope\\Contracts\\ScopeContextInterface',
     ),
     2 => 
     array (
       0 => 
       array (
-        0 => 'Academorix\\Scope\\Services\\ScopeEmulator',
+        0 => 'Stackra\\Scope\\Services\\ScopeEmulator',
       ),
-      1 => 'Academorix\\Scope\\Contracts\\ScopeEmulatorInterface',
+      1 => 'Stackra\\Scope\\Contracts\\ScopeEmulatorInterface',
     ),
     3 => 
     array (
       0 => 
       array (
-        0 => 'Academorix\\Scope\\Services\\ScopeRegistry',
+        0 => 'Stackra\\Scope\\Services\\ScopeRegistry',
       ),
-      1 => 'Academorix\\Scope\\Contracts\\ScopeRegistryInterface',
+      1 => 'Stackra\\Scope\\Contracts\\ScopeRegistryInterface',
     ),
     4 => 
     array (
       0 => 
       array (
-        0 => 'Academorix\\Scope\\Services\\ScopeResolverChain',
+        0 => 'Stackra\\Scope\\Services\\ScopeResolverChain',
       ),
-      1 => 'Academorix\\Scope\\Contracts\\ScopeResolverChainInterface',
+      1 => 'Stackra\\Scope\\Contracts\\ScopeResolverChainInterface',
     ),
   ),
   'Illuminate\\Container\\Attributes\\Scoped' => 
@@ -54,21 +54,21 @@
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Contracts\\ScopeResolutionInterface',
+      1 => 'Stackra\\Scope\\Contracts\\ScopeResolutionInterface',
     ),
     1 => 
     array (
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Contracts\\ScopeContextInterface',
+      1 => 'Stackra\\Scope\\Contracts\\ScopeContextInterface',
     ),
     2 => 
     array (
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Services\\ScopeManager',
+      1 => 'Stackra\\Scope\\Services\\ScopeManager',
     ),
   ),
   'Illuminate\\Container\\Attributes\\Singleton' => 
@@ -78,24 +78,24 @@
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Contracts\\ScopeEmulatorInterface',
+      1 => 'Stackra\\Scope\\Contracts\\ScopeEmulatorInterface',
     ),
     1 => 
     array (
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Contracts\\ScopeRegistryInterface',
+      1 => 'Stackra\\Scope\\Contracts\\ScopeRegistryInterface',
     ),
     2 => 
     array (
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Contracts\\ScopeResolverChainInterface',
+      1 => 'Stackra\\Scope\\Contracts\\ScopeResolverChainInterface',
     ),
   ),
-  'Academorix\\ServiceProvider\\Attributes\\Module' => 
+  'Stackra\\ServiceProvider\\Attributes\\Module' => 
   array (
     0 => 
     array (
@@ -104,10 +104,10 @@
         'name' => 'Scope',
         'priority' => 20,
       ),
-      1 => 'Academorix\\Scope\\Providers\\ScopeServiceProvider',
+      1 => 'Stackra\\Scope\\Providers\\ScopeServiceProvider',
     ),
   ),
-  'Academorix\\ServiceProvider\\Attributes\\LoadsResources' => 
+  'Stackra\\ServiceProvider\\Attributes\\LoadsResources' => 
   array (
     0 => 
     array (
@@ -119,7 +119,7 @@
         'seeders' => true,
         'publishables' => true,
       ),
-      1 => 'Academorix\\Scope\\Providers\\ScopeServiceProvider',
+      1 => 'Stackra\\Scope\\Providers\\ScopeServiceProvider',
     ),
   ),
   'Illuminate\\Database\\Eloquent\\Attributes\\Table' => 
@@ -132,7 +132,7 @@
         'key' => 'id',
         'keyType' => 'string',
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeNode',
+      1 => 'Stackra\\Scope\\Models\\ScopeNode',
     ),
     1 => 
     array (
@@ -142,7 +142,7 @@
         'key' => 'id',
         'keyType' => 'string',
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeAlias',
+      1 => 'Stackra\\Scope\\Models\\ScopeAlias',
     ),
     2 => 
     array (
@@ -152,7 +152,7 @@
         'key' => 'id',
         'keyType' => 'string',
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeDefinition',
+      1 => 'Stackra\\Scope\\Models\\ScopeDefinition',
     ),
     3 => 
     array (
@@ -162,7 +162,7 @@
         'key' => 'id',
         'keyType' => 'string',
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeValue',
+      1 => 'Stackra\\Scope\\Models\\ScopeValue',
     ),
   ),
   'Illuminate\\Database\\Eloquent\\Attributes\\Fillable' => 
@@ -181,7 +181,7 @@
           5 => 'depth',
         ),
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeNode',
+      1 => 'Stackra\\Scope\\Models\\ScopeNode',
     ),
     1 => 
     array (
@@ -194,7 +194,7 @@
           2 => 'alias_label',
         ),
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeAlias',
+      1 => 'Stackra\\Scope\\Models\\ScopeAlias',
     ),
     2 => 
     array (
@@ -209,7 +209,7 @@
           4 => 'sort_order',
         ),
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeDefinition',
+      1 => 'Stackra\\Scope\\Models\\ScopeDefinition',
     ),
     3 => 
     array (
@@ -224,7 +224,7 @@
           4 => 'updated_by',
         ),
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeValue',
+      1 => 'Stackra\\Scope\\Models\\ScopeValue',
     ),
   ),
   'Illuminate\\Database\\Eloquent\\Attributes\\UseFactory' => 
@@ -233,36 +233,36 @@
     array (
       0 => 
       array (
-        0 => 'Academorix\\Scope\\Database\\Factories\\ScopeNodeFactory',
+        0 => 'Stackra\\Scope\\Database\\Factories\\ScopeNodeFactory',
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeNode',
+      1 => 'Stackra\\Scope\\Models\\ScopeNode',
     ),
     1 => 
     array (
       0 => 
       array (
-        0 => 'Academorix\\Scope\\Database\\Factories\\ScopeAliasFactory',
+        0 => 'Stackra\\Scope\\Database\\Factories\\ScopeAliasFactory',
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeAlias',
+      1 => 'Stackra\\Scope\\Models\\ScopeAlias',
     ),
     2 => 
     array (
       0 => 
       array (
-        0 => 'Academorix\\Scope\\Database\\Factories\\ScopeDefinitionFactory',
+        0 => 'Stackra\\Scope\\Database\\Factories\\ScopeDefinitionFactory',
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeDefinition',
+      1 => 'Stackra\\Scope\\Models\\ScopeDefinition',
     ),
     3 => 
     array (
       0 => 
       array (
-        0 => 'Academorix\\Scope\\Database\\Factories\\ScopeValueFactory',
+        0 => 'Stackra\\Scope\\Database\\Factories\\ScopeValueFactory',
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeValue',
+      1 => 'Stackra\\Scope\\Models\\ScopeValue',
     ),
   ),
-  'Academorix\\Caching\\Attributes\\AsCacheTagResolver' => 
+  'Stackra\\Caching\\Attributes\\AsCacheTagResolver' => 
   array (
     0 => 
     array (
@@ -270,10 +270,10 @@
       array (
         'priority' => 50,
       ),
-      1 => 'Academorix\\Scope\\Resolvers\\ScopeAwareCacheTagResolver',
+      1 => 'Stackra\\Scope\\Resolvers\\ScopeAwareCacheTagResolver',
     ),
   ),
-  'Academorix\\Scope\\Attributes\\AsScopeResolver' => 
+  'Stackra\\Scope\\Attributes\\AsScopeResolver' => 
   array (
     0 => 
     array (
@@ -281,7 +281,7 @@
       array (
         'priority' => 100,
       ),
-      1 => 'Academorix\\Scope\\Resolvers\\HeaderScopeResolver',
+      1 => 'Stackra\\Scope\\Resolvers\\HeaderScopeResolver',
     ),
     1 => 
     array (
@@ -289,10 +289,10 @@
       array (
         'priority' => 0,
       ),
-      1 => 'Academorix\\Scope\\Resolvers\\RootFallbackResolver',
+      1 => 'Stackra\\Scope\\Resolvers\\RootFallbackResolver',
     ),
   ),
-  'Academorix\\Database\\Attributes\\AsDatabaseBlueprint' => 
+  'Stackra\\Database\\Attributes\\AsDatabaseBlueprint' => 
   array (
     0 => 
     array (
@@ -301,10 +301,10 @@
         'description' => 'Adds scopable() macro — scope_node_id column + FK + index for scope-platform participation.',
         'priority' => 30,
       ),
-      1 => 'Academorix\\Scope\\Schema\\ScopableBlueprint',
+      1 => 'Stackra\\Scope\\Schema\\ScopableBlueprint',
     ),
   ),
-  'Academorix\\ServiceProvider\\Attributes\\AsSeeder' => 
+  'Stackra\\ServiceProvider\\Attributes\\AsSeeder' => 
   array (
     0 => 
     array (
@@ -312,7 +312,7 @@
       array (
         'priority' => 120,
       ),
-      1 => 'Academorix\\Scope\\Database\\Seeders\\ScopeAliasSeeder',
+      1 => 'Stackra\\Scope\\Database\\Seeders\\ScopeAliasSeeder',
     ),
     1 => 
     array (
@@ -320,7 +320,7 @@
       array (
         'priority' => 110,
       ),
-      1 => 'Academorix\\Scope\\Database\\Seeders\\ScopeNodeSeeder',
+      1 => 'Stackra\\Scope\\Database\\Seeders\\ScopeNodeSeeder',
     ),
     2 => 
     array (
@@ -328,7 +328,7 @@
       array (
         'priority' => 130,
       ),
-      1 => 'Academorix\\Scope\\Database\\Seeders\\ScopeValueSeeder',
+      1 => 'Stackra\\Scope\\Database\\Seeders\\ScopeValueSeeder',
     ),
     3 => 
     array (
@@ -336,12 +336,12 @@
       array (
         'priority' => 100,
       ),
-      1 => 'Academorix\\Scope\\Database\\Seeders\\ScopeDefinitionSeeder',
+      1 => 'Stackra\\Scope\\Database\\Seeders\\ScopeDefinitionSeeder',
     ),
   ),
 ),
     targetMethods: array (
-  'Academorix\\ServiceProvider\\Attributes\\OnBoot' => 
+  'Stackra\\ServiceProvider\\Attributes\\OnBoot' => 
   array (
     0 => 
     array (
@@ -349,7 +349,7 @@
       array (
         'priority' => 10,
       ),
-      1 => 'Academorix\\Scope\\Providers\\ScopeServiceProvider',
+      1 => 'Stackra\\Scope\\Providers\\ScopeServiceProvider',
       2 => 'discoverScopeResolvers',
     ),
     1 => 
@@ -358,7 +358,7 @@
       array (
         'priority' => 20,
       ),
-      1 => 'Academorix\\Scope\\Providers\\ScopeServiceProvider',
+      1 => 'Stackra\\Scope\\Providers\\ScopeServiceProvider',
       2 => 'registerMiddlewareAlias',
     ),
     2 => 
@@ -367,7 +367,7 @@
       array (
         'priority' => 30,
       ),
-      1 => 'Academorix\\Scope\\Providers\\ScopeServiceProvider',
+      1 => 'Stackra\\Scope\\Providers\\ScopeServiceProvider',
       2 => 'autoRegisterScopedModels',
     ),
   ),
@@ -378,7 +378,7 @@
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeNode',
+      1 => 'Stackra\\Scope\\Models\\ScopeNode',
       2 => 'initializeHasRelationships',
     ),
     1 => 
@@ -386,7 +386,7 @@
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeNode',
+      1 => 'Stackra\\Scope\\Models\\ScopeNode',
       2 => 'initializeHasTimestamps',
     ),
     2 => 
@@ -394,7 +394,7 @@
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeNode',
+      1 => 'Stackra\\Scope\\Models\\ScopeNode',
       2 => 'initializeHidesAttributes',
     ),
     3 => 
@@ -402,7 +402,7 @@
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeNode',
+      1 => 'Stackra\\Scope\\Models\\ScopeNode',
       2 => 'initializeGuardsAttributes',
     ),
     4 => 
@@ -410,7 +410,7 @@
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeAlias',
+      1 => 'Stackra\\Scope\\Models\\ScopeAlias',
       2 => 'initializeHasRelationships',
     ),
     5 => 
@@ -418,7 +418,7 @@
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeAlias',
+      1 => 'Stackra\\Scope\\Models\\ScopeAlias',
       2 => 'initializeHasTimestamps',
     ),
     6 => 
@@ -426,7 +426,7 @@
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeAlias',
+      1 => 'Stackra\\Scope\\Models\\ScopeAlias',
       2 => 'initializeHidesAttributes',
     ),
     7 => 
@@ -434,7 +434,7 @@
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeAlias',
+      1 => 'Stackra\\Scope\\Models\\ScopeAlias',
       2 => 'initializeGuardsAttributes',
     ),
     8 => 
@@ -442,7 +442,7 @@
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeDefinition',
+      1 => 'Stackra\\Scope\\Models\\ScopeDefinition',
       2 => 'initializeHasRelationships',
     ),
     9 => 
@@ -450,7 +450,7 @@
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeDefinition',
+      1 => 'Stackra\\Scope\\Models\\ScopeDefinition',
       2 => 'initializeHasTimestamps',
     ),
     10 => 
@@ -458,7 +458,7 @@
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeDefinition',
+      1 => 'Stackra\\Scope\\Models\\ScopeDefinition',
       2 => 'initializeHidesAttributes',
     ),
     11 => 
@@ -466,7 +466,7 @@
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeDefinition',
+      1 => 'Stackra\\Scope\\Models\\ScopeDefinition',
       2 => 'initializeGuardsAttributes',
     ),
     12 => 
@@ -474,7 +474,7 @@
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeValue',
+      1 => 'Stackra\\Scope\\Models\\ScopeValue',
       2 => 'initializeHasRelationships',
     ),
     13 => 
@@ -482,7 +482,7 @@
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeValue',
+      1 => 'Stackra\\Scope\\Models\\ScopeValue',
       2 => 'initializeHasTimestamps',
     ),
     14 => 
@@ -490,7 +490,7 @@
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeValue',
+      1 => 'Stackra\\Scope\\Models\\ScopeValue',
       2 => 'initializeHidesAttributes',
     ),
     15 => 
@@ -498,7 +498,7 @@
       0 => 
       array (
       ),
-      1 => 'Academorix\\Scope\\Models\\ScopeValue',
+      1 => 'Stackra\\Scope\\Models\\ScopeValue',
       2 => 'initializeGuardsAttributes',
     ),
   ),
@@ -513,7 +513,7 @@
         0 => 'scope.header.name',
         1 => 'X-Scope-Node-Id',
       ),
-      1 => 'Academorix\\Scope\\Resolvers\\HeaderScopeResolver',
+      1 => 'Stackra\\Scope\\Resolvers\\HeaderScopeResolver',
       2 => 'headerName',
     ),
     1 => 
@@ -523,7 +523,7 @@
         0 => 'scope.middleware.strict',
         1 => true,
       ),
-      1 => 'Academorix\\Scope\\Http\\Middleware\\ResolveScope',
+      1 => 'Stackra\\Scope\\Http\\Middleware\\ResolveScope',
       2 => 'strict',
     ),
     2 => 
@@ -533,7 +533,7 @@
         0 => 'scope.header.name',
         1 => 'X-Scope-Node-Id',
       ),
-      1 => 'Academorix\\Scope\\Http\\Middleware\\ResolveScope',
+      1 => 'Stackra\\Scope\\Http\\Middleware\\ResolveScope',
       2 => 'headerName',
     ),
     3 => 
@@ -543,7 +543,7 @@
         0 => 'scope.eloquent.auto_scope_enabled',
         1 => true,
       ),
-      1 => 'Academorix\\Scope\\Scopes\\ScopedGlobalScope',
+      1 => 'Stackra\\Scope\\Scopes\\ScopedGlobalScope',
       2 => 'autoScopeEnabled',
     ),
   ),
@@ -558,7 +558,7 @@
         0 => 'scope.middleware.alias',
         1 => 'scope',
       ),
-      1 => 'Academorix\\Scope\\Providers\\ScopeServiceProvider',
+      1 => 'Stackra\\Scope\\Providers\\ScopeServiceProvider',
       2 => 'registerMiddlewareAlias',
       3 => 'aliasName',
     ),
@@ -569,7 +569,7 @@
         0 => 'scope.header.name',
         1 => 'X-Scope-Node-Id',
       ),
-      1 => 'Academorix\\Scope\\Resolvers\\HeaderScopeResolver',
+      1 => 'Stackra\\Scope\\Resolvers\\HeaderScopeResolver',
       2 => '__construct',
       3 => 'headerName',
     ),
@@ -580,7 +580,7 @@
         0 => 'scope.middleware.strict',
         1 => true,
       ),
-      1 => 'Academorix\\Scope\\Http\\Middleware\\ResolveScope',
+      1 => 'Stackra\\Scope\\Http\\Middleware\\ResolveScope',
       2 => '__construct',
       3 => 'strict',
     ),
@@ -591,7 +591,7 @@
         0 => 'scope.header.name',
         1 => 'X-Scope-Node-Id',
       ),
-      1 => 'Academorix\\Scope\\Http\\Middleware\\ResolveScope',
+      1 => 'Stackra\\Scope\\Http\\Middleware\\ResolveScope',
       2 => '__construct',
       3 => 'headerName',
     ),
@@ -602,7 +602,7 @@
         0 => 'scope.eloquent.auto_scope_enabled',
         1 => true,
       ),
-      1 => 'Academorix\\Scope\\Scopes\\ScopedGlobalScope',
+      1 => 'Stackra\\Scope\\Scopes\\ScopedGlobalScope',
       2 => '__construct',
       3 => 'autoScopeEnabled',
     ),

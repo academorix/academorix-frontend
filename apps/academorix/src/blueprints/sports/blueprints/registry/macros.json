@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/sports-registry/macros",
+  "id": "stackra://modules/sports-registry/macros",
   "$version": 1,
   "title": "sports-registry — published macros",
   "description": "No Blueprint schema macros. The sports-registry module does NOT publish schema-level composition helpers — downstream Wave 3 modules add `sport_key` (+ optional discipline_key + position_key) as ordinary string columns in their own migrations. No runtime macros either: sports are not a request-scoped context axis, so there is no `Request::activeSport()` equivalent. Downstream consumers reach the catalog via the `ReferencesSport` trait OR the injected `SportKeyResolver` / `SportRepository` services.",

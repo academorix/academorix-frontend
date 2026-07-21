@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Foundation\Support\CorrelationId;
+use Stackra\Foundation\Support\CorrelationId;
 
 afterEach(function (): void {
     CorrelationId::forget();

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Jobs;
+namespace Stackra\Geography\Jobs;
 
-use Academorix\Geography\Contracts\Repositories\CountryRepositoryInterface;
-use Academorix\Geography\Contracts\Repositories\CurrencyRepositoryInterface;
-use Academorix\Geography\Contracts\Repositories\LanguageRepositoryInterface;
+use Stackra\Geography\Contracts\Repositories\CountryRepositoryInterface;
+use Stackra\Geography\Contracts\Repositories\CurrencyRepositoryInterface;
+use Stackra\Geography\Contracts\Repositories\LanguageRepositoryInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;

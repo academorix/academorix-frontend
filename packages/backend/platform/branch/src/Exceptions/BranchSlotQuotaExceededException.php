@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branch\Exceptions;
+namespace Stackra\Branch\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Reached the `branch_slot` entitlement cap (Small=3, Medium=25, Enterprise=null).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class BranchSlotQuotaExceededException extends AcademorixException
+final class BranchSlotQuotaExceededException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

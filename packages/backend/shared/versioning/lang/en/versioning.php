@@ -4,7 +4,7 @@
  * @file modules/shared/versioning/lang/en/versioning.php
  *
  * @description
- * English translations for the `academorix/versioning` module.
+ * English translations for the `stackra/versioning` module.
  */
 
 declare(strict_types=1);

@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/attributes/permissions",
+  "id": "stackra://modules/attributes/permissions",
   "$version": 1,
   "title": "attributes — permissions",
-  "seeder": "Academorix\\Attributes\\Database\\Seeders\\AttributesPermissionSeeder",
+  "seeder": "Stackra\\Attributes\\Database\\Seeders\\AttributesPermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — attribute administration by admin / hr / branch_manager. Platform plane (platform_admin) — cross-tenant registry read.",
   "permissions": [

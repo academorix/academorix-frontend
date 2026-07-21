@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/entitlements/settings",
+  "id": "stackra://modules/entitlements/settings",
   "$version": 1,
   "title": "entitlements \u2014 settings",
   "description": "Tenant-facing settings for the entitlements platform. One #[AsSetting] class published under group key `entitlements`.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "entitlements",
-      "class": "Academorix\\Entitlements\\Settings\\EntitlementsSettings",
+      "class": "Stackra\\Entitlements\\Settings\\EntitlementsSettings",
       "label": "Quotas + usage",
       "description": "Tenant-facing quota notification preferences.",
       "icon": "chart-bar-square",

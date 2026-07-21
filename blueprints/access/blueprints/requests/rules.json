@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/access/requests/rules",
+  "id": "stackra://modules/access/requests/rules",
   "$version": 1,
   "title": "requests \u2014 validation rules",
   "description": "Custom Laravel validation rules published by `AccessRequestServiceProvider::boot()` so any FormRequest / Data class can validate the shape of an access-request submission. Applied to `CreateAccessRequestData` at the write path.",
-  "namespace": "Academorix\\AccessRequest\\Rules",
+  "namespace": "Stackra\\AccessRequest\\Rules",
   "rules": [
     {
       "name": "valid_requestable_resource",
-      "class": "Academorix\\AccessRequest\\Rules\\ValidRequestableResource",
+      "class": "Stackra\\AccessRequest\\Rules\\ValidRequestableResource",
       "signature": "valid_requestable_resource",
       "description": "Ensures the `resource_type` string is present in AccessRequestableRegistry. Rejects at write time if the caller submits a resource_type not registered by any consumer module. Fires ACCESS_REQUEST_INVALID_REQUESTABLE_RESOURCE (422).",
       "params": [],
@@ -17,7 +17,7 @@
     },
     {
       "name": "resource_in_caller_tenant",
-      "class": "Academorix\\AccessRequest\\Rules\\ResourceInCallerTenant",
+      "class": "Stackra\\AccessRequest\\Rules\\ResourceInCallerTenant",
       "signature": "resource_in_caller_tenant:<resource_type_field>",
       "description": "Ensures the row identified by (`resource_type_field`, `resource_id`) exists in the caller's active tenant. The rule resolves the target model class from the registry, queries by primary key + tenant scope, and refuses if the row is not found. Fires ACCESS_REQUEST_RESOURCE_NOT_IN_CALLER_TENANT (403) OR ACCESS_REQUEST_RESOURCE_NOT_FOUND (404).",
       "params": [
@@ -33,7 +33,7 @@
     },
     {
       "name": "permission_belongs_to_resource_type",
-      "class": "Academorix\\AccessRequest\\Rules\\PermissionBelongsToResourceType",
+      "class": "Stackra\\AccessRequest\\Rules\\PermissionBelongsToResourceType",
       "signature": "permission_belongs_to_resource_type:<resource_type_field>",
       "description": "Ensures every entry in the `permissions_wanted` array is (a) declared on the target resource type via `#[AccessRequestable(permissions: [...])]` AND (b) a valid permission name on the sanctum guard for the caller's application. Rule iterates the array and rejects the WHOLE request on the first failure. Fires ACCESS_REQUEST_PERMISSION_NOT_ON_RESOURCE_TYPE (422).",
       "params": [
@@ -49,7 +49,7 @@
     },
     {
       "name": "valid_reason_length",
-      "class": "Academorix\\AccessRequest\\Rules\\ValidReasonLength",
+      "class": "Stackra\\AccessRequest\\Rules\\ValidReasonLength",
       "signature": "valid_reason_length[:<min>[,<max>]]",
       "description": "Ensures the `reason` field is between MIN (default 20) and MAX (default 1000) characters after trimming. Short reasons don't inform approvers; over-long reasons are usually copy-paste artefacts. Multibyte-safe (mb_strlen).",
       "params": [

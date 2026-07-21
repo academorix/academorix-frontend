@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tenancy/entitlements",
+  "id": "stackra://modules/tenancy/entitlements",
   "$version": 1,
   "title": "tenants — entitlements",
   "description": "Tenancy does not publish entitlements itself. Entitlements are owned by the `entitlements` module and seeded per `BusinessType.default_config.entitlements` at tenant provisioning time. This file documents the SHAPE contract so consumers can typecheck what a BusinessType entry may seed, and enumerates the four entitlement KINDS the platform supports.",

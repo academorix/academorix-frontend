@@ -117,7 +117,7 @@
               "props": {
                 "variant": "warning",
                 "title": "Data processing agreement",
-                "description": "Adding this provider means Academorix will forward monitoring signals to the provider. Please confirm you have accepted the provider's DPA."
+                "description": "Adding this provider means Stackra will forward monitoring signals to the provider. Please confirm you have accepted the provider's DPA."
               }
             },
             {

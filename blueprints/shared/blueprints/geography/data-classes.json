@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geography/data-classes",
+  "id": "stackra://modules/geography/data-classes",
   "$version": 1,
   "title": "geography \u2014 field classification",
   "description": "Reference-catalog data is public. IP addresses (in the geolocate cache key + audit) are personal data under GDPR.",

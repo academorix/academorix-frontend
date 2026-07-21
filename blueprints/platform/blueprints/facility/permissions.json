@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/facility/permissions",
+  "id": "stackra://modules/facility/permissions",
   "$version": 1,
   "title": "facility — permissions",
-  "seeder": "Academorix\\Facility\\Database\\Seeders\\FacilityPermissionSeeder",
+  "seeder": "Stackra\\Facility\\Database\\Seeders\\FacilityPermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — facility catalogue CRUD by owner/admin/branch-manager; booking CRUD by any member (with per-facility permission for restricted facilities via `facilities.book.branch`); day-pass POS by reception staff + admins; pass management by owner/admin/coach. Platform plane (platform_admin) — cross-tenant read + support tooling. All permissions carry the `facilities.` prefix (or `platform.facilities.` on the platform audience) to align with hierarchy.md §4 audience-boundary rules.",
   "permissions": [

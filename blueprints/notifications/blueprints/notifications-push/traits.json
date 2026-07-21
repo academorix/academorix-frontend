@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-push/traits",
+  "id": "stackra://modules/notifications-push/traits",
   "$version": 1,
   "title": "notifications-push \u2014 trait composition",
   "description": "One entity: PushSubscription.",
@@ -14,18 +14,18 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasAuditable",
+        "trait": "Stackra\\Foundation\\Concerns\\HasAuditable",
         "reason": "Every subscription create + revoke audit-logged. Device tokens themselves NEVER audit-logged (restricted tier)."
       },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" }
     ],
     "tenants": [
-      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" },
+      { "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" },
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToApplication",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToApplication",
         "reason": "Push tokens are per-application (a coach's iOS token for the coach app is distinct from their same-device token for the parent app)."
       }
     ]

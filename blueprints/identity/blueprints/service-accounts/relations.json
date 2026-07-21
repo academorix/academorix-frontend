@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/service-accounts/relations",
+  "id": "stackra://modules/service-accounts/relations",
   "$version": 1,
   "title": "service-accounts \u2014 model relationships",
   "description": "ServiceAccount has TWO outbound FKs (application_id \u2192 applications, tenant_id \u2192 tenants) and ONE loose reference (signer_kid \u2192 auth::jwt_signing_keys.kid; not a schema-level FK because the auth module owns key lifecycle). There are NO inbound FKs from other modules \u2014 SAs are terminal in the ownership graph; nothing else references them.",

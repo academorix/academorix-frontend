@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/people/hooks",
+  "id": "stackra://modules/people/hooks",
   "$version": 1,
   "title": "people — tenant hooks",
   "description": "Per-tenant lifecycle callbacks (log context, cache prefix, cache invalidation).",

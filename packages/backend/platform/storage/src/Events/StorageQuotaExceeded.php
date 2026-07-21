@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Events;
+namespace Stackra\Storage\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 
 /**
  * Fired when a tenant crosses its byte or file quota. The upload
  * that triggered this event was rejected —
- * {@see \Academorix\Storage\Exceptions\StorageQuotaExceededException}.
+ * {@see \Stackra\Storage\Exceptions\StorageQuotaExceededException}.
  *
  * @category Storage
  *

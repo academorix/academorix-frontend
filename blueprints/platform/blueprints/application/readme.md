@@ -7,7 +7,7 @@ null) and change so infrequently they're essentially seed data.
 
 Extracted from `tenants` at v0.3 as part of the platform-tier split. Rationale:
 a product-catalogue mutation should never require a tenants service redeploy.
-Application changes on a slow cadence (roughly one entry per Academorix product
+Application changes on a slow cadence (roughly one entry per Stackra product
 launch) and BusinessType is a config catalogue the platform admin edits
 directly.
 

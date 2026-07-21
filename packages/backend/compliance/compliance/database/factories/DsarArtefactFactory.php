@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Database\Factories;
+namespace Stackra\Compliance\Database\Factories;
 
-use Academorix\Compliance\Contracts\Data\DsarArtefactInterface;
-use Academorix\Compliance\Models\DsarArtefact;
+use Stackra\Compliance\Contracts\Data\DsarArtefactInterface;
+use Stackra\Compliance\Models\DsarArtefact;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

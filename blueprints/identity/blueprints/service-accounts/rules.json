@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/service-accounts/rules",
+  "id": "stackra://modules/service-accounts/rules",
   "$version": 1,
   "title": "service-accounts \u2014 validation rules",
   "description": "Two custom validation rules published by ServiceAccountServiceProvider::boot(). Both operate on scalar string input; both are stateless. Consumers wire them via #[Validation] attribute on Data-class properties.",
-  "namespace": "Academorix\\ServiceAccount\\Rules",
+  "namespace": "Stackra\\ServiceAccount\\Rules",
   "rules": [
     {
       "name": "valid_service_account_name",
-      "class": "Academorix\\ServiceAccount\\Rules\\ValidServiceAccountName",
+      "class": "Stackra\\ServiceAccount\\Rules\\ValidServiceAccountName",
       "signature": "valid_service_account_name:<application_id>",
       "description": "Enforces the naming policy from `service-accounts.naming.*` config: max length (default 128), regex pattern (default `^[a-z0-9][a-z0-9_-]*[a-z0-9]$`), uniqueness within the SA's `application_id` (scoped by the passed argument). Rejects whitespace, uppercase, Unicode, and punctuation to keep names URL-safe + shell-safe.",
       "params": [
@@ -27,7 +27,7 @@
     },
     {
       "name": "valid_kid_format",
-      "class": "Academorix\\ServiceAccount\\Rules\\ValidKidFormat",
+      "class": "Stackra\\ServiceAccount\\Rules\\ValidKidFormat",
       "signature": "valid_kid_format",
       "description": "Validates the shape of a `signer_kid` string against `service-accounts.kid.format` config. Default `uuid` = UUIDv4 (with optional application prefix when `include_application_prefix=true`); `opaque` = exactly 32 lowercase alphanumeric chars. Additionally verifies existence + enablement via a fresh query against `auth::jwt_signing_keys` (this is where the runtime FK check happens \u2014 the schema does not enforce it).",
       "params": [],

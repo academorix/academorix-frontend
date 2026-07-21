@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/admin-console/listeners",
+  "id": "stackra://modules/admin-console/listeners",
   "$version": 1,
   "title": "admin-console — event listeners",
   "description": "Listeners this module registers, keyed by the event they consume.",

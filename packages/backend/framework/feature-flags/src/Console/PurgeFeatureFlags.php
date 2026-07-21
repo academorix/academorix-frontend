@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Console;
+namespace Stackra\FeatureFlags\Console;
 
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Organization\Exceptions;
+namespace Stackra\Organization\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Attempted to delete / archive / pause the tenant's is_default=true Organization without first promoting another row to default.

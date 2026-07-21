@@ -45,16 +45,16 @@
  *     Controller helpers that don't route through this builder.
  *
  *   - **Correlation id + request timestamp** are read on the fly
- *     from the foundation's {@see \Academorix\Foundation\Support\CorrelationId}
+ *     from the foundation's {@see \Stackra\Foundation\Support\CorrelationId}
  *     if the class is available, falling back to a locally-generated
  *     ULID-ish string so the class stays usable in isolation.
  *
- * @see \Academorix\Routing\Concerns\InteractsWithResponse Trait that returns builder instances.
+ * @see \Stackra\Routing\Concerns\InteractsWithResponse Trait that returns builder instances.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Routing\Http;
+namespace Stackra\Routing\Http;
 
 use DateTimeImmutable;
 use DateTimeZone;
@@ -190,7 +190,7 @@ final class ResponseBuilder implements Responsable
     // Status factories — succinct entry points from InteractsWithResponse.
     // -----------------------------------------------------------------
 
-    /** Fresh builder. Every {@see \Academorix\Routing\Concerns\InteractsWithResponse::response()} call yields one. */
+    /** Fresh builder. Every {@see \Stackra\Routing\Concerns\InteractsWithResponse::response()} call yields one. */
     public static function make(): self
     {
         return new self();
@@ -626,7 +626,7 @@ final class ResponseBuilder implements Responsable
 
     /**
      * Resolve the correlation / request id. Prefers the
-     * foundation's {@see \Academorix\Foundation\Support\CorrelationId}
+     * foundation's {@see \Stackra\Foundation\Support\CorrelationId}
      * when the class is available (it's the same source
      * exceptions read from); falls back to the current request's
      * `X-Request-Id` header, then to a locally-generated random
@@ -639,8 +639,8 @@ final class ResponseBuilder implements Responsable
         // Guarded with class_exists so the routing package remains
         // usable in a stripped-down test environment without
         // foundation loaded.
-        if (class_exists(\Academorix\Foundation\Support\CorrelationId::class)) {
-            $current = \Academorix\Foundation\Support\CorrelationId::current();
+        if (class_exists(\Stackra\Foundation\Support\CorrelationId::class)) {
+            $current = \Stackra\Foundation\Support\CorrelationId::current();
             if (is_string($current) && $current !== '') {
                 return $current;
             }

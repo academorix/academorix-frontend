@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\MarketplaceFee\Policies;
+namespace Stackra\MarketplaceFee\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\MarketplaceFee\Models\FeeSchedule;
+use Stackra\User\Models\User;
+use Stackra\MarketplaceFee\Models\FeeSchedule;
 
 /**
- * Authorization policy for {@see \Academorix\MarketplaceFee\Models\FeeSchedule}.
+ * Authorization policy for {@see \Stackra\MarketplaceFee\Models\FeeSchedule}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

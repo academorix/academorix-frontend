@@ -1,9 +1,9 @@
 {
-  "name": "academorix/feature-flags-sdk",
-  "description": "Saloon SDK sibling for academorix/feature-flags. Ships wire-visible DTOs plus Saloon requests for cross-service consumers (ai-service, admin console, third-party integrations). Depends only on saloonphp/saloon + spatie/laravel-data — never on the parent package's Eloquent models.",
+  "name": "stackra/feature-flags-sdk",
+  "description": "Saloon SDK sibling for stackra/feature-flags. Ships wire-visible DTOs plus Saloon requests for cross-service consumers (ai-service, admin console, third-party integrations). Depends only on saloonphp/saloon + spatie/laravel-data — never on the parent package's Eloquent models.",
   "type": "library",
   "keywords": [
-    "academorix",
+    "stackra",
     "feature-flags",
     "sdk",
     "saloon"
@@ -11,9 +11,9 @@
   "license": "proprietary",
   "authors": [
     {
-      "name": "Academorix Team",
-      "email": "dev@academorix.com",
-      "homepage": "https://academorix.com"
+      "name": "Stackra Team",
+      "email": "dev@stackra.com",
+      "homepage": "https://stackra.com"
     }
   ],
   "require": {
@@ -23,7 +23,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\FeatureFlagsSdk\\": "src/"
+      "Stackra\\FeatureFlagsSdk\\": "src/"
     }
   },
   "minimum-stability": "dev",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/ai/schemas/ai-run",
+  "id": "stackra://modules/ai/schemas/ai-run",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "AiRun",

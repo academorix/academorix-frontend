@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Database\Factories;
+namespace Stackra\Facility\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Facility\Contracts\Data\DayPassInterface;
-use Academorix\Facility\Models\DayPass;
+use Stackra\Facility\Contracts\Data\DayPassInterface;
+use Stackra\Facility\Models\DayPass;
 
 /**
- * Factory for {@see \Academorix\Facility\Models\DayPass}.
+ * Factory for {@see \Stackra\Facility\Models\DayPass}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Facility\Models\DayPass>
+ * @extends Factory<\Stackra\Facility\Models\DayPass>
  *
  * @category Facility
  *

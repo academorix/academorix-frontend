@@ -11,7 +11,7 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use Spatie\RouteAttributes\Attributes\Where as SpatieWhere;
@@ -29,8 +29,8 @@ use Spatie\RouteAttributes\Attributes\Where as SpatieWhere;
  *
  * ## Usage:
  * ```php
- * use Academorix\Routing\Attributes\Where;
- * use Academorix\Routing\Attributes\Get;
+ * use Stackra\Routing\Attributes\Where;
+ * use Stackra\Routing\Attributes\Get;
  *
  * class UserController
  * {

@@ -4,7 +4,7 @@
  * @file packages/health/src/Providers/HealthServiceProvider.php
  *
  * @description
- * Root service provider for `academorix/health`. Auto-discovered by
+ * Root service provider for `stackra/health`. Auto-discovered by
  * Laravel via `composer.json`'s `extra.laravel.providers`, so
  * consumer apps get the entire wiring by simply requiring the
  * package — no manual registration in `bootstrap/providers.php`.
@@ -12,7 +12,7 @@
  * ## Attribute-only registration
  *
  * Every health check in every package declares itself via
- * {@see \Academorix\Health\Attributes\AsHealthCheck}. Discovery is
+ * {@see \Stackra\Health\Attributes\AsHealthCheck}. Discovery is
  * automated end-to-end:
  *
  *   1. `composer dump-autoload` scans every autoloadable class and
@@ -52,24 +52,24 @@
  * (test harnesses, unusual production builds). See {@see boot()}
  * for the guard chain.
  *
- * @see \Academorix\Health\Support\HealthCheckDiscoverer  The workhorse.
- * @see \Academorix\Health\Attributes\AsHealthCheck       Registration seam.
+ * @see \Stackra\Health\Support\HealthCheckDiscoverer  The workhorse.
+ * @see \Stackra\Health\Attributes\AsHealthCheck       Registration seam.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Health\Providers;
+namespace Stackra\Health\Providers;
 
-use Academorix\Health\Support\HealthCheckDiscoverer;
-use Academorix\Health\Support\HealthNotificationConfig;
+use Stackra\Health\Support\HealthCheckDiscoverer;
+use Stackra\Health\Support\HealthNotificationConfig;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Psr\Log\LoggerInterface;
 use Spatie\Health\Facades\Health;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
 
 #[AsModule(name: 'Health', priority: 100)]
 #[LoadsResources()]

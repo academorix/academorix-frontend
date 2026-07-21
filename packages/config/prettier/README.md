@@ -1,19 +1,19 @@
-# @academorix/config-prettier
+# @stackra/config-prettier
 
-Canonical Prettier configuration for the `academorix-frontend` monorepo.
+Canonical Prettier configuration for the `stackra-frontend` monorepo.
 
 ## Usage
 
 Root `prettier.config.mjs`:
 
 ```js
-export { default } from "@academorix/config-prettier";
+export { default } from "@stackra/config-prettier";
 ```
 
 Per-package (rarely needed — Prettier resolves upward):
 
 ```js
-export { default } from "@academorix/config-prettier";
+export { default } from "@stackra/config-prettier";
 ```
 
 ## What it sets
@@ -30,7 +30,7 @@ export { default } from "@academorix/config-prettier";
 Consumers who need a different setting compose over the default:
 
 ```js
-import base from "@academorix/config-prettier";
+import base from "@stackra/config-prettier";
 
 export default {
   ...base,

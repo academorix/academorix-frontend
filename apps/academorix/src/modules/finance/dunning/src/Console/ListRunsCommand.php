@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Dunning\Console;
+namespace Stackra\Dunning\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan dunning:list-runs` — List runs — dunning command.

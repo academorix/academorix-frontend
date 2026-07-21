@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Services;
+namespace Stackra\Marketing\Services;
 
-use Academorix\Marketing\Contracts\Services\DomainEventMapperInterface;
+use Stackra\Marketing\Contracts\Services\DomainEventMapperInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Marketing\Contracts\Repositories\MarketingDeadLetterRepositoryInterface;
+use Stackra\Marketing\Contracts\Repositories\MarketingDeadLetterRepositoryInterface;
 
 /**
  * Concrete service — DomainEventMapper.

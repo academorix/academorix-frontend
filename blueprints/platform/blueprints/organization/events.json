@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/organization/events",
+  "id": "stackra://modules/organization/events",
   "$version": 1,
   "title": "organization — published events",
-  "namespace": "Academorix\\Organization\\Events",
+  "namespace": "Stackra\\Organization\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. `OrganizationParentChanged` is the most consequential — it can shift access boundaries for large sub-trees, and its listener chain synchronously updates tree_path for the moved row + asynchronously updates every descendant.",
   "events": [
     {
       "name": "OrganizationCreated",
-      "class": "Academorix\\Organization\\Events\\OrganizationCreated",
+      "class": "Stackra\\Organization\\Events\\OrganizationCreated",
       "trigger": "New Organization row committed.",
       "queue": "notifications",
       "afterCommit": true,
@@ -26,7 +26,7 @@
     },
     {
       "name": "OrganizationUpdated",
-      "class": "Academorix\\Organization\\Events\\OrganizationUpdated",
+      "class": "Stackra\\Organization\\Events\\OrganizationUpdated",
       "trigger": "One or more mutable fields changed. Distinct from ParentChanged / DefaultChanged / StatusChanged / BrandingUpdated — those are the SPECIFIC events; this fires for everything else (name / slug / short_name / description / website_url / contact fields / sort_order / established_date / category).",
       "queue": "notifications",
       "afterCommit": true,
@@ -40,7 +40,7 @@
     },
     {
       "name": "OrganizationStatusChanged",
-      "class": "Academorix\\Organization\\Events\\OrganizationStatusChanged",
+      "class": "Stackra\\Organization\\Events\\OrganizationStatusChanged",
       "trigger": "`status` transitioned (active ↔ paused, or active → archived).",
       "queue": "notifications",
       "afterCommit": true,
@@ -55,7 +55,7 @@
     },
     {
       "name": "OrganizationParentChanged",
-      "class": "Academorix\\Organization\\Events\\OrganizationParentChanged",
+      "class": "Stackra\\Organization\\Events\\OrganizationParentChanged",
       "trigger": "`parent_id` changed on an existing row. Fires on both nulling (child → root) and setting (root → child, or child → new parent).",
       "queue": "notifications-critical",
       "afterCommit": true,
@@ -81,7 +81,7 @@
     },
     {
       "name": "OrganizationDefaultChanged",
-      "class": "Academorix\\Organization\\Events\\OrganizationDefaultChanged",
+      "class": "Stackra\\Organization\\Events\\OrganizationDefaultChanged",
       "trigger": "The tenant's `is_default=true` Organization changed. Fires when `is_default` flips on the NEW default (the auto-demotion of the OLD default is part of the same event; no separate demotion event).",
       "queue": "notifications-critical",
       "afterCommit": true,
@@ -101,7 +101,7 @@
     },
     {
       "name": "OrganizationBrandingUpdated",
-      "class": "Academorix\\Organization\\Events\\OrganizationBrandingUpdated",
+      "class": "Stackra\\Organization\\Events\\OrganizationBrandingUpdated",
       "trigger": "One of `logo_url`, `primary_color`, `secondary_color`, `description` changed. Requires `organization_branding` entitlement to have been active at write time.",
       "queue": "notifications",
       "afterCommit": true,
@@ -115,7 +115,7 @@
     },
     {
       "name": "OrganizationArchived",
-      "class": "Academorix\\Organization\\Events\\OrganizationArchived",
+      "class": "Stackra\\Organization\\Events\\OrganizationArchived",
       "trigger": "Soft-delete + status=archived transition. Refused when is_default / has descendants / referenced by branches — the event fires only after all guards pass.",
       "queue": "notifications",
       "afterCommit": true,
@@ -132,7 +132,7 @@
     },
     {
       "name": "OrganizationRestored",
-      "class": "Academorix\\Organization\\Events\\OrganizationRestored",
+      "class": "Stackra\\Organization\\Events\\OrganizationRestored",
       "trigger": "Soft-deleted row restored (deleted_at set to null). Re-consumes the `organization_slot` — refused with ORGANIZATION_SLOT_EXCEEDED when the tenant is at cap.",
       "queue": "notifications",
       "afterCommit": true,
@@ -144,7 +144,7 @@
     },
     {
       "name": "OrganizationDeleted",
-      "class": "Academorix\\Organization\\Events\\OrganizationDeleted",
+      "class": "Stackra\\Organization\\Events\\OrganizationDeleted",
       "trigger": "Hard-delete via PurgeArchivedOrganizationsJob (after the 730-day archive hold + zero descendants + zero branch references). Distinct from OrganizationArchived — that is the soft-delete signal; this is the terminal-purge signal.",
       "queue": "notifications-critical",
       "afterCommit": true,
@@ -160,7 +160,7 @@
     },
     {
       "name": "TenantDefaultOrganizationSeeded",
-      "class": "Academorix\\Organization\\Events\\TenantDefaultOrganizationSeeded",
+      "class": "Stackra\\Organization\\Events\\TenantDefaultOrganizationSeeded",
       "trigger": "SeedDefaultOrganizationForTenantJob committed the tenant's default row. Fires exactly once per tenant. Distinct from OrganizationCreated (which fires for the same row) — this event has extra context tying the seed to the provisioning transaction.",
       "queue": "notifications",
       "afterCommit": true,

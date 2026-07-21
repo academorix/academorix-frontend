@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/auth/schemas/jwks-response",
+  "id": "stackra://modules/auth/schemas/jwks-response",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "JwksResponse",

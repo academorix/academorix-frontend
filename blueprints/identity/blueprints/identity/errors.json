@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/identity/errors",
+  "id": "stackra://modules/identity/errors",
   "$version": 1,
   "title": "identity \u2014 error codes",
   "namespace": "identity",

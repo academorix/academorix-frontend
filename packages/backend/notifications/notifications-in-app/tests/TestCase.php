@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsInApp\Tests;
+namespace Stackra\NotificationsInApp\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/notifications-in-app.
+ * Base test case for stackra/notifications-in-app.
  *
  * @category NotificationsInApp
  *

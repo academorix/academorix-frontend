@@ -156,7 +156,7 @@ ship.
       `useMyWorkspaces()` powers the Slack-style picker.
 - [x] 44. **Phase 1** — `config/env.ts` extended with `VITE_API_PATH`,
       `VITE_CENTRAL_HOST`, `VITE_PLATFORM_ADMIN_HOST`; `vite.config.ts` injects
-      `__ACADEMORIX_VERSION__` for the `X-Client` header.
+      `__STACKRA_VERSION__` for the `X-Client` header.
 - [x] 45. **Phase 2** — Split auth providers: `auth-provider.tenant` (POST
       `/auth/*` + companion `TenantAuthApi` for register/forgot/reset/
       email-verify/confirm/change), `auth-provider.platform` (POST

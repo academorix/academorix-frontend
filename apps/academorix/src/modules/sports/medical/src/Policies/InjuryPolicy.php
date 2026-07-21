@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Medical\Policies;
+namespace Stackra\Medical\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Medical\Models\Injury;
+use Stackra\User\Models\User;
+use Stackra\Medical\Models\Injury;
 
 /**
- * Authorization policy for {@see \Academorix\Medical\Models\Injury}.
+ * Authorization policy for {@see \Stackra\Medical\Models\Injury}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

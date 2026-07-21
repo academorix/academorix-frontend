@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transfer/retention",
+  "id": "stackra://modules/transfer/retention",
   "$version": 1,
   "title": "transfer \u2014 retention windows",
   "description": "Two independent retention clocks. Files (heavy) purge fast; DB rows (light) linger longer for history. Tier-based per plan for the DB row \u2014 files are uniformly short-lived regardless of plan.",

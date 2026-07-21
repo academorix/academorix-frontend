@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Database\Factories;
+namespace Stackra\Monitoring\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Monitoring\Contracts\Data\MonitoringIncidentInterface;
-use Academorix\Monitoring\Models\MonitoringIncident;
+use Stackra\Monitoring\Contracts\Data\MonitoringIncidentInterface;
+use Stackra\Monitoring\Models\MonitoringIncident;
 
 /**
- * Factory for {@see \Academorix\Monitoring\Models\MonitoringIncident}.
+ * Factory for {@see \Stackra\Monitoring\Models\MonitoringIncident}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Monitoring\Models\MonitoringIncident>
+ * @extends Factory<\Stackra\Monitoring\Models\MonitoringIncident>
  *
  * @category Monitoring
  *

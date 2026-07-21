@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/facility/events",
+  "id": "stackra://modules/facility/events",
   "$version": 1,
   "title": "facility — published events",
-  "namespace": "Academorix\\Facility\\Events",
+  "namespace": "Stackra\\Facility\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Booking lifecycle events fan out to notifications + activity + audit; financial events (day-pass sales, pass credit consumption) additionally fan out to finance (Wave 4) for revenue attribution. BookingOverlapDetected is the CRITICAL event of the module — it means the SERIALIZABLE overlap-detection observer failed and a double-booking exists; ops must be paged immediately.",
   "events": [
     {
       "name": "FacilityCreated",
-      "class": "Academorix\\Facility\\Events\\FacilityCreated",
+      "class": "Stackra\\Facility\\Events\\FacilityCreated",
       "trigger": "FacilityRepository finished a successful create. Fires exactly once per (tenant_id, branch_id, slug) tuple.",
       "queue": "notifications",
       "consumers": [
@@ -30,7 +30,7 @@
     },
     {
       "name": "FacilityUpdated",
-      "class": "Academorix\\Facility\\Events\\FacilityUpdated",
+      "class": "Stackra\\Facility\\Events\\FacilityUpdated",
       "trigger": "Any Facility scalar field mutated except status (FacilityStatusChanged), pricing_json (FacilityPricingUpdated), availability_json (FacilityAvailabilityChanged), and blackout_dates (FacilityBlackoutAdded / FacilityBlackoutRemoved). Umbrella event for renames, capacity changes, sport_category changes, min/max duration tweaks, advance_booking_window_days edits.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -44,7 +44,7 @@
     },
     {
       "name": "FacilityStatusChanged",
-      "class": "Academorix\\Facility\\Events\\FacilityStatusChanged",
+      "class": "Stackra\\Facility\\Events\\FacilityStatusChanged",
       "trigger": "Facility.status transitioned. Values: active / maintenance / retired. `active → maintenance` is temporary; `active → retired` is terminal (fires FacilityRetired in parallel).",
       "queue": "notifications-critical",
       "consumers": [
@@ -64,7 +64,7 @@
     },
     {
       "name": "FacilityPricingUpdated",
-      "class": "Academorix\\Facility\\Events\\FacilityPricingUpdated",
+      "class": "Stackra\\Facility\\Events\\FacilityPricingUpdated",
       "trigger": "Facility.pricing_json JSONB blob mutated. Any sub-field change (model, currency, tiers[], peak_hours) fires this event. Financial-record retention 7 years applies to the resulting audit row.",
       "queue": "notifications-critical",
       "consumers": [
@@ -83,7 +83,7 @@
     },
     {
       "name": "FacilityBlackoutAdded",
-      "class": "Academorix\\Facility\\Events\\FacilityBlackoutAdded",
+      "class": "Stackra\\Facility\\Events\\FacilityBlackoutAdded",
       "trigger": "A blackout window was appended to Facility.blackout_dates. Fires per blackout added — a multi-blackout admin update emits N events.",
       "queue": "notifications-critical",
       "consumers": [
@@ -104,7 +104,7 @@
     },
     {
       "name": "FacilityBlackoutRemoved",
-      "class": "Academorix\\Facility\\Events\\FacilityBlackoutRemoved",
+      "class": "Stackra\\Facility\\Events\\FacilityBlackoutRemoved",
       "trigger": "A blackout window was removed from Facility.blackout_dates. Does NOT restore cancelled bookings — those are gone.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -119,7 +119,7 @@
     },
     {
       "name": "FacilityAvailabilityChanged",
-      "class": "Academorix\\Facility\\Events\\FacilityAvailabilityChanged",
+      "class": "Stackra\\Facility\\Events\\FacilityAvailabilityChanged",
       "trigger": "Facility.availability_json mutated. Distinct from FacilityBlackout* (recurring weekly hours vs one-off windows). Observer refuses saves whose new availability window is broader than the parent Branch.opening_hours.",
       "queue": "notifications",
       "consumers": [
@@ -137,7 +137,7 @@
     },
     {
       "name": "FacilityRetired",
-      "class": "Academorix\\Facility\\Events\\FacilityRetired",
+      "class": "Stackra\\Facility\\Events\\FacilityRetired",
       "trigger": "Facility.status transitioned to `retired` OR facility soft-delete completed with the `--cascade-bookings` flag. Terminal. Fires alongside FacilityStatusChanged.",
       "queue": "notifications-critical",
       "consumers": [
@@ -159,7 +159,7 @@
     },
     {
       "name": "BookingCreated",
-      "class": "Academorix\\Facility\\Events\\BookingCreated",
+      "class": "Stackra\\Facility\\Events\\BookingCreated",
       "trigger": "ResourceBookingObserver committed a new resource_bookings row. Fires ONCE per booking. Precedes BookingConfirmed for pending-status bookings; for auto-confirmed bookings the two events fire in the same transaction.",
       "queue": "notifications",
       "consumers": [
@@ -189,7 +189,7 @@
     },
     {
       "name": "BookingConfirmed",
-      "class": "Academorix\\Facility\\Events\\BookingConfirmed",
+      "class": "Stackra\\Facility\\Events\\BookingConfirmed",
       "trigger": "ResourceBooking.status transitioned pending → confirmed. Fires when the payment/gate approval flow (Wave 4 Finance approval, or immediate on free bookings) resolves. Also fires directly at BookingCreated time for auto-confirmed bookings — the two events are dispatched in the same afterCommit hook, in that order.",
       "queue": "notifications",
       "consumers": [
@@ -207,7 +207,7 @@
     },
     {
       "name": "BookingCancelled",
-      "class": "Academorix\\Facility\\Events\\BookingCancelled",
+      "class": "Stackra\\Facility\\Events\\BookingCancelled",
       "trigger": "ResourceBooking.status transitioned to `cancelled` — either voluntarily by the booker/admin (via the cancel action) OR cascaded by FacilityRetired / FacilityBlackoutAdded. The `cancellation_reason` payload field distinguishes the two.",
       "queue": "notifications",
       "consumers": [
@@ -229,7 +229,7 @@
     },
     {
       "name": "BookingCompleted",
-      "class": "Academorix\\Facility\\Events\\BookingCompleted",
+      "class": "Stackra\\Facility\\Events\\BookingCompleted",
       "trigger": "ResourceBooking.status transitioned confirmed → completed. Fired ONLY by the automated `MarkBookingCompletedJob` when ends_at + 15 min has passed AND the booking wasn't cancelled or no-show. Never fires from a manual admin action (observer refuses manual transitions to completed).",
       "queue": "notifications",
       "consumers": [
@@ -247,7 +247,7 @@
     },
     {
       "name": "BookingMarkedNoShow",
-      "class": "Academorix\\Facility\\Events\\BookingMarkedNoShow",
+      "class": "Stackra\\Facility\\Events\\BookingMarkedNoShow",
       "trigger": "ResourceBooking.status transitioned to `no_show`. Fired by the automated `MarkNoShowJob` when starts_at + 15 min has passed with no check-in AND the booking is still confirmed. Also fired by manual admin action.",
       "queue": "notifications",
       "consumers": [
@@ -268,7 +268,7 @@
     },
     {
       "name": "BookingRescheduled",
-      "class": "Academorix\\Facility\\Events\\BookingRescheduled",
+      "class": "Stackra\\Facility\\Events\\BookingRescheduled",
       "trigger": "ResourceBooking.starts_at / ends_at mutated on an in-flight booking. Rescheduling into a conflicting slot is refused by the observer (overlap detection runs on reschedule too). Rescheduling triggers a fresh overlap check + capacity check + availability check.",
       "queue": "notifications",
       "consumers": [
@@ -289,14 +289,14 @@
     },
     {
       "name": "BookingOverlapDetected",
-      "class": "Academorix\\Facility\\Events\\BookingOverlapDetected",
+      "class": "Stackra\\Facility\\Events\\BookingOverlapDetected",
       "trigger": "CRITICAL — the SERIALIZABLE overlap-detection observer detected a double-booking after the fact. Fires ONLY as a paranoia safety net (e.g. a raw SQL write bypassed the observer, or a race in a non-SERIALIZABLE transaction slipped through). Every fire indicates ops attention is required. This event exists so alerting has a first-class signal to hook — it should NEVER fire in production.",
       "queue": "notifications-critical",
       "consumers": [
         "audit::WriteToAuditLog",
         "activity::WriteToActivityLog",
         "notifications::AlertOpsOnBookingOverlap (page the on-call)",
-        "observability::MetricsCollector (increments academorix.facility.overlaps.detected — this counter should stay at 0)"
+        "observability::MetricsCollector (increments stackra.facility.overlaps.detected — this counter should stay at 0)"
       ],
       "payload": {
         "facility_id": "ULID",
@@ -311,7 +311,7 @@
     },
     {
       "name": "BookingCheckedIn",
-      "class": "Academorix\\Facility\\Events\\BookingCheckedIn",
+      "class": "Stackra\\Facility\\Events\\BookingCheckedIn",
       "trigger": "Booker or receptionist called the check-in action. Sets checked_in_at on the booking. Distinct from BookingCompleted (check-in is at start-time; completion is at end-time + 15 min).",
       "queue": "notifications",
       "consumers": ["activity::WriteToActivityLog"],
@@ -325,7 +325,7 @@
     },
     {
       "name": "DayPassIssued",
-      "class": "Academorix\\Facility\\Events\\DayPassIssued",
+      "class": "Stackra\\Facility\\Events\\DayPassIssued",
       "trigger": "DayPassRepository committed a new day_passes row from the POS surface. Fires exactly once per row.",
       "queue": "notifications",
       "consumers": [
@@ -348,7 +348,7 @@
     },
     {
       "name": "DayPassConsumed",
-      "class": "Academorix\\Facility\\Events\\DayPassConsumed",
+      "class": "Stackra\\Facility\\Events\\DayPassConsumed",
       "trigger": "DayPass.consumed_at set from null → now(). Fires on turnstile scan or receptionist manual confirmation.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -362,7 +362,7 @@
     },
     {
       "name": "DayPassExpired",
-      "class": "Academorix\\Facility\\Events\\DayPassExpired",
+      "class": "Stackra\\Facility\\Events\\DayPassExpired",
       "trigger": "ExpireDayPassesJob transitioned a DayPass past valid_on_date without consumption. No refund flow triggered — day-pass revenue was already recognised on purchase.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -376,7 +376,7 @@
     },
     {
       "name": "DayPassRefunded",
-      "class": "Academorix\\Facility\\Events\\DayPassRefunded",
+      "class": "Stackra\\Facility\\Events\\DayPassRefunded",
       "trigger": "Manual refund action from staff (Wave 4 refund flow reversal). Requires DayPass.consumed_at IS NULL AND staff has facility.day_passes.refund permission.",
       "queue": "notifications",
       "consumers": [
@@ -396,7 +396,7 @@
     },
     {
       "name": "PassIssued",
-      "class": "Academorix\\Facility\\Events\\PassIssued",
+      "class": "Stackra\\Facility\\Events\\PassIssued",
       "trigger": "PassProvisioner committed a new passes row. Fires either from a Wave 4 Membership provisioning listener OR from manual admin action.",
       "queue": "notifications",
       "consumers": [
@@ -419,13 +419,13 @@
     },
     {
       "name": "PassCreditConsumed",
-      "class": "Academorix\\Facility\\Events\\PassCreditConsumed",
+      "class": "Stackra\\Facility\\Events\\PassCreditConsumed",
       "trigger": "Pass.used_credits incremented by 1 during BookingCreated (when the booking booked_for_user has an active pass covering this facility). The observer atomically increments in the same transaction as the booking-create — a failure to consume aborts the booking.",
       "queue": "notifications",
       "consumers": [
         "audit::WriteToAuditLog",
         "activity::WriteToActivityLog",
-        "observability::MetricsCollector (increments academorix.facility.pass_credits.consumed)"
+        "observability::MetricsCollector (increments stackra.facility.pass_credits.consumed)"
       ],
       "payload": {
         "pass_id": "ULID",
@@ -438,7 +438,7 @@
     },
     {
       "name": "PassExhausted",
-      "class": "Academorix\\Facility\\Events\\PassExhausted",
+      "class": "Stackra\\Facility\\Events\\PassExhausted",
       "trigger": "Pass.used_credits reached Pass.total_credits. Fires from PassObserver.updated when the increment crosses the threshold. NOT fired on subsequent increments (there won't be any — the observer refuses over-consumption).",
       "queue": "notifications",
       "consumers": [
@@ -456,7 +456,7 @@
     },
     {
       "name": "PassExpired",
-      "class": "Academorix\\Facility\\Events\\PassExpired",
+      "class": "Stackra\\Facility\\Events\\PassExpired",
       "trigger": "ExpirePassesJob transitioned a pass past valid_until (with unused credits — expired-and-unused). Refunds handled by Finance module case-by-case, not automatic.",
       "queue": "notifications",
       "consumers": [
@@ -474,7 +474,7 @@
     },
     {
       "name": "PassTransferred",
-      "class": "Academorix\\Facility\\Events\\PassTransferred",
+      "class": "Stackra\\Facility\\Events\\PassTransferred",
       "trigger": "Pass.assignable_user_ids mutated OR the primary owner-of-record on the pass changed. Refused when pass.is_transferable=false.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -488,7 +488,7 @@
     },
     {
       "name": "PassRevoked",
-      "class": "Academorix\\Facility\\Events\\PassRevoked",
+      "class": "Stackra\\Facility\\Events\\PassRevoked",
       "trigger": "Admin invoked the revoke action. Sets deleted_at + revocation_reason. Distinct from PassExhausted (used-up) and PassExpired (time-up). Refund handling is Finance module's job.",
       "queue": "notifications",
       "consumers": [

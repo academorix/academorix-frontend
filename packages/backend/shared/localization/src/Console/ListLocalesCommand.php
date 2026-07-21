@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Console;
+namespace Stackra\Localization\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Localization\Contracts\Data\PlatformLanguageInterface;
-use Academorix\Localization\Contracts\Data\TenantLocaleInterface;
-use Academorix\Localization\Contracts\Repositories\PlatformLanguageRepositoryInterface;
-use Academorix\Localization\Contracts\Repositories\TenantLocaleRepositoryInterface;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Localization\Contracts\Data\PlatformLanguageInterface;
+use Stackra\Localization\Contracts\Data\TenantLocaleInterface;
+use Stackra\Localization\Contracts\Repositories\PlatformLanguageRepositoryInterface;
+use Stackra\Localization\Contracts\Repositories\TenantLocaleRepositoryInterface;
 
 /**
  * `php artisan localization:list-locales` — list platform-active

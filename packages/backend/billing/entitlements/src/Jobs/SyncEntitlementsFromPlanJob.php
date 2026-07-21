@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Jobs;
+namespace Stackra\Entitlements\Jobs;
 
-use Academorix\Entitlements\Contracts\Services\PlanEntitlementSyncerInterface;
-use Academorix\Entitlements\Events\EntitlementSyncCompleted;
-use Academorix\Entitlements\Events\EntitlementSyncStarted;
-use Academorix\Entitlements\Exceptions\EntitlementSyncFailedException;
+use Stackra\Entitlements\Contracts\Services\PlanEntitlementSyncerInterface;
+use Stackra\Entitlements\Events\EntitlementSyncCompleted;
+use Stackra\Entitlements\Events\EntitlementSyncStarted;
+use Stackra\Entitlements\Exceptions\EntitlementSyncFailedException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

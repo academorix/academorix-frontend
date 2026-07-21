@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Console;
+namespace Stackra\Webhook\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan webhook:list` — List every webhook row.

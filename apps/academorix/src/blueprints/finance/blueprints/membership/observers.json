@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/membership/observers",
+  "id": "stackra://modules/membership/observers",
   "$version": 1,
   "title": "membership — Eloquent observers",
   "description": "Four observers, one per owned entity. MembershipObserver is the load-bearing one — enforces atomic invoice creation, frozen snapshots, entitlement consumption, state-machine transitions, immutability of athlete/plan, cross-tenant defense-in-depth. MembershipRenewalObserver drives the retry ladder + lapsed transition. MembershipPlanObserver gates plan creation on entitlements + capacity. PassObserver enforces per-period cap + consumption idempotence.",
   "observers": [
     {
       "model": "Membership",
-      "observer": "Academorix\\Finance\\Membership\\Observers\\MembershipObserver",
+      "observer": "Stackra\\Finance\\Membership\\Observers\\MembershipObserver",
       "handles": [
         "creating → populate ULID prefix `mbr_`",
         "creating → refuse when tenant does NOT hold `membership_capture` feature (defense-in-depth)",
@@ -56,7 +56,7 @@
     },
     {
       "model": "MembershipPlan",
-      "observer": "Academorix\\Finance\\Membership\\Observers\\MembershipPlanObserver",
+      "observer": "Stackra\\Finance\\Membership\\Observers\\MembershipPlanObserver",
       "handles": [
         "creating → populate ULID prefix `mbp_`",
         "creating → refuse when tenant does NOT hold `membership_capture` feature",
@@ -86,7 +86,7 @@
     },
     {
       "model": "MembershipRenewal",
-      "observer": "Academorix\\Finance\\Membership\\Observers\\MembershipRenewalObserver",
+      "observer": "Stackra\\Finance\\Membership\\Observers\\MembershipRenewalObserver",
       "handles": [
         "creating → populate ULID prefix `mbn_`",
         "creating → refuse when parent Membership.tenant_id != this.tenant_id",
@@ -108,7 +108,7 @@
     },
     {
       "model": "Pass",
-      "observer": "Academorix\\Finance\\Membership\\Observers\\PassObserver",
+      "observer": "Stackra\\Finance\\Membership\\Observers\\PassObserver",
       "handles": [
         "creating → populate ULID prefix `pss_`",
         "creating → refuse when parent Membership.tenant_id != this.tenant_id",

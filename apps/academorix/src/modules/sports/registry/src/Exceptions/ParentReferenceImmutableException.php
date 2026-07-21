@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Exceptions;
+namespace Stackra\Registry\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to change sport_id on a Discipline OR discipline_id on a Position post-create.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ParentReferenceImmutableException extends AcademorixException
+final class ParentReferenceImmutableException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Contracts\Services;
+namespace Stackra\Attribution\Contracts\Services;
 
-use Academorix\Attribution\Services\AttributionContext;
+use Stackra\Attribution\Services\AttributionContext;
 use Illuminate\Container\Attributes\Bind;
 
 /**

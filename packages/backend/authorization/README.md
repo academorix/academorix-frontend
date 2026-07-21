@@ -1,6 +1,6 @@
-# academorix/authorization
+# stackra/authorization
 
-Attribute-driven controller authorization for every Academorix package. Ships
+Attribute-driven controller authorization for every Stackra package. Ships
 five attributes and a reflection-cached middleware that enforces them BEFORE the
 controller body runs — no models, no migrations, no coupling to a specific
 role/permission backend.
@@ -26,16 +26,16 @@ attributes on the same target enforces the compound AND — useful when the
 permissions come from different domains and you want grep-friendly declarations.
 
 Every attribute accepts BOTH backed enums (implementers of
-`Academorix\Authorization\Contracts\PermissionEnum`) and raw strings. Prefer
+`Stackra\Authorization\Contracts\PermissionEnum`) and raw strings. Prefer
 enums — they carry IDE navigation, rename safety, and PHPStan verification that
 string literals cannot match.
 
 ## Quick start
 
 ```php
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Authorization\Attributes\AllowGuest;
-use Academorix\Users\Enums\UserPermission;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Authorization\Attributes\AllowGuest;
+use Stackra\Users\Enums\UserPermission;
 
 #[RequirePermission(UserPermission::View)]
 final class UserController extends CrudController
@@ -72,8 +72,8 @@ fail 403 BEFORE route-model-binding queries the database.
 ```php
 ->withMiddleware(function (Middleware $middleware): void {
     $middleware->api(prepend: [
-        \Academorix\Foundation\Middleware\AssignCorrelationId::class,
-        \Academorix\Authorization\Middleware\AuthorizeControllerAction::class,
+        \Stackra\Foundation\Middleware\AssignCorrelationId::class,
+        \Stackra\Authorization\Middleware\AuthorizeControllerAction::class,
     ]);
 })
 ```
@@ -90,7 +90,7 @@ fail 403 BEFORE route-model-binding queries the database.
 | Missing a role from `#[RequireRole]`                      | `AuthorizationException` (403)  |
 | Missing every role in `#[RequireAnyRole]`                 | `AuthorizationException` (403)  |
 
-Failures produce standard Laravel exceptions — the `academorix/exceptions`
+Failures produce standard Laravel exceptions — the `stackra/exceptions`
 handler renders them into the shared JSON envelope with the right HTTP status.
 
 ## Super-admin bypass
@@ -113,8 +113,8 @@ seeds the database.
 
 ```php
 // packages/users/src/Access/UserPermissionContributor.php
-use Academorix\Authorization\Contracts\PermissionContributor;
-use Academorix\Users\Enums\UserPermission;
+use Stackra\Authorization\Contracts\PermissionContributor;
+use Stackra\Users\Enums\UserPermission;
 
 final class UserPermissionContributor implements PermissionContributor
 {

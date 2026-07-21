@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/service-accounts/observers",
+  "id": "stackra://modules/service-accounts/observers",
   "$version": 1,
   "title": "service-accounts \u2014 Eloquent observers",
   "observers": [
     {
       "model": "ServiceAccount",
-      "observer": "Academorix\\ServiceAccount\\Observers\\ServiceAccountObserver",
+      "observer": "Stackra\\ServiceAccount\\Observers\\ServiceAccountObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `svc_`",
         "creating \u2192 validate `name` via valid_service_account_name (unique per application_id)",
@@ -24,7 +24,7 @@
         "updating (is_enabled transition false \u2192 true) \u2192 refuse when expires_at IS NOT NULL AND expires_at < now() (caller must rotate first); recompute status; fire ServiceAccountEnabled",
         "updating (is_enabled transition true \u2192 false) \u2192 recompute status = 'disabled'; fire ServiceAccountDisabled",
         "updating (expires_at dirty) \u2192 refuse when the proposed value < now() (cannot shorten below the present); recompute status",
-        "deleting (soft) \u2192 emit `academorix.service_account.deleted` metric; fire ServiceAccountDeleted(erasure_phase='soft_delete'); write compliance-audit entry with actor + reason; also flip is_enabled to false in the same transaction",
+        "deleting (soft) \u2192 emit `stackra.service_account.deleted` metric; fire ServiceAccountDeleted(erasure_phase='soft_delete'); write compliance-audit entry with actor + reason; also flip is_enabled to false in the same transaction",
         "restoring \u2192 refuse when retention hold has elapsed (row must be gone by then); clear deleted_at; write audit entry",
         "forceDeleted \u2192 fire ServiceAccountDeleted(erasure_phase='hard_delete') AFTER the row is gone (via afterCommit); anonymise audit rows referencing this SA to `[REDACTED-SERVICE-ACCOUNT]`"
       ]
@@ -32,7 +32,7 @@
   ],
   "notes": [
     "The observer is registered by ServiceAccountServiceProvider::boot(). It runs BEFORE HasActivityLog + HasAudit hooks so audit trails see the fully-normalised row.",
-    "Every `refuse` case throws a subclass of `Academorix\\ServiceAccount\\Exceptions\\ServiceAccountViolationException` \u2014 mapped to the errors in `errors.json`.",
+    "Every `refuse` case throws a subclass of `Stackra\\ServiceAccount\\Exceptions\\ServiceAccountViolationException` \u2014 mapped to the errors in `errors.json`.",
     "The `updating (secret_hash dirty)` branch NEVER touches password_history (SA secrets don't need reuse prevention). It's a clean overwrite \u2014 no history retained.",
     "The `updating (is_enabled)` transitions run cache invalidation via the `svc:lookup:id:{id}` + `svc:signer_kid:{kid}` entries in the same transaction \u2014 pre-emptive invalidation prevents a race where a request in flight sees stale state."
   ]

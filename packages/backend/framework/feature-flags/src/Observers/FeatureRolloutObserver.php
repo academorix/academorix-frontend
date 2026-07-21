@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Observers;
+namespace Stackra\FeatureFlags\Observers;
 
-use Academorix\FeatureFlags\Contracts\Data\FeatureRolloutInterface;
-use Academorix\FeatureFlags\Events\FeatureFlagRolloutUpdated;
-use Academorix\FeatureFlags\Models\FeatureRollout;
+use Stackra\FeatureFlags\Contracts\Data\FeatureRolloutInterface;
+use Stackra\FeatureFlags\Events\FeatureFlagRolloutUpdated;
+use Stackra\FeatureFlags\Models\FeatureRollout;
 use Illuminate\Cache\Repository as CacheRepository;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 

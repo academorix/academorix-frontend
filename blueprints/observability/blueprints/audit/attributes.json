@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/audit/attributes",
+  "id": "stackra://modules/audit/attributes",
   "$version": 1,
   "title": "audit — PHP attribute contracts",
   "description": "This module ships ZERO owned PHP attributes. Capture is exclusively via the vendor `owen-it/laravel-auditing` package's `Auditable` trait — there is no `AsAuditEventCapturer`, no `AsAuditProviderDriver`, no `AsAuditableTransition` attribute. Modules opt in to auditing by composing the vendor trait on their Eloquent models. Custom audit events register via the vendor's `Auditable::registerAuditableTransition` seam at boot — NOT via a PHP attribute discovery pass.",
-  "namespace": "Academorix\\Observability\\Audit\\Attributes",
+  "namespace": "Stackra\\Observability\\Audit\\Attributes",
   "attributes": [],
   "note": "Contrast with the growth::analytics + growth::marketing modules, which DO ship attribute-driven capturer discovery (#[AsAnalyticsEventCapturer], #[AsMarketingProviderDriver]). Those modules translate DOMAIN events into their own fan-out signals via a compilation pass. Audit does NOT — the vendor observer captures every model mutation directly, without an intermediate mapping layer.",
   "vendor_extension_seam": {

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceProvider\Registry;
+namespace Stackra\ServiceProvider\Registry;
 
-use Academorix\AI\Registry\AgentMiddlewareRegistry;
-use Academorix\Retention\Registry\RetentionPolicyRegistry;
-use Academorix\ServiceProvider\Bootstrappers\AbstractBootstrapper;
+use Stackra\AI\Registry\AgentMiddlewareRegistry;
+use Stackra\Retention\Registry\RetentionPolicyRegistry;
+use Stackra\ServiceProvider\Bootstrappers\AbstractBootstrapper;
 use Illuminate\Support\Collection;
 
 /**

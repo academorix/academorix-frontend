@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/session/rules",
+  "id": "stackra://modules/session/rules",
   "$version": 1,
   "title": "session — validation rules",
   "description": "Custom Laravel validation rules for FormRequests + Data classes. Named after intent.",
-  "namespace": "Academorix\\Sports\\Session\\Rules",
+  "namespace": "Stackra\\Sports\\Session\\Rules",
   "rules": [
     {
       "name": "valid_session_type",
-      "class": "Academorix\\Sports\\Session\\Rules\\ValidSessionType",
+      "class": "Stackra\\Sports\\Session\\Rules\\ValidSessionType",
       "signature": "valid_session_type",
       "description": "Ensures session_type is one of the enum values.",
       "params": [],
@@ -17,7 +17,7 @@
     },
     {
       "name": "valid_session_gender_category",
-      "class": "Academorix\\Sports\\Session\\Rules\\ValidSessionGenderCategory",
+      "class": "Stackra\\Sports\\Session\\Rules\\ValidSessionGenderCategory",
       "signature": "valid_session_gender_category",
       "description": "Ensures gender_category (when set) is one of male / female / mixed / any.",
       "params": [],
@@ -26,7 +26,7 @@
     },
     {
       "name": "valid_attendance_capacity",
-      "class": "Academorix\\Sports\\Session\\Rules\\ValidAttendanceCapacity",
+      "class": "Stackra\\Sports\\Session\\Rules\\ValidAttendanceCapacity",
       "signature": "valid_attendance_capacity",
       "description": "Ensures attendance_capacity >= 1 when set. Additionally checks against session.resource_booking.facility.capacity_persons when both are set.",
       "params": [],
@@ -34,7 +34,7 @@
     },
     {
       "name": "valid_attendance_min",
-      "class": "Academorix\\Sports\\Session\\Rules\\ValidAttendanceMin",
+      "class": "Stackra\\Sports\\Session\\Rules\\ValidAttendanceMin",
       "signature": "valid_attendance_min",
       "description": "Ensures attendance_min >= 1 when set AND attendance_min <= attendance_capacity when both set.",
       "params": [],
@@ -42,7 +42,7 @@
     },
     {
       "name": "valid_assistant_coaches_array",
-      "class": "Academorix\\Sports\\Session\\Rules\\ValidAssistantCoachesArray",
+      "class": "Stackra\\Sports\\Session\\Rules\\ValidAssistantCoachesArray",
       "signature": "valid_assistant_coaches_array",
       "description": "Ensures assistant_coach_ids is an array of at most 3 unique coach ULIDs, none equal to head_coach_id.",
       "params": [],
@@ -50,7 +50,7 @@
     },
     {
       "name": "valid_equipment_needed_array",
-      "class": "Academorix\\Sports\\Session\\Rules\\ValidEquipmentNeededArray",
+      "class": "Stackra\\Sports\\Session\\Rules\\ValidEquipmentNeededArray",
       "signature": "valid_equipment_needed_array",
       "description": "Ensures equipment_needed is an array of short string tags (max 64 chars each, max 20 entries).",
       "params": [],
@@ -58,7 +58,7 @@
     },
     {
       "name": "valid_session_rating",
-      "class": "Academorix\\Sports\\Session\\Rules\\ValidSessionRating",
+      "class": "Stackra\\Sports\\Session\\Rules\\ValidSessionRating",
       "signature": "valid_session_rating",
       "description": "Ensures rating value is in [0, 5] with 2 decimal precision.",
       "params": [],
@@ -66,7 +66,7 @@
     },
     {
       "name": "valid_session_status_transition",
-      "class": "Academorix\\Sports\\Session\\Rules\\ValidSessionStatusTransition",
+      "class": "Stackra\\Sports\\Session\\Rules\\ValidSessionStatusTransition",
       "signature": "valid_session_status_transition:from",
       "description": "Ensures target status is a valid transition from the current status per the state machine.",
       "params": [{ "name": "from", "type": "string", "description": "Current status." }],
@@ -74,7 +74,7 @@
     },
     {
       "name": "session_within_resource_booking_window",
-      "class": "Academorix\\Sports\\Session\\Rules\\SessionWithinResourceBookingWindow",
+      "class": "Stackra\\Sports\\Session\\Rules\\SessionWithinResourceBookingWindow",
       "signature": "session_within_resource_booking_window",
       "description": "Composite rule ensuring the referenced resource_booking is same-tenant + in an attachable state (pending/confirmed) + not already backing another session.",
       "params": [],
@@ -82,7 +82,7 @@
     },
     {
       "name": "session_coach_belongs_to_tenant",
-      "class": "Academorix\\Sports\\Session\\Rules\\SessionCoachBelongsToTenant",
+      "class": "Stackra\\Sports\\Session\\Rules\\SessionCoachBelongsToTenant",
       "signature": "session_coach_belongs_to_tenant",
       "description": "Composite rule verifying head_coach_id + every entry in assistant_coach_ids has coach.tenant_id = session.tenant_id.",
       "params": [],
@@ -90,7 +90,7 @@
     },
     {
       "name": "session_athletes_belong_to_team",
-      "class": "Academorix\\Sports\\Session\\Rules\\SessionAthletesBelongToTeam",
+      "class": "Stackra\\Sports\\Session\\Rules\\SessionAthletesBelongToTeam",
       "signature": "session_athletes_belong_to_team",
       "description": "For team sessions (team_id IS NOT NULL): validates that every athlete being registered for the session has an active AthleteEnrollment on the same team + season. Standalone sessions (team_id IS NULL) bypass this rule.",
       "params": [],
@@ -98,7 +98,7 @@
     },
     {
       "name": "no_overlapping_sessions_per_coach",
-      "class": "Academorix\\Sports\\Session\\Rules\\NoOverlappingSessionsPerCoach",
+      "class": "Stackra\\Sports\\Session\\Rules\\NoOverlappingSessionsPerCoach",
       "signature": "no_overlapping_sessions_per_coach",
       "description": "Refuses assigning a coach as head_coach or assistant to a session whose resource_booking window overlaps another active session where the same coach is assigned. Coaches cannot be in two places at once.",
       "params": [],
@@ -106,7 +106,7 @@
     },
     {
       "name": "attendance_capacity_not_exceeded",
-      "class": "Academorix\\Sports\\Session\\Rules\\AttendanceCapacityNotExceeded",
+      "class": "Stackra\\Sports\\Session\\Rules\\AttendanceCapacityNotExceeded",
       "signature": "attendance_capacity_not_exceeded",
       "description": "Ensures registering the athlete would not exceed session.attendance_capacity. Used at attendance-create time.",
       "params": [],

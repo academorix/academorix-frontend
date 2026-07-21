@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/storage/contracts/file-uploaded.v1",
+  "id": "stackra://modules/storage/contracts/file-uploaded.v1",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "title": "file-uploaded event \u2014 v1 wire contract",
   "description": "FROZEN wire shape for the `storage::FileUploaded` event. Emitted afterCommit on File row creation with virus_scan_state=pending. Every consumer (search indexer, variant generator, activity log, compliance recorder, webhook fan-out) reads this shape unchanged. Breaking changes require a v2 per the versioning policy in `foundation/readme.md` \u00a712.",
-  "x-emitter": "Academorix\\Storage\\Events\\FileUploaded",
+  "x-emitter": "Stackra\\Storage\\Events\\FileUploaded",
   "x-owning-module": "storage",
   "x-event-name": "storage.file.uploaded",
   "x-version": "v1",

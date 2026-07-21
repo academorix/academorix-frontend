@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/auth/schemas/auth-jwt-deny-list",
+  "id": "stackra://modules/auth/schemas/auth-jwt-deny-list",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "JwtDenyListEntry",
@@ -13,7 +13,7 @@
     "keyType": "string",
     "keyPrefix": "ajd_",
     "incrementing": false,
-    "model": "Academorix\\Auth\\Models\\JwtDenyListEntry",
+    "model": "Stackra\\Auth\\Models\\JwtDenyListEntry",
     "traits": ["HasFactory", "HasUlids", "HasActivityLog", "Filterable"],
     "casts": {
       "revoked_at": "datetime",

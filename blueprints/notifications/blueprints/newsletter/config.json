@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/newsletter/config",
+  "id": "stackra://modules/newsletter/config",
   "$version": 1,
   "title": "newsletter \u2014 developer configuration",
   "configFile": "config/newsletter.php",
@@ -27,17 +27,17 @@
         {
           "path": "newsletter.public_urls.subscribe_pattern",
           "type": "string",
-          "default": "https://{tenant_slug}.academorix.app/newsletters/{newsletter_slug}/subscribe"
+          "default": "https://{tenant_slug}.stackra.app/newsletters/{newsletter_slug}/subscribe"
         },
         {
           "path": "newsletter.public_urls.confirm_pattern",
           "type": "string",
-          "default": "https://{tenant_slug}.academorix.app/newsletters/{newsletter_slug}/confirm/{token}"
+          "default": "https://{tenant_slug}.stackra.app/newsletters/{newsletter_slug}/confirm/{token}"
         },
         {
           "path": "newsletter.public_urls.unsubscribe_pattern",
           "type": "string",
-          "default": "https://{tenant_slug}.academorix.app/newsletters/{newsletter_slug}/unsubscribe/{token}"
+          "default": "https://{tenant_slug}.stackra.app/newsletters/{newsletter_slug}/unsubscribe/{token}"
         }
       ]
     },

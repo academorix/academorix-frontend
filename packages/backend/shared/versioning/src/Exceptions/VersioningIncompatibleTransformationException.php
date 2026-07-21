@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Exceptions;
+namespace Stackra\Versioning\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Transformer chain resolved but a transformer threw an exception (bad payload shape, unknown field).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class VersioningIncompatibleTransformationException extends AcademorixException
+final class VersioningIncompatibleTransformationException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/drills/retention",
+  "id": "stackra://modules/drills/retention",
   "$version": 1,
   "title": "drills — data retention windows",
   "policies": [

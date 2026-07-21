@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/relations",
+  "id": "stackra://modules/notifications/relations",
   "$version": 1,
   "title": "notifications core \u2014 model relationships",
   "description": "The 6 notifications core entities + their relationships to each other + to foreign models (User in `user`, Tenant / Application in `tenants`). Channel-specific side state (push subscriptions, mail suppressions, sms opt-outs) belongs to the respective channel module and does not appear here. CI verifies every named relation resolves to a defined model or an inbound target from another module.",

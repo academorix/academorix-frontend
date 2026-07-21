@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/rbac/relations",
+  "id": "stackra://modules/rbac/relations",
   "$version": 1,
   "title": "rbac \u2014 model relationships",
-  "description": "Role + Permission are spatie-extended tables. Their pivot rows (role_has_permissions, model_has_roles, model_has_permissions) carry the denormalised (application_id, tenant_id) tuple for query-plan efficiency. RoleDefinition is the Academorix metadata layer FK-linked to Role. Every principal (User, PlatformUser, ServiceAccount) participates polymorphically via model_has_roles / model_has_permissions.",
+  "description": "Role + Permission are spatie-extended tables. Their pivot rows (role_has_permissions, model_has_roles, model_has_permissions) carry the denormalised (application_id, tenant_id) tuple for query-plan efficiency. RoleDefinition is the Stackra metadata layer FK-linked to Role. Every principal (User, PlatformUser, ServiceAccount) participates polymorphically via model_has_roles / model_has_permissions.",
   "internal": [
     {
       "from": "Role",
@@ -29,7 +29,7 @@
       "morphType": "model_type",
       "morphId": "model_id",
       "onDelete": "cascade",
-      "description": "The polymorphic role-holder join. `model_type` is one of `Academorix\\User\\Models\\User` / `Academorix\\PlatformUser\\Models\\PlatformUser` / `Academorix\\ServiceAccounts\\Models\\ServiceAccount`."
+      "description": "The polymorphic role-holder join. `model_type` is one of `Stackra\\User\\Models\\User` / `Stackra\\PlatformUser\\Models\\PlatformUser` / `Stackra\\ServiceAccounts\\Models\\ServiceAccount`."
     },
     {
       "from": "Permission",
@@ -74,7 +74,7 @@
       "foreignKey": "tenant_id",
       "onDelete": "cascade",
       "nullable": true,
-      "description": "NULL = system role (shipped by Academorix). Non-null = tenant-created custom role scoped to a specific tenant."
+      "description": "NULL = system role (shipped by Stackra). Non-null = tenant-created custom role scoped to a specific tenant."
     },
     {
       "from": "Permission",

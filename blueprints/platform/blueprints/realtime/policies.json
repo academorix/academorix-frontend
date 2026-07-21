@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/realtime/policies",
+  "id": "stackra://modules/realtime/policies",
   "$version": 1,
   "title": "realtime — authorization policies",
   "description": "Two policies. Channel registration is admin-only (BroadcastChannel rows are seeded by boot scan). Subscription policy governs who can subscribe to which channel — the per-channel authorize callback is the OTHER gate.",
   "policies": [
     {
       "model": "BroadcastChannel",
-      "class": "Academorix\\Realtime\\Policies\\BroadcastChannelPolicy",
+      "class": "Stackra\\Realtime\\Policies\\BroadcastChannelPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -23,7 +23,7 @@
     },
     {
       "model": "BroadcastSubscription",
-      "class": "Academorix\\Realtime\\Policies\\BroadcastSubscriptionPolicy",
+      "class": "Stackra\\Realtime\\Policies\\BroadcastSubscriptionPolicy",
       "abilities": [
         {
           "action": "viewAny",

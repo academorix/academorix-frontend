@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/entitlements/retention",
+  "id": "stackra://modules/entitlements/retention",
   "$version": 1,
   "title": "entitlements \u2014 retention windows",
   "description": "Entitlement rows retained while tenant active. EntitlementUsage partitioned by month + dropped past retention per plan.",

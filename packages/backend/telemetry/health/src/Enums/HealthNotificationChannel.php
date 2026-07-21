@@ -28,7 +28,7 @@
  *
  *   1. Add a case here (e.g. `case Opsgenie = 'opsgenie';`).
  *   2. Extend
- *      {@see \Academorix\Health\Support\HealthNotificationConfig::resolveChannel()}
+ *      {@see \Stackra\Health\Support\HealthNotificationConfig::resolveChannel()}
  *      so it knows how to translate the new case into a notifiable.
  *   3. Every consuming app publishes a matching config block under
  *      `config('health.notifications.opsgenie')`.
@@ -37,15 +37,15 @@
  * routing from environment / config using the case value as a key
  * (`'slack.platform-eng' => env('HEALTH_SLACK_PLATFORM_ENG_WEBHOOK')`).
  *
- * @see \Academorix\Health\Support\HealthNotificationConfig
- * @see \Academorix\Health\Attributes\AsHealthCheck  Consumers of this enum.
+ * @see \Stackra\Health\Support\HealthNotificationConfig
+ * @see \Stackra\Health\Attributes\AsHealthCheck  Consumers of this enum.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Health\Enums;
+namespace Stackra\Health\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 enum HealthNotificationChannel: string
 {
@@ -88,7 +88,7 @@ enum HealthNotificationChannel: string
      * Route ONLY failures that require human action within the SLA.
      * Every check routing here must have a clear runbook + a stable
      * name (the PagerDuty deduplication key is derived from the
-     * check's {@see \Academorix\Health\Attributes\AsHealthCheck::$name}).
+     * check's {@see \Stackra\Health\Attributes\AsHealthCheck::$name}).
      */
     case PagerDuty = 'pagerduty';
 

@@ -4,8 +4,8 @@ The **tenancy + configuration hierarchy** — everything that answers _"who is
 this request for, what identity does it render under, and what config resolves
 under that identity."_ **8 modules on disk** after the v0.3 split.
 
-Deploys to `academorix-backend/apps/platform-service/` (see
-[`apps/platform-service/README.md`](../../../academorix/academorix-backend/apps/platform-service/README.md)).
+Deploys to `stackra-backend/apps/platform-service/` (see
+[`apps/platform-service/README.md`](../../../stackra/stackra-backend/apps/platform-service/README.md)).
 
 ## Modules — on disk
 

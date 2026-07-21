@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Services;
+namespace Stackra\Tenancy\Services;
 
-use Academorix\Application\Models\Application;
+use Stackra\Application\Models\Application;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

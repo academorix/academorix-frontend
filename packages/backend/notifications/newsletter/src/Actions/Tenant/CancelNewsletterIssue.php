@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Actions\Tenant;
+namespace Stackra\Newsletter\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Newsletter\Contracts\Data\NewsletterIssueInterface;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterIssueRepositoryInterface;
-use Academorix\Newsletter\Data\NewsletterIssueData;
-use Academorix\Newsletter\Data\Requests\CancelIssueRequestData;
-use Academorix\Newsletter\Enums\NewsletterIssueStatus;
-use Academorix\Newsletter\Enums\NewsletterPermission;
-use Academorix\Newsletter\Exceptions\NewsletterIssueNotFoundException;
-use Academorix\Newsletter\Exceptions\NewsletterStateInvalidTransitionException;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Newsletter\Contracts\Data\NewsletterIssueInterface;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterIssueRepositoryInterface;
+use Stackra\Newsletter\Data\NewsletterIssueData;
+use Stackra\Newsletter\Data\Requests\CancelIssueRequestData;
+use Stackra\Newsletter\Enums\NewsletterIssueStatus;
+use Stackra\Newsletter\Enums\NewsletterPermission;
+use Stackra\Newsletter\Exceptions\NewsletterIssueNotFoundException;
+use Stackra\Newsletter\Exceptions\NewsletterStateInvalidTransitionException;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `POST /api/v1/newsletters/{newsletter}/issues/{issue}/cancel` —

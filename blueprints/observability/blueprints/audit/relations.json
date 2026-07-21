@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/audit/relations",
+  "id": "stackra://modules/audit/relations",
   "$version": 1,
   "title": "audit — model relationships",
   "description": "Two owned entities with sparse relations — Audit is a leaf in the graph (its only outbound FKs are polymorphic to auditable + user; those are morphs, not enforced FKs). AuditRetentionPolicy belongs to Tenant. Cross-module: every audited model implicitly relates to Audit rows via polymorphic morphMany, but that reverse relation is provided by the vendor `Auditable` trait — not declared here.",

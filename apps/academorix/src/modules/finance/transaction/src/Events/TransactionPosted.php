@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transaction\Events;
+namespace Stackra\Transaction\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog (retention: 7 years — SOX 404; every posted transaction is regulator-visible)
  * - activity::WriteToActivityLog
- * - monitoring::MetricsCollector (increments academorix.transaction.posted_total)
+ * - monitoring::MetricsCollector (increments stackra.transaction.posted_total)
  * - cache::InvalidateAccountBalanceCache (invalidates per-account balance keys for every account touched)
  * - growth::analytics::TrackRevenueMovement (when kind IN ('invoice_payment', 'refund_issued'))
  *

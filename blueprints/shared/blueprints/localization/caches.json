@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/localization/caches",
+  "id": "stackra://modules/localization/caches",
   "$version": 1,
   "title": "localization \u2014 cache keys + tags",
   "driver": "redis",

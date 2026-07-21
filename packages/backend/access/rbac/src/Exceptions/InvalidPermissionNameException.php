@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Exceptions;
+namespace Stackra\Rbac\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Permission name failed the `valid_permission_name` rule (dot-notation, valid scope suffix, no reserved prefix).

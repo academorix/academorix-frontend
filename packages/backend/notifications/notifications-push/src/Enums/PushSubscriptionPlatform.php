@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsPush\Enums;
+namespace Stackra\NotificationsPush\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `platform` on `push-subscription`.

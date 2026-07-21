@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/refund/schemas/refund",
+  "id": "stackra://modules/refund/schemas/refund",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Refund",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "rfd_",
     "incrementing": false,
-    "model": "Academorix\\Finance\\Refund\\Models\\Refund",
-    "interface": "Academorix\\Finance\\Refund\\Contracts\\Data\\RefundInterface",
-    "implements": ["Academorix\\Finance\\Refund\\Contracts\\Data\\RefundInterface"],
+    "model": "Stackra\\Finance\\Refund\\Models\\Refund",
+    "interface": "Stackra\\Finance\\Refund\\Contracts\\Data\\RefundInterface",
+    "implements": ["Stackra\\Finance\\Refund\\Contracts\\Data\\RefundInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Staff\Exceptions;
+namespace Stackra\Staff\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Offboarding a manager: direct reports must be reassigned (they'll be set to reports_to_staff_id=null via SET NULL FK).

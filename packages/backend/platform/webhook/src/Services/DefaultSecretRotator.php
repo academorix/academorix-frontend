@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Services;
+namespace Stackra\Webhook\Services;
 
-use Academorix\Webhook\Contracts\Data\WebhookSubscriptionInterface;
-use Academorix\Webhook\Contracts\Services\SecretRotatorInterface;
-use Academorix\Webhook\Events\WebhookSecretRotated;
-use Academorix\Webhook\Models\WebhookSubscription;
+use Stackra\Webhook\Contracts\Data\WebhookSubscriptionInterface;
+use Stackra\Webhook\Contracts\Services\SecretRotatorInterface;
+use Stackra\Webhook\Events\WebhookSecretRotated;
+use Stackra\Webhook\Models\WebhookSubscription;
 use Illuminate\Container\Attributes\Scoped;
 
 /**

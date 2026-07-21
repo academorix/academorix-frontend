@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Actions\Records;
+namespace Stackra\Domains\Actions\Records;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Domains\Data\DomainRecordData;
-use Academorix\Domains\Enums\DomainsPermission;
-use Academorix\Domains\Models\DomainRecord;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\WhereUlid;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Domains\Data\DomainRecordData;
+use Stackra\Domains\Enums\DomainsPermission;
+use Stackra\Domains\Models\DomainRecord;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\WhereUlid;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `GET /api/v1/tenant/domain-records/{record}` — read one record.

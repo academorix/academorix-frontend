@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Actions\Rollouts;
+namespace Stackra\FeatureFlags\Actions\Rollouts;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\FeatureFlags\Contracts\Data\FeatureRolloutInterface;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureRolloutRepositoryInterface;
-use Academorix\FeatureFlags\Data\FeatureRolloutData;
-use Academorix\FeatureFlags\Data\Requests\UpdateRolloutRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Put;
-use Academorix\Routing\Attributes\WhereUlid;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\FeatureFlags\Contracts\Data\FeatureRolloutInterface;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureRolloutRepositoryInterface;
+use Stackra\FeatureFlags\Data\FeatureRolloutData;
+use Stackra\FeatureFlags\Data\Requests\UpdateRolloutRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Put;
+use Stackra\Routing\Attributes\WhereUlid;
 
 /**
  * `PUT /api/v1/feature-flags/rollouts/{id}` — update a rollout.
@@ -54,7 +54,7 @@ final class UpdateRollout
             static fn ($v): bool => $v !== null,
         );
 
-        /** @var \Academorix\FeatureFlags\Models\FeatureRollout $row */
+        /** @var \Stackra\FeatureFlags\Models\FeatureRollout $row */
         $row = $this->repository->update($id, $patch);
 
         return FeatureRolloutData::fromModel($row);

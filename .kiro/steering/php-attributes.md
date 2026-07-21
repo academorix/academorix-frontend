@@ -30,7 +30,7 @@ Anti-pattern list at the end.
 | ------------------ | ----------------------------------- | --------------------------------- |
 | Laravel Framework  | `Illuminate\...`                    | 72                                |
 | Laravel MCP        | `Laravel\Mcp\Server\...`            | 17                                |
-| Academorix Routing | `Academorix\Routing\Attributes\...` | 28                                |
+| Stackra Routing | `Stackra\Routing\Attributes\...` | 28                                |
 | PHP native         | root `#[...]`                       | ~10                               |
 | Pest 4             | `Pest\...`                          | describe-style API, no attributes |
 
@@ -40,13 +40,13 @@ Grouped catalogues follow, one section per concern.
 
 `
 
-## Academorix Routing attributes (`Academorix\Routing\Attributes\...`)
+## Stackra Routing attributes (`Stackra\Routing\Attributes\...`)
 
 **This is our primary controller-authoring surface.** Routes are defined ON THE
 CONTROLLER, not in `routes/*.php` files. There is no `routes/api.php`, no
 `RouteServiceProvider` on the app side. The Routing package's `RouteRegistrar`
 discovers controllers via `#[AsController]` through the unified
-`Academorix\Foundation\Contracts\DiscoversAttributes` contract and registers
+`Stackra\Foundation\Contracts\DiscoversAttributes` contract and registers
 routes at boot.
 
 Every route attribute is a **composite** — routing + OpenAPI + authorization
@@ -117,12 +117,12 @@ is `IS_REPEATABLE`.
 
 declare(strict_types=1);
 
-namespace Academorix\Billing\Controllers;
+namespace Stackra\Billing\Controllers;
 
-use Academorix\Billing\Data\{CreateInvoiceData, InvoiceData};
-use Academorix\Billing\Enums\BillingPermission;
-use Academorix\Billing\Services\InvoicingService;
-use Academorix\Routing\Attributes\{
+use Stackra\Billing\Data\{CreateInvoiceData, InvoiceData};
+use Stackra\Billing\Enums\BillingPermission;
+use Stackra\Billing\Services\InvoicingService;
+use Stackra\Routing\Attributes\{
     ApiResource,
     AsController,
     Delete,
@@ -132,7 +132,7 @@ use Academorix\Routing\Attributes\{
     Prefix,
     WhereUuid,
 };
-use Academorix\Routing\BaseController;
+use Stackra\Routing\BaseController;
 
 #[AsController]
 #[Prefix('api/v1/invoices')]
@@ -279,7 +279,7 @@ based on which class you can annotate:
 | Concern                          | Attribute                                   | Where it lives              | Argument                | Registers                              |
 | -------------------------------- | ------------------------------------------- | --------------------------- | ----------------------- | -------------------------------------- |
 | Both sides owned by us           | `Illuminate\Container\Attributes\Bind`      | On the ABSTRACT (interface) | The concrete class      | `bind($this_interface, $arg_concrete)` |
-| Abstract is vendor / third-party | `Academorix\Container\Attributes\Overrides` | On the CONCRETE (subclass)  | The abstract we replace | `bind($arg_abstract, $this_concrete)`  |
+| Abstract is vendor / third-party | `Stackra\Container\Attributes\Overrides` | On the CONCRETE (subclass)  | The abstract we replace | `bind($arg_abstract, $this_concrete)`  |
 
 Choose by ownership, not by taste:
 
@@ -296,8 +296,8 @@ use Illuminate\Container\Attributes\Bind;
 #[Bind(EloquentUserRepository::class)]
 interface UserRepositoryInterface { /* ... */ }
 
-// Pattern B example — Academorix, vendor override.
-use Academorix\Container\Attributes\Overrides;
+// Pattern B example — Stackra, vendor override.
+use Stackra\Container\Attributes\Overrides;
 use Spatie\RouteAttributes\RouteRegistrar as SpatieRouteRegistrar;
 
 #[Overrides(SpatieRouteRegistrar::class)]
@@ -333,7 +333,7 @@ Every one of these implements `ContextualAttribute` and resolves via a
 | `#[RouteParameter(name?)]`                | `$request->route($name)`                          | `#[RouteParameter('id')] int $userId`                   |
 | `#[Context(key, default?, hidden?)]`      | Laravel Log Context repository lookup             | `#[Context('tenant_id')] string $tenantId`              |
 | `#[Give(class, params?)]`                 | force resolution of a specific concrete           | `#[Give(FakeInvoicer::class)] Invoicer $inv`            |
-| `#[Tag(tag)]`                             | `$container->tagged($tag)`                        | `#[Tag('academorix.formatters')] iterable $formatters`  |
+| `#[Tag(tag)]`                             | `$container->tagged($tag)`                        | `#[Tag('stackra.formatters')] iterable $formatters`  |
 
 Prefer these over `$this->app->make(...)` inside methods. Constructor promotion
 with contextual attributes reads like a dependency manifest.
@@ -613,7 +613,7 @@ final class ListInvoicesTool implements Tool
 
 ---
 
-## Custom attributes — Academorix conventions
+## Custom attributes — Stackra conventions
 
 Prefer authoring an attribute over another property or `boot()` hook whenever
 the concern is:
@@ -625,8 +625,8 @@ the concern is:
 
 ### Naming + placement
 
-- Namespace: `Academorix\<Package>\Attributes\` — e.g.
-  `Academorix\Exceptions\Attributes\ReportsAt`.
+- Namespace: `Stackra\<Package>\Attributes\` — e.g.
+  `Stackra\Exceptions\Attributes\ReportsAt`.
 - One attribute per file, matching the class name.
 - Every attribute file carries the same `@file` + `@description` docblock as the
   rest of the codebase.
@@ -652,7 +652,7 @@ The container auto-invokes it during resolution.
 
 ### Auto-discovery
 
-The `Academorix\Foundation\Providers\AbstractModuleServiceProvider` scans each
+The `Stackra\Foundation\Providers\AbstractModuleServiceProvider` scans each
 package's `src/` at boot when the package declares an `autoScan` list.
 Attributes discovered on classes get processed by handlers registered per
 attribute class. Prefer scan-based registration over hard-coded `->singleton()`
@@ -669,7 +669,7 @@ calls in the provider whenever the count is likely to grow.
 | `$this->app->singleton(Foo::class, Bar::class)` inside a provider                                                | `#[Bind(Bar::class)]` + `#[Singleton]` on `interface Foo` (Pattern A) — or `#[Overrides(Foo::class)]` + `#[Singleton]` on `Bar` when Foo is vendor/third-party (Pattern B) |
 | `Log::channel('security')->info(...)` scattered through a service                                                | `#[Log('security')] LoggerInterface $log` in the constructor                                                                                                               |
 | A `routes/api.php` file with `Route::get(...)` for domain endpoints                                              | `#[AsController]` + `#[Get('/...')]` on the controller — Routing package auto-discovers it                                                                                 |
-| A `RouteServiceProvider` in a package                                                                            | None — Academorix Routing handles route registration at the app level via one boot-time scan                                                                               |
+| A `RouteServiceProvider` in a package                                                                            | None — Stackra Routing handles route registration at the app level via one boot-time scan                                                                               |
 | `->middleware('auth:sanctum')` in a route file for a specific controller                                         | `#[Middleware('auth:sanctum')]` on the controller class                                                                                                                    |
 | Hand-registering middleware inside `Kernel::$routeMiddleware` (Laravel 10-) or `bootstrap/app.php` (Laravel 11+) | `#[AsMiddleware(alias: 'x', groups: ['api'], priority: 50)]` on the middleware class                                                                                       |
 | `public $tries = 5;` on a job                                                                                    | `#[Tries(5)]`                                                                                                                                                              |
@@ -701,11 +701,11 @@ calls in the provider whenever the count is likely to grow.
 - Laravel 13.x — `vendor/laravel/framework/src/Illuminate/**/Attributes/*.php`
 - Laravel MCP —
   `vendor/laravel/mcp/src/Server/{Attributes,Annotations,Tools/Annotations}/*.php`
-- Academorix Routing — `packages/Routing/src/Attributes/*.php` (extends Spatie
+- Stackra Routing — `packages/Routing/src/Attributes/*.php` (extends Spatie
   route-attributes; adds OpenAPI + auth)
 - Spatie route-attributes —
   `vendor/spatie/laravel-route-attributes/src/Attributes/*.php` (the base
-  classes Academorix Routing extends)
+  classes Stackra Routing extends)
 - Discovery contract —
   `packages/foundation/src/Contracts/DiscoversAttributes.php` (uniform API every
   package uses)
@@ -733,9 +733,9 @@ middleware; that's the wrong seam.
 | Eloquent wiring (`#[UseFactory]`, `#[UsePolicy]`, `#[UseResource]`, `#[UseResourceCollection]`, `#[ObservedBy]`, `#[ScopedBy]`, `#[CollectedBy]`)                                                                      | Framework traits + `AuthServiceProvider`           | Model boot / gate registration           |
 | Container parameter (`#[Config]`, `#[Cache]`, `#[Storage]`, `#[Auth]`, `#[Log]`, `#[DB]`, `#[CurrentUser]`, `#[RouteParameter]`, `#[Context]`, `#[Give]`, `#[Tag]`)                                                    | `Container` via `ContextualAttribute::resolve()`   | Parameter resolution (per `make()` call) |
 | Container class-level (`#[Bind]`, `#[Singleton]`, `#[Scoped]`)                                                                                                                                                         | Our `AbstractModuleServiceProvider` scanner        | Service-provider `register()`            |
-| Academorix Routing class-level (`#[AsController]`, `#[Prefix]`, `#[Middleware]`, `#[Group]`, `#[Domain]`, `#[Resource]`, `#[ApiResource]`)                                                                             | `Academorix\Routing\RouteRegistrar`                | Routing package boot (once)              |
-| Academorix Routing method-level (`#[Get]`, `#[Post]`, `#[Put]`, `#[Patch]`, `#[Delete]`, `#[Options]`, `#[Any]`, `#[Route]`, `#[Where*]`, `#[Defaults]`, `#[ScopeBindings]`, `#[WithTrashed]`, `#[Fallback]`)          | `Academorix\Routing\RouteRegistrar` per controller | Routing package boot (once)              |
-| Academorix Middleware discovery (`#[AsMiddleware]`)                                                                                                                                                                    | Routing package's `HasMiddleware` concern          | Routing package boot (once)              |
+| Stackra Routing class-level (`#[AsController]`, `#[Prefix]`, `#[Middleware]`, `#[Group]`, `#[Domain]`, `#[Resource]`, `#[ApiResource]`)                                                                             | `Stackra\Routing\RouteRegistrar`                | Routing package boot (once)              |
+| Stackra Routing method-level (`#[Get]`, `#[Post]`, `#[Put]`, `#[Patch]`, `#[Delete]`, `#[Options]`, `#[Any]`, `#[Route]`, `#[Where*]`, `#[Defaults]`, `#[ScopeBindings]`, `#[WithTrashed]`, `#[Fallback]`)          | `Stackra\Routing\RouteRegistrar` per controller | Routing package boot (once)              |
+| Stackra Middleware discovery (`#[AsMiddleware]`)                                                                                                                                                                    | Routing package's `HasMiddleware` concern          | Routing package boot (once)              |
 | Console (`#[Signature]`, `#[Description]`, `#[Help]`, `#[Aliases]`, `#[Usage]`, `#[Hidden]`)                                                                                                                           | `Command` base class                               | Command instantiation                    |
 | Queue (`#[Timeout]`, `#[Tries]`, `#[Backoff]`, `#[Queue]`, `#[Connection]`, `#[Delay]`, `#[FailOnTimeout]`, `#[MaxExceptions]`, `#[UniqueFor]`, `#[DebounceFor]`, `#[DeleteWhenMissingModels]`, `#[WithoutRelations]`) | Queue worker / dispatcher                          | Job dispatch / retry                     |
 | FormRequest (`#[StopOnFirstFailure]`, `#[ErrorBag]`, `#[FailOnUnknownFields]`, `#[RedirectTo]`, `#[RedirectToRoute]`)                                                                                                  | FormRequest base class                             | Request validation                       |
@@ -753,7 +753,7 @@ Every package that needs to find "which classes / methods / properties /
 parameters carry attribute X?" resolves ONE contract from the container:
 
 ```php
-use Academorix\Foundation\Contracts\DiscoversAttributes;
+use Stackra\Foundation\Contracts\DiscoversAttributes;
 
 final class MyServiceProvider extends AbstractModuleServiceProvider
 {
@@ -784,7 +784,7 @@ Every method returns an `iterable` — consumers iterate lazily.
 
 ### Under the hood
 
-`Academorix\Foundation\Discovery\AttributeDiscovery` — the production
+`Stackra\Foundation\Discovery\AttributeDiscovery` — the production
 implementation of `DiscoversAttributes` — delegates to
 `olvlvl/composer-attribute-collector`:
 
@@ -1059,7 +1059,7 @@ Custom mappers implement `NameMapper` — very rarely needed.
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Data\Requests;
+namespace Stackra\FeatureFlags\Data\Requests;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Between;
@@ -1166,10 +1166,10 @@ final class FeatureOverrideData extends Data
 
 ---
 
-## Academorix CRUD attributes (`Academorix\Crud\Attributes\...`)
+## Stackra CRUD attributes (`Stackra\Crud\Attributes\...`)
 
 **This is the primary repository-authoring surface.** Repositories extend
-`Academorix\Crud\Repositories\Repository` (attribute-first) and configure
+`Stackra\Crud\Repositories\Repository` (attribute-first) and configure
 themselves via attributes — never via `model()` / `tableName()` overrides. Model
 resolution, caching, filtering, sorting, criteria, and event dispatch are all
 declarative.
@@ -1218,17 +1218,17 @@ Every FeatureFlags repository already follows this pattern:
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Repositories;
+namespace Stackra\FeatureFlags\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureOverrideRepositoryInterface;
-use Academorix\FeatureFlags\Models\FeatureOverride;
-use Academorix\FeatureFlags\Support\ScopePath;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureOverrideRepositoryInterface;
+use Stackra\FeatureFlags\Models\FeatureOverride;
+use Stackra\FeatureFlags\Support\ScopePath;
 
 /**
  * Attribute-first Eloquent implementation of {@see FeatureOverrideRepositoryInterface}.
@@ -1262,9 +1262,9 @@ The model interface it references:
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Contracts\Data;
+namespace Stackra\FeatureFlags\Contracts\Data;
 
-use Academorix\FeatureFlags\Models\FeatureOverride;
+use Stackra\FeatureFlags\Models\FeatureOverride;
 use Illuminate\Container\Attributes\Bind;
 
 #[Bind(FeatureOverride::class)]

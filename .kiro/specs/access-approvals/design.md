@@ -112,7 +112,7 @@ pivot row for query-plan efficiency.
 
 **`model_has_permissions`** — spatie's, same augmentation.
 
-**`role_definitions`** — Academorix metadata layer:
+**`role_definitions`** — Stackra metadata layer:
 
 | Column                | Type   | Notes                                                     |
 | --------------------- | ------ | --------------------------------------------------------- |

@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Actions\Platform;
+namespace Stackra\Entitlements\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Entitlements\Contracts\Data\EntitlementInterface;
-use Academorix\Entitlements\Contracts\Repositories\EntitlementRepositoryInterface;
-use Academorix\Entitlements\Data\EntitlementData;
-use Academorix\Entitlements\Data\Requests\UpdateEntitlementRequestData;
-use Academorix\Entitlements\Enums\EntitlementsPermission;
-use Academorix\Entitlements\Enums\EntitlementSource;
-use Academorix\Entitlements\Exceptions\EntitlementNotFoundException;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Patch;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Entitlements\Contracts\Data\EntitlementInterface;
+use Stackra\Entitlements\Contracts\Repositories\EntitlementRepositoryInterface;
+use Stackra\Entitlements\Data\EntitlementData;
+use Stackra\Entitlements\Data\Requests\UpdateEntitlementRequestData;
+use Stackra\Entitlements\Enums\EntitlementsPermission;
+use Stackra\Entitlements\Enums\EntitlementSource;
+use Stackra\Entitlements\Exceptions\EntitlementNotFoundException;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Patch;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `PATCH /api/v1/platform/entitlements/{tenant}/{key}` — platform

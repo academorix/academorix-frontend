@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/organization/health",
+  "id": "stackra://modules/organization/health",
   "$version": 1,
   "title": "organization — health probes",
   "probes": [
     {
       "name": "organization-default-invariant",
-      "class": "Academorix\\Organization\\Health\\Probes\\DefaultInvariantProbe",
+      "class": "Stackra\\Organization\\Health\\Probes\\DefaultInvariantProbe",
       "category": "readiness",
       "critical": true,
       "description": "Every non-erased tenant has EXACTLY ONE is_default=true Organization. Zero → structural bug (tenant provisioned without seeder). Two-plus → the auto-demote path failed. Either state trips the probe critical, which page ops.",
@@ -14,7 +14,7 @@
     },
     {
       "name": "organization-tree-path-consistency",
-      "class": "Academorix\\Organization\\Health\\Probes\\TreePathConsistencyProbe",
+      "class": "Stackra\\Organization\\Health\\Probes\\TreePathConsistencyProbe",
       "category": "readiness",
       "critical": false,
       "description": "For every row: tree_path decomposed on the separator produces (a) a chain of live Organization ids (b) ending in self (c) whose parent chain matches parent_id. Cheap because sampled — probes 1% of rows per run.",
@@ -22,7 +22,7 @@
     },
     {
       "name": "organization-orphan-parent",
-      "class": "Academorix\\Organization\\Health\\Probes\\OrphanParentProbe",
+      "class": "Stackra\\Organization\\Health\\Probes\\OrphanParentProbe",
       "category": "readiness",
       "critical": true,
       "description": "Zero Organization rows carry a parent_id pointing at a non-existent (or soft-deleted) row. The FK is ON DELETE SET NULL so orphans should be impossible; this probe catches out-of-band manipulation.",
@@ -30,7 +30,7 @@
     },
     {
       "name": "organization-cross-tenant-parent",
-      "class": "Academorix\\Organization\\Health\\Probes\\CrossTenantParentProbe",
+      "class": "Stackra\\Organization\\Health\\Probes\\CrossTenantParentProbe",
       "category": "readiness",
       "critical": true,
       "description": "Zero Organization rows carry parent_id.tenant_id != tenant_id. Enforced at write time by the observer + rule; this probe catches manual DB corruption + confirms tenant isolation.",
@@ -38,7 +38,7 @@
     },
     {
       "name": "organization-slot-consistency",
-      "class": "Academorix\\Organization\\Health\\Probes\\SlotConsistencyProbe",
+      "class": "Stackra\\Organization\\Health\\Probes\\SlotConsistencyProbe",
       "category": "readiness",
       "critical": false,
       "description": "For every tenant: the number of active + paused Organizations matches the consumed `organization_slot` entitlement counter. Drift indicates an entitlement observer bug.",
@@ -46,7 +46,7 @@
     },
     {
       "name": "organization-cache-reachable",
-      "class": "Academorix\\Organization\\Health\\Probes\\CacheReachableProbe",
+      "class": "Stackra\\Organization\\Health\\Probes\\CacheReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "Redis namespace reachable for the org:* keys. Falls back to DB on failure.",
@@ -54,7 +54,7 @@
     },
     {
       "name": "organization-rebuild-tree-paths-job-stuck",
-      "class": "Academorix\\Organization\\Health\\Probes\\StuckJobProbe",
+      "class": "Stackra\\Organization\\Health\\Probes\\StuckJobProbe",
       "category": "readiness",
       "critical": true,
       "description": "No RebuildTreePathsJob is running (state=working) for > 5 minutes. A hung job blocks the moved subtree's tree_path from being consistent — descendant-lookup queries would return stale results.",

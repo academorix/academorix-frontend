@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/athlete/schemas/athlete",
+  "id": "stackra://modules/athlete/schemas/athlete",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Athlete",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "ath_",
     "incrementing": false,
-    "model": "Academorix\\Sports\\Athlete\\Models\\Athlete",
-    "interface": "Academorix\\Sports\\Athlete\\Contracts\\Data\\AthleteInterface",
-    "implements": ["Academorix\\Sports\\Athlete\\Contracts\\Data\\AthleteInterface"],
+    "model": "Stackra\\Sports\\Athlete\\Models\\Athlete",
+    "interface": "Stackra\\Sports\\Athlete\\Contracts\\Data\\AthleteInterface",
+    "implements": ["Stackra\\Sports\\Athlete\\Contracts\\Data\\AthleteInterface"],
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",

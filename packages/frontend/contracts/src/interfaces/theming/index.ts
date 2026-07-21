@@ -5,7 +5,7 @@
  *
  *   The canonical theme shape is `ITheme` — one type shared between
  *   the frontend `@stackra/theming` package and the backend
- *   `academorix/theming` package. The pre-1.0 split
+ *   `stackra/theming` package. The pre-1.0 split
  *   between `IThemeConfig` (runtime handle) and `IThemePreset`
  *   (wire payload) is dead.
  *

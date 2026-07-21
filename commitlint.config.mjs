@@ -1,7 +1,7 @@
 /**
  * @file commitlint.config.mjs
  * @description
- * Commit-message rules for the academorix-frontend monorepo.
+ * Commit-message rules for the stackra-frontend monorepo.
  *
  * Extends `@commitlint/config-conventional` (Conventional Commits) with
  * workspace-specific type + scope enums for enterprise-grade traceability.

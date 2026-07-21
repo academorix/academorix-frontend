@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Database\Seeders;
+namespace Stackra\Geography\Database\Seeders;
 
-use Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
-use Academorix\Geography\Enums\GeographyPermission;
-use Academorix\ServiceProvider\Attributes\AsSeeder;
+use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
+use Stackra\Geography\Enums\GeographyPermission;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;
 
 /**

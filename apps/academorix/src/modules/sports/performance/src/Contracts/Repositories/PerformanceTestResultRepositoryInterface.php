@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Performance\Contracts\Repositories;
+namespace Stackra\Performance\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Performance\Models\PerformanceTestResult}.
+ * Repository contract for {@see Stackra\Performance\Models\PerformanceTestResult}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `PerformanceTestResultRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Performance\Models\PerformanceTestResult>
+ * @extends RepositoryInterface<\Stackra\Performance\Models\PerformanceTestResult>
  *
  * @category Performance
  *

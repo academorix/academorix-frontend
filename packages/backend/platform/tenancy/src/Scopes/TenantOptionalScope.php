@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Scopes;
+namespace Stackra\Tenancy\Scopes;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * Global scope applied by {@see \Academorix\Tenancy\Concerns\BelongsToTenantOptional}.
+ * Global scope applied by {@see \Stackra\Tenancy\Concerns\BelongsToTenantOptional}.
  *
  * Filters to `WHERE tenant_id = ? OR tenant_id IS NULL` — platform-
  * wide catalogue rows (nullable `tenant_id`) are visible to every

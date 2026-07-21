@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/branch/policies",
+  "id": "stackra://modules/branch/policies",
   "$version": 1,
   "title": "branch — authorization policies",
   "description": "One policy. Reads are broad — every tenant member sees the branches they participate in. Writes are admin+owner only. Close (and reopen) are owner-tier. Cross-tenant reads live on the platform surface.",
   "policies": [
     {
       "model": "Branch",
-      "class": "Academorix\\Branch\\Policies\\BranchPolicy",
+      "class": "Stackra\\Branch\\Policies\\BranchPolicy",
       "abilities": [
         {
           "action": "viewAny",

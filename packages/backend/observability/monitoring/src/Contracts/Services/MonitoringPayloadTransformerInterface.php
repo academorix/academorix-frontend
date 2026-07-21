@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Contracts\Services;
+namespace Stackra\Monitoring\Contracts\Services;
 
-use Academorix\Monitoring\Services\MonitoringPayloadTransformer;
+use Stackra\Monitoring\Services\MonitoringPayloadTransformer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

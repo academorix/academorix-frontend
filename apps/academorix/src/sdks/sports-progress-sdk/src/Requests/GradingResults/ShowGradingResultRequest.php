@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsProgressSdk\Requests\GradingResults;
+namespace Stackra\SportsProgressSdk\Requests\GradingResults;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsProgressSdk\Data\GradingResultData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsProgressSdk\Data\GradingResultData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

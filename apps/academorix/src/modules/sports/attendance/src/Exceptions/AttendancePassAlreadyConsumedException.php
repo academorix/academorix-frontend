@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attendance\Exceptions;
+namespace Stackra\Attendance\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Race condition — the pass was consumed by a concurrent check-in.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AttendancePassAlreadyConsumedException extends AcademorixException
+final class AttendancePassAlreadyConsumedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

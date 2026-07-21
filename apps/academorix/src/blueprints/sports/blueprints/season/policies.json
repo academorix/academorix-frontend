@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/season/policies",
+  "id": "stackra://modules/season/policies",
   "$version": 1,
   "title": "season — authorization policies",
   "description": "One policy — SeasonPolicy — narrows by scope suffix (`.any` / `.tenant`). Every tenant member can READ seasons in their active tenant (they are base UI reference data every enrollment + team dropdown needs). Only admins + owners can WRITE. The `is_current` flag has extra guardrails: `seasons.set_current` is owner-only because current-season changes shift year-over-year reporting frames.",
   "policies": [
     {
       "model": "Season",
-      "class": "Academorix\\Sports\\Season\\Policies\\SeasonPolicy",
+      "class": "Stackra\\Sports\\Season\\Policies\\SeasonPolicy",
       "abilities": [
         {
           "action": "viewAny",

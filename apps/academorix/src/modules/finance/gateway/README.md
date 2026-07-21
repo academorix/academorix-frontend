@@ -1,4 +1,4 @@
-# academorix/gateway
+# stackra/gateway
 
 Server-side Laravel package for the `gateway` module. Auto-generated from the
 blueprint at `modules/finance/blueprints/gateway/`.
@@ -47,6 +47,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-finance/gateway-sdk` under `sdk/finance-gateway-sdk/`. Consumers
+`stackra-finance/gateway-sdk` under `sdk/finance-gateway-sdk/`. Consumers
 cross the service boundary through the SDK; this package is the SERVER-side
 owner of the domain.

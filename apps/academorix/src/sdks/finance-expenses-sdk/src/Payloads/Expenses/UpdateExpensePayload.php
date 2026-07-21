@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FinanceExpensesSdk\Payloads\Expenses;
+namespace Stackra\FinanceExpensesSdk\Payloads\Expenses;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\StringType;

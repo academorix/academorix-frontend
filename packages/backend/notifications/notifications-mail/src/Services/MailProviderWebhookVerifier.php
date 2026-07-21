@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Services;
+namespace Stackra\Notifications\Mail\Services;
 
-use Academorix\Notifications\Mail\Contracts\Services\MailProviderWebhookVerifierInterface;
+use Stackra\Notifications\Mail\Contracts\Services\MailProviderWebhookVerifierInterface;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Http\Request;

@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/ai/permissions",
+  "id": "stackra://modules/ai/permissions",
   "$version": 1,
   "title": "ai — permissions",
-  "seeder": "Academorix\\AI\\Database\\Seeders\\AiPermissionSeeder",
+  "seeder": "Stackra\\AI\\Database\\Seeders\\AiPermissionSeeder",
   "isSystem": true,
   "description": "Persona-role bindings sourced from the canonical Tenancy::defaultRoles() catalogue: `owner, admin, branch_manager, coach, athlete, parent_guardian, front_desk, viewer` (base) + `medical` (sports variants). NO head_coach / hr / finance / staff roles — those don't exist in the catalogue. Draft-then-confirm ability + tool write-back gated per persona.",
   "permissions": [

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Contracts\Services;
+namespace Stackra\Versioning\Contracts\Services;
 
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
-use Academorix\Versioning\Attributes\AsPayloadTransformer;
-use Academorix\Versioning\Services\PayloadTransformerRegistry;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Versioning\Attributes\AsPayloadTransformer;
+use Stackra\Versioning\Services\PayloadTransformerRegistry;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Singleton;
 
@@ -22,7 +22,7 @@ use Illuminate\Container\Attributes\Singleton;
  * transformer is registered.
  *
  * Hydrated at boot by the framework's generic
- * {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ * {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  * pump via the {@see HydratesFrom} attribute on {@see register()}.
  * Consumed by the webhook dispatcher, the REST envelope, and the
  * `versioning:transformers` command's introspection view.
@@ -44,7 +44,7 @@ interface PayloadTransformerRegistryInterface
      * Field extraction (`surface`, `event`, `from`, `to`) happens
      * inside the concrete registry so the hydration cache replay
      * feeds the same shape as the live scan. The concrete also
-     * dispatches {@see \Academorix\Versioning\Events\PayloadTransformerRegistered}
+     * dispatches {@see \Stackra\Versioning\Events\PayloadTransformerRegistered}
      * on every successful registration.
      *
      * @param  class-string  $className  FQCN of the transformer class.

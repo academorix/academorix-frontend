@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Enums;
+namespace Stackra\Application\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `default_business_type` on `application`.

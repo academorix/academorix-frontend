@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/chargeback/settings",
+  "id": "stackra://modules/chargeback/settings",
   "$version": 1,
   "title": "chargeback — settings",
   "description": "Tenant-facing preferences (rate monitoring thresholds, RDR configuration, evidence collection defaults, notification cadence, retention window). No user-level preferences — chargebacks are admin-managed workflows, not user preferences.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "chargeback",
-      "class": "Academorix\\Finance\\Chargeback\\Settings\\ChargebackSettings",
+      "class": "Stackra\\Finance\\Chargeback\\Settings\\ChargebackSettings",
       "label": "Chargebacks",
       "description": "Tenant-wide chargeback workflow configuration.",
       "icon": "shield-exclamation",

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Middleware;
+namespace Stackra\Localization\Middleware;
 
-use Academorix\Localization\Events\LocaleChanged;
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Localization\Events\LocaleChanged;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Closure;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;

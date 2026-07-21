@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Exceptions;
+namespace Stackra\Mfa\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * POST /me/mfa/totp/enroll refused because the Identity already has a TOTP secret persisted.

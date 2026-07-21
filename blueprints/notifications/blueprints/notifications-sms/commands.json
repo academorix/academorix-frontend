@@ -1,29 +1,29 @@
 {
-  "id": "academorix://modules/notifications-sms/commands",
+  "id": "stackra://modules/notifications-sms/commands",
   "$version": 1,
   "title": "notifications-sms \u2014 Artisan commands",
   "commands": [
     {
       "signature": "notifications:sms:test {phone} {--provider=}",
-      "class": "Academorix\\Notifications\\Sms\\Console\\Commands\\TestCommand",
+      "class": "Stackra\\Notifications\\Sms\\Console\\Commands\\TestCommand",
       "purpose": "Send a synthetic SMS. Rate-limited 10/day per operator + refused in production without --allow-production."
     },
     {
       "signature": "notifications:sms:opt-out-add {phone} {--tenant=} {--reason=manual}",
-      "class": "Academorix\\Notifications\\Sms\\Console\\Commands\\OptOutAddCommand"
+      "class": "Stackra\\Notifications\\Sms\\Console\\Commands\\OptOutAddCommand"
     },
     {
       "signature": "notifications:sms:opt-out-remove {phone} {--tenant=} {--force}",
-      "class": "Academorix\\Notifications\\Sms\\Console\\Commands\\OptOutRemoveCommand",
+      "class": "Stackra\\Notifications\\Sms\\Console\\Commands\\OptOutRemoveCommand",
       "purpose": "Refuses stop_keyword opt-outs unless --force + super_admin."
     },
     {
       "signature": "notifications:sms:opt-out-cleanup-expired",
-      "class": "Academorix\\Notifications\\Sms\\Console\\Commands\\OptOutCleanupExpiredCommand"
+      "class": "Stackra\\Notifications\\Sms\\Console\\Commands\\OptOutCleanupExpiredCommand"
     },
     {
       "signature": "notifications:sms:cost-report {--tenant=} {--month=previous}",
-      "class": "Academorix\\Notifications\\Sms\\Console\\Commands\\CostReportCommand",
+      "class": "Stackra\\Notifications\\Sms\\Console\\Commands\\CostReportCommand",
       "purpose": "Print or email SMS cost report for the given tenant + month."
     }
   ]

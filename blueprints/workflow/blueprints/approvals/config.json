@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/config",
+  "id": "stackra://modules/workflow/approvals/config",
   "$version": 1,
   "title": "approvals — developer configuration",
   "configFile": "config/approvals.php",

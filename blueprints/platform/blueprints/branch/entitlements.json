@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/branch/entitlements",
+  "id": "stackra://modules/branch/entitlements",
   "$version": 1,
   "title": "branch — declared entitlements",
   "description": "Five entitlement keys. `branch_slot` scopes concurrent Branch rows per tenant. `branch_geocoding` gates automatic address→coordinates via subprocessor. `branch_capacity_gating` enables the capacity enforcement layer on booking-adjacent routes. `branch_amenities` gates custom amenity tags. `branch_multi_period_hours` allows multi-period opening days (e.g. 9-12, 17-22).",

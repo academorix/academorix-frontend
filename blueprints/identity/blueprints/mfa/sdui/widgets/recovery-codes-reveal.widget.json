@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/mfa/sdui/widgets/recovery-codes-reveal",
+  "id": "stackra://modules/mfa/sdui/widgets/recovery-codes-reveal",
   "$version": 1,
   "kind": "widget",
   "name": "recovery-codes-reveal",
@@ -55,9 +55,9 @@
             "label": "Download as .txt",
             "kind": "download",
             "icon": "arrow-down-tray",
-            "filename": "academorix-recovery-codes.txt",
+            "filename": "stackra-recovery-codes.txt",
             "content_type": "text/plain",
-            "body": "Academorix recovery codes\n\nEach code is one-time-use. Save this file somewhere safe.\n\n{{props.data | join:'\n'}}"
+            "body": "Stackra recovery codes\n\nEach code is one-time-use. Save this file somewhere safe.\n\n{{props.data | join:'\n'}}"
           },
           {
             "label": "Print",

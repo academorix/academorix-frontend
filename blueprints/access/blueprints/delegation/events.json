@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/delegation/events",
+  "id": "stackra://modules/delegation/events",
   "$version": 1,
   "title": "delegation — published events",
-  "namespace": "Academorix\\Delegation\\Events",
+  "namespace": "Stackra\\Delegation\\Events",
   "dispatchMode": "afterCommit",
   "description": "Ten events split across two aggregates. All fire `afterCommit` so downstream listeners never see uncommitted state. Payloads are readonly value objects (readonly class + readonly properties) — immutable by construction. Impersonation events with SLA implications route to the `notifications-critical` queue so they never queue behind a backlog (SOC 2 evidence writes cannot be delayed). Every consumer listed is a listener declared in listeners.json — the pairing is the traceability contract.",
   "events": [
     {
       "name": "DelegationCreated",
-      "class": "Academorix\\Delegation\\Events\\DelegationCreated",
+      "class": "Stackra\\Delegation\\Events\\DelegationCreated",
       "trigger": "RoleDelegationObserver::created hook after the row is inserted + all validators passed. Fires exactly once per delegation, ever.",
       "queue": "notifications",
       "consumers": [
@@ -35,7 +35,7 @@
     },
     {
       "name": "DelegationActivated",
-      "class": "Academorix\\Delegation\\Events\\DelegationActivated",
+      "class": "Stackra\\Delegation\\Events\\DelegationActivated",
       "trigger": "ActivateDelegationsJob observed `starts_at <= now() AND state was pending`. Also fires when a delegation is created with starts_at already in the past (i.e. immediate activation on POST). Delegate gets notified — 'you can now act as X'.",
       "queue": "notifications",
       "consumers": [
@@ -56,7 +56,7 @@
     },
     {
       "name": "DelegationExpired",
-      "class": "Academorix\\Delegation\\Events\\DelegationExpired",
+      "class": "Stackra\\Delegation\\Events\\DelegationExpired",
       "trigger": "ExpireDelegationsJob observed `ends_at <= now() AND revoked_at IS NULL AND state was active`. Terminal state. Delegator gets notified.",
       "queue": "notifications",
       "consumers": [
@@ -78,7 +78,7 @@
     },
     {
       "name": "DelegationRevokedEarly",
-      "class": "Academorix\\Delegation\\Events\\DelegationRevokedEarly",
+      "class": "Stackra\\Delegation\\Events\\DelegationRevokedEarly",
       "trigger": "DELETE /me/delegations/{delegation} succeeded — the delegator (or admin) revoked before ends_at was reached. RoleDelegationObserver::updated on `revoked_at` transitioning from null to non-null.",
       "queue": "notifications",
       "consumers": [
@@ -102,7 +102,7 @@
     },
     {
       "name": "DelegationSelfOverlapDetected",
-      "class": "Academorix\\Delegation\\Events\\DelegationSelfOverlapDetected",
+      "class": "Stackra\\Delegation\\Events\\DelegationSelfOverlapDetected",
       "trigger": "RoleDelegationObserver::creating rejected a POST because the delegator already has an ACTIVE delegation of the same role to the same delegate with a window that overlaps the requested one. Critical severity — signals a UX bug in the tenant admin surface OR an abuse attempt. No row is created; the event fires so security + product can investigate.",
       "queue": "notifications-critical",
       "consumers": [
@@ -125,7 +125,7 @@
     },
     {
       "name": "ImpersonationSessionStarted",
-      "class": "Academorix\\Delegation\\Events\\ImpersonationSessionStarted",
+      "class": "Stackra\\Delegation\\Events\\ImpersonationSessionStarted",
       "trigger": "ImpersonationSessionObserver::created after all safety gates passed (entitlement check, PlatformUser is active, target tenant is enabled, snapshot fields captured). CRITICAL severity — routes to notifications-critical + fires the cannot-opt-out notification to the impersonated User.",
       "queue": "notifications-critical",
       "consumers": [
@@ -153,7 +153,7 @@
     },
     {
       "name": "ImpersonationSessionEnded",
-      "class": "Academorix\\Delegation\\Events\\ImpersonationSessionEnded",
+      "class": "Stackra\\Delegation\\Events\\ImpersonationSessionEnded",
       "trigger": "ImpersonationSessionObserver::updated on ended_at transitioning from null to non-null. Fires for end_trigger IN (self_service, ttl_expired). NOT for admin_revocation / security_lockdown — those fire the dedicated ForcedTerminate event instead.",
       "queue": "notifications-critical",
       "consumers": [
@@ -176,7 +176,7 @@
     },
     {
       "name": "ImpersonationSessionExtended",
-      "class": "Academorix\\Delegation\\Events\\ImpersonationSessionExtended",
+      "class": "Stackra\\Delegation\\Events\\ImpersonationSessionExtended",
       "trigger": "A super_admin extended the session's ends_at (rare — the tenant must hold `impersonation_extended_ttl` entitlement + only super_admin can invoke). ImpersonationSessionObserver::updated on ends_at increase.",
       "queue": "notifications-critical",
       "consumers": [
@@ -197,7 +197,7 @@
     },
     {
       "name": "ImpersonationSessionForcedTerminate",
-      "class": "Academorix\\Delegation\\Events\\ImpersonationSessionForcedTerminate",
+      "class": "Stackra\\Delegation\\Events\\ImpersonationSessionForcedTerminate",
       "trigger": "Security team fired `POST /impersonation/{session}/force-terminate` — a lockdown event. Sets ended_at + end_trigger=security_lockdown. Notifies security team via ImpersonationForcedTerminationNotification (cannot-opt-out).",
       "queue": "notifications-critical",
       "consumers": [
@@ -221,7 +221,7 @@
     },
     {
       "name": "ImpersonationAttemptRefused",
-      "class": "Academorix\\Delegation\\Events\\ImpersonationAttemptRefused",
+      "class": "Stackra\\Delegation\\Events\\ImpersonationAttemptRefused",
       "trigger": "ImpersonationSessionObserver::creating refused. Reason falls into: entitlement missing (PlatformUser lacks `platform.impersonate`), PlatformUser status != active, target User doesn't exist / belongs to different tenant, target tenant is disabled, target application is disabled, TTL request out of bounds, reason too short. No row created; the event fires so security can spot patterns.",
       "queue": "notifications-critical",
       "consumers": [

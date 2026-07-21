@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Actions\Platform\Currencies;
+namespace Stackra\Geography\Actions\Platform\Currencies;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Geography\Contracts\Data\CurrencyInterface;
-use Academorix\Geography\Contracts\Repositories\CurrencyRepositoryInterface;
-use Academorix\Geography\Data\Requests\CreateCurrencyRequestData;
-use Academorix\Geography\Data\Resources\CurrencyResourceData;
-use Academorix\Geography\Enums\GeographyPermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Geography\Contracts\Data\CurrencyInterface;
+use Stackra\Geography\Contracts\Repositories\CurrencyRepositoryInterface;
+use Stackra\Geography\Data\Requests\CreateCurrencyRequestData;
+use Stackra\Geography\Data\Resources\CurrencyResourceData;
+use Stackra\Geography\Enums\GeographyPermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `POST /api/v1/platform/geography/currencies` — platform admin

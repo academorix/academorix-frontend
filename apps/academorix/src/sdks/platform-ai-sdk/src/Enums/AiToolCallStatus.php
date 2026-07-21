@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformAiSdk\Enums;
+namespace Stackra\PlatformAiSdk\Enums;
 
 /**
  * Wire-visible backed enum for `ai-tool-call.status`.

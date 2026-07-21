@@ -7,7 +7,7 @@ declare(strict_types=1);
  *
  * @description
  * Package entry point for the API-versioning subsystem inside
- * `academorix/routing`. Ships alongside the existing
+ * `stackra/routing`. Ships alongside the existing
  * {@see RoutingServiceProvider} rather than replacing it — the
  * versioning concern is self-contained and shouldn't force a
  * refactor of the broader routing wiring.
@@ -17,16 +17,16 @@ declare(strict_types=1);
  * Every concrete service in this subsystem carries a container
  * attribute:
  *
- *   - {@see \Academorix\Routing\Services\VersionComparator} —
+ *   - {@see \Stackra\Routing\Services\VersionComparator} —
  *     `#[Singleton]` (stateless).
- *   - {@see \Academorix\Routing\Support\ApiVersionRegistry} —
+ *   - {@see \Stackra\Routing\Support\ApiVersionRegistry} —
  *     `#[Scoped]` (per-request state).
- *   - {@see \Academorix\Routing\Middleware\DetectApiVersion} —
+ *   - {@see \Stackra\Routing\Middleware\DetectApiVersion} —
  *     transient (default) with `#[Config('api-versioning')]`
  *     on its payload param.
  *
  * The middleware alias `api.version` is registered by
- * {@see \Academorix\Routing\Providers\RoutingServiceProvider}
+ * {@see \Stackra\Routing\Providers\RoutingServiceProvider}
  * via the `#[AsMiddleware(alias: 'api.version')]` attribute on
  * {@see DetectApiVersion} — no per-provider alias wiring needed.
  *
@@ -56,13 +56,13 @@ declare(strict_types=1);
  * assembly, so scoped state stays isolated per request.
  */
 
-namespace Academorix\Routing\Providers;
+namespace Stackra\Routing\Providers;
 
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\OnBoot;
-use Academorix\ServiceProvider\Attributes\OnRegister;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\OnBoot;
+use Stackra\ServiceProvider\Attributes\OnRegister;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * Wires the API-versioning subsystem into the host application.

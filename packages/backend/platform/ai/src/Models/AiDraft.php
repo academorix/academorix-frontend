@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Ai\Models;
+namespace Stackra\Ai\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Ai\Contracts\Data\AiDraftInterface;
-use Academorix\Ai\Database\Factories\AiDraftFactory;
-use Academorix\Ai\Policies\AiDraftPolicy;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Ai\Contracts\Data\AiDraftInterface;
+use Stackra\Ai\Database\Factories\AiDraftFactory;
+use Stackra\Ai\Policies\AiDraftPolicy;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;

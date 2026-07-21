@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Repositories;
+namespace Stackra\Notifications\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Notifications\Contracts\Data\NotificationCategoryInterface;
-use Academorix\Notifications\Contracts\Repositories\NotificationCategoryRepositoryInterface;
-use Academorix\Notifications\Models\NotificationCategory;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Notifications\Contracts\Data\NotificationCategoryInterface;
+use Stackra\Notifications\Contracts\Repositories\NotificationCategoryRepositoryInterface;
+use Stackra\Notifications\Models\NotificationCategory;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Notifications\Models\NotificationCategory}.
+ * Attribute-first Eloquent repository for {@see Stackra\Notifications\Models\NotificationCategory}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(NotificationCategoryInterface::class)]` which resolves to
  * `NotificationCategory` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Notifications\Models\NotificationCategory>
+ * @extends Repository<\Stackra\Notifications\Models\NotificationCategory>
  *
  * @category Notifications
  *

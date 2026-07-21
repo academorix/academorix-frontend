@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Tests;
+namespace Stackra\Leads\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/leads.
+ * Base test case for stackra/leads.
  *
  * @category Leads
  *

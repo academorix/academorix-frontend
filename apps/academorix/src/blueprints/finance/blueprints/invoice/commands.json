@@ -1,81 +1,81 @@
 {
-  "id": "academorix://modules/invoice/commands",
+  "id": "stackra://modules/invoice/commands",
   "$version": 1,
   "title": "invoice — Artisan commands",
   "commands": [
     {
       "signature": "invoice:list {--tenant=} {--customer=} {--status=} {--from=} {--to=} {--past-due} {--series=} {--currency=} {--limit=100}",
-      "class": "Academorix\\Finance\\Invoice\\Console\\Commands\\ListInvoicesCommand",
+      "class": "Stackra\\Finance\\Invoice\\Console\\Commands\\ListInvoicesCommand",
       "purpose": "Table view of invoices. Filterable by tenant, customer_id (any polymorphic type), status, date range, past-due state, series, currency. Default limit 100; --limit=0 for stream mode."
     },
     {
       "signature": "invoice:describe {invoice}",
-      "class": "Academorix\\Finance\\Invoice\\Console\\Commands\\DescribeInvoiceCommand",
+      "class": "Stackra\\Finance\\Invoice\\Console\\Commands\\DescribeInvoiceCommand",
       "purpose": "Verbose read of one invoice: base fields + billing_address snapshot + all lines with per-line tax_calculation + linked credit notes + payment history from the transactions module + audit trail. Support tool for investigating a specific customer dispute."
     },
     {
       "signature": "invoice:create --tenant={tenant} --customer-type={type} --customer={customer} {--currency=} {--payment-terms=net_30} {--series=INV} {--from-membership=} {--notes=}",
-      "class": "Academorix\\Finance\\Invoice\\Console\\Commands\\CreateInvoiceCommand",
+      "class": "Stackra\\Finance\\Invoice\\Console\\Commands\\CreateInvoiceCommand",
       "purpose": "Scriptable invoice creation. Creates a draft invoice + freezes billing_address from customer.profile. --from-membership pre-populates lines from the membership's plan. Use invoice:describe next to review, then invoice:finalize."
     },
     {
       "signature": "invoice:finalize {invoice} {--send-email=1}",
-      "class": "Academorix\\Finance\\Invoice\\Console\\Commands\\FinalizeInvoiceCommand",
+      "class": "Stackra\\Finance\\Invoice\\Console\\Commands\\FinalizeInvoiceCommand",
       "purpose": "Dispatch FinalizeInvoiceJob. --send-email=0 skips the SendInvoiceEmailJob dispatch (useful for staging/testing)."
     },
     {
       "signature": "invoice:send {invoice} {--to=} {--force}",
-      "class": "Academorix\\Finance\\Invoice\\Console\\Commands\\SendInvoiceCommand",
+      "class": "Stackra\\Finance\\Invoice\\Console\\Commands\\SendInvoiceCommand",
       "purpose": "Initial email send. Refused when already sent (use --force to override; audit logs the force). --to overrides the customer email (typos, address changes)."
     },
     {
       "signature": "invoice:resend {invoice} {--to=}",
-      "class": "Academorix\\Finance\\Invoice\\Console\\Commands\\ResendInvoiceCommand",
+      "class": "Stackra\\Finance\\Invoice\\Console\\Commands\\ResendInvoiceCommand",
       "purpose": "Force re-send. Idempotent — sends the same email again."
     },
     {
       "signature": "invoice:void {invoice} --reason={reason}",
-      "class": "Academorix\\Finance\\Invoice\\Console\\Commands\\VoidInvoiceCommand",
+      "class": "Stackra\\Finance\\Invoice\\Console\\Commands\\VoidInvoiceCommand",
       "purpose": "Void a draft or open invoice. --reason is required and written to void_reason + audit trail. Refused when status IN ('paid', 'partially_paid') — use credit-note:create instead."
     },
     {
       "signature": "invoice:mark-uncollectible {invoice} --note={note}",
-      "class": "Academorix\\Finance\\Invoice\\Console\\Commands\\MarkUncollectibleCommand",
+      "class": "Stackra\\Finance\\Invoice\\Console\\Commands\\MarkUncollectibleCommand",
       "purpose": "Mark a past-due invoice uncollectible. --note is required. Requires days_past_due >= config('invoice.dunning.uncollectible_after_days')."
     },
     {
       "signature": "invoice:mark-paid {invoice} --method={method} --amount={amount} --reference={ref} {--paid-at=}",
-      "class": "Academorix\\Finance\\Invoice\\Console\\Commands\\MarkPaidCommand",
+      "class": "Stackra\\Finance\\Invoice\\Console\\Commands\\MarkPaidCommand",
       "purpose": "Manual reconciliation for off-platform payments (check / wire / cash). --method IN (check, wire, cash, other). --amount in cents. --reference is the check number / wire tracking / receipt. Creates a transactions row via the transaction module."
     },
     {
       "signature": "invoice:reconcile-payments {--tenant=} {--dry-run}",
-      "class": "Academorix\\Finance\\Invoice\\Console\\Commands\\ReconcilePaymentsCommand",
+      "class": "Stackra\\Finance\\Invoice\\Console\\Commands\\ReconcilePaymentsCommand",
       "purpose": "One-shot invocation of ReconcileInvoicePaymentsJob. Rolls up per-invoice payment totals from transactions. --dry-run reports drift without repairing. Findings above 0 indicate transaction module drift + a P1 signal."
     },
     {
       "signature": "invoice:regenerate-pdf {invoice}",
-      "class": "Academorix\\Finance\\Invoice\\Console\\Commands\\RegeneratePdfCommand",
+      "class": "Stackra\\Finance\\Invoice\\Console\\Commands\\RegeneratePdfCommand",
       "purpose": "Dispatch GenerateInvoicePDFJob. Idempotent."
     },
     {
       "signature": "credit-note:list {--tenant=} {--status=} {--reason=} {--from=} {--to=} {--limit=100}",
-      "class": "Academorix\\Finance\\Invoice\\Console\\Commands\\ListCreditNotesCommand",
+      "class": "Stackra\\Finance\\Invoice\\Console\\Commands\\ListCreditNotesCommand",
       "purpose": "Credit note ledger view. Sorted by issue_date DESC. Filterable by status, reason, date range."
     },
     {
       "signature": "credit-note:create --invoice={invoice} --amount={amount} --reason={reason} {--note=}",
-      "class": "Academorix\\Finance\\Invoice\\Console\\Commands\\CreateCreditNoteCommand",
+      "class": "Stackra\\Finance\\Invoice\\Console\\Commands\\CreateCreditNoteCommand",
       "purpose": "Create a credit note against a paid/partially-paid invoice. --amount in cents. --reason IN (refund, adjustment, write_off, duplicate, customer_dispute_resolved, accounting_correction). --note required for adjustment / customer_dispute_resolved / accounting_correction."
     },
     {
       "signature": "credit-note:apply {credit_note} --to-type={type} --to={target}",
-      "class": "Academorix\\Finance\\Invoice\\Console\\Commands\\ApplyCreditNoteCommand",
+      "class": "Stackra\\Finance\\Invoice\\Console\\Commands\\ApplyCreditNoteCommand",
       "purpose": "Apply a credit note. --to-type IN (refund, next_invoice, customer_balance). --to is the target ULID. Transitions status issued → applied."
     },
     {
       "signature": "invoice:report {--type=aging|revenue|tax-collected} {--tenant=} {--from=} {--to=} {--group-by=} {--format=table|json|csv}",
-      "class": "Academorix\\Finance\\Invoice\\Console\\Commands\\ReportCommand",
+      "class": "Stackra\\Finance\\Invoice\\Console\\Commands\\ReportCommand",
       "purpose": "Unified report runner. --type=aging (0-30/31-60/61-90/91+ buckets); --type=revenue (invoiced/collected/AR balance grouped by --group-by=day|week|month|item_type); --type=tax-collected (grouped by tax_jurisdiction). --format=csv is finance-team-friendly (Excel-ready)."
     }
   ]

@@ -4,7 +4,7 @@
  * @file modules/notifications/notifications-push/config/notifications-push.php
  *
  * @description
- * Runtime knobs for the `academorix/notifications-push` module. Merged under
+ * Runtime knobs for the `stackra/notifications-push` module. Merged under
  * the `notifications-push.*` key by the base ServiceProvider's LoadsResources
  * concern. Every secret reference lives in Doppler; every default value is
  * safe for local dev.

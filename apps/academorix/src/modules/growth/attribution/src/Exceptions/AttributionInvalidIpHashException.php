@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Exceptions;
+namespace Stackra\Attribution\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * ip_hash is not a valid SHA-256 hex string (64 chars, [0-9a-f]).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AttributionInvalidIpHashException extends AcademorixException
+final class AttributionInvalidIpHashException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

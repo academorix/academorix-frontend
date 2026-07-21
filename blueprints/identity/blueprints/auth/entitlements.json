@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/auth/entitlements",
+  "id": "stackra://modules/auth/entitlements",
   "$version": 1,
   "title": "auth \u2014 declared entitlements",
-  "description": "Six entitlement keys. Refresh-token rotation is hard-required always but the flag exists for framework rollback capability. Extended-TTL sessions + JWT extended-expiry are Enterprise-tier. Cross-app SSO is medium+. Impersonation is Academorix-internal only. New-device notifications are opt-in medium+.",
+  "description": "Six entitlement keys. Refresh-token rotation is hard-required always but the flag exists for framework rollback capability. Extended-TTL sessions + JWT extended-expiry are Enterprise-tier. Cross-app SSO is medium+. Impersonation is Stackra-internal only. New-device notifications are opt-in medium+.",
   "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
   "kinds": [{ "kind": "boolean" }],
   "entitlements": [
@@ -28,7 +28,7 @@
       "key": "impersonation",
       "kind": "boolean",
       "defaultsByPlan": { "free": 1, "team": 1, "business": 1, "enterprise": 1 },
-      "description": "Academorix-internal capability \u2014 authorises platform staff to impersonate a tenant User. Present on every plan tier because it's a SUPPORT capability, not a customer-facing feature. Every tenant can be impersonated by support with valid reason (subject to auth.impersonation.notify_impersonated_user=true)."
+      "description": "Stackra-internal capability \u2014 authorises platform staff to impersonate a tenant User. Present on every plan tier because it's a SUPPORT capability, not a customer-facing feature. Every tenant can be impersonated by support with valid reason (subject to auth.impersonation.notify_impersonated_user=true)."
     },
     {
       "key": "new_device_notifications",

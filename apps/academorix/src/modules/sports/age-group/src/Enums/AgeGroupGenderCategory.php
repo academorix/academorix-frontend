@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Enums;
+namespace Stackra\AgeGroup\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `gender_category` on `age-group`.

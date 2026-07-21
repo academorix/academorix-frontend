@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/referrals/policies",
+  "id": "stackra://modules/referrals/policies",
   "$version": 1,
   "title": "referrals — authorization policies",
   "description": "Five policies, one per owned entity. Admin-heavy — most write actions require owner/admin/marketing role. User plane exposes read-own + invitation-send only. Every ability defers to spatie/laravel-permission for the permission check; scope narrowing runs via the ResolveScope middleware (tenant + optional branch context — though this module is not branch-scoped, so the branch narrow is a no-op).",
   "policies": [
     {
       "model": "ReferralProgram",
-      "class": "Academorix\\Growth\\Referrals\\Policies\\ReferralProgramPolicy",
+      "class": "Stackra\\Growth\\Referrals\\Policies\\ReferralProgramPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -53,7 +53,7 @@
     },
     {
       "model": "ReferralCode",
-      "class": "Academorix\\Growth\\Referrals\\Policies\\ReferralCodePolicy",
+      "class": "Stackra\\Growth\\Referrals\\Policies\\ReferralCodePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -84,7 +84,7 @@
     },
     {
       "model": "Referral",
-      "class": "Academorix\\Growth\\Referrals\\Policies\\ReferralPolicy",
+      "class": "Stackra\\Growth\\Referrals\\Policies\\ReferralPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -117,7 +117,7 @@
     },
     {
       "model": "ReferralReward",
-      "class": "Academorix\\Growth\\Referrals\\Policies\\ReferralRewardPolicy",
+      "class": "Stackra\\Growth\\Referrals\\Policies\\ReferralRewardPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -144,7 +144,7 @@
     },
     {
       "model": "ReferralFraudFlag",
-      "class": "Academorix\\Growth\\Referrals\\Policies\\ReferralFraudFlagPolicy",
+      "class": "Stackra\\Growth\\Referrals\\Policies\\ReferralFraudFlagPolicy",
       "abilities": [
         {
           "action": "viewAny",

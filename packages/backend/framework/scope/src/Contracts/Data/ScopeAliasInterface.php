@@ -4,7 +4,7 @@
  * @file src/Contracts/Data/ScopeAliasInterface.php
  *
  * @description
- * Column metadata for {@see \Academorix\Scope\Models\ScopeAlias} —
+ * Column metadata for {@see \Stackra\Scope\Models\ScopeAlias} —
  * deployment-specific display renames of scope-definition slugs.
  * Lets a tenant rebrand "tenant" → "organisation" without touching
  * code. Each row is one (owner, slug) → label mapping.
@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Contracts\Data;
+namespace Stackra\Scope\Contracts\Data;
 
 /**
  * Table shape for the `scope_aliases` table.

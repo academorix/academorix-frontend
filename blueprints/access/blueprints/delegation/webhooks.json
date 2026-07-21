@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/delegation/webhooks",
+  "id": "stackra://modules/delegation/webhooks",
   "$version": 1,
   "title": "delegation — inbound + outbound webhooks",
-  "description": "This module publishes NO webhooks. Rationale: delegation + impersonation are Academorix-internal concerns — there is no external integration party that consumes lifecycle events. External Slack + PagerDuty deliveries for impersonation-related notifications are owned by the notifications module + on-call transport respectively (declared there, not here). If a security-team SIEM eventually subscribes to the impersonation audit stream, that would be an outbound-webhook contract owned by compliance module (audit stream forwarding), not this module. This file exists for uniform module shape.",
+  "description": "This module publishes NO webhooks. Rationale: delegation + impersonation are Stackra-internal concerns — there is no external integration party that consumes lifecycle events. External Slack + PagerDuty deliveries for impersonation-related notifications are owned by the notifications module + on-call transport respectively (declared there, not here). If a security-team SIEM eventually subscribes to the impersonation audit stream, that would be an outbound-webhook contract owned by compliance module (audit stream forwarding), not this module. This file exists for uniform module shape.",
   "inbound": {
     "endpoint": null,
     "signing": null,
@@ -14,6 +14,6 @@
   },
   "future": [
     "If a security-team SIEM (Splunk, DataDog Security, Panther) subscribes to the impersonation stream via webhook, the outbound contract lands in compliance/webhooks.json — this module remains the producer of the audit rows but not the forwarder.",
-    "If Academorix ever exposes the delegation lifecycle to tenant-side third-party integrations (e.g. a tenant's own workflow tool needs to react to OOF activation), an outbound webhook contract COULD land here in Wave 2. Would be scoped to tenant-plane events only (Created / Activated / Expired / RevokedEarly) — impersonation events are Academorix-internal and NEVER exposed to tenants."
+    "If Stackra ever exposes the delegation lifecycle to tenant-side third-party integrations (e.g. a tenant's own workflow tool needs to react to OOF activation), an outbound webhook contract COULD land here in Wave 2. Would be scoped to tenant-plane events only (Created / Activated / Expired / RevokedEarly) — impersonation events are Stackra-internal and NEVER exposed to tenants."
   ]
 }

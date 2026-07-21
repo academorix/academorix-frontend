@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/tasks/permissions",
+  "id": "stackra://modules/tasks/permissions",
   "$version": 1,
   "title": "tasks — permissions",
-  "seeder": "Academorix\\Workflow\\Tasks\\Database\\Seeders\\TasksPermissionSeeder",
+  "seeder": "Stackra\\Workflow\\Tasks\\Database\\Seeders\\TasksPermissionSeeder",
   "isSystem": true,
   "description": "Every staff role sees + comments on tasks they're assigned to or watching. Only managers create/assign to other users. Guardians never touch tasks (internal-only concept).",
   "permissions": [

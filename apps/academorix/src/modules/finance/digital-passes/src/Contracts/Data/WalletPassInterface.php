@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\DigitalPasses\Contracts\Data;
+namespace Stackra\DigitalPasses\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\DigitalPasses\Models\WalletPass;
+use Stackra\DigitalPasses\Models\WalletPass;
 
 /**
  * Table shape for the `wallet_passes` table.

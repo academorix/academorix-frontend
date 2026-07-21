@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Medical\Actions\Tenant;
+namespace Stackra\Medical\Actions\Tenant;
 
-use Academorix\Medical\Contracts\Repositories\InjuryRepositoryInterface;
-use Academorix\Medical\Data\InjuryData;
-use Academorix\Medical\Data\Requests\UpdateInjuryRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\Medical\Contracts\Repositories\InjuryRepositoryInterface;
+use Stackra\Medical\Data\InjuryData;
+use Stackra\Medical\Data\Requests\UpdateInjuryRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Patch;
 
 /**
  * `PATCH /api/v1/injuries/{injury}` — update action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Patch(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Medical

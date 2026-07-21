@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Contracts\Data;
+namespace Stackra\Geography\Contracts\Data;
 
-use Academorix\Geography\Models\State;
+use Stackra\Geography\Models\State;
 use Illuminate\Container\Attributes\Bind;
 
 /**

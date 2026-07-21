@@ -4,12 +4,12 @@
  * @file packages/framework/caching/config/caching.php
  *
  * @description
- * Runtime configuration for `academorix/caching`. Every value is
+ * Runtime configuration for `stackra/caching`. Every value is
  * overridable via a `caching.*` entry in the consuming app's
  * config or the equivalent env var. Values documented here are
  * the safest defaults for a multi-tenant production deployment
  * running Redis; local dev on the array driver silently ignores
- * every tag path via {@see \Academorix\Caching\Support\TaggableCacheGuard}.
+ * every tag path via {@see \Stackra\Caching\Support\TaggableCacheGuard}.
  */
 
 declare(strict_types=1);
@@ -36,11 +36,11 @@ return [
     |
     | Static prefix prepended to every tag emitted by the tag
     | builder. Useful when a single Redis instance is shared by
-    | multiple apps and you want a bulk `KEYS 'academorix:*'`
+    | multiple apps and you want a bulk `KEYS 'stackra:*'`
     | sweep to be scoped.
     |
     */
-    'tag_prefix' => env('CACHE_TAG_PREFIX', 'academorix'),
+    'tag_prefix' => env('CACHE_TAG_PREFIX', 'stackra'),
 
     /*
     |----------------------------------------------------------------

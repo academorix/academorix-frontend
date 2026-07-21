@@ -11,7 +11,7 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use Spatie\RouteAttributes\Attributes\ApiResource as SpatieApiResource;
@@ -29,7 +29,7 @@ use Spatie\RouteAttributes\Attributes\ApiResource as SpatieApiResource;
  *
  * ## Usage:
  * ```php
- * use Academorix\Routing\Attributes\ApiResource;
+ * use Stackra\Routing\Attributes\ApiResource;
  *
  * #[ApiResource('posts')]
  * class PostController

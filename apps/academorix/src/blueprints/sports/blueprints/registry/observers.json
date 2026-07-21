@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/sports-registry/observers",
+  "id": "stackra://modules/sports-registry/observers",
   "$version": 1,
   "title": "sports-registry — Eloquent observers",
   "observers": [
     {
       "model": "Sport",
-      "observer": "Academorix\\Sports\\Registry\\Observers\\SportObserver",
+      "observer": "Stackra\\Sports\\Registry\\Observers\\SportObserver",
       "handles": [
         "creating → populate ULID prefix `spo_`.",
         "creating → refuse when caller is a tenant user AND `sports_registry_custom` entitlement is off (SPORTS_REGISTRY_CUSTOM_DISABLED 402).",
@@ -36,7 +36,7 @@
     },
     {
       "model": "Discipline",
-      "observer": "Academorix\\Sports\\Registry\\Observers\\DisciplineObserver",
+      "observer": "Stackra\\Sports\\Registry\\Observers\\DisciplineObserver",
       "handles": [
         "creating → populate ULID prefix `dis_`.",
         "creating → refuse when caller is a tenant user AND `sports_registry_custom` entitlement is off (SPORTS_REGISTRY_CUSTOM_DISABLED 402).",
@@ -65,7 +65,7 @@
     },
     {
       "model": "Position",
-      "observer": "Academorix\\Sports\\Registry\\Observers\\PositionObserver",
+      "observer": "Stackra\\Sports\\Registry\\Observers\\PositionObserver",
       "handles": [
         "creating → populate ULID prefix `pos_`.",
         "creating → refuse when caller is a tenant user AND `sports_registry_custom` entitlement is off (SPORTS_REGISTRY_CUSTOM_DISABLED 402).",

@@ -1,4 +1,4 @@
-# academorix/mfa
+# stackra/mfa
 
 Server-side Laravel package for the `mfa` module. Auto-generated from the
 blueprint at `modules/identity/blueprints/mfa/`.
@@ -51,6 +51,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-identity/mfa-sdk` under `sdk/identity-mfa-sdk/`. Consumers cross the
+`stackra-identity/mfa-sdk` under `sdk/identity-mfa-sdk/`. Consumers cross the
 service boundary through the SDK; this package is the SERVER-side owner of the
 domain.

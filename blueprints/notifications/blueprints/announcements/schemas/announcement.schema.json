@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/announcements/schemas/announcement",
+  "id": "stackra://modules/announcements/schemas/announcement",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Announcement",

@@ -1,121 +1,121 @@
 {
-  "id": "academorix://modules/marketing/listeners",
+  "id": "stackra://modules/marketing/listeners",
   "$version": 1,
   "title": "marketing — subscribed events",
   "listeners": [
     {
       "event": "user::UserRegistered",
-      "listener": "Academorix\\Growth\\Marketing\\Listeners\\CaptureUserRegisteredAsSignup",
+      "listener": "Stackra\\Growth\\Marketing\\Listeners\\CaptureUserRegisteredAsSignup",
       "queue": "marketing",
       "priority": 100,
       "purpose": "Maps user.registered → marketing_events.event_type='signup'. Deduplication key = 'signup:' + user.id. Runs after commit so unregistered rows don't fire. This is the primary marketing-lane entry point for the signup funnel."
     },
     {
       "event": "finance::TrialStarted",
-      "listener": "Academorix\\Growth\\Marketing\\Listeners\\CaptureTrialStarted",
+      "listener": "Stackra\\Growth\\Marketing\\Listeners\\CaptureTrialStarted",
       "queue": "marketing",
       "purpose": "Wave 4 bridge. Maps finance.trial_started → event_type='trial_started'. Dedup key = 'trial:' + subscription.id + ':started'."
     },
     {
       "event": "finance::TrialConverted",
-      "listener": "Academorix\\Growth\\Marketing\\Listeners\\CaptureTrialConverted",
+      "listener": "Stackra\\Growth\\Marketing\\Listeners\\CaptureTrialConverted",
       "queue": "marketing",
       "purpose": "Wave 4 bridge. Maps finance.trial_converted → event_type='trial_converted' with value_amount_cents from the plan's price. Dedup key = 'trial:' + subscription.id + ':converted'."
     },
     {
       "event": "finance::SubscriptionStarted",
-      "listener": "Academorix\\Growth\\Marketing\\Listeners\\CaptureSubscriptionStarted",
+      "listener": "Stackra\\Growth\\Marketing\\Listeners\\CaptureSubscriptionStarted",
       "queue": "marketing",
       "purpose": "Wave 4 bridge. Maps finance.subscription_started → event_type='subscription_started' with value_amount_cents = plan.price. Dedup key = 'sub:' + subscription.id + ':started'."
     },
     {
       "event": "finance::SubscriptionUpgraded",
-      "listener": "Academorix\\Growth\\Marketing\\Listeners\\CaptureSubscriptionUpgraded",
+      "listener": "Stackra\\Growth\\Marketing\\Listeners\\CaptureSubscriptionUpgraded",
       "queue": "marketing",
       "purpose": "Wave 4 bridge. Maps finance.subscription_upgraded → event_type='subscription_upgraded' with value_amount_cents = MRR delta. Dedup key = 'sub:' + subscription.id + ':upgraded:' + new_plan.id."
     },
     {
       "event": "finance::SubscriptionCancelled",
-      "listener": "Academorix\\Growth\\Marketing\\Listeners\\CaptureSubscriptionCancelled",
+      "listener": "Stackra\\Growth\\Marketing\\Listeners\\CaptureSubscriptionCancelled",
       "queue": "marketing",
       "purpose": "Wave 4 bridge. Maps finance.subscription_cancelled → event_type='subscription_cancelled'. Dedup key = 'sub:' + subscription.id + ':cancelled'. Signals churn to ad networks so they can adjust targeting."
     },
     {
       "event": "finance::MembershipPurchased",
-      "listener": "Academorix\\Growth\\Marketing\\Listeners\\CaptureMembershipPurchased",
+      "listener": "Stackra\\Growth\\Marketing\\Listeners\\CaptureMembershipPurchased",
       "queue": "marketing",
       "purpose": "Wave 4 bridge. Maps finance.membership_purchased → event_type='membership_purchased' with value_amount_cents = membership.price. Dedup key = 'membership:' + membership.id + ':purchased'."
     },
     {
       "event": "finance::RefundIssued",
-      "listener": "Academorix\\Growth\\Marketing\\Listeners\\CaptureRefundIssued",
+      "listener": "Stackra\\Growth\\Marketing\\Listeners\\CaptureRefundIssued",
       "queue": "marketing",
       "purpose": "Wave 4 bridge. Maps finance.refund_issued → event_type='refund_issued' with NEGATIVE value_amount_cents (revenue reversal). Providers that support negative-value conversion (Meta CAPI, Google Ads Enhanced Conversions) subtract from ROAS. Dedup key = 'refund:' + refund.id."
     },
     {
       "event": "finance::ChargebackFiled",
-      "listener": "Academorix\\Growth\\Marketing\\Listeners\\CaptureChargebackFiled",
+      "listener": "Stackra\\Growth\\Marketing\\Listeners\\CaptureChargebackFiled",
       "queue": "marketing",
       "purpose": "Wave 4 bridge. Maps finance.chargeback_filed → event_type='chargeback_filed'. Signals fraud + chargeback loss to ad networks. Dedup key = 'chargeback:' + chargeback.id."
     },
     {
       "event": "facility::BookingCreated",
-      "listener": "Academorix\\Growth\\Marketing\\Listeners\\CaptureSessionBooked",
+      "listener": "Stackra\\Growth\\Marketing\\Listeners\\CaptureSessionBooked",
       "queue": "marketing",
       "purpose": "Maps facility.booking_created → event_type='session_booked' WHEN booking.payment_status IN ('paid', 'included_in_membership'). Free bookings do NOT fire (not a conversion signal). Dedup key = 'booking:' + booking.id."
     },
     {
       "event": "sports::AthleteEnrolled",
-      "listener": "Academorix\\Growth\\Marketing\\Listeners\\CaptureAthleteEnrolled",
+      "listener": "Stackra\\Growth\\Marketing\\Listeners\\CaptureAthleteEnrolled",
       "queue": "marketing",
       "purpose": "Wave 3 bridge. Maps sports.athlete_enrolled → event_type='athlete_enrolled'. Dedup key = 'athlete:' + athlete.id + ':enrolled:' + enrollment.id."
     },
     {
       "event": "sports::EventRegistered",
-      "listener": "Academorix\\Growth\\Marketing\\Listeners\\CaptureEventRegistered",
+      "listener": "Stackra\\Growth\\Marketing\\Listeners\\CaptureEventRegistered",
       "queue": "marketing",
       "purpose": "Wave 3 bridge. Maps sports.event_registered → event_type='event_registered'. Dedup key = 'event_reg:' + event_registration.id."
     },
     {
       "event": "growth::LeadCaptured",
-      "listener": "Academorix\\Growth\\Marketing\\Listeners\\CaptureLead",
+      "listener": "Stackra\\Growth\\Marketing\\Listeners\\CaptureLead",
       "queue": "marketing",
       "purpose": "Maps growth.lead_captured (from contact form / demo request / newsletter signup) → event_type='lead_captured'. Dedup key = 'lead:' + lead.id."
     },
     {
       "event": "referrals::ReferralCompleted",
-      "listener": "Academorix\\Growth\\Marketing\\Listeners\\CaptureReferralCompleted",
+      "listener": "Stackra\\Growth\\Marketing\\Listeners\\CaptureReferralCompleted",
       "queue": "marketing",
       "purpose": "Wave 5 bridge (sibling growth module). Maps referrals.completed → event_type='referral_completed'. Dedup key = 'referral:' + referral.id + ':completed'."
     },
     {
       "event": "compliance::ConsentRevoked",
-      "listener": "Academorix\\Growth\\Marketing\\Listeners\\SuppressPendingMarketingOnConsentRevoked",
+      "listener": "Stackra\\Growth\\Marketing\\Listeners\\SuppressPendingMarketingOnConsentRevoked",
       "queue": "marketing",
       "priority": 20,
       "purpose": "Compliance-critical. Reacts to consent revocation on the `marketing` or `advertising` category. Sweeps pending + dispatching marketing_events for the subject + marks them status='suppressed_by_consent'. Cancels pending DispatchToProviderJobs. This is how the re-check-at-dispatch guarantee is enforced when the delay between capture and dispatch spans a consent revocation."
     },
     {
       "event": "tenancy::TenantSuspended",
-      "listener": "Academorix\\Growth\\Marketing\\Listeners\\DeactivateProvidersOnTenantSuspended",
+      "listener": "Stackra\\Growth\\Marketing\\Listeners\\DeactivateProvidersOnTenantSuspended",
       "queue": "marketing",
       "purpose": "Marks every marketing_provider_config for the suspended tenant as is_active=false (does NOT soft-delete — restoration on tenant reactivation is one flip away). Fires MarketingProviderDeactivated with reason='tenant_suspended'."
     },
     {
       "event": "tenancy::TenantResumed",
-      "listener": "Academorix\\Growth\\Marketing\\Listeners\\ReactivateProvidersOnTenantResumed",
+      "listener": "Stackra\\Growth\\Marketing\\Listeners\\ReactivateProvidersOnTenantResumed",
       "queue": "marketing",
       "purpose": "Reverses DeactivateProvidersOnTenantSuspended. Only re-activates configs that were deactivated BY the suspension cascade (checks the audit trail for reason='tenant_suspended')."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Growth\\Marketing\\Listeners\\PurgeMarketingDataForErasedTenant",
+      "listener": "Stackra\\Growth\\Marketing\\Listeners\\PurgeMarketingDataForErasedTenant",
       "queue": "marketing",
       "purpose": "Cascade delete via FK CASCADE. This listener writes the compliance audit trail entry + emits count metrics (marketing_events purged, marketing_deliveries purged, marketing_provider_configs purged, marketing_dead_letters purged). Also fires cross-provider deletion requests (Meta Data Deletion API, Google Ads user-data deletion) as a best-effort GDPR Art. 17 propagation."
     },
     {
       "event": "user::UserErased",
-      "listener": "Academorix\\Growth\\Marketing\\Listeners\\RedactUserFromMarketingEvents",
+      "listener": "Stackra\\Growth\\Marketing\\Listeners\\RedactUserFromMarketingEvents",
       "queue": "marketing",
       "purpose": "Individual GDPR Art. 17. Nulls subject_id on marketing_events WHERE subject_type='User' AND subject_id=erased_user.id. Fires provider-side deletion requests. Event rows themselves survive (financial retention) with the subject-identifying fields nulled."
     }

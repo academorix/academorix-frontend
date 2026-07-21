@@ -5,22 +5,22 @@
  *
  * @description
  * Guard-clause helpers for domain code. Mirrors the surface of
- * {@see \Academorix\Foundation\Support\Assert} — same method names,
+ * {@see \Stackra\Foundation\Support\Assert} — same method names,
  * same argument order — but every failure throws a rich
- * {@see \Academorix\Exceptions\Domain\InvariantViolationException}
+ * {@see \Stackra\Exceptions\Domain\InvariantViolationException}
  * carrying structured `context` metadata (argument name, expected /
  * actual shape, whatever the caller passes along).
  *
  * ## When to use which
  *
- * - `Academorix\Exceptions\Guard::...` — inside domain code, use
+ * - `Stackra\Exceptions\Guard::...` — inside domain code, use
  *   cases, aggregates, services. Failures here are bugs; the
  *   InvariantViolationException surfaces them with `severity =
  *   Critical` and enough context to reproduce.
  *
- * - `Academorix\Foundation\Support\Assert::...` — inside leaf
+ * - `Stackra\Foundation\Support\Assert::...` — inside leaf
  *   utilities that must stay `foundation`-only (no dependency on
- *   `academorix/exceptions`). Failures throw a plain SPL
+ *   `stackra/exceptions`). Failures throw a plain SPL
  *   `InvalidArgumentException` that any caller can catch without
  *   pulling in this package.
  *
@@ -36,9 +36,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions;
+namespace Stackra\Exceptions;
 
-use Academorix\Exceptions\Domain\InvariantViolationException;
+use Stackra\Exceptions\Domain\InvariantViolationException;
 
 final class Guard
 {

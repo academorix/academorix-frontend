@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/messaging/permissions",
+  "id": "stackra://modules/messaging/permissions",
   "$version": 1,
   "title": "messaging — permissions",
-  "seeder": "Academorix\\Notifications\\Messaging\\Database\\Seeders\\MessagingPermissionSeeder",
+  "seeder": "Stackra\\Notifications\\Messaging\\Database\\Seeders\\MessagingPermissionSeeder",
   "isSystem": true,
   "description": "Coach ↔ parent + coach ↔ athlete DMs are the default use case. Safeguarding officers see all messages tenant-wide (compliance + child protection).",
   "permissions": [

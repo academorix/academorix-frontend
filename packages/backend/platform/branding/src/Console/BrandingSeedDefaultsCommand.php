@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Console;
+namespace Stackra\Branding\Console;
 
-use Academorix\Branding\Database\Seeders\BrandingPermissionSeeder;
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Branding\Database\Seeders\BrandingPermissionSeeder;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 use Illuminate\Contracts\Foundation\Application;
 
 /**

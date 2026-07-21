@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Attributes;
+namespace Stackra\Compliance\Attributes;
 
 use Attribute;
 
@@ -10,9 +10,9 @@ use Attribute;
  * Register a model class as a DSAR-export contributor.
  *
  * The build-time compiler discovers `#[DsarExportable]`-marked
- * classes via `Academorix\Foundation\Contracts\DiscoversAttributes`
+ * classes via `Stackra\Foundation\Contracts\DiscoversAttributes`
  * and hands them to the
- * {@see \Academorix\Compliance\Services\DefaultDsarContributorRegistry},
+ * {@see \Stackra\Compliance\Services\DefaultDsarContributorRegistry},
  * which stores each contributor's subject column, include / exclude
  * glob, and priority so the assembler can walk them in the right
  * order.

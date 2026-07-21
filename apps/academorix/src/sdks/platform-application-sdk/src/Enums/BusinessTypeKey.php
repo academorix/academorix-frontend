@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformApplicationSdk\Enums;
+namespace Stackra\PlatformApplicationSdk\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
  * Wire-visible enum mirroring the closed set of BusinessType keys the
@@ -18,7 +18,7 @@ use Academorix\Enum\Enum;
  * `key` field carries the same tokens. Ship them here so callers can
  * type-check the identifier at compile time and hydrate the full
  * catalogue record from
- * {@see \Academorix\PlatformApplicationSdk\Data\BusinessTypeData} at
+ * {@see \Stackra\PlatformApplicationSdk\Data\BusinessTypeData} at
  * runtime.
  *
  * ## Cases

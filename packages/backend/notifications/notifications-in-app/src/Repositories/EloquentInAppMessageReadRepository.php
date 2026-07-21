@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Repositories;
+namespace Stackra\Notifications\InApp\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Notifications\InApp\Contracts\Data\InAppMessageInterface;
-use Academorix\Notifications\InApp\Contracts\Data\InAppMessageReadInterface;
-use Academorix\Notifications\InApp\Contracts\Repositories\InAppMessageReadRepositoryInterface;
-use Academorix\Notifications\InApp\Models\InAppMessageRead;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Notifications\InApp\Contracts\Data\InAppMessageInterface;
+use Stackra\Notifications\InApp\Contracts\Data\InAppMessageReadInterface;
+use Stackra\Notifications\InApp\Contracts\Repositories\InAppMessageReadRepositoryInterface;
+use Stackra\Notifications\InApp\Models\InAppMessageRead;
 use Illuminate\Support\Facades\DB;
 
 /**

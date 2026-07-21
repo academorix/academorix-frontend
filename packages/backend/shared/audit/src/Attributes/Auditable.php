@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Attributes;
+namespace Stackra\Audit\Attributes;
 
 use Attribute;
 
@@ -22,9 +22,9 @@ use Attribute;
  * ```
  *
  * At app boot, the framework's generic
- * {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ * {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  * scans every class carrying this attribute and hands each hit through
- * {@see \Academorix\Audit\Contracts\Services\AuditRegistryInterface::register()}
+ * {@see \Stackra\Audit\Contracts\Services\AuditRegistryInterface::register()}
  * (declared with `#[HydratesFrom(Auditable::class)]`). The
  * `EncryptedAuditValueCast` looks up the resulting encrypt-field list
  * at cast time — fields on it are transparently ciphered before

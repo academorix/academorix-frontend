@@ -35,10 +35,10 @@ declare(strict_types=1);
  * ## Consumers
  *
  *   - Base HTTP controllers via
- *     {@see \Academorix\Routing\Concerns\InteractsWithDataTransformation}
+ *     {@see \Stackra\Routing\Concerns\InteractsWithDataTransformation}
  *     — reads `$class` for the generic transform helpers.
- *   - {@see \Academorix\Crud\Controllers\CrudController} via
- *     {@see \Academorix\Crud\Concerns\Controller\InteractsWithCrudDeclarations}
+ *   - {@see \Stackra\Crud\Controllers\CrudController} via
+ *     {@see \Stackra\Crud\Concerns\Controller\InteractsWithCrudDeclarations}
  *     — reads the per-slot accessors (`forStore()`, `forUpdate()`,
  *     `forResource()`) so `store()` / `update()` / `index()` /
  *     `show()` each pick up the right class.
@@ -57,7 +57,7 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Crud\Attributes;
+namespace Stackra\Crud\Attributes;
 
 use Attribute;
 use Spatie\LaravelData\Data;

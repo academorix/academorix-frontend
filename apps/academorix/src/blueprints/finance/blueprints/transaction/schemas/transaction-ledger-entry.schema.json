@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transaction/schemas/transaction-ledger-entry",
+  "id": "stackra://modules/transaction/schemas/transaction-ledger-entry",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "TransactionLedgerEntry",
@@ -13,10 +13,10 @@
     "keyType": "string",
     "keyPrefix": "tld_",
     "incrementing": false,
-    "model": "Academorix\\Finance\\Transaction\\Models\\TransactionLedgerEntry",
-    "interface": "Academorix\\Finance\\Transaction\\Contracts\\Data\\TransactionLedgerEntryInterface",
+    "model": "Stackra\\Finance\\Transaction\\Models\\TransactionLedgerEntry",
+    "interface": "Stackra\\Finance\\Transaction\\Contracts\\Data\\TransactionLedgerEntryInterface",
     "implements": [
-      "Academorix\\Finance\\Transaction\\Contracts\\Data\\TransactionLedgerEntryInterface"
+      "Stackra\\Finance\\Transaction\\Contracts\\Data\\TransactionLedgerEntryInterface"
     ],
     "traits": [
       "HasFactory",

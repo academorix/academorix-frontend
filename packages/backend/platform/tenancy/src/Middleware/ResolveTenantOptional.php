@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Middleware;
+namespace Stackra\Tenancy\Middleware;
 
-use Academorix\Application\Contracts\Repositories\ApplicationRepositoryInterface;
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
-use Academorix\Tenancy\Services\HostResolver;
+use Stackra\Application\Contracts\Repositories\ApplicationRepositoryInterface;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Tenancy\Services\HostResolver;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

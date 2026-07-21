@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Region\Models;
+namespace Stackra\Region\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Region\Contracts\Data\RegionInterface;
-use Academorix\Region\Database\Factories\RegionFactory;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Region\Policies\RegionPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Region\Contracts\Data\RegionInterface;
+use Stackra\Region\Database\Factories\RegionFactory;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Region\Policies\RegionPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -85,13 +85,13 @@ final class Region extends Model implements RegionInterface, AuditableContract
         RegionInterface::ATTR_RTL => 'boolean',
         RegionInterface::ATTR_SORT_ORDER => 'integer',
         RegionInterface::ATTR_FISCAL_YEAR_START_MONTH => 'integer',
-        RegionInterface::ATTR_STATUS => \Academorix\Region\Enums\RegionStatus::class,
-        RegionInterface::ATTR_COUNTRY_CODE => \Academorix\Region\Casts\CountryCode::class,
-        RegionInterface::ATTR_CURRENCY => \Academorix\Region\Casts\CurrencyCode::class,
-        RegionInterface::ATTR_TIMEZONE => \Academorix\Region\Casts\IanaTimezone::class,
-        RegionInterface::ATTR_LOCALE => \Academorix\Region\Casts\Bcp47Locale::class,
+        RegionInterface::ATTR_STATUS => \Stackra\Region\Enums\RegionStatus::class,
+        RegionInterface::ATTR_COUNTRY_CODE => \Stackra\Region\Casts\CountryCode::class,
+        RegionInterface::ATTR_CURRENCY => \Stackra\Region\Casts\CurrencyCode::class,
+        RegionInterface::ATTR_TIMEZONE => \Stackra\Region\Casts\IanaTimezone::class,
+        RegionInterface::ATTR_LOCALE => \Stackra\Region\Casts\Bcp47Locale::class,
         RegionInterface::ATTR_WEEKEND_DAYS => 'array',
-        RegionInterface::ATTR_TAX_CONFIG => \Academorix\Region\Casts\TaxConfig::class,
+        RegionInterface::ATTR_TAX_CONFIG => \Stackra\Region\Casts\TaxConfig::class,
         RegionInterface::ATTR_METADATA => 'array',
     ];
 }

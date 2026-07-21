@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/performance/schemas/performance-test-result",
+  "id": "stackra://modules/performance/schemas/performance-test-result",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "PerformanceTestResult",

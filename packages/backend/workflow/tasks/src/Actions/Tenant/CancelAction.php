@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tasks\Actions\Tenant;
+namespace Stackra\Tasks\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tasks\Contracts\Data\TaskInterface;
-use Academorix\Tasks\Contracts\Repositories\TaskRepositoryInterface;
-use Academorix\Tasks\Data\TaskData;
-use Academorix\Tasks\Enums\TasksPermission;
-use Academorix\Tasks\Enums\TaskStatus;
-use Academorix\Tasks\Events\TaskCancelled;
-use Academorix\Tasks\Exceptions\TaskTerminalStateException;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tasks\Contracts\Data\TaskInterface;
+use Stackra\Tasks\Contracts\Repositories\TaskRepositoryInterface;
+use Stackra\Tasks\Data\TaskData;
+use Stackra\Tasks\Enums\TasksPermission;
+use Stackra\Tasks\Enums\TaskStatus;
+use Stackra\Tasks\Events\TaskCancelled;
+use Stackra\Tasks\Exceptions\TaskTerminalStateException;
 use Illuminate\Contracts\Events\Dispatcher;
 
 /**
@@ -53,7 +53,7 @@ final class CancelAction
      * @param  string  $task  ULID from the URL.
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  Row absent / scoped out.
-     * @throws \Academorix\Tasks\Exceptions\TaskTerminalStateException  Task is already terminal.
+     * @throws \Stackra\Tasks\Exceptions\TaskTerminalStateException  Task is already terminal.
      */
     public function __invoke(string $task): TaskData
     {

@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Models;
+namespace Stackra\Match\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Match\Contracts\Data\MatchSquadEntryInterface;
-use Academorix\Match\Database\Factories\MatchSquadEntryFactory;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Match\Policies\MatchSquadEntryPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Match\Contracts\Data\MatchSquadEntryInterface;
+use Stackra\Match\Database\Factories\MatchSquadEntryFactory;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Match\Policies\MatchSquadEntryPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

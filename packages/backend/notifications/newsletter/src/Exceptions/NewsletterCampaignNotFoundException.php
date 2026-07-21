@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Exceptions;
+namespace Stackra\Newsletter\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a campaign lookup finds no match.
@@ -13,7 +13,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NewsletterCampaignNotFoundException extends AcademorixException
+final class NewsletterCampaignNotFoundException extends StackraException
 {
     public const CODE = 'newsletter.campaign_not_found';
 

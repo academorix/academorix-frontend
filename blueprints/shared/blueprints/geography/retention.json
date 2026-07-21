@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geography/retention",
+  "id": "stackra://modules/geography/retention",
   "$version": 1,
   "title": "geography \u2014 retention windows",
   "description": "Reference-catalog rows never age out. Geolocation cache respects vendor TTL. No user-scoped data outside the geolocation cache.",

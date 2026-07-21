@@ -16,7 +16,7 @@ declare(strict_types=1);
  * Each event includes module context data:
  *   [
  *       'module'    => 'Tenancy',
- *       'namespace' => 'Academorix\\Tenancy',
+ *       'namespace' => 'Stackra\\Tenancy',
  *       'path'      => '/var/www/packages/tenancy',
  *   ]
  *
@@ -31,11 +31,11 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Core\Providers;
+namespace Stackra\Core\Providers;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Enums\ModuleLifecycleEvent;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Enums\ModuleLifecycleEvent;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 
@@ -47,7 +47,7 @@ use Illuminate\Support\Facades\Log;
  */
 #[AsModule(
     name: 'Core',
-    namespace: 'Academorix\\Core',
+    namespace: 'Stackra\\Core',
     priority: 1,
 )]
 class CoreServiceProvider extends ServiceProvider

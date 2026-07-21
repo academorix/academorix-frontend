@@ -11,7 +11,7 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use Spatie\RouteAttributes\Attributes\Defaults as SpatieDefaults;
@@ -29,8 +29,8 @@ use Spatie\RouteAttributes\Attributes\Defaults as SpatieDefaults;
  *
  * ## Usage:
  * ```php
- * use Academorix\Routing\Attributes\Defaults;
- * use Academorix\Routing\Attributes\Get;
+ * use Stackra\Routing\Attributes\Defaults;
+ * use Stackra\Routing\Attributes\Get;
  *
  * class PostController
  * {

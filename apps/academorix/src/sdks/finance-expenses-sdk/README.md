@@ -1,7 +1,7 @@
-# academorix-finance/expenses-sdk
+# stackra-finance/expenses-sdk
 
 Wire-visible SDK surface for the `expenses` module of the Finance service.
-Auto-discovered by `academorix/finance-sdk` (the service umbrella) via
+Auto-discovered by `stackra/finance-sdk` (the service umbrella) via
 `#[AsSdkResource(name: 'expenses', service: 'finance')]`.
 
 ## Aggregates
@@ -29,7 +29,7 @@ src/
 Consumed only over HTTP via the umbrella client:
 
 ```php
-app(\Academorix\FinanceSdk\Client\FinanceSdk::class)
+app(\Stackra\FinanceSdk\Client\FinanceSdk::class)
     ->expenses()
     ->budgets()
     ->list();

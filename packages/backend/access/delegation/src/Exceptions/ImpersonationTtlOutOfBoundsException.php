@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Delegation\Exceptions;
+namespace Stackra\Delegation\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Requested duration exceeds the 60-minute default cap AND tenant lacks impersonation_extended_ttl entitlement, OR requested duration exceeds max_minutes_extended.

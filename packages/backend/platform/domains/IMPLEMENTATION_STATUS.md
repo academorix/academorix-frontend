@@ -54,7 +54,7 @@
 ### Cross-module dependencies
 
 - **`platform/tenancy`** — every tenant provisions a default subdomain
-  (`{slug}.academorix.app`) with a wildcard certificate. Custom domains extend
+  (`{slug}.stackra.app`) with a wildcard certificate. Custom domains extend
   the mapping.
 - Frontend — reads the tenant's primary domain from the bootstrap payload to
   inject the correct absolute URLs.

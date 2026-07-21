@@ -9,7 +9,7 @@ Two template systems live in this repo — they solve different problems.
 
 | Kind                                  | Home                          | Consumer         | Author time                       |
 | ------------------------------------- | ----------------------------- | ---------------- | --------------------------------- |
-| **Machine templates** (with `{{ token }}` markers) | `tools/cli/src/Stubs/stubs/`   | `academorix` CLI | Rendered by `make:*` commands     |
+| **Machine templates** (with `{{ token }}` markers) | `tools/cli/src/Stubs/stubs/`   | `stackra` CLI | Rendered by `make:*` commands     |
 | **Human templates** (with prose scaffolding + TODOs) | `.kiro/skeletons/` (this dir)  | Humans + agents  | Copied + edited when needed       |
 
 The skeletons here have prose scaffolding + `TODO` comments a human reads and

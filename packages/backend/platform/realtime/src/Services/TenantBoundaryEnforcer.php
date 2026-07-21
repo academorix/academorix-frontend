@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Realtime\Services;
+namespace Stackra\Realtime\Services;
 
-use Academorix\Realtime\Contracts\Services\TenantBoundaryEnforcerInterface;
+use Stackra\Realtime\Contracts\Services\TenantBoundaryEnforcerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Realtime\Contracts\Repositories\BroadcastChannelRepositoryInterface;
+use Stackra\Realtime\Contracts\Repositories\BroadcastChannelRepositoryInterface;
 
 /**
  * Concrete service — TenantBoundaryEnforcer.

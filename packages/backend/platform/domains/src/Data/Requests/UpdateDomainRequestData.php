@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Data\Requests;
+namespace Stackra\Domains\Data\Requests;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;

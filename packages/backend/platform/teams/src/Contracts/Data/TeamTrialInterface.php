@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Teams\Contracts\Data;
+namespace Stackra\Teams\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Teams\Models\TeamTrial;
+use Stackra\Teams\Models\TeamTrial;
 
 /**
  * Table shape for the `team_trials` table.

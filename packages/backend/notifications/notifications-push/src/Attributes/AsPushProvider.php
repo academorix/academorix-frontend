@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Attributes;
+namespace Stackra\Notifications\Push\Attributes;
 
 use Attribute;
 
@@ -10,7 +10,7 @@ use Attribute;
  * Register a class as a push provider driver.
  *
  * A push provider driver implements
- * {@see \Academorix\Notifications\Push\Contracts\Services\PushTransportInterface}
+ * {@see \Stackra\Notifications\Push\Contracts\Services\PushTransportInterface}
  * and knows how to send an envelope to its concrete backend (FCM, APNs, Expo,
  * OneSignal, or an in-house transport).
  *

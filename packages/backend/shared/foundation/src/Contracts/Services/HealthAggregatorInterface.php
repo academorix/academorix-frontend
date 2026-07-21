@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Contracts\Services;
+namespace Stackra\Foundation\Contracts\Services;
 
-use Academorix\Foundation\Services\HealthAggregator;
+use Stackra\Foundation\Services\HealthAggregator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

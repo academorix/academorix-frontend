@@ -1,25 +1,25 @@
 {
-  "id": "academorix://modules/notifications-in-app/listeners",
+  "id": "stackra://modules/notifications-in-app/listeners",
   "$version": 1,
   "title": "notifications-in-app \u2014 subscribed events",
   "description": "The primary contract with core. Subscribes to NotificationDispatched (filtered to channel=in_app) + translates into a DB write + Reverb broadcast.",
   "listeners": [
     {
       "event": "notifications::NotificationDispatched",
-      "listener": "Academorix\\Notifications\\InApp\\Listeners\\HandleInAppDispatch",
+      "listener": "Stackra\\Notifications\\InApp\\Listeners\\HandleInAppDispatch",
       "queue": "notifications",
       "filter": "event.channels_requested contains 'in_app'",
       "purpose": "Dispatches BroadcastInAppNotificationJob. That job creates the NotificationDelivery row (state=delivered) via core's DispatchGateway + emits the Reverb broadcast. Filter ensures we don't fire for non-in-app channels."
     },
     {
       "event": "notifications::NotificationSeen",
-      "listener": "Academorix\\Notifications\\InApp\\Listeners\\RelayNotificationSeen",
+      "listener": "Stackra\\Notifications\\InApp\\Listeners\\RelayNotificationSeen",
       "queue": "notifications",
       "purpose": "Emits a `notifications.seen` broadcast on `user.{id}.notifications` so other open tabs (SPA + mobile web) reflect the seen state without a server round-trip."
     },
     {
       "event": "notifications::NotificationArchived",
-      "listener": "Academorix\\Notifications\\InApp\\Listeners\\RelayNotificationArchived",
+      "listener": "Stackra\\Notifications\\InApp\\Listeners\\RelayNotificationArchived",
       "queue": "notifications",
       "purpose": "Emits a `notifications.archived` broadcast so open tabs remove the row from the visible inbox."
     }

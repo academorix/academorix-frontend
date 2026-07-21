@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "tax",
   "alias": "tax",
-  "namespace": "Academorix\\Finance\\Tax",
+  "namespace": "Stackra\\Finance\\Tax",
   "description": "Tax rate + jurisdiction + exemption + calculation engine. Answers 'what tax is owed on this invoice line in this jurisdiction for this customer?'. Ships FOUR tables: `tax_rates` (per-jurisdiction rate rows with effective_from/effective_to time bounds — supports VAT changes at fiscal-year boundaries), `tax_jurisdictions` (country/state/city rule catalog — VAT / GST / Sales Tax / Consumption Tax / DIGITAL_SERVICES / ...), `tax_exemptions` (per-tenant exemption certificates — reseller / non-profit / diplomatic / rural / religious with certificate document + expiry + jurisdiction scope), `tax_calculations` (per-invoice-line tax computation record — immutable audit trail of which rate applied when, plus the provider that computed it if external). MultipleInstanceManager pattern via `TaxProviderManager` with 5 driver day-1: **TaxJar** (US-focused sales tax + international VAT), **Avalara AvaTax** (enterprise-grade global tax with per-SKU nexus), **Stripe Tax** (integrated with Stripe billing — automatic global tax on Stripe-processed transactions), **NativeCalculator** (built-in — reads tax_rates directly for simple jurisdictions; suitable for single-country tenants), **CustomWebhook** (generic HMAC-signed JSON escape hatch for tenant-run tax engines). Every invoice line runs through the provider for the customer's shipping/billing address — resolved via `TaxAddressResolver` from customer profile. Immutable calculation snapshot per invoice line — tax rate changes AFTER invoice issuance never retroactively re-tax historical invoices.",
   "keywords": [
     "tax",
@@ -47,7 +47,7 @@
     "wave-4"
   ],
   "priority": 60,
-  "providers": ["Academorix\\Finance\\Tax\\Providers\\TaxServiceProvider"],
+  "providers": ["Stackra\\Finance\\Tax\\Providers\\TaxServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "application", "region", "entitlements", "compliance"],
   "extendedBy": [],

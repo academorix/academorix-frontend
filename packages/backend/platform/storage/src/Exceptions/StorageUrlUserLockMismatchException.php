@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Exceptions;
+namespace Stackra\Storage\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Signed URL was user-locked and the caller's session user doesn't match.

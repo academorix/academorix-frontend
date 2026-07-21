@@ -1,7 +1,7 @@
-# academorix-platform/public-site-sdk
+# stackra-platform/public-site-sdk
 
 Wire-visible SDK surface for the `public-site` module of the Platform service.
-Auto-discovered by `academorix/platform-sdk` (the service umbrella) via
+Auto-discovered by `stackra/platform-sdk` (the service umbrella) via
 `#[AsSdkResource(name: 'public-site', service: 'platform')]`.
 
 ## Aggregates
@@ -25,7 +25,7 @@ src/
 Consumed only over HTTP via the umbrella client:
 
 ```php
-app(\Academorix\PlatformSdk\Client\PlatformSdk::class)
+app(\Stackra\PlatformSdk\Client\PlatformSdk::class)
     ->publicSite()
     ->contentBlocks()
     ->list();

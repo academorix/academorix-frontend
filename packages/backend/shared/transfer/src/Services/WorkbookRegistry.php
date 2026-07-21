@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Services;
+namespace Stackra\Transfer\Services;
 
-use Academorix\Transfer\Attributes\ExportableWorkbook;
-use Academorix\Transfer\Attributes\ImportableWorkbook;
-use Academorix\Transfer\Contracts\Services\WorkbookRegistryInterface;
+use Stackra\Transfer\Attributes\ExportableWorkbook;
+use Stackra\Transfer\Attributes\ImportableWorkbook;
+use Stackra\Transfer\Contracts\Services\WorkbookRegistryInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

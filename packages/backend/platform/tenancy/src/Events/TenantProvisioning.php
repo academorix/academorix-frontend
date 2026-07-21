@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Events;
+namespace Stackra\Tenancy\Events;
 
-use Academorix\Events\Attributes\AsEvent;
-use Academorix\Tenancy\Models\Tenant;
+use Stackra\Events\Attributes\AsEvent;
+use Stackra\Tenancy\Models\Tenant;
 use Illuminate\Foundation\Events\Dispatchable;
 
 /**

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/sports-registry/features",
+  "id": "stackra://modules/sports-registry/features",
   "$version": 1,
   "title": "sports-registry — feature keys",
   "reference": {

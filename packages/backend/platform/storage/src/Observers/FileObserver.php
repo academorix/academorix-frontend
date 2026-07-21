@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Observers;
+namespace Stackra\Storage\Observers;
 
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Contracts\Services\ContentAddressableStoreInterface;
-use Academorix\Storage\Enums\FileVisibility;
-use Academorix\Storage\Enums\VirusScanState;
-use Academorix\Storage\Events\FileErased;
-use Academorix\Storage\Events\FileUploaded;
-use Academorix\Storage\Events\FileUploading;
-use Academorix\Storage\Jobs\GenerateFileVariantsJob;
-use Academorix\Storage\Jobs\ScanFileForVirusesJob;
-use Academorix\Storage\Models\File;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Contracts\Services\ContentAddressableStoreInterface;
+use Stackra\Storage\Enums\FileVisibility;
+use Stackra\Storage\Enums\VirusScanState;
+use Stackra\Storage\Events\FileErased;
+use Stackra\Storage\Events\FileUploaded;
+use Stackra\Storage\Events\FileUploading;
+use Stackra\Storage\Jobs\GenerateFileVariantsJob;
+use Stackra\Storage\Jobs\ScanFileForVirusesJob;
+use Stackra\Storage\Models\File;
 
 /**
  * Lifecycle side effects on {@see File}.

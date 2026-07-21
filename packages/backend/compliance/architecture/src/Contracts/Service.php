@@ -5,7 +5,7 @@
  *
  * @description
  * Marker interface for service-layer classes. Equivalent to
- * {@see \Academorix\Architecture\Attributes\Service} at the
+ * {@see \Stackra\Architecture\Attributes\Service} at the
  * resolver level; see that file's docblock for placement guidance.
  *
  * ## Rationale for a marker interface
@@ -17,12 +17,12 @@
  * That's harder to do with attributes because they aren't part of
  * the runtime type system.
  *
- * @see \Academorix\Architecture\Attributes\Service
+ * @see \Stackra\Architecture\Attributes\Service
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Contracts;
+namespace Stackra\Architecture\Contracts;
 
 /**
  * Empty marker interface — no methods to implement.

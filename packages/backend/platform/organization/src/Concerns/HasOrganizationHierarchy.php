@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Organization\Concerns;
+namespace Stackra\Organization\Concerns;
 
 /**
  * Trait — HasOrganizationHierarchy.

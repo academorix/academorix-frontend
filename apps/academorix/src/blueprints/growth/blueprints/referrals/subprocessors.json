@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/referrals/subprocessors",
+  "id": "stackra://modules/referrals/subprocessors",
   "$version": 1,
   "title": "referrals — subprocessors",
-  "description": "The Referrals module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. Downstream marketing module engages ad-network subprocessors (Meta / Google / TikTok / Microsoft / Snapchat) to receive the marketing events fired from this module; the notifications module engages email/SMS subprocessors to deliver invitations. All are declared in their respective modules' subprocessors.json.",
+  "description": "The Referrals module itself engages ZERO third-party subprocessors — every state transition happens within the Stackra platform. Downstream marketing module engages ad-network subprocessors (Meta / Google / TikTok / Microsoft / Snapchat) to receive the marketing events fired from this module; the notifications module engages email/SMS subprocessors to deliver invitations. All are declared in their respective modules' subprocessors.json.",
   "subprocessors": [],
   "downstream_subprocessors_referenced": [
     {

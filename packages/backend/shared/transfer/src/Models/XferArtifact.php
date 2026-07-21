@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Models;
+namespace Stackra\Transfer\Models;
 
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
-use Academorix\Transfer\Contracts\Data\XferArtifactInterface;
-use Academorix\Transfer\Contracts\Data\XferJobInterface;
-use Academorix\Transfer\Database\Factories\XferArtifactFactory;
-use Academorix\Transfer\Enums\ExportFormat;
-use Academorix\Transfer\Enums\XferArtifactKind;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Transfer\Contracts\Data\XferArtifactInterface;
+use Stackra\Transfer\Contracts\Data\XferJobInterface;
+use Stackra\Transfer\Database\Factories\XferArtifactFactory;
+use Stackra\Transfer\Enums\ExportFormat;
+use Stackra\Transfer\Enums\XferArtifactKind;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;

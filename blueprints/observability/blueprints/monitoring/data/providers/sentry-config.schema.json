@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/monitoring/data/providers/sentry-config",
+  "id": "stackra://modules/monitoring/data/providers/sentry-config",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Sentry provider config",

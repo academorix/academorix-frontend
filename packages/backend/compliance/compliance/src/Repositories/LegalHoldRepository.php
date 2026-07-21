@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Repositories;
+namespace Stackra\Compliance\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Compliance\Contracts\Data\LegalHoldInterface;
-use Academorix\Compliance\Contracts\Repositories\LegalHoldRepositoryInterface;
-use Academorix\Compliance\Models\LegalHold;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Compliance\Contracts\Data\LegalHoldInterface;
+use Stackra\Compliance\Contracts\Repositories\LegalHoldRepositoryInterface;
+use Stackra\Compliance\Models\LegalHold;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Compliance\Models\LegalHold}.
+ * Attribute-first Eloquent repository for {@see Stackra\Compliance\Models\LegalHold}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(LegalHoldInterface::class)]` which resolves to
  * `LegalHold` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Compliance\Models\LegalHold>
+ * @extends Repository<\Stackra\Compliance\Models\LegalHold>
  *
  * @category Compliance
  *

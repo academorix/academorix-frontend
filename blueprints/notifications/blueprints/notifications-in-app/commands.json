@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-in-app/commands",
+  "id": "stackra://modules/notifications-in-app/commands",
   "$version": 1,
   "title": "notifications-in-app \u2014 Artisan commands",
   "description": "No transport-specific commands. Bulk mark-read runs as a queued job (not an Artisan command) since it's triggered by user action, not scheduled maintenance. Housekeeping (delivery-row cleanup) is owned by the parent `notifications::PurgeExpiredDeliveriesJob`. Marker file with an explanation.",

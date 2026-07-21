@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Exceptions;
+namespace Stackra\Leads\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Requested stage transition is not permitted by the state machine.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class LeadInvalidStageTransitionException extends AcademorixException
+final class LeadInvalidStageTransitionException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

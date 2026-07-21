@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transfer/caches",
+  "id": "stackra://modules/transfer/caches",
   "$version": 1,
   "title": "transfer \u2014 cache keys + tags",
   "driver": "redis",

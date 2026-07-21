@@ -4,7 +4,7 @@
  * @file modules/platform/integrations/config/integrations.php
  *
  * @description
- * Runtime knobs for the `academorix/integrations` module. Merged
+ * Runtime knobs for the `stackra/integrations` module. Merged
  * under the `integrations.*` key by the base ServiceProvider's
  * LoadsResources concern. Downstream reads via `config('integrations.*')`.
  */

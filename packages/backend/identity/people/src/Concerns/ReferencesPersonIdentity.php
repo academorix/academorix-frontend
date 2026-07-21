@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\People\Concerns;
+namespace Stackra\People\Concerns;
 
 /**
  * Trait — ReferencesPersonIdentity.

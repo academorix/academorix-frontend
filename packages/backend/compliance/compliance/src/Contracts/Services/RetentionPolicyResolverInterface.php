@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Contracts\Services;
+namespace Stackra\Compliance\Contracts\Services;
 
-use Academorix\Compliance\Attributes\RetentionPolicy;
-use Academorix\Compliance\Services\DefaultRetentionPolicyResolver;
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Compliance\Attributes\RetentionPolicy;
+use Stackra\Compliance\Services\DefaultRetentionPolicyResolver;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Repositories;
+namespace Stackra\Auth\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Auth\Contracts\Data\AuthCrossAppGrantInterface;
-use Academorix\Auth\Contracts\Repositories\AuthCrossAppGrantRepositoryInterface;
-use Academorix\Auth\Models\AuthCrossAppGrant;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Auth\Contracts\Data\AuthCrossAppGrantInterface;
+use Stackra\Auth\Contracts\Repositories\AuthCrossAppGrantRepositoryInterface;
+use Stackra\Auth\Models\AuthCrossAppGrant;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Auth\Models\AuthCrossAppGrant}.
+ * Attribute-first Eloquent repository for {@see Stackra\Auth\Models\AuthCrossAppGrant}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AuthCrossAppGrantInterface::class)]` which resolves to
  * `AuthCrossAppGrant` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Auth\Models\AuthCrossAppGrant>
+ * @extends Repository<\Stackra\Auth\Models\AuthCrossAppGrant>
  *
  * @category Auth
  *

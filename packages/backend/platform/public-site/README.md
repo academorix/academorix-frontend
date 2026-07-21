@@ -1,4 +1,4 @@
-# academorix/public-site
+# stackra/public-site
 
 Server-side Laravel package for the `public-site` module. Auto-generated from
 the blueprint at `modules/platform/blueprints/public-site/`.
@@ -44,6 +44,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-platform/public-site-sdk` under `sdk/platform-public-site-sdk/`.
+`stackra-platform/public-site-sdk` under `sdk/platform-public-site-sdk/`.
 Consumers cross the service boundary through the SDK; this package is the
 SERVER-side owner of the domain.

@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/auth/settings",
+  "id": "stackra://modules/auth/settings",
   "$version": 1,
   "title": "auth \u2014 settings",
-  "description": "Auth exposes tenant-configurable settings for password policy, session lifetime, MFA-required roles, cross-app SSO enablement, new-device notification defaults. Every group registers under the `auth` namespace with `academorix/settings`. Compliance floors (COPPA / GDPR / NIST 800-63B) enforce hard clamps \u2014 tenant settings can only TIGHTEN, never loosen.",
+  "description": "Auth exposes tenant-configurable settings for password policy, session lifetime, MFA-required roles, cross-app SSO enablement, new-device notification defaults. Every group registers under the `auth` namespace with `stackra/settings`. Compliance floors (COPPA / GDPR / NIST 800-63B) enforce hard clamps \u2014 tenant settings can only TIGHTEN, never loosen.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "namespace_registration": {
     "namespace": "auth",
-    "consumer": "Academorix\\Auth\\Providers\\AuthServiceProvider",
+    "consumer": "Stackra\\Auth\\Providers\\AuthServiceProvider",
     "defaultValueFactory": "Delegates to config('auth.*') when the tenant hasn't overridden. Ensures the effective value falls back to the config layer.",
     "validator": "Enforces compliance floors on password + session + lockout settings. Refuses writes that would reduce policy below NIST 800-63B / OWASP ASVS baselines."
   },

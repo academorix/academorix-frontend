@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlagsSdk\Saloon\KillSwitches;
+namespace Stackra\FeatureFlagsSdk\Saloon\KillSwitches;
 
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;

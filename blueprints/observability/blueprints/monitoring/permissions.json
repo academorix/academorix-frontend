@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/monitoring/permissions",
+  "id": "stackra://modules/monitoring/permissions",
   "$version": 1,
   "title": "monitoring — permissions",
-  "seeder": "Academorix\\Observability\\Monitoring\\Database\\Seeders\\MonitoringPermissionSeeder",
+  "seeder": "Stackra\\Observability\\Monitoring\\Database\\Seeders\\MonitoringPermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — health check + alert policy + provider CRUD by owner + admin (+ ops for policies); alert + incident + health check run reads by owner + admin + ops role + support role; alert + incident acknowledge/resolve by ops + admin + owner (+ support for acknowledge only). Platform plane (platform_admin) — cross-tenant support tooling for ops + support cross-tenant P1 review. All tenant-plane permissions carry the `monitoring.` prefix (or `platform.monitoring.` on the platform audience) per hierarchy.md §4 audience-boundary rules.",
   "permissions": [

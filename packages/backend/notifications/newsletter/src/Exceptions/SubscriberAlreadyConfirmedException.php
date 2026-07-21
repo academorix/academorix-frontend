@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Exceptions;
+namespace Stackra\Newsletter\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a caller attempts to confirm a subscription that has
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SubscriberAlreadyConfirmedException extends AcademorixException
+final class SubscriberAlreadyConfirmedException extends StackraException
 {
     public const CODE = 'newsletter.already_confirmed';
 

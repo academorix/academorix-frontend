@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Event\Exceptions;
+namespace Stackra\Event\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `EVENT_PRIZE_POOL_CURRENCY_REQUIRED` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class EventPrizePoolCurrencyRequiredException extends AcademorixException
+final class EventPrizePoolCurrencyRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

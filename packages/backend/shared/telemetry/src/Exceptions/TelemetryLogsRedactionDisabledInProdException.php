@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Telemetry\Exceptions;
+namespace Stackra\Telemetry\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Health probe detected redaction kill-switch off in production.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TelemetryLogsRedactionDisabledInProdException extends AcademorixException
+final class TelemetryLogsRedactionDisabledInProdException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

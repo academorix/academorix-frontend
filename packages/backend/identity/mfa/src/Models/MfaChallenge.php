@@ -4,15 +4,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Models;
+namespace Stackra\Mfa\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Mfa\Contracts\Data\MfaChallengeInterface;
-use Academorix\Mfa\Database\Factories\MfaChallengeFactory;
+use Stackra\Mfa\Contracts\Data\MfaChallengeInterface;
+use Stackra\Mfa\Database\Factories\MfaChallengeFactory;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 

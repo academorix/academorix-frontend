@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/private-sessions/rules",
+  "id": "stackra://modules/private-sessions/rules",
   "$version": 1,
   "title": "private-sessions — validation rules",
   "description": "Named validation rules this module ships (registered via Validator::extend).",

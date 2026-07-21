@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Services;
+namespace Stackra\Versioning\Services;
 
-use Academorix\Versioning\Attributes\AsPayloadTransformer;
-use Academorix\Versioning\Contracts\Services\PayloadTransformerRegistryInterface;
-use Academorix\Versioning\Events\PayloadTransformerRegistered;
+use Stackra\Versioning\Attributes\AsPayloadTransformer;
+use Stackra\Versioning\Contracts\Services\PayloadTransformerRegistryInterface;
+use Stackra\Versioning\Events\PayloadTransformerRegistered;
 use Illuminate\Container\Attributes\Singleton;
 
 /**
@@ -14,7 +14,7 @@ use Illuminate\Container\Attributes\Singleton;
  *
  * Keys entries as `<surface>:<event>:<from>:<to>` for O(1) lookup.
  * Hydrated at boot by the framework's generic hydration pump
- * ({@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper})
+ * ({@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper})
  * via the `#[HydratesFrom]` declaration on
  * {@see PayloadTransformerRegistryInterface::register()}.
  *

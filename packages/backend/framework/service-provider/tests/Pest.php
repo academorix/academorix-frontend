@@ -4,7 +4,7 @@
  * @file packages/service-provider/tests/Pest.php
  *
  * @description
- * Pest bootstrap for the `academorix/service-provider` test suite.
+ * Pest bootstrap for the `stackra/service-provider` test suite.
  * Kept minimal — Feature tests boot Testbench per case, and Unit
  * tests run in isolation without a framework instance.
  *

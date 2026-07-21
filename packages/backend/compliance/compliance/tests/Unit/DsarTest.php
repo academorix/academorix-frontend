@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Compliance\Models\Dsar;
+use Stackra\Compliance\Models\Dsar;
 
 it('is a placeholder — replace with actual Dsar unit tests', function (): void {
     expect(Dsar::class)->toBeString();

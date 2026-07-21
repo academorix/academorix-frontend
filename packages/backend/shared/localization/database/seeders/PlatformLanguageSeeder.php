@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Database\Seeders;
+namespace Stackra\Localization\Database\Seeders;
 
-use Academorix\Geography\Contracts\Data\CountryInterface as GeographyCountryInterface;
-use Academorix\Geography\Contracts\Data\LanguageInterface as GeographyLanguageInterface;
-use Academorix\Localization\Contracts\Data\PlatformLanguageInterface;
-use Academorix\Localization\Models\PlatformLanguage;
-use Academorix\ServiceProvider\Attributes\AsSeeder;
+use Stackra\Geography\Contracts\Data\CountryInterface as GeographyCountryInterface;
+use Stackra\Geography\Contracts\Data\LanguageInterface as GeographyLanguageInterface;
+use Stackra\Localization\Contracts\Data\PlatformLanguageInterface;
+use Stackra\Localization\Models\PlatformLanguage;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 

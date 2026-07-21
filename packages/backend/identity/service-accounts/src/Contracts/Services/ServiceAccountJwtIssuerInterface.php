@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Contracts\Services;
+namespace Stackra\ServiceAccounts\Contracts\Services;
 
-use Academorix\Auth\Data\SignedJwtData;
-use Academorix\ServiceAccounts\Models\ServiceAccount;
-use Academorix\ServiceAccounts\Services\ServiceAccountJwtIssuer;
+use Stackra\Auth\Data\SignedJwtData;
+use Stackra\ServiceAccounts\Models\ServiceAccount;
+use Stackra\ServiceAccounts\Services\ServiceAccountJwtIssuer;
 use Illuminate\Container\Attributes\Bind;
 
 /**
  * Service contract for the ServiceAccount JWT issuer.
  *
  * Bridges the SA row (which owns `signer_kid`, `application_id`,
- * `tenant_id`) to `academorix/auth`'s HS256 signer. The issuer
+ * `tenant_id`) to `stackra/auth`'s HS256 signer. The issuer
  * assembles a payload with `purpose = service_account`, chooses a
  * TTL from the module config or an explicit override, and hands
- * off to {@see \Academorix\Auth\Contracts\Services\JwtSignerInterface}.
+ * off to {@see \Stackra\Auth\Contracts\Services\JwtSignerInterface}.
  *
  * @category ServiceAccounts
  *
@@ -36,7 +36,7 @@ interface ServiceAccountJwtIssuerInterface
      *
      * @return SignedJwtData  The compact JWT + echoed claims.
      *
-     * @throws \Academorix\Auth\Exceptions\JwtSigningKeyUnavailableException
+     * @throws \Stackra\Auth\Exceptions\JwtSigningKeyUnavailableException
      */
     public function issue(
         ServiceAccount $account,

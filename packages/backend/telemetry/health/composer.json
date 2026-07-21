@@ -1,11 +1,11 @@
 {
-  "name": "academorix/health",
+  "name": "stackra/health",
   "type": "library",
-  "description": "Attribute-driven health check discovery + notification routing for every Academorix app. Bridges Spatie\\Laravel-Health with a zero-boilerplate #[AsHealthCheck] attribute discovered at composer-dump time via olvlvl/composer-attribute-collector. Ships a HealthNotificationChannel enum so packages route to logical channels (SlackPlatformEng, PagerDuty, Email) without ever knowing the concrete notifiable — apps map channels to destinations via config.",
+  "description": "Attribute-driven health check discovery + notification routing for every Stackra app. Bridges Spatie\\Laravel-Health with a zero-boilerplate #[AsHealthCheck] attribute discovered at composer-dump time via olvlvl/composer-attribute-collector. Ships a HealthNotificationChannel enum so packages route to logical channels (SlackPlatformEng, PagerDuty, Email) without ever knowing the concrete notifiable — apps map channels to destinations via config.",
   "license": "proprietary",
   "require": {
     "php": "^8.3",
-    "academorix/foundation": "@dev",
+    "stackra/foundation": "@dev",
     "illuminate/console": "^13.0",
     "illuminate/contracts": "^13.0",
     "illuminate/support": "^13.0",
@@ -20,18 +20,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Health\\": "src/"
+      "Stackra\\Health\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Health\\Tests\\": "tests/"
+      "Stackra\\Health\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Health\\Providers\\HealthServiceProvider"
+        "Stackra\\Health\\Providers\\HealthServiceProvider"
       ],
       "aliases": {}
     }

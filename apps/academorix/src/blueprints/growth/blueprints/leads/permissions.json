@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/leads/permissions",
+  "id": "stackra://modules/leads/permissions",
   "$version": 1,
   "title": "leads — permissions",
-  "seeder": "Academorix\\Growth\\Leads\\Database\\Seeders\\LeadsPermissionSeeder",
+  "seeder": "Stackra\\Growth\\Leads\\Database\\Seeders\\LeadsPermissionSeeder",
   "isSystem": true,
   "description": "Two audiences per hierarchy.md §4. Tenant plane (sanctum) — reception + marketing + admin + owner manage the CRM funnel; coach role sees only leads for their own athlete via policy narrowing; parent role never sees the surface. Platform plane (platform_admin) — ops + support read cross-tenant leads for support-ticket triage (never mutate). Every tenant-plane permission carries the `leads.` prefix (or `platform.leads.` on the platform audience).",
   "permissions": [

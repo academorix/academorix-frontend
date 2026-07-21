@@ -4,15 +4,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Contracts\Data;
+namespace Stackra\Rbac\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Rbac\Models\Role;
+use Stackra\Rbac\Models\Role;
 
 /**
  * Table shape for the `roles` table.
  *
- * Spatie's `roles` table augmented with Academorix scope columns (application_id, tenant_id, is_system, description, sort_order).
+ * Spatie's `roles` table augmented with Stackra scope columns (application_id, tenant_id, is_system, description, sort_order).
  *
  * @category Rbac
  *

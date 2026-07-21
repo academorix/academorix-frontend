@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/activity/data/log-names-catalog",
+  "id": "stackra://modules/activity/data/log-names-catalog",
   "$version": 1,
   "title": "activity — registered log names catalog",
   "description": "Every `log_name` string a downstream module may pass to `LogOptions::useLogName()`. Seeded at module boot into the registry cache. Adding a new feed = add an entry here + PR review. Consumer modules validate their `getActivitylogOptions()` returns a log_name from this catalog at model boot; unknown values throw UNKNOWN_LOG_NAME.",

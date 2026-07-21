@@ -4,7 +4,7 @@
  * @file packages/sdk/api-sdk/src/Testing/ApiFake.php
  *
  * @description
- * Test double implementing {@see \Academorix\ApiSdk\Contracts\ApiClientInterface}.
+ * Test double implementing {@see \Stackra\ApiSdk\Contracts\ApiClientInterface}.
  * Consumers bind the fake in tests via
  * `$this->app->bind(ApiClientInterface::class, ApiFake::class)`
  * (Laravel) or `config(['sdk.api.fake' => true])` (which
@@ -42,11 +42,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Testing;
+namespace Stackra\ApiSdk\Testing;
 
-use Academorix\ApiSdk\Contracts\ApiClientInterface;
-use Academorix\ApiSdk\Contracts\SdkResource;
-use Academorix\ApiSdk\Registry\SdkResourceRegistry;
+use Stackra\ApiSdk\Contracts\ApiClientInterface;
+use Stackra\ApiSdk\Contracts\SdkResource;
+use Stackra\ApiSdk\Registry\SdkResourceRegistry;
 
 /**
  * In-memory fake ApiClient — no HTTP, no Saloon, no network.

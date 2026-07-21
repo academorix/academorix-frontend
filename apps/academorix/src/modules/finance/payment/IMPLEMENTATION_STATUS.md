@@ -9,7 +9,7 @@ land but the domain logic has not been written yet.
 ## Implementation plan (depends on finance/gateway landing first)
 
 Every mutating Action routes through `PaymentGatewayManagerInterface` from
-`Academorix\Gateway\Contracts\Services`. Never inject a concrete driver — the
+`Stackra\Gateway\Contracts\Services`. Never inject a concrete driver — the
 manager resolves the right driver per (tenant, provider) tuple.
 
 ### Actions to fill (24 total)

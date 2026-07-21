@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Listeners;
+namespace Stackra\Geography\Listeners;
 
-use Academorix\Geography\Events\MaxMindDatabaseStale;
-use Academorix\Geography\Jobs\RefreshMaxMindDatabaseJob;
+use Stackra\Geography\Events\MaxMindDatabaseStale;
+use Stackra\Geography\Jobs\RefreshMaxMindDatabaseJob;
 
 /**
  * Listener: `MaxMindDatabaseStale` → dispatch

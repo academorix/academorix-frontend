@@ -22,20 +22,20 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Tenancy\Providers;
+namespace Stackra\Tenancy\Providers;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Contracts\HasBindings;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
-use Academorix\Tenancy\Bootstrappers\QueueBootstrapper;
-use Academorix\Tenancy\Contracts\Data\TenantInterface;
-use Academorix\Tenancy\Contracts\TenancyManagerInterface;
-use Academorix\Tenancy\Events\TenancyEnded;
-use Academorix\Tenancy\Events\TenancyInitialized;
-use Academorix\Tenancy\Listeners\BootstrapTenancy;
-use Academorix\Tenancy\Listeners\RevertToCentralContext;
-use Academorix\Tenancy\Schema\TenantBlueprint;
-use Academorix\Tenancy\TenancyManager;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Contracts\HasBindings;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
+use Stackra\Tenancy\Bootstrappers\QueueBootstrapper;
+use Stackra\Tenancy\Contracts\Data\TenantInterface;
+use Stackra\Tenancy\Contracts\TenancyManagerInterface;
+use Stackra\Tenancy\Events\TenancyEnded;
+use Stackra\Tenancy\Events\TenancyInitialized;
+use Stackra\Tenancy\Listeners\BootstrapTenancy;
+use Stackra\Tenancy\Listeners\RevertToCentralContext;
+use Stackra\Tenancy\Schema\TenantBlueprint;
+use Stackra\Tenancy\TenancyManager;
 use Illuminate\Support\Facades\Event;
 use Laravel\Pennant\Feature;
 
@@ -47,7 +47,7 @@ use Laravel\Pennant\Feature;
  */
 #[AsModule(
     name: 'Tenancy',
-    namespace: 'Academorix\\Tenancy',
+    namespace: 'Stackra\\Tenancy',
     priority: 10,
 )]
 class TenancyCustomServiceProvider extends ServiceProvider implements HasBindings

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/foundation/retention",
+  "id": "stackra://modules/foundation/retention",
   "$version": 1,
   "title": "foundation — data retention windows",
   "description": "Foundation ships zero persistent entities → zero retention rules. The health snapshot, module registry, and import/export contract caches are transient (max 1 hour TTL). This file exists for uniform module shape and to enumerate the compliance-tier taxonomy every downstream retention.json references.",

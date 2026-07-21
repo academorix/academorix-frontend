@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/application/relations",
+  "id": "stackra://modules/application/relations",
   "$version": 1,
   "title": "application — model relationships",
   "description": "Application + BusinessType are ROOT entities in the tenancy DAG — nothing above them, everything tenant-scoped cascades down through them.",

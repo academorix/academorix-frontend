@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registrations\Repositories;
+namespace Stackra\Registrations\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Registrations\Contracts\Data\RegistrationActivityInterface;
-use Academorix\Registrations\Contracts\Repositories\RegistrationActivityRepositoryInterface;
-use Academorix\Registrations\Models\RegistrationActivity;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Registrations\Contracts\Data\RegistrationActivityInterface;
+use Stackra\Registrations\Contracts\Repositories\RegistrationActivityRepositoryInterface;
+use Stackra\Registrations\Models\RegistrationActivity;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Registrations\Models\RegistrationActivity}.
+ * Attribute-first Eloquent repository for {@see Stackra\Registrations\Models\RegistrationActivity}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(RegistrationActivityInterface::class)]` which resolves to
  * `RegistrationActivity` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Registrations\Models\RegistrationActivity>
+ * @extends Repository<\Stackra\Registrations\Models\RegistrationActivity>
  *
  * @category Registrations
  *

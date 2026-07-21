@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Models;
+namespace Stackra\Audit\Models;
 
-use Academorix\Audit\Contracts\Data\AuditInterface;
-use Academorix\Audit\Database\Factories\AuditFactory;
-use Academorix\Audit\Observers\AuditObserver;
-use Academorix\Audit\Policies\AuditPolicy;
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenantOptional;
+use Stackra\Audit\Contracts\Data\AuditInterface;
+use Stackra\Audit\Database\Factories\AuditFactory;
+use Stackra\Audit\Observers\AuditObserver;
+use Stackra\Audit\Policies\AuditPolicy;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenantOptional;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -79,7 +79,7 @@ class Audit extends OwenItAudit implements AuditInterface
     public $incrementing = false;
 
     /**
-     * Cast map — the Academorix additions on top of owen-it's own
+     * Cast map — the Stackra additions on top of owen-it's own
      * cast list (which handles `old_values`, `new_values`, `tags`).
      * The vendor's parent constructor merges this list with its own.
      *

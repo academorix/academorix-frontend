@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/access/requests/subprocessors",
+  "id": "stackra://modules/access/requests/subprocessors",
   "$version": 1,
   "title": "requests \u2014 third-party subprocessors",
   "description": "This module does NOT directly integrate with any third-party subprocessor. Every external touchpoint (mail delivery for notifications, database, cache) is owned by a UPSTREAM module (`notifications` for mail transports, `foundation` for Redis/DB) whose own subprocessors.json documents its providers. This file exists for uniform blueprint shape and to make the empty state explicit \u2014 auditors verifying the DPA registry get a clean 'no direct integrations' signal.",
-  "publicRegistryUrl": "https://academorix.app/subprocessors",
+  "publicRegistryUrl": "https://stackra.app/subprocessors",
   "subprocessors": [],
   "indirectSubprocessors": [
     {

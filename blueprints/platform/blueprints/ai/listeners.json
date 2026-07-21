@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/ai/listeners",
+  "id": "stackra://modules/ai/listeners",
   "$version": 1,
   "title": "ai — event listeners",
   "description": "Listeners this module registers, keyed by the event they consume.",

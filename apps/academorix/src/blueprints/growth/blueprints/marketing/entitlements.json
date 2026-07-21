@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/marketing/entitlements",
+  "id": "stackra://modules/marketing/entitlements",
   "$version": 1,
   "title": "marketing — declared entitlements",
   "description": "Nine entitlement keys. `marketing_capture` is the boolean master gate. `marketing_provider_slot` caps provider configs per tenant. `marketing_event_slot_per_month` caps captured events per rolling calendar month (breach after which capture returns 402). `marketing_advanced_providers` unlocks LinkedIn / Snapchat / Pinterest / GTM Server on Medium+. `marketing_test_mode` (all tiers) enables the test-event flow. `marketing_roas_report` unlocks the ROAS dashboard on Medium+. `marketing_dead_letter_replay` unlocks manual dead-letter replay on Enterprise. `marketing_custom_webhook` unlocks the generic HMAC-signed webhook driver on Medium+. `marketing_extended_retention` unlocks 10-year retention on Enterprise (default 7).",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/entitlements/data-classes",
+  "id": "stackra://modules/entitlements/data-classes",
   "$version": 1,
   "title": "entitlements \u2014 field classification",
   "description": "Entitlement rows are mostly public/internal. No PII. correlation_id may reference confidential entities but is treated as internal.",

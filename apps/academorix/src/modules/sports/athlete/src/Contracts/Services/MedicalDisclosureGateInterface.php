@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Athlete\Contracts\Services;
+namespace Stackra\Athlete\Contracts\Services;
 
-use Academorix\Athlete\Models\Athlete;
-use Academorix\Athlete\Services\MedicalDisclosureGate;
+use Stackra\Athlete\Models\Athlete;
+use Stackra\Athlete\Services\MedicalDisclosureGate;
 use Illuminate\Container\Attributes\Bind;
 
 /**

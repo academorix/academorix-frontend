@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Contracts\Repositories;
+namespace Stackra\Webhook\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Webhook\Models\WebhookDelivery;
-use Academorix\Webhook\Repositories\EloquentWebhookDeliveryRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Webhook\Models\WebhookDelivery;
+use Stackra\Webhook\Repositories\EloquentWebhookDeliveryRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

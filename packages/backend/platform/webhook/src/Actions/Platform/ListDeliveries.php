@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Actions\Platform;
+namespace Stackra\Webhook\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Webhook\Contracts\Repositories\WebhookDeliveryRepositoryInterface;
-use Academorix\Webhook\Data\WebhookDeliveryData;
-use Academorix\Webhook\Enums\WebhookPermission;
-use Academorix\Webhook\Models\WebhookDelivery;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Webhook\Contracts\Repositories\WebhookDeliveryRepositoryInterface;
+use Stackra\Webhook\Data\WebhookDeliveryData;
+use Stackra\Webhook\Enums\WebhookPermission;
+use Stackra\Webhook\Models\WebhookDelivery;
 use Spatie\LaravelData\DataCollection;
 
 /**

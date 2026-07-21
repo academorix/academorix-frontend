@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Console\Commands;
+namespace Stackra\Notifications\Sms\Console\Commands;
 
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Notifications\Sms\Jobs\SendSmsJob;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Notifications\Sms\Jobs\SendSmsJob;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
 

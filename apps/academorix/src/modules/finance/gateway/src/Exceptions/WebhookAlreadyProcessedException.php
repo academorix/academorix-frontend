@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Gateway\Exceptions;
+namespace Stackra\Gateway\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Idempotent no-op — the (tenant_id, provider, provider_event_id) tuple was seen before.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class WebhookAlreadyProcessedException extends AcademorixException
+final class WebhookAlreadyProcessedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

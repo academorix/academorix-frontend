@@ -4,7 +4,7 @@
  * @file packages/exceptions/tests/Unit/RedactorTest.php
  *
  * @description
- * Exercises {@see \Academorix\Exceptions\Support\Redactor}, the
+ * Exercises {@see \Stackra\Exceptions\Support\Redactor}, the
  * safety-net that scrubs sensitive keys, credentials, and runaway
  * payloads before an exception's `context()` is shipped to logs,
  * Sentry, or a JSON error envelope.
@@ -42,7 +42,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Exceptions\Support\Redactor;
+use Stackra\Exceptions\Support\Redactor;
 
 // -----------------------------------------------------------------
 // Group 1 — key-based redaction (case-insensitive substring)

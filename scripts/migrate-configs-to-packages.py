@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
 Migrate every packages/*/tsconfig.json and tsup.config.ts to use the
-extracted @academorix/config-tsconfig + @academorix/config-tsup packages.
+extracted @stackra/config-tsconfig + @stackra/config-tsup packages.
 
 Rewrites:
-- tsconfig.json:     "extends": "../../tsconfig.base.json"  ->  "@academorix/config-tsconfig/base"
-- tsup.config.ts:    from "../../tsup.config.base"           ->  from "@academorix/config-tsup"
-- package.json:      adds @academorix/config-tsconfig + @academorix/config-tsup to devDependencies
+- tsconfig.json:     "extends": "../../tsconfig.base.json"  ->  "@stackra/config-tsconfig/base"
+- tsup.config.ts:    from "../../tsup.config.base"           ->  from "@stackra/config-tsup"
+- package.json:      adds @stackra/config-tsconfig + @stackra/config-tsup to devDependencies
 
 Idempotent — running twice is a no-op.
 """
@@ -52,7 +52,7 @@ def rewrite_tsconfig(path: Path) -> bool:
             return False
         new_raw = re.sub(
             r'"extends"\s*:\s*"[^"]+"',
-            '"extends": "@academorix/config-tsconfig/base"',
+            '"extends": "@stackra/config-tsconfig/base"',
             raw,
             count=1,
         )
@@ -64,7 +64,7 @@ def rewrite_tsconfig(path: Path) -> bool:
         return False
     if "config-tsconfig" in extends:
         return False  # already migrated
-    data["extends"] = "@academorix/config-tsconfig/base"
+    data["extends"] = "@stackra/config-tsconfig/base"
     path.write_text(json.dumps(data, indent=2) + "\n")
     return True
 
@@ -74,7 +74,7 @@ def rewrite_tsup(path: Path) -> bool:
     text = path.read_text()
     new_text = re.sub(
         r'from ["\'](?:\.\./)+tsup\.config\.base["\']',
-        'from "@academorix/config-tsup"',
+        'from "@stackra/config-tsup"',
         text,
     )
     if new_text == text:
@@ -88,7 +88,7 @@ def rewrite_package_json(path: Path) -> bool:
     data = json.loads(path.read_text())
     dev = data.setdefault("devDependencies", {})
     changed = False
-    for pkg in ("@academorix/config-tsconfig", "@academorix/config-tsup"):
+    for pkg in ("@stackra/config-tsconfig", "@stackra/config-tsup"):
         if pkg not in dev:
             dev[pkg] = "workspace:*"
             changed = True

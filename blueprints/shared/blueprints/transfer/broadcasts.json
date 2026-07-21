@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transfer/broadcasts",
+  "id": "stackra://modules/transfer/broadcasts",
   "$version": 1,
   "title": "transfer \u2014 broadcast channels",
   "description": "One private per-user channel carrying the lifecycle events of that user's xfer_jobs. SPA subscribes when the user opens the transfer screen (or the dashboard's 'Recent jobs' panel) and toasts progress + completion without polling.",

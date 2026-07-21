@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Refund\Exceptions;
+namespace Stackra\Refund\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * This refund requires approval.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class RefundApprovalRequiredException extends AcademorixException
+final class RefundApprovalRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

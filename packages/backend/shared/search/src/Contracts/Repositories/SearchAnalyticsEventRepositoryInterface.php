@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Contracts\Repositories;
+namespace Stackra\Search\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Search\Models\SearchAnalyticsEvent;
-use Academorix\Search\Repositories\EloquentSearchAnalyticsEventRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Search\Models\SearchAnalyticsEvent;
+use Stackra\Search\Repositories\EloquentSearchAnalyticsEventRepository;
 use DateTimeInterface;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;

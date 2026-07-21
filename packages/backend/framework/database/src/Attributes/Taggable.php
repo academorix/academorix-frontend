@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Database\Attributes;
+namespace Stackra\Database\Attributes;
 
 use Attribute;
 
@@ -20,7 +20,7 @@ use Attribute;
  * Taggable Attribute for Model Classes.
  *
  * Configures the polymorphic tagging relationship for the
- * {@see \Academorix\Database\Concerns\Model\HasTags} trait. When applied,
+ * {@see \Stackra\Database\Concerns\Model\HasTags} trait. When applied,
  * the attribute values override the trait's method-based defaults.
  *
  * ```php
@@ -48,7 +48,7 @@ use Attribute;
  *
  * @since    2.0.0
  *
- * @see \Academorix\Database\Concerns\Model\HasTags
+ * @see \Stackra\Database\Concerns\Model\HasTags
  */
 #[Attribute(Attribute::TARGET_CLASS)]
 final readonly class Taggable
@@ -58,7 +58,7 @@ final readonly class Taggable
      * @param  string  $pivotTable  Name of the polymorphic pivot table.
      */
     public function __construct(
-        public string $tagModel = 'Academorix\\Crud\\Models\\Tag',
+        public string $tagModel = 'Stackra\\Crud\\Models\\Tag',
         public string $pivotTable = 'taggables',
     ) {}
 }

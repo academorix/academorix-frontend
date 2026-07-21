@@ -2,23 +2,23 @@
 
 /**
  * @file UsesBlueprint.php
- * @module Academorix\Cli\Concerns
- * @description Delegates to {@see \Academorix\Cli\Blueprint\BlueprintReader}
- *   and {@see \Academorix\Cli\Blueprint\BlueprintValidator}. Blueprint
+ * @module Stackra\Cli\Concerns
+ * @description Delegates to {@see \Stackra\Cli\Blueprint\BlueprintReader}
+ *   and {@see \Stackra\Cli\Blueprint\BlueprintValidator}. Blueprint
  *   validation shells to the workspace Python validator.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Concerns;
+namespace Stackra\Cli\Concerns;
 
-use Academorix\Cli\Blueprint\BlueprintReader;
-use Academorix\Cli\Blueprint\BlueprintValidator;
+use Stackra\Cli\Blueprint\BlueprintReader;
+use Stackra\Cli\Blueprint\BlueprintValidator;
 
 /**
- * Composed by every command through {@see \Academorix\Cli\Commands\AbstractCommand}.
+ * Composed by every command through {@see \Stackra\Cli\Commands\AbstractCommand}.
  *
- * @property \Academorix\Cli\Container $container populated by {@see \Academorix\Cli\Commands\AbstractCommand}
+ * @property \Stackra\Cli\Container $container populated by {@see \Stackra\Cli\Commands\AbstractCommand}
  */
 trait UsesBlueprint
 {

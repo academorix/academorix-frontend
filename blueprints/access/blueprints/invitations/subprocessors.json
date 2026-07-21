@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/invitations/subprocessors",
+  "id": "stackra://modules/invitations/subprocessors",
   "$version": 1,
   "title": "invitations — third-party subprocessors",
   "description": "Third-party services this module uses. Aggregated at repo root by the compliance module's registry (GDPR Art. 28). Each entry names the purpose, region, DPA link, and data classes touched. Only one is required in production — the mail transport — but this module supports the whole list so tenants can pick per region + preference.",
-  "publicRegistryUrl": "https://academorix.app/subprocessors",
+  "publicRegistryUrl": "https://stackra.app/subprocessors",
   "subprocessors": [
     {
       "name": "SendGrid",
       "vendor": "Twilio, Inc.",
-      "purpose": "Transactional email delivery for invitation messages. Primary provider on the `academorix.app` US application. Reports delivery + open + click + bounce + complaint events via inbound webhook.",
+      "purpose": "Transactional email delivery for invitation messages. Primary provider on the `stackra.app` US application. Reports delivery + open + click + bounce + complaint events via inbound webhook.",
       "region": "us + eu (data-residency configurable — sub-account routing)",
       "data_classes": [
         "confidential (invitee email + name + inviter display name)",
@@ -23,7 +23,7 @@
     {
       "name": "Amazon SES",
       "vendor": "Amazon Web Services",
-      "purpose": "Transactional email — primary provider on the `academorix.eu` EU application (data-residency requirement). SNS-based delivery / bounce / complaint webhooks.",
+      "purpose": "Transactional email — primary provider on the `stackra.eu` EU application (data-residency requirement). SNS-based delivery / bounce / complaint webhooks.",
       "region": "eu-west-1 (Ireland) + eu-central-1 (Frankfurt)",
       "data_classes": ["confidential (invitee email + name)", "public (invitation subject line)"],
       "dpa_url": "https://aws.amazon.com/service-terms/",

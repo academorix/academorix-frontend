@@ -22,12 +22,12 @@
  *   - **Refactor safety** — renaming an olvlvl field would break
  *     every consumer directly; here it only affects this file.
  *
- * @see \Academorix\Foundation\Discovery\AttributeDiscovery Producer.
+ * @see \Stackra\Foundation\Discovery\AttributeDiscovery Producer.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Discovery;
+namespace Stackra\Foundation\Discovery;
 
 /**
  * One "class carries attribute" hit.

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Models;
+namespace Stackra\Notifications\Mail\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Foundation\Concerns\HasSystemFlag;
-use Academorix\Notifications\Mail\Contracts\Data\MailSuppressionInterface;
-use Academorix\Notifications\Mail\Database\Factories\MailSuppressionFactory;
-use Academorix\Notifications\Mail\Enums\MailProvider;
-use Academorix\Notifications\Mail\Enums\MailSuppressionReason;
-use Academorix\Notifications\Mail\Observers\MailSuppressionObserver;
-use Academorix\Notifications\Mail\Policies\MailSuppressionPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenantOptional;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Foundation\Concerns\HasSystemFlag;
+use Stackra\Notifications\Mail\Contracts\Data\MailSuppressionInterface;
+use Stackra\Notifications\Mail\Database\Factories\MailSuppressionFactory;
+use Stackra\Notifications\Mail\Enums\MailProvider;
+use Stackra\Notifications\Mail\Enums\MailSuppressionReason;
+use Stackra\Notifications\Mail\Observers\MailSuppressionObserver;
+use Stackra\Notifications\Mail\Policies\MailSuppressionPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenantOptional;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

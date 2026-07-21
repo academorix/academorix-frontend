@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/monitoring/schemas/monitoring-incident",
+  "id": "stackra://modules/monitoring/schemas/monitoring-incident",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "MonitoringIncident",
@@ -13,10 +13,10 @@
     "keyType": "string",
     "keyPrefix": "mci_",
     "incrementing": false,
-    "model": "Academorix\\Observability\\Monitoring\\Models\\MonitoringIncident",
-    "interface": "Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringIncidentInterface",
+    "model": "Stackra\\Observability\\Monitoring\\Models\\MonitoringIncident",
+    "interface": "Stackra\\Observability\\Monitoring\\Contracts\\Data\\MonitoringIncidentInterface",
     "implements": [
-      "Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringIncidentInterface"
+      "Stackra\\Observability\\Monitoring\\Contracts\\Data\\MonitoringIncidentInterface"
     ],
     "traits": [
       "HasFactory",

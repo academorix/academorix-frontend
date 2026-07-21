@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/storage/schemas/chunked-upload",
+  "id": "stackra://modules/storage/schemas/chunked-upload",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ChunkedUpload",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "cup_",
     "incrementing": false,
-    "model": "Academorix\\Storage\\Models\\ChunkedUpload",
-    "interface": "Academorix\\Storage\\Contracts\\Data\\ChunkedUploadInterface",
-    "implements": ["Academorix\\Storage\\Contracts\\Data\\ChunkedUploadInterface"],
+    "model": "Stackra\\Storage\\Models\\ChunkedUpload",
+    "interface": "Stackra\\Storage\\Contracts\\Data\\ChunkedUploadInterface",
+    "implements": ["Stackra\\Storage\\Contracts\\Data\\ChunkedUploadInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/theme/settings",
+  "id": "stackra://modules/theme/settings",
   "$version": 1,
   "title": "theme — settings (meta)",
   "description": "Settings the theme module publishes about itself. Consumed by the settings platform via #[AsSetting] discovery. Group covers rollback retention override + accessibility audit toggle + auto-provision-default-theme behavior on TenantProvisioned.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "theme_platform",
-      "class": "Academorix\\Platform\\Theme\\Settings\\ThemePlatformSettings",
+      "class": "Stackra\\Platform\\Theme\\Settings\\ThemePlatformSettings",
       "label": "Theme platform",
       "description": "Configuration for the design token substrate — rollback retention, accessibility audit cadence, default theme on tenant provisioning.",
       "icon": "swatch",

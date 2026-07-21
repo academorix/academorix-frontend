@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Notifications;
+namespace Stackra\Newsletter\Notifications;
 
-use Academorix\Newsletter\Contracts\Data\NewsletterInterface;
-use Academorix\Newsletter\Models\Newsletter;
+use Stackra\Newsletter\Contracts\Data\NewsletterInterface;
+use Stackra\Newsletter\Models\Newsletter;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;

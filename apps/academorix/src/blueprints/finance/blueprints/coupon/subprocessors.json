@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/coupon/subprocessors",
+  "id": "stackra://modules/coupon/subprocessors",
   "$version": 1,
   "title": "coupon — subprocessors",
-  "description": "The Coupon module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. Downstream marketing module engages ad-network subprocessors (Meta / Google / TikTok / Microsoft / Snapchat) to receive marketing events fired from coupons with issuance_source IN ('referral', 'marketing_campaign'); the notifications module engages email/SMS subprocessors to deliver coupon lifecycle notifications; the tax module (finance::tax) engages tax-computation subprocessors (TaxJar / Avalara / Stripe Tax) — coupons feed into their calculation but do not directly engage. All are declared in their respective modules' subprocessors.json.",
+  "description": "The Coupon module itself engages ZERO third-party subprocessors — every state transition happens within the Stackra platform. Downstream marketing module engages ad-network subprocessors (Meta / Google / TikTok / Microsoft / Snapchat) to receive marketing events fired from coupons with issuance_source IN ('referral', 'marketing_campaign'); the notifications module engages email/SMS subprocessors to deliver coupon lifecycle notifications; the tax module (finance::tax) engages tax-computation subprocessors (TaxJar / Avalara / Stripe Tax) — coupons feed into their calculation but do not directly engage. All are declared in their respective modules' subprocessors.json.",
   "subprocessors": [],
   "downstream_subprocessors_referenced": [
     {

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\MarketplaceFee\Exceptions;
+namespace Stackra\MarketplaceFee\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Stripe transfer API returned error.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class FeePayoutStripeTransferFailedException extends AcademorixException
+final class FeePayoutStripeTransferFailedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

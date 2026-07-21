@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/organization/schemas/organization",
+  "id": "stackra://modules/organization/schemas/organization",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Organization",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "org_",
     "incrementing": false,
-    "model": "Academorix\\Organization\\Models\\Organization",
-    "interface": "Academorix\\Organization\\Contracts\\Data\\OrganizationInterface",
-    "implements": ["Academorix\\Organization\\Contracts\\Data\\OrganizationInterface"],
+    "model": "Stackra\\Organization\\Models\\Organization",
+    "interface": "Stackra\\Organization\\Contracts\\Data\\OrganizationInterface",
+    "implements": ["Stackra\\Organization\\Contracts\\Data\\OrganizationInterface"],
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",
@@ -35,8 +35,8 @@
       "sort_order": "integer",
       "tree_depth": "integer",
       "established_date": "date",
-      "category": "Academorix\\Organization\\Enums\\OrganizationCategory",
-      "status": "Academorix\\Organization\\Enums\\OrganizationStatus",
+      "category": "Stackra\\Organization\\Enums\\OrganizationCategory",
+      "status": "Stackra\\Organization\\Enums\\OrganizationStatus",
       "metadata": "array"
     },
     "appends": ["display_label", "descendant_count", "is_root"],

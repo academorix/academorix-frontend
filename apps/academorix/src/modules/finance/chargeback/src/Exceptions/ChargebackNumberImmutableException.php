@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Exceptions;
+namespace Stackra\Chargeback\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * chargeback_number is immutable — sequential generator handles allocation; direct mutation refused.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ChargebackNumberImmutableException extends AcademorixException
+final class ChargebackNumberImmutableException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/audit/data/retention-jurisdictions",
+  "id": "stackra://modules/audit/data/retention-jurisdictions",
   "$version": 1,
   "title": "audit — jurisdiction-specific retention requirements",
   "description": "Reference table of the minimum retention windows imposed by various regulatory regimes. Used by the SDUI retention-policy editor to suggest override_reason + retention_years combinations to compliance officers. NOT enforced — the tenant chooses its own retention; this is guidance.",

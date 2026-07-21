@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Dunning\Tests;
+namespace Stackra\Dunning\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/dunning.
+ * Base test case for stackra/dunning.
  *
  * @category Dunning
  *

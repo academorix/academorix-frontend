@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/service-accounts/macros",
+  "id": "stackra://modules/service-accounts/macros",
   "$version": 1,
   "title": "service-accounts \u2014 published macros",
   "description": "This module publishes NO macros. Every SA-related capability is exposed via a service binding (SecretRotator, ServiceAccountJwtIssuer, DormantAccountDetector, ServiceAccountFingerprinter) OR a validation rule (valid_service_account_name, valid_kid_format), never as a global helper or Blueprint extension.",

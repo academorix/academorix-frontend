@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Events;
+namespace Stackra\Compliance\Events;
 
-use Academorix\Compliance\Models\DsarArtefact;
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Compliance\Models\DsarArtefact;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 

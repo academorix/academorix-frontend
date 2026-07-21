@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Invitations\Contracts\Data\InvitationInterface;
+use Stackra\Invitations\Contracts\Data\InvitationInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Schema;
  * `system` (null id for `system`).
  *
  * `tenant_id` is nullable ONLY to accommodate platform-scope
- * invitations (Academorix staff onboarding). The
+ * invitations (Stackra staff onboarding). The
  * `BelongsToTenantOptional` scope keeps NULL tenant_id rows
  * out of tenant-host reads.
  */

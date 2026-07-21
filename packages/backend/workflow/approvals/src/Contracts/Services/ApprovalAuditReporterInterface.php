@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Contracts\Services;
+namespace Stackra\Approvals\Contracts\Services;
 
-use Academorix\Approvals\Services\ApprovalAuditReporter;
+use Stackra\Approvals\Services\ApprovalAuditReporter;
 use Illuminate\Container\Attributes\Bind;
 
 /**

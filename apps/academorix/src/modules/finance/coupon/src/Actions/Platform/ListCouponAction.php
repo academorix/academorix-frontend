@@ -4,14 +4,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Actions\Platform;
+namespace Stackra\Coupon\Actions\Platform;
 
-use Academorix\Coupon\Contracts\Repositories\CouponRepositoryInterface;
-use Academorix\Coupon\Data\CouponData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Coupon\Contracts\Repositories\CouponRepositoryInterface;
+use Stackra\Coupon\Data\CouponData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\LaravelData\PaginatedDataCollection;
@@ -20,7 +20,7 @@ use Spatie\LaravelData\PaginatedDataCollection;
  * `GET /api/v1/platform/coupons` — list action (platform-admin audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Coupon
@@ -50,7 +50,7 @@ final class ListCouponAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Academorix\Coupon\Models\Coupon> $page */
+        /** @var LengthAwarePaginator<int, \Stackra\Coupon\Models\Coupon> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

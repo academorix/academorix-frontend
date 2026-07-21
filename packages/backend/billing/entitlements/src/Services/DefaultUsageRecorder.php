@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Services;
+namespace Stackra\Entitlements\Services;
 
-use Academorix\Entitlements\Contracts\Data\EntitlementInterface;
-use Academorix\Entitlements\Contracts\Data\EntitlementUsageInterface;
-use Academorix\Entitlements\Contracts\Repositories\EntitlementUsageRepositoryInterface;
-use Academorix\Entitlements\Contracts\Services\UsageRecorderInterface;
-use Academorix\Entitlements\Enums\EntitlementKind;
-use Academorix\Entitlements\Enums\EntitlementPeriod;
-use Academorix\Entitlements\Models\Entitlement;
-use Academorix\Entitlements\Models\EntitlementUsage;
+use Stackra\Entitlements\Contracts\Data\EntitlementInterface;
+use Stackra\Entitlements\Contracts\Data\EntitlementUsageInterface;
+use Stackra\Entitlements\Contracts\Repositories\EntitlementUsageRepositoryInterface;
+use Stackra\Entitlements\Contracts\Services\UsageRecorderInterface;
+use Stackra\Entitlements\Enums\EntitlementKind;
+use Stackra\Entitlements\Enums\EntitlementPeriod;
+use Stackra\Entitlements\Models\Entitlement;
+use Stackra\Entitlements\Models\EntitlementUsage;
 use Illuminate\Container\Attributes\Scoped;
 
 /**

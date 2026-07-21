@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/integrations/broadcasts",
+  "id": "stackra://modules/integrations/broadcasts",
   "$version": 1,
   "title": "integrations — broadcast channels",
   "description": "Channels this module publishes to for real-time UI updates.",

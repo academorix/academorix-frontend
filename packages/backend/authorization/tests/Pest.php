@@ -4,7 +4,7 @@
  * @file packages/authorization/tests/Pest.php
  *
  * @description
- * Pest bootstrap for the `academorix/authorization` test suite.
+ * Pest bootstrap for the `stackra/authorization` test suite.
  * Kept minimal — Feature tests boot Testbench per case, Unit tests
  * run without a framework instance.
  *

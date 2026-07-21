@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Database\Factories;
+namespace Stackra\Notifications\Mail\Database\Factories;
 
-use Academorix\Notifications\Mail\Contracts\Data\MailSuppressionInterface;
-use Academorix\Notifications\Mail\Enums\MailProvider;
-use Academorix\Notifications\Mail\Enums\MailSuppressionReason;
-use Academorix\Notifications\Mail\Models\MailSuppression;
+use Stackra\Notifications\Mail\Contracts\Data\MailSuppressionInterface;
+use Stackra\Notifications\Mail\Enums\MailProvider;
+use Stackra\Notifications\Mail\Enums\MailSuppressionReason;
+use Stackra\Notifications\Mail\Models\MailSuppression;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

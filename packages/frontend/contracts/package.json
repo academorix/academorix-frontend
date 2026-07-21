@@ -57,8 +57,8 @@
     "test:coverage": "vitest run --coverage --passWithNoTests"
   },
   "devDependencies": {
-    "@academorix/config-tsconfig": "workspace:*",
-    "@academorix/config-tsup": "workspace:*",
+    "@stackra/config-tsconfig": "workspace:*",
+    "@stackra/config-tsup": "workspace:*",
     "@stackra/testing": "workspace:*",
     "@types/node": "catalog:",
     "@types/react": "catalog:",

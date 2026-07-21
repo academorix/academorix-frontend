@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Contracts\Repositories;
+namespace Stackra\Theme\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Theme\Models\Theme}.
+ * Repository contract for {@see Stackra\Theme\Models\Theme}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `ThemeRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Theme\Models\Theme>
+ * @extends RepositoryInterface<\Stackra\Theme\Models\Theme>
  *
  * @category Theme
  *

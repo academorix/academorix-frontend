@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Analytics\Services;
+namespace Stackra\Analytics\Services;
 
-use Academorix\Analytics\Contracts\Services\ExperimentAssignmentReportBuilderInterface;
+use Stackra\Analytics\Contracts\Services\ExperimentAssignmentReportBuilderInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Analytics\Contracts\Repositories\AnalyticsDeliveryRepositoryInterface;
+use Stackra\Analytics\Contracts\Repositories\AnalyticsDeliveryRepositoryInterface;
 
 /**
  * Concrete service — ExperimentAssignmentReportBuilder.

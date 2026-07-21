@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Notifications;
+namespace Stackra\Geography\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -10,7 +10,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 /**
- * Ops notification — fires when {@see \Academorix\Geography\Jobs\RefreshMaxMindDatabaseJob}
+ * Ops notification — fires when {@see \Stackra\Geography\Jobs\RefreshMaxMindDatabaseJob}
  * has exhausted every retry.
  *
  * Routing target is `config('geography.maxmind.notify_email')` in

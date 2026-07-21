@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Exceptions;
+namespace Stackra\Match\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The result payload does not match the sport's scoring strategy (e.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MatchResultUnsupportedShapeException extends AcademorixException
+final class MatchResultUnsupportedShapeException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

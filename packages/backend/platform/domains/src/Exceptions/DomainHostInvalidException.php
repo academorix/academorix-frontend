@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Exceptions;
+namespace Stackra\Domains\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Raised when a host does not match the RFC 1035 label syntax.

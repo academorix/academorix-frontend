@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Contracts\Repositories;
+namespace Stackra\Attribution\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Attribution\Models\AttributionTouchpoint}.
+ * Repository contract for {@see Stackra\Attribution\Models\AttributionTouchpoint}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `AttributionTouchpointRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Attribution\Models\AttributionTouchpoint>
+ * @extends RepositoryInterface<\Stackra\Attribution\Models\AttributionTouchpoint>
  *
  * @category Attribution
  *

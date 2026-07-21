@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Database\Factories;
+namespace Stackra\Application\Database\Factories;
 
-use Academorix\Application\Contracts\Data\BusinessTypeInterface;
-use Academorix\Application\Enums\BusinessTypeEnum;
-use Academorix\Application\Models\BusinessType;
+use Stackra\Application\Contracts\Data\BusinessTypeInterface;
+use Stackra\Application\Enums\BusinessTypeEnum;
+use Stackra\Application\Models\BusinessType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

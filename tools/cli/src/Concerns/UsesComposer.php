@@ -2,23 +2,23 @@
 
 /**
  * @file UsesComposer.php
- * @module Academorix\Cli\Concerns
+ * @module Stackra\Cli\Concerns
  * @description Wraps composer subcommands via
- *   {@see \Academorix\Cli\Support\ProcessRunner}. Every method takes a
+ *   {@see \Stackra\Cli\Support\ProcessRunner}. Every method takes a
  *   `cwd` so callers can install into a template destination or an
  *   existing package without changing global state.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Concerns;
+namespace Stackra\Cli\Concerns;
 
-use Academorix\Cli\Support\ProcessRunner;
+use Stackra\Cli\Support\ProcessRunner;
 
 /**
- * Composed by every command through {@see \Academorix\Cli\Commands\AbstractCommand}.
+ * Composed by every command through {@see \Stackra\Cli\Commands\AbstractCommand}.
  *
- * @property \Academorix\Cli\Container $container populated by {@see \Academorix\Cli\Commands\AbstractCommand}
+ * @property \Stackra\Cli\Container $container populated by {@see \Stackra\Cli\Commands\AbstractCommand}
  */
 trait UsesComposer
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Exceptions;
+namespace Stackra\Audit\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the tamper-evident chain verifier detects a mismatch
@@ -14,14 +14,14 @@ use Academorix\Exceptions\AcademorixException;
  * ONLY by code paths that need a synchronous refusal (e.g., a
  * platform-admin surface that must not present potentially-tampered
  * data as if it were canonical). The async signal is
- * {@see \Academorix\Audit\Events\AuditChainBroken}, dispatched by the
+ * {@see \Stackra\Audit\Events\AuditChainBroken}, dispatched by the
  * verifier regardless of the code path.
  *
  * @category Audit
  *
  * @since    0.1.0
  */
-final class AuditChainBrokenException extends AcademorixException
+final class AuditChainBrokenException extends StackraException
 {
     public const CODE = 'audit.chain_broken';
 

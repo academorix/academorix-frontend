@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Exceptions;
+namespace Stackra\Attribution\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The target of a merge must be an identified profile — merging into an anonymous target is refused (would defeat the purpose).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AttributionMergeIntoAnonymousException extends AcademorixException
+final class AttributionMergeIntoAnonymousException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

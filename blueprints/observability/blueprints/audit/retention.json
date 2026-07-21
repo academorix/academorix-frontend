@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/audit/retention",
+  "id": "stackra://modules/audit/retention",
   "$version": 1,
   "title": "audit — retention windows",
   "description": "7 years default; 10 years max with audit_retention_extended entitlement. TenantErased MIGRATES to a compliance archive (never cascade-deletes — regulators may need proof of erasure years later). Exports themselves cold-archive after 90 days. Purge cadence: nightly per-tenant, honoring the active AuditRetentionPolicy.",

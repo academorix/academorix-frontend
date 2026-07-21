@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Repositories;
+namespace Stackra\Approvals\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Approvals\Contracts\Data\ApprovalRequirementInterface;
-use Academorix\Approvals\Contracts\Repositories\ApprovalRequirementRepositoryInterface;
-use Academorix\Approvals\Models\ApprovalRequirement;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Approvals\Contracts\Data\ApprovalRequirementInterface;
+use Stackra\Approvals\Contracts\Repositories\ApprovalRequirementRepositoryInterface;
+use Stackra\Approvals\Models\ApprovalRequirement;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Approvals\Models\ApprovalRequirement}.
+ * Attribute-first Eloquent repository for {@see Stackra\Approvals\Models\ApprovalRequirement}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ApprovalRequirementInterface::class)]` which resolves to
  * `ApprovalRequirement` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Approvals\Models\ApprovalRequirement>
+ * @extends Repository<\Stackra\Approvals\Models\ApprovalRequirement>
  *
  * @category Approvals
  *

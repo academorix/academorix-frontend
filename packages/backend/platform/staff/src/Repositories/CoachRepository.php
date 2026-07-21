@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Staff\Repositories;
+namespace Stackra\Staff\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Staff\Contracts\Data\CoachInterface;
-use Academorix\Staff\Contracts\Repositories\CoachRepositoryInterface;
-use Academorix\Staff\Models\Coach;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Staff\Contracts\Data\CoachInterface;
+use Stackra\Staff\Contracts\Repositories\CoachRepositoryInterface;
+use Stackra\Staff\Models\Coach;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Staff\Models\Coach}.
+ * Attribute-first Eloquent repository for {@see Stackra\Staff\Models\Coach}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(CoachInterface::class)]` which resolves to
  * `Coach` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Staff\Models\Coach>
+ * @extends Repository<\Stackra\Staff\Models\Coach>
  *
  * @category Staff
  *

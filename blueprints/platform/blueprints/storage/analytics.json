@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/storage/analytics",
+  "id": "stackra://modules/storage/analytics",
   "$version": 1,
   "title": "storage \u2014 product analytics",
   "description": "Product-analytics events (distinct from operational metrics). Fired to the analytics sink when a user takes a meaningful action worth understanding at the product level. Every event carries tenant_id + user_id; PII stripped per data-classes.json.",

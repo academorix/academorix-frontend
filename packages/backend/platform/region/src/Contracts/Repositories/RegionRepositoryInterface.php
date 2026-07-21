@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Region\Contracts\Repositories;
+namespace Stackra\Region\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Region\Models\Region}.
+ * Repository contract for {@see Stackra\Region\Models\Region}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `RegionRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Region\Models\Region>
+ * @extends RepositoryInterface<\Stackra\Region\Models\Region>
  *
  * @category Region
  *

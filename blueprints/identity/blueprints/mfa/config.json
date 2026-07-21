@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/mfa/config",
+  "id": "stackra://modules/mfa/config",
   "$version": 1,
   "title": "mfa — developer configuration",
   "configFile": "config/mfa.php",
@@ -31,8 +31,8 @@
           "path": "mfa.totp.issuer",
           "type": "string",
           "env": "MFA_TOTP_ISSUER",
-          "default": "Academorix",
-          "description": "The issuer string that appears in the authenticator app's account list (e.g. 'Academorix (alice@example.com)'). Change per-tenant via a settings override to render the tenant's brand name."
+          "default": "Stackra",
+          "description": "The issuer string that appears in the authenticator app's account list (e.g. 'Stackra (alice@example.com)'). Change per-tenant via a settings override to render the tenant's brand name."
         },
         {
           "path": "mfa.totp.digits",
@@ -122,7 +122,7 @@
           "path": "mfa.webauthn.rp_name",
           "type": "string",
           "env": "MFA_WEBAUTHN_RP_NAME",
-          "default": "Academorix",
+          "default": "Stackra",
           "description": "Human-readable relying-party name shown in the browser's authenticator UI. Tenant admins can override via settings to display their brand."
         },
         {

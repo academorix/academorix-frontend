@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Identity\Concerns;
+namespace Stackra\Identity\Concerns;
 
-use Academorix\Identity\Contracts\Data\IdentityInterface;
+use Stackra\Identity\Contracts\Data\IdentityInterface;
 
 /**
- * Credential-lifecycle helpers for {@see \Academorix\Identity\Models\Identity}.
+ * Credential-lifecycle helpers for {@see \Stackra\Identity\Models\Identity}.
  *
  * Encapsulates the failed-attempts counter + lockout window
  * transitions so consumers (login action, AccountLockoutPolicy)

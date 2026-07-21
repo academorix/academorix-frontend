@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Events;
+namespace Stackra\Approvals\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -17,7 +17,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - notifications::NotifyTemplateAuthorOfFailure (opt-in — the author of the template gets an email)
  * - activity::WriteToActivityLog
  * - audit::WriteAuditRecord (P1)
- * - observability::MetricsCollector (feeds academorix.approvals.selector.evaluation_failures counter)
+ * - observability::MetricsCollector (feeds stackra.approvals.selector.evaluation_failures counter)
  *
  * @category Approvals
  *

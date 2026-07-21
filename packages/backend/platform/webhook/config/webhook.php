@@ -4,7 +4,7 @@
  * @file modules/platform/webhook/config/webhook.php
  *
  * @description
- * Runtime knobs for the `academorix/webhook` module. Every knob is
+ * Runtime knobs for the `stackra/webhook` module. Every knob is
  * env-overridable so per-environment tuning stays out of code.
  */
 
@@ -101,7 +101,7 @@ return [
     'http' => [
         'timeout_seconds'          => env('WEBHOOK_HTTP_TIMEOUT', 30),
         'connect_timeout_seconds'  => env('WEBHOOK_HTTP_CONNECT_TIMEOUT', 5),
-        'user_agent'               => env('WEBHOOK_HTTP_USER_AGENT', 'Academorix-Webhook/1.0'),
+        'user_agent'               => env('WEBHOOK_HTTP_USER_AGENT', 'Stackra-Webhook/1.0'),
         'max_response_body_bytes'  => env('WEBHOOK_MAX_RESPONSE_BODY_BYTES', 65536),
     ],
 

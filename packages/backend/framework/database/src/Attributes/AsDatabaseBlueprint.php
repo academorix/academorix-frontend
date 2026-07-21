@@ -11,7 +11,7 @@ declare(strict_types=1);
  * `composer dump-autoload` time by
  * {@see olvlvl/composer-attribute-collector} and its
  * `register()` static method is invoked once during the
- * {@see \Academorix\Database\Providers\DatabaseServiceProvider}
+ * {@see \Stackra\Database\Providers\DatabaseServiceProvider}
  * boot phase.
  *
  * ## Convention
@@ -49,14 +49,14 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Database\Attributes;
+namespace Stackra\Database\Attributes;
 
 use Attribute;
 
 /**
  * Marker attribute for schema Blueprint macro registrars.
  *
- * @see \Academorix\Database\Providers\DatabaseServiceProvider
+ * @see \Stackra\Database\Providers\DatabaseServiceProvider
  *   Consumer of this attribute — invokes `register()` on each
  *   discovered target during boot.
  */
@@ -65,7 +65,7 @@ final readonly class AsDatabaseBlueprint
 {
     /**
      * @param  string       $description  Human-readable description used by developer tooling
-     *                                    (`artisan academorix:blueprints`) — not required at runtime.
+     *                                    (`artisan stackra:blueprints`) — not required at runtime.
      * @param  int          $priority     Ordering hint for the boot-time registration loop.
      *                                    Lower runs first. Defaults to 100.
      */

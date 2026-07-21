@@ -5,10 +5,10 @@
  *
  * @description
  * Immutable value object that captures the aggregated broadcasting
- * attributes ({@see \Academorix\Events\Attributes\Broadcastable},
- * {@see \Academorix\Events\Attributes\BroadcastOn},
- * {@see \Academorix\Events\Attributes\BroadcastAs},
- * {@see \Academorix\Events\Attributes\BroadcastQueue}) discovered on
+ * attributes ({@see \Stackra\Events\Attributes\Broadcastable},
+ * {@see \Stackra\Events\Attributes\BroadcastOn},
+ * {@see \Stackra\Events\Attributes\BroadcastAs},
+ * {@see \Stackra\Events\Attributes\BroadcastQueue}) discovered on
  * a single event class.
  *
  * Produced by {@see EventDiscovery} and consumed by
@@ -20,7 +20,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Events\Support;
+namespace Stackra\Events\Support;
 
 final class BroadcastMetadata
 {

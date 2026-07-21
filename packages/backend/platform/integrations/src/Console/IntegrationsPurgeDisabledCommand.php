@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Console;
+namespace Stackra\Integrations\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Integrations\Contracts\Data\TenantIntegrationInterface;
-use Academorix\Integrations\Jobs\PurgeDisabledIntegrationJob;
-use Academorix\Integrations\Models\TenantIntegration;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Integrations\Contracts\Data\TenantIntegrationInterface;
+use Stackra\Integrations\Jobs\PurgeDisabledIntegrationJob;
+use Stackra\Integrations\Models\TenantIntegration;
 
 /**
  * `php artisan integrations:purge-disabled` — dispatch

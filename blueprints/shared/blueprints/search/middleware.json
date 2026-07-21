@@ -1,22 +1,22 @@
 {
-  "id": "academorix://modules/search/middleware",
+  "id": "stackra://modules/search/middleware",
   "$version": 1,
   "title": "search \u2014 HTTP middleware",
   "description": "Three owned middleware. `search.rate-limit` enforces the per-tenant + per-user query rate cap from entitlements. `search.query-log` fires RecordSearchAnalyticsEventJob asynchronously so query latency stays flat. `search.owned-sync-job` gates job cancellation to the initiator or a platform admin.",
   "middleware": [
     {
       "alias": "search.rate-limit",
-      "class": "Academorix\\Search\\Http\\Middleware\\SearchRateLimit",
+      "class": "Stackra\\Search\\Http\\Middleware\\SearchRateLimit",
       "role": "Per-user + per-tenant query rate limit driven by the `search.max_query_rate_per_minute` entitlement. Applies on top of foundation's generic throttle. Refuses with 429 + SEARCH_RATE_LIMIT_EXCEEDED when either bucket exhausts. Bypasses for platform admins."
     },
     {
       "alias": "search.query-log",
-      "class": "Academorix\\Search\\Http\\Middleware\\LogQuery",
+      "class": "Stackra\\Search\\Http\\Middleware\\LogQuery",
       "role": "After the response is generated, dispatches RecordSearchAnalyticsEventJob with the query + result_count + took_ms + engine. Non-blocking \u2014 uses `terminate()` so the client already has the response. Skipped when `search.analytics.record` kill switch is off."
     },
     {
       "alias": "search.owned-sync-job",
-      "class": "Academorix\\Search\\Http\\Middleware\\ResolveOwnedSyncJob",
+      "class": "Stackra\\Search\\Http\\Middleware\\ResolveOwnedSyncJob",
       "role": "Resolves the `{jobId}` route parameter to a SearchSyncJob record. Refuses (404 with SEARCH_JOB_NOT_FOUND) when the caller is not the initiator AND does not hold `platform.search.sync-jobs.viewAny`. Runs after tenant.resolve so tenant scoping applies."
     }
   ],

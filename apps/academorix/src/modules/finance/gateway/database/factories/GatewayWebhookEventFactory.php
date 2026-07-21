@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Gateway\Database\Factories;
+namespace Stackra\Gateway\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Gateway\Contracts\Data\GatewayWebhookEventInterface;
-use Academorix\Gateway\Models\GatewayWebhookEvent;
+use Stackra\Gateway\Contracts\Data\GatewayWebhookEventInterface;
+use Stackra\Gateway\Models\GatewayWebhookEvent;
 
 /**
- * Factory for {@see \Academorix\Gateway\Models\GatewayWebhookEvent}.
+ * Factory for {@see \Stackra\Gateway\Models\GatewayWebhookEvent}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Gateway\Models\GatewayWebhookEvent>
+ * @extends Factory<\Stackra\Gateway\Models\GatewayWebhookEvent>
  *
  * @category Gateway
  *

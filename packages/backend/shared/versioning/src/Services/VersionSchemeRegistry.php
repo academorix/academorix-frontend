@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Services;
+namespace Stackra\Versioning\Services;
 
-use Academorix\Versioning\Contracts\Services\VersionSchemeInterface;
-use Academorix\Versioning\Contracts\Services\VersionSchemeRegistryInterface;
-use Academorix\Versioning\Exceptions\UnknownVersionSchemeException;
+use Stackra\Versioning\Contracts\Services\VersionSchemeInterface;
+use Stackra\Versioning\Contracts\Services\VersionSchemeRegistryInterface;
+use Stackra\Versioning\Exceptions\UnknownVersionSchemeException;
 use Illuminate\Container\Attributes\Singleton;
 
 /**
  * In-memory {@see VersionSchemeRegistryInterface}.
  *
  * Populated at boot by
- * {@see \Academorix\Versioning\Bootstrappers\VersionSchemeDiscoveryBootstrapper}
+ * {@see \Stackra\Versioning\Bootstrappers\VersionSchemeDiscoveryBootstrapper}
  * with the two shipped schemes. Consumer apps register additional
  * schemes via a `#[Bind]` on their own concrete + a call to
  * `register()` inside a bootstrapper.

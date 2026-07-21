@@ -12,10 +12,10 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Crud\Concerns\Repository;
+namespace Stackra\Crud\Concerns\Repository;
 
 use Illuminate\Support\Collection;
-use Academorix\Crud\Contracts\CriteriaInterface;
+use Stackra\Crud\Contracts\CriteriaInterface;
 
 /**
  * HasCriteria Trait.

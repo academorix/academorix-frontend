@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/search/schemas/search-saved-query",
+  "id": "stackra://modules/search/schemas/search-saved-query",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "SearchSavedQuery",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "sq_",
     "incrementing": false,
-    "model": "Academorix\\Search\\Models\\SearchSavedQuery",
-    "interface": "Academorix\\Search\\Contracts\\Data\\SearchSavedQueryInterface",
-    "implements": ["Academorix\\Search\\Contracts\\Data\\SearchSavedQueryInterface"],
+    "model": "Stackra\\Search\\Models\\SearchSavedQuery",
+    "interface": "Stackra\\Search\\Contracts\\Data\\SearchSavedQueryInterface",
+    "implements": ["Stackra\\Search\\Contracts\\Data\\SearchSavedQueryInterface"],
     "traits": ["HasUlids", "BelongsToTenant", "HasMetadata", "HasActivityLog", "SoftDeletes"],
     "casts": {
       "across": "array",

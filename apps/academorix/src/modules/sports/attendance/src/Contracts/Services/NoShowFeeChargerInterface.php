@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attendance\Contracts\Services;
+namespace Stackra\Attendance\Contracts\Services;
 
-use Academorix\Attendance\Services\NoShowFeeCharger;
+use Stackra\Attendance\Services\NoShowFeeCharger;
 use Illuminate\Container\Attributes\Bind;
 
 /**

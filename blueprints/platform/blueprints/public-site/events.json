@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/public-site/events",
+  "id": "stackra://modules/public-site/events",
   "$version": 1,
   "title": "public-site — published events",
-  "namespace": "Academorix\\Platform\\PublicSite\\Events",
+  "namespace": "Stackra\\Platform\\PublicSite\\Events",
   "dispatchMode": "afterCommit",
   "description": "Public tenant marketing site (custom subdomain). Blocks + pages + navigation. Read-heavy; every publish triggers CDN cache invalidation.",
   "events": [

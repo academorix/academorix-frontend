@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geofencing/entitlements",
+  "id": "stackra://modules/geofencing/entitlements",
   "$version": 1,
   "title": "geofencing \u2014 declared entitlements",
   "description": "One boolean feature capability + one pool for evaluations. Ref module declares just the feature capability; we add a pool for scaled workloads.",

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Telemetry\Exceptions;
+namespace Stackra\Telemetry\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * BatchSpanProcessor internal buffer full — dropping spans.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TelemetryOtelQueueFullException extends AcademorixException
+final class TelemetryOtelQueueFullException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

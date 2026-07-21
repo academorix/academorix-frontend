@@ -6,7 +6,7 @@
  * @description
  * PHPStan rule: forbid Laravel facade calls inside classes in
  * the Service / Action layer. Scope-aware sibling of the
- * regex-based {@see \Academorix\Architecture\Rules\NoFacadesInServicesRule}.
+ * regex-based {@see \Stackra\Architecture\Rules\NoFacadesInServicesRule}.
  *
  * ## Why a PHPStan version
  *
@@ -53,7 +53,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\PhpStan;
+namespace Stackra\Architecture\PhpStan;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\StaticCall;

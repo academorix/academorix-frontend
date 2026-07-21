@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Expenses\Repositories;
+namespace Stackra\Expenses\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Expenses\Contracts\Data\BudgetInterface;
-use Academorix\Expenses\Contracts\Repositories\BudgetRepositoryInterface;
-use Academorix\Expenses\Models\Budget;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Expenses\Contracts\Data\BudgetInterface;
+use Stackra\Expenses\Contracts\Repositories\BudgetRepositoryInterface;
+use Stackra\Expenses\Models\Budget;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Expenses\Models\Budget}.
+ * Attribute-first Eloquent repository for {@see Stackra\Expenses\Models\Budget}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(BudgetInterface::class)]` which resolves to
  * `Budget` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Expenses\Models\Budget>
+ * @extends Repository<\Stackra\Expenses\Models\Budget>
  *
  * @category Expenses
  *

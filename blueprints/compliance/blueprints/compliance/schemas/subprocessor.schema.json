@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/compliance/schemas/subprocessor",
+  "id": "stackra://modules/compliance/schemas/subprocessor",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Subprocessor",
@@ -12,9 +12,9 @@
     "keyType": "string",
     "keyPrefix": "spr_",
     "incrementing": false,
-    "model": "Academorix\\Compliance\\Models\\Subprocessor",
-    "interface": "Academorix\\Compliance\\Contracts\\Data\\SubprocessorInterface",
-    "implements": ["Academorix\\Compliance\\Contracts\\Data\\SubprocessorInterface"],
+    "model": "Stackra\\Compliance\\Models\\Subprocessor",
+    "interface": "Stackra\\Compliance\\Contracts\\Data\\SubprocessorInterface",
+    "implements": ["Stackra\\Compliance\\Contracts\\Data\\SubprocessorInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -64,7 +64,7 @@
       "purpose": {
         "type": "text",
         "nullable": false,
-        "description": "One-paragraph description of what this subprocessor does for Academorix."
+        "description": "One-paragraph description of what this subprocessor does for Stackra."
       },
       "description": {
         "type": "text",
@@ -135,7 +135,7 @@
       "first_engaged_at": {
         "type": "timestamptz",
         "nullable": false,
-        "description": "When Academorix first started sending data to this vendor. Fixed per key \u2014 does not update on version bump."
+        "description": "When Stackra first started sending data to this vendor. Fixed per key \u2014 does not update on version bump."
       },
       "last_updated_by": {
         "type": "string",

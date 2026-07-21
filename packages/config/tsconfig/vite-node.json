@@ -1,5 +1,5 @@
 {
-  "display": "@academorix/config-tsconfig — vite node (build tooling)",
+  "display": "@stackra/config-tsconfig — vite node (build tooling)",
   "extends": "./base.json",
   "compilerOptions": {
     "lib": ["ES2022"],

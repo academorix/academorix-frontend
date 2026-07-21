@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Rules;
+namespace Stackra\Storage\Rules;
 
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Models\File;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Models\File;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 

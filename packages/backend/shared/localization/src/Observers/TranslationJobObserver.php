@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Observers;
+namespace Stackra\Localization\Observers;
 
-use Academorix\Localization\Contracts\Data\TranslationJobInterface;
-use Academorix\Localization\Enums\TranslationJobStatus;
-use Academorix\Localization\Events\TranslationJobCompleted;
-use Academorix\Localization\Events\TranslationJobStarted;
-use Academorix\Localization\Models\TranslationJob;
+use Stackra\Localization\Contracts\Data\TranslationJobInterface;
+use Stackra\Localization\Enums\TranslationJobStatus;
+use Stackra\Localization\Events\TranslationJobCompleted;
+use Stackra\Localization\Events\TranslationJobStarted;
+use Stackra\Localization\Models\TranslationJob;
 
 /**
  * Lifecycle side effects for {@see TranslationJob}.

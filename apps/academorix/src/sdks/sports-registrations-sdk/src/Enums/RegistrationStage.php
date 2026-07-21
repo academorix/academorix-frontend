@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsRegistrationsSdk\Enums;
+namespace Stackra\SportsRegistrationsSdk\Enums;
 
 /**
  * Wire-visible backed enum for `registration.stage`.

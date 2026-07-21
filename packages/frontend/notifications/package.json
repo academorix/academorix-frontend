@@ -132,8 +132,8 @@
     }
   },
   "devDependencies": {
-    "@academorix/config-tsconfig": "workspace:*",
-    "@academorix/config-tsup": "workspace:*",
+    "@stackra/config-tsconfig": "workspace:*",
+    "@stackra/config-tsup": "workspace:*",
     "@heroicons/react": "catalog:",
     "@stackra/analytics": "workspace:*",
     "@stackra/container": "workspace:*",

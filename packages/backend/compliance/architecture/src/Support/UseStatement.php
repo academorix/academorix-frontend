@@ -25,7 +25,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Support;
+namespace Stackra\Architecture\Support;
 
 /**
  * Immutable value object — one per `use` line in the parsed file.

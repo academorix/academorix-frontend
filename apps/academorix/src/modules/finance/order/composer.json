@@ -1,10 +1,10 @@
 {
-  "name": "academorix/order",
+  "name": "stackra/order",
   "type": "library",
-  "description": "Academorix Order module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/order/`. Complements the wire SDK at `academorix-finance/order-sdk`.",
+  "description": "Stackra Order module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/order/`. Complements the wire SDK at `stackra-finance/order-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "finance",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-finance/order-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-finance/order-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Order\\": "src/"
+      "Stackra\\Order\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Order\\Tests\\": "tests/"
+      "Stackra\\Order\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Order\\Providers\\OrderServiceProvider"
+        "Stackra\\Order\\Providers\\OrderServiceProvider"
       ],
       "aliases": {}
     }

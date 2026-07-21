@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/attributes/events",
+  "id": "stackra://modules/attributes/events",
   "$version": 1,
   "title": "attributes — published events",
-  "namespace": "Academorix\\Attributes\\Events",
+  "namespace": "Stackra\\Attributes\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit`. AttributeSetVersioned is the load-bearing cache-invalidation signal — every host resolver caches the active set per (entity_type, discriminator_value), and this event triggers cache purge. AttributeValuesRejected is the negative signal from HasSchemalessAttributes save — host writes refused when values fail validation against the active set.",
   "events": [
     {
       "name": "AttributeDefinitionCreated",
-      "class": "Academorix\\Attributes\\Events\\AttributeDefinitionCreated",
+      "class": "Stackra\\Attributes\\Events\\AttributeDefinitionCreated",
       "trigger": "New AttributeDefinition committed via CreateAttributeDefinitionAction.",
       "queue": "attributes",
       "consumers": [
@@ -27,7 +27,7 @@
     },
     {
       "name": "AttributeDefinitionUpdated",
-      "class": "Academorix\\Attributes\\Events\\AttributeDefinitionUpdated",
+      "class": "Stackra\\Attributes\\Events\\AttributeDefinitionUpdated",
       "trigger": "AttributeDefinition mutated. Labels / description / widget_config changes fire this without a version bump. Type or validation changes MUST fire AttributeSetVersioned on every set referencing this definition.",
       "queue": "attributes",
       "consumers": [
@@ -45,7 +45,7 @@
     },
     {
       "name": "AttributeDefinitionDeprecated",
-      "class": "Academorix\\Attributes\\Events\\AttributeDefinitionDeprecated",
+      "class": "Stackra\\Attributes\\Events\\AttributeDefinitionDeprecated",
       "trigger": "AttributeDefinition.is_deprecated flipped true. Preserved for historic render; blocked from new sets.",
       "queue": "attributes",
       "consumers": [
@@ -62,7 +62,7 @@
     },
     {
       "name": "AttributeSetCreated",
-      "class": "Academorix\\Attributes\\Events\\AttributeSetCreated",
+      "class": "Stackra\\Attributes\\Events\\AttributeSetCreated",
       "trigger": "New AttributeSet committed (draft state — activate to publish).",
       "queue": "attributes",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -79,7 +79,7 @@
     },
     {
       "name": "AttributeSetVersioned",
-      "class": "Academorix\\Attributes\\Events\\AttributeSetVersioned",
+      "class": "Stackra\\Attributes\\Events\\AttributeSetVersioned",
       "trigger": "P1 event. AttributeSet.version_number bumped due to a breaking change. Old version marked superseded but preserved for historic render. Load-bearing signal — every host resolver cache MUST invalidate on this event.",
       "queue": "attributes",
       "consumers": [
@@ -102,7 +102,7 @@
     },
     {
       "name": "AttributeSetActivated",
-      "class": "Academorix\\Attributes\\Events\\AttributeSetActivated",
+      "class": "Stackra\\Attributes\\Events\\AttributeSetActivated",
       "trigger": "AttributeSet.is_active flipped false → true. Refused when it would collide with another active set at the same (entity_type, discriminator_value).",
       "queue": "attributes",
       "consumers": [
@@ -121,7 +121,7 @@
     },
     {
       "name": "AttributeSetDeactivated",
-      "class": "Academorix\\Attributes\\Events\\AttributeSetDeactivated",
+      "class": "Stackra\\Attributes\\Events\\AttributeSetDeactivated",
       "trigger": "AttributeSet.is_active flipped true → false. Fallback to next-lower version if any.",
       "queue": "attributes",
       "consumers": [
@@ -138,7 +138,7 @@
     },
     {
       "name": "AttributeGroupCreated",
-      "class": "Academorix\\Attributes\\Events\\AttributeGroupCreated",
+      "class": "Stackra\\Attributes\\Events\\AttributeGroupCreated",
       "trigger": "New AttributeGroup committed inside an AttributeSet.",
       "queue": "attributes",
       "consumers": ["audit::WriteToAuditLog"],
@@ -152,7 +152,7 @@
     },
     {
       "name": "AttributeGroupReordered",
-      "class": "Academorix\\Attributes\\Events\\AttributeGroupReordered",
+      "class": "Stackra\\Attributes\\Events\\AttributeGroupReordered",
       "trigger": "sort_order changed on one or more AttributeGroups within a set.",
       "queue": "attributes",
       "consumers": ["audit::WriteToAuditLog", "cache::InvalidateHostResolverCache"],
@@ -164,7 +164,7 @@
     },
     {
       "name": "AttributeValuesValidated",
-      "class": "Academorix\\Attributes\\Events\\AttributeValuesValidated",
+      "class": "Stackra\\Attributes\\Events\\AttributeValuesValidated",
       "trigger": "HasSchemalessAttributes trait fired the validator on host save and passed. Fires alongside the host's own persistence event.",
       "queue": "attributes",
       "consumers": ["audit::WriteToAuditLog (verbose channel)"],
@@ -177,7 +177,7 @@
     },
     {
       "name": "AttributeValuesRejected",
-      "class": "Academorix\\Attributes\\Events\\AttributeValuesRejected",
+      "class": "Stackra\\Attributes\\Events\\AttributeValuesRejected",
       "trigger": "P1 event. HasSchemalessAttributes trait fired the validator on host save and FAILED. Host save refused — this is the negative signal for monitoring + alerting on schema-mismatch bugs.",
       "queue": "notifications-critical",
       "consumers": [

@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/routing",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/routing",
   "tier": "framework",
   "surfaces": ["core"],
   "kind": "framework-plumbing",
@@ -14,12 +14,12 @@
     "BaseController with Response / Request / Auth / Pagination helpers",
     "OpenAPI-ready attribute metadata"
   ],
-  "when_to_use": "Every controller in an Academorix app — attribute-driven routing replaces routes/api.php entirely.",
+  "when_to_use": "Every controller in an Stackra app — attribute-driven routing replaces routes/api.php entirely.",
   "when_not_to_use": "For low-level HTTP verb registration outside a controller class, use Laravel's Route facade directly.",
   "peer_deps": [
-    "academorix/exceptions",
-    "academorix/foundation",
-    "academorix/service-provider",
+    "stackra/exceptions",
+    "stackra/foundation",
+    "stackra/service-provider",
     "spatie/laravel-route-attributes",
     "zircote/swagger-php"
   ],

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Events;
+namespace Stackra\Transfer\Events;
 
-use Academorix\Events\Attributes\AsEvent;
-use Academorix\Transfer\Models\XferJob;
+use Stackra\Events\Attributes\AsEvent;
+use Stackra\Transfer\Models\XferJob;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Expenses\Repositories;
+namespace Stackra\Expenses\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Expenses\Contracts\Data\PayrollRunInterface;
-use Academorix\Expenses\Contracts\Repositories\PayrollRunRepositoryInterface;
-use Academorix\Expenses\Models\PayrollRun;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Expenses\Contracts\Data\PayrollRunInterface;
+use Stackra\Expenses\Contracts\Repositories\PayrollRunRepositoryInterface;
+use Stackra\Expenses\Models\PayrollRun;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Expenses\Models\PayrollRun}.
+ * Attribute-first Eloquent repository for {@see Stackra\Expenses\Models\PayrollRun}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(PayrollRunInterface::class)]` which resolves to
  * `PayrollRun` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Expenses\Models\PayrollRun>
+ * @extends Repository<\Stackra\Expenses\Models\PayrollRun>
  *
  * @category Expenses
  *

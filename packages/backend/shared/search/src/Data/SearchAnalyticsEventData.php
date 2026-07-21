@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Data;
+namespace Stackra\Search\Data;
 
-use Academorix\Search\Contracts\Data\SearchAnalyticsEventInterface;
-use Academorix\Search\Models\SearchAnalyticsEvent;
+use Stackra\Search\Contracts\Data\SearchAnalyticsEventInterface;
+use Stackra\Search\Models\SearchAnalyticsEvent;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

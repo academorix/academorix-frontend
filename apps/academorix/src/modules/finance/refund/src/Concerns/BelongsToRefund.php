@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Refund\Concerns;
+namespace Stackra\Refund\Concerns;
 
 /**
  * Trait — BelongsToRefund.

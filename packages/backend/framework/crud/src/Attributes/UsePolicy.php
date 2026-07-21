@@ -7,7 +7,7 @@ declare(strict_types=1);
  *
  * @description
  * `#[UsePolicy]` — declares the model class a
- * {@see \Academorix\Crud\Controllers\CrudController} should authorize
+ * {@see \Stackra\Crud\Controllers\CrudController} should authorize
  * against via Laravel's `authorize()` helper, replacing the legacy
  * `abstract policyModel(): ?string` method with a declarative
  * attribute.
@@ -18,7 +18,7 @@ declare(strict_types=1);
  *
  *   #[UsePolicy(User::class)]
  *
- * every action in the base {@see \Academorix\Crud\Controllers\CrudController}
+ * every action in the base {@see \Stackra\Crud\Controllers\CrudController}
  * calls `$this->authorize($ability, $model ?? User::class)`. The
  * corresponding policy class (typically `UserPolicy`) is resolved
  * by Laravel's Gate as usual — this attribute only supplies the
@@ -31,7 +31,7 @@ declare(strict_types=1);
  *   1. **Omit the attribute entirely** — a controller without
  *      `#[UsePolicy]` still receives route-level authorization from
  *      middleware / `#[RequirePermission]` (see
- *      {@see \Academorix\Crud\Controllers\CrudController}'s "Two-layer
+ *      {@see \Stackra\Crud\Controllers\CrudController}'s "Two-layer
  *      authorization" docblock section), but no policy call fires.
  *
  *   2. **Set `enabled: false`** — useful when you want to keep the
@@ -56,7 +56,7 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Crud\Attributes;
+namespace Stackra\Crud\Attributes;
 
 use Attribute;
 use Illuminate\Database\Eloquent\Model;

@@ -18,15 +18,15 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  *
- * @see \Academorix\Settings\Settings\AppVersionSettings
- * @see \Academorix\Settings\Controllers\AppVersionController
+ * @see \Stackra\Settings\Settings\AppVersionSettings
+ * @see \Stackra\Settings\Controllers\AppVersionController
  */
 
-namespace Academorix\Settings\Events;
+namespace Stackra\Settings\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 
 /**
  * App Update Notification Event.

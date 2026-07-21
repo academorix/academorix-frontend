@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Analytics\Services;
+namespace Stackra\Analytics\Services;
 
-use Academorix\Analytics\Contracts\Services\IdentityResolverInterface;
+use Stackra\Analytics\Contracts\Services\IdentityResolverInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Analytics\Contracts\Repositories\AnalyticsDeliveryRepositoryInterface;
+use Stackra\Analytics\Contracts\Repositories\AnalyticsDeliveryRepositoryInterface;
 
 /**
  * Concrete service — IdentityResolver.

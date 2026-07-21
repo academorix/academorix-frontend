@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/newsletter/jobs",
+  "id": "stackra://modules/newsletter/jobs",
   "$version": 1,
   "title": "newsletter \u2014 background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Newsletter\\Jobs\\SendNewsletterCampaignJob",
+      "class": "Stackra\\Newsletter\\Jobs\\SendNewsletterCampaignJob",
       "queue": "notifications",
       "purpose": "Orchestrates a campaign send. Loads the audience, batches subscribers, dispatches per-batch send jobs.",
       "steps": [
@@ -25,7 +25,7 @@
       "notes": "Failure at orchestration level transitions campaign to failed; the batch-level jobs continue independently (per-recipient failure is expected + non-fatal)."
     },
     {
-      "class": "Academorix\\Newsletter\\Jobs\\SendNewsletterIssueBatchJob",
+      "class": "Stackra\\Newsletter\\Jobs\\SendNewsletterIssueBatchJob",
       "queue": "notifications",
       "purpose": "Send an issue to one batch of subscribers via notifications-mail.",
       "steps": [
@@ -45,7 +45,7 @@
       "backoff": [60, 300, 1800]
     },
     {
-      "class": "Academorix\\Newsletter\\Jobs\\BuildAudienceSegmentJob",
+      "class": "Stackra\\Newsletter\\Jobs\\BuildAudienceSegmentJob",
       "queue": "notifications",
       "purpose": "Evaluate audience.expression against NewsletterSubscription + refresh cached_subscriber_ids.",
       "steps": [
@@ -62,7 +62,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Newsletter\\Jobs\\ImportSubscribersJob",
+      "class": "Stackra\\Newsletter\\Jobs\\ImportSubscribersJob",
       "queue": "notifications",
       "purpose": "Import subscribers from a CSV upload. Requires consent evidence column.",
       "steps": [
@@ -80,7 +80,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Newsletter\\Jobs\\ExportSubscribersJob",
+      "class": "Stackra\\Newsletter\\Jobs\\ExportSubscribersJob",
       "queue": "notifications",
       "purpose": "Export subscribers to CSV. Uploaded to storage module + signed URL returned.",
       "shouldQueue": true,
@@ -90,7 +90,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Newsletter\\Jobs\\TrackNewsletterEngagementJob",
+      "class": "Stackra\\Newsletter\\Jobs\\TrackNewsletterEngagementJob",
       "queue": "notifications",
       "purpose": "Recompute engagement_score for a subscription. Called from open/click listeners.",
       "steps": [
@@ -105,7 +105,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Newsletter\\Jobs\\GenerateReputationReportJob",
+      "class": "Stackra\\Newsletter\\Jobs\\GenerateReputationReportJob",
       "queue": "notifications",
       "purpose": "Monthly reputation report per newsletter. Aggregates campaign-level counters into rolling averages + surfaces thresholds proximity. Emailed to newsletter owner.",
       "shouldQueue": true,
@@ -115,7 +115,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Newsletter\\Jobs\\PruneUnengagedSubscribersJob",
+      "class": "Stackra\\Newsletter\\Jobs\\PruneUnengagedSubscribersJob",
       "queue": "notifications",
       "purpose": "Two prunes: pending_confirmation older than confirmation_ttl_hours \u2192 soft delete; active-but-unengaged for > 365d \u2192 flag for admin review (never auto-delete).",
       "shouldQueue": true,
@@ -125,7 +125,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Newsletter\\Jobs\\ConfirmSubscriptionJob",
+      "class": "Stackra\\Newsletter\\Jobs\\ConfirmSubscriptionJob",
       "queue": "notifications",
       "purpose": "Async confirmation processing when caller hits GET /confirm/{token}. Validates token + transitions state.",
       "shouldQueue": true,

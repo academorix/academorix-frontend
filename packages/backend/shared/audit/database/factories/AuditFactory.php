@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Database\Factories;
+namespace Stackra\Audit\Database\Factories;
 
-use Academorix\Audit\Contracts\Data\AuditInterface;
-use Academorix\Audit\Models\Audit;
+use Stackra\Audit\Contracts\Data\AuditInterface;
+use Stackra\Audit\Models\Audit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Models;
+namespace Stackra\Tenancy\Models;
 
-use Academorix\Application\Concerns\BelongsToApplication;
-use Academorix\Application\Enums\BusinessTypeEnum;
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Database\Concerns\HasSystemFlag;
-use Academorix\Retention\Attributes\AsRetentionPolicy;
-use Academorix\Retention\Enums\RetentionAction;
-use Academorix\Tenancy\Contracts\Data\TenantInterface;
-use Academorix\Tenancy\Database\Factories\TenantFactory;
-use Academorix\Tenancy\Enums\TenantStatus;
-use Academorix\Tenancy\Observers\TenantObserver;
-use Academorix\Tenancy\Policies\TenantPolicy;
+use Stackra\Application\Concerns\BelongsToApplication;
+use Stackra\Application\Enums\BusinessTypeEnum;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Database\Concerns\HasSystemFlag;
+use Stackra\Retention\Attributes\AsRetentionPolicy;
+use Stackra\Retention\Enums\RetentionAction;
+use Stackra\Tenancy\Contracts\Data\TenantInterface;
+use Stackra\Tenancy\Database\Factories\TenantFactory;
+use Stackra\Tenancy\Enums\TenantStatus;
+use Stackra\Tenancy\Observers\TenantObserver;
+use Stackra\Tenancy\Policies\TenantPolicy;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -33,14 +33,14 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 /**
  * Eloquent model for a {@see TenantInterface}.
  *
- * Customer of an Academorix Application — one of the eight rows that
+ * Customer of an Stackra Application — one of the eight rows that
  * carry `application_id` directly (per `.kiro/steering/
  * tenancy-columns.md` §2). Sits ABOVE the tenancy boundary itself
  * (no `BelongsToTenant`), because it IS the row every tenant-scoped
  * row FKs to.
  *
  * Composes `HasSystemFlag` — the observer refuses mutations on
- * `is_system = true` rows outside sanctioned scopes (e.g. Academorix's
+ * `is_system = true` rows outside sanctioned scopes (e.g. Stackra's
  * own demo/support tenants).
  */
 #[Table(

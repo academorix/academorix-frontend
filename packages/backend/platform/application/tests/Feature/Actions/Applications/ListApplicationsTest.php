@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Application\Models\Application;
+use Stackra\Application\Models\Application;
 
 it('lists every enabled Application', function (): void {
     Application::factory()->count(3)->create();
@@ -40,10 +40,10 @@ it('excludes soft-deleted Applications from the public list', function (): void 
 });
 
 it('resolves the default row on empty catalogue lookups', function (): void {
-    Application::factory()->academorix()->create();
+    Application::factory()->stackra()->create();
 
     $response = $this->getJson('/api/v1/applications');
 
     $response->assertOk()
-        ->assertJsonFragment(['slug' => 'academorix', 'is_default' => true]);
+        ->assertJsonFragment(['slug' => 'stackra', 'is_default' => true]);
 });

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/age-group/macros",
+  "id": "stackra://modules/age-group/macros",
   "$version": 1,
   "title": "age-group — published macros",
   "description": "No Blueprint schema macros. The age-group module does NOT publish schema-level composition helpers — Team (Wave 2b) adds age_group_id via its own explicit column declaration. No runtime macros either: age groups are not a request-scoped context axis, so there is no `Request::activeAgeGroup()` equivalent. Downstream consumers reach the catalog via the `HasAgeGroupCatalog` trait on Tenant OR the injected `AgeGroupRepository` / `AgeGroupResolver` service.",

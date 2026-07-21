@@ -6,7 +6,7 @@
  * @description
  * `#[RequirePermission]` — declarative route-level permission
  * gate. The
- * {@see \Academorix\Authorization\Middleware\AuthorizeControllerAction}
+ * {@see \Stackra\Authorization\Middleware\AuthorizeControllerAction}
  * middleware inspects the resolved controller class + action
  * method for this attribute and enforces its checks BEFORE the
  * controller body runs.
@@ -35,7 +35,7 @@
  * ## Enum vs string arguments
  *
  * The attribute accepts BOTH backed enums (implementers of
- * {@see \Academorix\Authorization\Contracts\PermissionEnum}) and
+ * {@see \Stackra\Authorization\Contracts\PermissionEnum}) and
  * raw strings. Enum cases are normalised to their `->value` at
  * construction so the middleware sees a uniform `list<string>`.
  *
@@ -54,8 +54,8 @@
  * ## Example
  *
  * ```php
- * use Academorix\Authorization\Attributes\RequirePermission;
- * use Academorix\Users\Enums\UserPermission;
+ * use Stackra\Authorization\Attributes\RequirePermission;
+ * use Stackra\Users\Enums\UserPermission;
  *
  * #[RequirePermission(UserPermission::View)]
  * final class UserController extends CrudController
@@ -71,15 +71,15 @@
  * `GET /users` requires `user.view`. `DELETE /users/{id}` requires
  * `user.view` AND `user.delete` (compound from class + method).
  *
- * @see \Academorix\Authorization\Middleware\AuthorizeControllerAction Enforcement point.
+ * @see \Stackra\Authorization\Middleware\AuthorizeControllerAction Enforcement point.
  * @see RequireAnyPermission                                          OR semantics variant.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Authorization\Attributes;
+namespace Stackra\Authorization\Attributes;
 
-use Academorix\Authorization\Contracts\PermissionEnum;
+use Stackra\Authorization\Contracts\PermissionEnum;
 use Attribute;
 use BackedEnum;
 

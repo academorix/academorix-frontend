@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Exceptions;
+namespace Stackra\Notifications\Push\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a device token fails validation on the provider.
@@ -17,7 +17,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvalidDeviceTokenException extends AcademorixException
+final class InvalidDeviceTokenException extends StackraException
 {
     public const string CODE = 'notifications-push.token_validation_failed';
 

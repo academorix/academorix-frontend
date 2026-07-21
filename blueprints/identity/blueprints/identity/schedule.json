@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/identity/schedule",
+  "id": "stackra://modules/identity/schedule",
   "$version": 1,
   "title": "identity \u2014 scheduled tasks",
   "entries": [
@@ -29,14 +29,14 @@
       "command": "metrics:emit identity.active_lockouts",
       "cron": "* * * * *",
       "timezone": "UTC",
-      "purpose": "Every minute: emit the `academorix.identity.active_lockouts` gauge for dashboarding."
+      "purpose": "Every minute: emit the `stackra.identity.active_lockouts` gauge for dashboarding."
     },
     {
       "name": "identity-unverified-gauge",
       "command": "metrics:emit identity.unverified_identities",
       "cron": "*/5 * * * *",
       "timezone": "UTC",
-      "purpose": "Every 5 minutes: emit the `academorix.identity.unverified_identities` gauge."
+      "purpose": "Every 5 minutes: emit the `stackra.identity.unverified_identities` gauge."
     }
   ]
 }

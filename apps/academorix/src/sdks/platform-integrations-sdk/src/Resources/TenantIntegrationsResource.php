@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformIntegrationsSdk\Resources;
+namespace Stackra\PlatformIntegrationsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\PlatformIntegrationsSdk\Data\TenantIntegrationData;
-use Academorix\PlatformIntegrationsSdk\Requests\TenantIntegrations\CreateTenantIntegrationRequest;
-use Academorix\PlatformIntegrationsSdk\Requests\TenantIntegrations\DeleteTenantIntegrationRequest;
-use Academorix\PlatformIntegrationsSdk\Requests\TenantIntegrations\ListTenantIntegrationsAdminRequest;
-use Academorix\PlatformIntegrationsSdk\Requests\TenantIntegrations\ListTenantIntegrationsRequest;
-use Academorix\PlatformIntegrationsSdk\Requests\TenantIntegrations\ShowTenantIntegrationRequest;
-use Academorix\PlatformIntegrationsSdk\Requests\TenantIntegrations\UpdateTenantIntegrationRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\PlatformIntegrationsSdk\Data\TenantIntegrationData;
+use Stackra\PlatformIntegrationsSdk\Requests\TenantIntegrations\CreateTenantIntegrationRequest;
+use Stackra\PlatformIntegrationsSdk\Requests\TenantIntegrations\DeleteTenantIntegrationRequest;
+use Stackra\PlatformIntegrationsSdk\Requests\TenantIntegrations\ListTenantIntegrationsAdminRequest;
+use Stackra\PlatformIntegrationsSdk\Requests\TenantIntegrations\ListTenantIntegrationsRequest;
+use Stackra\PlatformIntegrationsSdk\Requests\TenantIntegrations\ShowTenantIntegrationRequest;
+use Stackra\PlatformIntegrationsSdk\Requests\TenantIntegrations\UpdateTenantIntegrationRequest;
 use Saloon\Http\Response;
 
 /**
@@ -73,7 +73,7 @@ final readonly class TenantIntegrationsResource
      *
      * @return TenantIntegrationData
      */
-    public function create(\Academorix\PlatformIntegrationsSdk\Payloads\TenantIntegrations\CreateTenantIntegrationPayload $payload, ?string $idempotencyKey = null): TenantIntegrationData
+    public function create(\Stackra\PlatformIntegrationsSdk\Payloads\TenantIntegrations\CreateTenantIntegrationPayload $payload, ?string $idempotencyKey = null): TenantIntegrationData
     {
         return $this->connector->send(new CreateTenantIntegrationRequest($payload, $idempotencyKey))->dto();
     }
@@ -101,7 +101,7 @@ final readonly class TenantIntegrationsResource
      *
      * @return TenantIntegrationData
      */
-    public function update(string $integration, \Academorix\PlatformIntegrationsSdk\Payloads\TenantIntegrations\UpdateTenantIntegrationPayload $payload, ?string $idempotencyKey = null): TenantIntegrationData
+    public function update(string $integration, \Stackra\PlatformIntegrationsSdk\Payloads\TenantIntegrations\UpdateTenantIntegrationPayload $payload, ?string $idempotencyKey = null): TenantIntegrationData
     {
         return $this->connector->send(new UpdateTenantIntegrationRequest($integration, $payload, $idempotencyKey))->dto();
     }

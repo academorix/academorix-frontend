@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Services;
+namespace Stackra\Compliance\Services;
 
-use Academorix\Compliance\Attributes\ConsentRequired;
-use Academorix\Compliance\Contracts\Services\ConsentRegistryInterface;
+use Stackra\Compliance\Attributes\ConsentRequired;
+use Stackra\Compliance\Contracts\Services\ConsentRegistryInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

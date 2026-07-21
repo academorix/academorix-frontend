@@ -28,7 +28,7 @@ export interface IRoutingModuleOptions {
   /**
    * Root domain for subdomain matchers.
    *
-   * @example `'academorix.app'`
+   * @example `'stackra.app'`
    */
   readonly rootDomain?: string;
 

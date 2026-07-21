@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Requests\Exceptions;
+namespace Stackra\Requests\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * The caller is not in the resolved approvers set for any pending requirement on this request.

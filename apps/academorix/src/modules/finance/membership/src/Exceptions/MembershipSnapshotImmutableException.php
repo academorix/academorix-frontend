@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Membership\Exceptions;
+namespace Stackra\Membership\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * price_snapshot_cents / currency / billing_interval / coupon_snapshot / tax_calculation_snapshot are frozen at signing.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MembershipSnapshotImmutableException extends AcademorixException
+final class MembershipSnapshotImmutableException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

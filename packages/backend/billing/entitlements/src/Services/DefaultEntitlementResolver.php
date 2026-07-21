@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Services;
+namespace Stackra\Entitlements\Services;
 
-use Academorix\Entitlements\Contracts\Repositories\EntitlementRepositoryInterface;
-use Academorix\Entitlements\Contracts\Services\EntitlementResolverInterface;
-use Academorix\Entitlements\Models\Entitlement;
+use Stackra\Entitlements\Contracts\Repositories\EntitlementRepositoryInterface;
+use Stackra\Entitlements\Contracts\Services\EntitlementResolverInterface;
+use Stackra\Entitlements\Models\Entitlement;
 use Illuminate\Container\Attributes\Cache;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\Scoped;

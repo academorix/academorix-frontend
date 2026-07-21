@@ -1,12 +1,12 @@
 {
-  "name": "academorix/database",
+  "name": "stackra/database",
   "type": "library",
-  "description": "Data-layer building blocks for every Academorix module: base Model + schema Blueprint macros + data-shaping attributes (Searchable, Translatable, Metadatable, Sluggable, Sortable, Taggable, UserStamped, UuidColumn, Archivable, StatusColumn) + model concern traits (HasArchive, HasSlug, HasSortOrder, HasStatus, HasTags, HasUserStamp, HasUuid, HasMetadata, HasTranslations, HasPrefixedUlid, HasSystemFlag, HasMockableStorage, InteractsWithMedia). Answers 'what the data IS' — pair with academorix/crud for 'how the data is QUERIED' and academorix/caching for tag-based invalidation.",
+  "description": "Data-layer building blocks for every Stackra module: base Model + schema Blueprint macros + data-shaping attributes (Searchable, Translatable, Metadatable, Sluggable, Sortable, Taggable, UserStamped, UuidColumn, Archivable, StatusColumn) + model concern traits (HasArchive, HasSlug, HasSortOrder, HasStatus, HasTags, HasUserStamp, HasUuid, HasMetadata, HasTranslations, HasPrefixedUlid, HasSystemFlag, HasMockableStorage, InteractsWithMedia). Answers 'what the data IS' — pair with stackra/crud for 'how the data is QUERIED' and stackra/caching for tag-based invalidation.",
   "license": "proprietary",
   "require": {
     "php": "^8.3",
-    "academorix/foundation": "@dev",
-    "academorix/service-provider": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/service-provider": "@dev",
     "illuminate/contracts": "^13.0",
     "illuminate/database": "^13.0",
     "illuminate/support": "^13.0",
@@ -27,18 +27,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Database\\": "src/"
+      "Stackra\\Database\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Database\\Tests\\": "tests/"
+      "Stackra\\Database\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Database\\Providers\\DatabaseServiceProvider"
+        "Stackra\\Database\\Providers\\DatabaseServiceProvider"
       ],
       "aliases": {}
     }

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Services;
+namespace Stackra\Search\Services;
 
-use Academorix\Search\Contracts\Services\AnalyticsRecorderInterface;
-use Academorix\Search\Enums\AnalyticsEventKind;
-use Academorix\Search\Jobs\RecordSearchAnalyticsEventJob;
+use Stackra\Search\Contracts\Services\AnalyticsRecorderInterface;
+use Stackra\Search\Enums\AnalyticsEventKind;
+use Stackra\Search\Jobs\RecordSearchAnalyticsEventJob;
 use Illuminate\Container\Attributes\Scoped;
 
 /**

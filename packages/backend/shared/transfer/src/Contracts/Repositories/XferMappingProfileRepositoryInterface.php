@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Contracts\Repositories;
+namespace Stackra\Transfer\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Transfer\Models\XferMappingProfile;
-use Academorix\Transfer\Repositories\EloquentXferMappingProfileRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Transfer\Models\XferMappingProfile;
+use Stackra\Transfer\Repositories\EloquentXferMappingProfileRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

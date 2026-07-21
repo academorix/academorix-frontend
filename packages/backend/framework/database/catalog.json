@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/database",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/database",
   "tier": "framework",
   "surfaces": ["core"],
   "kind": "framework-plumbing",
@@ -15,10 +15,10 @@
     "System-flag column + scopes"
   ],
   "when_to_use": "Defining a model, adding a Blueprint macro, or opting a model into slug / UUID / translation / sortable behaviour.",
-  "when_not_to_use": "For repositories, request-driven filter/sort allow-lists, or CRUD endpoints, reach for academorix/crud instead.",
+  "when_not_to_use": "For repositories, request-driven filter/sort allow-lists, or CRUD endpoints, reach for stackra/crud instead.",
   "peer_deps": [
-    "academorix/foundation",
-    "academorix/service-provider",
+    "stackra/foundation",
+    "stackra/service-provider",
     "mattiverse/userstamps",
     "olvlvl/composer-attribute-collector",
     "spatie/laravel-translatable"

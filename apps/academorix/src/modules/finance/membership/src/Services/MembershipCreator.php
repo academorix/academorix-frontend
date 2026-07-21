@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Membership\Services;
+namespace Stackra\Membership\Services;
 
-use Academorix\Membership\Contracts\Services\MembershipCreatorInterface;
+use Stackra\Membership\Contracts\Services\MembershipCreatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Membership\Contracts\Repositories\MembershipPlanRepositoryInterface;
+use Stackra\Membership\Contracts\Repositories\MembershipPlanRepositoryInterface;
 
 /**
  * Concrete service — MembershipCreator.

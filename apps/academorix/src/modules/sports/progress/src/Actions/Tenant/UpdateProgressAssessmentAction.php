@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Progress\Actions\Tenant;
+namespace Stackra\Progress\Actions\Tenant;
 
-use Academorix\Progress\Contracts\Repositories\ProgressAssessmentRepositoryInterface;
-use Academorix\Progress\Data\ProgressAssessmentData;
-use Academorix\Progress\Data\Requests\UpdateProgressAssessmentRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\Progress\Contracts\Repositories\ProgressAssessmentRepositoryInterface;
+use Stackra\Progress\Data\ProgressAssessmentData;
+use Stackra\Progress\Data\Requests\UpdateProgressAssessmentRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Patch;
 
 /**
  * `PATCH /api/v1/progress-assessments/{assessment}` — update action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Patch(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Progress

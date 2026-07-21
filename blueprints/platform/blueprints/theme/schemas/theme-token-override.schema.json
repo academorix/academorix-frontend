@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/theme/schemas/theme-token-override",
+  "id": "stackra://modules/theme/schemas/theme-token-override",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ThemeTokenOverride",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "tto_",
     "incrementing": false,
-    "model": "Academorix\\Platform\\Theme\\Models\\ThemeTokenOverride",
-    "interface": "Academorix\\Platform\\Theme\\Contracts\\Data\\ThemeTokenOverrideInterface",
-    "implements": ["Academorix\\Platform\\Theme\\Contracts\\Data\\ThemeTokenOverrideInterface"],
+    "model": "Stackra\\Platform\\Theme\\Models\\ThemeTokenOverride",
+    "interface": "Stackra\\Platform\\Theme\\Contracts\\Data\\ThemeTokenOverrideInterface",
+    "implements": ["Stackra\\Platform\\Theme\\Contracts\\Data\\ThemeTokenOverrideInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -184,7 +184,7 @@
   },
   "x-related": [
     {
-      "schema": "academorix://modules/theme/schemas/theme",
+      "schema": "stackra://modules/theme/schemas/theme",
       "kind": "parent theme this override applies to"
     }
   ]

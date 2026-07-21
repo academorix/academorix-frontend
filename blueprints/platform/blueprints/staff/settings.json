@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/staff/settings",
+  "id": "stackra://modules/staff/settings",
   "$version": 1,
   "title": "staff — settings",
   "description": "Tenant-facing preferences (staff-lifecycle defaults, notification cadences, compensation feature opt-in) + user-level preferences (staff-view display preferences).",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "staff",
-      "class": "Academorix\\Staff\\Settings\\StaffSettings",
+      "class": "Stackra\\Staff\\Settings\\StaffSettings",
       "label": "Staff & Coaches",
       "description": "Tenant-wide staff lifecycle defaults + feature opt-ins.",
       "icon": "user-group",
@@ -68,7 +68,7 @@
             {
               "name": "enable_compensation_tracking",
               "controlType": "toggle",
-              "label": "Track compensation in Academorix",
+              "label": "Track compensation in Stackra",
               "defaultValue": false,
               "helpText": "Enable this to track wage/salary/hourly rate on staff. Data is regulated_financial-tier, retained 7 years. Turning this on writes a compliance audit row + requires re-consent by the tenant admin.",
               "requiresPermission": "owner",
@@ -171,7 +171,7 @@
     },
     {
       "key": "staff_user",
-      "class": "Academorix\\Staff\\Settings\\StaffUserSettings",
+      "class": "Stackra\\Staff\\Settings\\StaffUserSettings",
       "label": "My staff record",
       "description": "Per-user preferences for how staff-lifecycle events appear in their inbox.",
       "icon": "user-circle",

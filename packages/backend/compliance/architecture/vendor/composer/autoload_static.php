@@ -47,7 +47,7 @@ class ComposerStaticInitfeda30afcfd08424e12d8df335048cbf
         'a1cfe24d14977df6878b9bf804af2d1c' => __DIR__ . '/..' . '/nunomaduro/collision/src/Adapters/Phpunit/Autoload.php',
         '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
         'aadac1114cab8dc19489a7f6dc24c003' => __DIR__ . '/..' . '/pestphp/pest-plugin-arch/src/Autoload.php',
-        '1456eef5152ef61ba5cc39c51a6d8276' => __DIR__ . '/..' . '/academorix/foundation/src/Support/helpers.php',
+        '1456eef5152ef61ba5cc39c51a6d8276' => __DIR__ . '/..' . '/stackra/foundation/src/Support/helpers.php',
         'c72349b1fe8d0deeedd3a52e8aa814d8' => __DIR__ . '/..' . '/mockery/mockery/library/helpers.php',
         'ce9671a430e4846b44e1c68c7611f9f5' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery.php',
         'f83ed111c2f97a0449abf067f157f418' => __DIR__ . '/..' . '/pestphp/pest/src/Functions.php',
@@ -218,11 +218,11 @@ class ComposerStaticInitfeda30afcfd08424e12d8df335048cbf
         ),
         'A' =>
         array (
-            'Academorix\\Foundation\\' => 22,
-            'Academorix\\Exceptions\\' => 22,
-            'Academorix\\Enum\\' => 16,
-            'Academorix\\Architecture\\Tests\\' => 30,
-            'Academorix\\Architecture\\' => 24,
+            'Stackra\\Foundation\\' => 22,
+            'Stackra\\Exceptions\\' => 22,
+            'Stackra\\Enum\\' => 16,
+            'Stackra\\Architecture\\Tests\\' => 30,
+            'Stackra\\Architecture\\' => 24,
         ),
     );
 
@@ -643,23 +643,23 @@ class ComposerStaticInitfeda30afcfd08424e12d8df335048cbf
         array (
             0 => __DIR__ . '/..' . '/brick/math/src',
         ),
-        'Academorix\\Foundation\\' =>
+        'Stackra\\Foundation\\' =>
         array (
-            0 => __DIR__ . '/..' . '/academorix/foundation/src',
+            0 => __DIR__ . '/..' . '/stackra/foundation/src',
         ),
-        'Academorix\\Exceptions\\' =>
+        'Stackra\\Exceptions\\' =>
         array (
-            0 => __DIR__ . '/..' . '/academorix/exceptions/src',
+            0 => __DIR__ . '/..' . '/stackra/exceptions/src',
         ),
-        'Academorix\\Enum\\' =>
+        'Stackra\\Enum\\' =>
         array (
-            0 => __DIR__ . '/..' . '/academorix/enum/src',
+            0 => __DIR__ . '/..' . '/stackra/enum/src',
         ),
-        'Academorix\\Architecture\\Tests\\' =>
+        'Stackra\\Architecture\\Tests\\' =>
         array (
             0 => __DIR__ . '/../..' . '/tests',
         ),
-        'Academorix\\Architecture\\' =>
+        'Stackra\\Architecture\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),

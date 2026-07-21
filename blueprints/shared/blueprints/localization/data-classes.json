@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/localization/data-classes",
+  "id": "stackra://modules/localization/data-classes",
   "$version": 1,
   "title": "localization \u2014 field classification",
   "description": "PlatformLanguage + TenantLocale are metadata. Translation values may contain tenant-specific copy which could inadvertently include PII \u2014 responsibility on tenant admins. Wave 5 refactor: `Language` classifications retired \u2014 duplicated ISO-639 / ISO-3166 fields (`code`, `name`, `native_name`, `direction`, `country_code`, `flag_emoji`) are now READ from geography via accessor and are NOT classified here (their source-of-truth classification lives in `geography::data-classes`).",

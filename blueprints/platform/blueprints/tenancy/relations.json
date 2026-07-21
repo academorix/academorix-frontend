@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tenancy/relations",
+  "id": "stackra://modules/tenancy/relations",
   "$version": 1,
   "title": "tenants — cross-module relations",
   "description": "Cross-module Eloquent relations rooted at the two entities tenants still owns after the v0.3 platform split: Tenant + TenantContact. Application + BusinessType moved to `application/`; Domain + DomainRecord to `domains/`; Branding to `branding/`; TenantIntegration to `integrations/`; the Identity stub was deleted entirely (Identity belongs in identity-service, not platform-service). Each `target.module` is a bare basename (per the discovery contract); CI resolves it to the target module's schemas and validates the FK columns match. Cross-tenant FKs are FORBIDDEN — every FK is either same-tenant, application-scoped, or crosses no tenancy boundary at all.",
@@ -7,8 +7,8 @@
     {
       "model": {
         "name": "Tenant",
-        "class": "Academorix\\Tenancy\\Models\\Tenant",
-        "schemaRef": "academorix://modules/tenancy/schemas/tenant"
+        "class": "Stackra\\Tenancy\\Models\\Tenant",
+        "schemaRef": "stackra://modules/tenancy/schemas/tenant"
       },
       "relations": [
         {
@@ -17,7 +17,7 @@
           "target": {
             "module": "application",
             "model": "Application",
-            "class": "Academorix\\Application\\Models\\Application"
+            "class": "Stackra\\Application\\Models\\Application"
           },
           "foreignKey": "application_id",
           "ownerKey": "id",
@@ -29,7 +29,7 @@
           "target": {
             "module": "branding",
             "model": "Branding",
-            "class": "Academorix\\Branding\\Models\\Branding"
+            "class": "Stackra\\Branding\\Models\\Branding"
           },
           "foreignKey": "primary_branding_id",
           "ownerKey": "id",
@@ -41,7 +41,7 @@
           "target": {
             "module": "branding",
             "model": "Branding",
-            "class": "Academorix\\Branding\\Models\\Branding"
+            "class": "Stackra\\Branding\\Models\\Branding"
           },
           "foreignKey": "tenant_id"
         },
@@ -51,7 +51,7 @@
           "target": {
             "module": "domains",
             "model": "Domain",
-            "class": "Academorix\\Domains\\Models\\Domain"
+            "class": "Stackra\\Domains\\Models\\Domain"
           },
           "foreignKey": "tenant_id",
           "cascade": {
@@ -65,7 +65,7 @@
           "target": {
             "module": "tenancy",
             "model": "TenantContact",
-            "class": "Academorix\\Tenancy\\Models\\TenantContact"
+            "class": "Stackra\\Tenancy\\Models\\TenantContact"
           },
           "foreignKey": "tenant_id"
         },
@@ -75,7 +75,7 @@
           "target": {
             "module": "integrations",
             "model": "TenantIntegration",
-            "class": "Academorix\\Integrations\\Models\\TenantIntegration"
+            "class": "Stackra\\Integrations\\Models\\TenantIntegration"
           },
           "foreignKey": "tenant_id"
         },
@@ -85,7 +85,7 @@
           "target": {
             "module": "organization",
             "model": "Organization",
-            "class": "Academorix\\Organization\\Models\\Organization"
+            "class": "Stackra\\Organization\\Models\\Organization"
           },
           "foreignKey": "tenant_id",
           "cascade": {
@@ -100,7 +100,7 @@
           "target": {
             "module": "region",
             "model": "Region",
-            "class": "Academorix\\Region\\Models\\Region"
+            "class": "Stackra\\Region\\Models\\Region"
           },
           "foreignKey": "tenant_id",
           "description": "Every tenant provisions one default Region on create."
@@ -111,7 +111,7 @@
           "target": {
             "module": "branch",
             "model": "Branch",
-            "class": "Academorix\\Branch\\Models\\Branch"
+            "class": "Stackra\\Branch\\Models\\Branch"
           },
           "foreignKey": "tenant_id",
           "description": "Direct shortcut; also reachable via organizations.branches and regions.branches."
@@ -122,7 +122,7 @@
           "target": {
             "module": "user",
             "model": "User",
-            "class": "Academorix\\User\\Models\\User"
+            "class": "Stackra\\User\\Models\\User"
           },
           "foreignKey": "tenant_id",
           "description": "Every user belongs to exactly one tenant. A person invited to two tenants has one User row per tenant, all pointing at the same application-scoped Identity."
@@ -133,7 +133,7 @@
           "target": {
             "module": "access",
             "model": "Role",
-            "class": "Academorix\\Access\\Models\\Role"
+            "class": "Stackra\\Access\\Models\\Role"
           },
           "foreignKey": "tenant_id",
           "description": "Tenant-scoped roles on the sanctum guard. Platform roles (platform_admin guard) have tenant_id = null and are NOT part of this relation."
@@ -144,7 +144,7 @@
           "target": {
             "module": "subscription",
             "model": "TenantSubscription",
-            "class": "Academorix\\Subscription\\Models\\TenantSubscription"
+            "class": "Stackra\\Subscription\\Models\\TenantSubscription"
           },
           "foreignKey": "tenant_id",
           "description": "Exactly one subscription per (application_id, tenant_id) tuple."
@@ -155,7 +155,7 @@
           "target": {
             "module": "entitlements",
             "model": "EntitlementLicense",
-            "class": "Academorix\\Entitlements\\Models\\EntitlementLicense"
+            "class": "Stackra\\Entitlements\\Models\\EntitlementLicense"
           },
           "foreignKey": "tenant_id",
           "description": "Full entitlement matrix for this tenant. quota_summary on /api/auth/me returns the top 3-5; the whole set is behind GET /api/v1/entitlements."
@@ -166,7 +166,7 @@
           "target": {
             "module": "audit",
             "model": "Audit",
-            "class": "Academorix\\Audit\\Models\\Audit"
+            "class": "Stackra\\Audit\\Models\\Audit"
           },
           "foreignKey": "tenant_id",
           "description": "Every mutation on any tenant-scoped model writes here. Depends on the Audit-adds-tenant_id migration (gap register)."
@@ -179,7 +179,7 @@
           "target": {
             "module": "scope",
             "model": "ScopeNode",
-            "class": "Academorix\\Scope\\Models\\ScopeNode"
+            "class": "Stackra\\Scope\\Models\\ScopeNode"
           },
           "morphType": "entity_type",
           "morphId": "entity_id",
@@ -190,8 +190,8 @@
     {
       "model": {
         "name": "TenantContact",
-        "class": "Academorix\\Tenancy\\Models\\TenantContact",
-        "schemaRef": "academorix://modules/tenancy/schemas/tenant-contact"
+        "class": "Stackra\\Tenancy\\Models\\TenantContact",
+        "schemaRef": "stackra://modules/tenancy/schemas/tenant-contact"
       },
       "relations": [
         {
@@ -200,7 +200,7 @@
           "target": {
             "module": "tenancy",
             "model": "Tenant",
-            "class": "Academorix\\Tenancy\\Models\\Tenant"
+            "class": "Stackra\\Tenancy\\Models\\Tenant"
           },
           "foreignKey": "tenant_id"
         }

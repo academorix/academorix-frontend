@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Region\Actions\Tenant;
+namespace Stackra\Region\Actions\Tenant;
 
-use Academorix\Region\Contracts\Repositories\RegionRepositoryInterface;
-use Academorix\Region\Data\RegionData;
-use Academorix\Region\Data\Requests\CreateRegionRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Region\Contracts\Repositories\RegionRepositoryInterface;
+use Stackra\Region\Data\RegionData;
+use Stackra\Region\Data\Requests\CreateRegionRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/regions` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Region

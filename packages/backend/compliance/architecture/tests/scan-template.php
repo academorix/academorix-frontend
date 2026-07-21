@@ -20,7 +20,7 @@ declare(strict_types=1);
  */
 
 spl_autoload_register(function (string $class): void {
-    $prefix = 'Academorix\\Architecture\\';
+    $prefix = 'Stackra\\Architecture\\';
     if (! str_starts_with($class, $prefix)) {
         return;
     }
@@ -50,42 +50,42 @@ foreach ($vendorAutoloads as $vendor) {
     }
 }
 
-use Academorix\Architecture\Rules\CommandUsesAttributeSignatureRule;
-use Academorix\Architecture\Rules\ControllerExtendsBaseRule;
-use Academorix\Architecture\Rules\ControllerNeedsAsControllerRule;
-use Academorix\Architecture\Rules\EnumIsBackedStringRule;
-use Academorix\Architecture\Rules\EventReadonlyPropertiesRule;
-use Academorix\Architecture\Rules\FinalDomainClassesRule;
-use Academorix\Architecture\Rules\JobHasQueueAttributeRule;
-use Academorix\Architecture\Rules\JobImplementsFailedRule;
-use Academorix\Architecture\Rules\MiddlewareNeedsAsMiddlewareRule;
-use Academorix\Architecture\Rules\ModelNoSideEffectsRule;
-use Academorix\Architecture\Rules\ModelUsesFillableAttributeRule;
-use Academorix\Architecture\Rules\NoAppMakeInConstructorRule;
-use Academorix\Architecture\Rules\NoDirectModelAccessRule;
-use Academorix\Architecture\Rules\NoEnvOutsideConfigRule;
-use Academorix\Architecture\Rules\NoFacadesInServicesRule;
-use Academorix\Architecture\Rules\NoFormRequestRule;
-use Academorix\Architecture\Rules\NoHttpNamespaceNestingRule;
-use Academorix\Architecture\Rules\NoJsonResourceRule;
-use Academorix\Architecture\Rules\NoQueryBuilderInServicesRule;
-use Academorix\Architecture\Rules\NoRepositoryFromControllerRule;
-use Academorix\Architecture\Rules\NoRequestValidateInControllerRule;
-use Academorix\Architecture\Rules\NoRouteFacadeRule;
-use Academorix\Architecture\Rules\NoSingletonOnScopedDepsRule;
-use Academorix\Architecture\Rules\NoStaticStateInServicesRule;
-use Academorix\Architecture\Rules\RepositoryNeedsBindRule;
-use Academorix\Architecture\Rules\RequireFileDocblockRule;
-use Academorix\Architecture\Rules\RequireStrictTypesRule;
-use Academorix\Architecture\Rules\NoRoutesFolderRule;
-use Academorix\Architecture\Rules\NoResourcesFolderRule;
-use Academorix\Architecture\Rules\NoAppFolderRule;
-use Academorix\Architecture\Rules\NoRouteServiceProviderRule;
-use Academorix\Architecture\Rules\MigrationHasDownRule;
-use Academorix\Architecture\Rules\NoEnvFileRule;
-use Academorix\Architecture\Rules\RepositoryInterfaceSuffixRule;
-use Academorix\Architecture\Support\LayerResolver;
-use Academorix\Architecture\Support\SourceFileParser;
+use Stackra\Architecture\Rules\CommandUsesAttributeSignatureRule;
+use Stackra\Architecture\Rules\ControllerExtendsBaseRule;
+use Stackra\Architecture\Rules\ControllerNeedsAsControllerRule;
+use Stackra\Architecture\Rules\EnumIsBackedStringRule;
+use Stackra\Architecture\Rules\EventReadonlyPropertiesRule;
+use Stackra\Architecture\Rules\FinalDomainClassesRule;
+use Stackra\Architecture\Rules\JobHasQueueAttributeRule;
+use Stackra\Architecture\Rules\JobImplementsFailedRule;
+use Stackra\Architecture\Rules\MiddlewareNeedsAsMiddlewareRule;
+use Stackra\Architecture\Rules\ModelNoSideEffectsRule;
+use Stackra\Architecture\Rules\ModelUsesFillableAttributeRule;
+use Stackra\Architecture\Rules\NoAppMakeInConstructorRule;
+use Stackra\Architecture\Rules\NoDirectModelAccessRule;
+use Stackra\Architecture\Rules\NoEnvOutsideConfigRule;
+use Stackra\Architecture\Rules\NoFacadesInServicesRule;
+use Stackra\Architecture\Rules\NoFormRequestRule;
+use Stackra\Architecture\Rules\NoHttpNamespaceNestingRule;
+use Stackra\Architecture\Rules\NoJsonResourceRule;
+use Stackra\Architecture\Rules\NoQueryBuilderInServicesRule;
+use Stackra\Architecture\Rules\NoRepositoryFromControllerRule;
+use Stackra\Architecture\Rules\NoRequestValidateInControllerRule;
+use Stackra\Architecture\Rules\NoRouteFacadeRule;
+use Stackra\Architecture\Rules\NoSingletonOnScopedDepsRule;
+use Stackra\Architecture\Rules\NoStaticStateInServicesRule;
+use Stackra\Architecture\Rules\RepositoryNeedsBindRule;
+use Stackra\Architecture\Rules\RequireFileDocblockRule;
+use Stackra\Architecture\Rules\RequireStrictTypesRule;
+use Stackra\Architecture\Rules\NoRoutesFolderRule;
+use Stackra\Architecture\Rules\NoResourcesFolderRule;
+use Stackra\Architecture\Rules\NoAppFolderRule;
+use Stackra\Architecture\Rules\NoRouteServiceProviderRule;
+use Stackra\Architecture\Rules\MigrationHasDownRule;
+use Stackra\Architecture\Rules\NoEnvFileRule;
+use Stackra\Architecture\Rules\RepositoryInterfaceSuffixRule;
+use Stackra\Architecture\Support\LayerResolver;
+use Stackra\Architecture\Support\SourceFileParser;
 
 $appPath = realpath(__DIR__ . '/../../../apps/template');
 if ($appPath === false) {
@@ -129,10 +129,10 @@ $sourceRules = [
     new NoFormRequestRule($resolver, ['severity' => 'error', 'forbidden_bases' => ['Illuminate\\Foundation\\Http\\FormRequest']]),
     new NoJsonResourceRule($resolver, ['severity' => 'error', 'forbidden_bases' => ['Illuminate\\Http\\Resources\\Json\\JsonResource', 'Illuminate\\Http\\Resources\\Json\\ResourceCollection']]),
     new NoFacadesInServicesRule($resolver, ['severity' => 'error', 'forbidden_namespaces' => ['Illuminate\\Support\\Facades\\'], 'allowed_facades' => []]),
-    new ControllerExtendsBaseRule($resolver, ['severity' => 'error', 'required_base' => 'Academorix\\Routing\\BaseController', 'forbidden_bases' => ['Illuminate\\Routing\\Controller']]),
-    new ControllerNeedsAsControllerRule($resolver, ['severity' => 'error', 'required_attribute' => 'Academorix\\Routing\\Attributes\\AsController']),
+    new ControllerExtendsBaseRule($resolver, ['severity' => 'error', 'required_base' => 'Stackra\\Routing\\BaseController', 'forbidden_bases' => ['Illuminate\\Routing\\Controller']]),
+    new ControllerNeedsAsControllerRule($resolver, ['severity' => 'error', 'required_attribute' => 'Stackra\\Routing\\Attributes\\AsController']),
     new RepositoryNeedsBindRule($resolver, ['severity' => 'error', 'required_attribute' => 'Illuminate\\Container\\Attributes\\Bind']),
-    new MiddlewareNeedsAsMiddlewareRule($resolver, ['severity' => 'error', 'required_attribute' => 'Academorix\\Routing\\Attributes\\AsMiddleware', 'middleware_namespaces' => ['App\\Http\\Middleware\\']]),
+    new MiddlewareNeedsAsMiddlewareRule($resolver, ['severity' => 'error', 'required_attribute' => 'Stackra\\Routing\\Attributes\\AsMiddleware', 'middleware_namespaces' => ['App\\Http\\Middleware\\']]),
     new FinalDomainClassesRule($resolver, ['severity' => 'error', 'required_layers' => ['controller', 'service', 'action']]),
     new RequireStrictTypesRule($resolver, ['severity' => 'error', 'exempt_paths' => ['/config/', '/bootstrap/']]),
     new RequireFileDocblockRule($resolver, ['severity' => 'warning', 'required_tags' => ['@file', '@description'], 'exempt_paths' => ['/config/', '/bootstrap/', '/database/migrations/']]),

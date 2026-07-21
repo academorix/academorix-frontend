@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/ai/policies",
+  "id": "stackra://modules/ai/policies",
   "$version": 1,
   "title": "ai — authorization policies",
   "description": "Three policies covering the three owned entities. Persona-role authorization is enforced by AuthorizePersonaRole HTTP middleware (reads `#[RequiresRoles]`) BEFORE the run controller — policies here handle post-run access to the persisted rows. Every run + tool-call re-checks RBAC inside the vendor agent pipeline via ToolAuthorizerDecorator — the LLM's promise is not authorization.",
   "policies": [
     {
       "model": "AiRun",
-      "class": "Academorix\\AI\\Policies\\AiRunPolicy",
+      "class": "Stackra\\AI\\Policies\\AiRunPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -29,7 +29,7 @@
     },
     {
       "model": "AiToolCall",
-      "class": "Academorix\\AI\\Policies\\AiToolCallPolicy",
+      "class": "Stackra\\AI\\Policies\\AiToolCallPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -51,7 +51,7 @@
     },
     {
       "model": "AiDraft",
-      "class": "Academorix\\AI\\Policies\\AiDraftPolicy",
+      "class": "Stackra\\AI\\Policies\\AiDraftPolicy",
       "abilities": [
         {
           "action": "viewAny",

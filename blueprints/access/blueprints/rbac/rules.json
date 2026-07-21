@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/rbac/rules",
+  "id": "stackra://modules/rbac/rules",
   "$version": 1,
   "title": "rbac \u2014 validation rules",
   "description": "Custom Laravel validation rules published by RbacServiceProvider::boot() so any FormRequest / Data class can validate role + permission writes. All rules can be used inline via the string signature OR as class instances for composition.",
-  "namespace": "Academorix\\Rbac\\Rules",
+  "namespace": "Stackra\\Rbac\\Rules",
   "rules": [
     {
       "name": "valid_role_name",
-      "class": "Academorix\\Rbac\\Rules\\ValidRoleName",
+      "class": "Stackra\\Rbac\\Rules\\ValidRoleName",
       "signature": "valid_role_name",
       "description": "Enforces role naming conventions: snake_case, max 128 chars, no whitespace, no reserved prefixes (`system.`, `_`), no ASCII-controlled characters. Applied on CreateRoleAction + UpdateRoleAction.",
       "params": [],
@@ -17,7 +17,7 @@
     },
     {
       "name": "valid_permission_name",
-      "class": "Academorix\\Rbac\\Rules\\ValidPermissionName",
+      "class": "Stackra\\Rbac\\Rules\\ValidPermissionName",
       "signature": "valid_permission_name",
       "description": "Enforces permission naming: dot-notation (`resource.action.scope`), max 128 chars, ends with a suffix from config('rbac.permissions.allowed_suffixes'). Refuses names starting with any reserved_prefix. Enforced only when config('rbac.permissions.require_scope_suffix')=true (default).",
       "params": [],
@@ -27,7 +27,7 @@
     },
     {
       "name": "permission_belongs_to_role_guard",
-      "class": "Academorix\\Rbac\\Rules\\PermissionBelongsToRoleGuard",
+      "class": "Stackra\\Rbac\\Rules\\PermissionBelongsToRoleGuard",
       "signature": "permission_belongs_to_role_guard:<role_id>",
       "description": "Cross-check on write. Enforces role.guard_name === permission.guard_name. Applied on AttachPermissionToRoleAction. Distinct from the observer's GuardMismatch enforcement \u2014 this rule surfaces the error inline in the FormRequest so the client sees a validation error, not a 500.",
       "params": [
@@ -43,7 +43,7 @@
     },
     {
       "name": "permission_belongs_to_role_application",
-      "class": "Academorix\\Rbac\\Rules\\PermissionBelongsToRoleApplication",
+      "class": "Stackra\\Rbac\\Rules\\PermissionBelongsToRoleApplication",
       "signature": "permission_belongs_to_role_application:<role_id>",
       "description": "Same shape as permission_belongs_to_role_guard, for the application_id column. Both non-null => must match. Either NULL => allowed (platform-scoped bindings).",
       "params": [{ "name": "role_id", "type": "string" }],
@@ -53,7 +53,7 @@
     },
     {
       "name": "role_assignable_by_actor",
-      "class": "Academorix\\Rbac\\Rules\\RoleAssignableByActor",
+      "class": "Stackra\\Rbac\\Rules\\RoleAssignableByActor",
       "signature": "role_assignable_by_actor",
       "description": "The privilege-escalation guard. A role can only be assigned by an actor whose own ResolvedPermissionSet is a SUPERSET of the target role's permission set. This prevents an admin from creating a custom role with permissions they lack + then assigning it to themselves. Enforced by AssignRoleToPrincipalAction.",
       "params": [],
@@ -63,7 +63,7 @@
     },
     {
       "name": "role_not_system",
-      "class": "Academorix\\Rbac\\Rules\\RoleNotSystem",
+      "class": "Stackra\\Rbac\\Rules\\RoleNotSystem",
       "signature": "role_not_system",
       "description": "Refuses mutations targeting a role where is_system=true. Applied to UpdateRoleAction + DeleteRoleAction (tenant-plane only).",
       "params": [],
@@ -73,7 +73,7 @@
     },
     {
       "name": "principal_belongs_to_current_application",
-      "class": "Academorix\\Rbac\\Rules\\PrincipalBelongsToCurrentApplication",
+      "class": "Stackra\\Rbac\\Rules\\PrincipalBelongsToCurrentApplication",
       "signature": "principal_belongs_to_current_application",
       "description": "For assign/revoke routes on principal-role pivots. Refuses assignments where principal.application_id does NOT match the current request's X-Application-Id. Prevents cross-Application role bleed via the API.",
       "params": [],

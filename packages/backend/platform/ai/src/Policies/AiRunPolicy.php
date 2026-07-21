@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Ai\Policies;
+namespace Stackra\Ai\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Ai\Models\AiRun;
+use Stackra\User\Models\User;
+use Stackra\Ai\Models\AiRun;
 
 /**
- * Authorization policy for {@see \Academorix\Ai\Models\AiRun}.
+ * Authorization policy for {@see \Stackra\Ai\Models\AiRun}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

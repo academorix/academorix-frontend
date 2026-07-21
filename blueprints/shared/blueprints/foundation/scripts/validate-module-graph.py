@@ -2,7 +2,7 @@
 """
 validate-module-graph.py
 
-CI check + local pre-commit hook for the Academorix module graph. Verifies:
+CI check + local pre-commit hook for the Stackra module graph. Verifies:
 
   1. Every module.json declared under `dependencies` exists on disk
      (no phantom deps).

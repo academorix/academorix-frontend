@@ -4,7 +4,7 @@
     "tenant_id": "ten_01J5R7V3A4N7D6Q8K5B2C9E1X0",
     "kind": "owner",
     "name": "Aisha Rahman",
-    "email": "aisha@academorix.dev",
+    "email": "aisha@stackra.dev",
     "phone": "+966501234567",
     "job_title": "Founder",
     "address": null,
@@ -26,7 +26,7 @@
     "tenant_id": "ten_01J5R7V3A4N7D6Q8K5B2C9E1X0",
     "kind": "billing",
     "name": "Finance Team",
-    "email": "billing@academorix.dev",
+    "email": "billing@stackra.dev",
     "phone": null,
     "job_title": null,
     "address": {

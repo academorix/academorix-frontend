@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/user/settings",
+  "id": "stackra://modules/user/settings",
   "$version": 1,
   "title": "user \u2014 settings",
   "description": "Tenant-scoped policy for user provisioning + profile + privacy + retention. Compliance floors clamp every value \u2014 tenants may only TIGHTEN, never loosen. Two per-user settings groups too.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "user",
-      "class": "Academorix\\User\\Settings\\UserSettings",
+      "class": "Stackra\\User\\Settings\\UserSettings",
       "label": "Users",
       "description": "Tenant-wide policy for user provisioning + lifecycle.",
       "icon": "user-group",
@@ -157,7 +157,7 @@
     },
     {
       "key": "user_me",
-      "class": "Academorix\\User\\Settings\\UserMeSettings",
+      "class": "Stackra\\User\\Settings\\UserMeSettings",
       "label": "My profile",
       "description": "Per-user preferences.",
       "icon": "user-circle",

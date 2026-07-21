@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-mail/features",
+  "id": "stackra://modules/notifications-mail/features",
   "$version": 1,
   "title": "notifications-mail \u2014 feature keys",
   "description": "Per-provider availability + mail-channel capabilities. Resolved at /auth/me. Downstream: `notifications-mail.enabled` gates channel visibility; per-provider keys let tenants pick their delivery lane.",

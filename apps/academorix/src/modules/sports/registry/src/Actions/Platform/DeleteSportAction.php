@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Actions\Platform;
+namespace Stackra\Registry\Actions\Platform;
 
-use Academorix\Registry\Contracts\Repositories\SportRepositoryInterface;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Delete;
+use Stackra\Registry\Contracts\Repositories\SportRepositoryInterface;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Delete;
 use Illuminate\Http\Response;
 
 /**
  * `DELETE /api/v1/platform/sports/{sport}` — delete action (platform-admin audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Delete(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Registry

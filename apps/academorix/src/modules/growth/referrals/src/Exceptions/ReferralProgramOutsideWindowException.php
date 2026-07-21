@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Exceptions;
+namespace Stackra\Referrals\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `REFERRAL_PROGRAM_OUTSIDE_WINDOW` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ReferralProgramOutsideWindowException extends AcademorixException
+final class ReferralProgramOutsideWindowException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

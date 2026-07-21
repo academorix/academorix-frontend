@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Announcements\Contracts\Data;
+namespace Stackra\Announcements\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Announcements\Models\AnnouncementView;
+use Stackra\Announcements\Models\AnnouncementView;
 
 /**
  * Table shape for the `announcement_views` table.

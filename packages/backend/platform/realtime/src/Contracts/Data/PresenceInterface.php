@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Realtime\Contracts\Data;
+namespace Stackra\Realtime\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Realtime\Models\Presence;
+use Stackra\Realtime\Models\Presence;
 
 /**
  * Table shape for the `presences` table.

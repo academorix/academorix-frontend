@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Attributes;
+namespace Stackra\FeatureFlags\Attributes;
 
-use Academorix\FeatureFlags\Enums\FlagKind;
+use Stackra\FeatureFlags\Enums\FlagKind;
 use Attribute;
 
 /**

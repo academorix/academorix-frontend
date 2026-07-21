@@ -1,83 +1,83 @@
 {
-  "id": "academorix://modules/rbac/listeners",
+  "id": "stackra://modules/rbac/listeners",
   "$version": 1,
   "title": "rbac \u2014 subscribed events",
   "listeners": [
     {
       "event": "foundation::ApplicationBooted",
-      "listener": "Academorix\\Rbac\\Listeners\\WarmCoreCataloguesOnBoot",
+      "listener": "Stackra\\Rbac\\Listeners\\WarmCoreCataloguesOnBoot",
       "queue": null,
       "purpose": "On boot, populate the in-memory rbac:permissions:catalogue:{application_id} + rbac:role_definitions:{application_id} caches. Reduces cold-request latency by ~50ms on the first gated route hit."
     },
     {
       "event": "tenancy::TenantProvisioned",
-      "listener": "Academorix\\Rbac\\Listeners\\DispatchSeedTenantDefaultRolesJob",
+      "listener": "Stackra\\Rbac\\Listeners\\DispatchSeedTenantDefaultRolesJob",
       "queue": "notifications",
       "purpose": "Kicks off SeedTenantDefaultRolesJob when a new tenant is created. Runs async because seeding can take ~500ms for a full role set."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Rbac\\Listeners\\PurgeTenantRbacRowsOnErasure",
+      "listener": "Stackra\\Rbac\\Listeners\\PurgeTenantRbacRowsOnErasure",
       "queue": "notifications-critical",
       "purpose": "GDPR Art. 17 compliance. Cascade-delete via FK, but this listener writes the compliance-audit entry + emits count metric + broadcasts cache invalidation for every principal in the tenant."
     },
     {
       "event": "user::UserProvisioned",
-      "listener": "Academorix\\Rbac\\Listeners\\AssignDefaultUserRoleOnProvision",
+      "listener": "Stackra\\Rbac\\Listeners\\AssignDefaultUserRoleOnProvision",
       "queue": "notifications",
       "purpose": "When a new User is provisioned on an Application, auto-assign the tenant's default role (usually `member` OR the tenant-configured default). Skipped when the provisioning payload specifies an explicit role list."
     },
     {
       "event": "user::UserSuspended",
-      "listener": "Academorix\\Rbac\\Listeners\\InvalidateUserPermissionCacheOnSuspend",
+      "listener": "Stackra\\Rbac\\Listeners\\InvalidateUserPermissionCacheOnSuspend",
       "queue": null,
       "purpose": "Purge the suspended user's rbac:permissions:User:{user_id}:* cache keys. Auth's HasSessionRevocation trait also revokes the user's PATs \u2014 the two chains run in parallel."
     },
     {
       "event": "user::UserDisabled",
-      "listener": "Academorix\\Rbac\\Listeners\\RevokeAllRolesOnDisable",
+      "listener": "Stackra\\Rbac\\Listeners\\RevokeAllRolesOnDisable",
       "queue": "notifications",
       "purpose": "Hard-cascade: enumerate every model_has_roles row where model_id = user.id + fire RoleRevokedFromPrincipal per row + delete pivot rows. Auth handles session revocation via its own chain."
     },
     {
       "event": "identity::IdentityErased",
-      "listener": "Academorix\\Rbac\\Listeners\\RevokeAllRolesOnIdentityErasure",
+      "listener": "Stackra\\Rbac\\Listeners\\RevokeAllRolesOnIdentityErasure",
       "queue": "notifications-critical",
       "purpose": "For every User row referencing the erased Identity, revoke every active role assignment. Cross-Application: a single Identity may have User rows on N Applications; every one gets the full revocation."
     },
     {
       "event": "auth::PasswordChanged",
-      "listener": "Academorix\\Rbac\\Listeners\\WarmPermissionCacheAfterPasswordChange",
+      "listener": "Stackra\\Rbac\\Listeners\\WarmPermissionCacheAfterPasswordChange",
       "queue": null,
       "purpose": "The auth chain revokes every session, so on the next login the resolver will cold-resolve. This listener PRE-WARMS the cache for the user + their default Application so the FIRST post-password-change login is fast."
     },
     {
       "event": "access/grants::GrantCreated",
-      "listener": "Academorix\\Rbac\\Listeners\\InvalidateSubjectPermissionCacheOnGrant",
+      "listener": "Stackra\\Rbac\\Listeners\\InvalidateSubjectPermissionCacheOnGrant",
       "queue": null,
       "purpose": "A new grant landed \u2014 purge the affected principal's permission cache so the resolver sees the grant on the next check."
     },
     {
       "event": "access/grants::GrantRevoked",
-      "listener": "Academorix\\Rbac\\Listeners\\InvalidateSubjectPermissionCacheOnGrantRevoke",
+      "listener": "Stackra\\Rbac\\Listeners\\InvalidateSubjectPermissionCacheOnGrantRevoke",
       "queue": null,
       "purpose": "Same as above, for the revoke path."
     },
     {
       "event": "access/delegation::RoleDelegated",
-      "listener": "Academorix\\Rbac\\Listeners\\InvalidateDelegatePermissionCacheOnDelegation",
+      "listener": "Stackra\\Rbac\\Listeners\\InvalidateDelegatePermissionCacheOnDelegation",
       "queue": null,
       "purpose": "When Alice delegates all her roles to Bob, Bob's permission cache must be invalidated so his next check picks up the delegator's permission set."
     },
     {
       "event": "access/delegation::RoleDelegationRevoked",
-      "listener": "Academorix\\Rbac\\Listeners\\InvalidateDelegatePermissionCacheOnDelegationRevoke",
+      "listener": "Stackra\\Rbac\\Listeners\\InvalidateDelegatePermissionCacheOnDelegationRevoke",
       "queue": null,
       "purpose": "Same as above, for revoke."
     },
     {
       "event": "entitlements::EntitlementDowngraded",
-      "listener": "Academorix\\Rbac\\Listeners\\ReconcileCustomRolesOnDowngrade",
+      "listener": "Stackra\\Rbac\\Listeners\\ReconcileCustomRolesOnDowngrade",
       "queue": "notifications",
       "purpose": "When a tenant downgrades from Medium to Small (loses `custom_roles`), do NOT auto-delete their custom roles. Mark them `is_active=false` so they remain in reports + can be re-activated on re-upgrade. Existing assignments continue to resolve for the graceful-degradation window."
     }

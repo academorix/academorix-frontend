@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Actions\Platform;
+namespace Stackra\Audit\Actions\Platform;
 
-use Academorix\Audit\Data\Requests\VerifyChainRequestData;
-use Academorix\Audit\Enums\AuditPermission;
-use Academorix\Audit\Jobs\VerifyAuditChainJob;
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Audit\Data\Requests\VerifyChainRequestData;
+use Stackra\Audit\Enums\AuditPermission;
+use Stackra\Audit\Jobs\VerifyAuditChainJob;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -22,8 +22,8 @@ use Illuminate\Http\JsonResponse;
  * can be arbitrarily long and the caller does not want to hold a
  * request open for minutes. The response carries the job's dispatch
  * status; results arrive as
- * {@see \Academorix\Audit\Events\AuditChainVerified} +
- * {@see \Academorix\Audit\Events\AuditChainBroken} on the notifications
+ * {@see \Stackra\Audit\Events\AuditChainVerified} +
+ * {@see \Stackra\Audit\Events\AuditChainBroken} on the notifications
  * pipeline.
  *
  * @category Audit

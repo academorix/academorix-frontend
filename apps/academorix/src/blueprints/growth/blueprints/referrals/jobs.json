@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/referrals/jobs",
+  "id": "stackra://modules/referrals/jobs",
   "$version": 1,
   "title": "referrals — background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Growth\\Referrals\\Jobs\\DetectReferralFraudJob",
+      "class": "Stackra\\Growth\\Referrals\\Jobs\\DetectReferralFraudJob",
       "queue": "referrals",
       "purpose": "Runs FraudDetector against a specific Referral at (a) claim time (dispatched from ReferralClaimer inside the claim transaction — synchronous execution when FRAUD_SYNC=true; async fallback otherwise), and (b) trigger time (dispatched from the trigger listener before vesting transitions). Writes ReferralFraudFlag rows for each rule that fires. Refuses the referral (or blocks vesting) when severity IN ('block','critical').",
       "steps": [
@@ -23,7 +23,7 @@
       "backoff": [30, 120, 600]
     },
     {
-      "class": "Academorix\\Growth\\Referrals\\Jobs\\IssueReferralCodeJob",
+      "class": "Stackra\\Growth\\Referrals\\Jobs\\IssueReferralCodeJob",
       "queue": "referrals",
       "purpose": "Auto-generates a user_scoped referral code for a newly-activated user, IF the tenant has at least one active referral program. Dispatched from IssueUserReferralCodeOnAccountActivated hook. Skipped when the user already has a code for the program.",
       "steps": [
@@ -41,7 +41,7 @@
       "backoff": [30, 120, 600]
     },
     {
-      "class": "Academorix\\Growth\\Referrals\\Jobs\\CheckReferralVestingJob",
+      "class": "Stackra\\Growth\\Referrals\\Jobs\\CheckReferralVestingJob",
       "queue": "referrals",
       "purpose": "Nightly sweep. Transitions Referral.status vesting -> vested for rows whose vesting_completes_at has passed. Handles trigger_plus_hold_days + after_refund_window_closes + n_events_completed vesting rules. Each transition creates ReferralReward rows atomically.",
       "steps": [
@@ -58,7 +58,7 @@
       "backoff": [60, 300, 1800]
     },
     {
-      "class": "Academorix\\Growth\\Referrals\\Jobs\\MaterializeVestedRewardsJob",
+      "class": "Stackra\\Growth\\Referrals\\Jobs\\MaterializeVestedRewardsJob",
       "queue": "referrals-critical",
       "purpose": "Every 15 min. Picks vested-status rewards + calls RewardMaterializer.materialize() which dispatches to the Finance module (Wave 4) to create a pending credit. Sets finance_credit_id + materialized_at on success. Fires ReferralRewardMaterialized.",
       "steps": [
@@ -75,7 +75,7 @@
       "backoff": [60, 300, 900, 1800, 3600]
     },
     {
-      "class": "Academorix\\Growth\\Referrals\\Jobs\\ExpireStaleReferralsJob",
+      "class": "Stackra\\Growth\\Referrals\\Jobs\\ExpireStaleReferralsJob",
       "queue": "referrals",
       "purpose": "Nightly. Transitions Referral.status 'claimed' / 'pending_claim' -> expired for rows past their claim TTL (default 30d, configurable per program). Never signed up → expired terminal.",
       "steps": [
@@ -88,7 +88,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Growth\\Referrals\\Jobs\\ClawbackRewardsOnRefundJob",
+      "class": "Stackra\\Growth\\Referrals\\Jobs\\ClawbackRewardsOnRefundJob",
       "queue": "referrals-critical",
       "purpose": "Dispatched by ClawbackRewardsOnFinanceRefund hook when finance::RefundIssued fires. Finds every ReferralReward tied (via the underlying referred user's first payment) to the refunded payment + transitions status -> clawback. Fires ReferralClawback per reward.",
       "steps": [
@@ -105,12 +105,12 @@
       "backoff": [60, 300, 900, 1800, 3600]
     },
     {
-      "class": "Academorix\\Growth\\Referrals\\Jobs\\ReconcileProgramBudgetJob",
+      "class": "Stackra\\Growth\\Referrals\\Jobs\\ReconcileProgramBudgetJob",
       "queue": "referrals",
       "purpose": "Nightly. Recomputes rewards_issued_count + rewards_issued_amount_cents from ReferralReward rows for each active program (defense against counter drift). Detects budget spikes (> 50% of remaining budget consumed in a rolling 24h window) + fires ReferralProgramBudgetSpike.",
       "steps": [
         "For each active program: SELECT count(*), sum(reward_amount) FROM referral_rewards WHERE referral_id IN (SELECT id FROM referrals WHERE referral_program_id = program.id) AND status IN ('materialized','paid') AND deleted_at IS NULL",
-        "Update program.rewards_issued_count + rewards_issued_amount_cents; log discrepancy metric academorix.referrals.budget.drift_ratio",
+        "Update program.rewards_issued_count + rewards_issued_amount_cents; log discrepancy metric stackra.referrals.budget.drift_ratio",
         "For each program: compute consumed_in_24h = sum(reward_amount) WHERE materialized_at > now() - 24h; if consumed_in_24h > 0.5 * (max_rewards_per_program - rewards_issued_amount_cents): fire ReferralProgramBudgetSpike",
         "For each program at budget cap: fire ReferralProgramBudgetReached (idempotent — check if already fired)"
       ],
@@ -120,7 +120,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Growth\\Referrals\\Jobs\\NotifyReferralInvitationJob",
+      "class": "Stackra\\Growth\\Referrals\\Jobs\\NotifyReferralInvitationJob",
       "queue": "notifications",
       "purpose": "Delivers a ReferralInvitationSent invitation via email / SMS. Dispatched by the InvitationDispatcher when a user calls POST /me/invitations. Consults tenant's invitation_template_samples + user's referral code + guard against disposable-email recipients.",
       "steps": [
@@ -138,7 +138,7 @@
       "backoff": [30, 120, 600]
     },
     {
-      "class": "Academorix\\Growth\\Referrals\\Jobs\\PurgeArchivedReferralsJob",
+      "class": "Stackra\\Growth\\Referrals\\Jobs\\PurgeArchivedReferralsJob",
       "queue": "referrals",
       "purpose": "Weekly sweep. Hard-deletes referrals + rewards + fraud flags past their retention window (7 years default, 10 years for Enterprise `referrals_extended_retention`). Preserves audit trail rows (survives per audit module design). Paid rewards migrate to compliance archive rather than being hard-deleted (financial-obligation retention).",
       "steps": [
@@ -146,7 +146,7 @@
         "For each: check tenant.referrals_extended_retention entitlement — if enterprise, use 10y window",
         "For each: check downstream rewards. If any reward.status='paid' AND retention alignment requires it: migrate to compliance_archive.referral_rewards + hard-delete referral",
         "Hard-delete referral_fraud_flags where referral_id in the delete set",
-        "Emit academorix.referrals.retention.purged_total counter"
+        "Emit stackra.referrals.retention.purged_total counter"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,

@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attributes\Database\Factories;
+namespace Stackra\Attributes\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Attributes\Contracts\Data\AttributeSetInterface;
-use Academorix\Attributes\Models\AttributeSet;
+use Stackra\Attributes\Contracts\Data\AttributeSetInterface;
+use Stackra\Attributes\Models\AttributeSet;
 
 /**
- * Factory for {@see \Academorix\Attributes\Models\AttributeSet}.
+ * Factory for {@see \Stackra\Attributes\Models\AttributeSet}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Attributes\Models\AttributeSet>
+ * @extends Factory<\Stackra\Attributes\Models\AttributeSet>
  *
  * @category Attributes
  *

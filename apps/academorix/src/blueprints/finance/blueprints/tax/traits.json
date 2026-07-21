@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/tax/traits",
+  "id": "stackra://modules/tax/traits",
   "$version": 1,
   "title": "tax — trait composition",
   "description": "Three owned traits. `BelongsToTaxJurisdiction` is the FK trait for downstream models (TaxRate, TaxExemption). `HasTaxRates` / `HasTaxCalculations` are inverse-side conveniences on TaxJurisdiction (for HasTaxRates) and Tenant (for HasTaxCalculations), exposing scoped query helpers. Order matters when composed with BelongsToTenant — tenant MUST come first so the scope chain observes the tenant context.",
   "owned": [
     {
-      "trait": "Academorix\\Finance\\Tax\\Concerns\\BelongsToTaxJurisdiction",
+      "trait": "Stackra\\Finance\\Tax\\Concerns\\BelongsToTaxJurisdiction",
       "description": "Mixed into any domain model that carries a `tax_jurisdiction_id` (or `issuing_jurisdiction_id`) FK. Adds the `jurisdiction()` belongsTo relation + a `resolveInJurisdiction(?TaxJurisdiction)` query scope. Used by TaxRate + TaxExemption. Refuses to save a row whose jurisdiction points at a jurisdiction in a different tenant than the row itself (unless the jurisdiction is platform-reference, tenant_id IS NULL — that's always allowed).",
       "public": true,
       "usedBy": [
@@ -19,13 +19,13 @@
       ]
     },
     {
-      "trait": "Academorix\\Finance\\Tax\\Concerns\\HasTaxRates",
+      "trait": "Stackra\\Finance\\Tax\\Concerns\\HasTaxRates",
       "description": "Composed onto the TaxJurisdiction model itself. Adds `->rates()` (hasMany over TaxRate), `->activeRates()` (scope filter effective_from <= today AND (effective_to IS NULL OR effective_to > today)), `->ratesFor(TaxRateType, TaxRateAppliesTo, ?CarbonImmutable)` (returns the single applicable rate for the tuple).",
       "public": true,
       "usedBy": ["tax::TaxJurisdiction"]
     },
     {
-      "trait": "Academorix\\Finance\\Tax\\Concerns\\HasTaxCalculations",
+      "trait": "Stackra\\Finance\\Tax\\Concerns\\HasTaxCalculations",
       "description": "Composed onto the Tenant model (imported from tenancy module). Adds `->taxCalculations()` (hasMany over TaxCalculation), `->recentTaxCalculations(int $days = 30)`, `->annualTaxSummary(int $year)` (returns per-jurisdiction rollup). Kept small — the tenant model is heavy already; this trait exposes only the convenience read methods the finance module needs.",
       "public": true,
       "usedBy": ["tenancy::Tenant (via module registration in TaxServiceProvider)"]
@@ -41,30 +41,30 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\Searchable",
+        "trait": "Stackra\\Foundation\\Concerns\\Searchable",
         "reason": "TaxJurisdiction (searchable by name, country_code, state_code) + TaxExemption (searchable by certificate_number - redacted, customer_id, exemption_type). NOT TaxRate + TaxCalculation (accessed via jurisdiction / invoice_line relations)."
       }
     ],
     "tenants": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
         "reason": "Every owned row carries tenant_id per tenancy-columns.md §3. NOTE: TaxJurisdiction uses a modified variant that allows tenant_id IS NULL for platform-reference rows."
       }
     ],
     "audit": [
       {
-        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "trait": "Stackra\\Audit\\Concerns\\Auditable",
         "reason": "Every write to tax_rates / tax_jurisdictions / tax_exemptions / tax_calculations is compliance-relevant (financial retention 7 years, 10 for Enterprise)."
       }
     ],
     "activity": [
       {
-        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
         "reason": "TaxExemption + tax_provider_configs — verification workflow decisions feed the staff-visible activity feed. NOT TaxRate + TaxJurisdiction + TaxCalculation — either high-volume or already covered by the audit trail."
       }
     ]

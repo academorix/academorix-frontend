@@ -2,15 +2,15 @@
 
 /**
  * @file PackageAddCommand.php
- * @module Academorix\Cli\Commands
- * @description `academorix package:add <name>` — v0.1 placeholder.
+ * @module Stackra\Cli\Commands
+ * @description `stackra package:add <name>` — v0.1 placeholder.
  *   v0.2 resolves `<name>` against the catalog and installs via composer
  *   or pnpm; wires ServiceProvider / AppModule registration.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Commands;
+namespace Stackra\Cli\Commands;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -26,7 +26,7 @@ final class PackageAddCommand extends AbstractCommand
     protected function configure(): void
     {
         parent::configure();
-        $this->addArgument('name', InputArgument::REQUIRED, 'Catalog package name (e.g. academorix/audit).');
+        $this->addArgument('name', InputArgument::REQUIRED, 'Catalog package name (e.g. stackra/audit).');
     }
 
     protected function handle(InputInterface $input, OutputInterface $output): int

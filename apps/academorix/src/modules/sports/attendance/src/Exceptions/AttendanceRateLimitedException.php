@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attendance\Exceptions;
+namespace Stackra\Attendance\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Too many check-in attempts from this source in a short window.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AttendanceRateLimitedException extends AcademorixException
+final class AttendanceRateLimitedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

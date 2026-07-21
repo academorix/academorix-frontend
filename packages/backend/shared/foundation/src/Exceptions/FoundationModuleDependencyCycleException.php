@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Exceptions;
+namespace Stackra\Foundation\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Cycle detected in module dependency graph at boot.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class FoundationModuleDependencyCycleException extends AcademorixException
+final class FoundationModuleDependencyCycleException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

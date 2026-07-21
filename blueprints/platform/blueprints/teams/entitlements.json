@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/teams/entitlements",
+  "id": "stackra://modules/teams/entitlements",
   "$version": 1,
   "title": "teams — declared entitlements",
   "description": "Five entitlement keys. `team_slot` caps the number of teams per tenant (per hierarchy.md §7). `team_capacity_gating` toggles capacity + waitlist enforcement. `team_trials` gates the whole Trials sub-module. `team_event_participation` gates the whole EventTeams sub-module. `team_polymorphic_coach` gates `member_type='coach'` on TeamMember rows (blocked until Wave 2b Staff module lands with the Coach model).",

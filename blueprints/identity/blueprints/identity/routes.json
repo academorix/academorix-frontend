@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/identity/routes",
+  "id": "stackra://modules/identity/routes",
   "$version": 1,
   "title": "identity \u2014 HTTP routes",
   "description": "This module publishes NO HTTP routes. Every authentication endpoint (login, refresh, logout, password reset, email verification, MFA challenge, cross-app SSO grant) lives in the `identity/auth` module which composes over this substrate. See design.md \u00a77 for the full HTTP contract.",

@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "athlete",
   "alias": "athlete",
-  "namespace": "Academorix\\Sports\\Athlete",
+  "namespace": "Stackra\\Sports\\Athlete",
   "description": "The person being coached. Answers 'who is being trained here?'. May lack a login (children under `athlete.minor_min_age`, default 16, typically have no `user_id`) — the underlying User is nullable + optional. Every Athlete belongs to Tenant (CASCADE) + Branch (RESTRICT — you cannot archive a branch that still has active athletes) + optionally User (RESTRICT — an adult athlete's user cannot be archived while the athlete row references it). Ships two sensitivity clusters distinct from the base row: CONFIDENTIAL (emergency contact — name / phone / relationship, gated by `athlete.view.emergency_contact`) and REGULATED_HEALTH (medical conditions / allergies / medications / notes, gated by `athlete.view.medical`, retained 7 years per medical-record retention floor, redacted 90 days post-archival). Ships a nightly `RollAthleteAgeGroupSnapshotJob` that recomputes `current_age_group_id` per Athlete against the tenant's active AgeGroup catalog + fires `AthleteAgeGroupSnapshotUpdated` when the group flips (birthday drift). Consent snapshot per GDPR Art. 8 (parental consent required for under-13s in EU / under-16s in most jurisdictions — modelled as `consent_photo_release` / `consent_medical_disclosure` / `consent_third_party` booleans + `consent_recorded_at` + `consent_recorded_by_user_id` — the recording User is typically the athlete's primary AthleteGuardian when the athlete is a minor). Consumes 1 unit of the `athlete_slot` entitlement on create (Small=15 / Medium=250 / Enterprise=unlimited — aligns with user_slot because most tenants budget athletes + users together); every AthleteEnrollment also consumes an `athlete_enrollment_slot`, kept distinct so tenants can have paused athletes without burning enrollment capacity. Lifecycle: active → paused → active OR active → graduated (terminal — kept for alumni relations + historical reference) OR active → withdrawn (terminal — parent chose to leave) OR active → archived (terminal — HR/admin decision). Downstream (Wave 3+): AthleteGuardian binds athletes to responsible Users; AthleteEnrollment attaches athletes to Team + Season; Event/Session reference athletes for participation; Attendance tracks their presence; Finance/Membership contracts pay for their enrollment; Notifications reach the athlete's guardians; Safeguarding auditors read the medical + consent cluster. Domain-agnostic: an athlete can be a swimmer, a basketballer, a chess player, or a music student — the module's naming is sports-first but the shape works for any student/trainee.",
   "keywords": [
     "athlete",
@@ -29,7 +29,7 @@
     "wave-3a"
   ],
   "priority": 55,
-  "providers": ["Academorix\\Sports\\Athlete\\Providers\\AthleteServiceProvider"],
+  "providers": ["Stackra\\Sports\\Athlete\\Providers\\AthleteServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

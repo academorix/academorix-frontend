@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Enums;
+namespace Stackra\Mfa\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `trigger` on `recovery-codes-download`.

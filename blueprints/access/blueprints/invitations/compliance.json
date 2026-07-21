@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invitations/compliance",
+  "id": "stackra://modules/invitations/compliance",
   "$version": 1,
   "title": "invitations — regulatory compliance",
   "description": "Compliance controls this module produces evidence for. Invitations are directly-solicited communications, which is the lawful basis under GDPR Art. 6(1)(a) (consent) OR Art. 6(1)(f) (legitimate interest — contractual context of tenant onboarding) — evidence for both bases is retained on the Invitation + InvitationEvent rows. When invitees are minors (guardian invitations for athletes under the age of consent), COPPA + GDPR Art. 8 apply additionally.",
@@ -79,7 +79,7 @@
         {
           "article": "§1798.100",
           "control": "notice-at-collection-for-invitee-email",
-          "evidence": "Preview page (GET /api/invitations/{token}) displays the Academorix privacy notice + tenant-specific processing purposes."
+          "evidence": "Preview page (GET /api/invitations/{token}) displays the Stackra privacy notice + tenant-specific processing purposes."
         }
       ]
     },
@@ -91,12 +91,12 @@
         {
           "article": "§7704(a)(1)",
           "control": "accurate-headers",
-          "evidence": "InvitationNotification uses the tenant's brand + address as From, with `academorix.app` sending-domain visible in Return-Path."
+          "evidence": "InvitationNotification uses the tenant's brand + address as From, with `stackra.app` sending-domain visible in Return-Path."
         },
         {
           "article": "§7704(a)(3)",
           "control": "physical-postal-address",
-          "evidence": "InvitationNotification footer contains the tenant's postal address (from TenantContact where kind=billing OR the Academorix corporate address as fallback)."
+          "evidence": "InvitationNotification footer contains the tenant's postal address (from TenantContact where kind=billing OR the Stackra corporate address as fallback)."
         }
       ]
     },

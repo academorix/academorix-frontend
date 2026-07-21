@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FinanceDigitalPassesSdk\Tests;
+namespace Stackra\FinanceDigitalPassesSdk\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix-finance/digital-passes-sdk.
+ * Base test case for stackra-finance/digital-passes-sdk.
  *
  * @category DigitalPassesSdk
  *

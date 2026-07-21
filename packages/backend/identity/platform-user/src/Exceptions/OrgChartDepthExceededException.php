@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformUser\Exceptions;
+namespace Stackra\PlatformUser\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * The proposed manager assignment would push the org-chart chain past `platform-user.

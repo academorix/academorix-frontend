@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branch\Exceptions;
+namespace Stackra\Branch\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Composite unique (tenant_id, organization_id, slug) violated.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class BranchSlugTakenException extends AcademorixException
+final class BranchSlugTakenException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

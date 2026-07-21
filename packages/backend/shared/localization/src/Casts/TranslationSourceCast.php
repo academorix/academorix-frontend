@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Casts;
+namespace Stackra\Localization\Casts;
 
-use Academorix\Localization\Enums\TranslationSource;
+use Stackra\Localization\Enums\TranslationSource;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 

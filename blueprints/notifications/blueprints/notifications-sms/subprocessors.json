@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-sms/subprocessors",
+  "id": "stackra://modules/notifications-sms/subprocessors",
   "$version": 1,
   "title": "notifications-sms \u2014 subprocessors (GDPR Art. 28)",
   "regulatoryBasis": ["gdpr Art. 28", "uk_gdpr Art. 28"],

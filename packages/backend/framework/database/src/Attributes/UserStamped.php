@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Database\Attributes;
+namespace Stackra\Database\Attributes;
 
 use Attribute;
 
@@ -20,7 +20,7 @@ use Attribute;
  * UserStamped Attribute for Model Classes.
  *
  * Configures the polymorphic user-stamping columns used by the
- * {@see \Academorix\Database\Concerns\Model\HasUserStamp} trait. When
+ * {@see \Stackra\Database\Concerns\Model\HasUserStamp} trait. When
  * applied, the attribute values override the trait's hardcoded defaults,
  * allowing per-model column customisation without method overrides.
  *
@@ -50,7 +50,7 @@ use Attribute;
  *
  * @since    2.0.0
  *
- * @see \Academorix\Database\Concerns\Model\HasUserStamp
+ * @see \Stackra\Database\Concerns\Model\HasUserStamp
  */
 #[Attribute(Attribute::TARGET_CLASS)]
 final readonly class UserStamped

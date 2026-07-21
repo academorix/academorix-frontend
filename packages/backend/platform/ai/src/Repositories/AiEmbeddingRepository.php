@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Ai\Repositories;
+namespace Stackra\Ai\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Ai\Contracts\Data\AiEmbeddingInterface;
-use Academorix\Ai\Contracts\Repositories\AiEmbeddingRepositoryInterface;
-use Academorix\Ai\Models\AiEmbedding;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Ai\Contracts\Data\AiEmbeddingInterface;
+use Stackra\Ai\Contracts\Repositories\AiEmbeddingRepositoryInterface;
+use Stackra\Ai\Models\AiEmbedding;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Ai\Models\AiEmbedding}.
+ * Attribute-first Eloquent repository for {@see Stackra\Ai\Models\AiEmbedding}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AiEmbeddingInterface::class)]` which resolves to
  * `AiEmbedding` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Ai\Models\AiEmbedding>
+ * @extends Repository<\Stackra\Ai\Models\AiEmbedding>
  *
  * @category Ai
  *

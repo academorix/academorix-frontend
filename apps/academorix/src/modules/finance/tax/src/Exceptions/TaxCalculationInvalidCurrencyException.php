@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Exceptions;
+namespace Stackra\Tax\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * source_currency is not a valid ISO 4217 3-letter uppercase code.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TaxCalculationInvalidCurrencyException extends AcademorixException
+final class TaxCalculationInvalidCurrencyException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

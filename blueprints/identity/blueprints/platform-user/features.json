@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/platform-user/features",
+  "id": "stackra://modules/platform-user/features",
   "$version": 1,
   "title": "platform-user \u2014 feature keys",
   "description": "Feature keys exposed on the platform_admin plane. NOT tenant-facing features (those live per-tenant + are surfaced via `GET /api/auth/me\u2192data.features`). These features gate platform-admin UI surfaces + drive the sidebar rendering of the ops dashboard.",

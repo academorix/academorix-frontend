@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Attributes;
+namespace Stackra\Webhook\Attributes;
 
 use Attribute;
 
 /**
  * Register a destination-driver class with
- * {@see \Academorix\Webhook\Services\WebhookDestinationRegistry}.
+ * {@see \Stackra\Webhook\Services\WebhookDestinationRegistry}.
  *
  * A destination driver implements
- * {@see \Academorix\Webhook\Contracts\Services\WebhookDestinationInterface}
+ * {@see \Stackra\Webhook\Contracts\Services\WebhookDestinationInterface}
  * and knows how to dispatch a
- * {@see \Academorix\Webhook\Models\WebhookDelivery} to its target
+ * {@see \Stackra\Webhook\Models\WebhookDelivery} to its target
  * (HTTPS endpoint, EventBridge bus, Pub/Sub topic, mTLS receiver).
  *
  * ```php

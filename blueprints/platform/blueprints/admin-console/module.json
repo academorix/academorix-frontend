@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "admin-console",
   "alias": "admin-console",
-  "namespace": "Academorix\\AdminConsole",
+  "namespace": "Stackra\\AdminConsole",
   "description": "Tenant admin dashboard + platform-staff console orchestration per blueprint §16.4. Ships ONE owned entity: `AdminDashboardConfig` (per-tenant admin dashboard configuration — enabled_widgets + layout + recent_actions cache). Tenant admin: cross-module dashboards + staff management + settings + reports/exports. Platform staff (central): tenant provisioning + plan/billing oversight + impersonation (audited) + support. Impersonation delegates to `identity/platform-user` module which owns the identity. This module owns the DASHBOARD ORCHESTRATION LAYER.",
   "keywords": [
     "admin",
@@ -14,7 +14,7 @@
     "wave-2"
   ],
   "priority": 89,
-  "providers": ["Academorix\\AdminConsole\\Providers\\AdminConsoleServiceProvider"],
+  "providers": ["Stackra\\AdminConsole\\Providers\\AdminConsoleServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

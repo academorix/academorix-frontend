@@ -1,4 +1,4 @@
-# academorix/platform-user
+# stackra/platform-user
 
 Server-side Laravel package for the `platform-user` module. Auto-generated from
 the blueprint at `modules/identity/blueprints/platform-user/`.
@@ -6,7 +6,7 @@ the blueprint at `modules/identity/blueprints/platform-user/`.
 ## Entities
 
 - **PlatformProfile** (`plp_...`) — 1:1 PII satellite of PlatformUser.
-- **PlatformUser** (`plu_...`) — Academorix-staff principal.
+- **PlatformUser** (`plu_...`) — Stackra-staff principal.
 
 ## Layout
 
@@ -44,6 +44,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-identity/platform-user-sdk` under `sdk/identity-platform-user-sdk/`.
+`stackra-identity/platform-user-sdk` under `sdk/identity-platform-user-sdk/`.
 Consumers cross the service boundary through the SDK; this package is the
 SERVER-side owner of the domain.

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Actions\Applications;
+namespace Stackra\Application\Actions\Applications;
 
-use Academorix\Application\Contracts\Repositories\ApplicationRepositoryInterface;
-use Academorix\Application\Enums\ApplicationPermission;
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Delete;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Application\Contracts\Repositories\ApplicationRepositoryInterface;
+use Stackra\Application\Enums\ApplicationPermission;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Delete;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\Response;
 
 /**

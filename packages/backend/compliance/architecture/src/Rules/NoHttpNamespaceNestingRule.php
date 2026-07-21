@@ -5,19 +5,19 @@
  *
  * @description
  * Source rule: forbids `\Http\` (and any other configured
- * segment) inside class namespaces. Academorix packages use
+ * segment) inside class namespaces. Stackra packages use
  * FLAT per-package namespaces:
  *
- *     Academorix\Users\Controllers\LoginController
+ *     Stackra\Users\Controllers\LoginController
  *
  * NOT
  *
- *     Academorix\Users\Http\Controllers\LoginController
+ *     Stackra\Users\Http\Controllers\LoginController
  *
  * ## Why
  *
  * The `Http` sub-namespace is a Laravel-app convention that
- * doesn't map to the package layout Academorix uses. Every
+ * doesn't map to the package layout Stackra uses. Every
  * package is a domain — Users, Billing, Auth — and the
  * transport (Controllers, Middleware) is one folder under the
  * domain, not a nested `Http` bucket.
@@ -41,11 +41,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Support\SourceFile;
-use Academorix\Architecture\Violations\Severity;
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Support\SourceFile;
+use Stackra\Architecture\Violations\Severity;
+use Stackra\Architecture\Violations\Violation;
 
 /**
  * Ban `\Http\` (and friends) inside class namespaces.
@@ -67,7 +67,7 @@ final class NoHttpNamespaceNestingRule extends AbstractRule
      */
     public function description(): string
     {
-        return 'Use flat namespaces — Academorix\\<Package>\\Controllers, not Academorix\\<Package>\\Http\\Controllers.';
+        return 'Use flat namespaces — Stackra\\<Package>\\Controllers, not Stackra\\<Package>\\Http\\Controllers.';
     }
 
     /**
@@ -116,7 +116,7 @@ final class NoHttpNamespaceNestingRule extends AbstractRule
                         $segment,
                     ),
                     line: null,
-                    hint: 'Use flat namespaces — Academorix\\<Package>\\Controllers, not Academorix\\<Package>\\Http\\Controllers.',
+                    hint: 'Use flat namespaces — Stackra\\<Package>\\Controllers, not Stackra\\<Package>\\Http\\Controllers.',
                 ),
             ];
         }

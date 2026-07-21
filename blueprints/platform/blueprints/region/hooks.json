@@ -1,22 +1,22 @@
 {
-  "id": "academorix://modules/region/hooks",
+  "id": "stackra://modules/region/hooks",
   "$version": 1,
   "title": "region — tenancy hooks",
   "description": "This module IS tenant-aware. It participates in tenancy lifecycle via two hooks. Distinct from `listeners.json` (which is domain-event listeners) — tenancy hooks fire at specific tenancy lifecycle points (provisioning / erasure) and participate in the tenancy transaction where relevant.",
   "reference": {
-    "contract": "academorix://modules/tenancy/hooks",
+    "contract": "stackra://modules/tenancy/hooks",
     "hierarchy_note": "See `hierarchy.md` §12 + `tenancy-columns.md` for the tenant plane the region module lives on."
   },
   "hooks": [
     {
-      "class": "Academorix\\Region\\Hooks\\SeedDefaultRegionOnTenantProvisioned",
+      "class": "Stackra\\Region\\Hooks\\SeedDefaultRegionOnTenantProvisioned",
       "event": "tenancy::TenantProvisioned",
       "lifecycle_phase": "after_commit",
       "queue": "notifications",
       "purpose": "When a new Tenant is provisioned, dispatch SeedDefaultRegionForTenantJob (or run RegionProvisioner synchronously per `region.provisioning.async` config). This is the tenancy-hook counterpart of the listener in `listeners.json` — the hook variant lets the tenancy module orchestrate a transaction across every registered module. Skipped when the tenant already has a default Region (idempotent)."
     },
     {
-      "class": "Academorix\\Region\\Hooks\\PreventRegionOrphansOnTenantErased",
+      "class": "Stackra\\Region\\Hooks\\PreventRegionOrphansOnTenantErased",
       "event": "tenancy::TenantErased",
       "lifecycle_phase": "before_cascade",
       "queue": null,

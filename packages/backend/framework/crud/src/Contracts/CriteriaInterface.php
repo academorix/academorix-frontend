@@ -17,7 +17,7 @@ declare(strict_types=1);
  * @since    2.0.0
  */
 
-namespace Academorix\Crud\Contracts;
+namespace Stackra\Crud\Contracts;
 
 use Illuminate\Database\Eloquent\Builder;
 

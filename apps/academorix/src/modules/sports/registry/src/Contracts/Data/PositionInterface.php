@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Contracts\Data;
+namespace Stackra\Registry\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Registry\Models\Position;
+use Stackra\Registry\Models\Position;
 
 /**
  * Table shape for the `positions` table.

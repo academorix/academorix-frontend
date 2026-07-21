@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Events;
+namespace Stackra\Coupon\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog
  * - activity::WriteToActivityLog (staff-visible for support triage)
- * - observability::MetricsCollector (academorix.coupons.redemption_refusals_total labelled by refusal_reason)
+ * - observability::MetricsCollector (stackra.coupons.redemption_refusals_total labelled by refusal_reason)
  *
  * @category Coupon
  *

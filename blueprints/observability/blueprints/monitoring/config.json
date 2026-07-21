@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/monitoring/config",
+  "id": "stackra://modules/monitoring/config",
   "$version": 1,
   "title": "monitoring — developer configuration",
   "configFile": "config/monitoring.php",

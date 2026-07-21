@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsSdk\Client;
+namespace Stackra\NotificationsSdk\Client;
 
-use Academorix\ApiSdk\Contracts\SdkResource;
-use Academorix\ApiSdk\Registry\SdkResourceRegistry;
+use Stackra\ApiSdk\Contracts\SdkResource;
+use Stackra\ApiSdk\Registry\SdkResourceRegistry;
 
 /**
  * Consumer-facing facade for the Notifications service SDK.
  *
  * Every `$notifications->{resource}()` call dispatches through `__call()` into the
  * service-scoped {@see SdkResourceRegistry} populated at boot by
- * {@see \Academorix\NotificationsSdk\Providers\NotificationsSdkServiceProvider}. Distinct
+ * {@see \Stackra\NotificationsSdk\Providers\NotificationsSdkServiceProvider}. Distinct
  * from the kernel `ApiClient` so each service exposes its own typed facade
  * bound to its own connector (its own base URL).
  *
@@ -32,7 +32,7 @@ final readonly class NotificationsSdk
     /**
      * Fetch a discovered resource by its `#[AsSdkResource]` name.
      *
-     * @throws \Academorix\ApiSdk\Exceptions\ResourceNotFoundException When none registered under `$name`.
+     * @throws \Stackra\ApiSdk\Exceptions\ResourceNotFoundException When none registered under `$name`.
      */
     public function resource(string $name): SdkResource
     {

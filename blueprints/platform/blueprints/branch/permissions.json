@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/branch/permissions",
+  "id": "stackra://modules/branch/permissions",
   "$version": 1,
   "title": "branch — permissions",
-  "seeder": "Academorix\\Branch\\Database\\Seeders\\BranchPermissionSeeder",
+  "seeder": "Stackra\\Branch\\Database\\Seeders\\BranchPermissionSeeder",
   "isSystem": true,
   "scope_suffix_convention": "Same suffix convention as user/access — `.any` / `.tenant` / `.branch` / `.own` — resolved by the `ScopeSuffixResolver` shipped by the user module. The base permission (no suffix) is the highest-tier variant, effectively `.tenant`.",
   "permissions": [

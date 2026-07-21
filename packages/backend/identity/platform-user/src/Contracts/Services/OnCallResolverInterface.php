@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformUser\Contracts\Services;
+namespace Stackra\PlatformUser\Contracts\Services;
 
-use Academorix\PlatformUser\Services\OnCallResolver;
+use Stackra\PlatformUser\Services\OnCallResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

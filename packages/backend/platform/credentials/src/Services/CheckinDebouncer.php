@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Credentials\Services;
+namespace Stackra\Credentials\Services;
 
-use Academorix\Credentials\Contracts\Services\CheckinDebouncerInterface;
+use Stackra\Credentials\Contracts\Services\CheckinDebouncerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Credentials\Contracts\Repositories\CheckinLogRepositoryInterface;
+use Stackra\Credentials\Contracts\Repositories\CheckinLogRepositoryInterface;
 
 /**
  * Concrete service — CheckinDebouncer.

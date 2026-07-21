@@ -4,7 +4,7 @@
  * @file modules/shared/activity/lang/en/activity.php
  *
  * @description
- * English translations for the `academorix/activity` module.
+ * English translations for the `stackra/activity` module.
  */
 
 declare(strict_types=1);

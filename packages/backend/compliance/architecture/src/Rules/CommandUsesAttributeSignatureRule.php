@@ -12,7 +12,7 @@
  *
  * Attribute-based signatures make the command's contract
  * visible on the class declaration and integrate with the same
- * attribute-driven discovery Academorix uses everywhere else
+ * attribute-driven discovery Stackra uses everywhere else
  * (`#[AsController]`, `#[Bind]`, `#[AsMiddleware]`). The
  * property form still works at runtime but is invisible to
  * reflection-based tooling that relies on attribute discovery.
@@ -44,11 +44,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Support\SourceFile;
-use Academorix\Architecture\Violations\Severity;
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Support\SourceFile;
+use Stackra\Architecture\Violations\Severity;
+use Stackra\Architecture\Violations\Violation;
 
 /**
  * Require #[Signature] on Console commands.

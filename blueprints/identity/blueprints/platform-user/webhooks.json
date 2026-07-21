@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/platform-user/webhooks",
+  "id": "stackra://modules/platform-user/webhooks",
   "$version": 1,
   "title": "platform-user \u2014 inbound + outbound webhooks",
-  "description": "This module publishes NO webhooks. Rationale: platform-user manages Academorix internal staff \u2014 there is no external integration party that consumes lifecycle events (an HRIS would be the consumer, but Academorix does not run one at this tier; if we adopt one in the future, an outbound `platform_user.hired` / `.offboarded` webhook would join this list). Inbound webhooks are similarly absent \u2014 there is no external identity provider posting into the platform-user surface (that's the future `identity/sso` module's job, Wave 1c). PagerDuty integration is one-way outbound API calls, not webhook-shaped. This file exists for uniform module shape.",
+  "description": "This module publishes NO webhooks. Rationale: platform-user manages Stackra internal staff \u2014 there is no external integration party that consumes lifecycle events (an HRIS would be the consumer, but Stackra does not run one at this tier; if we adopt one in the future, an outbound `platform_user.hired` / `.offboarded` webhook would join this list). Inbound webhooks are similarly absent \u2014 there is no external identity provider posting into the platform-user surface (that's the future `identity/sso` module's job, Wave 1c). PagerDuty integration is one-way outbound API calls, not webhook-shaped. This file exists for uniform module shape.",
   "inbound": {
     "endpoint": null,
     "signing": null,
@@ -13,7 +13,7 @@
     "webhooks": []
   },
   "future": [
-    "If Academorix adopts an HRIS (BambooHR, Rippling, Deel, etc.), an outbound webhook contract lands here: `platform_user.hired`, `platform_user.department_changed`, `platform_user.offboarded` with the standard HMAC-signed envelope. Consumer would be the HRIS's inbound integration.",
-    "If Academorix integrates a directory-sync provider (Okta SCIM, Azure AD Graph), inbound webhooks land here to signal upstream identity mutations (rename, department reassignment) that this module should propagate to the local platform_users row."
+    "If Stackra adopts an HRIS (BambooHR, Rippling, Deel, etc.), an outbound webhook contract lands here: `platform_user.hired`, `platform_user.department_changed`, `platform_user.offboarded` with the standard HMAC-signed envelope. Consumer would be the HRIS's inbound integration.",
+    "If Stackra integrates a directory-sync provider (Okta SCIM, Azure AD Graph), inbound webhooks land here to signal upstream identity mutations (rename, department reassignment) that this module should propagate to the local platform_users row."
   ]
 }

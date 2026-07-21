@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Repositories;
+namespace Stackra\Domains\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Domains\Contracts\Data\DomainRecordInterface;
-use Academorix\Domains\Contracts\Repositories\DomainRecordRepositoryInterface;
-use Academorix\Domains\Models\DomainRecord;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Domains\Contracts\Data\DomainRecordInterface;
+use Stackra\Domains\Contracts\Repositories\DomainRecordRepositoryInterface;
+use Stackra\Domains\Models\DomainRecord;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Domains\Models\DomainRecord}.
+ * Attribute-first Eloquent repository for {@see Stackra\Domains\Models\DomainRecord}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(DomainRecordInterface::class)]` which resolves to
  * `DomainRecord` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Domains\Models\DomainRecord>
+ * @extends Repository<\Stackra\Domains\Models\DomainRecord>
  *
  * @category Domains
  *

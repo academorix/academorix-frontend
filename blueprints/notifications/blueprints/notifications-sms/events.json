@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/notifications-sms/events",
+  "id": "stackra://modules/notifications-sms/events",
   "$version": 1,
   "title": "notifications-sms \u2014 published events",
-  "namespace": "Academorix\\Notifications\\Sms\\Events",
+  "namespace": "Stackra\\Notifications\\Sms\\Events",
   "dispatchMode": "afterCommit",
   "events": [
     {
       "name": "SmsSent",
-      "class": "Academorix\\Notifications\\Sms\\Events\\SmsSent",
+      "class": "Stackra\\Notifications\\Sms\\Events\\SmsSent",
       "trigger": "Provider accepted the message + returned SID.",
       "queue": "notifications",
       "consumers": ["notifications::UpdateDeliverySentListener"],
@@ -23,7 +23,7 @@
     },
     {
       "name": "SmsDelivered",
-      "class": "Academorix\\Notifications\\Sms\\Events\\SmsDelivered",
+      "class": "Stackra\\Notifications\\Sms\\Events\\SmsDelivered",
       "trigger": "Provider webhook confirms carrier delivery.",
       "queue": "notifications",
       "consumers": ["notifications::UpdateDeliveryDeliveredListener"],
@@ -36,7 +36,7 @@
     },
     {
       "name": "SmsFailed",
-      "class": "Academorix\\Notifications\\Sms\\Events\\SmsFailed",
+      "class": "Stackra\\Notifications\\Sms\\Events\\SmsFailed",
       "trigger": "Provider or carrier reported failure (transient).",
       "queue": "notifications",
       "consumers": ["notifications::UpdateDeliveryFailedListener"],
@@ -50,7 +50,7 @@
     },
     {
       "name": "SmsUndeliverable",
-      "class": "Academorix\\Notifications\\Sms\\Events\\SmsUndeliverable",
+      "class": "Stackra\\Notifications\\Sms\\Events\\SmsUndeliverable",
       "trigger": "Permanent failure (invalid number, unreachable carrier). Adds to SmsOptOut with reason=invalid_number.",
       "queue": "notifications",
       "consumers": [
@@ -67,7 +67,7 @@
     },
     {
       "name": "SmsOptedOut",
-      "class": "Academorix\\Notifications\\Sms\\Events\\SmsOptedOut",
+      "class": "Stackra\\Notifications\\Sms\\Events\\SmsOptedOut",
       "trigger": "SmsOptOut row created (either STOP-keyword or admin manual).",
       "queue": "notifications",
       "consumers": [
@@ -85,7 +85,7 @@
     },
     {
       "name": "SmsSubscribedIn",
-      "class": "Academorix\\Notifications\\Sms\\Events\\SmsSubscribedIn",
+      "class": "Stackra\\Notifications\\Sms\\Events\\SmsSubscribedIn",
       "trigger": "Inbound message body matches START / SUBSCRIBE / UNSTOP \u2014 re-subscription per CTIA guidelines.",
       "queue": "notifications",
       "consumers": [
@@ -101,7 +101,7 @@
     },
     {
       "name": "SmsCostRecorded",
-      "class": "Academorix\\Notifications\\Sms\\Events\\SmsCostRecorded",
+      "class": "Stackra\\Notifications\\Sms\\Events\\SmsCostRecorded",
       "trigger": "Provider webhook returned final cost. Emitted after SmsDelivered.",
       "queue": "notifications",
       "consumers": ["notifications-sms::UpdateCostAggregation", "billing::TrackSmsCostListener"],
@@ -116,7 +116,7 @@
     },
     {
       "name": "SmsOptOutRevoked",
-      "class": "Academorix\\Notifications\\Sms\\Events\\SmsOptOutRevoked",
+      "class": "Stackra\\Notifications\\Sms\\Events\\SmsOptOutRevoked",
       "trigger": "SmsOptOut soft-deleted (admin revoke OR SmsSubscribedIn).",
       "queue": "notifications",
       "consumers": ["compliance::AuditListener"],

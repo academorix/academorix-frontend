@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payout\Exceptions;
+namespace Stackra\Payout\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * resolve action only valid when status='drift'.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PayoutReconciliationNotDriftException extends AcademorixException
+final class PayoutReconciliationNotDriftException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

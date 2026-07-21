@@ -4,7 +4,7 @@
  * @file database/seeders/ScopeNodeSeeder.php
  *
  * @description
- * Demo-only seeder for {@see \Academorix\Scope\Models\ScopeNode}.
+ * Demo-only seeder for {@see \Stackra\Scope\Models\ScopeNode}.
  * Instantiates a three-level tree matching the demo hierarchy
  * defined by {@see ScopeDefinitionSeeder}. Priority 110 so
  * definitions land before their referencing nodes.
@@ -12,11 +12,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Database\Seeders;
+namespace Stackra\Scope\Database\Seeders;
 
-use Academorix\ServiceProvider\Attributes\AsSeeder;
-use Academorix\Scope\Models\ScopeDefinition;
-use Academorix\Scope\Models\ScopeNode;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
+use Stackra\Scope\Models\ScopeDefinition;
+use Stackra\Scope\Models\ScopeNode;
 use Illuminate\Database\Seeder;
 
 /**

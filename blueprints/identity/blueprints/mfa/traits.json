@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/mfa/traits",
+  "id": "stackra://modules/mfa/traits",
   "$version": 1,
   "title": "mfa — trait composition",
   "description": "One owned trait. `HasMfa` is a marker composed by services that participate in MFA policy resolution — actions that must be gated by a recent MFA challenge (sensitive-write actions, admin operations, platform-security surfaces) declare it so the boot-time discovery can enumerate them + wire the `mfa.require_recent_challenge` middleware automatically. NO BelongsToTenant on WebauthnCredential — WebAuthn credentials are GLOBAL (belong to the Identity), matching the substrate they extend.",
   "owned": [
     {
-      "trait": "Academorix\\Mfa\\Concerns\\HasMfa",
+      "trait": "Stackra\\Mfa\\Concerns\\HasMfa",
       "description": "Marker trait for services + actions requiring MFA-gated access. Composition triggers a boot-time scan by the MfaServiceProvider that (a) enumerates every #[UsesTrait(HasMfa::class)] target, (b) verifies the class has a corresponding route mounted with `mfa.require_recent_challenge` middleware, and (c) fails the boot when a marker exists on a route missing the middleware. The trait itself contributes no methods — it is a pure discovery marker so the wiring stays declarative.",
       "public": true,
       "usedBy": [
@@ -31,13 +31,13 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
-    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
+    "activity": [{ "trait": "Stackra\\Activity\\Concerns\\HasActivityLog" }]
   },
   "composition": {
     "webauthn_credential": {

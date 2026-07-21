@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Repositories;
+namespace Stackra\Transfer\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Transfer\Contracts\Data\XferJobInterface;
-use Academorix\Transfer\Contracts\Repositories\XferJobRepositoryInterface;
-use Academorix\Transfer\Models\XferJob;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Transfer\Contracts\Data\XferJobInterface;
+use Stackra\Transfer\Contracts\Repositories\XferJobRepositoryInterface;
+use Stackra\Transfer\Models\XferJob;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Transfer\Models\XferJob}.
+ * Attribute-first Eloquent repository for {@see Stackra\Transfer\Models\XferJob}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(XferJobInterface::class)]` which resolves to
  * `XferJob` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Transfer\Models\XferJob>
+ * @extends Repository<\Stackra\Transfer\Models\XferJob>
  *
  * @category Transfer
  *

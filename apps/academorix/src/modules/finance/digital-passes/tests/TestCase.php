@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\DigitalPasses\Tests;
+namespace Stackra\DigitalPasses\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/digital-passes.
+ * Base test case for stackra/digital-passes.
  *
  * @category DigitalPasses
  *

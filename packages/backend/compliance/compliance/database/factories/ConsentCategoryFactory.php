@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Database\Factories;
+namespace Stackra\Compliance\Database\Factories;
 
-use Academorix\Compliance\Contracts\Data\ConsentCategoryInterface;
-use Academorix\Compliance\Models\ConsentCategory;
+use Stackra\Compliance\Contracts\Data\ConsentCategoryInterface;
+use Stackra\Compliance\Models\ConsentCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

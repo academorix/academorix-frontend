@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Contracts\Services;
+namespace Stackra\Transfer\Contracts\Services;
 
-use Academorix\Transfer\Models\XferJob;
-use Academorix\Transfer\Services\NullExportManager;
+use Stackra\Transfer\Models\XferJob;
+use Stackra\Transfer\Services\NullExportManager;
 use Illuminate\Container\Attributes\Bind;
 
 /**

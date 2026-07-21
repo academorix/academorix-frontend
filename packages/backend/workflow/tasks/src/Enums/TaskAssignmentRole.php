@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tasks\Enums;
+namespace Stackra\Tasks\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `role` on `task-assignment`.

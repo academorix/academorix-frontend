@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Contracts\Repositories;
+namespace Stackra\Auth\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Auth\Models\AuthJwtDenyList}.
+ * Repository contract for {@see Stackra\Auth\Models\AuthJwtDenyList}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `AuthJwtDenyListRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Auth\Models\AuthJwtDenyList>
+ * @extends RepositoryInterface<\Stackra\Auth\Models\AuthJwtDenyList>
  *
  * @category Auth
  *

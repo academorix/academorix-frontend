@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/region/data/country-defaults",
+  "id": "stackra://modules/region/data/country-defaults",
   "$version": 1,
   "title": "region — country defaults reference table",
   "description": "40+ countries mapped to their default { currency, currency_symbol, timezone, locale, rtl, weekend_days, tax_config, subdivision_note }. Loaded by RegionProvisioner when the caller supplies only country_code — every field the caller explicitly provides overrides its default. Reference material — read at boot + cached in-memory. Countries NOT in this table are refused by default when `region.validation.reject_unknown_country_code=true` (the default). Supranational zones (EU, GCC) require the config switch to be off + the caller supplies every field explicitly. This table is the source of truth for the ValidCountryCode rule in strict mode + the SDUI country picker.",

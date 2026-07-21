@@ -19,19 +19,19 @@
  *
  *   exceptions::http.too_many_requests
  *
- * @see \Academorix\Exceptions\AcademorixException  Base class exposing `withRetryAfter()`.
+ * @see \Stackra\Exceptions\StackraException  Base class exposing `withRetryAfter()`.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Http;
+namespace Stackra\Exceptions\Http;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class TooManyRequestsException extends AcademorixException
+class TooManyRequestsException extends StackraException
 {
     /**
      * Machine-readable code — clients that implement adaptive
@@ -63,7 +63,7 @@ class TooManyRequestsException extends AcademorixException
     /**
      * Standard 429 status. The renderer pairs this with a
      * `Retry-After:` header sourced from
-     * {@see AcademorixException::retryAfter()}.
+     * {@see StackraException::retryAfter()}.
      */
     protected int $httpStatus = Response::HTTP_TOO_MANY_REQUESTS;
 

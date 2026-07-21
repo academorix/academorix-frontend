@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/activity/attributes",
+  "id": "stackra://modules/activity/attributes",
   "$version": 1,
   "title": "activity — PHP attribute contracts",
   "description": "Two attributes. `#[AsActivityFormatter]` on a class marks it as a description formatter for a specific log_name (registered via ActivityFormatterRegistry at boot). `#[AsActivitySubscriber]` on a service class registers it as a subscriber to `ActivityRecorded` events for a specific log_name (used by downstream modules that need to react to their own activities — e.g. digest queue routers).",
-  "namespace": "Academorix\\Observability\\Activity\\Attributes",
+  "namespace": "Stackra\\Observability\\Activity\\Attributes",
   "attributes": [
     {
       "name": "AsActivityFormatter",
-      "class": "Academorix\\Observability\\Activity\\Attributes\\AsActivityFormatter",
+      "class": "Stackra\\Observability\\Activity\\Attributes\\AsActivityFormatter",
       "targets": ["class"],
       "description": "Class-level marker on ActivityFormatter subclasses. Boot-time discovery scans #[AsActivityFormatter]-annotated classes and seeds them into ActivityFormatterRegistry with their log_name key. Only used when a domain module needs custom rendering beyond the default template interpolation (e.g. rendering a booking activity with a facility-name chip that resolves to a link). If no formatter is registered for a log_name, the default formatter interpolates properties in as `{{property}}` placeholders.",
       "params": [
@@ -34,7 +34,7 @@
     },
     {
       "name": "AsActivitySubscriber",
-      "class": "Academorix\\Observability\\Activity\\Attributes\\AsActivitySubscriber",
+      "class": "Stackra\\Observability\\Activity\\Attributes\\AsActivitySubscriber",
       "targets": ["class"],
       "description": "Marks a service class as an ActivityRecorded subscriber. Boot-time discovery registers the class with Laravel's event dispatcher, filtered by log_name. Alternative to manual EventServiceProvider wiring — keeps activity-adjacent listener registration self-contained. Used sparingly — downstream modules typically consume via broadcast (WebSocket) or digest email; explicit subscribers are for programmatic reactions like 'when a booking is cancelled, kick off a refund workflow'.",
       "params": [

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/teams/feature-flags",
+  "id": "stackra://modules/teams/feature-flags",
   "$version": 1,
   "title": "teams — kill switches",
   "engine": "laravel/pennant",

@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlagsSdk\Resources;
+namespace Stackra\FeatureFlagsSdk\Resources;
 
-use Academorix\FeatureFlagsSdk\Connectors\FeatureFlagsConnector;
-use Academorix\FeatureFlagsSdk\Data\FeatureKillSwitchData;
-use Academorix\FeatureFlagsSdk\Data\FeatureOverrideData;
-use Academorix\FeatureFlagsSdk\Data\FeatureRolloutData;
-use Academorix\FeatureFlagsSdk\Saloon\KillSwitches\CreateKillSwitchRequest;
-use Academorix\FeatureFlagsSdk\Saloon\KillSwitches\DeleteKillSwitchRequest;
-use Academorix\FeatureFlagsSdk\Saloon\KillSwitches\ListKillSwitchesRequest;
-use Academorix\FeatureFlagsSdk\Saloon\KillSwitches\UpdateKillSwitchRequest;
-use Academorix\FeatureFlagsSdk\Saloon\Overrides\CreateOverrideRequest;
-use Academorix\FeatureFlagsSdk\Saloon\Overrides\DeleteOverrideRequest;
-use Academorix\FeatureFlagsSdk\Saloon\Overrides\ListOverridesRequest;
-use Academorix\FeatureFlagsSdk\Saloon\Overrides\UpdateOverrideRequest;
-use Academorix\FeatureFlagsSdk\Saloon\Rollouts\CreateRolloutRequest;
-use Academorix\FeatureFlagsSdk\Saloon\Rollouts\DeleteRolloutRequest;
-use Academorix\FeatureFlagsSdk\Saloon\Rollouts\ListRolloutsRequest;
-use Academorix\FeatureFlagsSdk\Saloon\Rollouts\UpdateRolloutRequest;
+use Stackra\FeatureFlagsSdk\Connectors\FeatureFlagsConnector;
+use Stackra\FeatureFlagsSdk\Data\FeatureKillSwitchData;
+use Stackra\FeatureFlagsSdk\Data\FeatureOverrideData;
+use Stackra\FeatureFlagsSdk\Data\FeatureRolloutData;
+use Stackra\FeatureFlagsSdk\Saloon\KillSwitches\CreateKillSwitchRequest;
+use Stackra\FeatureFlagsSdk\Saloon\KillSwitches\DeleteKillSwitchRequest;
+use Stackra\FeatureFlagsSdk\Saloon\KillSwitches\ListKillSwitchesRequest;
+use Stackra\FeatureFlagsSdk\Saloon\KillSwitches\UpdateKillSwitchRequest;
+use Stackra\FeatureFlagsSdk\Saloon\Overrides\CreateOverrideRequest;
+use Stackra\FeatureFlagsSdk\Saloon\Overrides\DeleteOverrideRequest;
+use Stackra\FeatureFlagsSdk\Saloon\Overrides\ListOverridesRequest;
+use Stackra\FeatureFlagsSdk\Saloon\Overrides\UpdateOverrideRequest;
+use Stackra\FeatureFlagsSdk\Saloon\Rollouts\CreateRolloutRequest;
+use Stackra\FeatureFlagsSdk\Saloon\Rollouts\DeleteRolloutRequest;
+use Stackra\FeatureFlagsSdk\Saloon\Rollouts\ListRolloutsRequest;
+use Stackra\FeatureFlagsSdk\Saloon\Rollouts\UpdateRolloutRequest;
 use Saloon\Http\Response;
 
 /**

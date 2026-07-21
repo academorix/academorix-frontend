@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Delegation\Contracts\Services;
+namespace Stackra\Delegation\Contracts\Services;
 
-use Academorix\Delegation\Services\ImpersonationSessionTerminator;
+use Stackra\Delegation\Services\ImpersonationSessionTerminator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

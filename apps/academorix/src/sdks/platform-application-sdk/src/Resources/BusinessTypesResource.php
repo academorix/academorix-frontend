@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file apps/academorix/src/sdks/platform-application-sdk/src/Resources/BusinessTypesResource.php
+ * @file apps/stackra/src/sdks/platform-application-sdk/src/Resources/BusinessTypesResource.php
  *
  * @description
  * Platform-admin BusinessType surface. Per the module blueprint, the
@@ -25,18 +25,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformApplicationSdk\Resources;
+namespace Stackra\PlatformApplicationSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\PlatformApplicationSdk\Data\BusinessTypeData;
-use Academorix\PlatformApplicationSdk\Payloads\BusinessTypes\CreateBusinessTypePayload;
-use Academorix\PlatformApplicationSdk\Payloads\BusinessTypes\UpdateBusinessTypePayload;
-use Academorix\PlatformApplicationSdk\Requests\BusinessTypes\CreateBusinessTypeRequest;
-use Academorix\PlatformApplicationSdk\Requests\BusinessTypes\DeleteBusinessTypeRequest;
-use Academorix\PlatformApplicationSdk\Requests\BusinessTypes\ListBusinessTypesRequest;
-use Academorix\PlatformApplicationSdk\Requests\BusinessTypes\ShowBusinessTypeRequest;
-use Academorix\PlatformApplicationSdk\Requests\BusinessTypes\UpdateBusinessTypeRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\PlatformApplicationSdk\Data\BusinessTypeData;
+use Stackra\PlatformApplicationSdk\Payloads\BusinessTypes\CreateBusinessTypePayload;
+use Stackra\PlatformApplicationSdk\Payloads\BusinessTypes\UpdateBusinessTypePayload;
+use Stackra\PlatformApplicationSdk\Requests\BusinessTypes\CreateBusinessTypeRequest;
+use Stackra\PlatformApplicationSdk\Requests\BusinessTypes\DeleteBusinessTypeRequest;
+use Stackra\PlatformApplicationSdk\Requests\BusinessTypes\ListBusinessTypesRequest;
+use Stackra\PlatformApplicationSdk\Requests\BusinessTypes\ShowBusinessTypeRequest;
+use Stackra\PlatformApplicationSdk\Requests\BusinessTypes\UpdateBusinessTypeRequest;
 
 /**
  * Platform-admin BusinessType catalogue surface — full CRUD.
@@ -44,7 +44,7 @@ use Academorix\PlatformApplicationSdk\Requests\BusinessTypes\UpdateBusinessTypeR
  * ## Example
  *
  * ```php
- * use Academorix\PlatformSdk\Client\PlatformSdk;
+ * use Stackra\PlatformSdk\Client\PlatformSdk;
  *
  * $catalogue = app(PlatformSdk::class)->application()->businessTypes();
  * $page      = $catalogue->list(includeTranslations: true);
@@ -74,7 +74,7 @@ final readonly class BusinessTypesResource
      * @param  bool|null  $onlyVisible           When `true`, filter out `is_visible = false` entries.
      * @return PaginatedResponse<BusinessTypeData>
      *
-     * @throws \Academorix\ApiSdk\Exceptions\ApiRequestException
+     * @throws \Stackra\ApiSdk\Exceptions\ApiRequestException
      */
     public function list(
         ?int $page = null,
@@ -97,8 +97,8 @@ final readonly class BusinessTypesResource
      * @param  bool|null  $includeTranslations  When `true`, include the per-locale translation blob.
      * @return BusinessTypeData
      *
-     * @throws \Academorix\ApiSdk\Exceptions\ResourceNotFoundException  When `$key` isn't in the catalogue.
-     * @throws \Academorix\ApiSdk\Exceptions\ApiRequestException
+     * @throws \Stackra\ApiSdk\Exceptions\ResourceNotFoundException  When `$key` isn't in the catalogue.
+     * @throws \Stackra\ApiSdk\Exceptions\ApiRequestException
      */
     public function show(string $key, ?bool $includeTranslations = null): BusinessTypeData
     {
@@ -117,8 +117,8 @@ final readonly class BusinessTypesResource
      * @param  string|null                $idempotencyKey  Optional replay-safety token.
      * @return BusinessTypeData                            The freshly-persisted entry.
      *
-     * @throws \Academorix\ApiSdk\Exceptions\ValidationException
-     * @throws \Academorix\ApiSdk\Exceptions\ApiRequestException
+     * @throws \Stackra\ApiSdk\Exceptions\ValidationException
+     * @throws \Stackra\ApiSdk\Exceptions\ApiRequestException
      */
     public function create(CreateBusinessTypePayload $payload, ?string $idempotencyKey = null): BusinessTypeData
     {
@@ -138,9 +138,9 @@ final readonly class BusinessTypesResource
      * @param  string|null                $idempotencyKey  Optional replay-safety token.
      * @return BusinessTypeData                            The updated entry.
      *
-     * @throws \Academorix\ApiSdk\Exceptions\ResourceNotFoundException  When `$key` isn't in the catalogue.
-     * @throws \Academorix\ApiSdk\Exceptions\ValidationException
-     * @throws \Academorix\ApiSdk\Exceptions\ApiRequestException
+     * @throws \Stackra\ApiSdk\Exceptions\ResourceNotFoundException  When `$key` isn't in the catalogue.
+     * @throws \Stackra\ApiSdk\Exceptions\ValidationException
+     * @throws \Stackra\ApiSdk\Exceptions\ApiRequestException
      */
     public function update(string $key, UpdateBusinessTypePayload $payload, ?string $idempotencyKey = null): BusinessTypeData
     {
@@ -158,8 +158,8 @@ final readonly class BusinessTypesResource
      * @param  string       $key             The catalogue key.
      * @param  string|null  $idempotencyKey  Optional replay-safety token.
      *
-     * @throws \Academorix\ApiSdk\Exceptions\ResourceNotFoundException  When `$key` isn't in the catalogue.
-     * @throws \Academorix\ApiSdk\Exceptions\ApiRequestException        The server responds `422 business_type_in_use` (also an ApiRequestException subclass) when a Tenant still references the key.
+     * @throws \Stackra\ApiSdk\Exceptions\ResourceNotFoundException  When `$key` isn't in the catalogue.
+     * @throws \Stackra\ApiSdk\Exceptions\ApiRequestException        The server responds `422 business_type_in_use` (also an ApiRequestException subclass) when a Tenant still references the key.
      */
     public function delete(string $key, ?string $idempotencyKey = null): void
     {

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsProgressSdk\Resources;
+namespace Stackra\SportsProgressSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsProgressSdk\Data\ProgressAssessmentData;
-use Academorix\SportsProgressSdk\Requests\ProgressAssessments\ListProgressAssessmentsAdminRequest;
-use Academorix\SportsProgressSdk\Requests\ProgressAssessments\ProgressAssessmentsProgressAssessmentRequest;
-use Academorix\SportsProgressSdk\Requests\ProgressAssessments\ShowProgressAssessmentRequest;
-use Academorix\SportsProgressSdk\Requests\ProgressAssessments\UpdateProgressAssessmentRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsProgressSdk\Data\ProgressAssessmentData;
+use Stackra\SportsProgressSdk\Requests\ProgressAssessments\ListProgressAssessmentsAdminRequest;
+use Stackra\SportsProgressSdk\Requests\ProgressAssessments\ProgressAssessmentsProgressAssessmentRequest;
+use Stackra\SportsProgressSdk\Requests\ProgressAssessments\ShowProgressAssessmentRequest;
+use Stackra\SportsProgressSdk\Requests\ProgressAssessments\UpdateProgressAssessmentRequest;
 use Saloon\Http\Response;
 
 /**
@@ -71,7 +71,7 @@ final readonly class ProgressAssessmentsResource
      *
      * @return ProgressAssessmentData
      */
-    public function update(string $assessment, \Academorix\SportsProgressSdk\Payloads\ProgressAssessments\UpdateProgressAssessmentPayload $payload, ?string $idempotencyKey = null): ProgressAssessmentData
+    public function update(string $assessment, \Stackra\SportsProgressSdk\Payloads\ProgressAssessments\UpdateProgressAssessmentPayload $payload, ?string $idempotencyKey = null): ProgressAssessmentData
     {
         return $this->connector->send(new UpdateProgressAssessmentRequest($assessment, $payload, $idempotencyKey))->dto();
     }

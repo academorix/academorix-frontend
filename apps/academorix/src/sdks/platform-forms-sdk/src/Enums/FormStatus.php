@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformFormsSdk\Enums;
+namespace Stackra\PlatformFormsSdk\Enums;
 
 /**
  * Wire-visible backed enum for `form.status`.

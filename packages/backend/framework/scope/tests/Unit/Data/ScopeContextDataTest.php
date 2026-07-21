@@ -4,7 +4,7 @@
  * @file tests/Unit/Data/ScopeContextDataTest.php
  *
  * @description
- * Unit tests for {@see \Academorix\Scope\Data\ScopeContextData}
+ * Unit tests for {@see \Stackra\Scope\Data\ScopeContextData}
  * — the readonly value object every downstream service reads.
  * Focus: ancestor-id parsing (the hot-path helper the resolver
  * relies on).
@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Scope\Data\ScopeContextData;
+use Stackra\Scope\Data\ScopeContextData;
 
 uses()->group('unit', 'scope');
 

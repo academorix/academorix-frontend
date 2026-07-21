@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/monitoring/settings",
+  "id": "stackra://modules/monitoring/settings",
   "$version": 1,
   "title": "monitoring — settings",
   "description": "Tenant-facing monitoring configuration + per-user preferences for alert notifications + weekly digest subscription. The monitoring_provider_configs table is NOT settings — those are per-provider credentials owned by the monitoring module itself. This file declares tenant-level defaults (default alert routing, escalation contacts, suppression windows) + per-user preferences (which severities to page).",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "monitoring",
-      "class": "Academorix\\Observability\\Monitoring\\Settings\\MonitoringSettings",
+      "class": "Stackra\\Observability\\Monitoring\\Settings\\MonitoringSettings",
       "label": "System monitoring",
       "description": "Tenant-wide defaults for monitoring capture + notification routing.",
       "icon": "signal",
@@ -128,7 +128,7 @@
     },
     {
       "key": "monitoring_user",
-      "class": "Academorix\\Observability\\Monitoring\\Settings\\MonitoringUserSettings",
+      "class": "Stackra\\Observability\\Monitoring\\Settings\\MonitoringUserSettings",
       "label": "My monitoring preferences",
       "description": "Per-user preferences for monitoring alerts + digest.",
       "icon": "user-circle",

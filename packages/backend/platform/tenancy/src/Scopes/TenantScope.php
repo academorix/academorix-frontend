@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Scopes;
+namespace Stackra\Tenancy\Scopes;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * Global scope applied by {@see \Academorix\Tenancy\Concerns\BelongsToTenant}.
+ * Global scope applied by {@see \Stackra\Tenancy\Concerns\BelongsToTenant}.
  *
  * Filters every read to `WHERE tenant_id = ?` for the tenant
  * resolved by the `resolve.tenant` middleware. Bypass with

@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/age-group/events",
+  "id": "stackra://modules/age-group/events",
   "$version": 1,
   "title": "age-group — published events",
-  "namespace": "Academorix\\Sports\\AgeGroup\\Events",
+  "namespace": "Stackra\\Sports\\AgeGroup\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Safeguarding-adjacent events (bounds, cutoff, sport_key, default) fan out to the audit + notifications + downstream Team/AthleteEnrollment modules; lifecycle events (archived, restored, deleted) fan out to notifications + the tenant admin activity feed.",
   "events": [
     {
       "name": "AgeGroupCreated",
-      "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupCreated",
+      "class": "Stackra\\Sports\\AgeGroup\\Events\\AgeGroupCreated",
       "trigger": "AgeGroupProvisioner completed successfully. Fires exactly once per (tenant_id, organization_id, sport_key, slug) tuple. Emits for both seeded defaults + tenant customs; consumers may filter on `source` in the payload to distinguish.",
       "queue": "notifications",
       "consumers": [
@@ -36,7 +36,7 @@
     },
     {
       "name": "AgeGroupUpdated",
-      "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupUpdated",
+      "class": "Stackra\\Sports\\AgeGroup\\Events\\AgeGroupUpdated",
       "trigger": "Any AgeGroup field mutated except the four dedicated events (bounds, cutoff, sport_key, default). Fires for renames, description edits, color changes, gender_category edits, sort_order.",
       "queue": "notifications",
       "consumers": [
@@ -53,7 +53,7 @@
     },
     {
       "name": "AgeGroupBoundsChanged",
-      "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupBoundsChanged",
+      "class": "Stackra\\Sports\\AgeGroup\\Events\\AgeGroupBoundsChanged",
       "trigger": "min_age_inclusive OR max_age_inclusive mutated. Audit-CRITICAL — bounds changes may invalidate the eligibility of every Athlete currently enrolled in a Team that references this AgeGroup. Fires alongside AgeGroupUpdated (which does NOT include bounds).",
       "queue": "notifications-critical",
       "consumers": [
@@ -75,7 +75,7 @@
     },
     {
       "name": "AgeGroupCutoffChanged",
-      "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupCutoffChanged",
+      "class": "Stackra\\Sports\\AgeGroup\\Events\\AgeGroupCutoffChanged",
       "trigger": "cutoff_date_kind OR cutoff_month OR cutoff_day mutated. Audit-CRITICAL for the same reasoning as AgeGroupBoundsChanged — changing how age is calculated may reshape eligibility outcomes without touching the bounds themselves. (Example: switching from calendar_year to rolling_from_birthday on the same U12 group re-scores every borderline athlete.)",
       "queue": "notifications-critical",
       "consumers": [
@@ -95,7 +95,7 @@
     },
     {
       "name": "AgeGroupSportKeyChanged",
-      "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupSportKeyChanged",
+      "class": "Stackra\\Sports\\AgeGroup\\Events\\AgeGroupSportKeyChanged",
       "trigger": "sport_key mutated (including null → non-null and non-null → null). Audit-warn severity — the sport-specific override chain reshapes on this change; downstream resolvers switch their answers.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog (retention: 7 years)", "activity::WriteToActivityLog"],
@@ -108,7 +108,7 @@
     },
     {
       "name": "AgeGroupDefaultChanged",
-      "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupDefaultChanged",
+      "class": "Stackra\\Sports\\AgeGroup\\Events\\AgeGroupDefaultChanged",
       "trigger": "The is_default flag flipped within a (tenant_id, organization_id, sport_key) tuple. Fires with the previous default's ID + the new default's ID. Downstream tier-pricing defaults (Finance Wave 4) key off this flag.",
       "queue": "notifications-critical",
       "consumers": [
@@ -127,7 +127,7 @@
     },
     {
       "name": "AgeGroupArchived",
-      "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupArchived",
+      "class": "Stackra\\Sports\\AgeGroup\\Events\\AgeGroupArchived",
       "trigger": "AgeGroup soft-deleted (deleted_at set). Refused when is_default=true (observer catches it). Refused when is_seeded=true (seeded defaults cannot be deleted). Refused when any inbound row (Team, AthleteEnrollment via non-snapshot column, EventDivision) still references this AgeGroup (AGE_GROUP_IN_USE). Archived AgeGroups vanish from selectors but existing rows stay valid.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -141,7 +141,7 @@
     },
     {
       "name": "AgeGroupRestored",
-      "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupRestored",
+      "class": "Stackra\\Sports\\AgeGroup\\Events\\AgeGroupRestored",
       "trigger": "Archived AgeGroup transitioned back to active (deleted_at cleared). Restoration allowed within the 1095-day (3-year) retention window before PurgeArchivedAgeGroupsJob hard-deletes it.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -154,7 +154,7 @@
     },
     {
       "name": "AgeGroupDeleted",
-      "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupDeleted",
+      "class": "Stackra\\Sports\\AgeGroup\\Events\\AgeGroupDeleted",
       "trigger": "AgeGroup soft-deleted OR hard-deleted. Distinct events not needed — the payload carries the mode.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -169,7 +169,7 @@
     },
     {
       "name": "AgeGroupCatalogSeeded",
-      "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupCatalogSeeded",
+      "class": "Stackra\\Sports\\AgeGroup\\Events\\AgeGroupCatalogSeeded",
       "trigger": "SeedDefaultAgeGroupsForTenantJob completed for a freshly-provisioned tenant. Fires exactly once per tenant lifetime (unless the tenant loses every default + the reconciler re-seeds — that path fires a fresh event).",
       "queue": "notifications",
       "consumers": [

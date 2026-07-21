@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Data;
+namespace Stackra\Match\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Server-side output DTO for {@see \Academorix\Match\Models\MatchEvent}.
+ * Server-side output DTO for {@see \Stackra\Match\Models\MatchEvent}.
  *
  * Consumed by controllers + services on the SERVER side. This is
  * distinct from the wire SDK's DTO (which sits under
- * `Academorix\SportsMatchSdk\Data`) — the wire DTO travels across the HTTP
+ * `Stackra\SportsMatchSdk\Data`) — the wire DTO travels across the HTTP
  * boundary; this one stays in-process.
  *
  * @category Match

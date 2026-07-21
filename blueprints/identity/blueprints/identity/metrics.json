@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/identity/metrics",
+  "id": "stackra://modules/identity/metrics",
   "$version": 1,
   "title": "identity \u2014 OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "academorix.identity",
+  "namespace": "stackra.identity",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["outcome", "trigger", "hasher", "encryptor"],
@@ -12,35 +12,35 @@
   },
   "metrics": [
     {
-      "name": "academorix.identity.created",
+      "name": "stackra.identity.created",
       "kind": "counter",
       "unit": "identities",
       "labels": ["is_minor"],
       "description": "Fired on IdentityRegistered. Labels: is_minor=true|false (resolved by CompliantAgePolicy at creation)."
     },
     {
-      "name": "academorix.identity.locked",
+      "name": "stackra.identity.locked",
       "kind": "counter",
       "unit": "lockouts",
       "labels": ["lockout_number"],
       "description": "Fired on IdentityLocked. lockout_number = 1|2|3|4+ (progressive-backoff bucket)."
     },
     {
-      "name": "academorix.identity.unlocked",
+      "name": "stackra.identity.unlocked",
       "kind": "counter",
       "unit": "unlocks",
       "labels": ["trigger"],
       "description": "Fired on IdentityUnlocked. trigger=auto_expiry|admin_action."
     },
     {
-      "name": "academorix.identity.login_attempt",
+      "name": "stackra.identity.login_attempt",
       "kind": "counter",
       "unit": "attempts",
       "labels": ["outcome"],
       "description": "Login endpoint invocation. outcome=success|password_mismatch|unknown_email|locked|throttled|mfa_challenge_issued."
     },
     {
-      "name": "academorix.identity.login_duration_ms",
+      "name": "stackra.identity.login_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 50, 200, 500, 1000, 2000],
@@ -48,126 +48,126 @@
       "description": "Wall-clock duration of the login action. Constant-time by design: password_mismatch and unknown_email must fall in the same bucket range to prevent timing enumeration."
     },
     {
-      "name": "academorix.identity.password_changed",
+      "name": "stackra.identity.password_changed",
       "kind": "counter",
       "unit": "changes",
       "labels": ["trigger"],
       "description": "Fired on PasswordChanged. trigger=voluntary|forced_reset|admin_reset|breach_detected."
     },
     {
-      "name": "academorix.identity.password_reset_requested",
+      "name": "stackra.identity.password_reset_requested",
       "kind": "counter",
       "unit": "requests",
       "labels": ["outcome"],
       "description": "POST /auth/password/forgot invocations. outcome=email_dispatched|email_unknown|throttled. email_unknown NEVER surfaces in the response body but IS counted here (aggregated compliance-audit signal)."
     },
     {
-      "name": "academorix.identity.password_reset_completed",
+      "name": "stackra.identity.password_reset_completed",
       "kind": "counter",
       "unit": "resets",
       "labels": [],
       "description": "Fired on PasswordResetCompleted."
     },
     {
-      "name": "academorix.identity.password_breach_check",
+      "name": "stackra.identity.password_breach_check",
       "kind": "counter",
       "unit": "checks",
       "labels": ["outcome"],
       "description": "HIBP integration. outcome=clean|breached|unreachable. Breached rows do NOT record the breach_count (cardinality); the count is inspected at the audit-log line."
     },
     {
-      "name": "academorix.identity.mfa_enrolled",
+      "name": "stackra.identity.mfa_enrolled",
       "kind": "counter",
       "unit": "enrolments",
       "labels": [],
       "description": "Fired on MfaEnrolled."
     },
     {
-      "name": "academorix.identity.mfa_disabled",
+      "name": "stackra.identity.mfa_disabled",
       "kind": "counter",
       "unit": "disables",
       "labels": ["trigger"],
       "description": "trigger=self_service|admin_action|account_recovery."
     },
     {
-      "name": "academorix.identity.mfa_challenge",
+      "name": "stackra.identity.mfa_challenge",
       "kind": "counter",
       "unit": "challenges",
       "labels": ["method", "outcome"],
       "description": "MFA challenge verification. method=totp|webauthn|recovery_code. outcome=verified|invalid|expired|already_consumed."
     },
     {
-      "name": "academorix.identity.recovery_codes_regenerated",
+      "name": "stackra.identity.recovery_codes_regenerated",
       "kind": "counter",
       "unit": "regenerations",
       "labels": [],
       "description": "Fired on RecoveryCodesRegenerated."
     },
     {
-      "name": "academorix.identity.email_verified",
+      "name": "stackra.identity.email_verified",
       "kind": "counter",
       "unit": "verifications",
       "labels": [],
       "description": "Fired on IdentityEmailVerified."
     },
     {
-      "name": "academorix.identity.email_verification_dispatched",
+      "name": "stackra.identity.email_verification_dispatched",
       "kind": "counter",
       "unit": "notifications",
       "labels": ["reason"],
       "description": "reason=registration|email_change|resend."
     },
     {
-      "name": "academorix.identity.tokens.purged",
+      "name": "stackra.identity.tokens.purged",
       "kind": "counter",
       "unit": "tokens",
       "labels": ["token_type"],
       "description": "PurgeExpiredResetTokensJob output. token_type=password_reset|email_verification."
     },
     {
-      "name": "academorix.identity.locks.auto_cleared",
+      "name": "stackra.identity.locks.auto_cleared",
       "kind": "counter",
       "unit": "locks",
       "labels": [],
       "description": "AutoUnlockExpiredLockoutsJob output."
     },
     {
-      "name": "academorix.identity.erasure.soft_delete",
+      "name": "stackra.identity.erasure.soft_delete",
       "kind": "counter",
       "unit": "identities",
       "labels": [],
       "description": "IdentityErased(erasure_phase=soft_delete). Starts the GDPR hold-period clock."
     },
     {
-      "name": "academorix.identity.erasure.completed",
+      "name": "stackra.identity.erasure.completed",
       "kind": "counter",
       "unit": "identities",
       "labels": [],
       "description": "PurgeSoftDeletedIdentitiesJob completed a hard delete."
     },
     {
-      "name": "academorix.identity.erasure.blocked",
+      "name": "stackra.identity.erasure.blocked",
       "kind": "counter",
       "unit": "identities",
       "labels": ["blocker"],
       "description": "Hard delete was refused because an inbound row remained. blocker=user|platform_user|other. Investigative counter \u2014 non-zero indicates a downstream module didn't cascade cleanly."
     },
     {
-      "name": "academorix.identity.active_lockouts",
+      "name": "stackra.identity.active_lockouts",
       "kind": "gauge",
       "unit": "identities",
       "labels": [],
       "description": "Count of rows where locked_until > now(). Emitted every 60s."
     },
     {
-      "name": "academorix.identity.unverified_identities",
+      "name": "stackra.identity.unverified_identities",
       "kind": "gauge",
       "unit": "identities",
       "labels": [],
       "description": "Count of rows where email_verified_at IS NULL. Emitted every 5 minutes."
     },
     {
-      "name": "academorix.identity.password_hash_duration_ms",
+      "name": "stackra.identity.password_hash_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 100, 250, 500, 1000, 2500],

@@ -5,11 +5,11 @@
  *
  * @description
  * Exercises the declarative wiring surface of
- * {@see \Academorix\Foundation\Providers\AbstractModuleServiceProvider}.
+ * {@see \Stackra\Foundation\Providers\AbstractModuleServiceProvider}.
  *
  * ## Why every branch matters
  *
- * Every future Academorix package extends this base class — a bug
+ * Every future Stackra package extends this base class — a bug
  * in the wiring here silently breaks every downstream provider
  * (billing, tenancy, notifications). The provider transforms nine
  * different `protected array $...` declarations into imperative
@@ -28,7 +28,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Foundation\Providers\AbstractModuleServiceProvider;
+use Stackra\Foundation\Providers\AbstractModuleServiceProvider;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Gate;
 use Orchestra\Testbench\TestCase;

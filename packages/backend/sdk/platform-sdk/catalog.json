@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/platform-sdk",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/platform-sdk",
   "tier": "saas",
   "surfaces": ["core"],
   "kind": "sdk",
@@ -9,17 +9,17 @@
     "PlatformSdk umbrella client (config sdk.platform.*)",
     "#[AsSdkResource(service: 'platform')] discovery scope",
     "Aggregates the per-module resource SDKs at boot",
-    "Application + BusinessType via academorix-platform/application-sdk",
+    "Application + BusinessType via stackra-platform/application-sdk",
     "Tenancy + Organization + Region + Branch DTOs",
     "Branding + Domains + Storage + Webhook DTOs"
   ],
   "when_to_use": "A consumer service that needs to read or mutate platform aggregates cross-service under one client.",
   "when_not_to_use": "For the identity or billing surfaces, use the granular sibling SDKs (identity-sdk, billing-sdk) instead.",
   "peer_deps": [
-    "academorix/api-sdk",
-    "academorix/exceptions",
-    "academorix/foundation",
-    "academorix/service-provider",
+    "stackra/api-sdk",
+    "stackra/exceptions",
+    "stackra/foundation",
+    "stackra/service-provider",
     "saloonphp/saloon",
     "spatie/laravel-data"
   ],

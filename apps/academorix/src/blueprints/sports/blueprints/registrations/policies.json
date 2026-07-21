@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/registrations/policies",
+  "id": "stackra://modules/registrations/policies",
   "$version": 1,
   "title": "registrations — authorization policies",
   "policies": [
     {
       "model": "Registration",
-      "class": "Academorix\\Sports\\Registrations\\Policies\\RegistrationPolicy",
+      "class": "Stackra\\Sports\\Registrations\\Policies\\RegistrationPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -30,7 +30,7 @@
     },
     {
       "model": "TrialBooking",
-      "class": "Academorix\\Sports\\Registrations\\Policies\\TrialBookingPolicy",
+      "class": "Stackra\\Sports\\Registrations\\Policies\\TrialBookingPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "registrations.trials.viewAny" },
         { "action": "view", "permission": "registrations.trials.view" },
@@ -50,7 +50,7 @@
     },
     {
       "model": "WaitlistEntry",
-      "class": "Academorix\\Sports\\Registrations\\Policies\\WaitlistEntryPolicy",
+      "class": "Stackra\\Sports\\Registrations\\Policies\\WaitlistEntryPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "registrations.waitlist.viewAny" },
         { "action": "view", "permission": "registrations.waitlist.view" },
@@ -64,7 +64,7 @@
     },
     {
       "model": "Offer",
-      "class": "Academorix\\Sports\\Registrations\\Policies\\OfferPolicy",
+      "class": "Stackra\\Sports\\Registrations\\Policies\\OfferPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "registrations.offers.viewAny" },
         { "action": "view", "permission": "registrations.offers.view" },

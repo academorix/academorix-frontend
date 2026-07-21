@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/analytics/data/event-name-catalog",
+  "id": "stackra://modules/analytics/data/event-name-catalog",
   "$version": 1,
   "title": "analytics — canonical event-name catalog",
   "description": "Reserved event names used by first-party AnalyticsEventCapturer classes. Tenants may fire additional event names not on this list; this catalog is documentation + validation-assistance for the shipped capturers. Grouped by category. Every name is snake_case; a colon prefix indicates a scoped subresource (feature_used:calendar).",

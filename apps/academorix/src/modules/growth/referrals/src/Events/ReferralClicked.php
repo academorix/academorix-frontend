@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Events;
+namespace Stackra\Referrals\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - activity::WriteToActivityLog (staff-visible for viral analytics)
  * - attribution::CaptureReferralClickTouchpoint (adds a touchpoint on the referrer's attribution profile)
- * - observability::MetricsCollector (academorix.referrals.clicks_total)
+ * - observability::MetricsCollector (stackra.referrals.clicks_total)
  *
  * @category Referrals
  *

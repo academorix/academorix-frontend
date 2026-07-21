@@ -1,121 +1,121 @@
 {
-  "id": "academorix://modules/staff/commands",
+  "id": "stackra://modules/staff/commands",
   "$version": 1,
   "title": "staff — Artisan commands",
   "commands": [
     {
       "signature": "staff:list {--tenant=} {--branch=} {--status=} {--position=} {--department=} {--is-manager} {--include-offboarded}",
-      "class": "Academorix\\Staff\\Console\\Commands\\ListStaffCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\ListStaffCommand",
       "purpose": "Table view of staff. Filterable by tenant, branch, employment_status, position, department. --is-manager filters is_branch_manager=true. --include-offboarded shows offboarded rows; default hides them. Compensation fields NEVER shown at CLI — support-tooling redaction still applies."
     },
     {
       "signature": "staff:describe {staff}",
-      "class": "Academorix\\Staff\\Console\\Commands\\DescribeStaffCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\DescribeStaffCommand",
       "purpose": "Verbose read of one Staff row: base fields + linked User + Profile (redacted if invoker lacks permissions) + Coach profile if any + team memberships summary + direct reports (when org_chart entitlement on) + compensation summary (only when invoked with --show-compensation AND caller carries staff.view.compensation)."
     },
     {
       "signature": "staff:hire {tenant} {branch} {user} {--employment-type=full_time} {--position=} {--department=} {--started-at=} {--probation-ends-at=} {--is-manager} {--dry-run}",
-      "class": "Academorix\\Staff\\Console\\Commands\\HireStaffCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\HireStaffCommand",
       "purpose": "Scriptable staff hire (test harness + tenant onboarding). --dry-run validates the input against every observer rule without persisting. Compensation cannot be set from this CLI — use staff:audit-compensation or the /compensation endpoint."
     },
     {
       "signature": "staff:promote-to-manager {staff} {--demote-current}",
-      "class": "Academorix\\Staff\\Console\\Commands\\PromoteToManagerCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\PromoteToManagerCommand",
       "purpose": "CLI equivalent of POST /{staff}/promote-to-manager. --demote-current (default: true) auto-demotes the existing branch manager in the same transaction; passing --no-demote-current refuses when another manager exists."
     },
     {
       "signature": "staff:demote {staff} {--reason=}",
-      "class": "Academorix\\Staff\\Console\\Commands\\DemoteFromManagerCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\DemoteFromManagerCommand",
       "purpose": "Demote a branch manager. Warns if this leaves the branch leaderless."
     },
     {
       "signature": "staff:put-on-leave {staff} {--type=medical} {--return-at=}",
-      "class": "Academorix\\Staff\\Console\\Commands\\PutOnLeaveCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\PutOnLeaveCommand",
       "purpose": "Transition to on_leave. Cascades: pauses linked Coach."
     },
     {
       "signature": "staff:return-from-leave {staff}",
-      "class": "Academorix\\Staff\\Console\\Commands\\ReturnFromLeaveCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\ReturnFromLeaveCommand",
       "purpose": "Transition on_leave → active. Resumes linked Coach if paused as a side-effect of the leave."
     },
     {
       "signature": "staff:suspend {staff} {--reason=} {--expires-at=}",
-      "class": "Academorix\\Staff\\Console\\Commands\\SuspendCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\SuspendCommand",
       "purpose": "Disciplinary suspend. Audit-critical. Refuses without a reason. Cascades: pauses linked Coach."
     },
     {
       "signature": "staff:reinstate {staff}",
-      "class": "Academorix\\Staff\\Console\\Commands\\ReinstateCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\ReinstateCommand",
       "purpose": "Transition suspended → active. Audit-critical."
     },
     {
       "signature": "staff:offboard {staff} {--reason=resigned} {--notes=} {--ended-at=} {--cascade}",
-      "class": "Academorix\\Staff\\Console\\Commands\\OffboardCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\OffboardCommand",
       "purpose": "Offboard flow. --cascade archives linked Coach + removes team memberships in one transaction. Prompts for confirmation unless --no-interaction. Refuses without --reason."
     },
     {
       "signature": "staff:reactivate {staff} {--started-at=}",
-      "class": "Academorix\\Staff\\Console\\Commands\\ReactivateCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\ReactivateCommand",
       "purpose": "Rehire an offboarded staff. Rare — audit-critical."
     },
     {
       "signature": "staff:audit-compensation {--tenant=} {--from=} {--to=} {--output=csv}",
-      "class": "Academorix\\Staff\\Console\\Commands\\AuditCompensationCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\AuditCompensationCommand",
       "purpose": "Compliance-only export. Emits a signed audit CSV of every entry in staff_compensation_history for the tenant + window. Requires the caller to have run `sudo` or provide their platform_admin token via env. Every invocation writes a P1 audit row + notifies the tenant admin's compliance address."
     },
     {
       "signature": "coach:list {--tenant=} {--branch=} {--sport=} {--level=} {--status=} {--include-archived}",
-      "class": "Academorix\\Staff\\Console\\Commands\\ListCoachesCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\ListCoachesCommand",
       "purpose": "Table view of coaches. --sport filters sport_key + additional_sports. Rating shown only when coach_rating_display entitlement is on for the tenant."
     },
     {
       "signature": "coach:describe {coach}",
-      "class": "Academorix\\Staff\\Console\\Commands\\DescribeCoachCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\DescribeCoachCommand",
       "purpose": "Verbose read of one Coach: base fields + parent Staff summary + certifications (verified state highlighted when coach_certifications_verified is on) + team memberships + trailing rating history."
     },
     {
       "signature": "coach:create {staff} {sport} {--level=assistant} {--specialization=} {--started-at=} {--capacity-per-week=} {--dry-run}",
-      "class": "Academorix\\Staff\\Console\\Commands\\CreateCoachCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\CreateCoachCommand",
       "purpose": "Create a Coach row for a Staff that has assumed a coaching role. --dry-run validates without persisting."
     },
     {
       "signature": "coach:set-primary-sport {coach} {sport}",
-      "class": "Academorix\\Staff\\Console\\Commands\\SetPrimarySportCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\SetPrimarySportCommand",
       "purpose": "Change Coach.sport_key. Fires CoachSportChanged."
     },
     {
       "signature": "coach:add-certification {coach} {--org=} {--cert=} {--certified-at=} {--expires-at=} {--url=}",
-      "class": "Academorix\\Staff\\Console\\Commands\\AddCertificationCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\AddCertificationCommand",
       "purpose": "Append a certification. When coach_certifications_verified is on, enters pending_verification state — must be verified separately."
     },
     {
       "signature": "coach:remove-certification {coach} {certification} {--reason=}",
-      "class": "Academorix\\Staff\\Console\\Commands\\RemoveCertificationCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\RemoveCertificationCommand",
       "purpose": "Remove a certification entry. Fires CoachCertificationRemoved."
     },
     {
       "signature": "coach:set-availability {coach} {--pattern-file=}",
-      "class": "Academorix\\Staff\\Console\\Commands\\SetAvailabilityCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\SetAvailabilityCommand",
       "purpose": "Replace availability_pattern from a JSON file. Fires CoachAvailabilityChanged."
     },
     {
       "signature": "coach:pause {coach} {--reason=}",
-      "class": "Academorix\\Staff\\Console\\Commands\\PauseCoachCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\PauseCoachCommand",
       "purpose": "Transition Coach.status active → paused. Non-disciplinary."
     },
     {
       "signature": "coach:resume {coach}",
-      "class": "Academorix\\Staff\\Console\\Commands\\ResumeCoachCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\ResumeCoachCommand",
       "purpose": "Transition paused → active."
     },
     {
       "signature": "coach:archive {coach} {--reason=}",
-      "class": "Academorix\\Staff\\Console\\Commands\\ArchiveCoachCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\ArchiveCoachCommand",
       "purpose": "Terminal transition. Removes team assignments. Precondition to soft-delete."
     },
     {
       "signature": "coach:reconcile-ratings {--tenant=} {--from=} {--to=} {--dry-run}",
-      "class": "Academorix\\Staff\\Console\\Commands\\ReconcileRatingsCommand",
+      "class": "Stackra\\Staff\\Console\\Commands\\ReconcileRatingsCommand",
       "purpose": "One-shot invocation of AggregateCoachRatingsJob for the given window + tenant scope. Recomputes Coach.rating + rating_count from Wave 3+ session-rating rows. --dry-run reports the deltas without applying them."
     }
   ]

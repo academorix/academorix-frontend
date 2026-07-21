@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Delegation\Exceptions;
+namespace Stackra\Delegation\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * compliance module has an active security incident declared on the target tenant — impersonation refused until the incident is closed.

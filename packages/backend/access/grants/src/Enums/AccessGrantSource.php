@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Grants\Enums;
+namespace Stackra\Grants\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `source` on `access-grant`.

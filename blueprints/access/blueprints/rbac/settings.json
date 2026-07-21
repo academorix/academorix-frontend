@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/rbac/settings",
+  "id": "stackra://modules/rbac/settings",
   "$version": 1,
   "title": "rbac \u2014 settings",
   "description": "Tenant-facing preferences. RBAC exposes a narrow settings surface \u2014 most configuration is framework-level (config/rbac.php) or entitlement-gated. Tenant admins can toggle notification cadence + adjust the reminder-before-expiry window within the framework floor.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "rbac",
-      "class": "Academorix\\Rbac\\Settings\\RbacSettings",
+      "class": "Stackra\\Rbac\\Settings\\RbacSettings",
       "label": "Access control",
       "description": "Role + permission notification preferences + assignment lifecycle defaults.",
       "icon": "shield-check",

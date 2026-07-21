@@ -4,14 +4,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsMail\Actions\Tenant;
+namespace Stackra\NotificationsMail\Actions\Tenant;
 
-use Academorix\NotificationsMail\Contracts\Repositories\MailSuppressionRepositoryInterface;
-use Academorix\NotificationsMail\Data\MailSuppressionData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\NotificationsMail\Contracts\Repositories\MailSuppressionRepositoryInterface;
+use Stackra\NotificationsMail\Data\MailSuppressionData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\LaravelData\PaginatedDataCollection;
@@ -20,7 +20,7 @@ use Spatie\LaravelData\PaginatedDataCollection;
  * `GET /api/v1/tenant/mail-suppressions` — list action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category NotificationsMail
@@ -50,7 +50,7 @@ final class ListMailSuppressionAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Academorix\NotificationsMail\Models\MailSuppression> $page */
+        /** @var LengthAwarePaginator<int, \Stackra\NotificationsMail\Models\MailSuppression> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

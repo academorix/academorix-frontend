@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-mail/retention",
+  "id": "stackra://modules/notifications-mail/retention",
   "$version": 1,
   "title": "notifications-mail \u2014 retention windows",
   "description": "MailSuppression retention is regulation-driven \u2014 hard bounces forever, complaints P5Y for CAN-SPAM evidence.",

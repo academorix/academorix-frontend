@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\User\Contracts\Data;
+namespace Stackra\User\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\User\Models\User;
+use Stackra\User\Models\User;
 
 /**
  * Table shape for the `users` table.

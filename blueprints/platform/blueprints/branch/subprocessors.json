@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/branch/subprocessors",
+  "id": "stackra://modules/branch/subprocessors",
   "$version": 1,
   "title": "branch — subprocessors",
   "description": "Geocoding providers process the tenant's structured address + return coordinates. Only engaged when tenant has `branch_geocoding` entitlement (Medium+). Map tile rendering (for the map-view SDUI screen) engages one additional subprocessor per tenant selection — those tiles are billed to the platform.",

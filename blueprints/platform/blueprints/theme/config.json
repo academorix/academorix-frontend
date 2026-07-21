@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/theme/config",
+  "id": "stackra://modules/theme/config",
   "$version": 1,
   "title": "theme — developer configuration",
   "configFile": "config/theme.php",

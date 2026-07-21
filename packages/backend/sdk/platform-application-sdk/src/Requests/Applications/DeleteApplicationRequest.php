@@ -14,9 +14,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformApplicationSdk\Requests\Applications;
+namespace Stackra\PlatformApplicationSdk\Requests\Applications;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

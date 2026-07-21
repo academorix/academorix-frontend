@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Exceptions;
+namespace Stackra\Transfer\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when an import row carries a `tenant_id` column that
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TransferTenantMismatchException extends AcademorixException
+final class TransferTenantMismatchException extends StackraException
 {
     public const CODE = 'TRANSFER_TENANT_MISMATCH';
 

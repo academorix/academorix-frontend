@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Event\Console;
+namespace Stackra\Event\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan event:reconcile-facility-bookings` — Reconcile facility bookings — event command.

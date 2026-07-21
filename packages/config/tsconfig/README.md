@@ -1,4 +1,4 @@
-# @academorix/config-tsconfig
+# @stackra/config-tsconfig
 
 Shared TypeScript configuration presets. Every `tsconfig.json` in the monorepo
 extends one of these files so upgrading TS rules happens in exactly one place.
@@ -17,7 +17,7 @@ extends one of these files so upgrading TS rules happens in exactly one place.
 ```jsonc
 // apps/dashboard/tsconfig.app.json
 {
-  "extends": "@academorix/config-tsconfig/vite",
+  "extends": "@stackra/config-tsconfig/vite",
   "compilerOptions": {
     "outDir": "dist",
     "baseUrl": ".",

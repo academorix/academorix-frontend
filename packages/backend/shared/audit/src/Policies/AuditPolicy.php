@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Policies;
+namespace Stackra\Audit\Policies;
 
-use Academorix\Audit\Contracts\Data\AuditInterface;
-use Academorix\Audit\Enums\AuditPermission;
-use Academorix\Audit\Models\Audit;
+use Stackra\Audit\Contracts\Data\AuditInterface;
+use Stackra\Audit\Enums\AuditPermission;
+use Stackra\Audit\Models\Audit;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/storage/config",
+  "id": "stackra://modules/storage/config",
   "$version": 1,
   "title": "storage \u2014 developer configuration",
   "configFile": "config/storage.php",

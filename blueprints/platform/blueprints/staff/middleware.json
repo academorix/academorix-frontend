@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/staff/middleware",
+  "id": "stackra://modules/staff/middleware",
   "$version": 1,
   "title": "staff — HTTP middleware",
   "middleware": [
     {
       "alias": "staff.enforce_active",
-      "class": "Academorix\\Staff\\Http\\Middleware\\EnforceStaffActive",
+      "class": "Stackra\\Staff\\Http\\Middleware\\EnforceStaffActive",
       "priority": 44,
       "description": "Refuses actions that require an active-status staff row. Applied to routes that touch a Staff whose employment_status must be `active` (coach-create against a pre_hire staff is refused; branch-manager assignment on a suspended staff is refused). Resolves the target Staff from the route parameter (`{staff}`) and returns 422 `STAFF_NOT_ACTIVE` when employment_status != 'active'. Distinct from the observer refusal — the middleware fails fast at the route boundary so the caller doesn't burn a request through the full pipeline for a known-bad state.",
       "auto_applied": false,
@@ -16,7 +16,7 @@
     },
     {
       "alias": "staff.enforce_compensation_permission",
-      "class": "Academorix\\Staff\\Http\\Middleware\\EnforceCompensationPermission",
+      "class": "Stackra\\Staff\\Http\\Middleware\\EnforceCompensationPermission",
       "priority": 42,
       "description": "Field-level permission enforcer for the compensation sub-resource. Refuses the whole `/staff/{staff}/compensation` endpoint (GET + PATCH) when the caller lacks `staff.view.compensation` (for GET) or `staff.manage.compensation` (for PATCH). Also refuses when the tenant has not enabled the `staff_compensation_tracking` entitlement. This is separate from the field-level redaction that applies on the parent `/staff/{staff}` GET — the sub-resource is entirely permission-gated so the middleware can 403 the request before any DB fetch.",
       "auto_applied": false,

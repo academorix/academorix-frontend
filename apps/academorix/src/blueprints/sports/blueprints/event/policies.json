@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/event/policies",
+  "id": "stackra://modules/event/policies",
   "$version": 1,
   "title": "event — authorization policies",
   "description": "Two policies. EventPolicy narrows by scope suffix + visibility (a caller can only see events at or below their role's visibility ceiling — guardians see participants_only + public; members see tenant_only + up; admins see everything). EventFacilityPolicy piggybacks on the parent event's policy (can-manage-event ⇒ can-manage-facilities).",
   "policies": [
     {
       "model": "Event",
-      "class": "Academorix\\Sports\\Event\\Policies\\EventPolicy",
+      "class": "Stackra\\Sports\\Event\\Policies\\EventPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -108,7 +108,7 @@
     },
     {
       "model": "EventFacility",
-      "class": "Academorix\\Sports\\Event\\Policies\\EventFacilityPolicy",
+      "class": "Stackra\\Sports\\Event\\Policies\\EventFacilityPolicy",
       "abilities": [
         {
           "action": "viewAny",

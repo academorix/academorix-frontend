@@ -49,13 +49,13 @@ The whole developer surface is PHP attributes. First argument to every
 `#[Search*]` attribute is always the Eloquent attribute name.
 
 ```php
-use Academorix\Search\Attributes\Searchable;
-use Academorix\Search\Attributes\SearchField;
-use Academorix\Search\Attributes\SearchFacet;
-use Academorix\Search\Attributes\SearchSynonym;
-use Academorix\Search\Attributes\SearchBoost;
-use Academorix\Search\Concerns\HasSearchable;
-use Academorix\Search\Enums\SearchEngine;
+use Stackra\Search\Attributes\Searchable;
+use Stackra\Search\Attributes\SearchField;
+use Stackra\Search\Attributes\SearchFacet;
+use Stackra\Search\Attributes\SearchSynonym;
+use Stackra\Search\Attributes\SearchBoost;
+use Stackra\Search\Concerns\HasSearchable;
+use Stackra\Search\Enums\SearchEngine;
 
 #[Searchable(
     engine:             SearchEngine::Meilisearch,
@@ -124,7 +124,7 @@ The primary API is `Search::query()` \u2014 engine-agnostic, cross-model,
 permission-scoped, tenant-scoped.
 
 ```php
-use Academorix\Search\Facades\Search;
+use Stackra\Search\Facades\Search;
 
 $results = Search::query('jane doe')
     ->across(Athlete::class, Coach::class, Team::class)
@@ -253,11 +253,11 @@ Rename map:
 
 | Was                                                  | Now                                                                      |
 | ---------------------------------------------------- | ------------------------------------------------------------------------ |
-| `Academorix\Foundation\Concerns\Searchable`          | `Academorix\Search\Concerns\HasSearchable`                               |
-| `Academorix\Foundation\Search\SearchEngineResolver`  | `Academorix\Search\Registry\EngineRegistry`                              |
-| `Academorix\Foundation\Jobs\IndexSearchableJob`      | `Academorix\Search\Jobs\IndexModelJob`                                   |
-| `Academorix\Foundation\Console\SearchReindexCommand` | `Academorix\Search\Console\ReindexCommand` (`search:reindex`)            |
-| `Academorix\Foundation\Console\SearchFlushCommand`   | `Academorix\Search\Console\FlushCommand` (`search:flush`)                |
+| `Stackra\Foundation\Concerns\Searchable`          | `Stackra\Search\Concerns\HasSearchable`                               |
+| `Stackra\Foundation\Search\SearchEngineResolver`  | `Stackra\Search\Registry\EngineRegistry`                              |
+| `Stackra\Foundation\Jobs\IndexSearchableJob`      | `Stackra\Search\Jobs\IndexModelJob`                                   |
+| `Stackra\Foundation\Console\SearchReindexCommand` | `Stackra\Search\Console\ReindexCommand` (`search:reindex`)            |
+| `Stackra\Foundation\Console\SearchFlushCommand`   | `Stackra\Search\Console\FlushCommand` (`search:flush`)                |
 | `->searchable()` blueprint macro                     | Retired. Search discovers via PHP attributes, not schema markers.        |
 | `config('foundation.search.*')`                      | `config('search.*')`                                                     |
 | `foundation:search:engine_health` cache key          | `search:engines:{key}:health`                                            |

@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/storage/policies",
+  "id": "stackra://modules/storage/policies",
   "$version": 1,
   "title": "storage \u2014 authorization policies",
   "description": "Three policies. FilePolicy is the primary gate \u2014 every tenant-facing route defers to it. FileVariantPolicy inherits from FilePolicy (variants inherit their parent's ability). ChunkedUploadPolicy governs the in-flight upload lifecycle.",
   "policies": [
     {
       "model": "storage::File",
-      "class": "Academorix\\Storage\\Policies\\FilePolicy",
+      "class": "Stackra\\Storage\\Policies\\FilePolicy",
       "abilities": {
         "viewAny": {
           "description": "List files in the tenant. Every tenant member with `files.viewAny` permission passes.",
@@ -64,7 +64,7 @@
     },
     {
       "model": "storage::FileVariant",
-      "class": "Academorix\\Storage\\Policies\\FileVariantPolicy",
+      "class": "Stackra\\Storage\\Policies\\FileVariantPolicy",
       "abilities": {
         "view": {
           "description": "Variants inherit the parent File's `view` gate. This policy is a thin delegate to FilePolicy::view($caller, $variant->file).",
@@ -76,7 +76,7 @@
     },
     {
       "model": "storage::ChunkedUpload",
-      "class": "Academorix\\Storage\\Policies\\ChunkedUploadPolicy",
+      "class": "Stackra\\Storage\\Policies\\ChunkedUploadPolicy",
       "abilities": {
         "view": {
           "description": "Read a ChunkedUpload's state during upload / resume. Restricted to the owner (the user who initiated).",

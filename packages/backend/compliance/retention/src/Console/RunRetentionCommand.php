@@ -6,9 +6,9 @@
  * @description
  * `compliance:retention:run` — the scheduled artisan command that
  * walks every registered
- * {@see \Academorix\Retention\Support\RetentionPolicyDescriptor},
+ * {@see \Stackra\Retention\Support\RetentionPolicyDescriptor},
  * dispatches each to the
- * {@see \Academorix\Retention\Runner\RetentionRunner}, and
+ * {@see \Stackra\Retention\Runner\RetentionRunner}, and
  * renders a one-row-per-policy summary to the terminal.
  *
  * ## Scheduling
@@ -37,18 +37,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Retention\Console;
+namespace Stackra\Retention\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Retention\Enums\RetentionAction;
-use Academorix\Retention\Registry\RetentionPolicyRegistry;
-use Academorix\Retention\Runner\RetentionRunner;
-use Academorix\Retention\Support\RetentionPolicyDescriptor;
-use Academorix\Scheduling\Attributes\Cron;
-use Academorix\Scheduling\Attributes\OnOneServer;
-use Academorix\Scheduling\Attributes\ScheduleName;
-use Academorix\Scheduling\Attributes\WithoutOverlapping;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Retention\Enums\RetentionAction;
+use Stackra\Retention\Registry\RetentionPolicyRegistry;
+use Stackra\Retention\Runner\RetentionRunner;
+use Stackra\Retention\Support\RetentionPolicyDescriptor;
+use Stackra\Scheduling\Attributes\Cron;
+use Stackra\Scheduling\Attributes\OnOneServer;
+use Stackra\Scheduling\Attributes\ScheduleName;
+use Stackra\Scheduling\Attributes\WithoutOverlapping;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

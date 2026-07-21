@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Expenses\Actions\Tenant;
+namespace Stackra\Expenses\Actions\Tenant;
 
-use Academorix\Expenses\Contracts\Repositories\PayrollRunRepositoryInterface;
-use Academorix\Expenses\Data\PayrollRunData;
-use Academorix\Expenses\Data\Requests\CreatePayrollRunRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Expenses\Contracts\Repositories\PayrollRunRepositoryInterface;
+use Stackra\Expenses\Data\PayrollRunData;
+use Stackra\Expenses\Data\Requests\CreatePayrollRunRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/payroll-runs` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Expenses

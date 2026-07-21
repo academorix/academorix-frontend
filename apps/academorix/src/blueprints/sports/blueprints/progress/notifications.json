@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/progress/notifications",
+  "id": "stackra://modules/progress/notifications",
   "$version": 1,
   "title": "progress — user-facing notifications",
   "description": "Laravel notifications (mail / database / broadcast / vonage / slack).",

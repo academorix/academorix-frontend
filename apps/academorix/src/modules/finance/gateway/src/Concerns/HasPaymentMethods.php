@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Gateway\Concerns;
+namespace Stackra\Gateway\Concerns;
 
 /**
  * Trait — HasPaymentMethods.

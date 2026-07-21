@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Season\Exceptions;
+namespace Stackra\Season\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * registration_closes_at > start_date + 30 days.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SeasonRegistrationTooLateException extends AcademorixException
+final class SeasonRegistrationTooLateException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

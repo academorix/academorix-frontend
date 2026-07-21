@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/season/config",
+  "id": "stackra://modules/season/config",
   "$version": 1,
   "title": "season — developer configuration",
   "configFile": "config/season.php",

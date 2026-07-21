@@ -4,14 +4,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Actions\Platform;
+namespace Stackra\Integrations\Actions\Platform;
 
-use Academorix\Integrations\Contracts\Repositories\AppRepositoryInterface;
-use Academorix\Integrations\Data\AppData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Integrations\Contracts\Repositories\AppRepositoryInterface;
+use Stackra\Integrations\Data\AppData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\LaravelData\PaginatedDataCollection;
@@ -20,7 +20,7 @@ use Spatie\LaravelData\PaginatedDataCollection;
  * `GET /api/v1/platform/apps` — list action (platform-admin audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Integrations
@@ -50,7 +50,7 @@ final class ListAppAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Academorix\Integrations\Models\App> $page */
+        /** @var LengthAwarePaginator<int, \Stackra\Integrations\Models\App> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

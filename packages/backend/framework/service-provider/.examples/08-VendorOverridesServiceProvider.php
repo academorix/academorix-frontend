@@ -58,10 +58,10 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Admin\Providers;
+namespace Stackra\Admin\Providers;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * Admin module service provider — vendor overrides example.
@@ -72,7 +72,7 @@ use Academorix\ServiceProvider\Providers\ServiceProvider;
  */
 #[AsModule(
     name: 'Admin',
-    namespace: 'Academorix\\Admin',
+    namespace: 'Stackra\\Admin',
     viewNamespace: 'admin',
     translationNamespace: 'admin',
 )]

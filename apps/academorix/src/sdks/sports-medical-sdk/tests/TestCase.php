@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsMedicalSdk\Tests;
+namespace Stackra\SportsMedicalSdk\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix-sports/medical-sdk.
+ * Base test case for stackra-sports/medical-sdk.
  *
  * @category MedicalSdk
  *

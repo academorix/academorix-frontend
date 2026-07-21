@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Actions\Tenant;
+namespace Stackra\Notifications\Sms\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Notifications\Sms\Contracts\Repositories\SmsOptOutRepositoryInterface;
-use Academorix\Notifications\Sms\Enums\NotificationsSmsPermission;
-use Academorix\Notifications\Sms\Models\SmsOptOut;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Delete;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Notifications\Sms\Contracts\Repositories\SmsOptOutRepositoryInterface;
+use Stackra\Notifications\Sms\Enums\NotificationsSmsPermission;
+use Stackra\Notifications\Sms\Models\SmsOptOut;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Delete;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\Response;
 
 /**

@@ -1,6 +1,6 @@
 {
-  "name": "academorix/cli",
-  "description": "Academorix workspace CLI — scaffolds projects, packages, and modules.",
+  "name": "stackra/cli",
+  "description": "Stackra workspace CLI — scaffolds projects, packages, and modules.",
   "type": "library",
   "license": "proprietary",
   "require": {
@@ -22,7 +22,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Cli\\": "src/"
+      "Stackra\\Cli\\": "src/"
     },
     "files": [
       "src/helpers.php"
@@ -30,11 +30,11 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Cli\\Tests\\": "tests/"
+      "Stackra\\Cli\\Tests\\": "tests/"
     }
   },
   "bin": [
-    "bin/academorix"
+    "bin/stackra"
   ],
   "config": {
     "sort-packages": true,

@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "notifications-sms",
   "alias": "notifications-sms",
-  "namespace": "Academorix\\Notifications\\Sms",
+  "namespace": "Stackra\\Notifications\\Sms",
   "description": "SMS notification channel. Owns the SmsOptOut entity (TCPA + CASL evidence-grade unsubscribe records) + own MultipleInstanceManager wrapping Twilio / MessageBird / Vonage / Plivo / AWS SNS. Handles STOP-keyword inbound via webhook module (namespace=notifications-sms). Tracks per-message cost + destination-country pricing. Cost-cap entitlement prevents runaway spend.",
   "keywords": [
     "notifications",
@@ -19,7 +19,7 @@
     "cost-tracking"
   ],
   "priority": 28,
-  "providers": ["Academorix\\Notifications\\Sms\\Providers\\NotificationsSmsServiceProvider"],
+  "providers": ["Stackra\\Notifications\\Sms\\Providers\\NotificationsSmsServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "notifications", "webhook"],
   "extendedBy": [],
@@ -65,7 +65,7 @@
   },
   "channelRegistration": {
     "slug": "sms",
-    "class": "Academorix\\Notifications\\Sms\\Channels\\SmsChannel",
+    "class": "Stackra\\Notifications\\Sms\\Channels\\SmsChannel",
     "kind": "external",
     "provider_kind": "provider-mediated",
     "supported_providers": ["twilio", "messagebird", "vonage", "plivo", "aws-sns", "log", "array"],

@@ -2,10 +2,10 @@
 <?php
 
 /**
- * @file academorix
- * @description Entry point for the Academorix workspace CLI.
+ * @file stackra
+ * @description Entry point for the Stackra workspace CLI.
  *
- *   Loads Composer's autoloader, instantiates {@see \Academorix\Cli\Application},
+ *   Loads Composer's autoloader, instantiates {@see \Stackra\Cli\Application},
  *   and delegates to its `run()` method. Non-zero exit codes bubble to the shell
  *   so CI + local scripts can gate on them.
  */
@@ -28,13 +28,13 @@ foreach ($autoloadCandidates as $candidate) {
 }
 
 if ($autoload === null) {
-    fwrite(STDERR, "academorix: could not locate vendor/autoload.php.\n".
+    fwrite(STDERR, "stackra: could not locate vendor/autoload.php.\n".
         "Run `composer install` in tools/cli first.\n");
     exit(1);
 }
 
 require $autoload;
 
-use Academorix\Cli\Application;
+use Stackra\Cli\Application;
 
 exit((new Application)->run());

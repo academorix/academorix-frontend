@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Events;
+namespace Stackra\Notifications\Push\Events;
 
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 /**
  * The client SDK reported the user tapped the notification.
  *

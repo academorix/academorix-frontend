@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Concerns;
+namespace Stackra\Marketing\Concerns;
 
 /**
  * Trait — HasMarketingDeadLetters.

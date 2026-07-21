@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/retention",
+  "id": "stackra://modules/notifications/retention",
   "$version": 1,
   "title": "notifications core \u2014 retention windows",
   "description": "Retention per entity. Hot = searchable + indexed. Cold = archived (present but not indexed). Purge = hard-delete. Every purge emits an audit row in the audit_log tier so the trail survives the payload. Retention_days per plan comes from the entitlement.",

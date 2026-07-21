@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/private-sessions/analytics",
+  "id": "stackra://modules/private-sessions/analytics",
   "$version": 1,
   "title": "private-sessions — product-analytics events",
   "description": "PostHog / Mixpanel / Segment events this module emits.",

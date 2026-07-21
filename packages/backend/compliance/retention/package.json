@@ -1,5 +1,5 @@
 {
-  "name": "@academorix/retention",
+  "name": "@stackra/retention",
   "version": "0.1.0",
   "private": true,
   "description": "Turborepo shim for the retention package — the actual code lives in the composer package.",

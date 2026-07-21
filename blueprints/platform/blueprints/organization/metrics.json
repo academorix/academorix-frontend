@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/organization/metrics",
+  "id": "stackra://modules/organization/metrics",
   "$version": 1,
   "title": "organization — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "academorix.organization",
+  "namespace": "stackra.organization",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["category", "status", "source", "reason"],
@@ -11,14 +11,14 @@
   },
   "metrics": [
     {
-      "name": "academorix.organization.rows.total",
+      "name": "stackra.organization.rows.total",
       "kind": "gauge",
       "unit": "rows",
       "labels": ["status"],
       "description": "Count of Organizations by status (active / paused / archived) across the platform. Emitted every 60s by the observability sweeper."
     },
     {
-      "name": "academorix.organization.rows.per_tenant",
+      "name": "stackra.organization.rows.per_tenant",
       "kind": "histogram",
       "unit": "rows",
       "buckets": [1, 2, 5, 10, 25, 50, 100, 500],
@@ -26,21 +26,21 @@
       "description": "Distribution of active Organizations per tenant. Detects tenants approaching the Enterprise unlimited-cap territory."
     },
     {
-      "name": "academorix.organization.create.total",
+      "name": "stackra.organization.create.total",
       "kind": "counter",
       "unit": "organizations",
       "labels": ["category", "source"],
       "description": "source: api / cli / seeder / reconciler. category: the org's category enum."
     },
     {
-      "name": "academorix.organization.reparent.total",
+      "name": "stackra.organization.reparent.total",
       "kind": "counter",
       "unit": "moves",
       "labels": ["reason"],
       "description": "reason: manual / entitlement_flatten / support. entitlement_flatten fires on downgrade cascades."
     },
     {
-      "name": "academorix.organization.reparent.descendants_recomputed",
+      "name": "stackra.organization.reparent.descendants_recomputed",
       "kind": "histogram",
       "unit": "rows",
       "buckets": [1, 5, 10, 25, 100, 500],
@@ -48,7 +48,7 @@
       "description": "How many descendants had their tree_path recomputed per reparent. Detects unusually large restructurings."
     },
     {
-      "name": "academorix.organization.reparent.duration_ms",
+      "name": "stackra.organization.reparent.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 50, 200, 1000, 5000, 30000],
@@ -56,28 +56,28 @@
       "description": "End-to-end reparent duration including RebuildTreePathsJob completion."
     },
     {
-      "name": "academorix.organization.default_change.total",
+      "name": "stackra.organization.default_change.total",
       "kind": "counter",
       "unit": "changes",
       "labels": ["source"],
       "description": "source: action / reconciler / seeder."
     },
     {
-      "name": "academorix.organization.default_invariant.violations",
+      "name": "stackra.organization.default_invariant.violations",
       "kind": "counter",
       "unit": "tenants",
       "labels": ["kind"],
       "description": "kind: zero_defaults / multiple_defaults. Fires from ReconcileDefaultOrganizationInvariantJob. Non-zero → page ops."
     },
     {
-      "name": "academorix.organization.tree_path_drift.count",
+      "name": "stackra.organization.tree_path_drift.count",
       "kind": "counter",
       "unit": "rows",
       "labels": [],
       "description": "Rows detected with tree_path inconsistent with parent_id. Should stay flat at zero — non-zero indicates DB manipulation outside the observer."
     },
     {
-      "name": "academorix.organization.slot.utilisation_pct",
+      "name": "stackra.organization.slot.utilisation_pct",
       "kind": "histogram",
       "unit": "percent",
       "buckets": [10, 25, 50, 75, 90, 100],
@@ -85,7 +85,7 @@
       "description": "How full the organization_slot allowance runs per tenant. Fires the entitlement-approaching-cap notification at ≥ 80%."
     },
     {
-      "name": "academorix.organization.middleware.resolve.duration_ms",
+      "name": "stackra.organization.middleware.resolve.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [0.5, 2, 10, 50, 200],
@@ -93,28 +93,28 @@
       "description": "organization.resolve_active middleware duration. P99 target < 10 ms."
     },
     {
-      "name": "academorix.organization.middleware.resolve.source",
+      "name": "stackra.organization.middleware.resolve.source",
       "kind": "counter",
       "unit": "requests",
       "labels": ["source"],
       "description": "source: header / user_default / tenant_default. Where the active org came from."
     },
     {
-      "name": "academorix.organization.cache.hit_ratio",
+      "name": "stackra.organization.cache.hit_ratio",
       "kind": "gauge",
       "unit": "ratio",
       "labels": ["cache_key_pattern"],
       "description": "Redis hit ratio per cache pattern (default / tree / descendants / ancestors / by-id / by-slug / slot_usage)."
     },
     {
-      "name": "academorix.organization.observer.refusals",
+      "name": "stackra.organization.observer.refusals",
       "kind": "counter",
       "unit": "refusals",
       "labels": ["reason", "operation"],
       "description": "reason: cross_tenant_parent / cycle / depth_exceeded / has_descendants / in_use / is_default / status_invalid. operation: create / update / delete / reparent."
     },
     {
-      "name": "academorix.organization.rebuild_tree_paths.duration_ms",
+      "name": "stackra.organization.rebuild_tree_paths.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 200, 1000, 5000, 30000, 120000],
@@ -122,7 +122,7 @@
       "description": "RebuildTreePathsJob duration."
     },
     {
-      "name": "academorix.organization.purge_blocked.total",
+      "name": "stackra.organization.purge_blocked.total",
       "kind": "counter",
       "unit": "rows",
       "labels": ["reason"],

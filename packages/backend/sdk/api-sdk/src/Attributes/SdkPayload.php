@@ -26,7 +26,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Attributes;
+namespace Stackra\ApiSdk\Attributes;
 
 use Attribute;
 use InvalidArgumentException;
@@ -47,7 +47,7 @@ use InvalidArgumentException;
  * ```php
  * // On the SERVER side:
  *
- * use Academorix\ApiSdk\Attributes\SdkPayload;
+ * use Stackra\ApiSdk\Attributes\SdkPayload;
  * use Spatie\LaravelData\Data;
  *
  * #[SdkPayload(service: 'platform', resource: 'workspaces', op: 'create')]

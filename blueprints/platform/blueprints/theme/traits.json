@@ -1,16 +1,16 @@
 {
-  "id": "academorix://modules/theme/traits",
+  "id": "stackra://modules/theme/traits",
   "$version": 1,
   "title": "theme — trait composition",
   "description": "Two owned traits + composed foundation / tenancy traits on the three aggregates.",
   "owned": [
     {
-      "trait": "Academorix\\Platform\\Theme\\Concerns\\BelongsToTheme",
+      "trait": "Stackra\\Platform\\Theme\\Concerns\\BelongsToTheme",
       "purpose": "Applied to any downstream row that needs a foreign-key reference to a Theme (currently only ThemeTokenOverride). Registers the theme_id FK + adds a $model->theme() belongsTo relation + adds a query scope $query->forTheme(Theme $t).",
       "used_by": ["ThemeTokenOverride"]
     },
     {
-      "trait": "Academorix\\Platform\\Theme\\Concerns\\HasThemeSnapshot",
+      "trait": "Stackra\\Platform\\Theme\\Concerns\\HasThemeSnapshot",
       "purpose": "Applied to the Theme model. Manages the tokens_snapshot lifecycle — freeze() to resolve the cascade at activation, isFrozen() query, thaw() (for internal-only rollback tooling; not exposed via HTTP).",
       "used_by": ["Theme"]
     }
@@ -40,7 +40,7 @@
     ],
     "tenancy": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
         "usedBy": [
           "Theme",
           "ThemePreset (nullable tenant_id — trait applied but nullable behavior configured)",
@@ -50,14 +50,14 @@
     ],
     "audit": [
       {
-        "trait": "Academorix\\Audit\\Concerns\\HasAudit",
+        "trait": "Stackra\\Audit\\Concerns\\HasAudit",
         "usedBy": ["Theme", "ThemePreset", "ThemeTokenOverride"],
         "notes": "Every mutation captured for the audit lane (7y compliance retention)."
       }
     ],
     "activity": [
       {
-        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
         "usedBy": ["Theme", "ThemePreset"],
         "notes": "Tenant-facing activity feed. ThemeTokenOverride does NOT compose this — override churn is high-volume; noise-to-signal is bad in the activity UI."
       }

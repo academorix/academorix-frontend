@@ -5,8 +5,8 @@
  *
  * @description
  * Immutable per-run outcome captured by
- * {@see \Academorix\Retention\Runner\RetentionRunner}. Consumed by
- * {@see \Academorix\Retention\Console\RunRetentionCommand} to
+ * {@see \Stackra\Retention\Runner\RetentionRunner}. Consumed by
+ * {@see \Stackra\Retention\Console\RunRetentionCommand} to
  * render one output row per executed policy, and by future
  * observability surfaces (admin dashboard, per-run audit trail)
  * that need a stable shape for retention outcomes.
@@ -23,9 +23,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Retention\Runner;
+namespace Stackra\Retention\Runner;
 
-use Academorix\Retention\Enums\RetentionAction;
+use Stackra\Retention\Enums\RetentionAction;
 
 /**
  * Immutable outcome of a single retention policy run.

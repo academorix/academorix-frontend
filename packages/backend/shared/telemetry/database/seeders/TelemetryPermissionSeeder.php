@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Telemetry\Database\Seeders;
+namespace Stackra\Telemetry\Database\Seeders;
 
-use Academorix\Telemetry\Enums\TelemetryPermission;
-use Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
-use Academorix\ServiceProvider\Attributes\AsSeeder;
+use Stackra\Telemetry\Enums\TelemetryPermission;
+use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;
 
 /**

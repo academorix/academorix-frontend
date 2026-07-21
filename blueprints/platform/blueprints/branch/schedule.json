@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/branch/schedule",
+  "id": "stackra://modules/branch/schedule",
   "$version": 1,
   "title": "branch — scheduled tasks",
   "entries": [
@@ -22,7 +22,7 @@
       "command": "branch:metrics:snapshot",
       "cron": "0 * * * *",
       "timezone": "UTC",
-      "purpose": "Hourly. Compute `academorix.branch.active.count` per status + `academorix.branch.slot_usage` gauges per tenant. Publishes to the OpenTelemetry endpoint."
+      "purpose": "Hourly. Compute `stackra.branch.active.count` per status + `stackra.branch.slot_usage` gauges per tenant. Publishes to the OpenTelemetry endpoint."
     },
     {
       "name": "branch-geocoding-stuck-alert",

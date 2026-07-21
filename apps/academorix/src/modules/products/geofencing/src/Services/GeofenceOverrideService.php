@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Services;
+namespace Stackra\Geofencing\Services;
 
-use Academorix\Geofencing\Contracts\Data\GeofenceCheckInterface;
-use Academorix\Geofencing\Contracts\Repositories\GeofenceCheckRepositoryInterface;
-use Academorix\Geofencing\Contracts\Services\GeofenceOverrideServiceInterface;
-use Academorix\Geofencing\Enums\GeofenceMode;
-use Academorix\Geofencing\Enums\GeofenceResult;
-use Academorix\Geofencing\Events\GeofenceOverrideApplied;
-use Academorix\Geofencing\Events\GeofenceOverrideRequested;
-use Academorix\Geofencing\Exceptions\OverrideAlreadyAppliedException;
+use Stackra\Geofencing\Contracts\Data\GeofenceCheckInterface;
+use Stackra\Geofencing\Contracts\Repositories\GeofenceCheckRepositoryInterface;
+use Stackra\Geofencing\Contracts\Services\GeofenceOverrideServiceInterface;
+use Stackra\Geofencing\Enums\GeofenceMode;
+use Stackra\Geofencing\Enums\GeofenceResult;
+use Stackra\Geofencing\Events\GeofenceOverrideApplied;
+use Stackra\Geofencing\Events\GeofenceOverrideRequested;
+use Stackra\Geofencing\Exceptions\OverrideAlreadyAppliedException;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Support\Str;

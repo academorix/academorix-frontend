@@ -1,6 +1,6 @@
-# academorix/storage
+# stackra/storage
 
-File-upload substrate for every Academorix tenant. Wraps
+File-upload substrate for every Stackra tenant. Wraps
 `spatie/laravel-medialibrary ^11` and adds the tenant-scoping, entitlement
 enforcement, antivirus pipeline, audited signed-URL orchestrator, chunked-upload
 state machine, image variants, and content-addressable dedup that our
@@ -18,7 +18,7 @@ multi-tenant SaaS actually needs.
 ## Install
 
 ```bash
-composer require academorix/storage
+composer require stackra/storage
 ```
 
 Auto-registers via `extra.laravel.providers`.

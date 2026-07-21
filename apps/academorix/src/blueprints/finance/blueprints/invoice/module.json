@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "invoice",
   "alias": "invoice",
-  "namespace": "Academorix\\Finance\\Invoice",
+  "namespace": "Stackra\\Finance\\Invoice",
   "description": "The money-owed record. Answers 'how much does this customer owe us, for what, and when's it due?'. FUNDAMENTALLY DISTINCT from transaction/payment modules — invoice is a RECEIVABLE (money OWED), transactions + payments are money MOVEMENTS (records of the wire actually being moved). Ships THREE aggregates: Invoice (root record — one per membership renewal or standalone purchase; carries frozen customer address + billing details + due date + status draft/open/paid/partially_paid/void/uncollectible/pastdue/refunded/disputed), InvoiceLine (line items — one per membership charge / add-on / setup fee / late fee / adjustment; carries description + quantity + unit_price + tax_calculation_id + coupon_redemption_id references), CreditNote (reversal invoices for refunds/adjustments — never mutate paid invoices; issue credit note instead). Standard money flow: Membership.creating → Invoice.create (status=draft) → line accumulation → Invoice.finalize (status=open + freeze totals + generate PDF + send email) → PaymentIntent.confirm on the payment module → Invoice.paid (status=paid) → fires marketing::CaptureMembershipPurchasedMarketingEvent when membership_id is set. Multi-currency support: invoice.currency frozen at issuance; conversion rates snapshot when tax + coupon applied. Sequential invoice_number generation per tenant per year (2026-000001 shape) via Postgres advisory lock — required for accounting compliance (GAAP + IFRS mandate sequential numbering). Every state transition audit-logged (owen-it/laravel-auditing via Auditable trait) with 7-year retention (SOX §404 + national tax law). Credit notes are IMMUTABLE reversal invoices with positive amount_cents that represents the credit issued + reference to original invoice + reason enum (refund/adjustment/write_off/duplicate/customer_dispute_resolved/accounting_correction). Sequential credit_note_number per tenant per year (CN-2026-000001). Never conflate with the payment module: invoices know WHAT is owed; payments know WHEN + HOW the money moved. Never conflate with transactions: transactions are the double-entry ledger; invoices are the customer-facing bill. Never conflate with membership.MembershipRenewal: the renewal is the schedule-driven attempt to charge; the invoice is the resulting document.",
   "keywords": [
     "invoice",
@@ -38,7 +38,7 @@
     "wave-4"
   ],
   "priority": 63,
-  "providers": ["Academorix\\Finance\\Invoice\\Providers\\InvoiceServiceProvider"],
+  "providers": ["Stackra\\Finance\\Invoice\\Providers\\InvoiceServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

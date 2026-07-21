@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Requests\Attributes;
+namespace Stackra\Requests\Attributes;
 
 use Attribute;
 

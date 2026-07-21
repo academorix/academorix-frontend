@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Jobs;
+namespace Stackra\Newsletter\Jobs;
 
-use Academorix\Newsletter\Contracts\Services\NewsletterServiceInterface;
+use Stackra\Newsletter\Contracts\Services\NewsletterServiceInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;

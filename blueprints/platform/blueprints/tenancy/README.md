@@ -1,6 +1,6 @@
 # tenants
 
-Multi-tenant substrate for Academorix. Owns the models, traits, migration
+Multi-tenant substrate for Stackra. Owns the models, traits, migration
 macros, tenancy hooks, and middleware that make every other module tenant-scoped
 by composition.
 

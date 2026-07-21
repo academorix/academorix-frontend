@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/rbac/schedule",
+  "id": "stackra://modules/rbac/schedule",
   "$version": 1,
   "title": "rbac \u2014 scheduled tasks",
   "entries": [
@@ -19,7 +19,7 @@
     },
     {
       "name": "rbac-purge-soft-deleted-roles",
-      "command": "queue:dispatch Academorix\\\\Rbac\\\\Jobs\\\\PurgeSoftDeletedRolesJob",
+      "command": "queue:dispatch Stackra\\\\Rbac\\\\Jobs\\\\PurgeSoftDeletedRolesJob",
       "cron": "0 5 * * *",
       "timezone": "UTC",
       "purpose": "Daily 05:00 UTC: hard-delete `roles` rows past their 90-day soft-delete retention window."
@@ -36,7 +36,7 @@
       "command": "rbac:emit-quota-metrics",
       "cron": "*/15 * * * *",
       "timezone": "UTC",
-      "purpose": "Every 15 minutes: sample custom_role_slot usage per tenant + emit `academorix.rbac.custom_role_slot_usage` gauge. Feeds the tier-adoption dashboard."
+      "purpose": "Every 15 minutes: sample custom_role_slot usage per tenant + emit `stackra.rbac.custom_role_slot_usage` gauge. Feeds the tier-adoption dashboard."
     }
   ]
 }

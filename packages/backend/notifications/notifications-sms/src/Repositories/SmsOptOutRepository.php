@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsSms\Repositories;
+namespace Stackra\NotificationsSms\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\NotificationsSms\Contracts\Data\SmsOptOutInterface;
-use Academorix\NotificationsSms\Contracts\Repositories\SmsOptOutRepositoryInterface;
-use Academorix\NotificationsSms\Models\SmsOptOut;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\NotificationsSms\Contracts\Data\SmsOptOutInterface;
+use Stackra\NotificationsSms\Contracts\Repositories\SmsOptOutRepositoryInterface;
+use Stackra\NotificationsSms\Models\SmsOptOut;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\NotificationsSms\Models\SmsOptOut}.
+ * Attribute-first Eloquent repository for {@see Stackra\NotificationsSms\Models\SmsOptOut}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(SmsOptOutInterface::class)]` which resolves to
  * `SmsOptOut` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\NotificationsSms\Models\SmsOptOut>
+ * @extends Repository<\Stackra\NotificationsSms\Models\SmsOptOut>
  *
  * @category NotificationsSms
  *

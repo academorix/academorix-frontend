@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Services;
+namespace Stackra\ServiceAccounts\Services;
 
-use Academorix\Auth\Contracts\Services\JwtSignerInterface;
-use Academorix\Auth\Data\JwtPayloadData;
-use Academorix\Auth\Data\SignedJwtData;
-use Academorix\Auth\Enums\JwtPayloadPurpose;
-use Academorix\ServiceAccounts\Contracts\Data\ServiceAccountInterface;
-use Academorix\ServiceAccounts\Contracts\Services\ServiceAccountJwtIssuerInterface;
-use Academorix\ServiceAccounts\Events\ServiceAccountJwtIssued;
-use Academorix\ServiceAccounts\Models\ServiceAccount;
+use Stackra\Auth\Contracts\Services\JwtSignerInterface;
+use Stackra\Auth\Data\JwtPayloadData;
+use Stackra\Auth\Data\SignedJwtData;
+use Stackra\Auth\Enums\JwtPayloadPurpose;
+use Stackra\ServiceAccounts\Contracts\Data\ServiceAccountInterface;
+use Stackra\ServiceAccounts\Contracts\Services\ServiceAccountJwtIssuerInterface;
+use Stackra\ServiceAccounts\Events\ServiceAccountJwtIssued;
+use Stackra\ServiceAccounts\Models\ServiceAccount;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Contracts\Events\Dispatcher;
 
 /**
- * Bridges {@see ServiceAccount} rows to `academorix/auth`'s HS256
+ * Bridges {@see ServiceAccount} rows to `stackra/auth`'s HS256
  * signer.
  *
  * ## Payload shape (blueprint §8.2)
@@ -61,8 +61,8 @@ final class ServiceAccountJwtIssuer implements ServiceAccountJwtIssuerInterface
     public function __construct(
         private readonly JwtSignerInterface $signer,
         private readonly Dispatcher $events,
-        #[Config('auth.jwt.issuer', 'https://identity.academorix.com')]
-        private readonly string $issuer = 'https://identity.academorix.com',
+        #[Config('auth.jwt.issuer', 'https://identity.stackra.com')]
+        private readonly string $issuer = 'https://identity.stackra.com',
         #[Config('service-accounts.jwt.ttl_seconds', 300)]
         private readonly int $defaultTtl = 300,
         #[Config('service-accounts.jwt.max_ttl_seconds', 3600)]

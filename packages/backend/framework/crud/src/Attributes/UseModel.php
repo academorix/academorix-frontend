@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Crud\Attributes;
+namespace Stackra\Crud\Attributes;
 
 use Attribute;
 
@@ -27,8 +27,8 @@ use Attribute;
  *
  * ## Usage:
  * ```php
- * use Academorix\Crud\Attributes\UseModel;
- * use Academorix\Users\Contracts\Data\UserInterface;
+ * use Stackra\Crud\Attributes\UseModel;
+ * use Stackra\Users\Contracts\Data\UserInterface;
  *
  * #[UseModel(UserInterface::class)]
  * class UserRepository extends Repository implements UserRepositoryInterface

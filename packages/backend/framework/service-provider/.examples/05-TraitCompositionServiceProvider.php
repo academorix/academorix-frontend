@@ -18,18 +18,18 @@ declare(strict_types=1);
  * @since    2.0.0
  */
 
-namespace Academorix\Notifications\Providers;
+namespace Stackra\Notifications\Providers;
 
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Concerns\AsModuleProvider;
-use Academorix\ServiceProvider\Contracts\HasBindings;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Concerns\AsModuleProvider;
+use Stackra\ServiceProvider\Contracts\HasBindings;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 
 /**
  * Notification module service provider.
  *
- * Extends Laravel's base ServiceProvider directly (not the Academorix one)
+ * Extends Laravel's base ServiceProvider directly (not the Stackra one)
  * and uses the AsModuleProvider trait for full module functionality.
  *
  * The Application auto-wires registerModule() and bootModule() — no

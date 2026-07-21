@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Branding\Contracts\Data\BrandingInterface;
+use Stackra\Branding\Contracts\Data\BrandingInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

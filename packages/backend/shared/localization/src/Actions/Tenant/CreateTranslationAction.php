@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Actions\Tenant;
+namespace Stackra\Localization\Actions\Tenant;
 
-use Academorix\Localization\Contracts\Repositories\TranslationRepositoryInterface;
-use Academorix\Localization\Data\TranslationData;
-use Academorix\Localization\Data\Requests\CreateTranslationRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Localization\Contracts\Repositories\TranslationRepositoryInterface;
+use Stackra\Localization\Data\TranslationData;
+use Stackra\Localization\Data\Requests\CreateTranslationRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/translations` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Localization

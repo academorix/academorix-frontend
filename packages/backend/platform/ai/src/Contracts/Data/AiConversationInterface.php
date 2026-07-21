@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Ai\Contracts\Data;
+namespace Stackra\Ai\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Ai\Models\AiConversation;
+use Stackra\Ai\Models\AiConversation;
 
 /**
  * Table shape for the `ai_conversations` table.

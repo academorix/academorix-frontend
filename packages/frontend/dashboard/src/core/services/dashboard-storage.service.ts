@@ -8,15 +8,15 @@
  *
  *   ## Persistence keys
  *
- *   - `academorix.dashboards.v1:<ownerId>` — the owner's custom
+ *   - `stackra.dashboards.v1:<ownerId>` — the owner's custom
  *     dashboards (built-ins are synthesised on read).
- *   - `academorix.dashboard-embed-tokens.v1` — token → record map.
+ *   - `stackra.dashboard-embed-tokens.v1` — token → record map.
  *     Global scope so a shared token still resolves after the owner
  *     switches user.
- *   - `academorix.dashboard-share-grants.v1` — grant id → record map.
- *   - `academorix.dashboard-versions.v1` — version-snapshot log.
- *   - `academorix.dashboard-annotations.v1` — flat annotation array.
- *   - `academorix.broadcast-templates.v1` — template id → record map.
+ *   - `stackra.dashboard-share-grants.v1` — grant id → record map.
+ *   - `stackra.dashboard-versions.v1` — version-snapshot log.
+ *   - `stackra.dashboard-annotations.v1` — flat annotation array.
+ *   - `stackra.broadcast-templates.v1` — template id → record map.
  *
  *   ## Concurrency
  *
@@ -87,12 +87,12 @@ import { WidgetCatalogueService } from "./widget-catalogue.service";
 
 // ── Storage keys ──────────────────────────────────────────────────────
 
-const DASHBOARDS_KEY_PREFIX = "academorix.dashboards.v1";
-const EMBED_TOKENS_KEY = "academorix.dashboard-embed-tokens.v1";
-const SHARE_GRANTS_KEY = "academorix.dashboard-share-grants.v1";
-const VERSIONS_KEY = "academorix.dashboard-versions.v1";
-const ANNOTATIONS_KEY = "academorix.dashboard-annotations.v1";
-const BROADCAST_TEMPLATES_KEY = "academorix.broadcast-templates.v1";
+const DASHBOARDS_KEY_PREFIX = "stackra.dashboards.v1";
+const EMBED_TOKENS_KEY = "stackra.dashboard-embed-tokens.v1";
+const SHARE_GRANTS_KEY = "stackra.dashboard-share-grants.v1";
+const VERSIONS_KEY = "stackra.dashboard-versions.v1";
+const ANNOTATIONS_KEY = "stackra.dashboard-annotations.v1";
+const BROADCAST_TEMPLATES_KEY = "stackra.broadcast-templates.v1";
 
 // ── Internal shapes ───────────────────────────────────────────────────
 

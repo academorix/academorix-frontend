@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Exceptions;
+namespace Stackra\Notifications\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised internally when a recipient has opted out of an opt-out-
@@ -17,7 +17,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationUnsubscribedException extends AcademorixException
+final class NotificationUnsubscribedException extends StackraException
 {
     public const CODE = 'NOTIFICATIONS_UNSUBSCRIBED';
 

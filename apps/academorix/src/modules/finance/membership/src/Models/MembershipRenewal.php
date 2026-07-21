@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Membership\Models;
+namespace Stackra\Membership\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Membership\Contracts\Data\MembershipRenewalInterface;
-use Academorix\Membership\Database\Factories\MembershipRenewalFactory;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Membership\Concerns\BelongsToMembership;
-use Academorix\Membership\Policies\MembershipRenewalPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Membership\Contracts\Data\MembershipRenewalInterface;
+use Stackra\Membership\Database\Factories\MembershipRenewalFactory;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Membership\Concerns\BelongsToMembership;
+use Stackra\Membership\Policies\MembershipRenewalPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Scout\Searchable;

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Exceptions;
+namespace Stackra\Foundation\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * A probe exceeded its declared timeout.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class FoundationHealthProbeTimeoutException extends AcademorixException
+final class FoundationHealthProbeTimeoutException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

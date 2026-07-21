@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transfer/config",
+  "id": "stackra://modules/transfer/config",
   "$version": 1,
   "title": "transfer \u2014 developer configuration",
   "configFile": "config/transfer.php",

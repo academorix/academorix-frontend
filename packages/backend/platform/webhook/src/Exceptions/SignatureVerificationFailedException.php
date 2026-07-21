@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Exceptions;
+namespace Stackra\Webhook\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Raised by the inbound-webhook middleware when the request's HMAC

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Ai\Contracts\Data;
+namespace Stackra\Ai\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Ai\Models\AiRun;
+use Stackra\Ai\Models\AiRun;
 
 /**
  * Table shape for the `ai_runs` table.

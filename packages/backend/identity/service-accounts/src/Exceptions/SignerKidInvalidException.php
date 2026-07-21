@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Exceptions;
+namespace Stackra\ServiceAccounts\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * The proposed `signer_kid` does not exist in `auth::jwt_signing_keys` OR is disabled.

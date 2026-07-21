@@ -34,7 +34,7 @@ import re
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path("/Users/akouta/Projects/academorix-frontend")
+REPO_ROOT = Path("/Users/akouta/Projects/stackra-frontend")
 SCAN_EXTENSIONS = {
     ".json", ".md", ".mdx", ".txt",
     ".php", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs",

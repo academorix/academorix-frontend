@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transaction\Events;
+namespace Stackra\Transaction\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -17,7 +17,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - audit::WriteToAuditLog (retention: 7 years — regulator-critical audit trail for every ledger correction)
  * - activity::WriteToActivityLog
  * - notifications::DispatchTransactionAmendmentAppliedNotification (finance role + admin — every reversal is regulator-visible)
- * - monitoring::MetricsCollector (increments academorix.transaction.reversed_total)
+ * - monitoring::MetricsCollector (increments stackra.transaction.reversed_total)
  *
  * @category Transaction
  *

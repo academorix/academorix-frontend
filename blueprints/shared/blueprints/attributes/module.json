@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "attributes",
   "alias": "attributes",
-  "namespace": "Academorix\\Attributes",
+  "namespace": "Stackra\\Attributes",
   "description": "The sport-agnostic EAV substrate — Attribute Sets bound to entity_type × discriminator (e.g. `athlete_enrollment` × `sport_key=football`). Ships THREE owned entities: `AttributeDefinition` (typed field: code, type IN (integer/decimal/select/boolean/date/text/slider), widget hints, validation, bilingual i18n labels), `AttributeSet` (versioned collection of definitions grouped for a host entity; selected by discriminator; ships `is_active` + `version_number` for historic-render integrity — historic assessments render with the set version that was live at capture time), `AttributeGroup` (visual grouping within a set — Primary Stats / Detailed Skills / Position / Physical Profile). Values are NOT a row-per-value table — they live in a `JSONB` column on the host entity via `spatie/laravel-schemaless-attributes` (host: `athlete_enrollments.attributes`, `progress_assessments.values`, `performance_test_results.metrics`). Ships the `HasAttributeSet` trait for hosts, the `#[AttributableEntity]` PHP attribute for discoverable entity-type registration, and the `AttributeSetResolver` + `AttributeValidator` + `AttributeRenderer` services. Filterable attributes projected via generated columns / search index as needed by consumers. Foundational for §6 (mechanism #3) sport-agnosticism — every sport variance in athlete stats / progress cards / performance batteries resolves here.",
   "keywords": [
     "attributes",
@@ -22,7 +22,7 @@
     "wave-0"
   ],
   "priority": 11,
-  "providers": ["Academorix\\Attributes\\Providers\\AttributesServiceProvider"],
+  "providers": ["Stackra\\Attributes\\Providers\\AttributesServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "application"],
   "extendedBy": [],

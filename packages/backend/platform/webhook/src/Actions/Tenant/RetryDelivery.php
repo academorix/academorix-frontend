@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Actions\Tenant;
+namespace Stackra\Webhook\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
-use Academorix\Webhook\Contracts\Data\WebhookDeliveryInterface;
-use Academorix\Webhook\Contracts\Repositories\WebhookDeliveryRepositoryInterface;
-use Academorix\Webhook\Data\Requests\RetryWebhookDeliveryRequestData;
-use Academorix\Webhook\Data\WebhookDeliveryData;
-use Academorix\Webhook\Enums\WebhookPermission;
-use Academorix\Webhook\Exceptions\WebhookDeliveryFailedException;
-use Academorix\Webhook\Jobs\DispatchWebhookJob;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Webhook\Contracts\Data\WebhookDeliveryInterface;
+use Stackra\Webhook\Contracts\Repositories\WebhookDeliveryRepositoryInterface;
+use Stackra\Webhook\Data\Requests\RetryWebhookDeliveryRequestData;
+use Stackra\Webhook\Data\WebhookDeliveryData;
+use Stackra\Webhook\Enums\WebhookPermission;
+use Stackra\Webhook\Exceptions\WebhookDeliveryFailedException;
+use Stackra\Webhook\Jobs\DispatchWebhookJob;
 
 /**
  * `POST /api/v1/tenant/webhook/deliveries/{id}/retry` — manual retry

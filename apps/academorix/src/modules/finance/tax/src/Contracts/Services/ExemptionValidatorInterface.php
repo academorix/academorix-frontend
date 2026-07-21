@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Contracts\Services;
+namespace Stackra\Tax\Contracts\Services;
 
-use Academorix\Tax\Data\ExemptionVerdictData;
-use Academorix\Tax\Services\ExemptionValidator;
+use Stackra\Tax\Data\ExemptionVerdictData;
+use Stackra\Tax\Services\ExemptionValidator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

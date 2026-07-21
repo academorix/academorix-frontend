@@ -16,16 +16,16 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Settings\Settings;
+namespace Stackra\Settings\Settings;
 
 use Spatie\LaravelSettings\Settings;
-use Academorix\Settings\Attributes\AsSetting;
-use Academorix\Settings\Attributes\SettingField;
-use Academorix\Settings\Attributes\SettingGroup;
-use Academorix\Settings\Enums\ColorMode;
-use Academorix\Settings\Enums\ControlType;
-use Academorix\Settings\Enums\FontSize;
-use Academorix\Settings\Enums\UiDensity;
+use Stackra\Settings\Attributes\AsSetting;
+use Stackra\Settings\Attributes\SettingField;
+use Stackra\Settings\Attributes\SettingGroup;
+use Stackra\Settings\Enums\ColorMode;
+use Stackra\Settings\Enums\ControlType;
+use Stackra\Settings\Enums\FontSize;
+use Stackra\Settings\Enums\UiDensity;
 
 /**
  * User Preferences Settings.

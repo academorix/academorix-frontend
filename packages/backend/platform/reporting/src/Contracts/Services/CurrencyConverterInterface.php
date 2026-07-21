@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Reporting\Contracts\Services;
+namespace Stackra\Reporting\Contracts\Services;
 
-use Academorix\Reporting\Services\CurrencyConverter;
+use Stackra\Reporting\Services\CurrencyConverter;
 use Illuminate\Container\Attributes\Bind;
 
 /**

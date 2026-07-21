@@ -4,7 +4,7 @@
  * @file modules/platform/application/config/application.php
  *
  * @description
- * Runtime knobs for the `academorix/application` module. Merged under
+ * Runtime knobs for the `stackra/application` module. Merged under
  * the `application.*` key by the base ServiceProvider's LoadsResources
  * concern. Consumer overrides via `.env`; downstream modules read via
  * `config('application.*')` (never `env()` outside this file — see
@@ -23,7 +23,7 @@ return [
     | (fresh install, misconfigured DNS). Referenced by ResolveApplication
     | middleware and the `application:sync-catalogue` seeder.
     */
-    'default_slug' => env('APPLICATION_DEFAULT_SLUG', 'academorix'),
+    'default_slug' => env('APPLICATION_DEFAULT_SLUG', 'stackra'),
 
     /*
     |--------------------------------------------------------------------------

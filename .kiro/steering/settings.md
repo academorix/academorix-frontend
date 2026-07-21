@@ -13,7 +13,7 @@ fileMatchPattern: "**/Settings/**/*.php"
 > package.
 
 Every user-editable configuration surface in the platform goes through
-`academorix/settings`. Custom key-value tables, bespoke "config" rows in a
+`stackra/settings`. Custom key-value tables, bespoke "config" rows in a
 domain model, or `env()` reads inside a service are all off-pattern.
 
 ## The hard rules
@@ -30,7 +30,7 @@ declare property defaults. Every editable field is a public property with
 ### 2. Property-default is the truth
 
 A field's default value lives on the PHP property
-(`public string $app_name = 'Academorix'`). `#[SettingField(defaultValue: …)]`
+(`public string $app_name = 'Stackra'`). `#[SettingField(defaultValue: …)]`
 is only used when the default doesn't fit as a property default (closures,
 callable factories, computed shapes). The compiler picks up the property default
 automatically — no duplication.

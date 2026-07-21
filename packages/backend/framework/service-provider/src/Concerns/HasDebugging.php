@@ -21,7 +21,7 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\ServiceProvider\Concerns;
+namespace Stackra\ServiceProvider\Concerns;
 
 /**
  * Conditional debug logging for module service providers.

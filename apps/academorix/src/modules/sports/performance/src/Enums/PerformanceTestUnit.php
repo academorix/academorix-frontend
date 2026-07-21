@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Performance\Enums;
+namespace Stackra\Performance\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `unit` on `performance-test`.

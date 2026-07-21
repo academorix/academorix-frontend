@@ -11,11 +11,11 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
-use Academorix\Foundation\Enums\HttpStatusCode;
-use Academorix\Foundation\Enums\PolicyAbility;
+use Stackra\Foundation\Enums\HttpStatusCode;
+use Stackra\Foundation\Enums\PolicyAbility;
 use Spatie\RouteAttributes\Attributes\Patch as SpatiePatch;
 
 /**

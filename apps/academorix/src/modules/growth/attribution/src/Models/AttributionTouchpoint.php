@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Models;
+namespace Stackra\Attribution\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Attribution\Contracts\Data\AttributionTouchpointInterface;
-use Academorix\Attribution\Database\Factories\AttributionTouchpointFactory;
-use Academorix\Attribution\Policies\AttributionTouchpointPolicy;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Attribution\Contracts\Data\AttributionTouchpointInterface;
+use Stackra\Attribution\Database\Factories\AttributionTouchpointFactory;
+use Stackra\Attribution\Policies\AttributionTouchpointPolicy;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

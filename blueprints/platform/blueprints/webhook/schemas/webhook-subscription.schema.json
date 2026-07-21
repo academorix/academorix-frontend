@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/webhook/schemas/webhook-subscription",
+  "id": "stackra://modules/webhook/schemas/webhook-subscription",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "WebhookSubscription",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "wsub_",
     "incrementing": false,
-    "model": "Academorix\\Webhook\\Models\\WebhookSubscription",
-    "interface": "Academorix\\Webhook\\Contracts\\Data\\WebhookSubscriptionInterface",
-    "implements": ["Academorix\\Webhook\\Contracts\\Data\\WebhookSubscriptionInterface"],
+    "model": "Stackra\\Webhook\\Models\\WebhookSubscription",
+    "interface": "Stackra\\Webhook\\Contracts\\Data\\WebhookSubscriptionInterface",
+    "implements": ["Stackra\\Webhook\\Contracts\\Data\\WebhookSubscriptionInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -195,7 +195,7 @@
         "type": "string",
         "length": 200,
         "nullable": false,
-        "default": "Academorix-Webhook/1.0"
+        "default": "Stackra-Webhook/1.0"
       },
       "filter_expression": {
         "type": "text",

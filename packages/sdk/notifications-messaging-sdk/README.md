@@ -1,7 +1,7 @@
-# academorix-notifications/messaging-sdk
+# stackra-notifications/messaging-sdk
 
 Wire-visible SDK surface for the `messaging` module of the Notifications
-service. Auto-discovered by `academorix/notifications-sdk` (the service
+service. Auto-discovered by `stackra/notifications-sdk` (the service
 umbrella) via `#[AsSdkResource(name: 'messaging', service: 'notifications')]`.
 
 ## Aggregates
@@ -26,7 +26,7 @@ src/
 Consumed only over HTTP via the umbrella client:
 
 ```php
-app(\Academorix\NotificationsSdk\Client\NotificationsSdk::class)
+app(\Stackra\NotificationsSdk\Client\NotificationsSdk::class)
     ->messaging()
     ->conversationParticipants()
     ->list();

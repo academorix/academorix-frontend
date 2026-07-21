@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Data;
+namespace Stackra\Domains\Data;
 
-use Academorix\Domains\Contracts\Data\DomainRecordInterface;
-use Academorix\Domains\Enums\DnsRecordStatus;
-use Academorix\Domains\Enums\DnsRecordType;
-use Academorix\Domains\Models\DomainRecord;
+use Stackra\Domains\Contracts\Data\DomainRecordInterface;
+use Stackra\Domains\Enums\DnsRecordStatus;
+use Stackra\Domains\Enums\DnsRecordType;
+use Stackra\Domains\Models\DomainRecord;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

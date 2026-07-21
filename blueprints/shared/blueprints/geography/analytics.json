@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geography/analytics",
+  "id": "stackra://modules/geography/analytics",
   "$version": 1,
   "title": "geography \u2014 product analytics",
   "sink": "segment",

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Event\Tests;
+namespace Stackra\Event\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/event.
+ * Base test case for stackra/event.
  *
  * @category Event
  *

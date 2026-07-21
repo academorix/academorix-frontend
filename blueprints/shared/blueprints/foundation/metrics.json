@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/foundation/metrics",
+  "id": "stackra://modules/foundation/metrics",
   "$version": 1,
   "title": "foundation — OpenTelemetry base metrics",
   "description": "Base OpenTelemetry / Prometheus metrics foundation emits + the label taxonomy every downstream module inherits. Enforces cardinality: labels are chosen so unique combinations stay under 5000 per metric. High-cardinality attributes (user_id, invitation_id) are added as SPAN attributes, never as metric labels.",
   "instrumentation": "open-telemetry/sdk",
-  "namespace": "academorix.foundation",
+  "namespace": "stackra.foundation",
   "labelConventions": {
     "always": ["application_id"],
     "commonlyAvailable": ["tenant_id (nullable — omit on cross-tenant queries)", "module_name"],
@@ -12,7 +12,7 @@
   },
   "metrics": [
     {
-      "name": "academorix.http.request.duration_ms",
+      "name": "stackra.http.request.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000],
@@ -20,13 +20,13 @@
       "description": "RED metric — request latency. Labels: method, route name (from Laravel), status class (2xx/3xx/4xx/5xx), application_id."
     },
     {
-      "name": "academorix.http.request.total",
+      "name": "stackra.http.request.total",
       "kind": "counter",
       "unit": "requests",
       "labels": ["method", "route", "status_code_class", "application_id"]
     },
     {
-      "name": "academorix.http.request.errors_total",
+      "name": "stackra.http.request.errors_total",
       "kind": "counter",
       "unit": "requests",
       "labels": ["method", "route", "error_code", "application_id"],
@@ -34,28 +34,28 @@
     },
 
     {
-      "name": "academorix.queue.jobs.processed_total",
+      "name": "stackra.queue.jobs.processed_total",
       "kind": "counter",
       "unit": "jobs",
       "labels": ["queue", "job_class", "outcome"],
       "description": "outcome: success / failed / retried / released."
     },
     {
-      "name": "academorix.queue.jobs.duration_ms",
+      "name": "stackra.queue.jobs.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 50, 100, 500, 1000, 5000, 30000, 60000, 300000],
       "labels": ["queue", "job_class"]
     },
     {
-      "name": "academorix.queue.depth",
+      "name": "stackra.queue.depth",
       "kind": "gauge",
       "unit": "jobs",
       "labels": ["queue"],
       "description": "Per-queue pending count. Sampled every 30s by QueueDepthProbe."
     },
     {
-      "name": "academorix.queue.oldest_job_age_seconds",
+      "name": "stackra.queue.oldest_job_age_seconds",
       "kind": "gauge",
       "unit": "seconds",
       "labels": ["queue"],
@@ -63,41 +63,41 @@
     },
 
     {
-      "name": "academorix.db.queries.total",
+      "name": "stackra.db.queries.total",
       "kind": "counter",
       "unit": "queries",
       "labels": ["connection", "type"],
       "description": "type: select / insert / update / delete."
     },
     {
-      "name": "academorix.db.queries.duration_ms",
+      "name": "stackra.db.queries.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1, 5, 25, 100, 500, 2500],
       "labels": ["connection", "type"]
     },
     {
-      "name": "academorix.db.connections.active",
+      "name": "stackra.db.connections.active",
       "kind": "gauge",
       "unit": "connections",
       "labels": ["connection"]
     },
 
     {
-      "name": "academorix.cache.hits_total",
+      "name": "stackra.cache.hits_total",
       "kind": "counter",
       "unit": "operations",
       "labels": ["tag"],
       "description": "Grouped by cache tag namespace (from caches.json)."
     },
     {
-      "name": "academorix.cache.misses_total",
+      "name": "stackra.cache.misses_total",
       "kind": "counter",
       "unit": "operations",
       "labels": ["tag"]
     },
     {
-      "name": "academorix.cache.hit_ratio",
+      "name": "stackra.cache.hit_ratio",
       "kind": "gauge",
       "unit": "ratio",
       "labels": ["tag"],
@@ -105,14 +105,14 @@
     },
 
     {
-      "name": "academorix.search.index_ops_total",
+      "name": "stackra.search.index_ops_total",
       "kind": "counter",
       "unit": "operations",
       "labels": ["engine", "operation", "model"],
       "description": "operation: index / delete / flush / query."
     },
     {
-      "name": "academorix.search.query.duration_ms",
+      "name": "stackra.search.query.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [5, 25, 100, 500, 2500],
@@ -120,13 +120,13 @@
     },
 
     {
-      "name": "academorix.module.count",
+      "name": "stackra.module.count",
       "kind": "gauge",
       "unit": "modules",
       "description": "Number of loaded modules. Should equal the count in modules/. Anomaly = discovery bug."
     },
     {
-      "name": "academorix.module.boot.duration_ms",
+      "name": "stackra.module.boot.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 50, 100, 500, 2500, 10000],
@@ -135,27 +135,27 @@
     },
 
     {
-      "name": "academorix.health.probe.duration_ms",
+      "name": "stackra.health.probe.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 50, 100, 500, 1000, 5000],
       "labels": ["probe_name", "module_name", "category", "outcome"]
     },
     {
-      "name": "academorix.health.probe.failures_total",
+      "name": "stackra.health.probe.failures_total",
       "kind": "counter",
       "unit": "failures",
       "labels": ["probe_name", "module_name", "critical"]
     },
     {
-      "name": "academorix.health.aggregate_status",
+      "name": "stackra.health.aggregate_status",
       "kind": "gauge",
       "unit": "status",
       "description": "Encoded: 2=healthy, 1=degraded, 0=unhealthy. Sampled every 5s."
     },
 
     {
-      "name": "academorix.config.reload_total",
+      "name": "stackra.config.reload_total",
       "kind": "counter",
       "unit": "reloads",
       "labels": ["source"],

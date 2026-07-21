@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/offline-sync/traits",
+  "id": "stackra://modules/offline-sync/traits",
   "$version": 1,
   "title": "offline-sync — model traits",
   "description": "Traits owned by this module and traits consumed from foundation + framework. Fill in when the module ships its first trait; blueprint-driven scaffold otherwise.",

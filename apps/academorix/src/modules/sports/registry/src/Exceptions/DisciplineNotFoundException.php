@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Exceptions;
+namespace Stackra\Registry\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `DISCIPLINE_NOT_FOUND` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class DisciplineNotFoundException extends AcademorixException
+final class DisciplineNotFoundException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

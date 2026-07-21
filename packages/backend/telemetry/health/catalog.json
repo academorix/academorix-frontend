@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/health",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/health",
   "tier": "framework",
   "surfaces": ["core"],
   "kind": "framework-plumbing",
@@ -16,7 +16,7 @@
   "when_to_use": "Registering a periodic Spatie Health check that reports to a logical channel (Slack, PagerDuty, Email).",
   "when_not_to_use": "For low-level uptime pings without a check-class contract, curl Spatie Health's /health endpoint directly.",
   "peer_deps": [
-    "academorix/foundation",
+    "stackra/foundation",
     "olvlvl/composer-attribute-collector",
     "spatie/laravel-health"
   ],

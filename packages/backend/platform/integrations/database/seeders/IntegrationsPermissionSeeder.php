@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Database\Seeders;
+namespace Stackra\Integrations\Database\Seeders;
 
-use Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
-use Academorix\Integrations\Enums\IntegrationsPermission;
-use Academorix\ServiceProvider\Attributes\AsSeeder;
+use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
+use Stackra\Integrations\Enums\IntegrationsPermission;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;
 
 /**

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Contracts\Services;
+namespace Stackra\Storage\Contracts\Services;
 
-use Academorix\Storage\Services\DefaultContentAddressableStore;
+use Stackra\Storage\Services\DefaultContentAddressableStore;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -60,7 +60,7 @@ interface ContentAddressableStoreInterface
      * counted, when `$dryRun` is true).
      *
      * Invoked by
-     * {@see \Academorix\Storage\Jobs\DedupOrphanBlobsJob}.
+     * {@see \Stackra\Storage\Jobs\DedupOrphanBlobsJob}.
      *
      * @return int  Number of orphan blobs found (deleted, or
      *              would-be-deleted under `$dryRun`).

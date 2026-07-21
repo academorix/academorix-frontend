@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/payment/jobs",
+  "id": "stackra://modules/payment/jobs",
   "$version": 1,
   "title": "payment — background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Finance\\Payment\\Jobs\\ConfirmPaymentIntentJob",
+      "class": "Stackra\\Finance\\Payment\\Jobs\\ConfirmPaymentIntentJob",
       "queue": "payment",
       "purpose": "Customer-initiated confirmation. Fired when the customer's client-side SDK reports back with a confirmation. Transitions the intent from requires_confirmation → {requires_action, requires_capture, processing, succeeded, failed}. Idempotent — the same confirmation twice is a no-op.",
       "steps": [
@@ -25,7 +25,7 @@
       "backoff": [10, 60, 300]
     },
     {
-      "class": "Academorix\\Finance\\Payment\\Jobs\\CapturePaymentIntentJob",
+      "class": "Stackra\\Finance\\Payment\\Jobs\\CapturePaymentIntentJob",
       "queue": "payment",
       "purpose": "Post-authorization capture for manual-capture flows. Fired when admin invokes POST /payments/{payment}/capture on a requires_capture intent. Transitions the intent from requires_capture → succeeded (or cancelled on failure). Only fires for capture_method='manual' intents.",
       "steps": [
@@ -44,7 +44,7 @@
       "backoff": [30, 120, 600]
     },
     {
-      "class": "Academorix\\Finance\\Payment\\Jobs\\ReconcilePaymentIntentsJob",
+      "class": "Stackra\\Finance\\Payment\\Jobs\\ReconcilePaymentIntentsJob",
       "queue": "payment",
       "purpose": "Nightly reconciliation. Per active provider: fetches provider intent list (last 24h + all in-flight) + diffs against our payment_intents rows + reconciles drift. Detects lost webhooks + async completions we missed.",
       "steps": [
@@ -62,7 +62,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Finance\\Payment\\Jobs\\ExpireStalePaymentIntentsJob",
+      "class": "Stackra\\Finance\\Payment\\Jobs\\ExpireStalePaymentIntentsJob",
       "queue": "payment",
       "purpose": "Nightly sweep. Marks intents in non-terminal status for > 24h as 'cancelled' with cancellation_reason='expired'. Signals abandoned checkouts. Prevents in-flight intents from accumulating indefinitely.",
       "steps": [
@@ -77,7 +77,7 @@
       "tries": 1
     },
     {
-      "class": "Academorix\\Finance\\Payment\\Jobs\\NotifyDisputeEvidenceDueJob",
+      "class": "Stackra\\Finance\\Payment\\Jobs\\NotifyDisputeEvidenceDueJob",
       "queue": "payment",
       "purpose": "Fires 3 days before evidence_due_by. Admin gets notified so they don't miss the submission window.",
       "steps": [
@@ -91,7 +91,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Finance\\Payment\\Jobs\\CollectDisputeEvidenceJob",
+      "class": "Stackra\\Finance\\Payment\\Jobs\\CollectDisputeEvidenceJob",
       "queue": "payment",
       "purpose": "Fired on PaymentDisputeOpened. Auto-collects supporting evidence from other modules: invoice + membership + service documentation + refund policy + notification (communication) log + customer signature (if collected).",
       "steps": [
@@ -101,7 +101,7 @@
         "Collect customer_signature from user profile (if collected during signup)",
         "Assemble into evidence jsonb + encrypt at rest",
         "Save to PaymentDispute.evidence (update via observer — evidence field allows updates until evidence_submitted_at is set)",
-        "Emit metric academorix.payment.dispute.evidence_collected"
+        "Emit metric stackra.payment.dispute.evidence_collected"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -110,7 +110,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Finance\\Payment\\Jobs\\SubmitDisputeEvidenceJob",
+      "class": "Stackra\\Finance\\Payment\\Jobs\\SubmitDisputeEvidenceJob",
       "queue": "payment",
       "purpose": "Fired when admin submits collected evidence via POST /disputes/{dispute}/submit-evidence. Dispatches to the provider's evidence-submit API + transitions status → 'under_review'.",
       "steps": [
@@ -127,7 +127,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Finance\\Payment\\Jobs\\EscalateDisputeToChargebackJob",
+      "class": "Stackra\\Finance\\Payment\\Jobs\\EscalateDisputeToChargebackJob",
       "queue": "payment-critical",
       "purpose": "Fires when a dispute transitions to status='lost'. Creates a Chargeback row via the chargeback module + sets dispute.chargeback_id. This is the bridge from payment_dispute lifecycle to the chargeback module's regulator-facing lifecycle.",
       "steps": [
@@ -143,7 +143,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Finance\\Payment\\Jobs\\SyncPaymentMethodExpiryJob",
+      "class": "Stackra\\Finance\\Payment\\Jobs\\SyncPaymentMethodExpiryJob",
       "queue": "payment",
       "purpose": "Weekly sweep. Flags cards with exp_month + exp_year in the next 30 days. Fires PaymentMethodExpiringNotification (customer notification 30 + 7 days before) + PaymentMethodExpired (when actually expired).",
       "steps": [
@@ -159,7 +159,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Finance\\Payment\\Jobs\\PurgeExpiredPaymentDataJob",
+      "class": "Stackra\\Finance\\Payment\\Jobs\\PurgeExpiredPaymentDataJob",
       "queue": "payment",
       "purpose": "Weekly sweep. Applies the per-entity retention windows. TenantErased cascade is handled by FK CASCADE separately.",
       "steps": [

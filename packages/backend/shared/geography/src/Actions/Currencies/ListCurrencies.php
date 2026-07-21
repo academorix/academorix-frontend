@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Actions\Currencies;
+namespace Stackra\Geography\Actions\Currencies;
 
-use Academorix\Geography\Contracts\Repositories\CurrencyRepositoryInterface;
-use Academorix\Geography\Data\Resources\CurrencyResourceData;
-use Academorix\Geography\Models\Currency;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Geography\Contracts\Repositories\CurrencyRepositoryInterface;
+use Stackra\Geography\Data\Resources\CurrencyResourceData;
+use Stackra\Geography\Models\Currency;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 use Spatie\LaravelData\DataCollection;
 
 /**

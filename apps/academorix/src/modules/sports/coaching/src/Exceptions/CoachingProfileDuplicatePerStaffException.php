@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Exceptions;
+namespace Stackra\Coaching\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * This Staff already has an active CoachingProfile — a Staff can only be a Coach once.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CoachingProfileDuplicatePerStaffException extends AcademorixException
+final class CoachingProfileDuplicatePerStaffException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

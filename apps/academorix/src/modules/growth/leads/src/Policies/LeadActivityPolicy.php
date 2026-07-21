@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Policies;
+namespace Stackra\Leads\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Leads\Models\LeadActivity;
+use Stackra\User\Models\User;
+use Stackra\Leads\Models\LeadActivity;
 
 /**
- * Authorization policy for {@see \Academorix\Leads\Models\LeadActivity}.
+ * Authorization policy for {@see \Stackra\Leads\Models\LeadActivity}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

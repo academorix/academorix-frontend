@@ -48,7 +48,7 @@ describe("router() plugin", () => {
 
   describe("config()", () => {
     it("sets server.host and appends allowedHosts in serve mode", () => {
-      const plugin = router({ rootDomain: "academorix.app" });
+      const plugin = router({ rootDomain: "stackra.app" });
       const configHook = plugin.config;
       expect(typeof configHook).toBe("function");
       const config: { server?: { host?: unknown; allowedHosts?: unknown } } = {};
@@ -60,16 +60,16 @@ describe("router() plugin", () => {
         { command: "serve" },
       );
       expect(config.server?.host).toBe("0.0.0.0");
-      // `.localhost` + `academorix.app` + `.academorix.app` land in
+      // `.localhost` + `stackra.app` + `.stackra.app` land in
       // the allow list.
       const hosts = config.server?.allowedHosts as string[];
       expect(hosts).toContain(".localhost");
-      expect(hosts).toContain("academorix.app");
-      expect(hosts).toContain(".academorix.app");
+      expect(hosts).toContain("stackra.app");
+      expect(hosts).toContain(".stackra.app");
     });
 
     it("leaves server config alone in build mode", () => {
-      const plugin = router({ rootDomain: "academorix.app" });
+      const plugin = router({ rootDomain: "stackra.app" });
       const config: { server?: { host?: unknown } } = {};
       (
         plugin.config as unknown as (
@@ -147,7 +147,7 @@ describe("router() plugin", () => {
   describe("configureServer()", () => {
     it("returns a post-hook that injects the middleware + prints the banner", () => {
       const plugin = router({
-        rootDomain: "academorix.app",
+        rootDomain: "stackra.app",
         devSubdomains: ["admin"],
       });
 

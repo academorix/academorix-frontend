@@ -42,7 +42,7 @@
   `team_capacity_override` permission bypass.
 - Nightly reconciler `ReconcileTeamMemberActiveInvariantJob` sweeps for
   duplicate active rows on the same (team, person). Counter
-  `academorix.teams.member_invariant.violations` must stay at 0.
+  `stackra.teams.member_invariant.violations` must stay at 0.
 - Child-safety notification chain on `TeamCoachChanged` when team.min_age < 18
   (or max_age < 18) — critical-severity audit + notification.
 - Registration windows auto-flip via `OpenClosePendingRegistrationsJob` (every 5

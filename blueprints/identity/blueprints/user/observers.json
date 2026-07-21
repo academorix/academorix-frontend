@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/user/observers",
+  "id": "stackra://modules/user/observers",
   "$version": 1,
   "title": "user \u2014 Eloquent observers",
   "observers": [
     {
       "model": "User",
-      "observer": "Academorix\\User\\Observers\\UserObserver",
+      "observer": "Stackra\\User\\Observers\\UserObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `usr_`.",
         "creating \u2192 default status = 'pending' unless the caller explicitly set 'active' (admin-created + email-pre-verified).",
@@ -25,7 +25,7 @@
     },
     {
       "model": "Profile",
-      "observer": "Academorix\\User\\Observers\\ProfileObserver",
+      "observer": "Stackra\\User\\Observers\\ProfileObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `prf_`.",
         "creating \u2192 dob defaults to identity->dob if the caller left it null (denormalisation is intentional per §4.5).",
@@ -40,7 +40,7 @@
     },
     {
       "model": "TenantMember",
-      "observer": "Academorix\\User\\Observers\\TenantMemberObserver",
+      "observer": "Stackra\\User\\Observers\\TenantMemberObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `tmb_`.",
         "creating \u2192 default joined_at = now() unless the caller supplied one (audit-preserving import path).",

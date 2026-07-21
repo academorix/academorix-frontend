@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Exceptions;
+namespace Stackra\Registry\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Slug does not match `^[a-z][a-z0-9_]*$` — lowercase snake_case, starts with a letter, no hyphens.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SlugInvalidFormatException extends AcademorixException
+final class SlugInvalidFormatException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/chargeback/features",
+  "id": "stackra://modules/chargeback/features",
   "$version": 1,
   "title": "chargeback — feature keys",
   "reference": {

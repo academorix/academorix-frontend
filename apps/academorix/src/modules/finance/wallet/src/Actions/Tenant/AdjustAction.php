@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Wallet\Actions\Tenant;
+namespace Stackra\Wallet\Actions\Tenant;
 
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Wallet\Contracts\Data\WalletInterface;
-use Academorix\Wallet\Contracts\Data\WalletTransactionInterface;
-use Academorix\Wallet\Contracts\Repositories\WalletRepositoryInterface;
-use Academorix\Wallet\Contracts\Repositories\WalletTransactionRepositoryInterface;
-use Academorix\Wallet\Data\Requests\AdjustWalletRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Wallet\Contracts\Data\WalletInterface;
+use Stackra\Wallet\Contracts\Data\WalletTransactionInterface;
+use Stackra\Wallet\Contracts\Repositories\WalletRepositoryInterface;
+use Stackra\Wallet\Contracts\Repositories\WalletTransactionRepositoryInterface;
+use Stackra\Wallet\Data\Requests\AdjustWalletRequestData;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;

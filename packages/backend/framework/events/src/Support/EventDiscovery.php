@@ -27,9 +27,9 @@
  *   4. `$discovery->forClass(Broadcastable::class)` — the set of
  *      event classes that carry the broadcasting marker. For
  *      each, the scanner also collects
- *      {@see \Academorix\Events\Attributes\BroadcastOn},
- *      {@see \Academorix\Events\Attributes\BroadcastAs}, and
- *      {@see \Academorix\Events\Attributes\BroadcastQueue}.
+ *      {@see \Stackra\Events\Attributes\BroadcastOn},
+ *      {@see \Stackra\Events\Attributes\BroadcastAs}, and
+ *      {@see \Stackra\Events\Attributes\BroadcastQueue}.
  *
  * ## Zero-runtime-reflection design
  *
@@ -37,7 +37,7 @@
  * manifest is a hash-map lookup because `composer dump-autoload`
  * has already indexed every attribute usage under
  * `vendor/attributes.php` (via
- * {@see \Academorix\Foundation\Discovery\AttributeDiscovery}, our
+ * {@see \Stackra\Foundation\Discovery\AttributeDiscovery}, our
  * shared wrapper over `olvlvl/composer-attribute-collector`).
  *
  * ## Testability
@@ -57,16 +57,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Events\Support;
+namespace Stackra\Events\Support;
 
-use Academorix\Events\Attributes\AfterCommit;
-use Academorix\Events\Attributes\Broadcastable;
-use Academorix\Events\Attributes\BroadcastAs;
-use Academorix\Events\Attributes\BroadcastOn;
-use Academorix\Events\Attributes\BroadcastQueue;
-use Academorix\Events\Attributes\ListensFor;
-use Academorix\Events\Attributes\OnEvent;
-use Academorix\Foundation\Contracts\DiscoversAttributes;
+use Stackra\Events\Attributes\AfterCommit;
+use Stackra\Events\Attributes\Broadcastable;
+use Stackra\Events\Attributes\BroadcastAs;
+use Stackra\Events\Attributes\BroadcastOn;
+use Stackra\Events\Attributes\BroadcastQueue;
+use Stackra\Events\Attributes\ListensFor;
+use Stackra\Events\Attributes\OnEvent;
+use Stackra\Foundation\Contracts\DiscoversAttributes;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\Singleton;
 

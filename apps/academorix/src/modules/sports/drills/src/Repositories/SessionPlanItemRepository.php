@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Drills\Repositories;
+namespace Stackra\Drills\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Drills\Contracts\Data\SessionPlanItemInterface;
-use Academorix\Drills\Contracts\Repositories\SessionPlanItemRepositoryInterface;
-use Academorix\Drills\Models\SessionPlanItem;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Drills\Contracts\Data\SessionPlanItemInterface;
+use Stackra\Drills\Contracts\Repositories\SessionPlanItemRepositoryInterface;
+use Stackra\Drills\Models\SessionPlanItem;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Drills\Models\SessionPlanItem}.
+ * Attribute-first Eloquent repository for {@see Stackra\Drills\Models\SessionPlanItem}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(SessionPlanItemInterface::class)]` which resolves to
  * `SessionPlanItem` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Drills\Models\SessionPlanItem>
+ * @extends Repository<\Stackra\Drills\Models\SessionPlanItem>
  *
  * @category Drills
  *

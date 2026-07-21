@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/marketing/health",
+  "id": "stackra://modules/marketing/health",
   "$version": 1,
   "title": "marketing — health probes",
   "probes": [
     {
       "name": "marketing-schema-migrations-applied",
-      "class": "Academorix\\Growth\\Marketing\\Health\\Probes\\SchemaMigrationsAppliedProbe",
+      "class": "Stackra\\Growth\\Marketing\\Health\\Probes\\SchemaMigrationsAppliedProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms every migration this module ships has run: marketing_events, marketing_deliveries, marketing_provider_configs, marketing_dead_letters, plus their indexes (per-tenant deduplication_key unique partial index; delivery next_retry_at index).",
@@ -13,7 +13,7 @@
     },
     {
       "name": "marketing-dedup-index-present",
-      "class": "Academorix\\Growth\\Marketing\\Health\\Probes\\DedupIndexPresentProbe",
+      "class": "Stackra\\Growth\\Marketing\\Health\\Probes\\DedupIndexPresentProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms the composite unique partial index on (tenant_id, deduplication_key) WHERE deleted_at IS NULL exists on marketing_events. Missing this index makes deduplication a table-scan — every capture becomes O(N) — and permits duplicate captures under race conditions.",
@@ -21,7 +21,7 @@
     },
     {
       "name": "marketing-provider-drivers-registered",
-      "class": "Academorix\\Growth\\Marketing\\Health\\Probes\\ProviderDriversRegisteredProbe",
+      "class": "Stackra\\Growth\\Marketing\\Health\\Probes\\ProviderDriversRegisteredProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms every advertised provider (via #[AsMarketingProvider]) is registered with the MarketingProviderManager + its createXxxDriver factory resolves without errors. Fails hard when a provider driver class is missing.",
@@ -29,7 +29,7 @@
     },
     {
       "name": "marketing-provider-schemas-loaded",
-      "class": "Academorix\\Growth\\Marketing\\Health\\Probes\\ProviderSchemasLoadedProbe",
+      "class": "Stackra\\Growth\\Marketing\\Health\\Probes\\ProviderSchemasLoadedProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms every data/providers/<provider>-config.schema.json is present + parseable. Missing schemas would make provider config create silently accept invalid credentials.",
@@ -37,7 +37,7 @@
     },
     {
       "name": "marketing-pending-event-backlog",
-      "class": "Academorix\\Growth\\Marketing\\Health\\Probes\\PendingEventBacklogProbe",
+      "class": "Stackra\\Growth\\Marketing\\Health\\Probes\\PendingEventBacklogProbe",
       "category": "readiness",
       "critical": false,
       "description": "Warns when > 1000 marketing_events rows are in status='pending' for > 60 min. Indicates DispatchMarketingEventJob has stalled.",
@@ -45,7 +45,7 @@
     },
     {
       "name": "marketing-dispatching-event-backlog",
-      "class": "Academorix\\Growth\\Marketing\\Health\\Probes\\DispatchingEventBacklogProbe",
+      "class": "Stackra\\Growth\\Marketing\\Health\\Probes\\DispatchingEventBacklogProbe",
       "category": "readiness",
       "critical": false,
       "description": "Warns when > 500 marketing_events rows are in status='dispatching' for > 60 min. Indicates DispatchToProviderJob workers have stalled or the retry sweep is not running.",
@@ -53,7 +53,7 @@
     },
     {
       "name": "marketing-open-circuit-breakers",
-      "class": "Academorix\\Growth\\Marketing\\Health\\Probes\\OpenCircuitBreakersProbe",
+      "class": "Stackra\\Growth\\Marketing\\Health\\Probes\\OpenCircuitBreakersProbe",
       "category": "readiness",
       "critical": false,
       "description": "Reads the count of marketing_provider_configs with circuit_breaker_open_until IS NOT NULL AND > now(). Non-zero indicates at least one tenant × provider has ad-network dispatch degraded. Every open breaker over 24h is a P1 signal.",
@@ -61,7 +61,7 @@
     },
     {
       "name": "marketing-unresolved-dead-letters",
-      "class": "Academorix\\Growth\\Marketing\\Health\\Probes\\UnresolvedDeadLettersProbe",
+      "class": "Stackra\\Growth\\Marketing\\Health\\Probes\\UnresolvedDeadLettersProbe",
       "category": "readiness",
       "critical": false,
       "description": "Counts marketing_dead_letters rows with resolved_at IS NULL. Every unresolved dead letter is a paid conversion loss — the tenant should investigate. Health probe threshold: 100 unresolved warns; 1000 alerts.",
@@ -69,7 +69,7 @@
     },
     {
       "name": "marketing-dispatch-failure-rate",
-      "class": "Academorix\\Growth\\Marketing\\Health\\Probes\\DispatchFailureRateProbe",
+      "class": "Stackra\\Growth\\Marketing\\Health\\Probes\\DispatchFailureRateProbe",
       "category": "readiness",
       "critical": false,
       "description": "Reads the trailing 15-minute per-provider failure rate. > 10% failure rate on ANY provider triggers a warning. > 25% triggers an alert.",
@@ -77,7 +77,7 @@
     },
     {
       "name": "marketing-reconciler-recent",
-      "class": "Academorix\\Growth\\Marketing\\Health\\Probes\\ReconcilerRecentProbe",
+      "class": "Stackra\\Growth\\Marketing\\Health\\Probes\\ReconcilerRecentProbe",
       "category": "readiness",
       "critical": false,
       "description": "Confirms ReconcileMarketingEventStatusJob completed within the last 48 hours (nightly cadence + 24h slop). Stale reconciler indicates scheduler drift.",
@@ -85,7 +85,7 @@
     },
     {
       "name": "marketing-encryption-key-rotated",
-      "class": "Academorix\\Growth\\Marketing\\Health\\Probes\\EncryptionKeyRotatedProbe",
+      "class": "Stackra\\Growth\\Marketing\\Health\\Probes\\EncryptionKeyRotatedProbe",
       "category": "readiness",
       "critical": false,
       "description": "Warns when the encryption key used for marketing_provider_configs.config has not been rotated in > 90 days. Delegated to the compliance/encryption service's rotation cadence.",
@@ -93,7 +93,7 @@
     },
     {
       "name": "marketing-provider-health-per-tenant",
-      "class": "Academorix\\Growth\\Marketing\\Health\\Probes\\ProviderHealthPerTenantProbe",
+      "class": "Stackra\\Growth\\Marketing\\Health\\Probes\\ProviderHealthPerTenantProbe",
       "category": "readiness",
       "critical": false,
       "description": "For each (tenant, provider) with is_active=true: reports success_rate + circuit_breaker_state + last_success_at. Feeds the platform ops dashboard.",

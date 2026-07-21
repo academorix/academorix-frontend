@@ -2,15 +2,15 @@
 
 /**
  * @file MakePageCommand.php
- * @module Academorix\Cli\Commands
- * @description `academorix make:page <resource> --domain=<name>` — v0.1
+ * @module Stackra\Cli\Commands
+ * @description `stackra make:page <resource> --domain=<name>` — v0.1
  *   placeholder. v0.2 emits a Refine page set (list + create + edit +
  *   show + columns + form + module manifest).
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Commands;
+namespace Stackra\Cli\Commands;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;

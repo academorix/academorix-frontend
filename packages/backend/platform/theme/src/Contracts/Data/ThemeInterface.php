@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Contracts\Data;
+namespace Stackra\Theme\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Theme\Models\Theme;
+use Stackra\Theme\Models\Theme;
 
 /**
  * Table shape for the `themes` table.

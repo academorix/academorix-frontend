@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceProvider\Attributes;
+namespace Stackra\ServiceProvider\Attributes;
 
-use Academorix\ServiceProvider\Bootstrappers\AbstractBootstrapper;
-use Academorix\ServiceProvider\Bootstrappers\BootstrapperDiscoveryBootstrapper;
-use Academorix\ServiceProvider\Contracts\BootstrapperInterface;
-use Academorix\ServiceProvider\Registry\BootstrapperRegistry;
+use Stackra\ServiceProvider\Bootstrappers\AbstractBootstrapper;
+use Stackra\ServiceProvider\Bootstrappers\BootstrapperDiscoveryBootstrapper;
+use Stackra\ServiceProvider\Contracts\BootstrapperInterface;
+use Stackra\ServiceProvider\Registry\BootstrapperRegistry;
 use Attribute;
 
 /**
@@ -50,7 +50,7 @@ final readonly class AsBootstrapper
     /**
      * @param  int  $priority  Execution priority — lower runs first. Matches {@see BootstrapperInterface::priority()}; defaults to 100 for domain modules.
      * @param  bool  $enabled  Feature-flag toggle. Set to `false` to keep the class in the codebase but skip registration (useful during migrations).
-     * @param  string  $module  Optional module owner tag. When left empty, the discovery step derives the module from the class FQCN's second namespace segment (e.g. `Academorix\AI\...` → `AI`).
+     * @param  string  $module  Optional module owner tag. When left empty, the discovery step derives the module from the class FQCN's second namespace segment (e.g. `Stackra\AI\...` → `AI`).
      */
     public function __construct(
         public int $priority = 100,

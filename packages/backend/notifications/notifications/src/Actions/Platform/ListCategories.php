@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Actions\Platform;
+namespace Stackra\Notifications\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Notifications\Contracts\Repositories\NotificationCategoryRepositoryInterface;
-use Academorix\Notifications\Data\NotificationCategoryData;
-use Academorix\Notifications\Enums\NotificationsPermission;
-use Academorix\Notifications\Models\NotificationCategory;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Notifications\Contracts\Repositories\NotificationCategoryRepositoryInterface;
+use Stackra\Notifications\Data\NotificationCategoryData;
+use Stackra\Notifications\Enums\NotificationsPermission;
+use Stackra\Notifications\Models\NotificationCategory;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 use Spatie\LaravelData\DataCollection;
 
 /**

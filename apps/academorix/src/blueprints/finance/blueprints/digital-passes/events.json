@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/digital-passes/events",
+  "id": "stackra://modules/digital-passes/events",
   "$version": 1,
   "title": "digital-passes — published events",
-  "namespace": "Academorix\\Finance\\DigitalPasses\\Events",
+  "namespace": "Stackra\\Finance\\DigitalPasses\\Events",
   "dispatchMode": "afterCommit",
   "description": "Apple Wallet + Google Wallet + generic QR passes. Wraps spatie/laravel-mobile-pass v1. Push updates dispatched via APNs + FCM.",
   "events": [

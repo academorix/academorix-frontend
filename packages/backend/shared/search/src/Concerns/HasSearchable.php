@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Concerns;
+namespace Stackra\Search\Concerns;
 
 use Laravel\Scout\Searchable as ScoutSearchable;
 

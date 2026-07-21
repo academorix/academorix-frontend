@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PublicSite\Contracts\Data;
+namespace Stackra\PublicSite\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\PublicSite\Models\PublicPage;
+use Stackra\PublicSite\Models\PublicPage;
 
 /**
  * Table shape for the `public_pages` table.

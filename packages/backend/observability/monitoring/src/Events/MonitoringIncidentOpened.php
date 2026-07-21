@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Events;
+namespace Stackra\Monitoring\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -18,7 +18,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - notifications::DispatchMonitoringIncidentOpenedNotification (P1: page on-call via oncall_page_config; P2+: notify primary; P3+: dashboard-only)
  * - monitoring::NotifyProviders (dispatches NotifyProvidersJob for the incident's oncall_page_config)
  * - monitoring::ScheduleEscalation (dispatches EscalateIncidentJob delayed by the severity's SLA)
- * - monitoring::MetricsCollector (increments academorix.monitoring.incidents.opened_total{severity=...})
+ * - monitoring::MetricsCollector (increments stackra.monitoring.incidents.opened_total{severity=...})
  *
  * @category Monitoring
  *

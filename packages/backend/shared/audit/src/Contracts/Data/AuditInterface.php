@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Contracts\Data;
+namespace Stackra\Audit\Contracts\Data;
 
-use Academorix\Audit\Models\Audit;
+use Stackra\Audit\Models\Audit;
 use Illuminate\Container\Attributes\Bind;
 
 /**
  * Table shape for the `audits` table.
  *
  * Extends owen-it/laravel-auditing's default column set with the four
- * Academorix additions:
+ * Stackra additions:
  *
  *   - `tenant_id` — nullable ULID pointing at the owning tenant. NULL
  *     for system-plane audits (platform-admin operations, catalogue
@@ -71,7 +71,7 @@ interface AuditInterface
     public const string ATTR_CREATED_AT      = 'created_at';
     public const string ATTR_UPDATED_AT      = 'updated_at';
 
-    // ── Columns (Academorix additions) ─────────────────────────────
+    // ── Columns (Stackra additions) ─────────────────────────────
 
     public const string ATTR_TENANT_ID          = 'tenant_id';
     public const string ATTR_CHAIN_HASH         = 'chain_hash';

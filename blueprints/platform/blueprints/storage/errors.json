@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/storage/errors",
+  "id": "stackra://modules/storage/errors",
   "$version": 1,
   "title": "storage \u2014 error codes",
   "namespace": "storage",

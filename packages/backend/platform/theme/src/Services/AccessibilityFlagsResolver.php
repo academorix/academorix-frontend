@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Services;
+namespace Stackra\Theme\Services;
 
-use Academorix\Theme\Contracts\Services\AccessibilityFlagsResolverInterface;
+use Stackra\Theme\Contracts\Services\AccessibilityFlagsResolverInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Theme\Contracts\Repositories\ThemePresetRepositoryInterface;
+use Stackra\Theme\Contracts\Repositories\ThemePresetRepositoryInterface;
 
 /**
  * Concrete service — AccessibilityFlagsResolver.

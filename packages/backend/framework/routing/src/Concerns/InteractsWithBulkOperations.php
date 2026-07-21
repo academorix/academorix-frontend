@@ -26,14 +26,14 @@
  *     labels.
  *
  * @see InteractsWithResponse   Provides `response()`.
- * @see \Academorix\Routing\Http\ResponseBuilder  Emitted by every helper.
+ * @see \Stackra\Routing\Http\ResponseBuilder  Emitted by every helper.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Routing\Concerns;
+namespace Stackra\Routing\Concerns;
 
-use Academorix\Routing\Http\ResponseBuilder;
+use Stackra\Routing\Http\ResponseBuilder;
 
 trait InteractsWithBulkOperations
 {

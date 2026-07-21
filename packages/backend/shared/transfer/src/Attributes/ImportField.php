@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Attributes;
+namespace Stackra\Transfer\Attributes;
 
 use Attribute;
 

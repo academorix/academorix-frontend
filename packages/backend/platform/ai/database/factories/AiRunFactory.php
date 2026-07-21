@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Ai\Database\Factories;
+namespace Stackra\Ai\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Ai\Contracts\Data\AiRunInterface;
-use Academorix\Ai\Models\AiRun;
+use Stackra\Ai\Contracts\Data\AiRunInterface;
+use Stackra\Ai\Models\AiRun;
 
 /**
- * Factory for {@see \Academorix\Ai\Models\AiRun}.
+ * Factory for {@see \Stackra\Ai\Models\AiRun}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Ai\Models\AiRun>
+ * @extends Factory<\Stackra\Ai\Models\AiRun>
  *
  * @category Ai
  *

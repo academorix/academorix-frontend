@@ -17,7 +17,7 @@
  *     `#[RequirePermission]`.
  *   - Console commands: `#[AsCommand]` extending `BaseCommand`.
  *   - Seeder: `#[AsSeeder(priority: 44)]` — composes
- *     {@see \Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
+ *     {@see \Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
  *   - Events: `#[AsEvent]` on every class.
  *   - Observers: `#[ObservedBy]` on the models.
  *   - Policies: `#[UsePolicy]` on the models.
@@ -28,21 +28,21 @@
  *   - Attribute registries: `#[HydratesFrom]` on
  *     `PayloadTransformerRegistryInterface::register()` and
  *     `ApiVersionRegistryInterface::registerSurface()` — the framework's
- *     {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ *     {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  *     scans `#[AsPayloadTransformer]` and `#[AsApiSurface]` at boot
  *     and dispatches to the corresponding registry method on each hit.
  *   - Version-scheme catalogue: escape-hatch
- *     {@see \Academorix\Versioning\Bootstrappers\VersionSchemeDiscoveryBootstrapper}
+ *     {@see \Stackra\Versioning\Bootstrappers\VersionSchemeDiscoveryBootstrapper}
  *     — hardcoded two-scheme population, carries `#[AsBootstrapper]`.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Providers;
+namespace Stackra\Versioning\Providers;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * Versioning module service provider.

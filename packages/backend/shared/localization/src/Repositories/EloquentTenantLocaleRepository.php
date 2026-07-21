@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Repositories;
+namespace Stackra\Localization\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Localization\Contracts\Data\TenantLocaleInterface;
-use Academorix\Localization\Contracts\Repositories\TenantLocaleRepositoryInterface;
-use Academorix\Localization\Models\TenantLocale;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Localization\Contracts\Data\TenantLocaleInterface;
+use Stackra\Localization\Contracts\Repositories\TenantLocaleRepositoryInterface;
+use Stackra\Localization\Models\TenantLocale;
 use Illuminate\Support\Collection;
 
 /**

@@ -1,7 +1,7 @@
-# academorix/crud
+# stackra/crud
 
-Attribute-driven repository layer for every Academorix module. Answers **"how
-the data is QUERIED and MANAGED"** — pair with `academorix/database` for **"what
+Attribute-driven repository layer for every Stackra module. Answers **"how
+the data is QUERIED and MANAGED"** — pair with `stackra/database` for **"what
 the data IS"**.
 
 > **Services removed per ADR 0016.** The `Services/*` classes (`BaseService`,
@@ -35,7 +35,7 @@ src/
 │   ├── UseScope.php
 │   ├── WithCount.php
 │   └── WithRelations.php
-├── Compiler/                   — TODO: pending academorix/compiler port
+├── Compiler/                   — TODO: pending stackra/compiler port
 │   ├── CriteriaRegistryCompiler.php
 │   ├── RepositoryConfigCompiler.php
 │   └── ScopeRegistryCompiler.php
@@ -143,7 +143,7 @@ attribute indirection needed._
 ### 1. Install
 
 ```bash
-composer require academorix/crud
+composer require stackra/crud
 ```
 
 The service provider is auto-discovered — nothing to add to
@@ -152,18 +152,18 @@ The service provider is auto-discovered — nothing to add to
 ### 2. Author a repository
 
 ```php
-namespace Academorix\Products\Repositories;
+namespace Stackra\Products\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\OrderBy;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Attributes\UseScope;
-use Academorix\Crud\Attributes\WithCount;
-use Academorix\Crud\Attributes\WithRelations;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Crud\Scopes\ActiveScope;
-use Academorix\Products\Contracts\Data\ProductInterface;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\OrderBy;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Attributes\UseScope;
+use Stackra\Crud\Attributes\WithCount;
+use Stackra\Crud\Attributes\WithRelations;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Crud\Scopes\ActiveScope;
+use Stackra\Products\Contracts\Data\ProductInterface;
 
 #[AsRepository]
 #[UseModel(ProductInterface::class)]
@@ -188,14 +188,14 @@ layer, no Controller. The repository is the persistence boundary; the Action
 orchestrates the request → response cycle.
 
 ```php
-namespace Academorix\Products\Actions\Products;
+namespace Stackra\Products\Actions\Products;
 
-use Academorix\Access\Attributes\RequirePermission;
-use Academorix\Products\Contracts\ProductRepositoryInterface;
-use Academorix\Products\Data\PublishProductRequestData;
-use Academorix\Products\Data\ProductData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\Access\Attributes\RequirePermission;
+use Stackra\Products\Contracts\ProductRepositoryInterface;
+use Stackra\Products\Data\PublishProductRequestData;
+use Stackra\Products\Data\ProductData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Patch;
 
 #[AsAction(name: 'products.publish')]
 #[Patch('/api/v1/products/{product}/publish')]
@@ -251,12 +251,12 @@ Repository::__construct
 
 ## Related
 
-- Data-shape counterpart: `academorix/database`
-- Service-provider base: `academorix/foundation`
+- Data-shape counterpart: `stackra/database`
+- Service-provider base: `stackra/foundation`
 - Attribute discovery runtime: `olvlvl/composer-attribute-collector`
 
 ## Testing
 
 ```bash
-pnpm turbo run test --filter=@academorix/crud
+pnpm turbo run test --filter=@stackra/crud
 ```

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/rbac/errors",
+  "id": "stackra://modules/rbac/errors",
   "$version": 1,
   "title": "rbac \u2014 error codes",
   "namespace": "rbac",

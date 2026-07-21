@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Messaging\Database\Factories;
+namespace Stackra\Messaging\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Messaging\Contracts\Data\ConversationParticipantInterface;
-use Academorix\Messaging\Models\ConversationParticipant;
+use Stackra\Messaging\Contracts\Data\ConversationParticipantInterface;
+use Stackra\Messaging\Models\ConversationParticipant;
 
 /**
- * Factory for {@see \Academorix\Messaging\Models\ConversationParticipant}.
+ * Factory for {@see \Stackra\Messaging\Models\ConversationParticipant}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Messaging\Models\ConversationParticipant>
+ * @extends Factory<\Stackra\Messaging\Models\ConversationParticipant>
  *
  * @category Messaging
  *

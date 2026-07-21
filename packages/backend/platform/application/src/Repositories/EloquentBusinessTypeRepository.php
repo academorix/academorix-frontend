@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Repositories;
+namespace Stackra\Application\Repositories;
 
-use Academorix\Application\Contracts\Data\BusinessTypeInterface;
-use Academorix\Application\Contracts\Repositories\BusinessTypeRepositoryInterface;
-use Academorix\Application\Models\BusinessType;
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
+use Stackra\Application\Contracts\Data\BusinessTypeInterface;
+use Stackra\Application\Contracts\Repositories\BusinessTypeRepositoryInterface;
+use Stackra\Application\Models\BusinessType;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
 use Illuminate\Support\Collection;
 
 /**
@@ -38,7 +38,7 @@ use Illuminate\Support\Collection;
  *
  * `#[AsRepository]` + `#[UseModel]` + `#[Cacheable]` + `#[Filterable]`
  * follow the canonical shape from `.kiro/steering/php-attributes.md`
- * §Academorix CRUD attributes. Every configuration knob a legacy
+ * §Stackra CRUD attributes. Every configuration knob a legacy
  * repository would have expressed via `protected` properties or
  * override methods now lives as a class-level attribute pre-resolved
  * at boot (Octane-safe).

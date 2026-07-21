@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Services;
+namespace Stackra\Search\Services;
 
-use Academorix\Search\Contracts\Services\SearchServiceInterface;
+use Stackra\Search\Contracts\Services\SearchServiceInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Search\Contracts\Repositories\SearchAnalyticsEventRepositoryInterface;
+use Stackra\Search\Contracts\Repositories\SearchAnalyticsEventRepositoryInterface;
 
 /**
  * Concrete service — SearchService.

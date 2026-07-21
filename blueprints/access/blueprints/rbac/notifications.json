@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/rbac/notifications",
+  "id": "stackra://modules/rbac/notifications",
   "$version": 1,
   "title": "rbac \u2014 notification classes + categories",
-  "namespace": "Academorix\\Rbac\\Notifications",
+  "namespace": "Stackra\\Rbac\\Notifications",
   "description": "Four notifications. Two are informational (role assigned / revoked). One is a proactive nudge (assignment expiring in 7 days). One is a tier-boundary alert (custom role slot exhausted).",
   "notifications": [
     "RoleAssignedNotification",
@@ -18,7 +18,7 @@
       "queue": "notifications",
       "subject_template": "rbac::mail.role_assigned.subject",
       "body_template_path": "rbac::mail.role_assigned.body",
-      "default_subject_en": "You were granted the :role_name role on Academorix",
+      "default_subject_en": "You were granted the :role_name role on Stackra",
       "trigger_event": "RoleAssignedToPrincipal",
       "payload_bindings": {
         "role_name": "string (human-readable label from RoleDefinition.label_i18n)",
@@ -72,7 +72,7 @@
       "queue": "notifications",
       "subject_template": "rbac::mail.custom_role_limit.subject",
       "body_template_path": "rbac::mail.custom_role_limit.body",
-      "default_subject_en": "You've reached your custom-role limit on Academorix",
+      "default_subject_en": "You've reached your custom-role limit on Stackra",
       "trigger_event": "CustomRoleQuotaExceeded",
       "payload_bindings": {
         "current_custom_role_count": "integer",

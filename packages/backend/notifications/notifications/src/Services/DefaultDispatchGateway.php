@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Services;
+namespace Stackra\Notifications\Services;
 
-use Academorix\Notifications\Contracts\Data\NotificationInterface;
-use Academorix\Notifications\Contracts\Repositories\NotificationRepositoryInterface;
-use Academorix\Notifications\Contracts\Services\DispatchGatewayInterface;
-use Academorix\Notifications\Enums\NotificationStatus;
-use Academorix\Notifications\Models\Notification;
-use Academorix\Notifications\Support\NotificationDispatchRequest;
+use Stackra\Notifications\Contracts\Data\NotificationInterface;
+use Stackra\Notifications\Contracts\Repositories\NotificationRepositoryInterface;
+use Stackra\Notifications\Contracts\Services\DispatchGatewayInterface;
+use Stackra\Notifications\Enums\NotificationStatus;
+use Stackra\Notifications\Models\Notification;
+use Stackra\Notifications\Support\NotificationDispatchRequest;
 use Illuminate\Container\Attributes\Scoped;
 
 /**

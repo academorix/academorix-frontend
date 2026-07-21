@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Event\Repositories;
+namespace Stackra\Event\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Event\Contracts\Data\EventReminderInterface;
-use Academorix\Event\Contracts\Repositories\EventReminderRepositoryInterface;
-use Academorix\Event\Models\EventReminder;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Event\Contracts\Data\EventReminderInterface;
+use Stackra\Event\Contracts\Repositories\EventReminderRepositoryInterface;
+use Stackra\Event\Models\EventReminder;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Event\Models\EventReminder}.
+ * Attribute-first Eloquent repository for {@see Stackra\Event\Models\EventReminder}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(EventReminderInterface::class)]` which resolves to
  * `EventReminder` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Event\Models\EventReminder>
+ * @extends Repository<\Stackra\Event\Models\EventReminder>
  *
  * @category Event
  *

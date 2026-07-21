@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Exceptions;
+namespace Stackra\Activity\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a lookup expects an activity row but none is visible —
@@ -16,7 +16,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ActivityNotFoundException extends AcademorixException
+final class ActivityNotFoundException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

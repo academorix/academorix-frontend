@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/webhook/schemas/webhook-delivery",
+  "id": "stackra://modules/webhook/schemas/webhook-delivery",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "WebhookDelivery",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "wdlv_",
     "incrementing": false,
-    "model": "Academorix\\Webhook\\Models\\WebhookDelivery",
-    "interface": "Academorix\\Webhook\\Contracts\\Data\\WebhookDeliveryInterface",
-    "implements": ["Academorix\\Webhook\\Contracts\\Data\\WebhookDeliveryInterface"],
+    "model": "Stackra\\Webhook\\Models\\WebhookDelivery",
+    "interface": "Stackra\\Webhook\\Contracts\\Data\\WebhookDeliveryInterface",
+    "implements": ["Stackra\\Webhook\\Contracts\\Data\\WebhookDeliveryInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

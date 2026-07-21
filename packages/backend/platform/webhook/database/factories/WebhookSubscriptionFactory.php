@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Database\Factories;
+namespace Stackra\Webhook\Database\Factories;
 
-use Academorix\Webhook\Contracts\Data\WebhookSubscriptionInterface;
-use Academorix\Webhook\Enums\WebhookSubscriptionStatus;
-use Academorix\Webhook\Models\WebhookSubscription;
+use Stackra\Webhook\Contracts\Data\WebhookSubscriptionInterface;
+use Stackra\Webhook\Enums\WebhookSubscriptionStatus;
+use Stackra\Webhook\Models\WebhookSubscription;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

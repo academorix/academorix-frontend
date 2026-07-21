@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Tests;
+namespace Stackra\Auth\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/auth.
+ * Base test case for stackra/auth.
  *
  * @category Auth
  *

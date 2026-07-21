@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/delegation/entitlements",
+  "id": "stackra://modules/delegation/entitlements",
   "$version": 1,
   "title": "delegation — declared entitlements",
   "description": "Five entitlement keys. Two on the tenant plane (role_delegation core + emergency_delegation), three on the PlatformUser plane (impersonation itself + two enterprise-negotiated flags on the target-tenant side).",
@@ -28,7 +28,7 @@
       "key": "read_only_impersonation",
       "kind": "boolean",
       "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 0 },
-      "description": "TENANT-side flag — when TRUE, all impersonation of this tenant's users MUST be is_read_only=true (enforced by ImpersonationSessionObserver::creating). Only enterprise + contract-negotiated. Some tenant contracts require Academorix impersonation be read-only-only for confidentiality reasons; this entitlement is the mechanism."
+      "description": "TENANT-side flag — when TRUE, all impersonation of this tenant's users MUST be is_read_only=true (enforced by ImpersonationSessionObserver::creating). Only enterprise + contract-negotiated. Some tenant contracts require Stackra impersonation be read-only-only for confidentiality reasons; this entitlement is the mechanism."
     },
     {
       "key": "impersonation_extended_ttl",

@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/audit/notifications",
+  "id": "stackra://modules/audit/notifications",
   "$version": 1,
   "title": "audit — notifications",
   "description": "Four notifications: compliance-officer alerts on retention-policy extension, 30-day expiry warning, weekly purge digest, and export-ready notice. Wired via the `notifications` core module. Category slugs live under the `audit.*` namespace.",
-  "seeder": "Academorix\\Observability\\Audit\\Database\\Seeders\\AuditNotificationCategorySeeder",
+  "seeder": "Stackra\\Observability\\Audit\\Database\\Seeders\\AuditNotificationCategorySeeder",
   "categories": [
     {
       "slug": "audit.retention-policy",
@@ -35,7 +35,7 @@
   ],
   "notifications": [
     {
-      "class": "Academorix\\Observability\\Audit\\Notifications\\AuditRetentionPolicyExtendedNotification",
+      "class": "Stackra\\Observability\\Audit\\Notifications\\AuditRetentionPolicyExtendedNotification",
       "category": "audit.retention-policy",
       "channels": ["mail", "in_app"],
       "audience": ["tenant.compliance_officer", "tenant.owner"],
@@ -44,7 +44,7 @@
       "payload_fields": ["retention_years", "override_reason", "override_ends_at"]
     },
     {
-      "class": "Academorix\\Observability\\Audit\\Notifications\\AuditRetentionExtensionExpiringSoonNotification",
+      "class": "Stackra\\Observability\\Audit\\Notifications\\AuditRetentionExtensionExpiringSoonNotification",
       "category": "audit.retention-policy",
       "channels": ["mail", "in_app"],
       "audience": ["tenant.compliance_officer", "tenant.owner"],
@@ -54,7 +54,7 @@
       "notes": "Fired once per policy (idempotent via the `expiring_soon_notified_at` column on the policy). Advance-warning window is tenant-tunable via settings."
     },
     {
-      "class": "Academorix\\Observability\\Audit\\Notifications\\AuditPurgeCompletedNotification",
+      "class": "Stackra\\Observability\\Audit\\Notifications\\AuditPurgeCompletedNotification",
       "category": "audit.purge",
       "channels": ["mail"],
       "audience": ["tenant.compliance_officer"],
@@ -63,7 +63,7 @@
       "payload_fields": ["total_row_count_purged_week", "per_day_counts", "cutoff_at"]
     },
     {
-      "class": "Academorix\\Observability\\Audit\\Notifications\\AuditExportReadyNotification",
+      "class": "Stackra\\Observability\\Audit\\Notifications\\AuditExportReadyNotification",
       "category": "audit.export",
       "channels": ["mail", "in_app"],
       "audience": ["export.requester"],

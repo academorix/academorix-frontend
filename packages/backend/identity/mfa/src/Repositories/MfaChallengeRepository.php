@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Repositories;
+namespace Stackra\Mfa\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Mfa\Contracts\Data\MfaChallengeInterface;
-use Academorix\Mfa\Contracts\Repositories\MfaChallengeRepositoryInterface;
-use Academorix\Mfa\Models\MfaChallenge;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Mfa\Contracts\Data\MfaChallengeInterface;
+use Stackra\Mfa\Contracts\Repositories\MfaChallengeRepositoryInterface;
+use Stackra\Mfa\Models\MfaChallenge;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Mfa\Models\MfaChallenge}.
+ * Attribute-first Eloquent repository for {@see Stackra\Mfa\Models\MfaChallenge}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(MfaChallengeInterface::class)]` which resolves to
  * `MfaChallenge` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Mfa\Models\MfaChallenge>
+ * @extends Repository<\Stackra\Mfa\Models\MfaChallenge>
  *
  * @category Mfa
  *

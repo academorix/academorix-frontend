@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Database\Factories;
+namespace Stackra\Search\Database\Factories;
 
-use Academorix\Search\Contracts\Data\SearchSavedQueryInterface;
-use Academorix\Search\Models\SearchSavedQuery;
+use Stackra\Search\Contracts\Data\SearchSavedQueryInterface;
+use Stackra\Search\Models\SearchSavedQuery;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

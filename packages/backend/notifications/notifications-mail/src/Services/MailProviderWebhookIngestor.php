@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Services;
+namespace Stackra\Notifications\Mail\Services;
 
-use Academorix\Notifications\Mail\Contracts\Services\MailProviderWebhookIngestorInterface;
-use Academorix\Notifications\Mail\Events\MailBounced;
-use Academorix\Notifications\Mail\Events\MailClicked;
-use Academorix\Notifications\Mail\Events\MailComplaint;
-use Academorix\Notifications\Mail\Events\MailDelivered;
-use Academorix\Notifications\Mail\Events\MailOpened;
+use Stackra\Notifications\Mail\Contracts\Services\MailProviderWebhookIngestorInterface;
+use Stackra\Notifications\Mail\Events\MailBounced;
+use Stackra\Notifications\Mail\Events\MailClicked;
+use Stackra\Notifications\Mail\Events\MailComplaint;
+use Stackra\Notifications\Mail\Events\MailDelivered;
+use Stackra\Notifications\Mail\Events\MailOpened;
 use DateTimeImmutable;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Container\Attributes\Singleton;
@@ -256,7 +256,7 @@ final class MailProviderWebhookIngestor implements MailProviderWebhookIngestorIn
         }
 
         if ($notificationId === null) {
-            $this->log->info('notifications-mail: webhook missing X-Academorix-Notification-Id — cannot correlate', [
+            $this->log->info('notifications-mail: webhook missing X-Stackra-Notification-Id — cannot correlate', [
                 'provider' => $provider,
                 'type'     => $type,
             ]);
@@ -360,14 +360,14 @@ final class MailProviderWebhookIngestor implements MailProviderWebhookIngestorIn
     }
 
     /**
-     * Read the `X-Academorix-Notification-Id` correlation header.
+     * Read the `X-Stackra-Notification-Id` correlation header.
      *
      * @param  array<string, mixed>  $headers
      */
     private function extractNotificationId(array $headers): ?string
     {
         foreach ($headers as $name => $value) {
-            if (\strtolower((string) $name) !== 'x-academorix-notification-id') {
+            if (\strtolower((string) $name) !== 'x-stackra-notification-id') {
                 continue;
             }
 

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Actions\Tenant;
+namespace Stackra\Notifications\Push\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
-use Academorix\Notifications\Push\Contracts\Repositories\PushSubscriptionRepositoryInterface;
-use Academorix\Notifications\Push\Data\PushSubscriptionData;
-use Academorix\Notifications\Push\Data\Requests\RegisterPushSubscriptionRequestData;
-use Academorix\Notifications\Push\Enums\NotificationsPushPermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
+use Stackra\Notifications\Push\Contracts\Repositories\PushSubscriptionRepositoryInterface;
+use Stackra\Notifications\Push\Data\PushSubscriptionData;
+use Stackra\Notifications\Push\Data\Requests\RegisterPushSubscriptionRequestData;
+use Stackra\Notifications\Push\Enums\NotificationsPushPermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Contracts\Auth\Authenticatable;
 

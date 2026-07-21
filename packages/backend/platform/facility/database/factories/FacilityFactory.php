@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Database\Factories;
+namespace Stackra\Facility\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Facility\Contracts\Data\FacilityInterface;
-use Academorix\Facility\Models\Facility;
+use Stackra\Facility\Contracts\Data\FacilityInterface;
+use Stackra\Facility\Models\Facility;
 
 /**
- * Factory for {@see \Academorix\Facility\Models\Facility}.
+ * Factory for {@see \Stackra\Facility\Models\Facility}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Facility\Models\Facility>
+ * @extends Factory<\Stackra\Facility\Models\Facility>
  *
  * @category Facility
  *

@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branch\Policies;
+namespace Stackra\Branch\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Branch\Models\Branch;
+use Stackra\User\Models\User;
+use Stackra\Branch\Models\Branch;
 
 /**
- * Authorization policy for {@see \Academorix\Branch\Models\Branch}.
+ * Authorization policy for {@see \Stackra\Branch\Models\Branch}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

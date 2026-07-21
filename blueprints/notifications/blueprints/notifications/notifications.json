@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/notifications/notifications",
+  "id": "stackra://modules/notifications/notifications",
   "$version": 1,
   "title": "notifications core \u2014 published categories",
   "description": "Core-owned category registrations. Small \u2014 core is substrate, not a business surface. System-level categories (digest wrappers + platform announcements + maintenance windows) are declared here + seeded via `notifications:seed-categories`. Every other module ships its own notifications.json with its business categories (invitations.*, auth.*, billing.*, etc.).",
-  "namespace": "Academorix\\Notifications\\Notifications",
+  "namespace": "Stackra\\Notifications\\Notifications",
   "notifications": [
     "DigestNotification",
     "PlatformAnnouncementNotification",

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Observers;
+namespace Stackra\FeatureFlags\Observers;
 
-use Academorix\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
-use Academorix\FeatureFlags\Events\FeatureFlagOverrideCleared;
-use Academorix\FeatureFlags\Events\FeatureFlagOverrideCreated;
-use Academorix\FeatureFlags\Models\FeatureOverride;
+use Stackra\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
+use Stackra\FeatureFlags\Events\FeatureFlagOverrideCleared;
+use Stackra\FeatureFlags\Events\FeatureFlagOverrideCreated;
+use Stackra\FeatureFlags\Models\FeatureOverride;
 use Illuminate\Cache\Repository as CacheRepository;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 

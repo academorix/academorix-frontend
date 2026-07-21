@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Exceptions;
+namespace Stackra\AgeGroup\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The supplied sport_key is not a valid registered sport identifier.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AgeGroupInvalidSportKeyException extends AcademorixException
+final class AgeGroupInvalidSportKeyException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

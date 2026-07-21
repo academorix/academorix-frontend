@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Exceptions;
+namespace Stackra\Notifications\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the recipient's consent age gate blocks the category
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationRecipientIneligibleException extends AcademorixException
+final class NotificationRecipientIneligibleException extends StackraException
 {
     public const CODE = 'NOTIFICATIONS_RECIPIENT_INELIGIBLE';
 

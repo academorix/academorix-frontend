@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Actions\Platform;
+namespace Stackra\AgeGroup\Actions\Platform;
 
-use Academorix\AgeGroup\Contracts\Repositories\AgeGroupRepositoryInterface;
-use Academorix\AgeGroup\Data\AgeGroupData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\AgeGroup\Contracts\Repositories\AgeGroupRepositoryInterface;
+use Stackra\AgeGroup\Data\AgeGroupData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 
 /**
  * `GET /api/v1/platform/age-groups/{age_group}` — show action (platform-admin audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category AgeGroup

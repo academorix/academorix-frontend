@@ -1,15 +1,15 @@
 {
-  "id": "academorix://modules/tenancy/settings",
+  "id": "stackra://modules/tenancy/settings",
   "$version": 1,
   "title": "tenants \u2014 settings",
   "description": "Tenant-facing tenant settings. Canonical group/section/field taxonomy. Six #[AsSetting] classes carved by concern: tenant basics, domains, branding, contacts, notification preferences, privacy. A seventh danger-zone group ships action-typed fields (archive tenant).",
   "storedIn": "settings",
   "sduiScreen": "sdui/screens/settings-tenant.screen.json",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "tenant",
-      "class": "Academorix\\Tenancy\\Settings\\TenantSettings",
+      "class": "Stackra\\Tenancy\\Settings\\TenantSettings",
       "label": "Tenant",
       "description": "Basic tenant preferences \u2014 timezone, locale, currency, formatting.",
       "icon": "building-office-2",
@@ -94,7 +94,7 @@
     },
     {
       "key": "tenant_domains",
-      "class": "Academorix\\Tenancy\\Settings\\TenantDomainSettings",
+      "class": "Stackra\\Tenancy\\Settings\\TenantDomainSettings",
       "label": "Custom domains",
       "description": "Custom domain preferences.",
       "icon": "globe-alt",
@@ -142,7 +142,7 @@
     },
     {
       "key": "tenant_branding",
-      "class": "Academorix\\Tenancy\\Settings\\TenantBrandingSettings",
+      "class": "Stackra\\Tenancy\\Settings\\TenantBrandingSettings",
       "label": "Branding",
       "description": "Branding profile policy.",
       "icon": "swatch",
@@ -187,7 +187,7 @@
     },
     {
       "key": "tenant_contacts",
-      "class": "Academorix\\Tenancy\\Settings\\TenantContactSettings",
+      "class": "Stackra\\Tenancy\\Settings\\TenantContactSettings",
       "label": "Contacts",
       "description": "Named-contact + notification preferences.",
       "icon": "user-group",
@@ -225,7 +225,7 @@
     },
     {
       "key": "tenant_notifications",
-      "class": "Academorix\\Tenancy\\Settings\\TenantNotificationSettings",
+      "class": "Stackra\\Tenancy\\Settings\\TenantNotificationSettings",
       "label": "Admin notifications",
       "description": "Which notifications reach the tenant's admins.",
       "icon": "bell",
@@ -297,7 +297,7 @@
     },
     {
       "key": "tenant_privacy",
-      "class": "Academorix\\Tenancy\\Settings\\TenantPrivacySettings",
+      "class": "Stackra\\Tenancy\\Settings\\TenantPrivacySettings",
       "label": "Privacy",
       "description": "Consent + data-handling preferences.",
       "icon": "shield-check",
@@ -356,7 +356,7 @@
     },
     {
       "key": "tenant_danger_zone",
-      "class": "Academorix\\Tenancy\\Settings\\TenantDangerZoneSettings",
+      "class": "Stackra\\Tenancy\\Settings\\TenantDangerZoneSettings",
       "label": "Danger zone",
       "description": "Irreversible actions. Every action here dispatches a lifecycle event + audit trail entry.",
       "icon": "exclamation-triangle",

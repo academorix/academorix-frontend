@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Horizon\Examples;
+namespace Stackra\Horizon\Examples;
 
-use Academorix\Horizon\Attributes\HorizonTag;
+use Stackra\Horizon\Attributes\HorizonTag;
 
 /**
  * ## QueueTagger Example

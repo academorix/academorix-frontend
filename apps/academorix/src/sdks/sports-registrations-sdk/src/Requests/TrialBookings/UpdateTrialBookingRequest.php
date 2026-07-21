@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsRegistrationsSdk\Requests\TrialBookings;
+namespace Stackra\SportsRegistrationsSdk\Requests\TrialBookings;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsRegistrationsSdk\Data\TrialBookingData;
-use Academorix\SportsRegistrationsSdk\Payloads\TrialBookings\UpdateTrialBookingPayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsRegistrationsSdk\Data\TrialBookingData;
+use Stackra\SportsRegistrationsSdk\Payloads\TrialBookings\UpdateTrialBookingPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

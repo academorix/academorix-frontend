@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Contracts\Services;
+namespace Stackra\Newsletter\Contracts\Services;
 
-use Academorix\Newsletter\Models\Newsletter;
-use Academorix\Newsletter\Models\NewsletterCampaign;
-use Academorix\Newsletter\Services\DefaultReputationMonitor;
+use Stackra\Newsletter\Models\Newsletter;
+use Stackra\Newsletter\Models\NewsletterCampaign;
+use Stackra\Newsletter\Services\DefaultReputationMonitor;
 use Illuminate\Container\Attributes\Bind;
 
 /**

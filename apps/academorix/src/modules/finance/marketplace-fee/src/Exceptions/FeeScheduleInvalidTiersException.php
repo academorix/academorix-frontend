@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\MarketplaceFee\Exceptions;
+namespace Stackra\MarketplaceFee\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Tier config invalid: rates must monotonically decrease, up_to_minor must monotonically increase, last tier must be open-ended (null up_to).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class FeeScheduleInvalidTiersException extends AcademorixException
+final class FeeScheduleInvalidTiersException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

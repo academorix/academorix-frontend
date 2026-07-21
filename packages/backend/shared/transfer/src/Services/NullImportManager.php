@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Services;
+namespace Stackra\Transfer\Services;
 
-use Academorix\Transfer\Contracts\Services\ImportManagerInterface;
-use Academorix\Transfer\Models\XferJob;
+use Stackra\Transfer\Contracts\Services\ImportManagerInterface;
+use Stackra\Transfer\Models\XferJob;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

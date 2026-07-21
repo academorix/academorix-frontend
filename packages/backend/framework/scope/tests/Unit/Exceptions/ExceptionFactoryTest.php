@@ -11,11 +11,11 @@
 
 declare(strict_types=1);
 
-use Academorix\Scope\Exceptions\ScopeConflictException;
-use Academorix\Scope\Exceptions\ScopeContextRequiredException;
-use Academorix\Scope\Exceptions\ScopeException;
-use Academorix\Scope\Exceptions\ScopeNotFoundException;
-use Academorix\Scope\Exceptions\ScopeValidationException;
+use Stackra\Scope\Exceptions\ScopeConflictException;
+use Stackra\Scope\Exceptions\ScopeContextRequiredException;
+use Stackra\Scope\Exceptions\ScopeException;
+use Stackra\Scope\Exceptions\ScopeNotFoundException;
+use Stackra\Scope\Exceptions\ScopeValidationException;
 
 uses()->group('unit', 'scope');
 

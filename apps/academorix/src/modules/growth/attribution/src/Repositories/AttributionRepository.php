@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Repositories;
+namespace Stackra\Attribution\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Attribution\Contracts\Data\AttributionInterface;
-use Academorix\Attribution\Contracts\Repositories\AttributionRepositoryInterface;
-use Academorix\Attribution\Models\Attribution;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Attribution\Contracts\Data\AttributionInterface;
+use Stackra\Attribution\Contracts\Repositories\AttributionRepositoryInterface;
+use Stackra\Attribution\Models\Attribution;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Attribution\Models\Attribution}.
+ * Attribute-first Eloquent repository for {@see Stackra\Attribution\Models\Attribution}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AttributionInterface::class)]` which resolves to
  * `Attribution` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Attribution\Models\Attribution>
+ * @extends Repository<\Stackra\Attribution\Models\Attribution>
  *
  * @category Attribution
  *

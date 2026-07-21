@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Attributes;
+namespace Stackra\Entitlements\Attributes;
 
-use Academorix\Entitlements\Enums\EntitlementKind;
-use Academorix\Entitlements\Enums\EntitlementPeriod;
+use Stackra\Entitlements\Enums\EntitlementKind;
+use Stackra\Entitlements\Enums\EntitlementPeriod;
 use Attribute;
 
 /**
  * Register a class as a consumer of one entitlement key.
  *
  * The build-time compiler discovers `#[ConsumesEntitlement]`-marked
- * classes via `Academorix\Foundation\Contracts\DiscoversAttributes`
+ * classes via `Stackra\Foundation\Contracts\DiscoversAttributes`
  * and hands them to
- * {@see \Academorix\Entitlements\Services\EntitlementRegistry},
+ * {@see \Stackra\Entitlements\Services\EntitlementRegistry},
  * which stores the shipped default value + kind + period so tenant
  * provisioning can create the row with the right shape.
  *

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Teams\Exceptions;
+namespace Stackra\Teams\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * member_type='coach' requires the team_polymorphic_coach entitlement — blocked until Wave 2b Staff module lands.

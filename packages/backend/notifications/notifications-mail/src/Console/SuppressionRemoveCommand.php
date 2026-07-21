@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Console;
+namespace Stackra\Notifications\Mail\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Notifications\Mail\Contracts\Data\MailSuppressionInterface;
-use Academorix\Notifications\Mail\Contracts\Repositories\MailSuppressionRepositoryInterface;
-use Academorix\Notifications\Mail\Enums\MailSuppressionReason;
-use Academorix\Notifications\Mail\Models\MailSuppression;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Notifications\Mail\Contracts\Data\MailSuppressionInterface;
+use Stackra\Notifications\Mail\Contracts\Repositories\MailSuppressionRepositoryInterface;
+use Stackra\Notifications\Mail\Enums\MailSuppressionReason;
+use Stackra\Notifications\Mail\Models\MailSuppression;
 
 /**
  * `php artisan notifications:mail:suppression-remove` — revoke a

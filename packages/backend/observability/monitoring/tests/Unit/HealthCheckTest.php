@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Monitoring\Models\HealthCheck;
+use Stackra\Monitoring\Models\HealthCheck;
 
 it('is a placeholder — replace with actual HealthCheck unit tests', function (): void {
     expect(HealthCheck::class)->toBeString();

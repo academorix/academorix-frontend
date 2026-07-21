@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Data;
+namespace Stackra\Notifications\Sms\Data;
 
 use Spatie\LaravelData\Data;
 

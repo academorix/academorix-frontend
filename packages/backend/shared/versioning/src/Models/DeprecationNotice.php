@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Models;
+namespace Stackra\Versioning\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Versioning\Contracts\Data\DeprecationNoticeInterface;
-use Academorix\Versioning\Database\Factories\DeprecationNoticeFactory;
-use Academorix\Versioning\Enums\DeprecationSurface;
-use Academorix\Versioning\Observers\DeprecationNoticeObserver;
-use Academorix\Versioning\Policies\DeprecationNoticePolicy;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Versioning\Contracts\Data\DeprecationNoticeInterface;
+use Stackra\Versioning\Database\Factories\DeprecationNoticeFactory;
+use Stackra\Versioning\Enums\DeprecationSurface;
+use Stackra\Versioning\Observers\DeprecationNoticeObserver;
+use Stackra\Versioning\Policies\DeprecationNoticePolicy;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

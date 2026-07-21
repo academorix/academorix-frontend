@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Enums;
+namespace Stackra\Approvals\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
- * Approve / reject outcome of a single {@see \Academorix\Approvals\Models\ApprovalDecision}.
+ * Approve / reject outcome of a single {@see \Stackra\Approvals\Models\ApprovalDecision}.
  *
  * Persists as `approval_decisions.decision`. Domain code reads
  * this enum; the auto-generated `ApprovalDecisionDecision` variant

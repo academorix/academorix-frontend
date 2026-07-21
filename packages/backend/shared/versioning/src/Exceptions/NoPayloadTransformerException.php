@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Exceptions;
+namespace Stackra\Versioning\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the payload transformer registry has no chain from `$from`
@@ -18,7 +18,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NoPayloadTransformerException extends AcademorixException
+final class NoPayloadTransformerException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

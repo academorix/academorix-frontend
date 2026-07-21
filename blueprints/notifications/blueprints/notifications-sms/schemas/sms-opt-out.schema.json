@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-sms/schemas/sms-opt-out",
+  "id": "stackra://modules/notifications-sms/schemas/sms-opt-out",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "SmsOptOut",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "sopt_",
     "incrementing": false,
-    "model": "Academorix\\Notifications\\Sms\\Models\\SmsOptOut",
-    "interface": "Academorix\\Notifications\\Sms\\Contracts\\Data\\SmsOptOutInterface",
-    "implements": ["Academorix\\Notifications\\Sms\\Contracts\\Data\\SmsOptOutInterface"],
+    "model": "Stackra\\Notifications\\Sms\\Models\\SmsOptOut",
+    "interface": "Stackra\\Notifications\\Sms\\Contracts\\Data\\SmsOptOutInterface",
+    "implements": ["Stackra\\Notifications\\Sms\\Contracts\\Data\\SmsOptOutInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

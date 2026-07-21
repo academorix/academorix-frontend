@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invoice\Contracts\Services;
+namespace Stackra\Invoice\Contracts\Services;
 
-use Academorix\Invoice\Services\InvoicePdfrenderer;
+use Stackra\Invoice\Services\InvoicePdfrenderer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

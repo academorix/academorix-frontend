@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Exceptions;
+namespace Stackra\Rbac\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Raised when the domain rule `PERMISSION_NOT_FOUND` fires.

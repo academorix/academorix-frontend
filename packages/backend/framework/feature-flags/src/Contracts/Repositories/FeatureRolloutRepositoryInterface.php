@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Contracts\Repositories;
+namespace Stackra\FeatureFlags\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\FeatureFlags\Models\FeatureRollout;
-use Academorix\FeatureFlags\Repositories\EloquentFeatureRolloutRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\FeatureFlags\Models\FeatureRollout;
+use Stackra\FeatureFlags\Repositories\EloquentFeatureRolloutRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Scoped;
 

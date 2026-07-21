@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/geography/notifications",
+  "id": "stackra://modules/geography/notifications",
   "$version": 1,
   "title": "geography \u2014 notification classes + categories",
-  "namespace": "Academorix\\Geography\\Notifications",
+  "namespace": "Stackra\\Geography\\Notifications",
   "notifications": ["MaxMindRefreshFailedNotification"],
   "categories": [
     {

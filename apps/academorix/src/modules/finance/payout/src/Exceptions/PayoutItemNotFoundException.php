@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payout\Exceptions;
+namespace Stackra\Payout\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `PAYOUT_ITEM_NOT_FOUND` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PayoutItemNotFoundException extends AcademorixException
+final class PayoutItemNotFoundException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

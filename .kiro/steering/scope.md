@@ -12,7 +12,7 @@ module.
 
 ## What "scope" is
 
-`academorix/scope` is the framework-tier hierarchical scope platform. Four
+`stackra/scope` is the framework-tier hierarchical scope platform. Four
 tables (`scope_definitions`, `scope_nodes`, `scope_values`, `scope_aliases`),
 one resolver chain, N consumer namespaces. See
 `packages/framework/scope/README.md` for the full model.

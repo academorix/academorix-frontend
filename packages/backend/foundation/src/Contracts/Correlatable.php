@@ -13,7 +13,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Contracts;
+namespace Stackra\Foundation\Contracts;
 
 interface Correlatable
 {

@@ -1,4 +1,4 @@
-# academorix/geography
+# stackra/geography
 
 Global reference catalog + IP geolocation. Wraps
 [`nnjeim/world`](https://github.com/nnjeim/world). Wave 5 infrastructure.

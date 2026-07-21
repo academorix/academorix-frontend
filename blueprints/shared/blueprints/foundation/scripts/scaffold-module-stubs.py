@@ -41,7 +41,7 @@ STUB_TEMPLATES: dict[str, dict] = {
     "attributes.json": {
         "title": "{name} — PHP attributes",
         "description": "PHP attributes owned by this module. Empty at scaffold time; fill in with each new `#[As...]` class the module ships.",
-        "namespace": "Academorix\\\\{Studly}\\\\Attributes",
+        "namespace": "Stackra\\\\{Studly}\\\\Attributes",
         "attributes": [],
     },
     "relations.json": {
@@ -206,7 +206,7 @@ def author_stub(module_dir: Path, filename: str, template: dict, module_name: st
         return False
     # Substitute {name} / {Studly} placeholders in string leaves.
     body = {
-        "id": f"academorix://modules/{module_name}/{filename.replace('.json', '')}",
+        "id": f"stackra://modules/{module_name}/{filename.replace('.json', '')}",
         "$version": 1,
     }
     for key, value in template.items():

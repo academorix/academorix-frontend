@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Realtime\Contracts\Repositories;
+namespace Stackra\Realtime\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Realtime\Models\BroadcastSubscription}.
+ * Repository contract for {@see Stackra\Realtime\Models\BroadcastSubscription}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `BroadcastSubscriptionRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Realtime\Models\BroadcastSubscription>
+ * @extends RepositoryInterface<\Stackra\Realtime\Models\BroadcastSubscription>
  *
  * @category Realtime
  *

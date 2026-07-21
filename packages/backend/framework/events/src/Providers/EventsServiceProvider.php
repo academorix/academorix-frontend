@@ -6,7 +6,7 @@ declare(strict_types=1);
  * @file packages/events/src/Providers/EventsServiceProvider.php
  *
  * @description
- * Package entry point for `academorix/events`. Bridges the
+ * Package entry point for `stackra/events`. Bridges the
  * attribute-based listener + broadcasting declarations to Laravel's
  * event dispatcher and broadcaster, so downstream packages never
  * touch a `EventServiceProvider::$listen` map or hand-roll
@@ -17,10 +17,10 @@ declare(strict_types=1);
  * Every service in this package carries `#[Singleton]` +
  * `#[Config]` attributes directly on its class body:
  *
- *   - {@see \Academorix\Events\Support\EventDiscovery} —
+ *   - {@see \Stackra\Events\Support\EventDiscovery} —
  *     `#[Singleton]` + `#[Config('events.discovery.cache')]` +
  *     `#[Config('events.discovery.cache_path')]`.
- *   - {@see \Academorix\Events\Support\BroadcastConfigurator} —
+ *   - {@see \Stackra\Events\Support\BroadcastConfigurator} —
  *     `#[Singleton]` + `#[Config('events.broadcast.default_channel_type')]`.
  *
  * No imperative binding closures live here.
@@ -44,16 +44,16 @@ declare(strict_types=1);
  *     read-only value materialised once per worker.
  */
 
-namespace Academorix\Events\Providers;
+namespace Stackra\Events\Providers;
 
-use Academorix\Events\Support\BroadcastConfigurator;
-use Academorix\Events\Support\EventDiscovery;
-use Academorix\Events\Support\ListenerBinding;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\OnBoot;
-use Academorix\ServiceProvider\Attributes\OnRegister;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\Events\Support\BroadcastConfigurator;
+use Stackra\Events\Support\EventDiscovery;
+use Stackra\Events\Support\ListenerBinding;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\OnBoot;
+use Stackra\ServiceProvider\Attributes\OnRegister;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 use Closure;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -103,7 +103,7 @@ final class EventsServiceProvider extends ServiceProvider
      * into the framework's dispatcher and broadcasting
      * configurator.
      *
-     * The shared {@see \Academorix\Foundation\Contracts\DiscoversAttributes}
+     * The shared {@see \Stackra\Foundation\Contracts\DiscoversAttributes}
      * binding gracefully returns empty iterables when the
      * attribute-collector manifest hasn't been generated yet — no
      * need to guard here.

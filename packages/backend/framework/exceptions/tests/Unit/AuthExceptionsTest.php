@@ -7,10 +7,10 @@
  * Unit coverage for every named factory across the auth exception
  * family:
  *
- *   - {@see \Academorix\Exceptions\Auth\AuthenticationException}
- *   - {@see \Academorix\Exceptions\Auth\TokenExpiredException}
- *   - {@see \Academorix\Exceptions\Auth\ForbiddenException}
- *   - {@see \Academorix\Exceptions\Auth\FeatureDisabledException}
+ *   - {@see \Stackra\Exceptions\Auth\AuthenticationException}
+ *   - {@see \Stackra\Exceptions\Auth\TokenExpiredException}
+ *   - {@see \Stackra\Exceptions\Auth\ForbiddenException}
+ *   - {@see \Stackra\Exceptions\Auth\FeatureDisabledException}
  *
  * ## What each test protects
  *
@@ -38,13 +38,13 @@
 
 declare(strict_types=1);
 
-use Academorix\Exceptions\Auth\AuthenticationException;
-use Academorix\Exceptions\Auth\FeatureDisabledException;
-use Academorix\Exceptions\Auth\ForbiddenException;
-use Academorix\Exceptions\Auth\TokenExpiredException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
-use Academorix\Foundation\Support\CorrelationId;
+use Stackra\Exceptions\Auth\AuthenticationException;
+use Stackra\Exceptions\Auth\FeatureDisabledException;
+use Stackra\Exceptions\Auth\ForbiddenException;
+use Stackra\Exceptions\Auth\TokenExpiredException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
+use Stackra\Foundation\Support\CorrelationId;
 
 afterEach(function (): void {
     CorrelationId::forget();

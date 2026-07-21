@@ -4,14 +4,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Actions\Tenant;
+namespace Stackra\Monitoring\Actions\Tenant;
 
-use Academorix\Monitoring\Contracts\Repositories\HealthCheckRepositoryInterface;
-use Academorix\Monitoring\Data\HealthCheckData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Monitoring\Contracts\Repositories\HealthCheckRepositoryInterface;
+use Stackra\Monitoring\Data\HealthCheckData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\LaravelData\PaginatedDataCollection;
@@ -20,7 +20,7 @@ use Spatie\LaravelData\PaginatedDataCollection;
  * `GET /api/v1/monitoring/health-checks` — list action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Monitoring
@@ -50,7 +50,7 @@ final class ListHealthCheckAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Academorix\Monitoring\Models\HealthCheck> $page */
+        /** @var LengthAwarePaginator<int, \Stackra\Monitoring\Models\HealthCheck> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

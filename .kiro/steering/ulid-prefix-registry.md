@@ -2,7 +2,7 @@
 inclusion: manual
 ---
 
-# Academorix — ULID Prefix Registry
+# Stackra — ULID Prefix Registry
 
 Every persisted entity's primary key is a **prefixed ULID**: a short semantic
 tag + `_` + 26 base32 characters. For example:

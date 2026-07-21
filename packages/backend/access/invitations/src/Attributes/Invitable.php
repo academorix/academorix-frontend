@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Attributes;
+namespace Stackra\Invitations\Attributes;
 
 use Attribute;
 
@@ -10,9 +10,9 @@ use Attribute;
  * Marks an Eloquent model as an invitable target.
  *
  * The build-time compiler discovers `#[Invitable]`-marked classes
- * via `Academorix\Foundation\Contracts\DiscoversAttributes` and
+ * via `Stackra\Foundation\Contracts\DiscoversAttributes` and
  * hands them to
- * {@see \Academorix\Invitations\Services\DefaultInvitationTargetRegistry}
+ * {@see \Stackra\Invitations\Services\DefaultInvitationTargetRegistry}
  * so downstream consumers can send invitations against them without
  * this module ever name-dropping the concrete class.
  *

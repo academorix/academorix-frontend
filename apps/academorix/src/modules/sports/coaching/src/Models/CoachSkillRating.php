@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Models;
+namespace Stackra\Coaching\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Coaching\Contracts\Data\CoachSkillRatingInterface;
-use Academorix\Coaching\Database\Factories\CoachSkillRatingFactory;
-use Academorix\Coaching\Concerns\BelongsToCoachingProfile;
-use Academorix\Coaching\Policies\CoachSkillRatingPolicy;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Coaching\Contracts\Data\CoachSkillRatingInterface;
+use Stackra\Coaching\Database\Factories\CoachSkillRatingFactory;
+use Stackra\Coaching\Concerns\BelongsToCoachingProfile;
+use Stackra\Coaching\Policies\CoachSkillRatingPolicy;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;

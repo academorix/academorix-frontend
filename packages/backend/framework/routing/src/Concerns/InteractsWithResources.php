@@ -15,20 +15,20 @@
  * class level and auto-wrap payloads based on the calling method
  * name. That machinery lived in a separate `packages/crud/` that
  * hasn't been built yet, and depended on
- * `Academorix\Support\Reflection` which also doesn't exist. Both
+ * `Stackra\Support\Reflection` which also doesn't exist. Both
  * are dropped from this trait — when the crud package lands, the
  * attribute-based wrapping can come with it and this trait stays
  * focused on the manual case.
  *
  * @see InteractsWithResponse   Provides `response()`.
- * @see \Academorix\Routing\Http\ResponseBuilder  Emitted by every helper.
+ * @see \Stackra\Routing\Http\ResponseBuilder  Emitted by every helper.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Routing\Concerns;
+namespace Stackra\Routing\Concerns;
 
-use Academorix\Routing\Http\ResponseBuilder;
+use Stackra\Routing\Http\ResponseBuilder;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 

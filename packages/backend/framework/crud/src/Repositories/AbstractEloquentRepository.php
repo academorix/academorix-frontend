@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Crud\Repositories;
+namespace Stackra\Crud\Repositories;
 
-use Academorix\Caching\Support\CacheTagBuilder;
-use Academorix\Caching\Support\TaggableCacheGuard;
+use Stackra\Caching\Support\CacheTagBuilder;
+use Stackra\Caching\Support\TaggableCacheGuard;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
@@ -102,7 +102,7 @@ abstract class AbstractEloquentRepository
      * entity. Called by every cache-touching method.
      *
      * Delegates to the injected {@see CacheTagBuilder} which
-     * walks every registered {@see \Academorix\Caching\Contracts\CacheTagResolver}
+     * walks every registered {@see \Stackra\Caching\Contracts\CacheTagResolver}
      * (tenant, locale, feature flag, …) — the resulting list
      * is the union of every enabled resolver's contribution
      * plus the base table segment.

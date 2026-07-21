@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Region\Exceptions;
+namespace Stackra\Region\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Attempted a status transition that isn't in the state machine (e.

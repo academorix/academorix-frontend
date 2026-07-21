@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/workflow/approvals/settings",
+  "id": "stackra://modules/workflow/approvals/settings",
   "$version": 1,
   "title": "approvals — settings",
   "description": "Tenant-scope approval-engine preferences that supplement template-level config. Two groups: tenant-wide reminder defaults + per-user 'my inbox' preferences.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "approvals",
-      "class": "Academorix\\Approval\\Settings\\ApprovalSettings",
+      "class": "Stackra\\Approval\\Settings\\ApprovalSettings",
       "label": "Approvals",
       "description": "Tenant-wide approval-engine preferences. Governance defaults + delegation policy + reminder cadence.",
       "icon": "check-badge",
@@ -101,7 +101,7 @@
     },
     {
       "key": "approvals_user",
-      "class": "Academorix\\Approval\\Settings\\ApprovalUserSettings",
+      "class": "Stackra\\Approval\\Settings\\ApprovalUserSettings",
       "label": "My approvals",
       "description": "Personal approval-inbox preferences.",
       "icon": "inbox",

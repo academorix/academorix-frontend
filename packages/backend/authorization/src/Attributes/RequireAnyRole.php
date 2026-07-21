@@ -19,13 +19,13 @@
  *
  * Uses spatie/laravel-permission's `hasAnyRole()` under the hood.
  *
- * @see \Academorix\Authorization\Middleware\AuthorizeControllerAction Enforcement point.
+ * @see \Stackra\Authorization\Middleware\AuthorizeControllerAction Enforcement point.
  * @see RequireRole                                                    AND semantics variant.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Authorization\Attributes;
+namespace Stackra\Authorization\Attributes;
 
 use Attribute;
 use BackedEnum;

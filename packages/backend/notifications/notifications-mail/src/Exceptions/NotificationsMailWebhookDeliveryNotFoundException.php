@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsMail\Exceptions;
+namespace Stackra\NotificationsMail\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Provider webhook referenced a provider_message_id we don't have.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsMailWebhookDeliveryNotFoundException extends AcademorixException
+final class NotificationsMailWebhookDeliveryNotFoundException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

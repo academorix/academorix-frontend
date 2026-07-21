@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/versioning/compliance",
+  "id": "stackra://modules/versioning/compliance",
   "$version": 1,
   "title": "versioning \u2014 compliance evidence",
   "description": "Versioning is the direct enforcement point for RFC 8594 (Sunset header) + surfaces GDPR Art. 5 / Art. 30 evidence (records of processing). Customer notifications on deprecation provide GDPR Art. 13/14 informing-of-processing-changes coverage.",

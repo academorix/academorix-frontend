@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Exceptions;
+namespace Stackra\Tenancy\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Raised when a `kind = dpo` or `kind = legal` contact is promoted to

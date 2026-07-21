@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/chargeback/marketing",
+  "id": "stackra://modules/chargeback/marketing",
   "$version": 1,
   "title": "chargeback — marketing events (negative-value + fraud signal)",
   "lane": "marketing",

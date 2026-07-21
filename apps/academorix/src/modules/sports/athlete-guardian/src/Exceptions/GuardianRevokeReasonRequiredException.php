@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AthleteGuardian\Exceptions;
+namespace Stackra\AthleteGuardian\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `GUARDIAN_REVOKE_REASON_REQUIRED` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GuardianRevokeReasonRequiredException extends AcademorixException
+final class GuardianRevokeReasonRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

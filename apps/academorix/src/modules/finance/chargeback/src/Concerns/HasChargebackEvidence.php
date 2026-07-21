@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Concerns;
+namespace Stackra\Chargeback\Concerns;
 
 /**
  * Trait — HasChargebackEvidence.

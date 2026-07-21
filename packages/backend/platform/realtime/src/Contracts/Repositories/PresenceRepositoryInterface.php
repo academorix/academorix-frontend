@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Realtime\Contracts\Repositories;
+namespace Stackra\Realtime\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Realtime\Models\Presence}.
+ * Repository contract for {@see Stackra\Realtime\Models\Presence}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `PresenceRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Realtime\Models\Presence>
+ * @extends RepositoryInterface<\Stackra\Realtime\Models\Presence>
  *
  * @category Realtime
  *

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AthleteEnrollment\Exceptions;
+namespace Stackra\AthleteEnrollment\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Another active enrollment on this team already has this jersey number.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class EnrollmentJerseyNumberTakenException extends AcademorixException
+final class EnrollmentJerseyNumberTakenException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

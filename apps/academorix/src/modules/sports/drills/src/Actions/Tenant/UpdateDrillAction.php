@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Drills\Actions\Tenant;
+namespace Stackra\Drills\Actions\Tenant;
 
-use Academorix\Drills\Contracts\Repositories\DrillRepositoryInterface;
-use Academorix\Drills\Data\DrillData;
-use Academorix\Drills\Data\Requests\UpdateDrillRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\Drills\Contracts\Repositories\DrillRepositoryInterface;
+use Stackra\Drills\Data\DrillData;
+use Stackra\Drills\Data\Requests\UpdateDrillRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Patch;
 
 /**
  * `PATCH /api/v1/drills/{drill}` — update action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Patch(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Drills

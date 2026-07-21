@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsSeasonSdk\Requests\Seasons;
+namespace Stackra\SportsSeasonSdk\Requests\Seasons;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsSeasonSdk\Data\SeasonData;
-use Academorix\SportsSeasonSdk\Payloads\Seasons\CreateSeasonPayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsSeasonSdk\Data\SeasonData;
+use Stackra\SportsSeasonSdk\Payloads\Seasons\CreateSeasonPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

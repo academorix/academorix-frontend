@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Actions\Central;
+namespace Stackra\Newsletter\Actions\Central;
 
-use Academorix\Newsletter\Contracts\Repositories\NewsletterSubscriptionRepositoryInterface;
-use Academorix\Newsletter\Data\NewsletterSubscriptionData;
-use Academorix\Newsletter\Exceptions\InvalidUnsubscribeTokenException;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterSubscriptionRepositoryInterface;
+use Stackra\Newsletter\Data\NewsletterSubscriptionData;
+use Stackra\Newsletter\Exceptions\InvalidUnsubscribeTokenException;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `GET /newsletters/{newsletter}/unsubscribe/{token}` — renders

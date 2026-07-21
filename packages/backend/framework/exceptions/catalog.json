@@ -1,12 +1,12 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/exceptions",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/exceptions",
   "tier": "framework",
   "surfaces": ["core"],
   "kind": "framework-plumbing",
   "purpose": "Structured exception hierarchy, JSON error renderer, sensitive-data masking, Sentry context enrichment, and Spatie Ignition + Laravel AI solution providers.",
   "capabilities": [
-    "AcademorixException base with translation + user-message + masking",
+    "StackraException base with translation + user-message + masking",
     "ExceptionsBootstrap::configure one-line wiring",
     "RFC-7807-flavoured JSON error envelope",
     "SensitiveDataMasker (passwords, tokens, JWTs, cards, emails)",
@@ -14,9 +14,9 @@
     "SentryContextEnricher for scope + tags",
     "Ignition solutions + optional AI hints via laravel/ai"
   ],
-  "when_to_use": "Every Academorix backend app boots this via ExceptionsBootstrap::configure() to get uniform error responses.",
-  "when_not_to_use": "For domain-level guard-clause helpers, reach for academorix/foundation's Assert class instead.",
-  "peer_deps": ["academorix/foundation", "academorix/service-provider"],
+  "when_to_use": "Every Stackra backend app boots this via ExceptionsBootstrap::configure() to get uniform error responses.",
+  "when_not_to_use": "For domain-level guard-clause helpers, reach for stackra/foundation's Assert class instead.",
+  "peer_deps": ["stackra/foundation", "stackra/service-provider"],
   "backend_pair": null,
   "size_gzip_kb": {},
   "maturity": "alpha",

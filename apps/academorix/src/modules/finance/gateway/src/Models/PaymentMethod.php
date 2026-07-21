@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Gateway\Models;
+namespace Stackra\Gateway\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Gateway\Contracts\Data\PaymentMethodInterface;
-use Academorix\Gateway\Database\Factories\PaymentMethodFactory;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Gateway\Policies\PaymentMethodPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Gateway\Contracts\Data\PaymentMethodInterface;
+use Stackra\Gateway\Database\Factories\PaymentMethodFactory;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Gateway\Policies\PaymentMethodPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

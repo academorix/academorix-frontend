@@ -1,32 +1,32 @@
 {
-  "id": "academorix://modules/marketing/schedule",
+  "id": "stackra://modules/marketing/schedule",
   "$version": 1,
   "title": "marketing — scheduled tasks",
   "entries": [
     {
       "name": "marketing-retry-failed-deliveries",
-      "command": "queue:dispatch --job=Academorix\\Growth\\Marketing\\Jobs\\RetryFailedDeliveriesJob",
+      "command": "queue:dispatch --job=Stackra\\Growth\\Marketing\\Jobs\\RetryFailedDeliveriesJob",
       "cron": "*/5 * * * *",
       "timezone": "UTC",
       "purpose": "Every 5 min: pick up marketing_deliveries with status='failed' + next_retry_at <= now() + attempt_number < max_attempts, enqueue fresh DispatchToProviderJob with attempt_number+1."
     },
     {
       "name": "marketing-reconcile-status",
-      "command": "queue:dispatch --job=Academorix\\Growth\\Marketing\\Jobs\\ReconcileMarketingEventStatusJob",
+      "command": "queue:dispatch --job=Stackra\\Growth\\Marketing\\Jobs\\ReconcileMarketingEventStatusJob",
       "cron": "0 2 * * *",
       "timezone": "UTC",
       "purpose": "Nightly 02:00 UTC: roll up per-event delivery aggregates + update marketing_events.status. Findings above 0 are P1 (stuck event = crashed dispatch job)."
     },
     {
       "name": "marketing-purge-expired",
-      "command": "queue:dispatch --job=Academorix\\Growth\\Marketing\\Jobs\\PurgeExpiredMarketingDataJob",
+      "command": "queue:dispatch --job=Stackra\\Growth\\Marketing\\Jobs\\PurgeExpiredMarketingDataJob",
       "cron": "0 4 * * 0",
       "timezone": "UTC",
       "purpose": "Weekly Sunday 04:00 UTC: apply the per-entity retention windows. Events > 7y hard-deleted (10y for Enterprise); deliveries > 2y hard-deleted; soft-deleted provider_configs > 90d hard-deleted. Dead letters NEVER auto-purged."
     },
     {
       "name": "marketing-half-open-circuit-probes",
-      "command": "queue:dispatch --job=Academorix\\Growth\\Marketing\\Jobs\\HalfOpenCircuitBreakerJob",
+      "command": "queue:dispatch --job=Stackra\\Growth\\Marketing\\Jobs\\HalfOpenCircuitBreakerJob",
       "cron": "*/10 * * * *",
       "timezone": "UTC",
       "purpose": "Every 10 min: sweep marketing_provider_configs where circuit_breaker_open_until <= now() AND is still marked open. Transition to HALF_OPEN + dispatch a probe event. NOTE: the primary trigger for this job is the delayed enqueue from OpenCircuitBreakerJob; this scheduled sweep is a safety net for cases where the delayed enqueue was lost (crashed worker, queue restart)."

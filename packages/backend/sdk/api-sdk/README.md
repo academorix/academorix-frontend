@@ -1,4 +1,4 @@
-# academorix/api-sdk
+# stackra/api-sdk
 
 Typed, attribute-driven SDK for the `apps/api` HTTP surface. Built on
 [Saloon v3](https://docs.saloon.dev). Every domain module ships its own sibling
@@ -12,13 +12,13 @@ The consuming app requires the meta-package which transitively pulls in every
 module's SDK sibling:
 
 ```bash
-composer require academorix/api-sdk
+composer require stackra/api-sdk
 ```
 
 Environment setup (usually in `.env` / doppler):
 
 ```dotenv
-SDK_API_BASE_URL=https://api.academorix.com
+SDK_API_BASE_URL=https://api.stackra.com
 SDK_API_TOKEN=<sanctum-personal-access-token>
 SDK_API_AUTH_STRATEGY=bearer                 # or "api-key" / "none"
 ```
@@ -32,7 +32,7 @@ php artisan vendor:publish --tag=sdk-api-config
 ## Use
 
 ```php
-use Academorix\ApiSdk\Contracts\ApiClientInterface;
+use Stackra\ApiSdk\Contracts\ApiClientInterface;
 
 final class ComplianceMiddleware
 {
@@ -43,11 +43,11 @@ final class ComplianceMiddleware
     public function handle(Request $req, Closure $next): mixed
     {
         // Discovered via `#[AsSdkResource(name: 'tenancy')]` on
-        // Academorix\ApiTenancySdk\TenancySdkResource — no hard
+        // Stackra\ApiTenancySdk\TenancySdkResource — no hard
         // reference on this end.
         $tenant = $this->api->tenancy()->find($this->currentTenantId());
 
-        //  $tenant is Academorix\ApiTenancySdk\Data\TenantData
+        //  $tenant is Stackra\ApiTenancySdk\Data\TenantData
         //  — the wire shape lives in the module's SDK sibling.
 
         return $next($req);
@@ -108,12 +108,12 @@ Inside your module's SDK sibling (e.g.
 `apps/api/src/modules/<domain>/sdk/src/`):
 
 ```php
-namespace Academorix\ApiTenancySdk;
+namespace Stackra\ApiTenancySdk;
 
-use Academorix\ApiSdk\Attributes\AsSdkResource;
-use Academorix\ApiSdk\Resources\BaseSdkResource;
-use Academorix\ApiTenancySdk\Data\TenantData;
-use Academorix\ApiTenancySdk\Requests\FindTenantRequest;
+use Stackra\ApiSdk\Attributes\AsSdkResource;
+use Stackra\ApiSdk\Resources\BaseSdkResource;
+use Stackra\ApiTenancySdk\Data\TenantData;
+use Stackra\ApiTenancySdk\Requests\FindTenantRequest;
 
 #[AsSdkResource(name: 'tenancy')]
 final class TenancySdkResource extends BaseSdkResource
@@ -125,14 +125,14 @@ final class TenancySdkResource extends BaseSdkResource
 }
 ```
 
-Every `Request` extends `Academorix\ApiSdk\Requests\BaseSdkRequest` or Saloon's
+Every `Request` extends `Stackra\ApiSdk\Requests\BaseSdkRequest` or Saloon's
 `Saloon\Http\Request` directly:
 
 ```php
-namespace Academorix\ApiTenancySdk\Requests;
+namespace Stackra\ApiTenancySdk\Requests;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\ApiTenancySdk\Data\TenantData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\ApiTenancySdk\Data\TenantData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 
@@ -165,7 +165,7 @@ working.
 Every failure surfaces as a typed exception:
 
 ```php
-use Academorix\ApiSdk\Exceptions\{
+use Stackra\ApiSdk\Exceptions\{
     ApiRequestException,
     AuthenticationException,
     AuthorizationException,
@@ -226,7 +226,7 @@ it('reads the tenant', function () {
 Every outbound request flows through:
 
 1. **Correlation-id injection** — reads
-   `Academorix\Foundation\Support\CorrelationId::current()` and stamps
+   `Stackra\Foundation\Support\CorrelationId::current()` and stamps
    `X-Correlation-ID` (or whatever `sdk.api.correlation_id.header` is set to).
 
 2. **Retry** — 5xx and 429 responses trigger exponential backoff + jitter, up to
@@ -246,7 +246,7 @@ Every knob defaults to a sane production value. Full list in
 
 | Env                          | Default                      | What it does                        |
 | ---------------------------- | ---------------------------- | ----------------------------------- |
-| `SDK_API_BASE_URL`           | `http://api.academorix.test` | Base URL of the api.                |
+| `SDK_API_BASE_URL`           | `http://api.stackra.test` | Base URL of the api.                |
 | `SDK_API_TOKEN`              | —                            | Bearer token or API key value.      |
 | `SDK_API_AUTH_STRATEGY`      | `bearer`                     | `bearer` / `api-key` / `none`.      |
 | `SDK_API_TIMEOUT_REQUEST`    | `10.0`                       | Full round-trip timeout, seconds.   |

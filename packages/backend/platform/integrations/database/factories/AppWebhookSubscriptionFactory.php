@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Database\Factories;
+namespace Stackra\Integrations\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Integrations\Contracts\Data\AppWebhookSubscriptionInterface;
-use Academorix\Integrations\Models\AppWebhookSubscription;
+use Stackra\Integrations\Contracts\Data\AppWebhookSubscriptionInterface;
+use Stackra\Integrations\Models\AppWebhookSubscription;
 
 /**
- * Factory for {@see \Academorix\Integrations\Models\AppWebhookSubscription}.
+ * Factory for {@see \Stackra\Integrations\Models\AppWebhookSubscription}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Integrations\Models\AppWebhookSubscription>
+ * @extends Factory<\Stackra\Integrations\Models\AppWebhookSubscription>
  *
  * @category Integrations
  *

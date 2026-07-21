@@ -4,26 +4,26 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Event\Models;
+namespace Stackra\Event\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Event\Contracts\Data\EventInterface;
-use Academorix\Event\Database\Factories\EventFactory;
-use Academorix\Branch\Concerns\BelongsToBranch;
-use Academorix\Event\Enums\EventFormat;
-use Academorix\Event\Enums\EventGenderCategory;
-use Academorix\Event\Enums\EventStatus;
-use Academorix\Event\Enums\EventVisibility;
-use Academorix\Event\Policies\EventPolicy;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Organization\Concerns\BelongsToOrganization;
-use Academorix\Season\Concerns\BelongsToSeason;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Event\Contracts\Data\EventInterface;
+use Stackra\Event\Database\Factories\EventFactory;
+use Stackra\Branch\Concerns\BelongsToBranch;
+use Stackra\Event\Enums\EventFormat;
+use Stackra\Event\Enums\EventGenderCategory;
+use Stackra\Event\Enums\EventStatus;
+use Stackra\Event\Enums\EventVisibility;
+use Stackra\Event\Policies\EventPolicy;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Organization\Concerns\BelongsToOrganization;
+use Stackra\Season\Concerns\BelongsToSeason;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

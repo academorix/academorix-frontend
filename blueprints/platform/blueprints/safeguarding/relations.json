@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/safeguarding/relations",
+  "id": "stackra://modules/safeguarding/relations",
   "$version": 1,
   "title": "safeguarding — model relationships",
   "description": "Eloquent relations rooted at this module's models. `internal` = same-module edges; `outbound` = edges to other modules' models.",

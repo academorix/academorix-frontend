@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Services;
+namespace Stackra\Theme\Services;
 
-use Academorix\Theme\Contracts\Services\UserThemePreferenceResolverInterface;
+use Stackra\Theme\Contracts\Services\UserThemePreferenceResolverInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Theme\Contracts\Repositories\ThemePresetRepositoryInterface;
+use Stackra\Theme\Contracts\Repositories\ThemePresetRepositoryInterface;
 
 /**
  * Concrete service — UserThemePreferenceResolver.

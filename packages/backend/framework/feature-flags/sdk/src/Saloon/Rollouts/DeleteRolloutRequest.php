@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlagsSdk\Saloon\Rollouts;
+namespace Stackra\FeatureFlagsSdk\Saloon\Rollouts;
 
 use Saloon\Enums\Method;
 use Saloon\Http\Request;

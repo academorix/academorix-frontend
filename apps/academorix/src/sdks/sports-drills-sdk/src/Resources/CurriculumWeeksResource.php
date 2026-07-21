@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDrillsSdk\Resources;
+namespace Stackra\SportsDrillsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsDrillsSdk\Data\CurriculumWeekData;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsDrillsSdk\Data\CurriculumWeekData;
 use Saloon\Http\Response;
 
 /**

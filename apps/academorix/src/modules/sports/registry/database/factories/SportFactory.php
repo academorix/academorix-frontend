@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Database\Factories;
+namespace Stackra\Registry\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Registry\Contracts\Data\SportInterface;
-use Academorix\Registry\Models\Sport;
+use Stackra\Registry\Contracts\Data\SportInterface;
+use Stackra\Registry\Models\Sport;
 
 /**
- * Factory for {@see \Academorix\Registry\Models\Sport}.
+ * Factory for {@see \Stackra\Registry\Models\Sport}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Registry\Models\Sport>
+ * @extends Factory<\Stackra\Registry\Models\Sport>
  *
  * @category Registry
  *

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Data;
+namespace Stackra\Notifications\Sms\Data;
 
-use Academorix\Notifications\Sms\Enums\SmsProvider;
+use Stackra\Notifications\Sms\Enums\SmsProvider;
 use Spatie\LaravelData\Data;
 
 /**

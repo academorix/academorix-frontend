@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Actions\Tenant;
+namespace Stackra\Registry\Actions\Tenant;
 
-use Academorix\Registry\Contracts\Repositories\SportRepositoryInterface;
-use Academorix\Registry\Data\SportData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Registry\Contracts\Repositories\SportRepositoryInterface;
+use Stackra\Registry\Data\SportData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 
 /**
  * `GET /api/v1/sports/{sport}` — show action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Registry

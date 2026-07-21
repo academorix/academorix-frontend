@@ -2,8 +2,8 @@
   "$version": 1,
   "name": "marketplace-fee",
   "alias": "marketplace_fee",
-  "namespace": "Academorix\\Finance\\MarketplaceFee",
-  "description": "Academorix's take-rate on Parents -> Academy transactions. Per DL-5 in tasks.md, Stripe Connect is the default gateway and fee-splits happen at charge time via Stripe Application Fees: tenant Connect account receives charge minus platform_fee; Academorix platform account receives the fee. Owns three tables: fee_schedules (per-tenant + per-application fee configuration; multiple versions retain history — an increase applies to future transactions never retroactively), fee_applications (one row per transaction where a fee was applied, references the Stripe application_fee_id), fee_payouts (Academorix-facing payout of fees to the platform account, roll-up over fee_applications in a period). Cross-integrates with finance/payment (reads active schedule to compute application_fee for Stripe), finance/payout (fees appear on tenant payouts as payout_items of kind='fee'), finance/gateway (Stripe adapter passes calculated fee to payment_intents.create).",
+  "namespace": "Stackra\\Finance\\MarketplaceFee",
+  "description": "Stackra's take-rate on Parents -> Academy transactions. Per DL-5 in tasks.md, Stripe Connect is the default gateway and fee-splits happen at charge time via Stripe Application Fees: tenant Connect account receives charge minus platform_fee; Stackra platform account receives the fee. Owns three tables: fee_schedules (per-tenant + per-application fee configuration; multiple versions retain history — an increase applies to future transactions never retroactively), fee_applications (one row per transaction where a fee was applied, references the Stripe application_fee_id), fee_payouts (Stackra-facing payout of fees to the platform account, roll-up over fee_applications in a period). Cross-integrates with finance/payment (reads active schedule to compute application_fee for Stripe), finance/payout (fees appear on tenant payouts as payout_items of kind='fee'), finance/gateway (Stripe adapter passes calculated fee to payment_intents.create).",
   "keywords": [
     "marketplace-fee",
     "platform-fee",
@@ -15,7 +15,7 @@
     "finance"
   ],
   "priority": 44,
-  "providers": ["Academorix\\Finance\\MarketplaceFee\\Providers\\MarketplaceFeeServiceProvider"],
+  "providers": ["Stackra\\Finance\\MarketplaceFee\\Providers\\MarketplaceFeeServiceProvider"],
   "dependencies": ["foundation", "tenancy", "application", "gateway"],
   "extendedBy": [],
   "contributes": {

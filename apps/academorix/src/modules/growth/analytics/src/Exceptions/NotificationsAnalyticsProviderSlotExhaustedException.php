@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Analytics\Exceptions;
+namespace Stackra\Analytics\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Tenant has consumed analytics_provider_slot; create refused.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsAnalyticsProviderSlotExhaustedException extends AcademorixException
+final class NotificationsAnalyticsProviderSlotExhaustedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

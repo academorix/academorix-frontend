@@ -1,20 +1,20 @@
 {
-  "id": "academorix://modules/integrations/traits",
+  "id": "stackra://modules/integrations/traits",
   "$version": 1,
   "title": "integrations — model traits",
   "description": "No owned traits. Integrations composes the standard tenant-scoped stack + the IntegrationSecretsCipher for encryption-at-rest on the `config` column.",
   "owned": [],
   "consumed": [
     {
-      "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+      "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
       "source": "tenants",
       "usedBy": ["TenantIntegration"]
     },
     { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory", "source": "framework" },
     { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids", "source": "framework" },
-    { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata", "source": "foundation" },
-    { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps", "source": "foundation" },
-    { "trait": "Academorix\\Foundation\\Concerns\\HasAuditable", "source": "foundation" },
+    { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata", "source": "foundation" },
+    { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps", "source": "foundation" },
+    { "trait": "Stackra\\Foundation\\Concerns\\HasAuditable", "source": "foundation" },
     { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes", "source": "framework" }
   ],
   "composition_example": {

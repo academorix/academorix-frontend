@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Contracts\Services;
+namespace Stackra\Leads\Contracts\Services;
 
-use Academorix\Leads\Models\Lead;
-use Academorix\Leads\Services\LeadConversionService;
+use Stackra\Leads\Models\Lead;
+use Stackra\Leads\Services\LeadConversionService;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Scoped;
 
@@ -48,8 +48,8 @@ interface LeadConversionServiceInterface
      * @param  Lead  $lead  The row to convert.
      * @return Lead         The refreshed model post-flip.
      *
-     * @throws \Academorix\Leads\Exceptions\LeadInvalidStageTransitionException  When the lead's current stage cannot transition to WON.
-     * @throws \Academorix\Leads\Exceptions\LeadConversionAthletesRequiredException  When `athlete_names` is empty at conversion time.
+     * @throws \Stackra\Leads\Exceptions\LeadInvalidStageTransitionException  When the lead's current stage cannot transition to WON.
+     * @throws \Stackra\Leads\Exceptions\LeadConversionAthletesRequiredException  When `athlete_names` is empty at conversion time.
      */
     public function convert(Lead $lead): Lead;
 }

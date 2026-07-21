@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Contracts\Repositories;
+namespace Stackra\Rbac\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Rbac\Models\Role}.
+ * Repository contract for {@see Stackra\Rbac\Models\Role}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `RoleRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Rbac\Models\Role>
+ * @extends RepositoryInterface<\Stackra\Rbac\Models\Role>
  *
  * @category Rbac
  *

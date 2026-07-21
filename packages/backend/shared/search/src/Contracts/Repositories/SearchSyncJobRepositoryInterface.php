@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Contracts\Repositories;
+namespace Stackra\Search\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Search\Models\SearchSyncJob;
-use Academorix\Search\Repositories\EloquentSearchSyncJobRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Search\Models\SearchSyncJob;
+use Stackra\Search\Repositories\EloquentSearchSyncJobRepository;
 use DateTimeInterface;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/webhook/feature-flags",
+  "id": "stackra://modules/webhook/feature-flags",
   "$version": 1,
   "title": "webhook \u2014 kill switches + rollout controls",
   "description": "Pennant flags. Kill switches default ON.",

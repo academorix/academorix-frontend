@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Attributes;
+namespace Stackra\Notifications\InApp\Attributes;
 
 use Attribute;
 
@@ -14,7 +14,7 @@ use Attribute;
  * event into its transport (Reverb broadcast, SMTP mail send, Twilio
  * SMS send, FCM push). Each concrete driver carries this attribute
  * so the framework's generic hydration pump can register it into
- * {@see \Academorix\Notifications\Contracts\Services\NotificationChannelRegistryInterface}
+ * {@see \Stackra\Notifications\Contracts\Services\NotificationChannelRegistryInterface}
  * at boot.
  *
  * ```php
@@ -44,7 +44,7 @@ final readonly class AsNotificationChannel
     /**
      * @param  string  $key
      *   Channel identifier (e.g. `in_app`, `mail`, `push`, `sms`).
-     *   Matches {@see \Academorix\Notifications\Enums\NotificationChannel}
+     *   Matches {@see \Stackra\Notifications\Enums\NotificationChannel}
      *   backing values.
      *
      * @param  string  $kind

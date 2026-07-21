@@ -1,4 +1,4 @@
-# academorix/athlete-guardian
+# stackra/athlete-guardian
 
 Server-side Laravel package for the `athlete-guardian` module. Auto-generated
 from the blueprint at `modules/sports/blueprints/athlete-guardian/`.
@@ -44,6 +44,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-sports/athlete-guardian-sdk` under
+`stackra-sports/athlete-guardian-sdk` under
 `sdk/sports-athlete-guardian-sdk/`. Consumers cross the service boundary through
 the SDK; this package is the SERVER-side owner of the domain.

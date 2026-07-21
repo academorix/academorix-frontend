@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Services;
+namespace Stackra\Chargeback\Services;
 
-use Academorix\Chargeback\Contracts\Data\ChargebackInterface;
-use Academorix\Chargeback\Contracts\Repositories\ChargebackRepositoryInterface;
-use Academorix\Chargeback\Contracts\Services\ChargebackRateCalculatorInterface;
-use Academorix\Chargeback\Data\ChargebackRateData;
+use Stackra\Chargeback\Contracts\Data\ChargebackInterface;
+use Stackra\Chargeback\Contracts\Repositories\ChargebackRepositoryInterface;
+use Stackra\Chargeback\Contracts\Services\ChargebackRateCalculatorInterface;
+use Stackra\Chargeback\Data\ChargebackRateData;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\DB;
 use Illuminate\Container\Attributes\Scoped;
@@ -15,7 +15,7 @@ use Illuminate\Database\ConnectionInterface;
 
 /**
  * Reference implementation of
- * {@see \Academorix\Chargeback\Contracts\Services\ChargebackRateCalculatorInterface}.
+ * {@see \Stackra\Chargeback\Contracts\Services\ChargebackRateCalculatorInterface}.
  *
  * Chargeback rate is computed as a percentage — chargebacks divided
  * by successful transactions in the trailing window. Visa's VDMP
@@ -24,7 +24,7 @@ use Illuminate\Database\ConnectionInterface;
  * catches on.
  *
  * The denominator is the count of `transactions.status = succeeded`
- * rows for the tenant in the same window. Because `academorix/transaction`
+ * rows for the tenant in the same window. Because `stackra/transaction`
  * lives in a sibling package we join through raw table names — the
  * generator does not know about cross-module FK constants. If the
  * transaction module changes its table name, this join needs the

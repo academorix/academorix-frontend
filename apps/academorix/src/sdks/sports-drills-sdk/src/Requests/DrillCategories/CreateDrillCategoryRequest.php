@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDrillsSdk\Requests\DrillCategories;
+namespace Stackra\SportsDrillsSdk\Requests\DrillCategories;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsDrillsSdk\Data\DrillCategoryData;
-use Academorix\SportsDrillsSdk\Payloads\DrillCategories\CreateDrillCategoryPayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsDrillsSdk\Data\DrillCategoryData;
+use Stackra\SportsDrillsSdk\Payloads\DrillCategories\CreateDrillCategoryPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

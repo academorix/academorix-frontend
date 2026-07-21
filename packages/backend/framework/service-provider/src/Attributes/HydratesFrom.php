@@ -12,8 +12,8 @@ declare(strict_types=1);
  * at app boot.
  *
  * Placed on the `register()` method of a registry interface
- * (e.g. {@see \Academorix\Webhook\Contracts\Services\WebhookRegistryInterface::register()}).
- * At boot the framework's meta-{@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ * (e.g. {@see \Stackra\Webhook\Contracts\Services\WebhookRegistryInterface::register()}).
+ * At boot the framework's meta-{@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  * scans every method carrying this attribute, resolves the
  * declaring interface from the container, then iterates every
  * class carrying `$attribute` and calls the method with
@@ -30,13 +30,13 @@ declare(strict_types=1);
  * @since    0.1.0
  */
 
-namespace Academorix\ServiceProvider\Attributes;
+namespace Stackra\ServiceProvider\Attributes;
 
 use Attribute;
 
 /**
  * Declare a registry method as the hydration sink for a discovery
- * attribute. Composed with {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ * attribute. Composed with {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  * to generalise away the "one bootstrapper class per attribute"
  * duplication.
  *

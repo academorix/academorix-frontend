@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformUser\Contracts\Data;
+namespace Stackra\PlatformUser\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\PlatformUser\Models\PlatformProfile;
+use Stackra\PlatformUser\Models\PlatformProfile;
 
 /**
  * Table shape for the `platform_profiles` table.

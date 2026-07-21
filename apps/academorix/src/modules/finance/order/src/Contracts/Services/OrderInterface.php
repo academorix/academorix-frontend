@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Order\Contracts\Services;
+namespace Stackra\Order\Contracts\Services;
 
-use Academorix\Order\Services\Order;
+use Stackra\Order\Services\Order;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Region\Exceptions;
+namespace Stackra\Region\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Attempted to create a Region with a (tenant_id, slug) pair that already exists.

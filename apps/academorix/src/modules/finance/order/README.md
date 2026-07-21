@@ -1,4 +1,4 @@
-# academorix/order
+# stackra/order
 
 Server-side Laravel package for the `order` module. Auto-generated from the
 blueprint at `modules/finance/blueprints/order/`.
@@ -46,6 +46,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-finance/order-sdk` under `sdk/finance-order-sdk/`. Consumers cross
+`stackra-finance/order-sdk` under `sdk/finance-order-sdk/`. Consumers cross
 the service boundary through the SDK; this package is the SERVER-side owner of
 the domain.

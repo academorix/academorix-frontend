@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AthleteEnrollment\Contracts\Services;
+namespace Stackra\AthleteEnrollment\Contracts\Services;
 
-use Academorix\AthleteEnrollment\Services\EnrollmentAtomicityCoordinator;
+use Stackra\AthleteEnrollment\Services\EnrollmentAtomicityCoordinator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

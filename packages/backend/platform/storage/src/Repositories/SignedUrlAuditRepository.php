@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Repositories;
+namespace Stackra\Storage\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Storage\Contracts\Data\SignedUrlAuditInterface;
-use Academorix\Storage\Contracts\Repositories\SignedUrlAuditRepositoryInterface;
-use Academorix\Storage\Models\SignedUrlAudit;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Storage\Contracts\Data\SignedUrlAuditInterface;
+use Stackra\Storage\Contracts\Repositories\SignedUrlAuditRepositoryInterface;
+use Stackra\Storage\Models\SignedUrlAudit;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Storage\Models\SignedUrlAudit}.
+ * Attribute-first Eloquent repository for {@see Stackra\Storage\Models\SignedUrlAudit}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(SignedUrlAuditInterface::class)]` which resolves to
  * `SignedUrlAudit` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Storage\Models\SignedUrlAudit>
+ * @extends Repository<\Stackra\Storage\Models\SignedUrlAudit>
  *
  * @category Storage
  *

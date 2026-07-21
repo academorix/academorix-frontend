@@ -6,14 +6,14 @@
  * @description
  * Create the `theme_presets` table for the dual-source preset catalogue.
  * `is_system = true` rows are seeded from
- * {@see \Academorix\Theme\Enums\ThemePresetSlug} and are IMMUTABLE outside
+ * {@see \Stackra\Theme\Enums\ThemePresetSlug} and are IMMUTABLE outside
  * the seeder. Tenant customs carry `is_system = false` and a non-null
  * `tenant_id`.
  */
 
 declare(strict_types=1);
 
-use Academorix\Theme\Contracts\Data\ThemePresetInterface;
+use Stackra\Theme\Contracts\Data\ThemePresetInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;

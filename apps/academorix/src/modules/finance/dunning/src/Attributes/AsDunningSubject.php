@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Dunning\Attributes;
+namespace Stackra\Dunning\Attributes;
 
 use Attribute;
 

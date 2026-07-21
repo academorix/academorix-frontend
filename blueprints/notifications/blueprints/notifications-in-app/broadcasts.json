@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-in-app/broadcasts",
+  "id": "stackra://modules/notifications-in-app/broadcasts",
   "$version": 1,
   "title": "notifications-in-app \u2014 broadcast channel bindings",
   "description": "This module WRITES to channels declared by core (user.{id}.notifications + tenant.{id}.notifications). It does not declare new channels. The channel authorization rules live in core's broadcasts.json. This file documents the broadcast events fired by this module.",
@@ -12,7 +12,7 @@
       "events": [
         {
           "event": "notifications.created",
-          "class": "Academorix\\Notifications\\InApp\\Broadcasting\\NotificationCreatedBroadcast",
+          "class": "Stackra\\Notifications\\InApp\\Broadcasting\\NotificationCreatedBroadcast",
           "trigger": "BroadcastInAppNotificationJob succeeded",
           "payload": {
             "notification_id": "ULID",
@@ -24,7 +24,7 @@
         },
         {
           "event": "notifications.seen",
-          "class": "Academorix\\Notifications\\InApp\\Broadcasting\\NotificationSeenBroadcast",
+          "class": "Stackra\\Notifications\\InApp\\Broadcasting\\NotificationSeenBroadcast",
           "trigger": "RelayNotificationSeen listener",
           "payload": {
             "notification_id": "ULID",
@@ -33,7 +33,7 @@
         },
         {
           "event": "notifications.archived",
-          "class": "Academorix\\Notifications\\InApp\\Broadcasting\\NotificationArchivedBroadcast",
+          "class": "Stackra\\Notifications\\InApp\\Broadcasting\\NotificationArchivedBroadcast",
           "trigger": "RelayNotificationArchived listener",
           "payload": {
             "notification_id": "ULID",

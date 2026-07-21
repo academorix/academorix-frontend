@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformUser\Services;
+namespace Stackra\PlatformUser\Services;
 
-use Academorix\PlatformUser\Contracts\Services\PlatformOffboardingCoordinatorInterface;
+use Stackra\PlatformUser\Contracts\Services\PlatformOffboardingCoordinatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\PlatformUser\Contracts\Repositories\PlatformProfileRepositoryInterface;
+use Stackra\PlatformUser\Contracts\Repositories\PlatformProfileRepositoryInterface;
 
 /**
  * Concrete service — PlatformOffboardingCoordinator.

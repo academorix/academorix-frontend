@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/chargeback/retention",
+  "id": "stackra://modules/chargeback/retention",
   "$version": 1,
   "title": "chargeback — retention windows",
   "description": "Chargeback data is financial-audit critical + card-network-audit critical. Every chargeback is a compliance-relevant financial event — a bank-forced reversal of previously-recognised revenue. Default retention 7 years (SOX + SOC 2 CC6.3 + national tax law baselines: US, EU, UK, CA + card network audit windows). Enterprise tier extends to 10y via `chargeback_extended_retention`. TenantErased cascades FK CASCADE hard-delete of every owned row EXCEPT invoice-linked chargebacks — those migrate to a compliance archive for legal-obligation retention. Card network audit windows (Visa VDMP evidence retention up to 5 years) do NOT extend beyond financial retention.",

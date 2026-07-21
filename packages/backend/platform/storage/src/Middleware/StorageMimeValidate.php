@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Middleware;
+namespace Stackra\Storage\Middleware;
 
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Storage\Contracts\Services\MimeTypeAllowlistInterface;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Storage\Contracts\Services\MimeTypeAllowlistInterface;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

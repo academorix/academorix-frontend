@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Exceptions;
+namespace Stackra\Transfer\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the entity doesn't support imports.
@@ -13,7 +13,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TransferEntityNotImportableException extends AcademorixException
+final class TransferEntityNotImportableException extends StackraException
 {
     public const CODE = 'TRANSFER_ENTITY_NOT_IMPORTABLE';
 

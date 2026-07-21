@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Progress\Database\Factories;
+namespace Stackra\Progress\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Progress\Contracts\Data\GradingEventInterface;
-use Academorix\Progress\Models\GradingEvent;
+use Stackra\Progress\Contracts\Data\GradingEventInterface;
+use Stackra\Progress\Models\GradingEvent;
 
 /**
- * Factory for {@see \Academorix\Progress\Models\GradingEvent}.
+ * Factory for {@see \Stackra\Progress\Models\GradingEvent}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Progress\Models\GradingEvent>
+ * @extends Factory<\Stackra\Progress\Models\GradingEvent>
  *
  * @category Progress
  *

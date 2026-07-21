@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/dunning/permissions",
+  "id": "stackra://modules/dunning/permissions",
   "$version": 1,
   "title": "dunning — permissions",
-  "seeder": "Academorix\\Finance\\Dunning\\Database\\Seeders\\DunningPermissionSeeder",
+  "seeder": "Stackra\\Finance\\Dunning\\Database\\Seeders\\DunningPermissionSeeder",
   "isSystem": true,
   "description": "Finance role manages plans + runs. Support role reads runs. Guardian reads own runs (transparency: 'why did my card get charged three times?').",
   "permissions": [

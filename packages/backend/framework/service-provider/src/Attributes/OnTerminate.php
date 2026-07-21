@@ -10,7 +10,7 @@ declare(strict_types=1);
  * application is terminating (after the response has been sent).
  *
  * The method is auto-discovered by
- * {@see \Academorix\ServiceProvider\Concerns\RegistersHooks}
+ * {@see \Stackra\ServiceProvider\Concerns\RegistersHooks}
  * during the boot phase and registered as a terminating callback
  * via `$this->app->terminating(...)` — zero manual registration
  * needed.
@@ -40,7 +40,7 @@ declare(strict_types=1);
  *
  * Errors thrown inside an `#[OnTerminate]` method are caught and
  * logged (see
- * {@see \Academorix\ServiceProvider\Concerns\RegistersHooks::registerTerminateAttributes()}).
+ * {@see \Stackra\ServiceProvider\Concerns\RegistersHooks::registerTerminateAttributes()}).
  * A single broken cleanup callback cannot corrupt the response
  * that's already been sent or leak into the next request.
  *
@@ -49,7 +49,7 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\ServiceProvider\Attributes;
+namespace Stackra\ServiceProvider\Attributes;
 
 use Attribute;
 

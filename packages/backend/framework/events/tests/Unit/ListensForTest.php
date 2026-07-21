@@ -4,7 +4,7 @@
  * @file packages/events/tests/Unit/ListensForTest.php
  *
  * @description
- * Unit coverage for the {@see \Academorix\Events\Attributes\ListensFor}
+ * Unit coverage for the {@see \Stackra\Events\Attributes\ListensFor}
  * attribute. Mirrors {@see OnEventTest} but for the method-scoped
  * sibling — validates default `method: 'handle'` semantics, the
  * `TARGET_METHOD | IS_REPEATABLE` combination, and the readonly
@@ -13,7 +13,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Events\Attributes\ListensFor;
+use Stackra\Events\Attributes\ListensFor;
 
 it('captures the event class and defaults', function (): void {
     $attribute = new ListensFor(event: 'App\\Events\\UserRegistered');

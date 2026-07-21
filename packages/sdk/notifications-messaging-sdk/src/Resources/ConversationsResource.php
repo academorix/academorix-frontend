@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsMessagingSdk\Resources;
+namespace Stackra\NotificationsMessagingSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\NotificationsMessagingSdk\Data\ConversationData;
-use Academorix\NotificationsMessagingSdk\Requests\Conversations\CreateConversationRequest;
-use Academorix\NotificationsMessagingSdk\Requests\Conversations\ListConversationsRequest;
-use Academorix\NotificationsMessagingSdk\Requests\Conversations\ShowConversationRequest;
-use Academorix\NotificationsMessagingSdk\Requests\Conversations\UpdateConversationRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\NotificationsMessagingSdk\Data\ConversationData;
+use Stackra\NotificationsMessagingSdk\Requests\Conversations\CreateConversationRequest;
+use Stackra\NotificationsMessagingSdk\Requests\Conversations\ListConversationsRequest;
+use Stackra\NotificationsMessagingSdk\Requests\Conversations\ShowConversationRequest;
+use Stackra\NotificationsMessagingSdk\Requests\Conversations\UpdateConversationRequest;
 use Saloon\Http\Response;
 
 /**
@@ -57,7 +57,7 @@ final readonly class ConversationsResource
      *
      * @return ConversationData
      */
-    public function create(\Academorix\NotificationsMessagingSdk\Payloads\Conversations\CreateConversationPayload $payload, ?string $idempotencyKey = null): ConversationData
+    public function create(\Stackra\NotificationsMessagingSdk\Payloads\Conversations\CreateConversationPayload $payload, ?string $idempotencyKey = null): ConversationData
     {
         return $this->connector->send(new CreateConversationRequest($payload, $idempotencyKey))->dto();
     }
@@ -85,7 +85,7 @@ final readonly class ConversationsResource
      *
      * @return ConversationData
      */
-    public function update(string $conversation, \Academorix\NotificationsMessagingSdk\Payloads\Conversations\UpdateConversationPayload $payload, ?string $idempotencyKey = null): ConversationData
+    public function update(string $conversation, \Stackra\NotificationsMessagingSdk\Payloads\Conversations\UpdateConversationPayload $payload, ?string $idempotencyKey = null): ConversationData
     {
         return $this->connector->send(new UpdateConversationRequest($conversation, $payload, $idempotencyKey))->dto();
     }

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/versioning/schedule",
+  "id": "stackra://modules/versioning/schedule",
   "$version": 1,
   "title": "versioning \u2014 scheduled tasks",
   "description": "Two entries: hourly sunset scan + daily reminder-notice dispatcher.",

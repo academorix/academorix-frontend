@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Services;
+namespace Stackra\Search\Services;
 
-use Academorix\Search\Contracts\Data\SearchSynonymInterface;
-use Academorix\Search\Contracts\Repositories\SearchSynonymRepositoryInterface;
-use Academorix\Search\Contracts\Services\SynonymRegistryInterface;
+use Stackra\Search\Contracts\Data\SearchSynonymInterface;
+use Stackra\Search\Contracts\Repositories\SearchSynonymRepositoryInterface;
+use Stackra\Search\Contracts\Services\SynonymRegistryInterface;
 use Illuminate\Container\Attributes\Scoped;
 
 /**

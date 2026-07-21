@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/search/policies",
+  "id": "stackra://modules/search/policies",
   "$version": 1,
   "title": "search \u2014 authorization policies",
   "policies": [
     {
       "model": "SearchIndex",
-      "class": "Academorix\\Search\\Policies\\SearchIndexPolicy",
+      "class": "Stackra\\Search\\Policies\\SearchIndexPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -37,7 +37,7 @@
     },
     {
       "model": "SearchSyncJob",
-      "class": "Academorix\\Search\\Policies\\SearchSyncJobPolicy",
+      "class": "Stackra\\Search\\Policies\\SearchSyncJobPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -65,7 +65,7 @@
     },
     {
       "model": "SearchSynonym",
-      "class": "Academorix\\Search\\Policies\\SearchSynonymPolicy",
+      "class": "Stackra\\Search\\Policies\\SearchSynonymPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "search.synonyms.viewAny" },
         {
@@ -93,7 +93,7 @@
     },
     {
       "model": "SearchSavedQuery",
-      "class": "Academorix\\Search\\Policies\\SearchSavedQueryPolicy",
+      "class": "Stackra\\Search\\Policies\\SearchSavedQueryPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -130,7 +130,7 @@
     },
     {
       "model": "SearchAnalyticsEvent",
-      "class": "Academorix\\Search\\Policies\\SearchAnalyticsEventPolicy",
+      "class": "Stackra\\Search\\Policies\\SearchAnalyticsEventPolicy",
       "abilities": [
         {
           "action": "viewAny",

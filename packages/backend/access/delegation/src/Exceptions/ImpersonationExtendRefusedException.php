@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Delegation\Exceptions;
+namespace Stackra\Delegation\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Attempted to extend a session past its default TTL by a non-super_admin OR without the impersonation_extended_ttl entitlement.

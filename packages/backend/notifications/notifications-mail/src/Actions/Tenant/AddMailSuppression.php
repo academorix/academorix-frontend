@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Actions\Tenant;
+namespace Stackra\Notifications\Mail\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Notifications\Mail\Contracts\Data\MailSuppressionInterface;
-use Academorix\Notifications\Mail\Contracts\Repositories\MailSuppressionRepositoryInterface;
-use Academorix\Notifications\Mail\Data\MailSuppressionData;
-use Academorix\Notifications\Mail\Data\Requests\AddMailSuppressionRequestData;
-use Academorix\Notifications\Mail\Enums\NotificationsMailPermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Notifications\Mail\Contracts\Data\MailSuppressionInterface;
+use Stackra\Notifications\Mail\Contracts\Repositories\MailSuppressionRepositoryInterface;
+use Stackra\Notifications\Mail\Data\MailSuppressionData;
+use Stackra\Notifications\Mail\Data\Requests\AddMailSuppressionRequestData;
+use Stackra\Notifications\Mail\Enums\NotificationsMailPermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 
 /**
  * `POST /api/v1/tenant/mail-suppressions` — manually block an email

@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Models;
+namespace Stackra\Forms\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Forms\Contracts\Data\FormVersionInterface;
-use Academorix\Forms\Database\Factories\FormVersionFactory;
-use Academorix\Forms\Policies\FormVersionPolicy;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Forms\Contracts\Data\FormVersionInterface;
+use Stackra\Forms\Database\Factories\FormVersionFactory;
+use Stackra\Forms\Policies\FormVersionPolicy;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;

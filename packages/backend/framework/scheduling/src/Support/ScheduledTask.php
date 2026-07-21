@@ -14,8 +14,8 @@
  *
  * Exactly one of `$frequency` / `$cronExpression` must be
  * non-`null`. The discovery layer enforces the invariant — if a
- * class carries BOTH {@see \Academorix\Scheduling\Attributes\Schedule}
- * and {@see \Academorix\Scheduling\Attributes\Cron} the task is
+ * class carries BOTH {@see \Stackra\Scheduling\Attributes\Schedule}
+ * and {@see \Stackra\Scheduling\Attributes\Cron} the task is
  * rejected before it reaches the registrar.
  *
  * ## Persistence shape
@@ -28,9 +28,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scheduling\Support;
+namespace Stackra\Scheduling\Support;
 
-use Academorix\Scheduling\Enums\Frequency;
+use Stackra\Scheduling\Enums\Frequency;
 
 final readonly class ScheduledTask
 {

@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/integrations/attributes",
+  "id": "stackra://modules/integrations/attributes",
   "$version": 1,
   "title": "integrations — PHP attribute contracts",
   "description": "Two owned attributes discovered at boot via Foundation's DiscoversAttributes seam. #[AsIntegrationProvider] drives Lane 1 (native providers ship now); #[AsAppExtensionPoint] documents Lane 2 extension points (marketplace apps ship later per ADR 0025).",
-  "namespace": "Academorix\\Integrations\\Attributes",
+  "namespace": "Stackra\\Integrations\\Attributes",
   "attributes": [
     {
       "name": "AsIntegrationProvider",
-      "class": "Academorix\\Integrations\\Attributes\\AsIntegrationProvider",
+      "class": "Stackra\\Integrations\\Attributes\\AsIntegrationProvider",
       "targets": ["class"],
       "description": "Marks a class as a Lane 1 integration provider discoverable by IntegrationProviderRegistry. The bootstrapper scans every enabled module's `Integrations/Providers/` namespace for classes carrying this attribute. IntegrationProviderSeeder walks discovered providers + upserts the matching `integration_providers` row on `db:seed`. Runtime lookup is O(1) via ToolRegistry-style hash-map cache.",
       "params": [
@@ -40,7 +40,7 @@
     },
     {
       "name": "AsAppExtensionPoint",
-      "class": "Academorix\\Integrations\\Attributes\\AsAppExtensionPoint",
+      "class": "Stackra\\Integrations\\Attributes\\AsAppExtensionPoint",
       "targets": ["class", "method"],
       "description": "Declares a documented extension point that Lane 2 apps may subscribe to when the marketplace launches. Documentation-only during the schema-only phase — reviewer + tooling scan for these attributes to build the app developer docs. When marketplace ships, this attribute drives the scope-check + webhook delivery path for AppWebhookSubscription rows.",
       "params": [
@@ -67,7 +67,7 @@
     }
   ],
   "discovery": {
-    "loader": "Academorix\\Integrations\\Bootstrap\\IntegrationProviderBootstrapper",
+    "loader": "Stackra\\Integrations\\Bootstrap\\IntegrationProviderBootstrapper",
     "runs_at": "boot (via Foundation's DiscoversAttributes seam)",
     "output_registries": [
       "IntegrationProviderRegistry — map of slug → provider class + kind + auth_kind + scopes.",

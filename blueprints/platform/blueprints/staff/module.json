@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "staff",
   "alias": "staff",
-  "namespace": "Academorix\\Staff",
+  "namespace": "Stackra\\Staff",
   "description": "Employed/engaged person operating within a Tenant Branch. Answers 'who works here?'. Ships two owned entities: (1) `Staff` — the employment record wrapping a User row with employment metadata (hire dates, position, department, employment_type, employment_status, wage/salary/hourly rate, emergency contact), and (2) `Coach` — a Staff-satellite adding a per-sport coaching profile (specialization, certifications, rating, availability_pattern) for the subset of Staff who coach. A tenant may run non-coach staff (receptionist, cafeteria worker, HR admin) which are Staff rows only, and coach-only setups where every Staff has a Coach row — the two aggregates are decoupled on purpose. Every Staff belongs to Tenant + Branch + User (RESTRICT on User — you can't archive a User row that still has an active Staff record; must offboard first). Coach belongs to Tenant + Staff (RESTRICT — coach-profile removal precedes staff-offboarding). Every write goes through observers that enforce: cross-tenant defense-in-depth, one-active-Staff-per-user-tenant, one-active-branch-manager-per-branch, coach-parent-staff-must-be-active, and compensation-write-permission (a distinct `staff.manage.compensation` capability separate from the general `staff.update`). Two sensitivity tiers on Staff: normal employment fields are internal-tier; compensation (compensation_amount_cents / compensation_type / pay_frequency) is regulated_financial-tier with 7-year retention and access gated behind `staff.view.compensation`; emergency contact + tax_id_last4 are confidential-tier gated behind `staff.view.emergency_contact`. Ships `staff_slot` entitlement (Small=5 / Medium=50 / Enterprise=null), `coach_slot` entitlement (Small=1 / Medium=10 / Enterprise=null), `staff_compensation_tracking` boolean gate (off by default, tenant opts in), `staff_org_chart` (Enterprise-only reports_to hierarchy), `coach_certifications_verified` (Enterprise-only compliance-verified certifications) and `coach_rating_display` (Medium+ public rating on tenant website). Lifecycle events: StaffHired / StaffPromotedToBranchManager / StaffOffboarded / CoachCertificationExpired / CompensationChanged (private-tier — never dispatched to tenant plane). Domain-agnostic: creates Staff for reception, HR, cafeteria workers, cleaners, coaches — the coach role is layered ON TOP via the Coach entity when the Staff acquires a per-sport profile.",
   "keywords": [
     "staff",
@@ -31,7 +31,7 @@
     "wave-2"
   ],
   "priority": 51,
-  "providers": ["Academorix\\Staff\\Providers\\StaffServiceProvider"],
+  "providers": ["Stackra\\Staff\\Providers\\StaffServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

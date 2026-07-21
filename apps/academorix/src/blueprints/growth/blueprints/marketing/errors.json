@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/marketing/errors",
+  "id": "stackra://modules/marketing/errors",
   "$version": 1,
   "title": "marketing — error codes",
   "namespace": "marketing",

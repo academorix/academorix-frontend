@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/storage/traits",
+  "id": "stackra://modules/storage/traits",
   "$version": 1,
   "title": "storage \u2014 trait composition",
   "description": "Two owned traits. HasFiles is the consumer-facing trait mixed into models that want polymorphic attachments. IsFile is a marker on the storage-owned File model itself (rarely composed elsewhere \u2014 exposed for testing + extension modules that need to reuse the File semantics under a different table).",
   "owned": [
     {
-      "trait": "Academorix\\Storage\\Concerns\\HasFiles",
+      "trait": "Stackra\\Storage\\Concerns\\HasFiles",
       "description": "Mixed into any Eloquent model that wants attachments. Adds polymorphic morphMany relationships keyed by `kind` (from `#[Attachable]` on properties). Runtime helpers: `->files()` (all attached), `->filesOfKind($kind)`, `->fileOfKind($kind)` (single, latest by created_at), `->attachFile(UploadedFile|Filesystem $file, string $kind)`, `->detachFile(File $file)`. The trait discovers `#[Attachable]` properties at boot via reflection cached in the FileKindRegistry \u2014 zero runtime cost per read.",
       "public": true,
       "usedBy": [
@@ -16,10 +16,10 @@
       "wraps": "Extends the vendor's HasMedia trait + overrides its media() relationship to return our File model (which subclasses their Media). Media collections map to our `kind` field. Custom conversions register through the vendor's `registerMediaConversions()` hook. Our tenant scope is enforced via a global query scope + a `beforeAttach` boot hook that stamps `tenant_id` from the caller's RequestContext."
     },
     {
-      "trait": "Academorix\\Storage\\Concerns\\IsFile",
+      "trait": "Stackra\\Storage\\Concerns\\IsFile",
       "description": "Marker composed by the File model itself. Adds the runtime accessors (`->url()`, `->variantUrl($key)`, `->sha256()`, `->refCount()`) + hooks the observer lifecycle events. NOT for consumer models \u2014 they use HasFiles.",
       "public": true,
-      "usedBy": ["Academorix\\Storage\\Models\\File"],
+      "usedBy": ["Stackra\\Storage\\Models\\File"],
       "conflicts_with": []
     }
   ],
@@ -33,16 +33,16 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasAuditable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Sluggable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasSystemFlag" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasAuditable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Sluggable" }
     ],
-    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
-    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }],
+    "tenants": [{ "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "activity": [{ "trait": "Stackra\\Activity\\Concerns\\HasActivityLog" }],
     "spatie": [
       {
         "trait": "Spatie\\MediaLibrary\\InteractsWithMedia",

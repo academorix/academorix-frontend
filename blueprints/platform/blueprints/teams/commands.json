@@ -1,136 +1,136 @@
 {
-  "id": "academorix://modules/teams/commands",
+  "id": "stackra://modules/teams/commands",
   "$version": 1,
   "title": "teams — Artisan commands",
   "commands": [
     {
       "signature": "team:list {--tenant=} {--branch=} {--organization=} {--type=} {--sport=} {--status=} {--include-archived}",
-      "class": "Academorix\\Teams\\Console\\Commands\\ListTeamsCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\ListTeamsCommand",
       "purpose": "Table view of teams. Filterable by tenant, branch, organization, team_type, sport_key, status. --include-archived shows archived rows; default hides them."
     },
     {
       "signature": "team:describe {team}",
-      "class": "Academorix\\Teams\\Console\\Commands\\DescribeTeamCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\DescribeTeamCommand",
       "purpose": "Verbose read of one team: base fields + schedule_pattern (day-by-day summary) + active roster count + pending trial count + upcoming event count + trailing-30-day retention rollup."
     },
     {
       "signature": "team:create {branch} {name} {--slug=} {--type=squad} {--sport=} {--capacity=} {--min-age=} {--max-age=} {--gender=any} {--dry-run}",
-      "class": "Academorix\\Teams\\Console\\Commands\\CreateTeamCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\CreateTeamCommand",
       "purpose": "Scriptable team creation (test harness + tenant onboarding). --dry-run validates the input against every observer rule without persisting."
     },
     {
       "signature": "team:set-default {team}",
-      "class": "Academorix\\Teams\\Console\\Commands\\SetDefaultTeamCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\SetDefaultTeamCommand",
       "purpose": "Mark a team as the branch's default (rare — used only when tenants want a general catch-all team; observer auto-demotes previous default)."
     },
     {
       "signature": "team:pause {team} {--reason=}",
-      "class": "Academorix\\Teams\\Console\\Commands\\PauseTeamCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\PauseTeamCommand",
       "purpose": "Transition team to status='paused'. New trials + roster adds refused; existing members continue."
     },
     {
       "signature": "team:resume {team}",
-      "class": "Academorix\\Teams\\Console\\Commands\\ResumeTeamCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\ResumeTeamCommand",
       "purpose": "Transition paused team back to status='active'."
     },
     {
       "signature": "team:archive {team} {--reason=} {--cascade-members}",
-      "class": "Academorix\\Teams\\Console\\Commands\\ArchiveTeamCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\ArchiveTeamCommand",
       "purpose": "Terminal transition. Refused when active members exist unless --cascade-members is passed (which sets every active member to status='inactive' with left_reason='team_archived')."
     },
     {
       "signature": "team:reopen-registration {team} {--opens=} {--closes=}",
-      "class": "Academorix\\Teams\\Console\\Commands\\ReopenRegistrationCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\ReopenRegistrationCommand",
       "purpose": "Set registration_opens_at + registration_closes_at. Publishes TeamRegistrationOpened notification to eligible members based on age + gender."
     },
     {
       "signature": "team:close-registration {team} {--reason=}",
-      "class": "Academorix\\Teams\\Console\\Commands\\CloseRegistrationCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\CloseRegistrationCommand",
       "purpose": "Force-close registration ahead of schedule. Sets registration_closes_at = now() and clears registration_opens_at when it's in the future."
     },
     {
       "signature": "team-member:list {team} {--role=} {--status=active}",
-      "class": "Academorix\\Teams\\Console\\Commands\\ListTeamMembersCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\ListTeamMembersCommand",
       "purpose": "List roster rows for a team. Default status=active; pass 'all' to see historic + terminal rows."
     },
     {
       "signature": "team-member:add {team} {--member-type=athlete} {--member-id=} {--role=player} {--jersey=} {--position=}",
-      "class": "Academorix\\Teams\\Console\\Commands\\AddTeamMemberCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\AddTeamMemberCommand",
       "purpose": "Add a member to a team's roster. Runs the full observer check chain: uniqueness, tenant-match, capacity, age/gender eligibility."
     },
     {
       "signature": "team-member:remove {team} {member} {--reason=withdrew}",
-      "class": "Academorix\\Teams\\Console\\Commands\\RemoveTeamMemberCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\RemoveTeamMemberCommand",
       "purpose": "Transition roster row to status='inactive' with left_reason. Preserves historic row."
     },
     {
       "signature": "team-member:change-role {team} {member} {--role=}",
-      "class": "Academorix\\Teams\\Console\\Commands\\ChangeTeamMemberRoleCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\ChangeTeamMemberRoleCommand",
       "purpose": "Change role_on_team (player / captain / vice_captain / coach / assistant_coach / team_manager / medical / analyst / substitute)."
     },
     {
       "signature": "team-member:mark-injured {team} {member} {--notes=}",
-      "class": "Academorix\\Teams\\Console\\Commands\\MarkTeamMemberInjuredCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\MarkTeamMemberInjuredCommand",
       "purpose": "Transition member to status='injured'. Coach-visible notes optional."
     },
     {
       "signature": "team-member:mark-graduated {team} {member}",
-      "class": "Academorix\\Teams\\Console\\Commands\\MarkTeamMemberGraduatedCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\MarkTeamMemberGraduatedCommand",
       "purpose": "Transition member to status='graduated'. Terminal for this team."
     },
     {
       "signature": "trial:list {team} {--status=} {--from=} {--to=}",
-      "class": "Academorix\\Teams\\Console\\Commands\\ListTrialsCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\ListTrialsCommand",
       "purpose": "List trials for a team. Filter by status + date range."
     },
     {
       "signature": "trial:schedule {team} {--type=individual} {--sessions=1} {--starts=} {--ends=} {--athlete=} {--user=} {--first-name=} {--last-name=} {--phone=} {--email=} {--dob=}",
-      "class": "Academorix\\Teams\\Console\\Commands\\ScheduleTrialCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\ScheduleTrialCommand",
       "purpose": "Schedule a trial. Either an athlete/user reference OR anonymous profile (first-name + phone required for anonymous)."
     },
     {
       "signature": "trial:complete {trial} {--notes=}",
-      "class": "Academorix\\Teams\\Console\\Commands\\CompleteTrialCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\CompleteTrialCommand",
       "purpose": "Transition trial to status='completed'. Coach writes evaluation_notes; decision (convert/reject) is a separate action."
     },
     {
       "signature": "trial:convert {trial} {--notes=}",
-      "class": "Academorix\\Teams\\Console\\Commands\\ConvertTrialCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\ConvertTrialCommand",
       "purpose": "Atomic conversion: transition trial to status='converted' AND create TeamMember row in the same transaction. Refused on uniqueness violation (rolls back the whole conversion)."
     },
     {
       "signature": "trial:reject {trial} {--notes=}",
-      "class": "Academorix\\Teams\\Console\\Commands\\RejectTrialCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\RejectTrialCommand",
       "purpose": "Transition trial to status='rejected'. decision_notes is a required audit field for anti-discrimination review; not exposed in analytics."
     },
     {
       "signature": "trial:cancel {trial} {--reason=}",
-      "class": "Academorix\\Teams\\Console\\Commands\\CancelTrialCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\CancelTrialCommand",
       "purpose": "Cancel a pending trial (before it starts). Applies to status IN scheduled / in_progress."
     },
     {
       "signature": "event-team:list {team} {--status=} {--from=} {--to=}",
-      "class": "Academorix\\Teams\\Console\\Commands\\ListEventTeamsCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\ListEventTeamsCommand",
       "purpose": "List event participations for a team."
     },
     {
       "signature": "event-team:register {team} {--event=} {--participation-type=participant}",
-      "class": "Academorix\\Teams\\Console\\Commands\\RegisterEventTeamCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\RegisterEventTeamCommand",
       "purpose": "Register team for an event. Wave 3 event_id becomes required + FK-constrained; Wave 2 allows nullable placeholder."
     },
     {
       "signature": "event-team:withdraw {event_team} {--reason=}",
-      "class": "Academorix\\Teams\\Console\\Commands\\WithdrawEventTeamCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\WithdrawEventTeamCommand",
       "purpose": "Withdraw from event. Sets withdrew_at + withdrawal_reason."
     },
     {
       "signature": "event-team:check-in {event_team}",
-      "class": "Academorix\\Teams\\Console\\Commands\\CheckInEventTeamCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\CheckInEventTeamCommand",
       "purpose": "Mark team as checked in at the event. Sets checked_in_at."
     },
     {
       "signature": "event-team:record-result {event_team} {--result=} {--attendance-count=}",
-      "class": "Academorix\\Teams\\Console\\Commands\\RecordEventTeamResultCommand",
+      "class": "Stackra\\Teams\\Console\\Commands\\RecordEventTeamResultCommand",
       "purpose": "Record the event result JSONB blob. --result accepts a JSON path or inline JSON."
     }
   ]

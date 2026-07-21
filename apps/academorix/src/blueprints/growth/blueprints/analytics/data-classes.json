@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/analytics/data-classes",
+  "id": "stackra://modules/analytics/data-classes",
   "$version": 1,
   "title": "analytics — field classification",
   "description": "Field-level classification per foundation's five-tier taxonomy. Analytics is behavioral; properties + context + attribution can carry near-PII (device fingerprints, IP hashes, session ids) so most substantive columns land in `confidential` or `internal`. NO raw PII (email, phone, name, address) is ever stored \u2014 enforced by PropertyValidator at capture time.",

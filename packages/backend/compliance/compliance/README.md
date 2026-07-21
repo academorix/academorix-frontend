@@ -1,4 +1,4 @@
-# academorix/compliance
+# stackra/compliance
 
 Cross-cutting compliance substrate. Wave 5 infrastructure. The **only**
 canonical orchestrator for GDPR / CCPA data-subject rights, consent evidence,

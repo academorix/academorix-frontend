@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/access/requests/relations",
+  "id": "stackra://modules/access/requests/relations",
   "$version": 1,
   "title": "requests \u2014 cross-module relations (no local tables)",
   "description": "This module owns NO tables and therefore has NO anchors. Every relation documented here is either (a) a READ this module performs against another module's table or (b) a WRITE this module orchestrates on another module's table via that module's public API. The `AccessRequest` DTO is a PROJECTION across these tables \u2014 it is not itself an Eloquent model. Consumers who want a single object should reach for the DTO, not join manually.",

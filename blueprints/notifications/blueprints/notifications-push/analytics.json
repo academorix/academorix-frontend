@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-push/analytics",
+  "id": "stackra://modules/notifications-push/analytics",
   "$version": 1,
   "title": "notifications-push \u2014 product analytics",
   "sink": "segment",

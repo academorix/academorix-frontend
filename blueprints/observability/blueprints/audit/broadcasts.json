@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/audit/broadcasts",
+  "id": "stackra://modules/audit/broadcasts",
   "$version": 1,
   "title": "audit — realtime broadcast channels",
   "description": "Two broadcast channels for live compliance-dashboard updates. Tenant-level retention-policy channel + audit-export channel. Audit rows themselves are NOT broadcast — they are potentially high-volume + PII-laden, and there is no operational need for live audit tail (compliance dashboards refresh on demand). Reverb driver is the default transport.",
   "channels": [
     {
       "name": "tenant.{tenantId}.audit.retention-policy",
-      "class": "Academorix\\Observability\\Audit\\Broadcasts\\TenantAuditRetentionPolicyChannel",
+      "class": "Stackra\\Observability\\Audit\\Broadcasts\\TenantAuditRetentionPolicyChannel",
       "description": "Retention-policy lifecycle updates. Powers the compliance-officer dashboard's retention-policy widget with live status transitions.",
       "authorization": "sanctum::authed AND tenant_matches AND (compliance_officer OR owner role)",
       "events": [
@@ -19,7 +19,7 @@
     },
     {
       "name": "tenant.{tenantId}.audit.exports",
-      "class": "Academorix\\Observability\\Audit\\Broadcasts\\TenantAuditExportsChannel",
+      "class": "Stackra\\Observability\\Audit\\Broadcasts\\TenantAuditExportsChannel",
       "description": "Audit export lifecycle updates. Powers the compliance-officer dashboard's active-exports widget + a live progress indicator on running exports.",
       "authorization": "sanctum::authed AND tenant_matches AND (compliance_officer OR owner role)",
       "events": [

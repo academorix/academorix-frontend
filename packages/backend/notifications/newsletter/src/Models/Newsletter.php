@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Models;
+namespace Stackra\Newsletter\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Newsletter\Contracts\Data\NewsletterInterface;
-use Academorix\Newsletter\Database\Factories\NewsletterFactory;
-use Academorix\Newsletter\Enums\NewsletterCadence;
-use Academorix\Newsletter\Enums\NewsletterStatus;
-use Academorix\Newsletter\Observers\NewsletterObserver;
-use Academorix\Newsletter\Policies\NewsletterPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Newsletter\Contracts\Data\NewsletterInterface;
+use Stackra\Newsletter\Database\Factories\NewsletterFactory;
+use Stackra\Newsletter\Enums\NewsletterCadence;
+use Stackra\Newsletter\Enums\NewsletterStatus;
+use Stackra\Newsletter\Observers\NewsletterObserver;
+use Stackra\Newsletter\Policies\NewsletterPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -99,7 +99,7 @@ final class Newsletter extends Model implements AuditableContract, NewsletterInt
     {
         return $this->hasMany(
             NewsletterIssue::class,
-            \Academorix\Newsletter\Contracts\Data\NewsletterIssueInterface::ATTR_NEWSLETTER_ID,
+            \Stackra\Newsletter\Contracts\Data\NewsletterIssueInterface::ATTR_NEWSLETTER_ID,
             NewsletterInterface::ATTR_ID,
         );
     }
@@ -113,7 +113,7 @@ final class Newsletter extends Model implements AuditableContract, NewsletterInt
     {
         return $this->hasMany(
             NewsletterSubscription::class,
-            \Academorix\Newsletter\Contracts\Data\NewsletterSubscriptionInterface::ATTR_NEWSLETTER_ID,
+            \Stackra\Newsletter\Contracts\Data\NewsletterSubscriptionInterface::ATTR_NEWSLETTER_ID,
             NewsletterInterface::ATTR_ID,
         );
     }
@@ -127,7 +127,7 @@ final class Newsletter extends Model implements AuditableContract, NewsletterInt
     {
         return $this->hasMany(
             NewsletterCampaign::class,
-            \Academorix\Newsletter\Contracts\Data\NewsletterCampaignInterface::ATTR_NEWSLETTER_ID,
+            \Stackra\Newsletter\Contracts\Data\NewsletterCampaignInterface::ATTR_NEWSLETTER_ID,
             NewsletterInterface::ATTR_ID,
         );
     }
@@ -141,7 +141,7 @@ final class Newsletter extends Model implements AuditableContract, NewsletterInt
     {
         return $this->hasMany(
             NewsletterAudience::class,
-            \Academorix\Newsletter\Contracts\Data\NewsletterAudienceInterface::ATTR_NEWSLETTER_ID,
+            \Stackra\Newsletter\Contracts\Data\NewsletterAudienceInterface::ATTR_NEWSLETTER_ID,
             NewsletterInterface::ATTR_ID,
         );
     }

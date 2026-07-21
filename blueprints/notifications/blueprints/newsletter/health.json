@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/newsletter/health",
+  "id": "stackra://modules/newsletter/health",
   "$version": 1,
   "title": "newsletter \u2014 health probes",
   "probes": [
     {
       "name": "newsletter-scheduler-recent",
-      "class": "Academorix\\Newsletter\\Health\\Probes\\SchedulerRecentProbe",
+      "class": "Stackra\\Newsletter\\Health\\Probes\\SchedulerRecentProbe",
       "category": "readiness",
       "critical": false,
       "description": "newsletter:send-scheduled ran within last 5 min.",
@@ -13,7 +13,7 @@
     },
     {
       "name": "newsletter-audience-freshness",
-      "class": "Academorix\\Newsletter\\Health\\Probes\\AudienceFreshnessProbe",
+      "class": "Stackra\\Newsletter\\Health\\Probes\\AudienceFreshnessProbe",
       "category": "readiness",
       "critical": false,
       "description": "No audience with cache_refreshed_at > 24h.",
@@ -22,7 +22,7 @@
     },
     {
       "name": "newsletter-in-progress-campaigns-stuck",
-      "class": "Academorix\\Newsletter\\Health\\Probes\\StuckCampaignsProbe",
+      "class": "Stackra\\Newsletter\\Health\\Probes\\StuckCampaignsProbe",
       "category": "readiness",
       "critical": false,
       "description": "No campaign stuck in state=in_progress for > 2h.",

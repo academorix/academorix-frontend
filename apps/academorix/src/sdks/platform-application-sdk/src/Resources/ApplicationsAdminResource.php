@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file apps/academorix/src/sdks/platform-application-sdk/src/Resources/ApplicationsAdminResource.php
+ * @file apps/stackra/src/sdks/platform-application-sdk/src/Resources/ApplicationsAdminResource.php
  *
  * @description
  * Platform-admin Applications surface. Wraps the five admin-tier
@@ -14,24 +14,24 @@
  * The Platform service enforces `role: platform_admin` on this
  * surface; the connector attaches the Sanctum PAT via the Bearer
  * scheme. A missing or under-privileged token yields
- * {@see \Academorix\ApiSdk\Exceptions\AuthenticationException} /
- * {@see \Academorix\ApiSdk\Exceptions\AuthorizationException}.
+ * {@see \Stackra\ApiSdk\Exceptions\AuthenticationException} /
+ * {@see \Stackra\ApiSdk\Exceptions\AuthorizationException}.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformApplicationSdk\Resources;
+namespace Stackra\PlatformApplicationSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\PlatformApplicationSdk\Data\ApplicationData;
-use Academorix\PlatformApplicationSdk\Payloads\Applications\CreateApplicationPayload;
-use Academorix\PlatformApplicationSdk\Payloads\Applications\UpdateApplicationPayload;
-use Academorix\PlatformApplicationSdk\Requests\Applications\CreateApplicationRequest;
-use Academorix\PlatformApplicationSdk\Requests\Applications\DeleteApplicationRequest;
-use Academorix\PlatformApplicationSdk\Requests\Applications\ListApplicationsAdminRequest;
-use Academorix\PlatformApplicationSdk\Requests\Applications\ShowApplicationAdminRequest;
-use Academorix\PlatformApplicationSdk\Requests\Applications\UpdateApplicationRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\PlatformApplicationSdk\Data\ApplicationData;
+use Stackra\PlatformApplicationSdk\Payloads\Applications\CreateApplicationPayload;
+use Stackra\PlatformApplicationSdk\Payloads\Applications\UpdateApplicationPayload;
+use Stackra\PlatformApplicationSdk\Requests\Applications\CreateApplicationRequest;
+use Stackra\PlatformApplicationSdk\Requests\Applications\DeleteApplicationRequest;
+use Stackra\PlatformApplicationSdk\Requests\Applications\ListApplicationsAdminRequest;
+use Stackra\PlatformApplicationSdk\Requests\Applications\ShowApplicationAdminRequest;
+use Stackra\PlatformApplicationSdk\Requests\Applications\UpdateApplicationRequest;
 
 /**
  * Platform-admin Applications surface — full CRUD.
@@ -39,14 +39,14 @@ use Academorix\PlatformApplicationSdk\Requests\Applications\UpdateApplicationReq
  * ## Example
  *
  * ```php
- * use Academorix\PlatformSdk\Client\PlatformSdk;
+ * use Stackra\PlatformSdk\Client\PlatformSdk;
  *
  * $admin = app(PlatformSdk::class)->application()->applicationsAdmin();
  * $new   = $admin->create(new CreateApplicationPayload(
  *     slug: 'ticketing',
  *     name: 'Ticketing',
- *     centralHost: 'ticketing.academorix.app',
- *     platformAdminHost: 'admin.ticketing.academorix.app',
+ *     centralHost: 'ticketing.stackra.app',
+ *     platformAdminHost: 'admin.ticketing.stackra.app',
  * ), idempotencyKey: 'idem-create-ticketing-v1');
  * ```
  *
@@ -72,7 +72,7 @@ final readonly class ApplicationsAdminResource
      * @param  bool|null  $withTrashed   When `true`, include soft-deleted rows (requires `application.viewTrashed`).
      * @return PaginatedResponse<ApplicationData>
      *
-     * @throws \Academorix\ApiSdk\Exceptions\ApiRequestException
+     * @throws \Stackra\ApiSdk\Exceptions\ApiRequestException
      */
     public function list(?int $page = null, ?int $perPage = null, ?bool $withTrashed = null): PaginatedResponse
     {
@@ -90,8 +90,8 @@ final readonly class ApplicationsAdminResource
      * @param  string  $id  Prefixed ULID (`app_<26 chars>`).
      * @return ApplicationData
      *
-     * @throws \Academorix\ApiSdk\Exceptions\ResourceNotFoundException
-     * @throws \Academorix\ApiSdk\Exceptions\ApiRequestException
+     * @throws \Stackra\ApiSdk\Exceptions\ResourceNotFoundException
+     * @throws \Stackra\ApiSdk\Exceptions\ApiRequestException
      */
     public function show(string $id): ApplicationData
     {
@@ -110,8 +110,8 @@ final readonly class ApplicationsAdminResource
      * @param  string|null               $idempotencyKey  Optional replay-safety token.
      * @return ApplicationData                            The freshly-persisted Application.
      *
-     * @throws \Academorix\ApiSdk\Exceptions\ValidationException   On invalid payload.
-     * @throws \Academorix\ApiSdk\Exceptions\ApiRequestException   On any other failure.
+     * @throws \Stackra\ApiSdk\Exceptions\ValidationException   On invalid payload.
+     * @throws \Stackra\ApiSdk\Exceptions\ApiRequestException   On any other failure.
      */
     public function create(CreateApplicationPayload $payload, ?string $idempotencyKey = null): ApplicationData
     {
@@ -131,9 +131,9 @@ final readonly class ApplicationsAdminResource
      * @param  string|null               $idempotencyKey  Optional replay-safety token.
      * @return ApplicationData                            The updated Application.
      *
-     * @throws \Academorix\ApiSdk\Exceptions\ResourceNotFoundException  When `id` is unknown.
-     * @throws \Academorix\ApiSdk\Exceptions\ValidationException        On invalid payload.
-     * @throws \Academorix\ApiSdk\Exceptions\ApiRequestException        On any other failure.
+     * @throws \Stackra\ApiSdk\Exceptions\ResourceNotFoundException  When `id` is unknown.
+     * @throws \Stackra\ApiSdk\Exceptions\ValidationException        On invalid payload.
+     * @throws \Stackra\ApiSdk\Exceptions\ApiRequestException        On any other failure.
      */
     public function update(string $id, UpdateApplicationPayload $payload, ?string $idempotencyKey = null): ApplicationData
     {
@@ -151,8 +151,8 @@ final readonly class ApplicationsAdminResource
      * @param  string       $id              Prefixed ULID.
      * @param  string|null  $idempotencyKey  Optional replay-safety token.
      *
-     * @throws \Academorix\ApiSdk\Exceptions\ResourceNotFoundException  When `id` is unknown.
-     * @throws \Academorix\ApiSdk\Exceptions\ApiRequestException        On any other failure.
+     * @throws \Stackra\ApiSdk\Exceptions\ResourceNotFoundException  When `id` is unknown.
+     * @throws \Stackra\ApiSdk\Exceptions\ApiRequestException        On any other failure.
      */
     public function delete(string $id, ?string $idempotencyKey = null): void
     {

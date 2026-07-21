@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/attribution/relations",
+  "id": "stackra://modules/attribution/relations",
   "$version": 1,
   "title": "attribution — model relationships",
   "description": "Two owned entities. Attribution is a leaf below Tenant (polymorphic subject via subject_type + subject_id). AttributionTouchpoint attaches to Attribution + carries a denormalised subject reference for direct queries. Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / region_id / organization_id / branch_id / scope_node_id on any owned row (attribution cascades ONLY through tenant).",

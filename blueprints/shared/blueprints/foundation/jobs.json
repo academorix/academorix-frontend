@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/foundation/jobs",
+  "id": "stackra://modules/foundation/jobs",
   "$version": 1,
   "title": "foundation — queued jobs",
   "description": "One base infrastructure job. Extends `BaseJob` which auto-attaches Sentry tags + tenants context + request_id from the dispatching request. Downstream modules use it directly (via the Searchable trait) — no per-module reimplementation. Import + export jobs previously listed here (ProcessImportBatchJob, GenerateExportJob) moved to `modules/transfer/` as of Wave 2 module inception \u2014 that module owns the full queue chain via `maatwebsite/excel`'s own `->queue()` mechanism and does not need foundation-level base jobs.",
@@ -7,7 +7,7 @@
   "defaultConnection": "redis",
   "jobs": [
     {
-      "class": "Academorix\\Foundation\\Jobs\\IndexSearchableJob",
+      "class": "Stackra\\Foundation\\Jobs\\IndexSearchableJob",
       "description": "Pushes a model to its Scout search index. Called by the Searchable trait's `saved` event hook. Batches when possible — repeated saves on the same model within a 30-second window collapse to one job via ShouldBeUnique.",
       "queue": "search",
       "tries": 5,

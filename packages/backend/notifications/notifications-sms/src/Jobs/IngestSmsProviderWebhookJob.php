@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Jobs;
+namespace Stackra\Notifications\Sms\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -18,9 +18,9 @@ use Illuminate\Queue\SerializesModels;
  * Normalise an inbound provider webhook payload into the module's public
  * event surface.
  *
- * Handles delivery receipts (fire {@see \Academorix\Notifications\Sms\Events\SmsDelivered}
- * / {@see \Academorix\Notifications\Sms\Events\SmsFailed} /
- * {@see \Academorix\Notifications\Sms\Events\SmsUndeliverable}) AND inbound
+ * Handles delivery receipts (fire {@see \Stackra\Notifications\Sms\Events\SmsDelivered}
+ * / {@see \Stackra\Notifications\Sms\Events\SmsFailed} /
+ * {@see \Stackra\Notifications\Sms\Events\SmsUndeliverable}) AND inbound
  * messages (parse STOP / START / HELP keywords).
  *
  * @category NotificationsSms

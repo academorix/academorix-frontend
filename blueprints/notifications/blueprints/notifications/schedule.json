@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/schedule",
+  "id": "stackra://modules/notifications/schedule",
   "$version": 1,
   "title": "notifications core \u2014 scheduled tasks",
   "description": "Cron-driven core work: digest windows, retention expunge, delivery reconciliation, registry cache warm.",

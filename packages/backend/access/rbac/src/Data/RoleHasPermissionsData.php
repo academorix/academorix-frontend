@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Data;
+namespace Stackra\Rbac\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Server-side output DTO for {@see \Academorix\Rbac\Models\RoleHasPermissions}.
+ * Server-side output DTO for {@see \Stackra\Rbac\Models\RoleHasPermissions}.
  *
  * Consumed by controllers + services on the SERVER side. This is
  * distinct from the wire SDK's DTO (which sits under
- * `Academorix\AccessRbacSdk\Data`) — the wire DTO travels across the HTTP
+ * `Stackra\AccessRbacSdk\Data`) — the wire DTO travels across the HTTP
  * boundary; this one stays in-process.
  *
  * @category Rbac

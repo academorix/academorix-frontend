@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Bootstrappers;
+namespace Stackra\Versioning\Bootstrappers;
 
-use Academorix\ServiceProvider\Attributes\AsBootstrapper;
-use Academorix\ServiceProvider\Bootstrappers\AbstractBootstrapper;
-use Academorix\Versioning\Contracts\Services\VersionSchemeRegistryInterface;
-use Academorix\Versioning\Enums\VersionScheme;
-use Academorix\Versioning\Schemes\CalVerScheme;
-use Academorix\Versioning\Schemes\SemVerScheme;
+use Stackra\ServiceProvider\Attributes\AsBootstrapper;
+use Stackra\ServiceProvider\Bootstrappers\AbstractBootstrapper;
+use Stackra\Versioning\Contracts\Services\VersionSchemeRegistryInterface;
+use Stackra\Versioning\Enums\VersionScheme;
+use Stackra\Versioning\Schemes\CalVerScheme;
+use Stackra\Versioning\Schemes\SemVerScheme;
 use Illuminate\Container\Attributes\Singleton;
 
 /**
- * Register the two shipped {@see \Academorix\Versioning\Contracts\Services\VersionSchemeInterface}
+ * Register the two shipped {@see \Stackra\Versioning\Contracts\Services\VersionSchemeInterface}
  * adapters (`semver` -> {@see SemVerScheme}, `calver` -> {@see CalVerScheme})
  * with the {@see VersionSchemeRegistryInterface}.
  *

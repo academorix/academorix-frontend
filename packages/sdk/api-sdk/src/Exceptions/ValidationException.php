@@ -31,7 +31,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Exceptions;
+namespace Stackra\ApiSdk\Exceptions;
 
 use Saloon\Http\Request;
 use Saloon\Http\Response;

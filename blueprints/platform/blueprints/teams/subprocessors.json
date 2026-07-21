@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/teams/subprocessors",
+  "id": "stackra://modules/teams/subprocessors",
   "$version": 1,
   "title": "teams — subprocessors",
-  "description": "The Teams module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. The Notifications module dispatches team + trial + coach-change notifications via its own subprocessors (mail, SMS, push); those are declared in notifications::subprocessors.json. The Finance module (Wave 4) will engage payment processors for trial fees + event registration fees. This file lists ZERO active subprocessors to be explicit about the module's boundary — team state is fully first-party.",
+  "description": "The Teams module itself engages ZERO third-party subprocessors — every state transition happens within the Stackra platform. The Notifications module dispatches team + trial + coach-change notifications via its own subprocessors (mail, SMS, push); those are declared in notifications::subprocessors.json. The Finance module (Wave 4) will engage payment processors for trial fees + event registration fees. This file lists ZERO active subprocessors to be explicit about the module's boundary — team state is fully first-party.",
   "subprocessors": [],
   "downstream_subprocessors_referenced": [
     {

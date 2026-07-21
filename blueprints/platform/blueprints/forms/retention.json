@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/forms/retention",
+  "id": "stackra://modules/forms/retention",
   "$version": 1,
   "title": "forms — data retention windows",
   "description": "Form schemas retained indefinitely (immutable audit trail). Submissions inherit the sensitivity of their most-sensitive answer field — medical / safeguarding submissions retained 7yr; standard submissions 2yr; abandoned sessions swept quickly.",

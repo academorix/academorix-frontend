@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Contracts\Services;
+namespace Stackra\Storage\Contracts\Services;
 
-use Academorix\Storage\Models\ChunkedUpload;
-use Academorix\Storage\Models\File;
-use Academorix\Storage\Services\DefaultChunkedUploadCoordinator;
+use Stackra\Storage\Models\ChunkedUpload;
+use Stackra\Storage\Models\File;
+use Stackra\Storage\Services\DefaultChunkedUploadCoordinator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

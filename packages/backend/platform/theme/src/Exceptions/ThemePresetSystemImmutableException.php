@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Exceptions;
+namespace Stackra\Theme\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 
 /**
  * Raised when a caller attempts to mutate a system-marked `theme_presets`
  * row (`is_system = true`) outside the sanctioned mutation-allowed scope.
  *
  * The mutation-allowed scope is opened only by the seeder (via
- * {@see \Academorix\Theme\Models\ThemePreset::allowSystemMutation()}) and
+ * {@see \Stackra\Theme\Models\ThemePreset::allowSystemMutation()}) and
  * by tests that fixture system state. Every other write path — HTTP admin
  * mutations, Tinker one-liners, ad-hoc migrations — is refused by the
  * model's observer.
  *
- * Mirrors the shape of {@see \Academorix\Application\Exceptions\SystemRowImmutableException}
+ * Mirrors the shape of {@see \Stackra\Application\Exceptions\SystemRowImmutableException}
  * but carries a theme-scoped error code so log filters + i18n stay clean.
  *
  * @category Theme

@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/monitoring/observers",
+  "id": "stackra://modules/monitoring/observers",
   "$version": 1,
   "title": "monitoring — Eloquent observers",
   "description": "Six observers enforce the module's write-time invariants: health check config validation (interval floor, target/type match, PII scrub of response bodies, entitlement consumption, initial-run scheduling), append-only run bookkeeping (state-change detection, alert policy re-evaluation trigger), alert policy shape (signal source existence, threshold sanity), alert lifecycle (grouping, provider fan-out trigger, incident auto-resolve on last-alert close), incident lifecycle (P1 postmortem trigger, escalation scheduling), and provider config validation (per-provider JSON Schema, entitlement, credential encryption, test-mode dispatch).",
   "observers": [
     {
       "model": "HealthCheck",
-      "observer": "Academorix\\Observability\\Monitoring\\Observers\\HealthCheckObserver",
+      "observer": "Stackra\\Observability\\Monitoring\\Observers\\HealthCheckObserver",
       "handles": [
         "creating → populate ULID prefix `hck_`",
         "creating → refuse when tenant does NOT hold `monitoring_capture` entitlement (returns `MONITORING_FEATURE_NOT_ENTITLED`)",
@@ -34,7 +34,7 @@
     },
     {
       "model": "HealthCheckRun",
-      "observer": "Academorix\\Observability\\Monitoring\\Observers\\HealthCheckRunObserver",
+      "observer": "Stackra\\Observability\\Monitoring\\Observers\\HealthCheckRunObserver",
       "handles": [
         "creating → populate ULID prefix `hcr_`",
         "creating → refuse when parent health_check is deleted (soft or hard); the run should not have been dispatched",
@@ -53,7 +53,7 @@
     },
     {
       "model": "MonitoringAlertPolicy",
-      "observer": "Academorix\\Observability\\Monitoring\\Observers\\MonitoringAlertPolicyObserver",
+      "observer": "Stackra\\Observability\\Monitoring\\Observers\\MonitoringAlertPolicyObserver",
       "handles": [
         "creating → populate ULID prefix `map_`",
         "creating → refuse when tenant does NOT hold `monitoring_capture` entitlement",
@@ -78,7 +78,7 @@
     },
     {
       "model": "MonitoringAlert",
-      "observer": "Academorix\\Observability\\Monitoring\\Observers\\MonitoringAlertObserver",
+      "observer": "Stackra\\Observability\\Monitoring\\Observers\\MonitoringAlertObserver",
       "handles": [
         "creating → populate ULID prefix `mal_`",
         "creating → refuse when parent monitoring_alert_policy is soft-deleted or disabled",
@@ -102,7 +102,7 @@
     },
     {
       "model": "MonitoringIncident",
-      "observer": "Academorix\\Observability\\Monitoring\\Observers\\MonitoringIncidentObserver",
+      "observer": "Stackra\\Observability\\Monitoring\\Observers\\MonitoringIncidentObserver",
       "handles": [
         "creating → populate ULID prefix `mci_`",
         "creating → set status='open' + opened_at = now() + alert_count = 1 (from the initial alert)",
@@ -125,7 +125,7 @@
     },
     {
       "model": "MonitoringProviderConfig",
-      "observer": "Academorix\\Observability\\Monitoring\\Observers\\MonitoringProviderConfigObserver",
+      "observer": "Stackra\\Observability\\Monitoring\\Observers\\MonitoringProviderConfigObserver",
       "handles": [
         "creating → populate ULID prefix `mpr_`",
         "creating → refuse when tenant does NOT hold `monitoring_capture` entitlement",

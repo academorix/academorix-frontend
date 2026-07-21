@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Contracts\Data;
+namespace Stackra\Integrations\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Integrations\Models\AppWebhookSubscription;
+use Stackra\Integrations\Models\AppWebhookSubscription;
 
 /**
  * Table shape for the `app_webhook_subscriptions` table.

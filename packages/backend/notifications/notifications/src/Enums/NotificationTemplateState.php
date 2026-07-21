@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Enums;
+namespace Stackra\Notifications\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `state` on `notification-template`.

@@ -1,60 +1,60 @@
 {
-  "id": "academorix://modules/membership/health",
+  "id": "stackra://modules/membership/health",
   "$version": 1,
   "title": "membership — health probes",
   "probes": [
     {
       "name": "membership-schema-migrations-applied",
-      "class": "Academorix\\Finance\\Membership\\Health\\Probes\\SchemaMigrationsAppliedProbe",
+      "class": "Stackra\\Finance\\Membership\\Health\\Probes\\SchemaMigrationsAppliedProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms memberships + membership_plans + membership_renewals + passes tables + partial unique indexes exist."
     },
     {
       "name": "membership-renewal-backlog",
-      "class": "Academorix\\Finance\\Membership\\Health\\Probes\\RenewalBacklogProbe",
+      "class": "Stackra\\Finance\\Membership\\Health\\Probes\\RenewalBacklogProbe",
       "category": "readiness",
       "critical": true,
       "description": "Active memberships with next_renewal_at more than 2 hours past-due. WARN > 20, CRIT > 100. Indicates ProcessMembershipRenewalJob stalled."
     },
     {
       "name": "membership-dunning-backlog",
-      "class": "Academorix\\Finance\\Membership\\Health\\Probes\\DunningBacklogProbe",
+      "class": "Stackra\\Finance\\Membership\\Health\\Probes\\DunningBacklogProbe",
       "category": "readiness",
       "critical": false,
       "description": "Failed renewals with next_attempt_at more than 2 hours past-due. WARN > 20."
     },
     {
       "name": "membership-atomic-invoice-failure-rate",
-      "class": "Academorix\\Finance\\Membership\\Health\\Probes\\AtomicInvoiceFailureRateProbe",
+      "class": "Stackra\\Finance\\Membership\\Health\\Probes\\AtomicInvoiceFailureRateProbe",
       "category": "readiness",
       "critical": true,
       "description": "Percentage of membership creates that rolled back due to invoice-create failure. Any non-zero rate is P1."
     },
     {
       "name": "membership-lapsed-surge",
-      "class": "Academorix\\Finance\\Membership\\Health\\Probes\\LapsedSurgeProbe",
+      "class": "Stackra\\Finance\\Membership\\Health\\Probes\\LapsedSurgeProbe",
       "category": "readiness",
       "critical": false,
       "description": "Lapsed count in the last hour vs 7-day baseline. WARN when > 3x baseline. Indicates payment gateway outage or systemic issue."
     },
     {
       "name": "membership-chargeback-surge",
-      "class": "Academorix\\Finance\\Membership\\Health\\Probes\\ChargebackSurgeProbe",
+      "class": "Stackra\\Finance\\Membership\\Health\\Probes\\ChargebackSurgeProbe",
       "category": "readiness",
       "critical": true,
       "description": "Chargeback count in the last hour vs 7-day baseline. CRIT when > 5x baseline. Indicates possible fraud attack."
     },
     {
       "name": "membership-pass-expiry-drift",
-      "class": "Academorix\\Finance\\Membership\\Health\\Probes\\PassExpiryDriftProbe",
+      "class": "Stackra\\Finance\\Membership\\Health\\Probes\\PassExpiryDriftProbe",
       "category": "readiness",
       "critical": false,
       "description": "Passes past valid_until still not marked expired. WARN > 500. Indicates ExpireStalePassesJob stalled."
     },
     {
       "name": "membership-slot-headroom",
-      "class": "Academorix\\Finance\\Membership\\Health\\Probes\\SlotHeadroomProbe",
+      "class": "Stackra\\Finance\\Membership\\Health\\Probes\\SlotHeadroomProbe",
       "category": "readiness",
       "critical": false,
       "description": "Tenants within 10% of their membership_slot cap. Product signal for upgrade CTA."

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Gateway\Enums;
+namespace Stackra\Gateway\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `provider` on `payment-gateway-config`.

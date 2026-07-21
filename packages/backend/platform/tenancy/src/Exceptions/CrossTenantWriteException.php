@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Exceptions;
+namespace Stackra\Tenancy\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Raised when a save attempts to write a row with a `tenant_id`
  * different from the resolved tenant.
  *
- * Enforced by {@see \Academorix\Tenancy\Concerns\BelongsToTenant} on
+ * Enforced by {@see \Stackra\Tenancy\Concerns\BelongsToTenant} on
  * every `saving` event. Always a bug OR an attack — the exception
  * routes to the `security` audit channel and pages on-call per
  * `tenants.audit.cross_tenant_alert_channel`.

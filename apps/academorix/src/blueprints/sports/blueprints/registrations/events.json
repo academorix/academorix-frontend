@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/registrations/events",
+  "id": "stackra://modules/registrations/events",
   "$version": 1,
   "title": "registrations — published events",
-  "namespace": "Academorix\\Sports\\Registrations\\Events",
+  "namespace": "Stackra\\Sports\\Registrations\\Events",
   "dispatchMode": "afterCommit",
   "description": "Enrollment + waitlist funnel. Every stage transition is an event; the terminal ENROLLED transition atomically creates Athlete + AthleteEnrollment + Invoice (via AtomicallyConvertOnOfferAccepted). Waitlist auto-offer on capacity free.",
   "events": [

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-push/errors",
+  "id": "stackra://modules/notifications-push/errors",
   "$version": 1,
   "title": "notifications-push \u2014 error codes",
   "namespace": "notifications-push",

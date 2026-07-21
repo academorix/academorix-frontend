@@ -5,8 +5,8 @@ file is an index and parallelization graph. Each sub-file below is a
 self-contained task list a sub-agent can execute independently.
 
 **Excluded from every task file below**: everything from `workspace.md` — the
-config extraction batches A/B/C/D/E (`@academorix/config-tsup`,
-`@academorix/config-tsconfig`, `@academorix/config-prettier`), root file
+config extraction batches A/B/C/D/E (`@stackra/config-tsup`,
+`@stackra/config-tsconfig`, `@stackra/config-prettier`), root file
 hardening (`turbo.json`, `.gitignore`, `playwright.config.ts`, `.npmrc`,
 `.nvmrc`, `commitlint.config.mjs`, `.lintstagedrc.mjs`, `.size-limit.json`,
 `knip.json`, root `package.json`), strict-TS re-enable (`noImplicitOverride`,
@@ -101,7 +101,7 @@ find packages/backend -maxdepth 3 -name composer.json | wc -l   # → ~143
 find packages/frontend -maxdepth 2 -name package.json | wc -l    # → ~50
 
 # After Wave 2 lands
-./tools/cli/bin/academorix --version   # → Academorix CLI 0.1.0
+./tools/cli/bin/stackra --version   # → Stackra CLI 0.1.0
 
 # After Wave 3 lands
 find packages -name catalog.json | wc -l   # → 155 or 156
@@ -113,6 +113,6 @@ ls tools/cli/src/Stubs/stubs/ | wc -l      # → 6 (php/react/native/typescript/
 ## Source of truth
 
 Every content spec below traces back to
-`/Users/akouta/Projects/academorix-frontend/fullplan.md`. When the sub-file
+`/Users/akouta/Projects/stackra-frontend/fullplan.md`. When the sub-file
 leaves a detail unspecified, the sub-agent consults `fullplan.md` — do NOT
 invent shape.

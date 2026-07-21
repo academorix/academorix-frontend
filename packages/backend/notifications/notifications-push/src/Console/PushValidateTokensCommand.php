@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsPush\Console;
+namespace Stackra\NotificationsPush\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan notifications:push:validate-tokens` — Push:validate tokens — notifications command.

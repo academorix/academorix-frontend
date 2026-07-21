@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/identity/notifications",
+  "id": "stackra://modules/identity/notifications",
   "$version": 1,
   "title": "identity \u2014 notification classes + categories",
-  "namespace": "Academorix\\Identity\\Notifications",
+  "namespace": "Stackra\\Identity\\Notifications",
   "description": "Five notifications. Two are transactional (email-verification, password-reset) with no opt-out; three are informational-security (password-changed, account-locked, suspicious-login) with default-on opt-in. All notifications render through the localized template pipeline \u2014 subject + body support {{placeholders}} resolved at dispatch time.",
   "notifications": [
     "EmailVerificationNotification",
@@ -19,7 +19,7 @@
       "queue": "notifications",
       "subject_template": "identity::mail.email_verification.subject",
       "body_template_path": "identity::mail.email_verification.body",
-      "default_subject_en": "Verify your Academorix email",
+      "default_subject_en": "Verify your Stackra email",
       "trigger_event": "IdentityEmailVerificationRequested",
       "payload_bindings": {
         "verification_url": "string (signed URL, 24h TTL)",
@@ -34,7 +34,7 @@
       "queue": "notifications",
       "subject_template": "identity::mail.password_reset.subject",
       "body_template_path": "identity::mail.password_reset.body",
-      "default_subject_en": "Reset your Academorix password",
+      "default_subject_en": "Reset your Stackra password",
       "trigger_event": "PasswordResetRequested",
       "payload_bindings": {
         "reset_url": "string (signed URL, 15min TTL)",
@@ -50,7 +50,7 @@
       "queue": "notifications",
       "subject_template": "identity::mail.password_changed.subject",
       "body_template_path": "identity::mail.password_changed.body",
-      "default_subject_en": "Your Academorix password was changed",
+      "default_subject_en": "Your Stackra password was changed",
       "trigger_event": "PasswordChanged",
       "payload_bindings": {
         "changed_at": "ISO-8601 timestamp",
@@ -66,7 +66,7 @@
       "queue": "notifications-critical",
       "subject_template": "identity::mail.account_locked.subject",
       "body_template_path": "identity::mail.account_locked.body",
-      "default_subject_en": "Your Academorix account has been locked",
+      "default_subject_en": "Your Stackra account has been locked",
       "trigger_event": "IdentityLocked",
       "payload_bindings": {
         "locked_until": "ISO-8601 timestamp",
@@ -83,7 +83,7 @@
       "queue": "notifications-critical",
       "subject_template": "identity::mail.suspicious_login.subject",
       "body_template_path": "identity::mail.suspicious_login.body",
-      "default_subject_en": "Unusual sign-in activity on your Academorix account",
+      "default_subject_en": "Unusual sign-in activity on your Stackra account",
       "trigger_event": "IdentityLocked",
       "payload_bindings": {
         "request_ip": "string",

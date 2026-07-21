@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/search/compliance",
+  "id": "stackra://modules/search/compliance",
   "$version": 1,
   "title": "search \u2014 compliance evidence",
   "description": "Search indexes user + tenant content \u2014 the compliance surface centres on (a) not indexing restricted-tier fields, (b) tenant-scope isolation on queries, (c) query-text retention with GDPR-friendly hashing, (d) right-to-erasure cascades. Sync-job transitions dual-write to audits; queries do not (query volume is telemetry, not audit).",

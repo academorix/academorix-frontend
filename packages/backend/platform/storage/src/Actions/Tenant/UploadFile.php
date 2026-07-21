@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Actions\Tenant;
+namespace Stackra\Storage\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Contracts\Repositories\FileRepositoryInterface;
-use Academorix\Storage\Data\FileData;
-use Academorix\Storage\Data\Requests\UploadFileRequestData;
-use Academorix\Storage\Enums\StoragePermission;
-use Academorix\Storage\Models\File;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Contracts\Repositories\FileRepositoryInterface;
+use Stackra\Storage\Data\FileData;
+use Stackra\Storage\Data\Requests\UploadFileRequestData;
+use Stackra\Storage\Enums\StoragePermission;
+use Stackra\Storage\Models\File;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Illuminate\Support\Str;
 
 /**
@@ -23,8 +23,8 @@ use Illuminate\Support\Str;
  *
  * The uploaded file bytes land in a File row with
  * `virus_scan_state = pending`. The observer dispatches
- * {@see \Academorix\Storage\Jobs\ScanFileForVirusesJob} +
- * {@see \Academorix\Storage\Jobs\GenerateFileVariantsJob} on commit.
+ * {@see \Stackra\Storage\Jobs\ScanFileForVirusesJob} +
+ * {@see \Stackra\Storage\Jobs\GenerateFileVariantsJob} on commit.
  *
  * @category Storage
  *

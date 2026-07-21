@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformUser\Contracts\Services;
+namespace Stackra\PlatformUser\Contracts\Services;
 
-use Academorix\PlatformUser\Services\PlatformOffboardingCoordinator;
+use Stackra\PlatformUser\Services\PlatformOffboardingCoordinator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

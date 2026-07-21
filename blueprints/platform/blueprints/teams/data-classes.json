@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/teams/data-classes",
+  "id": "stackra://modules/teams/data-classes",
   "$version": 1,
   "title": "teams — field classification",
   "description": "Teams are commercial reference data. TeamMembers carry a polymorphic reference (member_type + member_id) and a set of operational fields (jersey, position, role). TeamTrials capture PII on prospective members, including anonymous ones (redacted 90 days post-decision). EventTeams record participation + result blobs. The most sensitive fields are (1) trialist anonymous profile (name/phone/email/dob), redacted per GDPR; (2) team member medical notes / injury metadata (staff-visible only, never wire-projected to the member); (3) trial decision_notes (anti-discrimination retention).",

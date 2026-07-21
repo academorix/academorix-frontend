@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Performance\Actions\Tenant;
+namespace Stackra\Performance\Actions\Tenant;
 
-use Academorix\Performance\Contracts\Repositories\PerformanceTestResultRepositoryInterface;
-use Academorix\Performance\Data\PerformanceTestResultData;
-use Academorix\Performance\Data\Requests\CreatePerformanceTestResultRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Performance\Contracts\Repositories\PerformanceTestResultRepositoryInterface;
+use Stackra\Performance\Data\PerformanceTestResultData;
+use Stackra\Performance\Data\Requests\CreatePerformanceTestResultRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/performance-test-results` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Performance

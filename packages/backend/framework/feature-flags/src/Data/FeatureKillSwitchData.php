@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Data;
+namespace Stackra\FeatureFlags\Data;
 
-use Academorix\FeatureFlags\Contracts\Data\FeatureKillSwitchInterface;
-use Academorix\FeatureFlags\Models\FeatureKillSwitch;
+use Stackra\FeatureFlags\Contracts\Data\FeatureKillSwitchInterface;
+use Stackra\FeatureFlags\Models\FeatureKillSwitch;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;

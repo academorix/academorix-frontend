@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Exceptions;
+namespace Stackra\Activity\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * POST / PATCH / DELETE against /api/v1/activities/* returns 405 with this code — writes happen exclusively via the vendor LogsActivity trait on domain models.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ActivityWriteForbiddenException extends AcademorixException
+final class ActivityWriteForbiddenException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

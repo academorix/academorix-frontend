@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsMedicalSdk\Enums;
+namespace Stackra\SportsMedicalSdk\Enums;
 
 /**
  * Wire-visible backed enum for `medical-clearance.scope`.

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Data\Requests;
+namespace Stackra\Notifications\Push\Data\Requests;
 
-use Academorix\Notifications\Push\Enums\PushPlatform;
-use Academorix\Notifications\Push\Enums\PushProvider;
+use Stackra\Notifications\Push\Enums\PushPlatform;
+use Stackra\Notifications\Push\Enums\PushProvider;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Enum;
 use Spatie\LaravelData\Attributes\Validation\Max;

@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/rbac/config",
+  "id": "stackra://modules/rbac/config",
   "$version": 1,
   "title": "rbac \u2014 developer configuration",
   "configFile": "config/rbac.php",
   "envPrefix": "RBAC_",
-  "description": "RBAC's canonical config surface. Read alongside `config/permission.php` (spatie's shipped file) \u2014 our config OVERLAYS spatie's with Academorix-specific keys. Any key that exists in both, `rbac.*` wins on the code path (it's the tenant-configurable surface); spatie's key remains the substrate default for the vendor package's own paths.",
+  "description": "RBAC's canonical config surface. Read alongside `config/permission.php` (spatie's shipped file) \u2014 our config OVERLAYS spatie's with Stackra-specific keys. Any key that exists in both, `rbac.*` wins on the code path (it's the tenant-configurable surface); spatie's key remains the substrate default for the vendor package's own paths.",
   "sections": {
     "cache": {
       "description": "Permission cache configuration. See `caches.json` for the key patterns.",

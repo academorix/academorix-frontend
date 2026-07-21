@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/competition/compliance",
+  "id": "stackra://modules/competition/compliance",
   "$version": 1,
   "title": "competition — self-compliance posture",
   "description": "Regulatory regimes this module's data touches + how each is discharged.",

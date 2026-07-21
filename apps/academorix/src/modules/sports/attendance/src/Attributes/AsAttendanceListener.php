@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attendance\Attributes;
+namespace Stackra\Attendance\Attributes;
 
 use Attribute;
 

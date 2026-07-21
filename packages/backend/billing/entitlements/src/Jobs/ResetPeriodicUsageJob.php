@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Jobs;
+namespace Stackra\Entitlements\Jobs;
 
-use Academorix\Entitlements\Contracts\Data\EntitlementInterface;
-use Academorix\Entitlements\Contracts\Repositories\EntitlementRepositoryInterface;
-use Academorix\Entitlements\Enums\EntitlementPeriod;
-use Academorix\Entitlements\Events\EntitlementReset;
+use Stackra\Entitlements\Contracts\Data\EntitlementInterface;
+use Stackra\Entitlements\Contracts\Repositories\EntitlementRepositoryInterface;
+use Stackra\Entitlements\Enums\EntitlementPeriod;
+use Stackra\Entitlements\Events\EntitlementReset;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/entitlements",
+  "id": "stackra://modules/workflow/approvals/entitlements",
   "$version": 1,
   "title": "approvals — declared entitlements",
   "description": "Five entitlement keys. `approvals_enabled` is the core boolean gate (all tiers). Slot cap on max active templates per tenant scales with plan tier. Custom-template authoring + advanced expressions are feature-gated. Cross-tenant audit report generation is enterprise + compliance-module co-active only.",

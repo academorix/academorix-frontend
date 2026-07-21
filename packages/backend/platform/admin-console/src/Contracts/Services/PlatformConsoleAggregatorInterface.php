@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AdminConsole\Contracts\Services;
+namespace Stackra\AdminConsole\Contracts\Services;
 
-use Academorix\AdminConsole\Services\PlatformConsoleAggregator;
+use Stackra\AdminConsole\Services\PlatformConsoleAggregator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

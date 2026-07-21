@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Database\Factories;
+namespace Stackra\Domains\Database\Factories;
 
-use Academorix\Domains\Contracts\Data\DomainRecordInterface;
-use Academorix\Domains\Enums\DnsRecordStatus;
-use Academorix\Domains\Enums\DnsRecordType;
-use Academorix\Domains\Models\DomainRecord;
+use Stackra\Domains\Contracts\Data\DomainRecordInterface;
+use Stackra\Domains\Enums\DnsRecordStatus;
+use Stackra\Domains\Enums\DnsRecordType;
+use Stackra\Domains\Models\DomainRecord;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -38,7 +38,7 @@ final class DomainRecordFactory extends Factory
             DomainRecordInterface::ATTR_DOMAIN_ID      => 'dom_' . Str::ulid()->toBase32(),
             DomainRecordInterface::ATTR_KIND           => DnsRecordType::Cname->value,
             DomainRecordInterface::ATTR_NAME           => 'www.example.com',
-            DomainRecordInterface::ATTR_EXPECTED_VALUE => 'edge.academorix.app',
+            DomainRecordInterface::ATTR_EXPECTED_VALUE => 'edge.stackra.app',
             DomainRecordInterface::ATTR_STATUS         => DnsRecordStatus::Unknown->value,
         ];
     }

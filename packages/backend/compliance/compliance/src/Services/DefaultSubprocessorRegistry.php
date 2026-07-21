@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Services;
+namespace Stackra\Compliance\Services;
 
-use Academorix\Compliance\Contracts\Data\SubprocessorInterface;
-use Academorix\Compliance\Contracts\Repositories\SubprocessorRepositoryInterface;
-use Academorix\Compliance\Contracts\Services\SubprocessorRegistryInterface;
-use Academorix\Compliance\Models\Subprocessor;
+use Stackra\Compliance\Contracts\Data\SubprocessorInterface;
+use Stackra\Compliance\Contracts\Repositories\SubprocessorRepositoryInterface;
+use Stackra\Compliance\Contracts\Services\SubprocessorRegistryInterface;
+use Stackra\Compliance\Models\Subprocessor;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Support\Collection;
 

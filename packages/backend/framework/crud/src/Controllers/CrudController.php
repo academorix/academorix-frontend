@@ -8,7 +8,7 @@ declare(strict_types=1);
  * @description
  * Generic RESTful CRUD controller providing `index()` / `show()` /
  * `store()` / `update()` / `destroy()` on top of a
- * {@see \Academorix\Crud\Contracts\ServiceInterface}.
+ * {@see \Stackra\Crud\Contracts\ServiceInterface}.
  *
  * ## Zero abstract methods — everything is attribute-driven
  *
@@ -46,7 +46,7 @@ declare(strict_types=1);
  * | `#[UseService]`    | `service()` from Routing's `InteractsWithServices` |
  * | `#[UseData]`       | `storeDataClass()`, `updateDataClass()`, `resourceDataClass()` from `InteractsWithCrudDeclarations` |
  * | `#[UsePolicy]`     | `policyModel()` from `InteractsWithCrudDeclarations` |
- * | `#[AsController]`  | Registered as an HTTP controller by `Academorix\Routing` |
+ * | `#[AsController]`  | Registered as an HTTP controller by `Stackra\Routing` |
  * | `#[Prefix]`        | Prepended to every action route (Spatie route-attributes) |
  * | `#[Get]/#[Post]/…` | Method-level HTTP verb + path — inherited from this base |
  *
@@ -59,9 +59,9 @@ declare(strict_types=1);
  * subclass's inherited methods — so no per-controller route
  * declarations are needed.
  *
- * The `academorix/routing` package's `Get` / `Post` / etc.
+ * The `stackra/routing` package's `Get` / `Post` / etc.
  * attributes extend Spatie's directly, so the eventual migration
- * from Spatie's classes to Academorix's is a one-line import swap.
+ * from Spatie's classes to Stackra's is a one-line import swap.
  * For now we use Spatie's directly to keep the base free of the
  * routing package's pending cleanup work.
  *
@@ -72,7 +72,7 @@ declare(strict_types=1);
  *     override the inherited method to add one):
  *
  *     ```php
- *     use Academorix\Access\Attributes\RequirePermission;
+ *     use Stackra\Access\Attributes\RequirePermission;
  *
  *     #[RequirePermission(PlatformUserPermission::View)]
  *     public function show(int|string $id): JsonResponse
@@ -113,11 +113,11 @@ declare(strict_types=1);
  * @template TModel of Model
  */
 
-namespace Academorix\Crud\Controllers;
+namespace Stackra\Crud\Controllers;
 
-use Academorix\Crud\Concerns\Controller\InteractsWithCrudDeclarations;
-use Academorix\Crud\Contracts\ServiceInterface;
-use Academorix\Routing\Controller;
+use Stackra\Crud\Concerns\Controller\InteractsWithCrudDeclarations;
+use Stackra\Crud\Contracts\ServiceInterface;
+use Stackra\Routing\Controller;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

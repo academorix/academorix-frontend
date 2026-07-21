@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branch\Actions\Platform;
+namespace Stackra\Branch\Actions\Platform;
 
-use Academorix\Branch\Contracts\Repositories\BranchRepositoryInterface;
-use Academorix\Branch\Data\BranchData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Branch\Contracts\Repositories\BranchRepositoryInterface;
+use Stackra\Branch\Data\BranchData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 
 /**
  * `GET /api/v1/platform/branches/{branch}` — show action (platform-admin audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Branch

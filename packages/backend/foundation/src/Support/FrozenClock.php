@@ -4,7 +4,7 @@
  * @file packages/foundation/src/Support/FrozenClock.php
  *
  * @description
- * In-memory {@see \Academorix\Foundation\Contracts\Clock} for tests.
+ * In-memory {@see \Stackra\Foundation\Contracts\Clock} for tests.
  * Freezes `now()` at construction; `advance(...)` shifts the clock by
  * a `\DateInterval` or seconds. Bind in Pest tests via:
  *
@@ -13,9 +13,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Support;
+namespace Stackra\Foundation\Support;
 
-use Academorix\Foundation\Contracts\Clock;
+use Stackra\Foundation\Contracts\Clock;
 use DateInterval;
 use DateTimeInterface;
 use Illuminate\Support\Carbon;

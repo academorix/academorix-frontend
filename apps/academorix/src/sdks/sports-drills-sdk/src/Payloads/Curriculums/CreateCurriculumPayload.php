@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDrillsSdk\Payloads\Curriculums;
+namespace Stackra\SportsDrillsSdk\Payloads\Curriculums;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\StringType;

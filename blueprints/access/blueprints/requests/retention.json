@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/access/requests/retention",
+  "id": "stackra://modules/access/requests/retention",
   "$version": 1,
   "title": "requests \u2014 data retention windows",
   "description": "This module owns NO tables. Retention windows for the underlying data live in the modules that OWN the rows: workflow/approvals owns approval_instances retention, access/grants owns access_grants retention. This file documents the WINDOWS this module DEPENDS on so ops can verify the two are consistent + compliance auditors can trace the retention chain.",

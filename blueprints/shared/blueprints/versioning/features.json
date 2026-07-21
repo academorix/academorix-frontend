@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/versioning/features",
+  "id": "stackra://modules/versioning/features",
   "$version": 1,
   "title": "versioning \u2014 feature keys",
   "description": "Features exposed at `/auth/me` \u2192 `data.features`. Gate capability availability by plan.",

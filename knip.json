@@ -49,7 +49,7 @@
   "ignoreExportsUsedInFile": true,
   "ignoreDependencies": [
     "@stackra/*",
-    "@academorix/*",
+    "@stackra/*",
     "@commitlint/types",
     "@babel/preset-env",
     "@babel/runtime",

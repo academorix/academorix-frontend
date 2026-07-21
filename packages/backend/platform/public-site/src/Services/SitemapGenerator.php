@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PublicSite\Services;
+namespace Stackra\PublicSite\Services;
 
-use Academorix\PublicSite\Contracts\Services\SitemapGeneratorInterface;
+use Stackra\PublicSite\Contracts\Services\SitemapGeneratorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\PublicSite\Contracts\Repositories\ContentBlockRepositoryInterface;
+use Stackra\PublicSite\Contracts\Repositories\ContentBlockRepositoryInterface;
 
 /**
  * Concrete service — SitemapGenerator.

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Services;
+namespace Stackra\Notifications\Sms\Services;
 
-use Academorix\Notifications\Sms\Contracts\Services\SmsCostCalculatorInterface;
+use Stackra\Notifications\Sms\Contracts\Services\SmsCostCalculatorInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

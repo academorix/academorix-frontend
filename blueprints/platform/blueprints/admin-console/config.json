@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/admin-console/config",
+  "id": "stackra://modules/admin-console/config",
   "$version": 1,
   "title": "admin-console — config keys",
   "description": "config/<module>.php shape + defaults.",

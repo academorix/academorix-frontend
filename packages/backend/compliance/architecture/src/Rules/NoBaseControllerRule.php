@@ -6,9 +6,9 @@
  * @description
  * Source rule: no class in a domain module may extend
  * `Illuminate\Routing\Controller`,
- * `Academorix\Routing\BaseController`,
- * `Academorix\Routing\Controller`, or
- * `Academorix\Crud\Controllers\CrudController`. Per ADR 0016
+ * `Stackra\Routing\BaseController`,
+ * `Stackra\Routing\Controller`, or
+ * `Stackra\Crud\Controllers\CrudController`. Per ADR 0016
  * (Actions-only), controllers are banned in favour of
  * single-action classes.
  *
@@ -48,11 +48,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Support\SourceFile;
-use Academorix\Architecture\Violations\Severity;
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Support\SourceFile;
+use Stackra\Architecture\Violations\Severity;
+use Stackra\Architecture\Violations\Violation;
 
 /**
  * Enforce "no BaseController / CrudController / Illuminate

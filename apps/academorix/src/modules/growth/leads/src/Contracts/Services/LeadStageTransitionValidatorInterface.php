@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Contracts\Services;
+namespace Stackra\Leads\Contracts\Services;
 
-use Academorix\Leads\Enums\LeadStage;
-use Academorix\Leads\Services\LeadStageTransitionValidator;
+use Stackra\Leads\Enums\LeadStage;
+use Stackra\Leads\Services\LeadStageTransitionValidator;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Scoped;
 
@@ -45,13 +45,13 @@ interface LeadStageTransitionValidatorInterface
 
     /**
      * Enforce a transition. Throws
-     * {@see \Academorix\Leads\Exceptions\LeadInvalidStageTransitionException}
+     * {@see \Stackra\Leads\Exceptions\LeadInvalidStageTransitionException}
      * on any transition {@see canTransition()} refuses.
      *
      * @param  LeadStage  $from  The current stage.
      * @param  LeadStage  $to    The desired next stage.
      *
-     * @throws \Academorix\Leads\Exceptions\LeadInvalidStageTransitionException  When the transition is refused.
+     * @throws \Stackra\Leads\Exceptions\LeadInvalidStageTransitionException  When the transition is refused.
      */
     public function assertTransition(LeadStage $from, LeadStage $to): void;
 

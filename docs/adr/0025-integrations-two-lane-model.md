@@ -21,7 +21,7 @@ get routinely conflated:
    points, per-app billing + revenue-share plumbing, app review team, developer
    docs, ecosystem marketing.
 
-For Academorix specifically:
+For Stackra specifically:
 
 - **Native providers are needed on day one.** Stripe billing (already shipped),
   Paddle, Pipedrive / HubSpot for the enrollment funnel sync (ADR 0024), Apple
@@ -64,7 +64,7 @@ marketplace and does not enforce provider allowlisting.
 ### D1 — Lane 1: provider slots (ships now)
 
 The `platform/integrations` module gains an `IntegrationProvider` entity (`ipd_`
-ULID prefix) — the allowlist catalog of every provider Academorix supports.
+ULID prefix) — the allowlist catalog of every provider Stackra supports.
 System rows only; adding a provider is a code deploy.
 
 **Shape:**
@@ -122,7 +122,7 @@ App                          (apk_)
 ├── slug                     globally unique — e.g. 'smart-pricing-pro'
 ├── name
 ├── description
-├── developer_name           first-party for now — 'Academorix' or partner
+├── developer_name           first-party for now — 'Stackra' or partner
 ├── developer_email
 ├── status                   'draft' | 'in_review' | 'approved' | 'suspended'
 ├── oauth_client_id          FK to OAuth 2.0 client row (from platform/oauth)

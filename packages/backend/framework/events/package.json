@@ -1,8 +1,8 @@
 {
-  "name": "@academorix/events",
+  "name": "@stackra/events",
   "version": "0.0.0",
   "private": true,
-  "description": "Turborepo shim for the PHP `academorix/events` package. NOTE: composer install is exposed as `install:composer` — never plain `install` — so pnpm's lifecycle does not run it during a root `pnpm install`.",
+  "description": "Turborepo shim for the PHP `stackra/events` package. NOTE: composer install is exposed as `install:composer` — never plain `install` — so pnpm's lifecycle does not run it during a root `pnpm install`.",
   "scripts": {
     "install:composer": "composer install --no-interaction --prefer-dist",
     "lint": "../../apps/template/vendor/bin/pint --test --config=../../config/pint.json src tests",

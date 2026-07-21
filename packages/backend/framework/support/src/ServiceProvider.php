@@ -12,22 +12,22 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Support;
+namespace Stackra\Support;
 
-use Academorix\ServiceProvider\Concerns\AsModuleProvider;
-use Academorix\ServiceProvider\Providers\ServiceProvider as BaseServiceProvider;
+use Stackra\ServiceProvider\Concerns\AsModuleProvider;
+use Stackra\ServiceProvider\Providers\ServiceProvider as BaseServiceProvider;
 
 /**
  * Support Service Provider.
  *
- * Convenience alias for Academorix\ServiceProvider\Providers\ServiceProvider.
+ * Convenience alias for Stackra\ServiceProvider\Providers\ServiceProvider.
  * Provides a shorter import path for module service providers.
  *
  * ## Usage
  *
  * ### Extend this class (standard modules):
  * ```php
- * use Academorix\Support\ServiceProvider;
+ * use Stackra\Support\ServiceProvider;
  *
  * #[AsModule(name: 'MyModule')]
  * class MyServiceProvider extends ServiceProvider { }
@@ -35,7 +35,7 @@ use Academorix\ServiceProvider\Providers\ServiceProvider as BaseServiceProvider;
  *
  * ### Use AsModuleProvider trait (third-party bases):
  * ```php
- * use Academorix\ServiceProvider\Concerns\AsModuleProvider;
+ * use Stackra\ServiceProvider\Concerns\AsModuleProvider;
  *
  * class MyServiceProvider extends ThirdPartyServiceProvider
  * {

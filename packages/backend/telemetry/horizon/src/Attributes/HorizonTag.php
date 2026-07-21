@@ -12,10 +12,10 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  *
- * @see \Academorix\Horizon\Compiler\HorizonCompiler
+ * @see \Stackra\Horizon\Compiler\HorizonCompiler
  */
 
-namespace Academorix\Horizon\Attributes;
+namespace Stackra\Horizon\Attributes;
 
 use Attribute;
 

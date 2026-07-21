@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Database\Factories;
+namespace Stackra\Invitations\Database\Factories;
 
-use Academorix\Invitations\Contracts\Data\InvitationEventInterface;
-use Academorix\Invitations\Models\InvitationEvent;
+use Stackra\Invitations\Contracts\Data\InvitationEventInterface;
+use Stackra\Invitations\Models\InvitationEvent;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

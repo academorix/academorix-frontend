@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Observers;
+namespace Stackra\Search\Observers;
 
-use Academorix\Search\Contracts\Data\SearchIndexInterface;
-use Academorix\Search\Enums\SearchIndexStatus;
-use Academorix\Search\Events\SearchIndexAliasSwapped;
-use Academorix\Search\Events\SearchIndexRegistered;
-use Academorix\Search\Events\SearchIndexUnregistered;
-use Academorix\Search\Models\SearchIndex;
+use Stackra\Search\Contracts\Data\SearchIndexInterface;
+use Stackra\Search\Enums\SearchIndexStatus;
+use Stackra\Search\Events\SearchIndexAliasSwapped;
+use Stackra\Search\Events\SearchIndexRegistered;
+use Stackra\Search\Events\SearchIndexUnregistered;
+use Stackra\Search\Models\SearchIndex;
 
 /**
  * Lifecycle side effects on {@see SearchIndex}.

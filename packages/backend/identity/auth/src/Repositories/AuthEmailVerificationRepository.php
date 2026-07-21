@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Repositories;
+namespace Stackra\Auth\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Auth\Contracts\Data\AuthEmailVerificationInterface;
-use Academorix\Auth\Contracts\Repositories\AuthEmailVerificationRepositoryInterface;
-use Academorix\Auth\Models\AuthEmailVerification;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Auth\Contracts\Data\AuthEmailVerificationInterface;
+use Stackra\Auth\Contracts\Repositories\AuthEmailVerificationRepositoryInterface;
+use Stackra\Auth\Models\AuthEmailVerification;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Auth\Models\AuthEmailVerification}.
+ * Attribute-first Eloquent repository for {@see Stackra\Auth\Models\AuthEmailVerification}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AuthEmailVerificationInterface::class)]` which resolves to
  * `AuthEmailVerification` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Auth\Models\AuthEmailVerification>
+ * @extends Repository<\Stackra\Auth\Models\AuthEmailVerification>
  *
  * @category Auth
  *

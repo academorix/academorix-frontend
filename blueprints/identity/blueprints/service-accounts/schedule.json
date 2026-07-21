@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/service-accounts/schedule",
+  "id": "stackra://modules/service-accounts/schedule",
   "$version": 1,
   "title": "service-accounts \u2014 scheduled tasks",
   "entries": [
@@ -36,21 +36,21 @@
       "command": "metrics:emit service_account.active_count",
       "cron": "* * * * *",
       "timezone": "UTC",
-      "purpose": "Every minute: emit `academorix.service_account.active_count` gauge for dashboarding."
+      "purpose": "Every minute: emit `stackra.service_account.active_count` gauge for dashboarding."
     },
     {
       "name": "service-account-rotation-due-count-gauge",
       "command": "metrics:emit service_account.rotation_due_count",
       "cron": "0 * * * *",
       "timezone": "UTC",
-      "purpose": "Hourly: emit `academorix.service_account.rotation_due_count` gauge for the rotation-hygiene dashboard."
+      "purpose": "Hourly: emit `stackra.service_account.rotation_due_count` gauge for the rotation-hygiene dashboard."
     },
     {
       "name": "service-account-expired-count-gauge",
       "command": "metrics:emit service_account.expired_count",
       "cron": "*/5 * * * *",
       "timezone": "UTC",
-      "purpose": "Every 5 minutes: emit `academorix.service_account.expired_count` gauge. Non-zero for more than one purge cycle (24h) triggers ops alert \u2014 signals PurgeExpiredServiceAccountsJob is stalled."
+      "purpose": "Every 5 minutes: emit `stackra.service_account.expired_count` gauge. Non-zero for more than one purge cycle (24h) triggers ops alert \u2014 signals PurgeExpiredServiceAccountsJob is stalled."
     }
   ]
 }

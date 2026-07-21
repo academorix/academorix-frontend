@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registrations\Contracts\Data;
+namespace Stackra\Registrations\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Registrations\Models\Registration;
+use Stackra\Registrations\Models\Registration;
 
 /**
  * Table shape for the `registrations` table.

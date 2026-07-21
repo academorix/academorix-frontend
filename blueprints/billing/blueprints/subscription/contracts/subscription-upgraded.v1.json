@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/subscription/contracts/subscription-upgraded.v1",
+  "id": "stackra://modules/subscription/contracts/subscription-upgraded.v1",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "title": "subscription-upgraded event \u2014 v1 wire contract",
   "description": "FROZEN wire shape for the `subscription::SubscriptionUpgraded` event. Emitted AFTER a plan swap to a higher tier commits. Distinct from `SubscriptionDowngraded` \u2014 the tier direction is meaningful for the entitlements sync + welcome-to-higher-tier notification flow. Every consumer reads this shape unchanged; breaking changes require a v2 per the versioning policy in `foundation/readme.md` \u00a712.",
-  "x-emitter": "Academorix\\Subscription\\Events\\SubscriptionUpgraded",
+  "x-emitter": "Stackra\\Subscription\\Events\\SubscriptionUpgraded",
   "x-owning-module": "subscription",
   "x-event-name": "subscription.subscription.upgraded",
   "x-version": "v1",

@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Actions\Tenant;
+namespace Stackra\Geofencing\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Geofencing\Contracts\Geofenceable;
-use Academorix\Geofencing\Contracts\Services\GeofenceServiceInterface;
-use Academorix\Geofencing\Data\EvaluateGeofenceData;
-use Academorix\Geofencing\Data\GeofenceCheckResultData;
-use Academorix\Geofencing\Enums\GeofenceMode;
-use Academorix\Geofencing\Enums\GeofenceResult;
-use Academorix\Geofencing\Enums\GeofencingPermission;
-use Academorix\Geofencing\Exceptions\FenceableNotInTenantException;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Geofencing\Contracts\Geofenceable;
+use Stackra\Geofencing\Contracts\Services\GeofenceServiceInterface;
+use Stackra\Geofencing\Data\EvaluateGeofenceData;
+use Stackra\Geofencing\Data\GeofenceCheckResultData;
+use Stackra\Geofencing\Enums\GeofenceMode;
+use Stackra\Geofencing\Enums\GeofenceResult;
+use Stackra\Geofencing\Enums\GeofencingPermission;
+use Stackra\Geofencing\Exceptions\FenceableNotInTenantException;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 

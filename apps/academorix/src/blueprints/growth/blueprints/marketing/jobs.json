@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/marketing/jobs",
+  "id": "stackra://modules/marketing/jobs",
   "$version": 1,
   "title": "marketing — background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Growth\\Marketing\\Jobs\\CaptureMarketingEventJob",
+      "class": "Stackra\\Growth\\Marketing\\Jobs\\CaptureMarketingEventJob",
       "queue": "marketing",
       "purpose": "Listener-driven. Fired by MarketingEventCapturer when a domain event maps to a marketing event type via the DomainEventMapper registry. Normalizes the domain event → marketing_events row + snapshots consent + attribution + eligible-provider list.",
       "steps": [
@@ -27,7 +27,7 @@
       "backoff": [10, 60, 300]
     },
     {
-      "class": "Academorix\\Growth\\Marketing\\Jobs\\DispatchMarketingEventJob",
+      "class": "Stackra\\Growth\\Marketing\\Jobs\\DispatchMarketingEventJob",
       "queue": "marketing",
       "purpose": "Per-event fan-out. Fired on MarketingEventCaptured. Loads eligible provider configs + enqueues one DispatchToProviderJob per provider.",
       "steps": [
@@ -45,7 +45,7 @@
       "backoff": [30, 120, 600]
     },
     {
-      "class": "Academorix\\Growth\\Marketing\\Jobs\\DispatchToProviderJob",
+      "class": "Stackra\\Growth\\Marketing\\Jobs\\DispatchToProviderJob",
       "queue": "marketing",
       "purpose": "Per-provider HTTP call. The workhorse. Wraps the full pre-dispatch gate chain (consent re-check → circuit-breaker check → rate-limit check → transform payload → HTTP call → response validation → observer bookkeeping).",
       "steps": [
@@ -73,7 +73,7 @@
       "note": "tries=1 because the retry semantics are OWNED by this module via RetryFailedDeliveriesJob + backoff schedule. Do NOT enable Laravel-level retry — it would bypass the circuit-breaker + rate-limit gates."
     },
     {
-      "class": "Academorix\\Growth\\Marketing\\Jobs\\RetryFailedDeliveriesJob",
+      "class": "Stackra\\Growth\\Marketing\\Jobs\\RetryFailedDeliveriesJob",
       "queue": "marketing",
       "purpose": "Every 5 min sweep. Picks up marketing_deliveries with status='failed' AND next_retry_at <= now() AND attempt_number < max_attempts + enqueues a fresh DispatchToProviderJob with attempt_number+1.",
       "steps": [
@@ -89,7 +89,7 @@
       "backoff": [30, 120, 600]
     },
     {
-      "class": "Academorix\\Growth\\Marketing\\Jobs\\ReconcileMarketingEventStatusJob",
+      "class": "Stackra\\Growth\\Marketing\\Jobs\\ReconcileMarketingEventStatusJob",
       "queue": "marketing",
       "purpose": "Nightly. Rolls up per-event delivery aggregates + updates marketing_events.status to terminal state when every delivery is terminal. Safety net for events stuck in 'dispatching' due to a crashed job.",
       "steps": [
@@ -97,7 +97,7 @@
         "For each event: aggregate delivery statuses; if every delivery is succeeded → event.status = 'delivered' + fire MarketingEventDelivered",
         "If some succeeded + some dead-lettered → event.status = 'partially_delivered' + fire MarketingEventPartiallyDelivered",
         "If every delivery is dead-lettered → event.status = 'failed' + fire MarketingEventFailed",
-        "Emit metric academorix.marketing.reconcile.stuck_events_found — should stay at 0 in a healthy system"
+        "Emit metric stackra.marketing.reconcile.stuck_events_found — should stay at 0 in a healthy system"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -106,7 +106,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Growth\\Marketing\\Jobs\\OpenCircuitBreakerJob",
+      "class": "Stackra\\Growth\\Marketing\\Jobs\\OpenCircuitBreakerJob",
       "queue": "marketing-critical",
       "purpose": "Dispatched on threshold-hit from MarketingDeliveryFailed listener. Atomically sets circuit_breaker_open_until on the provider config + fires MarketingProviderCircuitBreakerOpened.",
       "steps": [
@@ -121,7 +121,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Growth\\Marketing\\Jobs\\CloseCircuitBreakerJob",
+      "class": "Stackra\\Growth\\Marketing\\Jobs\\CloseCircuitBreakerJob",
       "queue": "marketing",
       "purpose": "Fired from HalfOpenCircuitBreakerJob's success path OR from manual reset (marketing:reset-circuit-breaker). Resets consecutive_failure_count to 0 + clears circuit_breaker_open_until.",
       "steps": [
@@ -135,7 +135,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Growth\\Marketing\\Jobs\\HalfOpenCircuitBreakerJob",
+      "class": "Stackra\\Growth\\Marketing\\Jobs\\HalfOpenCircuitBreakerJob",
       "queue": "marketing",
       "purpose": "Delayed job. When circuit_breaker_open_until elapses, dispatches 1 test probe. Success → close the breaker; failure → re-open.",
       "steps": [
@@ -153,7 +153,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Growth\\Marketing\\Jobs\\PurgeExpiredMarketingDataJob",
+      "class": "Stackra\\Growth\\Marketing\\Jobs\\PurgeExpiredMarketingDataJob",
       "queue": "marketing",
       "purpose": "Weekly sweep. Applies the per-entity retention windows: marketing_events > 7 years → hard delete; marketing_deliveries > 2 years → hard delete; marketing_provider_configs (soft-deleted) > 90 days → hard delete; marketing_dead_letters retained indefinitely (financial audit — never auto-purged).",
       "steps": [

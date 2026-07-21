@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/notifications-push/policies",
+  "id": "stackra://modules/notifications-push/policies",
   "$version": 1,
   "title": "notifications-push \u2014 authorization policies",
   "policies": [
     {
       "model": "PushSubscription",
-      "class": "Academorix\\Notifications\\Push\\Policies\\PushSubscriptionPolicy",
+      "class": "Stackra\\Notifications\\Push\\Policies\\PushSubscriptionPolicy",
       "abilities": [
         {
           "action": "viewAny",

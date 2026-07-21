@@ -4,14 +4,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PrivateSessions\Actions\Tenant;
+namespace Stackra\PrivateSessions\Actions\Tenant;
 
-use Academorix\PrivateSessions\Contracts\Repositories\PrivateSessionRequestRepositoryInterface;
-use Academorix\PrivateSessions\Data\PrivateSessionRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\PrivateSessions\Contracts\Repositories\PrivateSessionRequestRepositoryInterface;
+use Stackra\PrivateSessions\Data\PrivateSessionRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\LaravelData\PaginatedDataCollection;
@@ -20,7 +20,7 @@ use Spatie\LaravelData\PaginatedDataCollection;
  * `GET /api/v1/private-session-requests` — list action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category PrivateSessions
@@ -50,7 +50,7 @@ final class ListPrivateSessionRequestAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Academorix\PrivateSessions\Models\PrivateSessionRequest> $page */
+        /** @var LengthAwarePaginator<int, \Stackra\PrivateSessions\Models\PrivateSessionRequest> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

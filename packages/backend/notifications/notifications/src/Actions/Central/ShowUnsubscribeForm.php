@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Actions\Central;
+namespace Stackra\Notifications\Actions\Central;
 
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\JsonResponse;
 
 /**

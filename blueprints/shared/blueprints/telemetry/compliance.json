@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/telemetry/compliance",
+  "id": "stackra://modules/telemetry/compliance",
   "$version": 1,
   "title": "telemetry \u2014 compliance evidence",
   "description": "Combined compliance surface for the three signals. Traces + metrics leak less than logs (attribute values are usually structured identifiers, not free-form message bodies), so logs carry the heavier redaction obligation. All three signals ship through the same shared redactor pipeline configured under telemetry.redact.*.",
@@ -25,7 +25,7 @@
         {
           "article": "Art. 30",
           "principle": "records of processing",
-          "evidence": "Span attributes + log records include academorix.tenant_id + causer_id \u2014 count as processing records. Documented per subprocessor."
+          "evidence": "Span attributes + log records include stackra.tenant_id + causer_id \u2014 count as processing records. Documented per subprocessor."
         },
         {
           "article": "Art. 32",

@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/auth/metrics",
+  "id": "stackra://modules/auth/metrics",
   "$version": 1,
   "title": "auth \u2014 OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "academorix.auth",
+  "namespace": "stackra.auth",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["outcome", "guard", "application_id", "reason", "trigger"],
@@ -12,14 +12,14 @@
   },
   "metrics": [
     {
-      "name": "academorix.auth.login_attempt",
+      "name": "stackra.auth.login_attempt",
       "kind": "counter",
       "unit": "attempts",
       "labels": ["outcome", "guard", "application_id"],
       "description": "Fired on every login-endpoint invocation. outcome=success|password_mismatch|unknown_email|locked|throttled|mfa_challenge_issued|application_mismatch. guard=sanctum|platform_admin."
     },
     {
-      "name": "academorix.auth.login_duration_ms",
+      "name": "stackra.auth.login_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 50, 200, 500, 1000, 2000],
@@ -27,237 +27,237 @@
       "description": "Wall-clock duration of the login action. Constant-time by design (see identity metrics)."
     },
     {
-      "name": "academorix.auth.logout",
+      "name": "stackra.auth.logout",
       "kind": "counter",
       "unit": "logouts",
       "labels": ["guard", "trigger"],
       "description": "trigger=self_service|idle_timeout|admin_revocation."
     },
     {
-      "name": "academorix.auth.mfa_challenge_issued",
+      "name": "stackra.auth.mfa_challenge_issued",
       "kind": "counter",
       "unit": "challenges",
       "labels": ["challenge_type"],
       "description": "challenge_type=totp|webauthn|recovery_code."
     },
     {
-      "name": "academorix.auth.mfa_challenge_completed",
+      "name": "stackra.auth.mfa_challenge_completed",
       "kind": "counter",
       "unit": "verifications",
       "labels": ["challenge_type", "attempts_bucket"],
       "description": "attempts_bucket=first_try|retry|last_attempt."
     },
     {
-      "name": "academorix.auth.mfa_challenge_failed",
+      "name": "stackra.auth.mfa_challenge_failed",
       "kind": "counter",
       "unit": "failures",
       "labels": ["challenge_type", "is_terminal"],
       "description": "is_terminal=true when the 3rd failure hard-deletes the challenge."
     },
     {
-      "name": "academorix.auth.refresh_rotation",
+      "name": "stackra.auth.refresh_rotation",
       "kind": "counter",
       "unit": "rotations",
       "labels": ["guard"]
     },
     {
-      "name": "academorix.auth.refresh_reuse_detected",
+      "name": "stackra.auth.refresh_reuse_detected",
       "kind": "counter",
       "unit": "detections",
       "labels": [],
       "description": "Breach signal counter. Any non-zero value is investigated by security ops."
     },
     {
-      "name": "academorix.auth.session_revoked",
+      "name": "stackra.auth.session_revoked",
       "kind": "counter",
       "unit": "revocations",
       "labels": ["reason", "guard"],
       "description": "reason=password_changed|user_suspended|user_disabled|admin_revocation|idle_timeout|refresh_reuse|self_service."
     },
     {
-      "name": "academorix.auth.sessions_bulk_revoked",
+      "name": "stackra.auth.sessions_bulk_revoked",
       "kind": "counter",
       "unit": "bulk_events",
       "labels": ["reason"],
       "description": "Single event per bulk operation; the tokens_revoked_count is emitted separately."
     },
     {
-      "name": "academorix.auth.tokens_bulk_revoked",
+      "name": "stackra.auth.tokens_bulk_revoked",
       "kind": "counter",
       "unit": "tokens",
       "labels": ["reason"],
       "description": "Sum of tokens revoked in bulk operations."
     },
     {
-      "name": "academorix.auth.password_reset_initiated",
+      "name": "stackra.auth.password_reset_initiated",
       "kind": "counter",
       "unit": "requests",
       "labels": ["guard", "outcome"],
       "description": "outcome=email_dispatched|email_unknown|throttled. email_unknown never surfaces in the response but IS counted here."
     },
     {
-      "name": "academorix.auth.password_reset_completed",
+      "name": "stackra.auth.password_reset_completed",
       "kind": "counter",
       "unit": "completions",
       "labels": ["guard"]
     },
     {
-      "name": "academorix.auth.email_verification_dispatched",
+      "name": "stackra.auth.email_verification_dispatched",
       "kind": "counter",
       "unit": "dispatches",
       "labels": ["reason"],
       "description": "reason=registration|email_change|resend."
     },
     {
-      "name": "academorix.auth.email_verification_completed",
+      "name": "stackra.auth.email_verification_completed",
       "kind": "counter",
       "unit": "verifications",
       "labels": []
     },
     {
-      "name": "academorix.auth.cross_app_grant_issued",
+      "name": "stackra.auth.cross_app_grant_issued",
       "kind": "counter",
       "unit": "grants",
       "labels": ["source_application_id", "target_application_id"]
     },
     {
-      "name": "academorix.auth.cross_app_grant_exchanged",
+      "name": "stackra.auth.cross_app_grant_exchanged",
       "kind": "counter",
       "unit": "exchanges",
       "labels": ["target_application_id"]
     },
     {
-      "name": "academorix.auth.cross_app_grant_expired",
+      "name": "stackra.auth.cross_app_grant_expired",
       "kind": "counter",
       "unit": "expiries",
       "labels": ["target_application_id"]
     },
     {
-      "name": "academorix.auth.jwt_issued",
+      "name": "stackra.auth.jwt_issued",
       "kind": "counter",
       "unit": "jwts",
       "labels": ["application_id", "purpose"],
       "description": "purpose=user_session|service_account|impersonation."
     },
     {
-      "name": "academorix.auth.jwt_verified",
+      "name": "stackra.auth.jwt_verified",
       "kind": "counter",
       "unit": "verifications",
       "labels": ["outcome", "application_id"],
       "description": "outcome=success|invalid_signature|expired|denied|application_mismatch."
     },
     {
-      "name": "academorix.auth.jwt_denied",
+      "name": "stackra.auth.jwt_denied",
       "kind": "counter",
       "unit": "denials",
       "labels": ["reason"],
       "description": "Deny-list rejections. reason=password_change|user_suspended|manual_revocation|breach_response."
     },
     {
-      "name": "academorix.auth.jwt_signing_key_rotated",
+      "name": "stackra.auth.jwt_signing_key_rotated",
       "kind": "counter",
       "unit": "rotations",
       "labels": ["application_id"]
     },
     {
-      "name": "academorix.auth.impersonation_started",
+      "name": "stackra.auth.impersonation_started",
       "kind": "counter",
       "unit": "sessions",
       "labels": ["target_application_id"]
     },
     {
-      "name": "academorix.auth.impersonation_ended",
+      "name": "stackra.auth.impersonation_ended",
       "kind": "counter",
       "unit": "sessions",
       "labels": ["trigger"],
       "description": "trigger=self_service|ttl_expired|admin_revocation."
     },
     {
-      "name": "academorix.auth.impersonation_active_gauge",
+      "name": "stackra.auth.impersonation_active_gauge",
       "kind": "gauge",
       "unit": "sessions",
       "labels": [],
       "description": "Currently-active impersonation sessions. Emitted every 60s. Non-zero on evening / weekend hours warrants investigation."
     },
     {
-      "name": "academorix.auth.new_device_detected",
+      "name": "stackra.auth.new_device_detected",
       "kind": "counter",
       "unit": "detections",
       "labels": ["guard"]
     },
     {
-      "name": "academorix.auth.rate_limit_login_rejection",
+      "name": "stackra.auth.rate_limit_login_rejection",
       "kind": "counter",
       "unit": "rejections",
       "labels": ["throttle_bucket", "guard"],
       "description": "throttle_bucket=ip|email."
     },
     {
-      "name": "academorix.auth.cors_origin_refused",
+      "name": "stackra.auth.cors_origin_refused",
       "kind": "counter",
       "unit": "refusals",
       "labels": ["application_id"]
     },
     {
-      "name": "academorix.auth.refresh_tokens_purged",
+      "name": "stackra.auth.refresh_tokens_purged",
       "kind": "counter",
       "unit": "tokens",
       "labels": [],
       "description": "PurgeExpiredRefreshTokensJob output."
     },
     {
-      "name": "academorix.auth.reset_tokens_purged",
+      "name": "stackra.auth.reset_tokens_purged",
       "kind": "counter",
       "unit": "tokens",
       "labels": []
     },
     {
-      "name": "academorix.auth.verification_tokens_purged",
+      "name": "stackra.auth.verification_tokens_purged",
       "kind": "counter",
       "unit": "tokens",
       "labels": []
     },
     {
-      "name": "academorix.auth.mfa_challenges_purged",
+      "name": "stackra.auth.mfa_challenges_purged",
       "kind": "counter",
       "unit": "challenges",
       "labels": []
     },
     {
-      "name": "academorix.auth.cross_app_grants_purged",
+      "name": "stackra.auth.cross_app_grants_purged",
       "kind": "counter",
       "unit": "grants",
       "labels": []
     },
     {
-      "name": "academorix.auth.jwt_deny_list_purged",
+      "name": "stackra.auth.jwt_deny_list_purged",
       "kind": "counter",
       "unit": "entries",
       "labels": []
     },
     {
-      "name": "academorix.auth.active_sessions",
+      "name": "stackra.auth.active_sessions",
       "kind": "gauge",
       "unit": "sessions",
       "labels": ["guard"],
       "description": "Count of un-revoked, un-expired PATs. Emitted every 60s."
     },
     {
-      "name": "academorix.auth.active_refresh_tokens",
+      "name": "stackra.auth.active_refresh_tokens",
       "kind": "gauge",
       "unit": "tokens",
       "labels": [],
       "description": "Emitted every 5 minutes."
     },
     {
-      "name": "academorix.auth.jwt_deny_list_size",
+      "name": "stackra.auth.jwt_deny_list_size",
       "kind": "gauge",
       "unit": "entries",
       "labels": [],
       "description": "Current size of the JWT deny list. Should stay well under 10K at any time; growth trends investigated."
     },
     {
-      "name": "academorix.auth.jwt_sign_duration_ms",
+      "name": "stackra.auth.jwt_sign_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1, 5, 20, 100, 500],

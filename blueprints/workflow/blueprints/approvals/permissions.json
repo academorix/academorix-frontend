@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/workflow/approvals/permissions",
+  "id": "stackra://modules/workflow/approvals/permissions",
   "$version": 1,
   "title": "approvals — permissions",
-  "seeder": "Academorix\\Approval\\Database\\Seeders\\ApprovalsPermissionSeeder",
+  "seeder": "Stackra\\Approval\\Database\\Seeders\\ApprovalsPermissionSeeder",
   "isSystem": true,
-  "description": "Permissions split across two guards. `sanctum` guard covers tenant users (viewers + admins + approvers). `platform_admin` guard covers Academorix ops staff (cross-tenant read + registry management). Approval decisions themselves use `approvals.instances.approve` — one permission covers both approve + reject because they're two sides of the same decision-authority.",
+  "description": "Permissions split across two guards. `sanctum` guard covers tenant users (viewers + admins + approvers). `platform_admin` guard covers Stackra ops staff (cross-tenant read + registry management). Approval decisions themselves use `approvals.instances.approve` — one permission covers both approve + reject because they're two sides of the same decision-authority.",
   "permissions": [
     {
       "name": "approvals.actions.viewAny",

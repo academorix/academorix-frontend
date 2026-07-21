@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/service-accounts/events",
+  "id": "stackra://modules/service-accounts/events",
   "$version": 1,
   "title": "service-accounts \u2014 published events",
-  "namespace": "Academorix\\ServiceAccount\\Events",
+  "namespace": "Stackra\\ServiceAccount\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every SA lifecycle event fires after DB commit so downstream listeners never see uncommitted state. Payloads are readonly value objects (readonly class + readonly properties) \u2014 immutable by construction. Payloads carry `service_account_id` only; downstream services that need name/kid/tenant re-fetch through ServiceAccountRepository so redaction rules apply consistently.",
   "events": [
     {
       "name": "ServiceAccountCreated",
-      "class": "Academorix\\ServiceAccount\\Events\\ServiceAccountCreated",
+      "class": "Stackra\\ServiceAccount\\Events\\ServiceAccountCreated",
       "trigger": "New ServiceAccount row inserted, first secret hashed, initial expires_at set. Fires exactly once per SA, ever.",
       "queue": "notifications",
       "consumers": [
@@ -29,7 +29,7 @@
     },
     {
       "name": "ServiceAccountEnabled",
-      "class": "Academorix\\ServiceAccount\\Events\\ServiceAccountEnabled",
+      "class": "Stackra\\ServiceAccount\\Events\\ServiceAccountEnabled",
       "trigger": "is_enabled transitioned from false to true. Fires only for genuine re-enables \u2014 the initial creation fires ServiceAccountCreated, not this.",
       "queue": "notifications",
       "consumers": [
@@ -47,7 +47,7 @@
     },
     {
       "name": "ServiceAccountDisabled",
-      "class": "Academorix\\ServiceAccount\\Events\\ServiceAccountDisabled",
+      "class": "Stackra\\ServiceAccount\\Events\\ServiceAccountDisabled",
       "trigger": "is_enabled transitioned from true to false. Also fires as part of the ServiceAccountExpired + delete flows (each of those fires two events: the domain-specific one AND this).",
       "queue": "notifications-critical",
       "consumers": [
@@ -66,7 +66,7 @@
     },
     {
       "name": "ServiceAccountDeleted",
-      "class": "Academorix\\ServiceAccount\\Events\\ServiceAccountDeleted",
+      "class": "Stackra\\ServiceAccount\\Events\\ServiceAccountDeleted",
       "trigger": "Soft-delete (deleted_at set) OR hard-delete (PurgeExpiredServiceAccountsJob past-hold pass). Two dispatches per full-erasure lifecycle.",
       "queue": "notifications-critical",
       "consumers": [
@@ -87,7 +87,7 @@
     },
     {
       "name": "ServiceAccountSecretRotated",
-      "class": "Academorix\\ServiceAccount\\Events\\ServiceAccountSecretRotated",
+      "class": "Stackra\\ServiceAccount\\Events\\ServiceAccountSecretRotated",
       "trigger": "secret_hash mutated. Also updates secret_rotated_at + expires_at in the same transaction. Fires whether the trigger was manual (operator ran service-account:rotate) or scheduled (future RotateServiceAccountSecretJob).",
       "queue": "notifications",
       "consumers": [
@@ -109,7 +109,7 @@
     },
     {
       "name": "ServiceAccountSecretRotationScheduled",
-      "class": "Academorix\\ServiceAccount\\Events\\ServiceAccountSecretRotationScheduled",
+      "class": "Stackra\\ServiceAccount\\Events\\ServiceAccountSecretRotationScheduled",
       "trigger": "NotifyRotationDueJob detected an SA whose expires_at falls inside the warning window (default 14d). Fires once per SA per week the SA is inside the window \u2014 debounced so the notification volume matches the weekly job cadence.",
       "queue": "notifications",
       "consumers": [
@@ -127,7 +127,7 @@
     },
     {
       "name": "ServiceAccountJwtIssued",
-      "class": "Academorix\\ServiceAccount\\Events\\ServiceAccountJwtIssued",
+      "class": "Stackra\\ServiceAccount\\Events\\ServiceAccountJwtIssued",
       "trigger": "Token-exchange OR test-JWT issuance path. Payload captures the JWT's public metadata (jti, iat, exp, aud) NEVER the encoded token itself.",
       "queue": "notifications",
       "consumers": [
@@ -149,7 +149,7 @@
     },
     {
       "name": "ServiceAccountUsageDetected",
-      "class": "Academorix\\ServiceAccount\\Events\\ServiceAccountUsageDetected",
+      "class": "Stackra\\ServiceAccount\\Events\\ServiceAccountUsageDetected",
       "trigger": "The FIRST request after a > `security.dormant_threshold_days` (default 30) silence. Distinct from the periodic Dormant Detected \u2014 this signals a wake-up which is compromise-adjacent. Debounced so subsequent requests within the same 24h window do NOT re-fire.",
       "queue": "notifications-critical",
       "consumers": [
@@ -169,7 +169,7 @@
     },
     {
       "name": "ServiceAccountExpired",
-      "class": "Academorix\\ServiceAccount\\Events\\ServiceAccountExpired",
+      "class": "Stackra\\ServiceAccount\\Events\\ServiceAccountExpired",
       "trigger": "PurgeExpiredServiceAccountsJob detected an SA past expires_at + grace_days_after_expiry with no rotation. The job soft-disables the SA in the same transaction; this event fires after commit.",
       "queue": "notifications-critical",
       "consumers": [

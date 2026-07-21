@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/season/events",
+  "id": "stackra://modules/season/events",
   "$version": 1,
   "title": "season — published events",
-  "namespace": "Academorix\\Sports\\Season\\Events",
+  "namespace": "Stackra\\Sports\\Season\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Lifecycle events fan out to notifications + activity + audit; financial-relevant events (late_registration_fee_cents changes) additionally feed the audit stream with 7-year retention. SeasonCurrentChanged is the highest-severity event of the module — YoY reporting queries pivot on the current season; every flip generates a mandatory audit row + a cannot-opt-out notification.",
   "events": [
     {
       "name": "SeasonCreated",
-      "class": "Academorix\\Sports\\Season\\Events\\SeasonCreated",
+      "class": "Stackra\\Sports\\Season\\Events\\SeasonCreated",
       "trigger": "SeasonProvisioner finished a successful create. Fires exactly once per `seasons.id`.",
       "queue": "notifications",
       "consumers": [
@@ -34,7 +34,7 @@
     },
     {
       "name": "SeasonUpdated",
-      "class": "Academorix\\Sports\\Season\\Events\\SeasonUpdated",
+      "class": "Stackra\\Sports\\Season\\Events\\SeasonUpdated",
       "trigger": "Any Season scalar field mutated except the specific-transition fields below (status, is_current, start_date, end_date, sport_key, late_registration_fee_cents, capacity_target). Umbrella event for renames, description edits, primary_color changes, sort_order tweaks, allows_late_registration toggles.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -47,7 +47,7 @@
     },
     {
       "name": "SeasonStatusChanged",
-      "class": "Academorix\\Sports\\Season\\Events\\SeasonStatusChanged",
+      "class": "Stackra\\Sports\\Season\\Events\\SeasonStatusChanged",
       "trigger": "Season.status transitioned to any new value. A superset event; the specific-state events below (SeasonStarted, SeasonCompleted, ...) fire alongside for the routing case that cares.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -63,7 +63,7 @@
     },
     {
       "name": "SeasonRegistrationOpened",
-      "class": "Academorix\\Sports\\Season\\Events\\SeasonRegistrationOpened",
+      "class": "Stackra\\Sports\\Season\\Events\\SeasonRegistrationOpened",
       "trigger": "Season.status transitioned planned -> registration_open. Fires from automated RollSeasonPhaseJob (when now() reaches registration_opens_at) OR manual admin open action. Fires alongside SeasonStatusChanged.",
       "queue": "notifications",
       "consumers": [
@@ -81,7 +81,7 @@
     },
     {
       "name": "SeasonRegistrationClosed",
-      "class": "Academorix\\Sports\\Season\\Events\\SeasonRegistrationClosed",
+      "class": "Stackra\\Sports\\Season\\Events\\SeasonRegistrationClosed",
       "trigger": "Season.status transitioned registration_open -> registration_closed. Fires from CloseExpiredRegistrationsJob (every 15 min when now() reaches registration_closes_at) OR manual admin close action. Does NOT block late enrollments — the late window is independent.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -96,7 +96,7 @@
     },
     {
       "name": "SeasonStarted",
-      "class": "Academorix\\Sports\\Season\\Events\\SeasonStarted",
+      "class": "Stackra\\Sports\\Season\\Events\\SeasonStarted",
       "trigger": "Season.status transitioned to in_progress. Fires from automated RollSeasonPhaseJob (when now() reaches start_date OR competition_starts_at when set) OR manual admin start action. Kicks off session scheduling for Wave 3 downstream consumers.",
       "queue": "notifications",
       "consumers": [
@@ -113,7 +113,7 @@
     },
     {
       "name": "SeasonPlayoffsBegun",
-      "class": "Academorix\\Sports\\Season\\Events\\SeasonPlayoffsBegun",
+      "class": "Stackra\\Sports\\Season\\Events\\SeasonPlayoffsBegun",
       "trigger": "Season.status transitioned in_progress -> playoffs. Fires from automated RollSeasonPhaseJob (when now() reaches playoff_starts_at) OR manual admin action. Only fires when Season.has_playoffs=true (guarded by observer).",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -127,7 +127,7 @@
     },
     {
       "name": "SeasonCompleted",
-      "class": "Academorix\\Sports\\Season\\Events\\SeasonCompleted",
+      "class": "Stackra\\Sports\\Season\\Events\\SeasonCompleted",
       "trigger": "Season.status transitioned in_progress -> completed OR playoffs -> completed. Terminal-adjacent state; only archive follows. Fires from automated RollSeasonPhaseJob (when now() reaches end_date OR playoff_ends_at) OR manual admin action.",
       "queue": "notifications",
       "consumers": [
@@ -145,7 +145,7 @@
     },
     {
       "name": "SeasonArchived",
-      "class": "Academorix\\Sports\\Season\\Events\\SeasonArchived",
+      "class": "Stackra\\Sports\\Season\\Events\\SeasonArchived",
       "trigger": "Season.status transitioned completed -> archived. Soft-delete completed; the row is hidden from tenant selectors + booking flows but readable via `?include_archived=true`. Refused when active downstream enrollments still reference this Season.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -160,7 +160,7 @@
     },
     {
       "name": "SeasonRestored",
-      "class": "Academorix\\Sports\\Season\\Events\\SeasonRestored",
+      "class": "Stackra\\Sports\\Season\\Events\\SeasonRestored",
       "trigger": "Archived -> completed. Only within the retention window (default 2555 days = 7 years). Reactivates the row without touching the (retired) enrollments that pointed at it.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -174,7 +174,7 @@
     },
     {
       "name": "SeasonDeleted",
-      "class": "Academorix\\Sports\\Season\\Events\\SeasonDeleted",
+      "class": "Stackra\\Sports\\Season\\Events\\SeasonDeleted",
       "trigger": "Hard-delete completed via PurgeArchivedSeasonsJob (past retention window + no inbound rows) OR via platform-support CLI (two-person path). Wave 3a refuses public hard-delete.",
       "queue": "notifications-critical",
       "consumers": [
@@ -192,7 +192,7 @@
     },
     {
       "name": "SeasonCurrentChanged",
-      "class": "Academorix\\Sports\\Season\\Events\\SeasonCurrentChanged",
+      "class": "Stackra\\Sports\\Season\\Events\\SeasonCurrentChanged",
       "trigger": "The `is_current=true` flag flipped within a scope tuple. Fires with both the newly-current row + the previously-current row so downstream caches can drop keys keyed on either. AUDIT-CRITICAL: year-over-year reports pivot on `is_current`; changing it shifts the whole reporting frame.",
       "queue": "notifications-critical",
       "consumers": [
@@ -214,7 +214,7 @@
     },
     {
       "name": "SeasonDatesShifted",
-      "class": "Academorix\\Sports\\Season\\Events\\SeasonDatesShifted",
+      "class": "Stackra\\Sports\\Season\\Events\\SeasonDatesShifted",
       "trigger": "Season.start_date OR Season.end_date OR Season.playoff_starts_at OR Season.playoff_ends_at changed on an in-flight Season (status IN in_progress, playoffs). AUDIT-WARN: affects enrolled athletes' bookings + coach schedules; regulator interest for minors' programs. Refused when status IN in_progress/playoffs/completed UNLESS caller carries `season.dates.shift` permission.",
       "queue": "notifications-critical",
       "consumers": [
@@ -244,7 +244,7 @@
     },
     {
       "name": "SeasonSportKeyChanged",
-      "class": "Academorix\\Sports\\Season\\Events\\SeasonSportKeyChanged",
+      "class": "Stackra\\Sports\\Season\\Events\\SeasonSportKeyChanged",
       "trigger": "Season.sport_key mutated. CRITICAL severity: should never happen post-in_progress; if it does, downstream Team + Enrollment rows carrying this Season may drift into inconsistency (a hockey team enrolled to a suddenly-basketball season). Refused post-in_progress by the observer.",
       "queue": "notifications-critical",
       "consumers": [
@@ -262,7 +262,7 @@
     },
     {
       "name": "SeasonCapacityTargetChanged",
-      "class": "Academorix\\Sports\\Season\\Events\\SeasonCapacityTargetChanged",
+      "class": "Stackra\\Sports\\Season\\Events\\SeasonCapacityTargetChanged",
       "trigger": "Season.capacity_target mutated (set / changed / cleared). Feeds capacity-planning dashboards. Not enforced anywhere — informational only.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -276,7 +276,7 @@
     },
     {
       "name": "SeasonRegistrationCapReached",
-      "class": "Academorix\\Sports\\Season\\Events\\SeasonRegistrationCapReached",
+      "class": "Stackra\\Sports\\Season\\Events\\SeasonRegistrationCapReached",
       "trigger": "The enrolled-athlete count for this Season crossed `capacity_target` for the first time. Wave 3 athlete-enrollment consumers fire this from their post-commit hook; this module owns the event class so the notification + audit consumers can subscribe today. Informational only — enrollments continue past capacity_target unless a Wave 3 quota gate blocks them.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -290,7 +290,7 @@
     },
     {
       "name": "SeasonLateRegistrationOpened",
-      "class": "Academorix\\Sports\\Season\\Events\\SeasonLateRegistrationOpened",
+      "class": "Stackra\\Sports\\Season\\Events\\SeasonLateRegistrationOpened",
       "trigger": "Season transitioned from registration_closed into the late-registration window (now() >= registration_closes_at AND now() < late_registration_ends_at AND allows_late_registration=true). Fires from CloseExpiredRegistrationsJob when it observes the crossover — the Season row itself stays status=registration_closed; this event is informational to notification consumers.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -304,7 +304,7 @@
     },
     {
       "name": "TenantDefaultSeasonSeeded",
-      "class": "Academorix\\Sports\\Season\\Events\\TenantDefaultSeasonSeeded",
+      "class": "Stackra\\Sports\\Season\\Events\\TenantDefaultSeasonSeeded",
       "trigger": "SeedDefaultSeasonForTenantJob completed for an eligible seasonal-business_type tenant. Fires exactly once per tenant lifetime under normal operations (subsequent seasons come from admin action, not from this listener).",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],

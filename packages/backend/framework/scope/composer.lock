@@ -7,7 +7,7 @@
     "content-hash": "3c3893c590c816e1bf73e92a2dea7117",
     "packages": [
         {
-            "name": "academorix/caching",
+            "name": "stackra/caching",
             "version": "dev-main",
             "dist": {
                 "type": "path",
@@ -15,8 +15,8 @@
                 "reference": "abc235fad1fbb694b582810704fcd69353fad196"
             },
             "require": {
-                "academorix/foundation": "@dev",
-                "academorix/service-provider": "@dev",
+                "stackra/foundation": "@dev",
+                "stackra/service-provider": "@dev",
                 "illuminate/cache": "^13.0",
                 "illuminate/contracts": "^13.0",
                 "illuminate/support": "^13.0",
@@ -34,19 +34,19 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Academorix\\Caching\\Providers\\CachingServiceProvider"
+                        "Stackra\\Caching\\Providers\\CachingServiceProvider"
                     ],
                     "aliases": []
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Academorix\\Caching\\": "src/"
+                    "Stackra\\Caching\\": "src/"
                 }
             },
             "autoload-dev": {
                 "psr-4": {
-                    "Academorix\\Caching\\Tests\\": "tests/"
+                    "Stackra\\Caching\\Tests\\": "tests/"
                 }
             },
             "license": [
@@ -54,7 +54,7 @@
             ],
             "description": "Framework primitive: attribute-driven cache composition. Ships #[Cacheable], #[CacheEvict], #[CachePut], #[CacheKey], #[CacheTag], #[CacheTtl], and #[AsCacheTagResolver], plus a driver-agnostic tag builder (CacheTagBuilder), a driver-capability guard (TaggableCacheGuard), a deterministic key composer (CacheKeyBuilder), the CacheTagResolver contract, and a boot-time discovery pass that hydrates a resolver registry via olvlvl/composer-attribute-collector. No knowledge of tenancy, no Eloquent dependency — this package is the cache substrate every other layer builds on.",
             "keywords": [
-                "academorix",
+                "stackra",
                 "attributes",
                 "cache-aside",
                 "cache-tags",
@@ -67,7 +67,7 @@
             }
         },
         {
-            "name": "academorix/database",
+            "name": "stackra/database",
             "version": "dev-main",
             "dist": {
                 "type": "path",
@@ -75,8 +75,8 @@
                 "reference": "42af7dc67ba66fab377760bb5961910d2ac6fe2e"
             },
             "require": {
-                "academorix/foundation": "@dev",
-                "academorix/service-provider": "@dev",
+                "stackra/foundation": "@dev",
+                "stackra/service-provider": "@dev",
                 "illuminate/contracts": "^13.0",
                 "illuminate/database": "^13.0",
                 "illuminate/support": "^13.0",
@@ -99,32 +99,32 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Academorix\\Database\\Providers\\DatabaseServiceProvider"
+                        "Stackra\\Database\\Providers\\DatabaseServiceProvider"
                     ],
                     "aliases": []
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Academorix\\Database\\": "src/"
+                    "Stackra\\Database\\": "src/"
                 }
             },
             "autoload-dev": {
                 "psr-4": {
-                    "Academorix\\Database\\Tests\\": "tests/"
+                    "Stackra\\Database\\Tests\\": "tests/"
                 }
             },
             "license": [
                 "proprietary"
             ],
-            "description": "Data-layer building blocks for every Academorix module: base Model + schema Blueprint macros + data-shaping attributes (Searchable, Translatable, Metadatable, Sluggable, Sortable, Taggable, UserStamped, UuidColumn, Archivable, StatusColumn) + model concern traits (HasArchive, HasSlug, HasSortOrder, HasStatus, HasTags, HasUserStamp, HasUuid, HasMetadata, HasTranslations, HasPrefixedUlid, HasSystemFlag, HasMockableStorage, InteractsWithMedia). Answers 'what the data IS' — pair with academorix/crud for 'how the data is QUERIED' and academorix/caching for tag-based invalidation.",
+            "description": "Data-layer building blocks for every Stackra module: base Model + schema Blueprint macros + data-shaping attributes (Searchable, Translatable, Metadatable, Sluggable, Sortable, Taggable, UserStamped, UuidColumn, Archivable, StatusColumn) + model concern traits (HasArchive, HasSlug, HasSortOrder, HasStatus, HasTags, HasUserStamp, HasUuid, HasMetadata, HasTranslations, HasPrefixedUlid, HasSystemFlag, HasMockableStorage, InteractsWithMedia). Answers 'what the data IS' — pair with stackra/crud for 'how the data is QUERIED' and stackra/caching for tag-based invalidation.",
             "transport-options": {
                 "symlink": true,
                 "relative": true
             }
         },
         {
-            "name": "academorix/enum",
+            "name": "stackra/enum",
             "version": "dev-main",
             "dist": {
                 "type": "path",
@@ -141,21 +141,21 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Academorix\\Enum\\": "src/"
+                    "Stackra\\Enum\\": "src/"
                 }
             },
             "autoload-dev": {
                 "psr-4": {
-                    "Academorix\\Enum\\Tests\\": "tests/"
+                    "Stackra\\Enum\\Tests\\": "tests/"
                 }
             },
             "license": [
                 "proprietary"
             ],
             "description": "Modern PHP 8.1+ enum system with metadata, attributes, and helper traits",
-            "homepage": "https://github.com/academorix-inc/laravel-framework/enum",
+            "homepage": "https://github.com/stackra-inc/laravel-framework/enum",
             "keywords": [
-                "academorix",
+                "stackra",
                 "attributes",
                 "enum",
                 "laravel",
@@ -163,8 +163,8 @@
                 "php81"
             ],
             "support": {
-                "issues": "https://github.com/academorix-inc/laravel-framework/enum/-/issues",
-                "source": "https://github.com/academorix-inc/laravel-framework/enum"
+                "issues": "https://github.com/stackra-inc/laravel-framework/enum/-/issues",
+                "source": "https://github.com/stackra-inc/laravel-framework/enum"
             },
             "transport-options": {
                 "symlink": true,
@@ -172,7 +172,7 @@
             }
         },
         {
-            "name": "academorix/exceptions",
+            "name": "stackra/exceptions",
             "version": "dev-main",
             "dist": {
                 "type": "path",
@@ -180,8 +180,8 @@
                 "reference": "8f2cb2f189e98489e37d0f4d80ce8013f050330d"
             },
             "require": {
-                "academorix/foundation": "@dev",
-                "academorix/service-provider": "@dev",
+                "stackra/foundation": "@dev",
+                "stackra/service-provider": "@dev",
                 "illuminate/auth": "^13.0",
                 "illuminate/contracts": "^13.0",
                 "illuminate/http": "^13.0",
@@ -210,32 +210,32 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Academorix\\Exceptions\\Providers\\ExceptionsServiceProvider"
+                        "Stackra\\Exceptions\\Providers\\ExceptionsServiceProvider"
                     ],
                     "aliases": []
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Academorix\\Exceptions\\": "src/"
+                    "Stackra\\Exceptions\\": "src/"
                 }
             },
             "autoload-dev": {
                 "psr-4": {
-                    "Academorix\\Exceptions\\Tests\\": "tests/"
+                    "Stackra\\Exceptions\\Tests\\": "tests/"
                 }
             },
             "license": [
                 "proprietary"
             ],
-            "description": "Structured exception hierarchy, JSON error renderer, Spatie Ignition + AI solutions, and Sentry context enrichment for every Academorix app and package.",
+            "description": "Structured exception hierarchy, JSON error renderer, Spatie Ignition + AI solutions, and Sentry context enrichment for every Stackra app and package.",
             "transport-options": {
                 "symlink": true,
                 "relative": true
             }
         },
         {
-            "name": "academorix/foundation",
+            "name": "stackra/foundation",
             "version": "dev-main",
             "dist": {
                 "type": "path",
@@ -243,8 +243,8 @@
                 "reference": "aba248301f80db755ed2ea255b752d9e63b92e08"
             },
             "require": {
-                "academorix/enum": "@dev",
-                "academorix/service-provider": "@dev",
+                "stackra/enum": "@dev",
+                "stackra/service-provider": "@dev",
                 "illuminate/config": "^13.0",
                 "illuminate/contracts": "^13.0",
                 "illuminate/http": "^13.0",
@@ -263,14 +263,14 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Academorix\\Foundation\\Providers\\FoundationServiceProvider"
+                        "Stackra\\Foundation\\Providers\\FoundationServiceProvider"
                     ],
                     "aliases": []
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Academorix\\Foundation\\": "src/"
+                    "Stackra\\Foundation\\": "src/"
                 },
                 "files": [
                     "src/Support/helpers.php"
@@ -278,20 +278,20 @@
             },
             "autoload-dev": {
                 "psr-4": {
-                    "Academorix\\Foundation\\Tests\\": "tests/"
+                    "Stackra\\Foundation\\Tests\\": "tests/"
                 }
             },
             "license": [
                 "proprietary"
             ],
-            "description": "Shared kernel for every Academorix package: module service-provider base class, cross-cutting contracts, correlation-id middleware, guard clauses, testable clock.",
+            "description": "Shared kernel for every Stackra package: module service-provider base class, cross-cutting contracts, correlation-id middleware, guard clauses, testable clock.",
             "transport-options": {
                 "symlink": true,
                 "relative": true
             }
         },
         {
-            "name": "academorix/service-provider",
+            "name": "stackra/service-provider",
             "version": "dev-main",
             "dist": {
                 "type": "path",
@@ -299,7 +299,7 @@
                 "reference": "c11d1efe3584cf994fa1379450d41a504fb87638"
             },
             "require": {
-                "academorix/enum": "@dev",
+                "stackra/enum": "@dev",
                 "illuminate/console": "^13.0",
                 "illuminate/contracts": "^13.0",
                 "illuminate/routing": "^13.0",
@@ -319,18 +319,18 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Academorix\\ServiceProvider\\Providers\\ServiceProviderServiceProvider"
+                        "Stackra\\ServiceProvider\\Providers\\ServiceProviderServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Academorix\\ServiceProvider\\": "src/"
+                    "Stackra\\ServiceProvider\\": "src/"
                 }
             },
             "autoload-dev": {
                 "psr-4": {
-                    "Academorix\\ServiceProvider\\Tests\\": "tests/"
+                    "Stackra\\ServiceProvider\\Tests\\": "tests/"
                 }
             },
             "license": [
@@ -338,7 +338,7 @@
             ],
             "description": "Attribute-driven module service provider for Laravel — declarative resource loading, olvlvl-cached discovery, lifecycle hooks. The enterprise-grade replacement for hand-rolled boot() / register() methods.",
             "keywords": [
-                "academorix",
+                "stackra",
                 "attributes",
                 "laravel",
                 "modules",
@@ -10544,11 +10544,11 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "academorix/caching": 20,
-        "academorix/database": 20,
-        "academorix/exceptions": 20,
-        "academorix/foundation": 20,
-        "academorix/service-provider": 20
+        "stackra/caching": 20,
+        "stackra/database": 20,
+        "stackra/exceptions": 20,
+        "stackra/foundation": 20,
+        "stackra/service-provider": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

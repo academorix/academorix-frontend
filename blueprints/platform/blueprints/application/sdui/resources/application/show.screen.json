@@ -139,7 +139,7 @@
                         "props": { "className": "text-xs text-muted" },
                         "bindings": {
                           "children": {
-                            "$expr": "row.slug + '.academorix.app \u00b7 ' + row.status"
+                            "$expr": "row.slug + '.stackra.app \u00b7 ' + row.status"
                           }
                         }
                       }

@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Concerns;
+namespace Stackra\Coupon\Concerns;
 
 /**
  * Trait — BelongsToCoupon.

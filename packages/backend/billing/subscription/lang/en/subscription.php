@@ -4,7 +4,7 @@
  * @file modules/billing/subscription/lang/en/subscription.php
  *
  * @description
- * English translations for the `academorix/subscription` module.
+ * English translations for the `stackra/subscription` module.
  */
 
 declare(strict_types=1);

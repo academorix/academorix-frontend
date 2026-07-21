@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Data\Requests;
+namespace Stackra\Notifications\Sms\Data\Requests;
 
-use Academorix\Notifications\Sms\Enums\SmsOptOutReason;
+use Stackra\Notifications\Sms\Enums\SmsOptOutReason;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Enum;
 use Spatie\LaravelData\Attributes\Validation\Max;

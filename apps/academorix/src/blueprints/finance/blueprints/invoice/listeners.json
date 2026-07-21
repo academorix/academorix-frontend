@@ -1,102 +1,102 @@
 {
-  "id": "academorix://modules/invoice/listeners",
+  "id": "stackra://modules/invoice/listeners",
   "$version": 1,
   "title": "invoice — subscribed events",
   "listeners": [
     {
       "event": "membership::MembershipCreated",
-      "listener": "Academorix\\Finance\\Invoice\\Listeners\\CreateInvoiceOnMembershipCreated",
+      "listener": "Stackra\\Finance\\Invoice\\Listeners\\CreateInvoiceOnMembershipCreated",
       "queue": "invoice",
       "priority": 100,
       "purpose": "Atomic invoice creation on membership signup. Creates a draft invoice with lines for the membership_charge + setup_fee + any coupon discount. Sets invoice.membership_id + invoice.membership_renewal_id. Runs in the same transaction as MembershipCreated (per membership module's atomic_membership_invoice_creation rule)."
     },
     {
       "event": "membership::MembershipRenewed",
-      "listener": "Academorix\\Finance\\Invoice\\Listeners\\CreateInvoiceOnMembershipRenewed",
+      "listener": "Stackra\\Finance\\Invoice\\Listeners\\CreateInvoiceOnMembershipRenewed",
       "queue": "invoice",
       "priority": 100,
       "purpose": "Per-renewal invoice creation. Fires on each successful MembershipRenewal — creates a new draft invoice for that period, references the MembershipRenewal via membership_renewal_id."
     },
     {
       "event": "tax::TaxCalculationCompleted",
-      "listener": "Academorix\\Finance\\Invoice\\Listeners\\FinalizeInvoiceOnAllLinesTaxed",
+      "listener": "Stackra\\Finance\\Invoice\\Listeners\\FinalizeInvoiceOnAllLinesTaxed",
       "queue": "invoice",
       "priority": 200,
       "purpose": "Async-tax cascade. When a TaxCalculation completes for an invoice line, check if all lines on the parent invoice are now taxed; if so + settings.auto_finalize_on_tax_complete=true, dispatch FinalizeInvoiceJob."
     },
     {
       "event": "coupon::CouponRedeemed",
-      "listener": "Academorix\\Finance\\Invoice\\Listeners\\ApplyCouponOnCouponRedeemed",
+      "listener": "Stackra\\Finance\\Invoice\\Listeners\\ApplyCouponOnCouponRedeemed",
       "queue": "invoice",
       "purpose": "When the coupon module fires CouponRedeemed for a redemption linked to an invoice, dispatch ApplyCouponToInvoiceJob to create the discount_line + update the invoice's discount_amount_cents."
     },
     {
       "event": "payment::PaymentIntentConfirmed",
-      "listener": "Academorix\\Finance\\Invoice\\Listeners\\MarkPaidOnPaymentIntentConfirmed",
+      "listener": "Stackra\\Finance\\Invoice\\Listeners\\MarkPaidOnPaymentIntentConfirmed",
       "queue": "invoice",
       "priority": 100,
       "purpose": "The load-bearing paid-invoice signal. When the payment module confirms a payment intent linked to an invoice (via metadata.invoice_id), aggregates the transaction total against invoice.total_cents and transitions status accordingly (paid / partially_paid). Fires InvoicePaid which cascades to marketing + membership activation."
     },
     {
       "event": "refund::RefundIssued",
-      "listener": "Academorix\\Finance\\Invoice\\Listeners\\IssueCreditNoteOnRefundIssued",
+      "listener": "Stackra\\Finance\\Invoice\\Listeners\\IssueCreditNoteOnRefundIssued",
       "queue": "invoice",
       "priority": 100,
       "purpose": "When the refund module fires refund.issued for a payment on an invoice, dispatch GenerateCreditNoteJob to create the reversal credit_note. Transitions invoice.status paid → refunded (full refund) or leaves at paid (partial refund)."
     },
     {
       "event": "chargeback::ChargebackFiled",
-      "listener": "Academorix\\Finance\\Invoice\\Listeners\\MarkDisputedOnChargebackFiled",
+      "listener": "Stackra\\Finance\\Invoice\\Listeners\\MarkDisputedOnChargebackFiled",
       "queue": "invoice-critical",
       "priority": 100,
       "purpose": "When a chargeback is filed against an invoice's payment, transition status paid → disputed. Fires InvoiceDisputed for downstream ops handoff."
     },
     {
       "event": "chargeback::ChargebackResolvedInFavorOfMerchant",
-      "listener": "Academorix\\Finance\\Invoice\\Listeners\\MarkPaidOnChargebackResolvedInFavorOfMerchant",
+      "listener": "Stackra\\Finance\\Invoice\\Listeners\\MarkPaidOnChargebackResolvedInFavorOfMerchant",
       "queue": "invoice",
       "purpose": "Rare recovery path. When a chargeback is resolved in the merchant's favor (customer's bank sided with the tenant), transition invoice.status disputed → paid."
     },
     {
       "event": "chargeback::ChargebackResolvedInFavorOfCustomer",
-      "listener": "Academorix\\Finance\\Invoice\\Listeners\\IssueCreditNoteOnChargebackResolvedInFavorOfCustomer",
+      "listener": "Stackra\\Finance\\Invoice\\Listeners\\IssueCreditNoteOnChargebackResolvedInFavorOfCustomer",
       "queue": "invoice",
       "purpose": "When the customer's bank forces a chargeback in their favor, dispatch GenerateCreditNoteJob (reason='chargeback_settled') to record the reversal. Invoice.status stays 'disputed' with state_reason='chargeback_lost'."
     },
     {
       "event": "tenancy::TenantErasureRequested",
-      "listener": "Academorix\\Finance\\Invoice\\Listeners\\ArchiveInvoiceFinancialRecordsOnTenantErasure",
+      "listener": "Stackra\\Finance\\Invoice\\Listeners\\ArchiveInvoiceFinancialRecordsOnTenantErasure",
       "queue": "invoice-critical",
       "priority": 10,
       "purpose": "Compliance-critical PRE-erasure hook. Fires BEFORE the TenantErased cascade drops the invoice/credit_note tables. Copies every row + PDF into the compliance archive (S3 Glacier with regulator-facing metadata) to satisfy the 7-10y financial retention obligation. Runs at priority 10 (very early) — must complete before the tenancy module's cascade fires."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Finance\\Invoice\\Listeners\\PurgeInvoiceDataForErasedTenant",
+      "listener": "Stackra\\Finance\\Invoice\\Listeners\\PurgeInvoiceDataForErasedTenant",
       "queue": "invoice",
       "purpose": "Post-archive cascade delete via FK CASCADE. Emits count metrics + writes the compliance audit trail entry."
     },
     {
       "event": "user::UserErased",
-      "listener": "Academorix\\Finance\\Invoice\\Listeners\\RedactCustomerFromInvoicesOnUserErased",
+      "listener": "Stackra\\Finance\\Invoice\\Listeners\\RedactCustomerFromInvoicesOnUserErased",
       "queue": "invoice",
       "purpose": "Individual GDPR Art. 17. Nulls PII fields on invoices + credit_notes where customer is the erased user."
     },
     {
       "event": "tenancy::TenantSuspended",
-      "listener": "Academorix\\Finance\\Invoice\\Listeners\\PauseDunningOnTenantSuspended",
+      "listener": "Stackra\\Finance\\Invoice\\Listeners\\PauseDunningOnTenantSuspended",
       "queue": "invoice",
       "purpose": "When a tenant is suspended, pause the dunning schedule for their invoices. Sets collection_status='paused' on all in_dunning invoices; DispatchDunningRemindersJob refuses when status='paused'. Restored on TenantResumed."
     },
     {
       "event": "tenancy::TenantResumed",
-      "listener": "Academorix\\Finance\\Invoice\\Listeners\\ResumeDunningOnTenantResumed",
+      "listener": "Stackra\\Finance\\Invoice\\Listeners\\ResumeDunningOnTenantResumed",
       "queue": "invoice",
       "purpose": "Reverse PauseDunningOnTenantSuspended. Sets collection_status='in_dunning' + re-enqueues the appropriate DispatchDunningRemindersJob for the current days_past_due stage."
     },
     {
       "event": "compliance::ConsentRevoked",
-      "listener": "Academorix\\Finance\\Invoice\\Listeners\\LogConsentRevocation",
+      "listener": "Stackra\\Finance\\Invoice\\Listeners\\LogConsentRevocation",
       "queue": "invoice",
       "priority": 300,
       "purpose": "When a customer revokes consent (marketing / advertising), invoicing continues (contractual necessity per GDPR Art. 6(1)(b) — the invoicing relationship does not require ongoing consent). This listener merely LOGS the revocation on the customer's invoices for compliance evidence. Notifications for those invoices continue to fire (transactional_required tier)."

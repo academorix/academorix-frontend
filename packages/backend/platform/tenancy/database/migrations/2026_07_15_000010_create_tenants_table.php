@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Tenancy\Contracts\Data\TenantInterface;
+use Stackra\Tenancy\Contracts\Data\TenantInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Schema;
 /**
  * Create the `tenants` table.
  *
- * Customer of an Academorix Application. Carries `application_id`
+ * Customer of an Stackra Application. Carries `application_id`
  * directly (one of the eight boundary rows per
  * `.kiro/steering/tenancy-columns.md` §2). Every domain row below
  * FKs into this table via `BelongsToTenant`.

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Jobs;
+namespace Stackra\Integrations\Jobs;
 
-use Academorix\Integrations\Contracts\Data\TenantIntegrationInterface;
-use Academorix\Integrations\Contracts\Repositories\TenantIntegrationRepositoryInterface;
-use Academorix\Integrations\Contracts\Services\IntegrationRegistryInterface;
-use Academorix\Integrations\Enums\IntegrationSyncStatus;
-use Academorix\Integrations\Events\IntegrationSyncCompleted;
-use Academorix\Integrations\Events\IntegrationSyncFailed;
-use Academorix\Integrations\Events\IntegrationSyncStarted;
-use Academorix\Integrations\Models\TenantIntegration;
+use Stackra\Integrations\Contracts\Data\TenantIntegrationInterface;
+use Stackra\Integrations\Contracts\Repositories\TenantIntegrationRepositoryInterface;
+use Stackra\Integrations\Contracts\Services\IntegrationRegistryInterface;
+use Stackra\Integrations\Enums\IntegrationSyncStatus;
+use Stackra\Integrations\Events\IntegrationSyncCompleted;
+use Stackra\Integrations\Events\IntegrationSyncFailed;
+use Stackra\Integrations\Events\IntegrationSyncStarted;
+use Stackra\Integrations\Models\TenantIntegration;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

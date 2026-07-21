@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Enums;
+namespace Stackra\Search\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
- * Kind of {@see \Academorix\Search\Models\SearchSynonym} entry.
+ * Kind of {@see \Stackra\Search\Models\SearchSynonym} entry.
  *
  * ## Cases
  *

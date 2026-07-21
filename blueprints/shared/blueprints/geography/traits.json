@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/geography/traits",
+  "id": "stackra://modules/geography/traits",
   "$version": 1,
   "title": "geography \u2014 trait composition",
   "description": "One owned trait: HasWorldLocalizedName for models that have a `name` + `iso2` column and a corresponding translation key at `world::country.<ISO2>`. Applied to Country today; the vendor does not ship translations for the other five entities so applying the trait there would be a no-op.",
   "owned": [
     {
-      "trait": "Academorix\\Geography\\Concerns\\HasWorldLocalizedName",
+      "trait": "Stackra\\Geography\\Concerns\\HasWorldLocalizedName",
       "description": "Adds `resolveLocalizedName(?string $locale = null): string` + `getLocalizedNameAttribute(): string` (so `$country->localized_name` works). Resolves against `world::country.<ISO2>` translation catalog with English DB fallback via `Lang::has()` guard.",
       "public": true,
       "usedBy": ["geography::Country"],
@@ -22,7 +22,7 @@
     ],
     "foundation": [
       {
-        "trait": "Academorix\\Foundation\\Concerns\\Filterable",
+        "trait": "Stackra\\Foundation\\Concerns\\Filterable",
         "reason": "Query builder integration for standard filter/sort/include envelope."
       }
     ]

@@ -6,7 +6,7 @@
  * @description
  * Immutable value object representing the "active scope" for a
  * single request. Threaded through every downstream service via
- * {@see \Academorix\Scope\Contracts\ScopeContextInterface}. Kept as
+ * {@see \Stackra\Scope\Contracts\ScopeContextInterface}. Kept as
  * a plain readonly class rather than a Spatie Data DTO to keep the
  * scope package dependency-free — Spatie Data is a fine choice for
  * HTTP boundary DTOs but overkill for this internal handoff.
@@ -14,10 +14,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Data;
+namespace Stackra\Scope\Data;
 
-use Academorix\Scope\Contracts\ScopeContextInterface;
-use Academorix\Scope\Models\ScopeNode;
+use Stackra\Scope\Contracts\ScopeContextInterface;
+use Stackra\Scope\Models\ScopeNode;
 
 /**
  * Active scope for a request.

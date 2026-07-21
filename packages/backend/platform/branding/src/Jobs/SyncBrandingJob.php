@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Jobs;
+namespace Stackra\Branding\Jobs;
 
-use Academorix\Branding\Casts\BrandingPayload;
-use Academorix\Branding\Contracts\Data\BrandingInterface;
-use Academorix\Branding\Contracts\Repositories\BrandingRepositoryInterface;
-use Academorix\Branding\Enums\BrandingTheme;
-use Academorix\Tenancy\Contracts\Data\TenantInterface;
-use Academorix\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
+use Stackra\Branding\Casts\BrandingPayload;
+use Stackra\Branding\Contracts\Data\BrandingInterface;
+use Stackra\Branding\Contracts\Repositories\BrandingRepositoryInterface;
+use Stackra\Branding\Enums\BrandingTheme;
+use Stackra\Tenancy\Contracts\Data\TenantInterface;
+use Stackra\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -24,7 +24,7 @@ use Illuminate\Queue\SerializesModels;
  * (JSONB) so the tenant picker + shell reads the palette without a
  * join.
  *
- * Dispatched by {@see \Academorix\Branding\Observers\BrandingObserver}
+ * Dispatched by {@see \Stackra\Branding\Observers\BrandingObserver}
  * on every save that touches the default row.
  *
  * @category Branding

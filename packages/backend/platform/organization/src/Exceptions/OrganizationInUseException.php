@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Organization\Exceptions;
+namespace Stackra\Organization\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Attempted to delete/archive an Organization referenced by one or more `branches` rows.

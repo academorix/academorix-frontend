@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "monitoring",
   "alias": "monitoring",
-  "namespace": "Academorix\\Observability\\Monitoring",
+  "namespace": "Stackra\\Observability\\Monitoring",
   "description": "The monitoring lane. Answers 'is my system healthy right now?' via server-side health checks + threshold-triggered alerts + provider fan-out. Ops audience — pages on-call when SLOs breach. High-volume, sampling-acceptable, 30-day hot retention. Six tables: `health_checks` (per-tenant health check config — uptime probe, DB probe, queue-depth probe, redis probe, memory probe, HTTP endpoint probe, custom probe), `health_check_runs` (per-execution result — latency + status + error blob), `monitoring_alerts` (fired alert record — signals a threshold breach), `monitoring_alert_policies` (per-tenant threshold config — 5xx rate > 5% over 5min = P1; DB p99 > 500ms over 3min = P2), `monitoring_incidents` (grouped alert timeline — multiple related alerts → one incident; auto-resolves when signals clear), `monitoring_provider_configs` (per-tenant per-provider connection). MultipleInstanceManager pattern via `MonitoringProviderManager` with 6 provider drivers day-1: Sentry (error tracking), Datadog (APM + logs + metrics), PagerDuty (paging + on-call rotation), Opsgenie (paging alternative), Prometheus (metrics scrape endpoint + AlertManager webhook), Custom Webhook (generic HMAC-signed JSON escape hatch for tenant-run Grafana / Grafana Cloud / New Relic / Slack directly / etc.). Retention: alerts + incidents 30d hot / 90d cold; health check runs 7d hot / 30d cold. Complements the frontend `@stackra/monitoring` package (browser-side error reporting) — this module owns SERVER-side monitoring + provider fan-out for alerts fired by BACKEND signals.",
   "keywords": [
     "monitoring",
@@ -32,7 +32,7 @@
     "wave-5"
   ],
   "priority": 19,
-  "providers": ["Academorix\\Observability\\Monitoring\\Providers\\MonitoringServiceProvider"],
+  "providers": ["Stackra\\Observability\\Monitoring\\Providers\\MonitoringServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "application"],
   "extendedBy": [],

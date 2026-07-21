@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsFormationsSdk\Resources;
+namespace Stackra\SportsFormationsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsFormationsSdk\Data\FormationData;
-use Academorix\SportsFormationsSdk\Requests\Formations\CreateFormationRequest;
-use Academorix\SportsFormationsSdk\Requests\Formations\ListFormationsRequest;
-use Academorix\SportsFormationsSdk\Requests\Formations\ShowFormationRequest;
-use Academorix\SportsFormationsSdk\Requests\Formations\UpdateFormationRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsFormationsSdk\Data\FormationData;
+use Stackra\SportsFormationsSdk\Requests\Formations\CreateFormationRequest;
+use Stackra\SportsFormationsSdk\Requests\Formations\ListFormationsRequest;
+use Stackra\SportsFormationsSdk\Requests\Formations\ShowFormationRequest;
+use Stackra\SportsFormationsSdk\Requests\Formations\UpdateFormationRequest;
 use Saloon\Http\Response;
 
 /**
@@ -57,7 +57,7 @@ final readonly class FormationsResource
      *
      * @return FormationData
      */
-    public function create(\Academorix\SportsFormationsSdk\Payloads\Formations\CreateFormationPayload $payload, ?string $idempotencyKey = null): FormationData
+    public function create(\Stackra\SportsFormationsSdk\Payloads\Formations\CreateFormationPayload $payload, ?string $idempotencyKey = null): FormationData
     {
         return $this->connector->send(new CreateFormationRequest($payload, $idempotencyKey))->dto();
     }
@@ -85,7 +85,7 @@ final readonly class FormationsResource
      *
      * @return FormationData
      */
-    public function update(string $formation, \Academorix\SportsFormationsSdk\Payloads\Formations\UpdateFormationPayload $payload, ?string $idempotencyKey = null): FormationData
+    public function update(string $formation, \Stackra\SportsFormationsSdk\Payloads\Formations\UpdateFormationPayload $payload, ?string $idempotencyKey = null): FormationData
     {
         return $this->connector->send(new UpdateFormationRequest($formation, $payload, $idempotencyKey))->dto();
     }

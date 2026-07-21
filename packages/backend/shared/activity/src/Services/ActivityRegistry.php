@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Services;
+namespace Stackra\Activity\Services;
 
-use Academorix\Activity\Attributes\LoggableActivity;
-use Academorix\Activity\Contracts\Services\ActivityRegistryInterface;
+use Stackra\Activity\Attributes\LoggableActivity;
+use Stackra\Activity\Contracts\Services\ActivityRegistryInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**
@@ -13,7 +13,7 @@ use Illuminate\Container\Attributes\Singleton;
  * {@see LoggableActivity} attribute.
  *
  * Hydrated at boot by the framework's generic hydration pump
- * ({@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper})
+ * ({@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper})
  * via the `#[HydratesFrom]` declaration on
  * {@see ActivityRegistryInterface::register()}.
  *

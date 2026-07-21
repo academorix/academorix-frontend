@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/people/policies",
+  "id": "stackra://modules/people/policies",
   "$version": 1,
   "title": "people — authorization policies",
-  "description": "CENTRAL-plane policies. Three model policies + strict lookup gate. Every lookup MUST prove BOTH the Academorix ID AND the date of birth — no PII returned pre-consent. Platform staff can override for support tooling only with audit trail.",
+  "description": "CENTRAL-plane policies. Three model policies + strict lookup gate. Every lookup MUST prove BOTH the Stackra ID AND the date of birth — no PII returned pre-consent. Platform staff can override for support tooling only with audit trail.",
   "policies": [
     {
       "model": "PersonIdentity",
-      "class": "Academorix\\People\\Policies\\PersonIdentityPolicy",
+      "class": "Stackra\\People\\Policies\\PersonIdentityPolicy",
       "abilities": [
         {
           "action": "lookup",
@@ -43,13 +43,13 @@
         {
           "action": "erase",
           "permission": "people.erase.own",
-          "scope": "person owner only. 90-day grace + hard-delete + academorix_id blacklist"
+          "scope": "person owner only. 90-day grace + hard-delete + stackra_id blacklist"
         }
       ]
     },
     {
       "model": "TenantLinkRequest",
-      "class": "Academorix\\People\\Policies\\TenantLinkRequestPolicy",
+      "class": "Stackra\\People\\Policies\\TenantLinkRequestPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -97,7 +97,7 @@
     },
     {
       "model": "PersonGuardianLink",
-      "class": "Academorix\\People\\Policies\\PersonGuardianLinkPolicy",
+      "class": "Stackra\\People\\Policies\\PersonGuardianLinkPolicy",
       "abilities": [
         {
           "action": "viewAny",

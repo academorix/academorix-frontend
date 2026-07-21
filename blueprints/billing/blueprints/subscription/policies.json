@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/subscription/policies",
+  "id": "stackra://modules/subscription/policies",
   "$version": 1,
   "title": "subscription \u2014 authorization policies",
   "policies": [
     {
       "model": "Plan",
-      "class": "Academorix\\Subscription\\Policies\\PlanPolicy",
+      "class": "Stackra\\Subscription\\Policies\\PlanPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -25,7 +25,7 @@
     },
     {
       "model": "Subscription",
-      "class": "Academorix\\Subscription\\Policies\\SubscriptionPolicy",
+      "class": "Stackra\\Subscription\\Policies\\SubscriptionPolicy",
       "abilities": [
         {
           "action": "view",
@@ -54,7 +54,7 @@
     },
     {
       "model": "SubscriptionEvent",
-      "class": "Academorix\\Subscription\\Policies\\SubscriptionEventPolicy",
+      "class": "Stackra\\Subscription\\Policies\\SubscriptionEventPolicy",
       "abilities": [
         {
           "action": "viewAny",

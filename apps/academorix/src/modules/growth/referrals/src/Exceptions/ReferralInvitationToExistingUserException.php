@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Exceptions;
+namespace Stackra\Referrals\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Silent-refuse: the recipient is already signed up.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ReferralInvitationToExistingUserException extends AcademorixException
+final class ReferralInvitationToExistingUserException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

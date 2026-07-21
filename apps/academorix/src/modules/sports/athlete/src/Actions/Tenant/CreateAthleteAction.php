@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Athlete\Actions\Tenant;
+namespace Stackra\Athlete\Actions\Tenant;
 
-use Academorix\Athlete\Contracts\Data\AthleteInterface;
-use Academorix\Athlete\Contracts\Services\AthleteProvisionerInterface;
-use Academorix\Athlete\Data\AthleteData;
-use Academorix\Athlete\Data\Requests\CreateAthleteRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Athlete\Contracts\Data\AthleteInterface;
+use Stackra\Athlete\Contracts\Services\AthleteProvisionerInterface;
+use Stackra\Athlete\Data\AthleteData;
+use Stackra\Athlete\Data\Requests\CreateAthleteRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\JsonResponse;
 
 /**

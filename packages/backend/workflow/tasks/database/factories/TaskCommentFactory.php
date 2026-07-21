@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tasks\Database\Factories;
+namespace Stackra\Tasks\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Tasks\Contracts\Data\TaskCommentInterface;
-use Academorix\Tasks\Models\TaskComment;
+use Stackra\Tasks\Contracts\Data\TaskCommentInterface;
+use Stackra\Tasks\Models\TaskComment;
 
 /**
- * Factory for {@see \Academorix\Tasks\Models\TaskComment}.
+ * Factory for {@see \Stackra\Tasks\Models\TaskComment}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Tasks\Models\TaskComment>
+ * @extends Factory<\Stackra\Tasks\Models\TaskComment>
  *
  * @category Tasks
  *

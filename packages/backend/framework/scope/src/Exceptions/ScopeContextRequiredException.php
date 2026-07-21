@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Exceptions;
+namespace Stackra\Scope\Exceptions;
 
 /**
  * No active scope context — fail closed.

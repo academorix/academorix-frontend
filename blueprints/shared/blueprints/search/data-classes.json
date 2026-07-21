@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/search/data-classes",
+  "id": "stackra://modules/search/data-classes",
   "$version": 1,
   "title": "search \u2014 field classification",
   "description": "Every column across search_indexes, search_sync_jobs, search_synonyms, search_saved_queries, search_analytics_events classified per foundation's tier taxonomy. Note that DOCUMENT CONTENT stored in the physical engine indexes (Meilisearch, PG FTS, pgvector) inherits the source entity's classification \u2014 an athletes index contains regulated_minor rows because Athlete rows are regulated_minor \u2014 not the classification of these ledger tables. Enforcement of the source classification (masking restricted-tier fields before indexing) is done by `HasSearchable::toSearchableArray()`, not by this table.",

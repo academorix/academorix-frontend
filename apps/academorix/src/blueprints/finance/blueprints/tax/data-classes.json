@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tax/data-classes",
+  "id": "stackra://modules/tax/data-classes",
   "$version": 1,
   "title": "tax — field classification",
   "description": "Tax carries FINANCIAL RECORDS + LEGAL DOCUMENTS. tax_amount + rate percentage are competitor intel (revealing tenant tax posture). Certificate numbers + documents are RESTRICTED (legal identifiers). Provider credentials are RESTRICTED (financial-critical). Every calculation is a REGULATED_FINANCIAL record with 7-10 year retention.",

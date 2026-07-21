@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tax/feature-flags",
+  "id": "stackra://modules/tax/feature-flags",
   "$version": 1,
   "title": "tax — kill switches",
   "engine": "laravel/pennant",

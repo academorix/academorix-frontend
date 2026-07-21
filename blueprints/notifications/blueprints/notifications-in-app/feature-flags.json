@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-in-app/feature-flags",
+  "id": "stackra://modules/notifications-in-app/feature-flags",
   "$version": 1,
   "title": "notifications-in-app \u2014 kill switches",
   "description": "Two Pennant flags. Both default ON.",

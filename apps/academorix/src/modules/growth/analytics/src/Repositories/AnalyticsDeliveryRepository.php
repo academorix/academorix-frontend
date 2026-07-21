@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Analytics\Repositories;
+namespace Stackra\Analytics\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Analytics\Contracts\Data\AnalyticsDeliveryInterface;
-use Academorix\Analytics\Contracts\Repositories\AnalyticsDeliveryRepositoryInterface;
-use Academorix\Analytics\Models\AnalyticsDelivery;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Analytics\Contracts\Data\AnalyticsDeliveryInterface;
+use Stackra\Analytics\Contracts\Repositories\AnalyticsDeliveryRepositoryInterface;
+use Stackra\Analytics\Models\AnalyticsDelivery;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Analytics\Models\AnalyticsDelivery}.
+ * Attribute-first Eloquent repository for {@see Stackra\Analytics\Models\AnalyticsDelivery}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AnalyticsDeliveryInterface::class)]` which resolves to
  * `AnalyticsDelivery` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Analytics\Models\AnalyticsDelivery>
+ * @extends Repository<\Stackra\Analytics\Models\AnalyticsDelivery>
  *
  * @category Analytics
  *

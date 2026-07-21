@@ -4,7 +4,7 @@
  * @file packages/exceptions/tests/Unit/JsonErrorFormatterTest.php
  *
  * @description
- * Locks in the wire-shape contract of {@see \Academorix\Exceptions\Formatters\JsonErrorFormatter}.
+ * Locks in the wire-shape contract of {@see \Stackra\Exceptions\Formatters\JsonErrorFormatter}.
  * The formatter replaces the older `JsonErrorRenderer` and is the
  * primary path every API client sees.
  *
@@ -17,7 +17,7 @@
  *   2. **Envelope shape** — every top-level key documented in
  *      `ErrorEnvelope::jsonSerialize()` is present; masked fields
  *      appear or disappear based on the current
- *      {@see \Academorix\Exceptions\Support\MaskingPolicy}.
+ *      {@see \Stackra\Exceptions\Support\MaskingPolicy}.
  *
  *   3. **Debug gating** — the `debug` block ships in local /
  *      development / testing envs and disappears in staging /
@@ -31,7 +31,7 @@
  *
  * ## Why Testbench
  *
- * The formatter depends on {@see \Academorix\Foundation\Enums\AppEnvironment::current()}
+ * The formatter depends on {@see \Stackra\Foundation\Enums\AppEnvironment::current()}
  * which reads `config('app.env')`, and on the container-bound docs
  * URL from `config('exceptions.docs_url')`. Testbench boots a
  * minimal container so both are resolvable.
@@ -39,13 +39,13 @@
 
 declare(strict_types=1);
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Formatters\JsonErrorFormatter;
-use Academorix\Exceptions\Http\TooManyRequestsException;
-use Academorix\Exceptions\Support\ExceptionMapper;
-use Academorix\Exceptions\Support\Redactor;
-use Academorix\Exceptions\Support\TraceCleaner;
-use Academorix\Foundation\Support\CorrelationId;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Formatters\JsonErrorFormatter;
+use Stackra\Exceptions\Http\TooManyRequestsException;
+use Stackra\Exceptions\Support\ExceptionMapper;
+use Stackra\Exceptions\Support\Redactor;
+use Stackra\Exceptions\Support\TraceCleaner;
+use Stackra\Foundation\Support\CorrelationId;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Orchestra\Testbench\TestCase;
@@ -57,7 +57,7 @@ uses(TestCase::class);
  * the tests decoupled from any shipping subclass's defaults.
  */
 if (! class_exists('JsonFormatterFixtureException', false)) {
-    final class JsonFormatterFixtureException extends AcademorixException
+    final class JsonFormatterFixtureException extends StackraException
     {
         public const CODE = 'fixture.simple';
 
@@ -145,7 +145,7 @@ it('canFormat returns false for browser HTML requests', function (): void {
 // -----------------------------------------------------------------
 
 it('format returns a JsonResponse with the mapped HTTP status', function (): void {
-    // Non-Academorix throwable → mapper wraps → renderer honours
+    // Non-Stackra throwable → mapper wraps → renderer honours
     // the mapped `httpStatus`.
     $formatter = makeJsonFormatter();
 
@@ -177,7 +177,7 @@ it('format emits every documented top-level key of the error envelope', function
         ->and($body['error']['correlationId'])->toBe('req_shape')
         // Default `type` uses the URN scheme so responses stay
         // parseable even when no docs URL is configured.
-        ->and($body['error']['type'])->toBe('urn:academorix:error:fixture.simple');
+        ->and($body['error']['type'])->toBe('urn:stackra:error:fixture.simple');
 });
 
 it('format uses config(exceptions.docs_url) to build the type URI when set', function (): void {

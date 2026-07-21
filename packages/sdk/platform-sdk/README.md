@@ -1,10 +1,10 @@
-# academorix/platform-sdk
+# stackra/platform-sdk
 
 Typed Saloon SDK for the Platform service — applications, tenants,
 organizations, regions, branches, settings, feature flags, branding, domains,
 storage.
 
-Per-service umbrella SDK built on the shared kernel (`academorix/api-sdk`). It
+Per-service umbrella SDK built on the shared kernel (`stackra/api-sdk`). It
 owns the Platform service connector (config `sdk.platform.*`), a typed
 `PlatformSdk` client, and a discovery pass scoped to
 `#[AsSdkResource(service: 'platform')]`.
@@ -12,7 +12,7 @@ owns the Platform service connector (config `sdk.platform.*`), a typed
 ## Usage
 
 ```php
-use Academorix\PlatformSdk\Client\PlatformSdk;
+use Stackra\PlatformSdk\Client\PlatformSdk;
 
 $platform = app(PlatformSdk::class);
 $platform->someResource()->find($id);

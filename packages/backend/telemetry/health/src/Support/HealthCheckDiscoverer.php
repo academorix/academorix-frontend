@@ -39,7 +39,7 @@
  *      class carrying `#[AsHealthCheck]`, and writes the target list
  *      to `vendor/attributes.php`.
  *   2. At application boot,
- *      {@see \Academorix\Health\Providers\HealthServiceProvider} calls
+ *      {@see \Stackra\Health\Providers\HealthServiceProvider} calls
  *      {@see discover()} once — before Spatie's Health facade is
  *      exercised so registered checks show up on `/health` and in
  *      the scheduler.
@@ -70,16 +70,16 @@
  * then assert on the recorded warnings without ever touching
  * Spatie's real machinery.
  *
- * @see \Academorix\Health\Attributes\AsHealthCheck  Attribute this class consumes.
- * @see \Academorix\Health\Providers\HealthServiceProvider  Wires this class in.
+ * @see \Stackra\Health\Attributes\AsHealthCheck  Attribute this class consumes.
+ * @see \Stackra\Health\Providers\HealthServiceProvider  Wires this class in.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Health\Support;
+namespace Stackra\Health\Support;
 
-use Academorix\Health\Attributes\AsHealthCheck;
-use Academorix\Health\Enums\HealthNotificationChannel;
+use Stackra\Health\Attributes\AsHealthCheck;
+use Stackra\Health\Enums\HealthNotificationChannel;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
 use olvlvl\ComposerAttributeCollector\Attributes;

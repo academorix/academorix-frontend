@@ -5,9 +5,9 @@
  *
  * @description
  * Default trait providing the four
- * {@see \Academorix\Authorization\Contracts\RoleEnum} accessors
+ * {@see \Stackra\Authorization\Contracts\RoleEnum} accessors
  * (`guard()`, `permissions()`, `description()`, `isSystem()`) by
- * reading the {@see \Academorix\Authorization\Attributes\RoleMeta}
+ * reading the {@see \Stackra\Authorization\Attributes\RoleMeta}
  * attribute attached to each enum case.
  *
  * ## Reflection cost
@@ -31,22 +31,22 @@
  * role is written with the API guard and no permissions until
  * the attribute is added.
  *
- * @see \Academorix\Authorization\Contracts\RoleEnum Interface this trait satisfies.
- * @see \Academorix\Authorization\Attributes\RoleMeta Per-case attribute read by this trait.
+ * @see \Stackra\Authorization\Contracts\RoleEnum Interface this trait satisfies.
+ * @see \Stackra\Authorization\Attributes\RoleMeta Per-case attribute read by this trait.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Authorization\Concerns;
+namespace Stackra\Authorization\Concerns;
 
-use Academorix\Authorization\Attributes\RoleMeta;
-use Academorix\Authorization\Contracts\PermissionEnum;
-use Academorix\Authorization\Enums\Guard;
+use Stackra\Authorization\Attributes\RoleMeta;
+use Stackra\Authorization\Contracts\PermissionEnum;
+use Stackra\Authorization\Enums\Guard;
 use ReflectionClassConstant;
 use ReflectionEnum;
 
 /**
- * Default trait implementation of {@see \Academorix\Authorization\Contracts\RoleEnum}.
+ * Default trait implementation of {@see \Stackra\Authorization\Contracts\RoleEnum}.
  *
  * Use on any string-backed enum that also implements `RoleEnum`.
  */

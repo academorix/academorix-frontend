@@ -1,4 +1,4 @@
-# Migration guide — cross-app HTTP → `academorix/api-sdk`
+# Migration guide — cross-app HTTP → `stackra/api-sdk`
 
 ## For consumers replacing hand-rolled HTTP calls
 
@@ -40,7 +40,7 @@ Gains:
 
    ```
    sdk/
-   ├── composer.json                     # name: academorix-api/<yourmodule>-sdk
+   ├── composer.json                     # name: stackra-api/<yourmodule>-sdk
    └── src/
        ├── <Module>SdkResource.php       # #[AsSdkResource(name: '<yourmodule>')]
        ├── Data/*.php                    # Wire-visible DTOs
@@ -50,7 +50,7 @@ Gains:
    ```
 
 2. Have the meta-SDK depend on it — add
-   `"academorix-api/<yourmodule>-sdk": "@dev"` to
+   `"stackra-api/<yourmodule>-sdk": "@dev"` to
    `packages/sdk/api-sdk/composer.json`'s `require`.
 
 3. Run `composer dump-autoload` in every consuming app so the collector rebuilds
@@ -64,10 +64,10 @@ The server SHOULD import the wire shapes from the SDK sibling so server + client
 can't drift:
 
 ```php
-namespace Academorix\Tenancy\Controllers;
+namespace Stackra\Tenancy\Controllers;
 
-use Academorix\ApiTenancySdk\Data\TenantData;   // <- from the SDK sibling
-use Academorix\Tenancy\Services\TenantService;
+use Stackra\ApiTenancySdk\Data\TenantData;   // <- from the SDK sibling
+use Stackra\Tenancy\Services\TenantService;
 
 final class TenantController
 {
@@ -85,10 +85,10 @@ The DTO is defined once, consumed by both sides.
 1. Ship `packages/sdk/api-sdk/` (this package).
 2. Extract wire shapes from `apps/api/src/modules/tenancy/src/Data/*` into
    `apps/api/src/modules/tenancy/sdk/src/Data/*` (namespace
-   `Academorix\ApiTenancySdk\Data\*`).
+   `Stackra\ApiTenancySdk\Data\*`).
 3. Ship `TenancySdkResource` with `#[AsSdkResource(name: 'tenancy')]`.
 4. Register the sibling in `packages/sdk/api-sdk/composer.json`'s `require`.
-5. Bump `apps/ai-service/composer.json` to require `academorix/api-sdk` and use
+5. Bump `apps/ai-service/composer.json` to require `stackra/api-sdk` and use
    `$this->api->tenancy()` for cross-service calls.
 6. Repeat 2-4 for every other module that has a public HTTP surface (`access`,
    `ai`, …).

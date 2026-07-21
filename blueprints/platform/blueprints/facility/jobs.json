@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/facility/jobs",
+  "id": "stackra://modules/facility/jobs",
   "$version": 1,
   "title": "facility — background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Facility\\Jobs\\ExpireLapsedBookingsJob",
+      "class": "Stackra\\Facility\\Jobs\\ExpireLapsedBookingsJob",
       "queue": "facility",
       "purpose": "Sweep resource_bookings for rows in status='pending' with created_at + 30 minutes past-due. Transitions them to 'cancelled' with cascade_trigger='expired_pending'. Ensures pending-approval bookings don't linger indefinitely + free up their slot for other users.",
       "steps": [
@@ -20,7 +20,7 @@
       "backoff": [30, 120, 600]
     },
     {
-      "class": "Academorix\\Facility\\Jobs\\MarkNoShowJob",
+      "class": "Stackra\\Facility\\Jobs\\MarkNoShowJob",
       "queue": "facility",
       "purpose": "Sweep resource_bookings for confirmed rows past starts_at + 15 min without a checked_in_at. Transitions them to 'no_show' + fires BookingMarkedNoShow (trigger='automated_job').",
       "steps": [
@@ -35,7 +35,7 @@
       "backoff": [30, 120, 600]
     },
     {
-      "class": "Academorix\\Facility\\Jobs\\MarkBookingCompletedJob",
+      "class": "Stackra\\Facility\\Jobs\\MarkBookingCompletedJob",
       "queue": "facility",
       "purpose": "Sweep resource_bookings for confirmed rows past ends_at + 15 min. Transitions them to 'completed' + fires BookingCompleted. Note: skips rows that were marked no_show by MarkNoShowJob (status != confirmed at this point).",
       "steps": [
@@ -50,7 +50,7 @@
       "backoff": [30, 120, 600]
     },
     {
-      "class": "Academorix\\Facility\\Jobs\\ExpireDayPassesJob",
+      "class": "Stackra\\Facility\\Jobs\\ExpireDayPassesJob",
       "queue": "facility",
       "purpose": "Daily sweep of day_passes past valid_on_date with consumed_at IS NULL. Marks them expired + fires DayPassExpired. No refund flow.",
       "steps": [
@@ -63,7 +63,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Facility\\Jobs\\ExpirePassesJob",
+      "class": "Stackra\\Facility\\Jobs\\ExpirePassesJob",
       "queue": "facility",
       "purpose": "Daily sweep of passes past valid_until OR with used_credits >= total_credits (belt-and-suspenders — the observer already fires PassExhausted on the crossing increment). Fires PassExpired for time-expired rows.",
       "steps": [
@@ -78,7 +78,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Facility\\Jobs\\PurgeSoftDeletedFacilitiesJob",
+      "class": "Stackra\\Facility\\Jobs\\PurgeSoftDeletedFacilitiesJob",
       "queue": "facility",
       "purpose": "Weekly sweep of soft-deleted facilities past retention (7 years for financial records associated with the facility). Hard-deletes the row only when NO day_passes or passes still reference it (RESTRICT FKs enforce this at DB level too — the job just cleans up rows that pass all checks).",
       "steps": [
@@ -91,7 +91,7 @@
       "tries": 1
     },
     {
-      "class": "Academorix\\Facility\\Jobs\\SendBookingReminderJob",
+      "class": "Stackra\\Facility\\Jobs\\SendBookingReminderJob",
       "queue": "notifications",
       "purpose": "Individual reminder dispatch. Scheduled by BookingReminderScheduler at booking-create time (24h + 1h before starts_at). Fires the BookingReminderNotification unless the booking has been cancelled since scheduling.",
       "steps": [
@@ -107,13 +107,13 @@
       "backoff": [10, 60, 300]
     },
     {
-      "class": "Academorix\\Facility\\Jobs\\ReconcileBookingsAgainstRetiredFacilitiesJob",
+      "class": "Stackra\\Facility\\Jobs\\ReconcileBookingsAgainstRetiredFacilitiesJob",
       "queue": "facility",
       "purpose": "Weekly audit sweep to catch bookings referencing retired facilities that should have been cancelled by the FacilityRetired cascade. A finding here indicates a race + fires BookingOverlapDetected (misuse of the event? no — same class of ops-alarm: unexpected state).",
       "steps": [
         "SELECT b.id FROM resource_bookings b JOIN facilities f ON f.id = b.facility_id WHERE f.status='retired' AND b.status IN ('pending','confirmed') AND b.starts_at > now()",
         "For each: fire BookingCancelled with cascade_trigger='facility_retired' + cancellation_reason='reconciler_orphan_cleanup'",
-        "Emit metric academorix.facility.reconcile.orphans_found — should always be 0"
+        "Emit metric stackra.facility.reconcile.orphans_found — should always be 0"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -121,7 +121,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Facility\\Jobs\\ReconcileBookingOverlapsJob",
+      "class": "Stackra\\Facility\\Jobs\\ReconcileBookingOverlapsJob",
       "queue": "facility",
       "purpose": "Weekly audit to catch double-bookings that slipped through the SERIALIZABLE overlap check. Every finding fires BookingOverlapDetected. This job's counter should always report 0 findings.",
       "steps": [
@@ -134,7 +134,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Facility\\Jobs\\RedactAnonymousDayPassProfileJob",
+      "class": "Stackra\\Facility\\Jobs\\RedactAnonymousDayPassProfileJob",
       "queue": "facility",
       "purpose": "GDPR data-minimisation. Sweeps day_passes issued to anonymous walk-ins (issued_to_user_id IS NULL) 90 days past consumed_at. Replaces issued_to_profile_name + issued_to_profile_phone with '[REDACTED]' but preserves the receipt_number + price_amount_cents + payment_method for financial retention.",
       "steps": [

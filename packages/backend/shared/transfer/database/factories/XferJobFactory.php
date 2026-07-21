@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Database\Factories;
+namespace Stackra\Transfer\Database\Factories;
 
-use Academorix\Transfer\Contracts\Data\XferJobInterface;
-use Academorix\Transfer\Enums\XferJobStatus;
-use Academorix\Transfer\Enums\XferKind;
-use Academorix\Transfer\Models\XferJob;
+use Stackra\Transfer\Contracts\Data\XferJobInterface;
+use Stackra\Transfer\Enums\XferJobStatus;
+use Stackra\Transfer\Enums\XferKind;
+use Stackra\Transfer\Models\XferJob;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

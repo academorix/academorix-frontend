@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Data\Requests;
+namespace Stackra\Entitlements\Data\Requests;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Max;

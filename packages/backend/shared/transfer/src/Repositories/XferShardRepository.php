@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Repositories;
+namespace Stackra\Transfer\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Transfer\Contracts\Data\XferShardInterface;
-use Academorix\Transfer\Contracts\Repositories\XferShardRepositoryInterface;
-use Academorix\Transfer\Models\XferShard;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Transfer\Contracts\Data\XferShardInterface;
+use Stackra\Transfer\Contracts\Repositories\XferShardRepositoryInterface;
+use Stackra\Transfer\Models\XferShard;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Transfer\Models\XferShard}.
+ * Attribute-first Eloquent repository for {@see Stackra\Transfer\Models\XferShard}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(XferShardInterface::class)]` which resolves to
  * `XferShard` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Transfer\Models\XferShard>
+ * @extends Repository<\Stackra\Transfer\Models\XferShard>
  *
  * @category Transfer
  *

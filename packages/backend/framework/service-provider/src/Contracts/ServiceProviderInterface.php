@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * Service Provider Interface.
  *
- * Defines the contract for module service providers in the Academorix
+ * Defines the contract for module service providers in the Stackra
  * ecosystem. All module service providers should implement this contract
  * either by extending the base ServiceProvider class or by using the
  * AsModuleProvider trait.
@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\ServiceProvider\Contracts;
+namespace Stackra\ServiceProvider\Contracts;
 
 /**
  * Contract for module service providers.

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Console;
+namespace Stackra\Storage\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Storage\Contracts\Data\SignedUrlAuditInterface;
-use Academorix\Storage\Contracts\Repositories\SignedUrlAuditRepositoryInterface;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Storage\Contracts\Data\SignedUrlAuditInterface;
+use Stackra\Storage\Contracts\Repositories\SignedUrlAuditRepositoryInterface;
 
 /**
  * `php artisan storage:signed-url-revoke-all` — emergency revoke

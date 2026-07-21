@@ -1,10 +1,10 @@
 {
-  "name": "academorix/facility",
+  "name": "stackra/facility",
   "type": "library",
-  "description": "Academorix Facility module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/facility/`. Complements the wire SDK at `academorix-platform/facility-sdk`.",
+  "description": "Stackra Facility module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/facility/`. Complements the wire SDK at `stackra-platform/facility-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "platform",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-platform/facility-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-platform/facility-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Facility\\": "src/"
+      "Stackra\\Facility\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Facility\\Tests\\": "tests/"
+      "Stackra\\Facility\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Facility\\Providers\\FacilityServiceProvider"
+        "Stackra\\Facility\\Providers\\FacilityServiceProvider"
       ],
       "aliases": {}
     }

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Models;
+namespace Stackra\Subscription\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Subscription\Contracts\Data\SubscriptionEventInterface;
-use Academorix\Subscription\Database\Factories\SubscriptionEventFactory;
-use Academorix\Subscription\Enums\SubscriptionEventActor;
-use Academorix\Subscription\Enums\SubscriptionEventKind;
-use Academorix\Subscription\Observers\SubscriptionEventObserver;
-use Academorix\Subscription\Policies\SubscriptionEventPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Subscription\Contracts\Data\SubscriptionEventInterface;
+use Stackra\Subscription\Database\Factories\SubscriptionEventFactory;
+use Stackra\Subscription\Enums\SubscriptionEventActor;
+use Stackra\Subscription\Enums\SubscriptionEventKind;
+use Stackra\Subscription\Observers\SubscriptionEventObserver;
+use Stackra\Subscription\Policies\SubscriptionEventPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Services;
+namespace Stackra\Integrations\Services;
 
-use Academorix\Integrations\Contracts\Services\IntegrationSecretsCipherInterface;
+use Stackra\Integrations\Contracts\Services\IntegrationSecretsCipherInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

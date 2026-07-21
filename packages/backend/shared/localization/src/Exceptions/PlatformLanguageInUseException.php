@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Exceptions;
+namespace Stackra\Localization\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a platform admin tries to hard-delete a
- * {@see \Academorix\Localization\Models\PlatformLanguage} row that
+ * {@see \Stackra\Localization\Models\PlatformLanguage} row that
  * has active TenantLocale references. Ops must archive
  * `is_platform_active=false` first, wait for tenants to migrate off,
  * then delete.
@@ -17,7 +17,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PlatformLanguageInUseException extends AcademorixException
+final class PlatformLanguageInUseException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

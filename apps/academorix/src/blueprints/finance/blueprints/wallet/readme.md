@@ -6,7 +6,7 @@ discriminator (per DL-2 in tasks.md).
 
 ## Model A — non-custodial mirror
 
-Academorix does **not** hold customer funds. The wallet ledger is a mirror of
+Stackra does **not** hold customer funds. The wallet ledger is a mirror of
 balances that live at the payment gateway (Stripe Connect Balance) OR are
 already-earned entitlements (credits, points). Money movement always transits
 the gateway; we ledger it locally for fast reads + off-line-tolerant UX.

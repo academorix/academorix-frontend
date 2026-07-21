@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Database\Seeders;
+namespace Stackra\Theme\Database\Seeders;
 
-use Academorix\ServiceProvider\Attributes\AsSeeder;
-use Academorix\Theme\Contracts\Data\ThemePresetInterface;
-use Academorix\Theme\Enums\ThemePresetSlug;
-use Academorix\Theme\Models\ThemePreset;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
+use Stackra\Theme\Contracts\Data\ThemePresetInterface;
+use Stackra\Theme\Enums\ThemePresetSlug;
+use Stackra\Theme\Models\ThemePreset;
 use Illuminate\Database\Seeder;
 
 /**

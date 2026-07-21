@@ -5,7 +5,7 @@
  *
  * @description
  * Behaviour tests for
- * {@see \Academorix\Architecture\Rules\NoDirectModelAccessRule}.
+ * {@see \Stackra\Architecture\Rules\NoDirectModelAccessRule}.
  *
  * The headline layering rule: Models may only be referenced from
  * Repositories, other Models, Tests, Infrastructure, or classes
@@ -13,16 +13,16 @@
  * layer that touches `App\Models\*` produces a violation.
  *
  * Layer classification is performed by the shared
- * {@see \Academorix\Architecture\Support\LayerResolver} — each
+ * {@see \Stackra\Architecture\Support\LayerResolver} — each
  * test builds a resolver primed with realistic defaults, then
  * pushes the fixture SourceFile through the rule.
  */
 
 declare(strict_types=1);
 
-use Academorix\Architecture\Rules\NoDirectModelAccessRule;
-use Academorix\Architecture\Support\LayerResolver;
-use Academorix\Architecture\Support\SourceFileParser;
+use Stackra\Architecture\Rules\NoDirectModelAccessRule;
+use Stackra\Architecture\Support\LayerResolver;
+use Stackra\Architecture\Support\SourceFileParser;
 
 /**
  * Shared factory — mirrors the shipped defaults so tests reason

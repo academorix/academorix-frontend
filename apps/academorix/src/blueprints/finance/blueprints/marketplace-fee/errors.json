@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/marketplace-fee/errors",
+  "id": "stackra://modules/marketplace-fee/errors",
   "$version": 1,
   "title": "marketplace-fee — error codes",
   "namespace": "marketplace_fee",

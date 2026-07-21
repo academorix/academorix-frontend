@@ -13,26 +13,26 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  *
- * @see \Academorix\Horizon\Compiler\HorizonCompiler
+ * @see \Stackra\Horizon\Compiler\HorizonCompiler
  * @see https://laravel.com/docs/horizon
  */
 
-namespace Academorix\Horizon\Providers;
+namespace Stackra\Horizon\Providers;
 
 use Illuminate\Support\Facades\Gate;
 use Laravel\Horizon\Horizon;
 use Laravel\Horizon\HorizonServiceProvider as BaseHorizonServiceProvider;
 use Override;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Concerns\AsModuleProvider;
-use Academorix\ServiceProvider\Contracts\ServiceProviderInterface;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Concerns\AsModuleProvider;
+use Stackra\ServiceProvider\Contracts\ServiceProviderInterface;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
 
 /**
  * Horizon module service provider.
  *
  * Extends the vendor base provider — uses AsModuleProvider trait
- * instead of extending the Academorix ServiceProvider base class.
+ * instead of extending the Stackra ServiceProvider base class.
  *
  * ## Environment Variables
  * - HORIZON_MAIL_NOTIFICATIONS: Email address for notifications

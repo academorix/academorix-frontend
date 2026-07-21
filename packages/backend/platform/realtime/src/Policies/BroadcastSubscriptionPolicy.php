@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Realtime\Policies;
+namespace Stackra\Realtime\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Realtime\Models\BroadcastSubscription;
+use Stackra\User\Models\User;
+use Stackra\Realtime\Models\BroadcastSubscription;
 
 /**
- * Authorization policy for {@see \Academorix\Realtime\Models\BroadcastSubscription}.
+ * Authorization policy for {@see \Stackra\Realtime\Models\BroadcastSubscription}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

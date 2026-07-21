@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/delegation/retention",
+  "id": "stackra://modules/delegation/retention",
   "$version": 1,
   "title": "delegation — retention windows",
   "description": "Two distinct retention tracks. RoleDelegation is 730-day hot then hard-purged (soft-deleted rows only — active/expired stay indefinitely until manually revoked or the tenant is erased). ImpersonationSession is 7-year hot AND NEVER HARD-DELETED (compliance evidence retention — SOC 2 Type II requires impersonation evidence for the entire audit window plus one year). The session_token_hash column IS scrubbed after 30 days but the row is preserved.",

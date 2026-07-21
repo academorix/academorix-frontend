@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/identity/policies",
+  "id": "stackra://modules/identity/policies",
   "$version": 1,
   "title": "identity \u2014 authorization policies",
   "description": "Only ONE policy exists: `IdentityPolicy`. Every ability is gated behind the `platform_admin` guard \u2014 the tenant-audience `sanctum` guard NEVER interacts with Identity rows directly. Tenant callers reach Identity substrate only via auth-service actions (login, MFA challenge, password reset) which route through domain-layer authorization, not this policy.",
   "policies": [
     {
       "model": "Identity",
-      "class": "Academorix\\Identity\\Policies\\IdentityPolicy",
+      "class": "Stackra\\Identity\\Policies\\IdentityPolicy",
       "guard": "platform_admin",
       "abilities": [
         {

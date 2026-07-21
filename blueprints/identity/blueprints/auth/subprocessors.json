@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/auth/subprocessors",
+  "id": "stackra://modules/auth/subprocessors",
   "$version": 1,
   "title": "auth \u2014 subprocessors",
   "description": "Auth invokes two kinds of subprocessors. KMS providers for JWT signing key envelope-encryption (invoked on every sign / verify \u2014 the KMS-decrypted plaintext is in-memory-only). GeoIP provider for the new-location detection listener (invoked on every login for the geolocation_hint used in notification payloads).",

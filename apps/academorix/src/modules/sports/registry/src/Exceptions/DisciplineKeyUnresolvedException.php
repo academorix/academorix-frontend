@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Exceptions;
+namespace Stackra\Registry\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Same shape as SPORT_KEY_UNRESOLVED for the Discipline level.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class DisciplineKeyUnresolvedException extends AcademorixException
+final class DisciplineKeyUnresolvedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

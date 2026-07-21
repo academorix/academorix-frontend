@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Refund\Services;
+namespace Stackra\Refund\Services;
 
-use Academorix\Refund\Contracts\Services\CreditNoteIssuerInterface;
+use Stackra\Refund\Contracts\Services\CreditNoteIssuerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Refund\Contracts\Repositories\RefundLineRepositoryInterface;
+use Stackra\Refund\Contracts\Repositories\RefundLineRepositoryInterface;
 
 /**
  * Concrete service — CreditNoteIssuer.

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Contracts\Services;
+namespace Stackra\Localization\Contracts\Services;
 
-use Academorix\Localization\Attributes\AsLocaleResolutionStrategy;
-use Academorix\Localization\Services\LocaleResolutionStrategyRegistry;
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Localization\Attributes\AsLocaleResolutionStrategy;
+use Stackra\Localization\Services\LocaleResolutionStrategyRegistry;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
 use Illuminate\Container\Attributes\Bind;
 
 /**
  * Registry of every class carrying
  * {@see AsLocaleResolutionStrategy}. Hydrated at boot by the
  * framework's generic
- * {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ * {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  * via the `#[HydratesFrom]` attribute on {@see register()}.
  *
  * @category Localization

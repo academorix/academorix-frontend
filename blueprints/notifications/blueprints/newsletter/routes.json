@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/newsletter/routes",
+  "id": "stackra://modules/newsletter/routes",
   "$version": 1,
   "title": "newsletter \u2014 HTTP routes",
   "description": "Tenant admin CRUD across five entities + public subscribe / confirm / unsubscribe surface.",
@@ -22,50 +22,50 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@index",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@index",
           "permission": "newsletters.viewAny"
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@store",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@store",
           "permission": "newsletters.create"
         },
         {
           "method": "GET",
           "path": "/{newsletter}",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@show",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@show",
           "permission": "newsletters.view"
         },
         {
           "method": "PATCH",
           "path": "/{newsletter}",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@update",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@update",
           "permission": "newsletters.update"
         },
         {
           "method": "DELETE",
           "path": "/{newsletter}",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@destroy",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@destroy",
           "permission": "newsletters.delete",
           "description": "Soft-deletes + cascades to issues / subscriptions / campaigns / audiences."
         },
         {
           "method": "POST",
           "path": "/{newsletter}/pause",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@pause",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@pause",
           "permission": "newsletters.manage"
         },
         {
           "method": "POST",
           "path": "/{newsletter}/resume",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@resume",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@resume",
           "permission": "newsletters.manage"
         },
         {
           "method": "POST",
           "path": "/{newsletter}/archive",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@archive",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@archive",
           "permission": "newsletters.manage"
         }
       ]
@@ -87,56 +87,56 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@index",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@index",
           "permission": "newsletter-issues.viewAny"
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@store",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@store",
           "permission": "newsletter-issues.create"
         },
         {
           "method": "GET",
           "path": "/{issue}",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@show",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@show",
           "permission": "newsletter-issues.view"
         },
         {
           "method": "PATCH",
           "path": "/{issue}",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@update",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@update",
           "permission": "newsletter-issues.update"
         },
         {
           "method": "DELETE",
           "path": "/{issue}",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@destroy",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@destroy",
           "permission": "newsletter-issues.delete"
         },
         {
           "method": "POST",
           "path": "/{issue}/schedule",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@schedule",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@schedule",
           "permission": "newsletter-issues.publish",
           "description": "Body: { scheduled_at, audience_id }. Creates NewsletterCampaign + transitions issue state to scheduled."
         },
         {
           "method": "POST",
           "path": "/{issue}/send-now",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@sendNow",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@sendNow",
           "permission": "newsletter-issues.publish"
         },
         {
           "method": "POST",
           "path": "/{issue}/cancel",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@cancel",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@cancel",
           "permission": "newsletter-issues.publish"
         },
         {
           "method": "POST",
           "path": "/{issue}/preview",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@preview",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@preview",
           "permission": "newsletter-issues.view",
           "description": "Render preview (HTML) without sending."
         }
@@ -159,46 +159,46 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@index",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@index",
           "permission": "newsletter-subscriptions.viewAny"
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@store",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@store",
           "permission": "newsletter-subscriptions.create",
           "description": "Admin add (source=admin_added). Skips double-opt-in if newsletter.confirmation_required=false."
         },
         {
           "method": "GET",
           "path": "/{subscription}",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@show",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@show",
           "permission": "newsletter-subscriptions.view"
         },
         {
           "method": "PATCH",
           "path": "/{subscription}",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@update",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@update",
           "permission": "newsletter-subscriptions.update",
           "description": "Admin edit tags + metadata. Cannot edit email (that would defeat consent)."
         },
         {
           "method": "DELETE",
           "path": "/{subscription}",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@destroy",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@destroy",
           "permission": "newsletter-subscriptions.delete"
         },
         {
           "method": "POST",
           "path": "/import",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@import",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@import",
           "permission": "newsletter-subscriptions.import",
           "description": "CSV import. Dispatches ImportSubscribersJob. Requires consent evidence in the CSV."
         },
         {
           "method": "POST",
           "path": "/export",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@export",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@export",
           "permission": "newsletter-subscriptions.export"
         }
       ]
@@ -220,19 +220,19 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterCampaignController@index",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterCampaignController@index",
           "permission": "newsletter-campaigns.viewAny"
         },
         {
           "method": "GET",
           "path": "/{campaign}",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterCampaignController@show",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterCampaignController@show",
           "permission": "newsletter-campaigns.view"
         },
         {
           "method": "POST",
           "path": "/{campaign}/cancel",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterCampaignController@cancel",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterCampaignController@cancel",
           "permission": "newsletter-campaigns.manage",
           "description": "Cancellable while pending or in_progress."
         }
@@ -255,38 +255,38 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterAudienceController@index",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterAudienceController@index",
           "permission": "newsletter-audiences.viewAny"
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterAudienceController@store",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterAudienceController@store",
           "permission": "newsletter-audiences.create"
         },
         {
           "method": "GET",
           "path": "/{audience}",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterAudienceController@show",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterAudienceController@show",
           "permission": "newsletter-audiences.view"
         },
         {
           "method": "PATCH",
           "path": "/{audience}",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterAudienceController@update",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterAudienceController@update",
           "permission": "newsletter-audiences.update"
         },
         {
           "method": "DELETE",
           "path": "/{audience}",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterAudienceController@destroy",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterAudienceController@destroy",
           "permission": "newsletter-audiences.delete",
           "description": "Refused for is_default=true."
         },
         {
           "method": "POST",
           "path": "/{audience}/refresh",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterAudienceController@refresh",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterAudienceController@refresh",
           "permission": "newsletter-audiences.update",
           "description": "Force re-evaluate the audience expression + refresh cached_subscriber_ids."
         }
@@ -307,29 +307,29 @@
         {
           "method": "POST",
           "path": "/subscribe",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Public\\SubscribeController@store",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Public\\SubscribeController@store",
           "description": "Body: { email, first_name?, last_name?, locale?, tags? }. Creates pending_confirmation NewsletterSubscription + dispatches confirmation email."
         },
         {
           "method": "GET",
           "path": "/confirm/{token}",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Public\\ConfirmController@confirm"
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Public\\ConfirmController@confirm"
         },
         {
           "method": "POST",
           "path": "/confirm/{token}",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Public\\ConfirmController@confirm"
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Public\\ConfirmController@confirm"
         },
         {
           "method": "GET",
           "path": "/unsubscribe/{token}",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Public\\UnsubscribeController@show",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Public\\UnsubscribeController@show",
           "description": "Renders unsubscribe confirmation page (branded)."
         },
         {
           "method": "POST",
           "path": "/unsubscribe/{token}",
-          "controller": "Academorix\\Newsletter\\Http\\Controllers\\Public\\UnsubscribeController@unsubscribe",
+          "controller": "Stackra\\Newsletter\\Http\\Controllers\\Public\\UnsubscribeController@unsubscribe",
           "description": "RFC 8058 List-Unsubscribe-Post supported here."
         }
       ]

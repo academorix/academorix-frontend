@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/admin-console/schemas/admin-dashboard-config",
+  "id": "stackra://modules/admin-console/schemas/admin-dashboard-config",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "AdminDashboardConfig",

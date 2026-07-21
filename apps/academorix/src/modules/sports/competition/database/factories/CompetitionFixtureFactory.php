@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Competition\Database\Factories;
+namespace Stackra\Competition\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Competition\Contracts\Data\CompetitionFixtureInterface;
-use Academorix\Competition\Models\CompetitionFixture;
+use Stackra\Competition\Contracts\Data\CompetitionFixtureInterface;
+use Stackra\Competition\Models\CompetitionFixture;
 
 /**
- * Factory for {@see \Academorix\Competition\Models\CompetitionFixture}.
+ * Factory for {@see \Stackra\Competition\Models\CompetitionFixture}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Competition\Models\CompetitionFixture>
+ * @extends Factory<\Stackra\Competition\Models\CompetitionFixture>
  *
  * @category Competition
  *

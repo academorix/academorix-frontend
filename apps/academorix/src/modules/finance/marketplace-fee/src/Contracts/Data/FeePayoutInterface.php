@@ -4,15 +4,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\MarketplaceFee\Contracts\Data;
+namespace Stackra\MarketplaceFee\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\MarketplaceFee\Models\FeePayout;
+use Stackra\MarketplaceFee\Models\FeePayout;
 
 /**
  * Table shape for the `fee_payouts` table.
  *
- * Academorix-facing payout of fees to the platform account.
+ * Stackra-facing payout of fees to the platform account.
  *
  * @category MarketplaceFee
  *

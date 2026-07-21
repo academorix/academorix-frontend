@@ -2,11 +2,11 @@
  * @file tsup.config.ts
  * @module {{ packageName }}
  * @description tsup build config. Imports the shared preset from
- *   `@academorix/config-tsup` and passes the package's per-subpath
+ *   `@stackra/config-tsup` and passes the package's per-subpath
  *   entries.
  */
 
-import { defineBaseConfig } from "@academorix/config-tsup";
+import { defineBaseConfig } from "@stackra/config-tsup";
 
 export default defineBaseConfig({
   index: "{{ srcDir }}/core/index.ts",

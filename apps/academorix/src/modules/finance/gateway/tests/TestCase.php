@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Gateway\Tests;
+namespace Stackra\Gateway\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/gateway.
+ * Base test case for stackra/gateway.
  *
  * @category Gateway
  *

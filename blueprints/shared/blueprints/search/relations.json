@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/search/relations",
+  "id": "stackra://modules/search/relations",
   "$version": 1,
   "title": "search \u2014 model relationships",
   "description": "Five owned models with a hub-and-spoke shape: SearchIndex is the primary aggregate; SearchSyncJob + SearchSynonym hang off it. SearchSavedQuery + SearchAnalyticsEvent are user-facing peers scoped to tenant. Cross-module: SearchSyncJob may reference an xfer_artifact for the reindex-from-transfer-export flow.",

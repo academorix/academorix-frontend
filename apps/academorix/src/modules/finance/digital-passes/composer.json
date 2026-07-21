@@ -1,10 +1,10 @@
 {
-  "name": "academorix/digital-passes",
+  "name": "stackra/digital-passes",
   "type": "library",
-  "description": "Academorix DigitalPasses module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/digital-passes/`. Complements the wire SDK at `academorix-finance/digital-passes-sdk`.",
+  "description": "Stackra DigitalPasses module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/digital-passes/`. Complements the wire SDK at `stackra-finance/digital-passes-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "finance",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-finance/digital-passes-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-finance/digital-passes-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\DigitalPasses\\": "src/"
+      "Stackra\\DigitalPasses\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\DigitalPasses\\Tests\\": "tests/"
+      "Stackra\\DigitalPasses\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\DigitalPasses\\Providers\\DigitalPassesServiceProvider"
+        "Stackra\\DigitalPasses\\Providers\\DigitalPassesServiceProvider"
       ],
       "aliases": {}
     }

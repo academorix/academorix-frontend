@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Reporters;
+namespace Stackra\Exceptions\Reporters;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Contracts\ExceptionReporterInterface;
-use Academorix\Exceptions\Support\Redactor;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Contracts\ExceptionReporterInterface;
+use Stackra\Exceptions\Support\Redactor;
 use Illuminate\Contracts\Container\Container;
 use Throwable;
 
 /**
- * Reporter that enriches Sentry scope with Academorix-structured
+ * Reporter that enriches Sentry scope with Stackra-structured
  * metadata before Sentry's own SDK emits the event.
  *
  * ## SDK availability
@@ -26,8 +26,8 @@ use Throwable;
  *   - **Tags** — `error.code`, `error.category`, `error.severity`,
  *     `correlation_id`, `tenant_id`, `route`. Sentry indexes tags for
  *     search + alerting.
- *   - **Contexts** — `academorix.error` (full masked exception
- *     snapshot) and `academorix.request` (masked per-request metadata
+ *   - **Contexts** — `stackra.error` (full masked exception
+ *     snapshot) and `stackra.request` (masked per-request metadata
  *     from the exception-context middleware).
  *
  * The redactor runs on every value before Sentry receives it, so we
@@ -65,9 +65,9 @@ final class SentryReporter implements ExceptionReporterInterface
                 }
             }
 
-            if ($throwable instanceof AcademorixException) {
+            if ($throwable instanceof StackraException) {
                 $scope->setContext(
-                    'academorix.error',
+                    'stackra.error',
                     $this->redactor->redact($throwable->toArray()),
                 );
 
@@ -78,7 +78,7 @@ final class SentryReporter implements ExceptionReporterInterface
 
             if ($requestContext !== []) {
                 $scope->setContext(
-                    'academorix.request',
+                    'stackra.request',
                     $this->redactor->redact($requestContext),
                 );
             }
@@ -104,7 +104,7 @@ final class SentryReporter implements ExceptionReporterInterface
     {
         $tags = [];
 
-        if ($e instanceof AcademorixException) {
+        if ($e instanceof StackraException) {
             $tags['error.code'] = $e->errorCode();
             $tags['error.category'] = $e->category()->value;
             $tags['error.severity'] = $e->severity()->value;
@@ -126,11 +126,11 @@ final class SentryReporter implements ExceptionReporterInterface
      */
     private function requestContext(): array
     {
-        if (! $this->container->bound('academorix.exception_context')) {
+        if (! $this->container->bound('stackra.exception_context')) {
             return [];
         }
 
-        $context = $this->container->make('academorix.exception_context');
+        $context = $this->container->make('stackra.exception_context');
 
         return is_array($context) ? $context : [];
     }

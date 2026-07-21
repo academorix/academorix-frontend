@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://github.com/academorix-inc/laravel--laravel/framework/routing/-/raw/main/.gitlab/banner.svg" alt="Routing" width="100%">
+<img src="https://github.com/stackra-inc/laravel--laravel/framework/routing/-/raw/main/.gitlab/banner.svg" alt="Routing" width="100%">
 
 </div>
 
@@ -29,7 +29,7 @@ The package is already installed as part of the monorepo. If installing
 separately:
 
 ```bash
-composer require academorix/routing
+composer require stackra/routing
 ```
 
 ## Quick Start
@@ -41,11 +41,11 @@ composer require academorix/routing
 
 namespace App\Controllers;
 
-use Academorix\Routing\Attributes\Routing\Controller;
-use Academorix\Routing\Attributes\Routing\Get;
-use Academorix\Routing\Attributes\Routing\Post;
-use Academorix\Routing\Attributes\Routing\Put;
-use Academorix\Routing\Attributes\Routing\Delete;
+use Stackra\Routing\Attributes\Routing\Controller;
+use Stackra\Routing\Attributes\Routing\Get;
+use Stackra\Routing\Attributes\Routing\Post;
+use Stackra\Routing\Attributes\Routing\Put;
+use Stackra\Routing\Attributes\Routing\Delete;
 
 #[AsController]
 #[Prefix('api/v1/users')]
@@ -435,7 +435,7 @@ The package provides a `BaseController` class that extends Laravel's base
 controller:
 
 ```php
-use Academorix\Routing\BaseController;
+use Stackra\Routing\BaseController;
 
 class UserController extends BaseController
 {
@@ -530,7 +530,7 @@ Metadata for automatic API documentation generation.
 ## Testing
 
 ```php
-use Academorix\Routing\Tests\TestCase;
+use Stackra\Routing\Tests\TestCase;
 
 class UserControllerTest extends TestCase
 {

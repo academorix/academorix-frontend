@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/subscription/config",
+  "id": "stackra://modules/subscription/config",
   "$version": 1,
   "title": "subscription \u2014 developer configuration",
   "configFile": "config/subscription.php",

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Exceptions;
+namespace Stackra\FeatureFlags\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Raised when disabling a hierarchy flag would orphan existing rows.

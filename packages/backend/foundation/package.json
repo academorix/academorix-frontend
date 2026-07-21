@@ -1,8 +1,8 @@
 {
-  "name": "@academorix/foundation",
+  "name": "@stackra/foundation",
   "version": "0.0.0",
   "private": true,
-  "description": "Turborepo shim for the PHP `academorix/foundation` package. Maps `turbo run <task>` onto composer / pint / phpstan / pest. NOTE: the composer install script is deliberately named `install:composer` (not `install`) so pnpm's own lifecycle does not auto-invoke composer during a root `pnpm install`.",
+  "description": "Turborepo shim for the PHP `stackra/foundation` package. Maps `turbo run <task>` onto composer / pint / phpstan / pest. NOTE: the composer install script is deliberately named `install:composer` (not `install`) so pnpm's own lifecycle does not auto-invoke composer during a root `pnpm install`.",
   "scripts": {
     "install:composer": "composer install --no-interaction --prefer-dist",
     "lint": "echo 'PHP package - lint via composer lint / pint (run from the Laravel app)'",

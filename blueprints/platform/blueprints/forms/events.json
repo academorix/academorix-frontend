@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/forms/events",
+  "id": "stackra://modules/forms/events",
   "$version": 1,
   "title": "forms — published events",
-  "namespace": "Academorix\\Platform\\Forms\\Events",
+  "namespace": "Stackra\\Platform\\Forms\\Events",
   "dispatchMode": "afterCommit",
   "description": "Form authoring lifecycle + public submission stream. FormSubmissionCompleted is the trigger every domain handoff hangs off — most cross-module cascades ride this event. FormFileUploaded is HIGH VOLUME for medical questionnaires — sampled 10% for activity log.",
   "events": [

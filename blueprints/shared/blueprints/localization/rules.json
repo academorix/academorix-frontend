@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/localization/rules",
+  "id": "stackra://modules/localization/rules",
   "$version": 1,
   "title": "localization \u2014 validation rules",
   "description": "Custom Laravel validation rules published by LocalizationServiceProvider::boot() so any FormRequest / Data class can validate translation blobs. All three rules operate on the JSONB shape `{ locale_code: { field: value } }` written by the `HasTranslations` trait.",
-  "namespace": "Academorix\\Localization\\Rules",
+  "namespace": "Stackra\\Localization\\Rules",
   "rules": [
     {
       "name": "translatable_required",
-      "class": "Academorix\\Localization\\Rules\\TranslatableRequired",
+      "class": "Stackra\\Localization\\Rules\\TranslatableRequired",
       "signature": "translatable_required:<locale_codes>",
       "description": "Ensures the JSONB blob contains a NON-EMPTY value for every locale in the argument list. Argument is either a comma-joined list of BCP-47 codes or the sentinel `tenant_required` (resolved at runtime from `TenantLocale where is_required=true`).",
       "params": [
@@ -25,7 +25,7 @@
     },
     {
       "name": "translatable_locale_available",
-      "class": "Academorix\\Localization\\Rules\\TranslatableLocaleAvailable",
+      "class": "Stackra\\Localization\\Rules\\TranslatableLocaleAvailable",
       "signature": "translatable_locale_available[:scope]",
       "description": "Ensures every locale key in the JSONB blob is (a) a valid BCP-47 tag AND (b) enabled on the current scope. Scope defaults to `tenant` (rejects locales not enabled on the caller's TenantLocale); `platform` allows any `PlatformLanguage.locale_code` (used by platform-admin surfaces).",
       "params": [{ "name": "scope", "type": "'tenant' | 'platform'", "default": "tenant" }],
@@ -36,7 +36,7 @@
     },
     {
       "name": "translatable_length_per_locale",
-      "class": "Academorix\\Localization\\Rules\\TranslatableLengthPerLocale",
+      "class": "Stackra\\Localization\\Rules\\TranslatableLengthPerLocale",
       "signature": "translatable_length_per_locale:<max>",
       "description": "Enforces per-locale character length limits on the JSONB blob. Rejects the whole request when ANY locale value exceeds `<max>`. Validates against multibyte character counts (mb_strlen), not raw bytes, so `\u00e9` counts as 1 character not 2.",
       "params": [{ "name": "max", "type": "integer" }],

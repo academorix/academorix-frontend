@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/monitoring/data/providers/opsgenie-config",
+  "id": "stackra://modules/monitoring/data/providers/opsgenie-config",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Opsgenie provider config",

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Console\Commands;
+namespace Stackra\Geofencing\Console\Commands;
 
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Commands\BaseCommand;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Symfony\Component\Console\Attribute\AsCommand;
 

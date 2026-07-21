@@ -2,15 +2,15 @@
 
 /**
  * @file MakeNativeScreenCommand.php
- * @module Academorix\Cli\Commands
- * @description `academorix make:native-screen <name> --domain=<x>` —
+ * @module Stackra\Cli\Commands
+ * @description `stackra make:native-screen <name> --domain=<x>` —
  *   v0.1 placeholder. v0.2 emits a heroui-native-pro screen wired
  *   through Expo Router.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Commands;
+namespace Stackra\Cli\Commands;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Teams\Models\EventTeam;
+use Stackra\Teams\Models\EventTeam;
 
 it('is a placeholder — replace with actual EventTeam unit tests', function (): void {
     expect(EventTeam::class)->toBeString();

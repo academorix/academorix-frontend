@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Events;
+namespace Stackra\Leads\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -17,7 +17,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - audit::WriteToAuditLog (retention: 7 years — regulator lookback on marketing conversions)
  * - leads::SnapshotAttributionOnLeadCapture (reads growth::attribution + freezes into leads.attribution_snapshot)
  * - notifications::DispatchLeadCapturedNotification (opt-in to marketing role — new-lead alerts)
- * - monitoring::MetricsCollector (increments academorix.leads.captured_total)
+ * - monitoring::MetricsCollector (increments stackra.leads.captured_total)
  *
  * @category Leads
  *

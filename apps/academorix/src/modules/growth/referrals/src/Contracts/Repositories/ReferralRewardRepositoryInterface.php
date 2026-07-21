@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Contracts\Repositories;
+namespace Stackra\Referrals\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Referrals\Models\ReferralReward}.
+ * Repository contract for {@see Stackra\Referrals\Models\ReferralReward}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `ReferralRewardRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Referrals\Models\ReferralReward>
+ * @extends RepositoryInterface<\Stackra\Referrals\Models\ReferralReward>
  *
  * @category Referrals
  *

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Casts;
+namespace Stackra\Entitlements\Casts;
 
-use Academorix\Entitlements\Contracts\Data\EntitlementInterface;
-use Academorix\Entitlements\Enums\EntitlementKind;
+use Stackra\Entitlements\Contracts\Data\EntitlementInterface;
+use Stackra\Entitlements\Enums\EntitlementKind;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Database\Factories;
+namespace Stackra\Geography\Database\Factories;
 
-use Academorix\Geography\Contracts\Data\TimezoneInterface;
-use Academorix\Geography\Models\Timezone;
+use Stackra\Geography\Contracts\Data\TimezoneInterface;
+use Stackra\Geography\Models\Timezone;
 use DateTimeZone;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

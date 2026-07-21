@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Exceptions;
+namespace Stackra\Mfa\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Round-2 confirm refused because no round-1 preview was ever issued for the caller's session.

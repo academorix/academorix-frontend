@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Actions\Platform\Cities;
+namespace Stackra\Geography\Actions\Platform\Cities;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Geography\Contracts\Repositories\CityRepositoryInterface;
-use Academorix\Geography\Enums\GeographyPermission;
-use Academorix\Geography\Models\City;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Delete;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Geography\Contracts\Repositories\CityRepositoryInterface;
+use Stackra\Geography\Enums\GeographyPermission;
+use Stackra\Geography\Models\City;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Delete;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\JsonResponse;
 
 /**

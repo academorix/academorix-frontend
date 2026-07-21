@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Wallet\Data\Requests;
+namespace Stackra\Wallet\Data\Requests;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\In;

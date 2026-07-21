@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Events;
+namespace Stackra\Branding\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 

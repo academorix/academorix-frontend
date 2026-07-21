@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Repositories;
+namespace Stackra\Tenancy\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Tenancy\Contracts\Data\TenantInterface;
-use Academorix\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
-use Academorix\Tenancy\Models\Tenant;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Tenancy\Contracts\Data\TenantInterface;
+use Stackra\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
+use Stackra\Tenancy\Models\Tenant;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Tenancy\Models\Tenant}.
+ * Attribute-first Eloquent repository for {@see Stackra\Tenancy\Models\Tenant}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(TenantInterface::class)]` which resolves to
  * `Tenant` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Tenancy\Models\Tenant>
+ * @extends Repository<\Stackra\Tenancy\Models\Tenant>
  *
  * @category Tenancy
  *

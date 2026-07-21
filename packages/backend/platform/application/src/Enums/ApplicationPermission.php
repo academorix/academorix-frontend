@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Enums;
+namespace Stackra\Application\Enums;
 
-use Academorix\Authorization\Contracts\PermissionEnum;
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Authorization\Contracts\PermissionEnum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
  * Permissions this module contributes to the `platform_admin` guard.
  *
  * Every case's backing value IS the storage key in spatie/laravel-permission's
- * `permissions` table. Discovered at boot by `academorix/authorization`'s
+ * `permissions` table. Discovered at boot by `stackra/authorization`'s
  * hydrator via the provider's `$permissions` array.
  *
  * The BusinessType write permissions apply ONLY to tenant-custom rows —

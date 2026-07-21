@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\People\Models;
+namespace Stackra\People\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\People\Contracts\Data\PersonIdentityInterface;
-use Academorix\People\Database\Factories\PersonIdentityFactory;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\People\Policies\PersonIdentityPolicy;
+use Stackra\People\Contracts\Data\PersonIdentityInterface;
+use Stackra\People\Database\Factories\PersonIdentityFactory;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\People\Policies\PersonIdentityPolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -27,7 +27,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 /**
  * Eloquent model for a PersonIdentity.
  *
- * CENTRAL-plane global identity carrying the Academorix ID.
+ * CENTRAL-plane global identity carrying the Stackra ID.
  *
  * @category People
  *
@@ -35,7 +35,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  */
 #[Table(name: PersonIdentityInterface::TABLE, key: PersonIdentityInterface::PRIMARY_KEY, keyType: PersonIdentityInterface::KEY_TYPE)]
 #[Fillable([
-    PersonIdentityInterface::ATTR_ACADEMORIX_ID,
+    PersonIdentityInterface::ATTR_STACKRA_ID,
         PersonIdentityInterface::ATTR_LEGAL_NAME,
         PersonIdentityInterface::ATTR_DATE_OF_BIRTH,
         PersonIdentityInterface::ATTR_NATIONALITY,

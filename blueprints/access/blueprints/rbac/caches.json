@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/rbac/caches",
+  "id": "stackra://modules/rbac/caches",
   "$version": 1,
   "title": "rbac \u2014 cache keys + tags",
   "driver": "redis",

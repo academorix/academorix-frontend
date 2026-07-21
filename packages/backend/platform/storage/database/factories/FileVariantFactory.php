@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Database\Factories;
+namespace Stackra\Storage\Database\Factories;
 
-use Academorix\Storage\Contracts\Data\FileVariantInterface;
-use Academorix\Storage\Models\FileVariant;
+use Stackra\Storage\Contracts\Data\FileVariantInterface;
+use Stackra\Storage\Models\FileVariant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -35,7 +35,7 @@ final class FileVariantFactory extends Factory
             FileVariantInterface::ATTR_FILE_ID                 => 'fil_' . Str::ulid()->toBase32(),
             FileVariantInterface::ATTR_TENANT_ID               => 'ten_' . Str::ulid()->toBase32(),
             FileVariantInterface::ATTR_VARIANT_KEY             => 'thumbnail',
-            FileVariantInterface::ATTR_GENERATED_BY_CONVERSION => 'Academorix\\Storage\\Variants\\ThumbnailRecipe',
+            FileVariantInterface::ATTR_GENERATED_BY_CONVERSION => 'Stackra\\Storage\\Variants\\ThumbnailRecipe',
             FileVariantInterface::ATTR_MIME_TYPE               => 'image/webp',
             FileVariantInterface::ATTR_WIDTH                   => 200,
             FileVariantInterface::ATTR_HEIGHT                  => 200,

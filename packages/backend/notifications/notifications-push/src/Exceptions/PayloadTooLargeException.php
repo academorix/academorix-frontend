@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Exceptions;
+namespace Stackra\Notifications\Push\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a push payload exceeds the provider's byte limit (FCM 4KB /
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PayloadTooLargeException extends AcademorixException
+final class PayloadTooLargeException extends StackraException
 {
     public const string CODE = 'notifications-push.payload_too_large';
 

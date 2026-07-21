@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Exceptions;
+namespace Stackra\Approvals\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * action_key does not match `^[a-z][a-z0-9]*(\.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvalidActionKeyFormatException extends AcademorixException
+final class InvalidActionKeyFormatException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

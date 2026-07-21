@@ -5,7 +5,7 @@
  *
  * @description
  * Behaviour tests for
- * {@see \Academorix\Architecture\Rules\ModelNoSideEffectsRule}.
+ * {@see \Stackra\Architecture\Rules\ModelNoSideEffectsRule}.
  *
  * Fat models are the classic anti-pattern this rule targets:
  * business actions like `$user->send()` are indistinguishable
@@ -17,9 +17,9 @@
 
 declare(strict_types=1);
 
-use Academorix\Architecture\Rules\ModelNoSideEffectsRule;
-use Academorix\Architecture\Support\LayerResolver;
-use Academorix\Architecture\Support\SourceFileParser;
+use Stackra\Architecture\Rules\ModelNoSideEffectsRule;
+use Stackra\Architecture\Support\LayerResolver;
+use Stackra\Architecture\Support\SourceFileParser;
 
 /**
  * Shared factory — the resolver is primed with the canonical

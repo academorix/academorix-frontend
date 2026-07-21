@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/transaction/health",
+  "id": "stackra://modules/transaction/health",
   "$version": 1,
   "title": "transaction — health probes",
   "probes": [
     {
       "name": "transaction-schema-migrations-applied",
-      "class": "Academorix\\Finance\\Transaction\\Health\\Probes\\SchemaMigrationsAppliedProbe",
+      "class": "Stackra\\Finance\\Transaction\\Health\\Probes\\SchemaMigrationsAppliedProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms every migration this module ships has run: transactions + transaction_ledger_entries + their indexes (composite unique index on (tenant_id, transaction_number, YEAR(effective_date)) + running-balance indexes on ledger entries). Missing schema is a fail-hard startup error.",
@@ -13,7 +13,7 @@
     },
     {
       "name": "transaction-number-generator-lock",
-      "class": "Academorix\\Finance\\Transaction\\Health\\Probes\\TransactionNumberGeneratorLockProbe",
+      "class": "Stackra\\Finance\\Transaction\\Health\\Probes\\TransactionNumberGeneratorLockProbe",
       "category": "startup",
       "critical": true,
       "description": "Verifies the Postgres advisory-lock function used by TransactionNumberGenerator resolves + acquires-releases in < 100ms on a smoke-test payload. Missing advisory-lock support = the module cannot guarantee unique transaction_number generation under concurrent writes.",
@@ -21,7 +21,7 @@
     },
     {
       "name": "transaction-observer-registered",
-      "class": "Academorix\\Finance\\Transaction\\Health\\Probes\\ObserverRegisteredProbe",
+      "class": "Stackra\\Finance\\Transaction\\Health\\Probes\\ObserverRegisteredProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms TransactionObserver + TransactionLedgerEntryObserver are registered against their models. Missing observer = the load-bearing invariants (ledger balance, immutability) are un-enforced.",
@@ -29,7 +29,7 @@
     },
     {
       "name": "transaction-chart-of-accounts-loaded",
-      "class": "Academorix\\Finance\\Transaction\\Health\\Probes\\ChartOfAccountsLoadedProbe",
+      "class": "Stackra\\Finance\\Transaction\\Health\\Probes\\ChartOfAccountsLoadedProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms data/chart-of-accounts-catalog.json is present + parses to exactly 14 accounts + every entry has description + regulator_category. Missing chart = every ledger-entry-observer.creating fails with LEDGER_ENTRY_INVALID_ACCOUNT.",
@@ -37,7 +37,7 @@
     },
     {
       "name": "transaction-kind-catalog-loaded",
-      "class": "Academorix\\Finance\\Transaction\\Health\\Probes\\KindCatalogLoadedProbe",
+      "class": "Stackra\\Finance\\Transaction\\Health\\Probes\\KindCatalogLoadedProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms data/kind-catalog.json is present + parses to exactly 12 kinds + every entry has description + expected_ledger_entries (canonical debit/credit pair for validation).",
@@ -45,7 +45,7 @@
     },
     {
       "name": "transaction-halt-flag-consistency",
-      "class": "Academorix\\Finance\\Transaction\\Health\\Probes\\HaltFlagConsistencyProbe",
+      "class": "Stackra\\Finance\\Transaction\\Health\\Probes\\HaltFlagConsistencyProbe",
       "category": "readiness",
       "critical": true,
       "description": "Reads the count of tenants with tenant.transaction_halt_new=true. > 0 indicates active ledger-imbalance investigations blocking new transactions. Non-blocking on startup but WARNS on readiness. Ops must resolve within SLA (defined per-tenant).",
@@ -53,7 +53,7 @@
     },
     {
       "name": "transaction-reconciler-recent",
-      "class": "Academorix\\Finance\\Transaction\\Health\\Probes\\ReconcilerRecentProbe",
+      "class": "Stackra\\Finance\\Transaction\\Health\\Probes\\ReconcilerRecentProbe",
       "category": "readiness",
       "critical": true,
       "description": "Confirms ReconcileLedgerBalancesJob completed within the last 26 hours (nightly cadence + 2h slop for long-running jobs). Stale reconciler = we can't guarantee the ledger has been balance-checked recently — regulator-facing SLA breach.",
@@ -61,7 +61,7 @@
     },
     {
       "name": "transaction-unresolved-imbalances",
-      "class": "Academorix\\Finance\\Transaction\\Health\\Probes\\UnresolvedImbalancesProbe",
+      "class": "Stackra\\Finance\\Transaction\\Health\\Probes\\UnresolvedImbalancesProbe",
       "category": "readiness",
       "critical": true,
       "description": "Counts LedgerImbalanceDetected fires in the last 30 days that have no follow-up resolution transaction. > 0 = a P0 imbalance is unresolved + accumulating investigator attention. Regulator-facing.",
@@ -69,7 +69,7 @@
     },
     {
       "name": "transaction-exchange-rate-provider-healthy",
-      "class": "Academorix\\Finance\\Transaction\\Health\\Probes\\ExchangeRateProviderHealthyProbe",
+      "class": "Stackra\\Finance\\Transaction\\Health\\Probes\\ExchangeRateProviderHealthyProbe",
       "category": "readiness",
       "critical": false,
       "description": "Confirms the configured exchange-rate provider (openexchangerates / fixer_io / ecb_daily) is reachable + returning fresh rates within max_stale_seconds. Non-critical because same-currency transactions work regardless — but cross-currency tenants are blocked when the provider is down.",
@@ -77,7 +77,7 @@
     },
     {
       "name": "transaction-account-balances-computed",
-      "class": "Academorix\\Finance\\Transaction\\Health\\Probes\\AccountBalancesComputedProbe",
+      "class": "Stackra\\Finance\\Transaction\\Health\\Probes\\AccountBalancesComputedProbe",
       "category": "readiness",
       "critical": false,
       "description": "Confirms per-account running balances are computed + cached for every active tenant. Feeds the SDUI ledger-account list. Stale balances = the ledger view is out of date but not broken.",
@@ -85,7 +85,7 @@
     },
     {
       "name": "transaction-compliance-archive-writable",
-      "class": "Academorix\\Finance\\Transaction\\Health\\Probes\\ComplianceArchiveWritableProbe",
+      "class": "Stackra\\Finance\\Transaction\\Health\\Probes\\ComplianceArchiveWritableProbe",
       "category": "readiness",
       "critical": true,
       "description": "Confirms the compliance-storage archive backend (S3 with Object Lock) is reachable + writable. Critical because PurgeExpiredTransactionDataJob refuses to hard-purge without a successful archive write; a broken archive backend = purges silently blocked + retention window overrun.",
@@ -93,7 +93,7 @@
     },
     {
       "name": "transaction-monthly-report-recent",
-      "class": "Academorix\\Finance\\Transaction\\Health\\Probes\\MonthlyReportRecentProbe",
+      "class": "Stackra\\Finance\\Transaction\\Health\\Probes\\MonthlyReportRecentProbe",
       "category": "readiness",
       "critical": false,
       "description": "Confirms the monthly GenerateGeneralLedgerReportJob ran within the last 35 days for tenants with transaction_advanced_reporting entitlement. Stale monthly report = tenant will notice; not P0 but a support ticket.",

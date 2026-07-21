@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Settings\Data;
+namespace Stackra\Settings\Data;
 
 /**
  * DTO for a single setting field's metadata.

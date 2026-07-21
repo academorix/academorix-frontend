@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Services;
+namespace Stackra\Forms\Services;
 
-use Academorix\Forms\Contracts\Services\FieldTypeRegistryInterface;
-use Academorix\Forms\Data\FieldTypeDefinitionData;
+use Stackra\Forms\Contracts\Services\FieldTypeRegistryInterface;
+use Stackra\Forms\Data\FieldTypeDefinitionData;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

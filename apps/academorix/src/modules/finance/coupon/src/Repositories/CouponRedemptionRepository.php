@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Repositories;
+namespace Stackra\Coupon\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Coupon\Contracts\Data\CouponRedemptionInterface;
-use Academorix\Coupon\Contracts\Repositories\CouponRedemptionRepositoryInterface;
-use Academorix\Coupon\Models\CouponRedemption;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Coupon\Contracts\Data\CouponRedemptionInterface;
+use Stackra\Coupon\Contracts\Repositories\CouponRedemptionRepositoryInterface;
+use Stackra\Coupon\Models\CouponRedemption;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Coupon\Models\CouponRedemption}.
+ * Attribute-first Eloquent repository for {@see Stackra\Coupon\Models\CouponRedemption}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(CouponRedemptionInterface::class)]` which resolves to
  * `CouponRedemption` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Coupon\Models\CouponRedemption>
+ * @extends Repository<\Stackra\Coupon\Models\CouponRedemption>
  *
  * @category Coupon
  *

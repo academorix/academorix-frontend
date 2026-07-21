@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attendance\Exceptions;
+namespace Stackra\Attendance\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Self-kiosk and QR-scan check-ins require a device_fingerprint_hash for fraud correlation.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AttendanceFingerprintRequiredException extends AcademorixException
+final class AttendanceFingerprintRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

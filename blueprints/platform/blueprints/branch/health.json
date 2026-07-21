@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/branch/health",
+  "id": "stackra://modules/branch/health",
   "$version": 1,
   "title": "branch — health probes",
   "probes": [
     {
       "name": "branch-table-migrated",
-      "class": "Academorix\\Branch\\Health\\Probes\\TableMigratedProbe",
+      "class": "Stackra\\Branch\\Health\\Probes\\TableMigratedProbe",
       "category": "startup",
       "critical": true,
       "description": "The `branches` table exists + carries the latest schema version. Failure indicates a missed migration.",
@@ -13,7 +13,7 @@
     },
     {
       "name": "branch-organization-fk-integrity",
-      "class": "Academorix\\Branch\\Health\\Probes\\OrganizationFkIntegrityProbe",
+      "class": "Stackra\\Branch\\Health\\Probes\\OrganizationFkIntegrityProbe",
       "category": "readiness",
       "critical": false,
       "description": "Every `branches.organization_id` resolves to a live `organizations` row AND `organization.tenant_id === branch.tenant_id`. Failure catches orphaned rows OR cross-tenant drift after out-of-band SQL.",
@@ -22,7 +22,7 @@
     },
     {
       "name": "branch-region-fk-integrity",
-      "class": "Academorix\\Branch\\Health\\Probes\\RegionFkIntegrityProbe",
+      "class": "Stackra\\Branch\\Health\\Probes\\RegionFkIntegrityProbe",
       "category": "readiness",
       "critical": false,
       "description": "Every `branches.region_id` resolves to a live `regions` row AND `region.tenant_id === branch.tenant_id`. Same shape as the organization check.",
@@ -30,7 +30,7 @@
     },
     {
       "name": "branch-default-invariant",
-      "class": "Academorix\\Branch\\Health\\Probes\\DefaultInvariantProbe",
+      "class": "Stackra\\Branch\\Health\\Probes\\DefaultInvariantProbe",
       "category": "readiness",
       "critical": false,
       "description": "Every (tenant_id, organization_id) tuple with at least one active or paused Branch has EXACTLY ONE row with `is_default = true` (excluding closed branches). Failure is a data-quality signal; the observer + partial unique index normally prevent this state.",
@@ -38,7 +38,7 @@
     },
     {
       "name": "branch-google-maps-reachable",
-      "class": "Academorix\\Branch\\Health\\Probes\\GoogleMapsReachableProbe",
+      "class": "Stackra\\Branch\\Health\\Probes\\GoogleMapsReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "Google Maps Geocoding API reachable + returns a valid response for a known-good address probe. Non-critical because other providers exist + the module has a manual-pin fallback.",
@@ -47,7 +47,7 @@
     },
     {
       "name": "branch-mapbox-reachable",
-      "class": "Academorix\\Branch\\Health\\Probes\\MapboxReachableProbe",
+      "class": "Stackra\\Branch\\Health\\Probes\\MapboxReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "Mapbox Geocoding API reachable.",
@@ -56,7 +56,7 @@
     },
     {
       "name": "branch-nominatim-reachable",
-      "class": "Academorix\\Branch\\Health\\Probes\\NominatimReachableProbe",
+      "class": "Stackra\\Branch\\Health\\Probes\\NominatimReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "Nominatim reachable + within rate-limit budget.",
@@ -65,7 +65,7 @@
     },
     {
       "name": "branch-geocoding-queue-drained",
-      "class": "Academorix\\Branch\\Health\\Probes\\GeocodingQueueDrainedProbe",
+      "class": "Stackra\\Branch\\Health\\Probes\\GeocodingQueueDrainedProbe",
       "category": "readiness",
       "critical": false,
       "description": "No `GeocodeAddressJob` has been pending for > 30 minutes. Catches subprocessor stalls that would delay coordinate updates for hours.",
@@ -73,7 +73,7 @@
     },
     {
       "name": "branch-reconcile-queue-drained",
-      "class": "Academorix\\Branch\\Health\\Probes\\ReconcileQueueDrainedProbe",
+      "class": "Stackra\\Branch\\Health\\Probes\\ReconcileQueueDrainedProbe",
       "category": "readiness",
       "critical": false,
       "description": "No `ReconcileDefaultBranchInvariantJob` has been pending for > 24h. Nightly job — a stall indicates the queue worker is degraded.",
@@ -81,7 +81,7 @@
     },
     {
       "name": "branch-amenity-catalog-loaded",
-      "class": "Academorix\\Branch\\Health\\Probes\\AmenityCatalogLoadedProbe",
+      "class": "Stackra\\Branch\\Health\\Probes\\AmenityCatalogLoadedProbe",
       "category": "startup",
       "critical": true,
       "description": "The platform amenity catalogue (from `data/amenity-catalog.json`) parsed successfully at boot. Failure indicates a malformed catalogue — writes touching amenities would fail hard.",

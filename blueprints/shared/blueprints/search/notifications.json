@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/search/notifications",
+  "id": "stackra://modules/search/notifications",
   "$version": 1,
   "title": "search \u2014 notification classes + categories",
-  "namespace": "Academorix\\Search\\Notifications",
+  "namespace": "Stackra\\Search\\Notifications",
   "description": "Two notifications covering sync-job completion + failure outcomes. Channels resolved once at dispatch from search_sync_jobs.notify_channels and delivered through the notifications module. Query volume + analytics events do NOT notify \u2014 that's dashboard territory.",
   "notifications": ["SearchSyncCompletedNotification", "SearchSyncFailedNotification"],
   "categories": [

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/activity/relations",
+  "id": "stackra://modules/activity/relations",
   "$version": 1,
   "title": "activity — cross-module relations",
   "description": "Two aggregates. `Activity` is the vendor-adapted `activity_log` row: polymorphic subject (the thing something happened to) + polymorphic causer (the actor who did it) — plus hard FKs on `tenant_id` and (nullable) `application_id`. `ActivityRetentionPolicy` is a tenant-scoped per-log_name override on top of the config default. Cross-tenant FKs are forbidden; every read is scoped by `BelongsToTenant`.",
@@ -7,8 +7,8 @@
     {
       "model": {
         "name": "Activity",
-        "class": "Academorix\\Observability\\Activity\\Models\\Activity",
-        "schemaRef": "academorix://modules/activity/schemas/activity"
+        "class": "Stackra\\Observability\\Activity\\Models\\Activity",
+        "schemaRef": "stackra://modules/activity/schemas/activity"
       },
       "relations": [
         {
@@ -17,7 +17,7 @@
           "target": {
             "module": "tenancy",
             "model": "Tenant",
-            "class": "Academorix\\Tenancy\\Models\\Tenant"
+            "class": "Stackra\\Tenancy\\Models\\Tenant"
           },
           "foreignKey": "tenant_id",
           "ownerKey": "id",
@@ -30,7 +30,7 @@
           "target": {
             "module": "application",
             "model": "Application",
-            "class": "Academorix\\Application\\Models\\Application"
+            "class": "Stackra\\Application\\Models\\Application"
           },
           "foreignKey": "application_id",
           "ownerKey": "id",
@@ -98,7 +98,7 @@
               "module": "user",
               "model": "PlatformUser",
               "causerTypeKey": "platform_user",
-              "note": "Academorix support ops causing mutations on behalf of a tenant. Rare; every one is also captured on the audit stream."
+              "note": "Stackra support ops causing mutations on behalf of a tenant. Rare; every one is also captured on the audit stream."
             },
             {
               "module": "identity",
@@ -113,8 +113,8 @@
     {
       "model": {
         "name": "ActivityRetentionPolicy",
-        "class": "Academorix\\Observability\\Activity\\Models\\ActivityRetentionPolicy",
-        "schemaRef": "academorix://modules/activity/schemas/activity-retention-policy"
+        "class": "Stackra\\Observability\\Activity\\Models\\ActivityRetentionPolicy",
+        "schemaRef": "stackra://modules/activity/schemas/activity-retention-policy"
       },
       "relations": [
         {
@@ -123,7 +123,7 @@
           "target": {
             "module": "tenancy",
             "model": "Tenant",
-            "class": "Academorix\\Tenancy\\Models\\Tenant"
+            "class": "Stackra\\Tenancy\\Models\\Tenant"
           },
           "foreignKey": "tenant_id",
           "ownerKey": "id",

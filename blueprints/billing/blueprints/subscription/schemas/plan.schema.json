@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/subscription/schemas/plan",
+  "id": "stackra://modules/subscription/schemas/plan",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Plan",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "pln_",
     "incrementing": false,
-    "model": "Academorix\\Subscription\\Models\\Plan",
-    "interface": "Academorix\\Subscription\\Contracts\\Data\\PlanInterface",
-    "implements": ["Academorix\\Subscription\\Contracts\\Data\\PlanInterface"],
+    "model": "Stackra\\Subscription\\Models\\Plan",
+    "interface": "Stackra\\Subscription\\Contracts\\Data\\PlanInterface",
+    "implements": ["Stackra\\Subscription\\Contracts\\Data\\PlanInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -179,7 +179,7 @@
     ]
   },
   "x-translatable": {
-    "trait": "Academorix\\Localization\\Concerns\\HasTranslations",
+    "trait": "Stackra\\Localization\\Concerns\\HasTranslations",
     "column": "translations",
     "fields": ["name", "description"],
     "underlying_package": "spatie/laravel-translatable ^6.0",

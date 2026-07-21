@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/event/rules",
+  "id": "stackra://modules/event/rules",
   "$version": 1,
   "title": "event — validation rules",
   "description": "Custom Laravel validation rules published by EventServiceProvider::boot() for use in FormRequests + Data classes. Named after their intent so they read cleanly at composition site.",
-  "namespace": "Academorix\\Sports\\Event\\Rules",
+  "namespace": "Stackra\\Sports\\Event\\Rules",
   "rules": [
     {
       "name": "valid_event_type",
-      "class": "Academorix\\Sports\\Event\\Rules\\ValidEventType",
+      "class": "Stackra\\Sports\\Event\\Rules\\ValidEventType",
       "signature": "valid_event_type",
       "description": "Ensures event_type is one of the enum values.",
       "params": [],
@@ -17,7 +17,7 @@
     },
     {
       "name": "valid_event_format",
-      "class": "Academorix\\Sports\\Event\\Rules\\ValidEventFormat",
+      "class": "Stackra\\Sports\\Event\\Rules\\ValidEventFormat",
       "signature": "valid_event_format",
       "description": "Ensures format (when set) is one of the enum values.",
       "params": [],
@@ -27,7 +27,7 @@
     },
     {
       "name": "valid_event_date_range",
-      "class": "Academorix\\Sports\\Event\\Rules\\ValidEventDateRange",
+      "class": "Stackra\\Sports\\Event\\Rules\\ValidEventDateRange",
       "signature": "valid_event_date_range:min_minutes,max_days",
       "description": "Ensures ends_at >= starts_at with optional minimum duration in minutes and maximum span in days. Field-level (class-level) rule.",
       "params": [
@@ -50,7 +50,7 @@
     },
     {
       "name": "valid_event_registration_window",
-      "class": "Academorix\\Sports\\Event\\Rules\\ValidEventRegistrationWindow",
+      "class": "Stackra\\Sports\\Event\\Rules\\ValidEventRegistrationWindow",
       "signature": "valid_event_registration_window",
       "description": "Composite rule ensuring registration_opens_at < registration_closes_at <= starts_at when set. Field-level (class-level).",
       "params": [],
@@ -60,7 +60,7 @@
     },
     {
       "name": "valid_event_age_range",
-      "class": "Academorix\\Sports\\Event\\Rules\\ValidEventAgeRange",
+      "class": "Stackra\\Sports\\Event\\Rules\\ValidEventAgeRange",
       "signature": "valid_event_age_range",
       "description": "Ensures min_age (when set) <= max_age (when set) and both fall in [3, 100]. Field-level.",
       "params": [],
@@ -70,7 +70,7 @@
     },
     {
       "name": "valid_gender_category",
-      "class": "Academorix\\Sports\\Event\\Rules\\ValidGenderCategory",
+      "class": "Stackra\\Sports\\Event\\Rules\\ValidGenderCategory",
       "signature": "valid_gender_category",
       "description": "Ensures gender_category is one of male / female / mixed / any (or null).",
       "params": [],
@@ -80,7 +80,7 @@
     },
     {
       "name": "valid_visibility_value",
-      "class": "Academorix\\Sports\\Event\\Rules\\ValidVisibilityValue",
+      "class": "Stackra\\Sports\\Event\\Rules\\ValidVisibilityValue",
       "signature": "valid_visibility_value",
       "description": "Ensures visibility is one of public / tenant_only / participants_only / private.",
       "params": [],
@@ -90,7 +90,7 @@
     },
     {
       "name": "valid_entry_fee",
-      "class": "Academorix\\Sports\\Event\\Rules\\ValidEntryFee",
+      "class": "Stackra\\Sports\\Event\\Rules\\ValidEntryFee",
       "signature": "valid_entry_fee",
       "description": "Ensures entry_fee_cents >= 0 and when > 0, entry_fee_currency IS NOT NULL. When allow_late_registration=true, late_registration_fee_cents > 0. Field-level.",
       "params": [],
@@ -100,7 +100,7 @@
     },
     {
       "name": "valid_prize_pool",
-      "class": "Academorix\\Sports\\Event\\Rules\\ValidPrizePool",
+      "class": "Stackra\\Sports\\Event\\Rules\\ValidPrizePool",
       "signature": "valid_prize_pool",
       "description": "Ensures prize_pool_cents (when set) >= 0 and prize_pool_currency IS NOT NULL. Field-level.",
       "params": [],
@@ -110,7 +110,7 @@
     },
     {
       "name": "valid_sponsors_json",
-      "class": "Academorix\\Sports\\Event\\Rules\\ValidSponsorsJson",
+      "class": "Stackra\\Sports\\Event\\Rules\\ValidSponsorsJson",
       "signature": "valid_sponsors_json",
       "description": "Validates sponsors JSONB array shape: each entry has name (required, string <=128), optional logo_url (URL), tier (enum gold/silver/bronze/partner).",
       "params": [],
@@ -120,7 +120,7 @@
     },
     {
       "name": "valid_livestream_url",
-      "class": "Academorix\\Sports\\Event\\Rules\\ValidLivestreamUrl",
+      "class": "Stackra\\Sports\\Event\\Rules\\ValidLivestreamUrl",
       "signature": "valid_livestream_url",
       "description": "Ensures livestream_url is a valid HTTPS URL <=512 chars (HTTPS-only to prevent leaks).",
       "params": [],
@@ -130,7 +130,7 @@
     },
     {
       "name": "valid_event_facility_purpose",
-      "class": "Academorix\\Sports\\Event\\Rules\\ValidEventFacilityPurpose",
+      "class": "Stackra\\Sports\\Event\\Rules\\ValidEventFacilityPurpose",
       "signature": "valid_event_facility_purpose",
       "description": "Ensures purpose is one of competition / warm_up / registration / spectator / vip.",
       "params": [],
@@ -140,7 +140,7 @@
     },
     {
       "name": "one_primary_facility_per_event",
-      "class": "Academorix\\Sports\\Event\\Rules\\OnePrimaryFacilityPerEvent",
+      "class": "Stackra\\Sports\\Event\\Rules\\OnePrimaryFacilityPerEvent",
       "signature": "one_primary_facility_per_event",
       "description": "Ensures setting is_primary=true on this row will not create a second primary in the same event (the observer auto-demotes; this rule surfaces the form-level warning).",
       "params": [],
@@ -150,7 +150,7 @@
     },
     {
       "name": "event_facility_within_branch",
-      "class": "Academorix\\Sports\\Event\\Rules\\EventFacilityWithinBranch",
+      "class": "Stackra\\Sports\\Event\\Rules\\EventFacilityWithinBranch",
       "signature": "event_facility_within_branch",
       "description": "Ensures the facility.branch.organization_id matches event.organization_id (a facility must belong to the event's organization). When event.branch_id IS NOT NULL, facility.branch_id must equal event.branch_id.",
       "params": [],

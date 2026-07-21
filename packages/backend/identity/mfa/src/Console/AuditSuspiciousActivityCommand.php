@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Console;
+namespace Stackra\Mfa\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan mfa:audit-suspicious-activity` — Audit suspicious activity — mfa command.

@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/payment/middleware",
+  "id": "stackra://modules/payment/middleware",
   "$version": 1,
   "title": "payment — HTTP middleware",
   "middleware": [
     {
       "alias": "payment.webhook_verify",
-      "class": "Academorix\\Finance\\Payment\\Http\\Middleware\\VerifyPaymentWebhookSignature",
+      "class": "Stackra\\Finance\\Payment\\Http\\Middleware\\VerifyPaymentWebhookSignature",
       "priority": 30,
       "description": "Guards the public webhook plane (POST /webhooks/payment/{provider}). Extracts the provider's signature header + verifies HMAC-SHA256 over the request body + timestamp per per-provider signing scheme (Stripe: `Stripe-Signature`; Paddle: `Paddle-Signature`; Adyen: `HmacSignature`; Square: `Square-Signature`; PayPal: `Paypal-Transmission-Sig` with cert verification; CustomWebhook: `X-Payment-Signature`). Refuses (400) with `payment_webhook_signature_invalid` on failure. No body echoed on refuse. Runs BEFORE any tenant/application resolution (the webhook body carries the tenant identifier).",
       "auto_applied": false,

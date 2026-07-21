@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Session\Exceptions;
+namespace Stackra\Session\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Cancelling <24h before start requires sessions.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SessionShortNoticeCancellationRequiresPermissionException extends AcademorixException
+final class SessionShortNoticeCancellationRequiresPermissionException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

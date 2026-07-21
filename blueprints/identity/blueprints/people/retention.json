@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/people/retention",
+  "id": "stackra://modules/people/retention",
   "$version": 1,
   "title": "people — data retention windows",
   "description": "CENTRAL-plane retention. PersonIdentity is the identity of record — retained indefinitely. TenantLinkRequests 3y post-decision (audit trail for consent provenance). GuardianLinks retained while relationship active + 3y post-revocation.",
@@ -11,7 +11,7 @@
       "cold_days": null,
       "on_purge": "archive_cold",
       "regulatory_minimum_days": 3650,
-      "description": "INDEFINITE retention while linked to any active tenant. On explicit erasure request (person requests full removal): 90-day grace period + hard-delete + academorix_id blacklisted from reuse. Frozen identities (fraud) retained indefinitely for audit."
+      "description": "INDEFINITE retention while linked to any active tenant. On explicit erasure request (person requests full removal): 90-day grace period + hard-delete + stackra_id blacklisted from reuse. Frozen identities (fraud) retained indefinitely for audit."
     },
     {
       "entity": "PersonGuardianLink",

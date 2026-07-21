@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Actions\Tenant;
+namespace Stackra\Search\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Patch;
-use Academorix\Routing\Attributes\WhereUlid;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Search\Contracts\Data\SearchSavedQueryInterface;
-use Academorix\Search\Data\Requests\UpdateSavedQueryRequestData;
-use Academorix\Search\Data\SearchSavedQueryData;
-use Academorix\Search\Enums\SearchPermission;
-use Academorix\Search\Models\SearchSavedQuery;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Patch;
+use Stackra\Routing\Attributes\WhereUlid;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Search\Contracts\Data\SearchSavedQueryInterface;
+use Stackra\Search\Data\Requests\UpdateSavedQueryRequestData;
+use Stackra\Search\Data\SearchSavedQueryData;
+use Stackra\Search\Enums\SearchPermission;
+use Stackra\Search\Models\SearchSavedQuery;
 
 /**
  * `PATCH /api/v1/search/saved-queries/{query}` — update own saved query.

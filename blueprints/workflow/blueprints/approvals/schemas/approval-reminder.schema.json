@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/schemas/approval-reminder",
+  "id": "stackra://modules/workflow/approvals/schemas/approval-reminder",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ApprovalReminder",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "apn_",
     "incrementing": false,
-    "model": "Academorix\\Approval\\Models\\ApprovalReminder",
-    "interface": "Academorix\\Approval\\Contracts\\Data\\ApprovalReminderInterface",
-    "implements": ["Academorix\\Approval\\Contracts\\Data\\ApprovalReminderInterface"],
+    "model": "Stackra\\Approval\\Models\\ApprovalReminder",
+    "interface": "Stackra\\Approval\\Contracts\\Data\\ApprovalReminderInterface",
+    "implements": ["Stackra\\Approval\\Contracts\\Data\\ApprovalReminderInterface"],
     "traits": ["HasFactory", "HasUlids", "BelongsToTenant"],
     "casts": {
       "reminder_number": "integer",

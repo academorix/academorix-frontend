@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Console;
+namespace Stackra\AgeGroup\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan age-group:seed-defaults-for-tenant` — Seed defaults for tenant — age group command.

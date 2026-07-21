@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/marketing/retention",
+  "id": "stackra://modules/marketing/retention",
   "$version": 1,
   "title": "marketing — retention windows",
   "description": "Marketing events are financial records (7 years default, 10 for Enterprise). Deliveries retain 2 years (support-debugging window). Dead letters retain INDEFINITELY (financial audit — every unresolved P1 preserved). Provider configs retain while active + 90d grace after deactivation.",
@@ -95,7 +95,7 @@
     {
       "case": "UserErased (individual GDPR Art. 17)",
       "action": "RedactUserFromMarketingEventsJob nulls subject_id on affected marketing_events + fires provider-side deletion requests (Meta Data Deletion API, Google Ads user-data deletion, etc.)",
-      "notes": "The event row itself survives (financial retention) but the subject-identifying fields are redacted. Provider-side deletion is best-effort — Academorix records the deletion request; the provider is responsible for honoring it."
+      "notes": "The event row itself survives (financial retention) but the subject-identifying fields are redacted. Provider-side deletion is best-effort — Stackra records the deletion request; the provider is responsible for honoring it."
     },
     {
       "case": "MarketingProviderConfigDeactivated with existing deliveries",

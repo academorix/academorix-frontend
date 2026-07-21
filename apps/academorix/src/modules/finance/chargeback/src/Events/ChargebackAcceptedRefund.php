@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Events;
+namespace Stackra\Chargeback\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -17,7 +17,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - audit::WriteToAuditLog (retention: 7 years — financial record)
  * - activity::WriteToActivityLog
  * - notifications::DispatchChargebackAcceptedRefundNotification (customer + admin — 'refund issued via RDR')
- * - observability::MetricsCollector (academorix.chargeback.rdr_accepted_total)
+ * - observability::MetricsCollector (stackra.chargeback.rdr_accepted_total)
  *
  * @category Chargeback
  *

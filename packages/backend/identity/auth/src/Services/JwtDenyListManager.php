@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Services;
+namespace Stackra\Auth\Services;
 
-use Academorix\Auth\Contracts\Data\AuthJwtDenyListInterface;
-use Academorix\Auth\Contracts\Repositories\AuthJwtDenyListRepositoryInterface;
-use Academorix\Auth\Contracts\Services\JwtDenyListManagerInterface;
+use Stackra\Auth\Contracts\Data\AuthJwtDenyListInterface;
+use Stackra\Auth\Contracts\Repositories\AuthJwtDenyListRepositoryInterface;
+use Stackra\Auth\Contracts\Services\JwtDenyListManagerInterface;
 use DateTimeImmutable;
 use Illuminate\Container\Attributes\Cache as CacheAttr;
 use Illuminate\Container\Attributes\Scoped;

@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/athlete/subprocessors",
+  "id": "stackra://modules/athlete/subprocessors",
   "$version": 1,
   "title": "athlete — subprocessors",
-  "description": "The Athlete module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. The Notifications module dispatches athlete lifecycle notifications via its own subprocessors (mail, SMS, push); those are declared in notifications::subprocessors.json. The Storage module (Wave 4+) will engage object-storage subprocessors for profile_photo_url upload workflow; declared in storage::subprocessors.json. Third-party medical-clearance verification providers (Wave 4+ Safeguarding module) will engage medical-record subprocessors; declared there. This file lists ZERO active subprocessors to be explicit about the module's boundary — athlete state is fully first-party.",
+  "description": "The Athlete module itself engages ZERO third-party subprocessors — every state transition happens within the Stackra platform. The Notifications module dispatches athlete lifecycle notifications via its own subprocessors (mail, SMS, push); those are declared in notifications::subprocessors.json. The Storage module (Wave 4+) will engage object-storage subprocessors for profile_photo_url upload workflow; declared in storage::subprocessors.json. Third-party medical-clearance verification providers (Wave 4+ Safeguarding module) will engage medical-record subprocessors; declared there. This file lists ZERO active subprocessors to be explicit about the module's boundary — athlete state is fully first-party.",
   "subprocessors": [],
   "downstream_subprocessors_referenced": [
     {

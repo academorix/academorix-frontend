@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/rbac/compliance",
+  "id": "stackra://modules/rbac/compliance",
   "$version": 1,
   "title": "rbac \u2014 compliance evidence",
   "description": "Access control is the load-bearing surface for every framework's access-provisioning + access-review requirement. Every role/permission mutation is audited. System role modifications are refused + logged critical.",
@@ -76,7 +76,7 @@
     },
     "hipaa": {
       "applicable": false,
-      "reason": "Academorix does not process protected health information (PHI) at this tier. Sports academies that record injury notes trigger different controls under `modules/products/sports/medical/`."
+      "reason": "Stackra does not process protected health information (PHI) at this tier. Sports academies that record injury notes trigger different controls under `modules/products/sports/medical/`."
     }
   }
 }

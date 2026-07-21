@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Session\Exceptions;
+namespace Stackra\Session\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted check-in when session hasn't started, or mark-absent post-completion.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SessionAttendanceInvalidStateException extends AcademorixException
+final class SessionAttendanceInvalidStateException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

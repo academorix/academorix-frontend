@@ -1,7 +1,7 @@
-# academorix-sports/awards-sdk
+# stackra-sports/awards-sdk
 
 Wire-visible SDK surface for the `awards` module of the Sports service.
-Auto-discovered by `academorix/sports-sdk` (the service umbrella) via
+Auto-discovered by `stackra/sports-sdk` (the service umbrella) via
 `#[AsSdkResource(name: 'awards', service: 'sports')]`.
 
 ## Aggregates
@@ -25,7 +25,7 @@ src/
 Consumed only over HTTP via the umbrella client:
 
 ```php
-app(\Academorix\SportsSdk\Client\SportsSdk::class)
+app(\Stackra\SportsSdk\Client\SportsSdk::class)
     ->awards()
     ->awards()
     ->list();

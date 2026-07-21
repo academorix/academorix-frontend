@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Policies;
+namespace Stackra\Storage\Policies;
 
-use Academorix\Storage\Contracts\Data\ChunkedUploadInterface;
-use Academorix\Storage\Enums\StoragePermission;
-use Academorix\Storage\Models\ChunkedUpload;
+use Stackra\Storage\Contracts\Data\ChunkedUploadInterface;
+use Stackra\Storage\Enums\StoragePermission;
+use Stackra\Storage\Models\ChunkedUpload;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

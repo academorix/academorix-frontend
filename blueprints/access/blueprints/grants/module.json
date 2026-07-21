@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "grants",
   "alias": "grants",
-  "namespace": "Academorix\\Grant",
+  "namespace": "Stackra\\Grant",
   "description": "Per-resource dynamic access grants — 'Alice grants Bob edit on invoice #123 until Friday'. Overlays above RBAC (per D-A3 of the access-approvals spec): effective permission on a resource = RBAC ∪ grants − denies. Deny grants take priority over allow grants AND over RBAC roles — an explicit deny is inviolable and short-circuits every check. Grants are subject-polymorphic (usually User; Group deferred to Wave 2) and resource-polymorphic (Invoice / Athlete / Team / any domain aggregate that composes IsGrantable). The `permissions` column is a JSONB array of permission names scoped to that specific (resource_type, resource_id) tuple — no scope suffix needed because the resource is explicit. Time-bounded via `expires_at` (nullable = permanent; enterprise-gated). Revocable at any time — `revoked_at + revoked_by + revoked_reason` track the revocation trail. Every write audited via HasActivityLog + HasAudit. Consumed by the RBAC PermissionResolver at every check via GrantOverlayResolver: walks the (principal, resource_type, resource_id) tuple, short-circuits on any deny, returns allow, defers to RBAC otherwise. Ships the GrantIssuer central action that access/requests + workflow/approvals invoke to materialise approved access requests into grant rows (source='access_request', source_reference=approval_instance_id).",
   "keywords": [
     "grants",
@@ -19,7 +19,7 @@
     "iso27001-a.9.2.5"
   ],
   "priority": 32,
-  "providers": ["Academorix\\Grant\\Providers\\GrantServiceProvider"],
+  "providers": ["Stackra\\Grant\\Providers\\GrantServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "identity", "user", "application", "tenancy", "rbac"],
   "extendedBy": ["requests", "approvals", "delegation"],

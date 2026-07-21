@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/notifications-sms/permissions",
+  "id": "stackra://modules/notifications-sms/permissions",
   "$version": 1,
   "title": "notifications-sms \u2014 permissions",
-  "seeder": "Academorix\\Notifications\\Sms\\Database\\Seeders\\NotificationsSmsPermissionSeeder",
+  "seeder": "Stackra\\Notifications\\Sms\\Database\\Seeders\\NotificationsSmsPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

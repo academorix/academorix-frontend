@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tenancy/compliance",
+  "id": "stackra://modules/tenancy/compliance",
   "$version": 1,
   "title": "tenants — regulatory compliance",
   "description": "Regulatory regime × control × evidence per module. Each control has a stable `article` (or Trust Services Criterion) reference so auditors can cross-check. `evidence` points at the concrete artefact this module produces — a data file, a scheduled job, a DTO, or a downstream module. Aggregated by the compliance module for the enterprise-facing security whitepaper.",
@@ -88,7 +88,7 @@
         {
           "article": "§99.31(a)(1)",
           "control": "school-official-clause",
-          "evidence": "DPA template in compliance module lists Academorix as a 'school official under direct control'."
+          "evidence": "DPA template in compliance module lists Stackra as a 'school official under direct control'."
         }
       ]
     },
@@ -112,7 +112,7 @@
     "pci_dss": {
       "applicable": false,
       "regulation": "PCI-DSS v4.0",
-      "description": "Tenancy does NOT touch payment card data. Card data is scoped to the Stripe Elements iframe — Academorix stays SAQ-A.",
+      "description": "Tenancy does NOT touch payment card data. Card data is scoped to the Stripe Elements iframe — Stackra stays SAQ-A.",
       "controls": [
         {
           "article": "SAQ-A",

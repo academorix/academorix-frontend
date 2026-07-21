@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Grants\Exceptions;
+namespace Stackra\Grants\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Attempt to PATCH `subject_id / resource_type / resource_id / permissions / decision / granted_by / granted_at / source / source_reference / tenant_id`.

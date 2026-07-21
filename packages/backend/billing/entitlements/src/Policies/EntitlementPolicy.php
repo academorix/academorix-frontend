@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Policies;
+namespace Stackra\Entitlements\Policies;
 
-use Academorix\Entitlements\Contracts\Data\EntitlementInterface;
-use Academorix\Entitlements\Enums\EntitlementsPermission;
-use Academorix\Entitlements\Models\Entitlement;
+use Stackra\Entitlements\Contracts\Data\EntitlementInterface;
+use Stackra\Entitlements\Enums\EntitlementsPermission;
+use Stackra\Entitlements\Models\Entitlement;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Database\Factories;
+namespace Stackra\AgeGroup\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\AgeGroup\Contracts\Data\AgeGroupInterface;
-use Academorix\AgeGroup\Models\AgeGroup;
+use Stackra\AgeGroup\Contracts\Data\AgeGroupInterface;
+use Stackra\AgeGroup\Models\AgeGroup;
 
 /**
- * Factory for {@see \Academorix\AgeGroup\Models\AgeGroup}.
+ * Factory for {@see \Stackra\AgeGroup\Models\AgeGroup}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\AgeGroup\Models\AgeGroup>
+ * @extends Factory<\Stackra\AgeGroup\Models\AgeGroup>
  *
  * @category AgeGroup
  *

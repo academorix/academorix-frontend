@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Debugbar\Examples;
+namespace Stackra\Debugbar\Examples;
 
 use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
-use Academorix\Debugbar\Attributes\AsCollector;
+use Stackra\Debugbar\Attributes\AsCollector;
 
 /**
  * ## PerformanceCollector Example

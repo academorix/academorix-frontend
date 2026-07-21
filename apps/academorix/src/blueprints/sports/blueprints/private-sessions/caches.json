@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/private-sessions/caches",
+  "id": "stackra://modules/private-sessions/caches",
   "$version": 1,
   "title": "private-sessions — cache keys",
   "description": "Cache keys the module owns + TTLs + invalidation triggers + tags.",

@@ -1,29 +1,29 @@
 {
-  "id": "academorix://modules/session/hooks",
+  "id": "stackra://modules/session/hooks",
   "$version": 1,
   "title": "session — tenancy + facility + coach hooks",
   "description": "Three hooks: tenant erasure orphan check, facility retirement cascade (auto-cancel sessions on retired facility), coach deactivation reassignment.",
   "reference": {
-    "contract": "academorix://modules/tenancy/hooks",
+    "contract": "stackra://modules/tenancy/hooks",
     "hierarchy_note": "See hierarchy.md §12 for tenancy-lifecycle vs domain-event separation."
   },
   "hooks": [
     {
-      "class": "Academorix\\Sports\\Session\\Hooks\\PreventSessionOrphansOnTenantErased",
+      "class": "Stackra\\Sports\\Session\\Hooks\\PreventSessionOrphansOnTenantErased",
       "event": "tenancy::TenantErased",
       "lifecycle_phase": "before_cascade",
       "queue": null,
       "purpose": "Runs BEFORE tenancy's FK cascade. Verifies session_attendance rows are gone (they cascade via CASCADE FK on session_id). Session rows themselves cascade via tenant_id FK. Safeguarding-flagged sessions log a diagnostic before the cascade drops them (the audit_events survive)."
     },
     {
-      "class": "Academorix\\Sports\\Session\\Hooks\\CancelSessionsOnFacilityRetired",
+      "class": "Stackra\\Sports\\Session\\Hooks\\CancelSessionsOnFacilityRetired",
       "event": "facility::FacilityRetired",
       "lifecycle_phase": "after_commit",
       "queue": "sports",
       "purpose": "Fires on FacilityRetired. Finds active sessions whose resource_booking.facility_id points at the retired facility. For each: transition Session.status -> cancelled with cancellation_reason='Facility retired' + trigger='facility_retired'. Fires SessionCancelled per session + the cannot-opt-out notification to registrants."
     },
     {
-      "class": "Academorix\\Sports\\Session\\Hooks\\ReassignCoachOnCoachDeactivated",
+      "class": "Stackra\\Sports\\Session\\Hooks\\ReassignCoachOnCoachDeactivated",
       "event": "coaching::CoachDeactivated",
       "lifecycle_phase": "after_commit",
       "queue": "sports",

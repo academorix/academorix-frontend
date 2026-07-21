@@ -1,6 +1,6 @@
-# academorix/webhook
+# stackra/webhook
 
-Outbound webhook substrate for Academorix. Owns two aggregates:
+Outbound webhook substrate for Stackra. Owns two aggregates:
 `WebhookSubscription` (the customer-registered destination + event filter) and
 `WebhookDelivery` (the per-attempt outbound audit trail).
 
@@ -14,7 +14,7 @@ Outbound webhook substrate for Academorix. Owns two aggregates:
 ## Install
 
 ```bash
-composer require academorix/webhook
+composer require stackra/webhook
 ```
 
 ## Contributes

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsMail\Exceptions;
+namespace Stackra\NotificationsMail\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Recipient is on the suppression list.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsMailSuppressedAddressException extends AcademorixException
+final class NotificationsMailSuppressedAddressException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Refund\Events;
+namespace Stackra\Refund\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog (retention: 7 years)
  * - activity::WriteToActivityLog
- * - observability::MetricsCollector (academorix.refund.reconciliations_total labelled by drift_detected)
+ * - observability::MetricsCollector (stackra.refund.reconciliations_total labelled by drift_detected)
  *
  * @category Refund
  *

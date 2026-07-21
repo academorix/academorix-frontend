@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Repositories;
+namespace Stackra\Branding\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Branding\Contracts\Data\BrandingInterface;
-use Academorix\Branding\Contracts\Repositories\BrandingRepositoryInterface;
-use Academorix\Branding\Models\Branding;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Branding\Contracts\Data\BrandingInterface;
+use Stackra\Branding\Contracts\Repositories\BrandingRepositoryInterface;
+use Stackra\Branding\Models\Branding;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Branding\Models\Branding}.
+ * Attribute-first Eloquent repository for {@see Stackra\Branding\Models\Branding}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(BrandingInterface::class)]` which resolves to
  * `Branding` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Branding\Models\Branding>
+ * @extends Repository<\Stackra\Branding\Models\Branding>
  *
  * @category Branding
  *

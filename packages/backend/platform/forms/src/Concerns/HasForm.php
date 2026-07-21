@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Concerns;
+namespace Stackra\Forms\Concerns;
 
 /**
  * Trait — HasForm.

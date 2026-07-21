@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Exceptions;
+namespace Stackra\Newsletter\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when an issue lookup finds no match.
@@ -13,7 +13,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NewsletterIssueNotFoundException extends AcademorixException
+final class NewsletterIssueNotFoundException extends StackraException
 {
     public const CODE = 'newsletter.issue_not_found';
 

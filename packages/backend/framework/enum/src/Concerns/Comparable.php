@@ -12,9 +12,9 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Enum\Concerns;
+namespace Stackra\Enum\Concerns;
 
-use Academorix\Support\Arr;
+use Stackra\Support\Arr;
 
 /**
  * Comparable Trait.
@@ -38,7 +38,7 @@ use Academorix\Support\Arr;
  * $status->notIn([Status::INACTIVE()]);       // true
  * ```
  *
- * @author  Academorix Development Team
+ * @author  Stackra Development Team
  *
  * @since   1.0.0
  */

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Rules;
+namespace Stackra\Search\Rules;
 
-use Academorix\Search\Enums\SearchEngine;
+use Stackra\Search\Enums\SearchEngine;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 

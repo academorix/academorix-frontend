@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Progress\Tests;
+namespace Stackra\Progress\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/progress.
+ * Base test case for stackra/progress.
  *
  * @category Progress
  *

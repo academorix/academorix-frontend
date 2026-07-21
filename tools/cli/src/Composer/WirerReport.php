@@ -2,7 +2,7 @@
 
 /**
  * @file WirerReport.php
- * @module Academorix\Cli\Composer
+ * @module Stackra\Cli\Composer
  * @description Mutable report produced by
  *   {@see ComposerPathRepoWirer::run()}. Tracks the counts + the two
  *   lists downstream consumers care about: which files changed
@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Composer;
+namespace Stackra\Cli\Composer;
 
 /**
  * Aggregate report for one wire-up pass.

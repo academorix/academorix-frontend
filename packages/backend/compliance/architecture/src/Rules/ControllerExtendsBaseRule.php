@@ -5,7 +5,7 @@
  *
  * @description
  * Source rule: Controllers must extend
- * `Academorix\Routing\BaseController` — the routing package's
+ * `Stackra\Routing\BaseController` — the routing package's
  * base class that wires up the InteractsWith* traits every
  * controller needs (input parsing, response shaping, auth-user
  * accessors, tracing headers). Extending Laravel's stock
@@ -44,12 +44,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Enums\LayerType;
-use Academorix\Architecture\Support\SourceFile;
-use Academorix\Architecture\Violations\Severity;
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Enums\LayerType;
+use Stackra\Architecture\Support\SourceFile;
+use Stackra\Architecture\Violations\Severity;
+use Stackra\Architecture\Violations\Violation;
 
 /**
  * Enforce the mandatory controller base class.
@@ -71,7 +71,7 @@ final class ControllerExtendsBaseRule extends AbstractRule
      */
     public function description(): string
     {
-        return 'Controllers must extend Academorix\\Routing\\BaseController — not the raw Illuminate base or nothing at all.';
+        return 'Controllers must extend Stackra\\Routing\\BaseController — not the raw Illuminate base or nothing at all.';
     }
 
     /**
@@ -137,7 +137,7 @@ final class ControllerExtendsBaseRule extends AbstractRule
                         $requiredBase !== '' ? $requiredBase : 'the required base',
                     ),
                     line: null,
-                    hint: 'Extend Academorix\\Routing\\BaseController — it brings the InteractsWith* traits every controller needs.',
+                    hint: 'Extend Stackra\\Routing\\BaseController — it brings the InteractsWith* traits every controller needs.',
                 );
             }
         } else {
@@ -156,7 +156,7 @@ final class ControllerExtendsBaseRule extends AbstractRule
                         $requiredBase,
                     ),
                     line: null,
-                    hint: 'Extend Academorix\\Routing\\BaseController — it brings the InteractsWith* traits every controller needs.',
+                    hint: 'Extend Stackra\\Routing\\BaseController — it brings the InteractsWith* traits every controller needs.',
                 );
             }
         }

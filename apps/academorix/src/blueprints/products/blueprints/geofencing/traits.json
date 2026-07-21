@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/geofencing/traits",
+  "id": "stackra://modules/geofencing/traits",
   "$version": 1,
   "title": "geofencing \u2014 trait composition",
   "description": "One owned trait \u2014 `HasGeofence`. Any Eloquent model can use it to carry a fence. Ships a companion interface (`Geofenceable`) that models MUST implement so the evaluator can rely on a stable surface even when models override the trait's default column storage.",
   "owned": [
     {
-      "trait": "Academorix\\Geofencing\\Concerns\\HasGeofence",
+      "trait": "Stackra\\Geofencing\\Concerns\\HasGeofence",
       "description": "Mixed into any Eloquent model. Adds column casts for the 5 fence columns (geofence_polygon, location_point, geofence_radius_m, geofence_accuracy_tolerance_m, geofence_enforcement_enabled), a `geofenceChecks(): MorphMany` relation, a `evaluateGeofence(EvaluateGeofenceData): GeofenceCheckResultData` helper, a `preflightGeofence(EvaluateGeofenceData): GeofenceCheckResultData` helper, `hasGeofencePolygon(): bool`, `hasGeofenceRadius(): bool`. Storage strategy: geometry columns live on the model's OWN table \u2014 added via the `$table->addGeofenceColumns()` blueprint macro in the consumer's migration.",
       "public": true,
       "usedBy": [
@@ -19,7 +19,7 @@
   ],
   "owned_interfaces": [
     {
-      "interface": "Academorix\\Geofencing\\Contracts\\Geofenceable",
+      "interface": "Stackra\\Geofencing\\Contracts\\Geofenceable",
       "description": "Stable surface the evaluator depends on. Every fenceable model MUST implement it. The HasGeofence trait provides the default implementation reading from the model's columns; models with non-standard storage override individual methods.",
       "methods": [
         "geofencePolygon(): ?Clickbar\\Magellan\\Data\\Geometries\\Polygon",
@@ -42,15 +42,15 @@
     ],
     "foundation": [
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid",
+        "trait": "Stackra\\Foundation\\Concerns\\HasPrefixedUlid",
         "prefix": "gfc_",
         "usedBy": ["GeofenceCheck"]
       },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps", "usedBy": ["GeofenceCheck"] }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps", "usedBy": ["GeofenceCheck"] }
     ],
     "tenants": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
         "usedBy": ["GeofenceCheck"]
       }
     ],

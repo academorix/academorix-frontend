@@ -119,7 +119,7 @@ Enforced by three layers:
 3. **ReconcileBranchManagerInvariantJob** — nightly audit; every finding is a P1
    signal.
 
-The `academorix.staff.branch_manager.invariant_violations` metric should stay at
+The `stackra.staff.branch_manager.invariant_violations` metric should stay at
 0 for the lifetime of a healthy platform.
 
 ## 6. Compensation — the private tier
@@ -185,7 +185,7 @@ The module ships several cascades:
 - **Timesheet / attendance tracking.** Deferred to Wave 4 attendance module.
 - **Payroll integration.** Deferred to Wave 4 finance module (integrates with
   3rd-party payroll processors that own full-tax-ID storage).
-- **Coach discovery/marketplace.** Not the shape of Academorix — coaches belong
+- **Coach discovery/marketplace.** Not the shape of Stackra — coaches belong
   to specific tenants.
 - **Auto-provisioning of default staff on TenantProvisioned.** The tenant
   onboarding flow explicitly hires the owner-user as the first Staff.

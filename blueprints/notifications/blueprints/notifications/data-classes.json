@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/data-classes",
+  "id": "stackra://modules/notifications/data-classes",
   "$version": 1,
   "title": "notifications core \u2014 field classification",
   "description": "Every persistent column on every core entity, classified per foundation's 8-tier taxonomy. CI enforces: every column MUST appear in exactly ONE tier. Restricted-tier fields are the ones that would trigger a Sev-1 incident on exposure. Confidential-tier fields feed DSAR export + user-erasure workflows.",

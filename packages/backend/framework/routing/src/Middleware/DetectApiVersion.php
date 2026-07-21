@@ -6,7 +6,7 @@
  * @description
  * Request-scoped middleware that resolves the API version for the
  * current call and stamps it onto the
- * {@see \Academorix\Routing\Support\ApiVersionRegistry}. Runs
+ * {@see \Stackra\Routing\Support\ApiVersionRegistry}. Runs
  * BEFORE controller resolution so the resolved version is visible
  * to concerns / traits inside the controller method.
  *
@@ -29,14 +29,14 @@
  *
  *   1. Resolves the target controller + method via the route's
  *      `getAction()` metadata.
- *   2. Reads {@see \Academorix\Routing\Attributes\ApiVersionNeutral}
+ *   2. Reads {@see \Stackra\Routing\Attributes\ApiVersionNeutral}
  *      → short-circuits with `neutral` if present.
- *   3. Reads {@see \Academorix\Routing\Attributes\MapToApiVersion}
- *      (method-level) or {@see \Academorix\Routing\Attributes\ApiVersion}
+ *   3. Reads {@see \Stackra\Routing\Attributes\MapToApiVersion}
+ *      (method-level) or {@see \Stackra\Routing\Attributes\ApiVersion}
  *      (class-level, fallback) → builds the effective allowlist.
  *   4. Verifies the resolved version is in the allowlist. Otherwise
  *      throws {@see UnsupportedApiVersionException}.
- *   5. Reads {@see \Academorix\Routing\Attributes\Sunsets} → if
+ *   5. Reads {@see \Stackra\Routing\Attributes\Sunsets} → if
  *      present, records it on the registry so the response
  *      emitter can attach `Sunset` / `Link` headers. When
  *      enforcement is enabled AND the sunset date has passed,
@@ -52,25 +52,25 @@
  *   - No captured Request references — every request reaches
  *     `handle()` explicitly.
  *
- * @see \Academorix\Routing\Providers\ApiVersioningServiceProvider
+ * @see \Stackra\Routing\Providers\ApiVersioningServiceProvider
  *      Wires the middleware alias `api.version` and binds this
  *      class with its config payload.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Routing\Middleware;
+namespace Stackra\Routing\Middleware;
 
-use Academorix\Routing\Attributes\ApiVersion;
-use Academorix\Routing\Attributes\ApiVersionNeutral;
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Routing\Attributes\MapToApiVersion;
-use Academorix\Routing\Attributes\Sunsets;
-use Academorix\Routing\Http\Exceptions\MalformedApiVersionException;
-use Academorix\Routing\Http\Exceptions\SunsetApiVersionException;
-use Academorix\Routing\Http\Exceptions\UnsupportedApiVersionException;
-use Academorix\Routing\Services\VersionComparator;
-use Academorix\Routing\Support\ApiVersionRegistry;
+use Stackra\Routing\Attributes\ApiVersion;
+use Stackra\Routing\Attributes\ApiVersionNeutral;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Routing\Attributes\MapToApiVersion;
+use Stackra\Routing\Attributes\Sunsets;
+use Stackra\Routing\Http\Exceptions\MalformedApiVersionException;
+use Stackra\Routing\Http\Exceptions\SunsetApiVersionException;
+use Stackra\Routing\Http\Exceptions\UnsupportedApiVersionException;
+use Stackra\Routing\Services\VersionComparator;
+use Stackra\Routing\Support\ApiVersionRegistry;
 use Closure;
 use DateTimeImmutable;
 use DateTimeZone;

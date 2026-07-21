@@ -11,7 +11,7 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use Spatie\RouteAttributes\Attributes\Any as SpatieAny;
@@ -29,7 +29,7 @@ use Spatie\RouteAttributes\Attributes\Any as SpatieAny;
  *
  * ## Usage:
  * ```php
- * use Academorix\Routing\Attributes\Any;
+ * use Stackra\Routing\Attributes\Any;
  *
  * class WebhookController
  * {

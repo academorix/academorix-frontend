@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Models;
+namespace Stackra\Search\Models;
 
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Search\Contracts\Data\SearchSyncJobInterface;
-use Academorix\Search\Database\Factories\SearchSyncJobFactory;
-use Academorix\Search\Enums\SearchSyncJobStatus;
-use Academorix\Search\Observers\SearchSyncJobObserver;
-use Academorix\Search\Policies\SearchSyncJobPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Search\Contracts\Data\SearchSyncJobInterface;
+use Stackra\Search\Database\Factories\SearchSyncJobFactory;
+use Stackra\Search\Enums\SearchSyncJobStatus;
+use Stackra\Search\Observers\SearchSyncJobObserver;
+use Stackra\Search\Policies\SearchSyncJobPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

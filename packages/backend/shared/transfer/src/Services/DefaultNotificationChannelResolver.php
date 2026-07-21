@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Services;
+namespace Stackra\Transfer\Services;
 
-use Academorix\Transfer\Contracts\Services\NotificationChannelResolverInterface;
+use Stackra\Transfer\Contracts\Services\NotificationChannelResolverInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

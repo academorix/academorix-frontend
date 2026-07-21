@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Policies;
+namespace Stackra\Tenancy\Policies;
 
-use Academorix\Tenancy\Contracts\Data\TenantInterface;
-use Academorix\Tenancy\Enums\TenancyPermission;
-use Academorix\Tenancy\Models\Tenant;
+use Stackra\Tenancy\Contracts\Data\TenantInterface;
+use Stackra\Tenancy\Enums\TenancyPermission;
+use Stackra\Tenancy\Models\Tenant;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

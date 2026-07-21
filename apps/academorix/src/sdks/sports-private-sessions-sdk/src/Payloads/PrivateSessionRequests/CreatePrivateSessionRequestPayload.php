@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsPrivateSessionsSdk\Payloads\PrivateSessionRequests;
+namespace Stackra\SportsPrivateSessionsSdk\Payloads\PrivateSessionRequests;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\StringType;

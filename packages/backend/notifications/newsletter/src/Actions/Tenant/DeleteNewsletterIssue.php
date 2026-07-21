@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Actions\Tenant;
+namespace Stackra\Newsletter\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterIssueRepositoryInterface;
-use Academorix\Newsletter\Enums\NewsletterPermission;
-use Academorix\Newsletter\Exceptions\NewsletterIssueNotFoundException;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Delete;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterIssueRepositoryInterface;
+use Stackra\Newsletter\Enums\NewsletterPermission;
+use Stackra\Newsletter\Exceptions\NewsletterIssueNotFoundException;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Delete;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\JsonResponse;
 
 /**

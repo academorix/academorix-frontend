@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/monitoring/data/providers/prometheus-config",
+  "id": "stackra://modules/monitoring/data/providers/prometheus-config",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Prometheus provider config",
@@ -11,7 +11,7 @@
     "mode": {
       "type": "string",
       "enum": ["pushgateway", "alertmanager_receiver", "both"],
-      "description": "pushgateway: outbound — Academorix pushes metrics to tenant Pushgateway. alertmanager_receiver: inbound — Academorix hosts a webhook receiver that AlertManager POSTs to. both: enable both modes."
+      "description": "pushgateway: outbound — Stackra pushes metrics to tenant Pushgateway. alertmanager_receiver: inbound — Stackra hosts a webhook receiver that AlertManager POSTs to. both: enable both modes."
     },
     "pushgateway_url": {
       "type": ["string", "null"],
@@ -21,7 +21,7 @@
     },
     "pushgateway_job_name": {
       "type": "string",
-      "default": "academorix_monitoring",
+      "default": "stackra_monitoring",
       "description": "Job name applied to pushed metrics. Grouped in Prometheus by this name."
     },
     "pushgateway_instance": {

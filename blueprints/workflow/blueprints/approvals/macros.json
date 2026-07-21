@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/macros",
+  "id": "stackra://modules/workflow/approvals/macros",
   "$version": 1,
   "title": "approvals — published macros",
   "description": "This module ships NO Blueprint macros. Approval-instance + approval-decision tables use plain columns declared via the standard `AsDatabaseBlueprint` conventions from foundation. No JSONB-composition macros needed. The `context_json` + `payload_json` columns on approval_instances are simple `jsonb` types written via straightforward `$table->jsonb('context_json')` calls in the migration — no helper required.",

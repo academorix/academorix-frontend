@@ -5,11 +5,11 @@
  *
  * @description
  * Path rule: forbids the existence of view-asset directories
- * (e.g. `resources/`) inside any Academorix app.
+ * (e.g. `resources/`) inside any Stackra app.
  *
  * ## Why
  *
- * Every Academorix backend app is headless — it emits JSON to a
+ * Every Stackra backend app is headless — it emits JSON to a
  * separate frontend and never renders Blade / CSS / JS itself.
  * A `resources/` directory on an app root is either a leftover
  * from a Laravel `laravel new` skeleton or an early-stage
@@ -41,9 +41,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Violations\Violation;
 
 /**
  * Enforce "no view-asset directories inside a headless app".
@@ -67,7 +67,7 @@ final class NoResourcesFolderRule extends AbstractPathRule
      */
     public function description(): string
     {
-        return 'Academorix apps are headless — no resources/ (or equivalent view-asset) directory allowed at the app root.';
+        return 'Stackra apps are headless — no resources/ (or equivalent view-asset) directory allowed at the app root.';
     }
 
     /**
@@ -112,11 +112,11 @@ final class NoResourcesFolderRule extends AbstractPathRule
                     filePath: $fullPath,
                     offender: $basename,
                     message: sprintf(
-                        'Forbidden directory "%s" exists in %s — Academorix apps are headless.',
+                        'Forbidden directory "%s" exists in %s — Stackra apps are headless.',
                         $basename,
                         $appRoot,
                     ),
-                    hint: 'Every Academorix app is headless. Move view assets to a separate frontend.',
+                    hint: 'Every Stackra app is headless. Move view assets to a separate frontend.',
                 );
             }
         }

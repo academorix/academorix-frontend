@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsSms\Actions\Tenant;
+namespace Stackra\NotificationsSms\Actions\Tenant;
 
-use Academorix\NotificationsSms\Contracts\Repositories\SmsOptOutRepositoryInterface;
-use Academorix\NotificationsSms\Data\SmsOptOutData;
-use Academorix\NotificationsSms\Data\Requests\CreateSmsOptOutRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\NotificationsSms\Contracts\Repositories\SmsOptOutRepositoryInterface;
+use Stackra\NotificationsSms\Data\SmsOptOutData;
+use Stackra\NotificationsSms\Data\Requests\CreateSmsOptOutRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/tenant/sms-opt-outs` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category NotificationsSms

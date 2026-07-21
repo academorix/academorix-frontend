@@ -57,7 +57,7 @@
           "props": {
             "emptyState": {
               "title": "No devices registered",
-              "description": "Install the Academorix mobile app to register a device.",
+              "description": "Install the Stackra mobile app to register a device.",
               "icon": "device-phone-mobile"
             }
           },

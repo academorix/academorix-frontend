@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/audit/entitlements",
+  "id": "stackra://modules/audit/entitlements",
   "$version": 1,
   "title": "audit — entitlements",
   "description": "Four entitlements gating audit capture (all tiers baseline), self-service export (Medium+), extended retention (Enterprise), and regulator-shaped cross-application export (Enterprise). Audit is a compliance requirement; the master entitlement is ON for every tier so no tenant ever operates without audit capture.",
@@ -32,7 +32,7 @@
       "key": "audit_regulator_export",
       "kind": "boolean",
       "defaultsByPlan": { "free": false, "small": false, "medium": false, "enterprise": true },
-      "description": "Regulator-shaped export via POST /api/v1/platform/audits/export. Cross-application (per tenants.application_id, so this composes across a tenant's activity across every Academorix product they're on). Payload conforms to regulator export schemas (see schemas/audit-regulator-export.schema.json planned Wave 7). Enterprise-only because the payload includes cross-app rollup + a signed manifest hash + a chain-of-custody metadata block that non-Enterprise tenants shouldn't need."
+      "description": "Regulator-shaped export via POST /api/v1/platform/audits/export. Cross-application (per tenants.application_id, so this composes across a tenant's activity across every Stackra product they're on). Payload conforms to regulator export schemas (see schemas/audit-regulator-export.schema.json planned Wave 7). Enterprise-only because the payload includes cross-app rollup + a signed manifest hash + a chain-of-custody metadata block that non-Enterprise tenants shouldn't need."
     }
   ]
 }

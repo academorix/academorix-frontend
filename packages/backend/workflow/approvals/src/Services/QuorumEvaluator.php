@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Services;
+namespace Stackra\Approvals\Services;
 
-use Academorix\Approvals\Contracts\Services\QuorumEvaluatorInterface;
-use Academorix\Approvals\Enums\ApprovalDecisionOutcome;
-use Academorix\Approvals\Enums\ApprovalQuorumType;
+use Stackra\Approvals\Contracts\Services\QuorumEvaluatorInterface;
+use Stackra\Approvals\Enums\ApprovalDecisionOutcome;
+use Stackra\Approvals\Enums\ApprovalQuorumType;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

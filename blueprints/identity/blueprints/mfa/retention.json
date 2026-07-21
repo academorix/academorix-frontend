@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/mfa/retention",
+  "id": "stackra://modules/mfa/retention",
   "$version": 1,
   "title": "mfa — retention windows",
   "description": "MFA retention is compliance-driven, not product-driven. Disabled WebAuthn credentials retain for 90 days (audit-trail hold). MFA challenges are ephemeral (5-minute TTL, hard-purged on expiry). Successful challenges leave activity_log entries for compliance correlation. Failed challenges retain for 90 days to support suspicious-activity forensics. Enrollment previews are strictly ephemeral (5-minute Redis TTL, no durable trail).",

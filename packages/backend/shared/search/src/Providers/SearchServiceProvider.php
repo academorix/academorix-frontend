@@ -17,7 +17,7 @@
  *     `#[RequirePermission]`.
  *   - Console commands: `#[AsCommand]` extending `BaseCommand`.
  *   - Seeder: `#[AsSeeder(priority: 45)]` — composes
- *     {@see \Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
+ *     {@see \Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
  *   - Events: `#[AsEvent]` on every class.
  *   - Observers: `#[ObservedBy]` on the models.
  *   - Policies: `#[UsePolicy]` on the models.
@@ -26,18 +26,18 @@
  *     binding their own concrete class through the same
  *     interface-side attribute.
  *   - Attribute registry: `#[HydratesFrom(Searchable::class)]` on
- *     the {@see \Academorix\Search\Contracts\Services\EngineRegistryInterface::register()}
+ *     the {@see \Stackra\Search\Contracts\Services\EngineRegistryInterface::register()}
  *     method — the framework scans every model carrying `#[Searchable]`
  *     and calls the registry on each hit.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Providers;
+namespace Stackra\Search\Providers;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * Search module service provider.

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Services;
+namespace Stackra\Search\Services;
 
-use Academorix\Search\Contracts\Data\SearchSyncJobInterface;
-use Academorix\Search\Contracts\Repositories\SearchSyncJobRepositoryInterface;
-use Academorix\Search\Contracts\Services\IndexOrchestratorInterface;
-use Academorix\Search\Enums\SearchSyncJobStatus;
-use Academorix\Search\Models\SearchSyncJob;
+use Stackra\Search\Contracts\Data\SearchSyncJobInterface;
+use Stackra\Search\Contracts\Repositories\SearchSyncJobRepositoryInterface;
+use Stackra\Search\Contracts\Services\IndexOrchestratorInterface;
+use Stackra\Search\Enums\SearchSyncJobStatus;
+use Stackra\Search\Models\SearchSyncJob;
 use Illuminate\Container\Attributes\Scoped;
 
 /**

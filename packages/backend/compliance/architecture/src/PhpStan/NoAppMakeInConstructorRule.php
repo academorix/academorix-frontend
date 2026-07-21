@@ -7,7 +7,7 @@
  * PHPStan rule: forbid service-locator calls
  * (`app()->make(...)`, `resolve(...)`) inside a `__construct`
  * body. Scope-aware sibling of
- * {@see \Academorix\Architecture\Rules\NoAppMakeInConstructorRule}.
+ * {@see \Stackra\Architecture\Rules\NoAppMakeInConstructorRule}.
  *
  * ## Why constructor scope specifically
  *
@@ -57,7 +57,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\PhpStan;
+namespace Stackra\Architecture\PhpStan;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;

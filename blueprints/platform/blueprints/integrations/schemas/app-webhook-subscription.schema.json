@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/integrations/schemas/app-webhook-subscription",
+  "id": "stackra://modules/integrations/schemas/app-webhook-subscription",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "AppWebhookSubscription",

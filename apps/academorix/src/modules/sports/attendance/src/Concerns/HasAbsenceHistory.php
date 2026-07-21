@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attendance\Concerns;
+namespace Stackra\Attendance\Concerns;
 
 /**
  * Trait — HasAbsenceHistory.

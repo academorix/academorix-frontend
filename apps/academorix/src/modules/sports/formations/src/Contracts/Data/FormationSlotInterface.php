@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Formations\Contracts\Data;
+namespace Stackra\Formations\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Formations\Models\FormationSlot;
+use Stackra\Formations\Models\FormationSlot;
 
 /**
  * Table shape for the `formation_slots` table.

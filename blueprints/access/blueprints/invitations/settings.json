@@ -1,15 +1,15 @@
 {
-  "id": "academorix://modules/invitations/settings",
+  "id": "stackra://modules/invitations/settings",
   "$version": 1,
   "title": "invitations \u2014 settings",
   "description": "Invitation platform settings. Canonical group/section/field taxonomy. One #[AsSetting] class \u2014 `InvitationSettings` \u2014 group key `invitations`. Ships with permission + feature + entitlement gates on individual fields via metadata.",
   "storedIn": "settings",
   "sduiScreen": "sdui/screens/settings-invitations.screen.json",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "invitations",
-      "class": "Academorix\\Invitations\\Settings\\InvitationSettings",
+      "class": "Stackra\\Invitations\\Settings\\InvitationSettings",
       "label": "Invitations",
       "description": "Expiry + resends + delivery channels + rate limits + sender identity + acceptance flow.",
       "icon": "envelope-open",

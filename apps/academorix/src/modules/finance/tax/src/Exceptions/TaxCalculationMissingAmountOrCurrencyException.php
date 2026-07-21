@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Exceptions;
+namespace Stackra\Tax\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * source_amount_cents AND source_currency are both required on tax_calculations.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TaxCalculationMissingAmountOrCurrencyException extends AcademorixException
+final class TaxCalculationMissingAmountOrCurrencyException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

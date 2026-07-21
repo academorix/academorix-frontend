@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Grants\Data;
+namespace Stackra\Grants\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Server-side output DTO for {@see \Academorix\Grants\Models\AccessGrant}.
+ * Server-side output DTO for {@see \Stackra\Grants\Models\AccessGrant}.
  *
  * Consumed by controllers + services on the SERVER side. This is
  * distinct from the wire SDK's DTO (which sits under
- * `Academorix\AccessGrantsSdk\Data`) — the wire DTO travels across the HTTP
+ * `Stackra\AccessGrantsSdk\Data`) — the wire DTO travels across the HTTP
  * boundary; this one stays in-process.
  *
  * @category Grants

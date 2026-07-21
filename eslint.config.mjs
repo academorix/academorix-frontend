@@ -1,4 +1,4 @@
-import react from "@academorix/config-eslint/react";
+import react from "@stackra/config-eslint/react";
 
 /**
  * Root ESLint config. Used when linting from the repo root (e.g. lint-staged).

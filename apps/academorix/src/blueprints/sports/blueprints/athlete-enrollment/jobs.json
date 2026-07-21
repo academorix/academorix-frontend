@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/athlete-enrollment/jobs",
+  "id": "stackra://modules/athlete-enrollment/jobs",
   "$version": 1,
   "title": "athlete-enrollment — background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Jobs\\ActivateConfirmedEnrollmentsJob",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Jobs\\ActivateConfirmedEnrollmentsJob",
       "queue": "athlete-enrollment",
       "purpose": "Every 15 minutes: sweep confirmed enrollments whose team's season has reached in_progress state + trigger status → active via EnrollmentAtomicityCoordinator. Handles the transition when a season starts + all confirmed enrollments need to be activated in one bulk pass.",
       "steps": [
@@ -19,7 +19,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Jobs\\ExpireExpiredProvisionalEnrollmentsJob",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Jobs\\ExpireExpiredProvisionalEnrollmentsJob",
       "queue": "athlete-enrollment",
       "purpose": "Daily: sweep provisional enrollments past config.athlete_enrollment.provisional_ttl_days (default 14) without guardian consent + transition to expired.",
       "steps": [
@@ -32,7 +32,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Jobs\\PromoteWaitlistedEnrollmentsJob",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Jobs\\PromoteWaitlistedEnrollmentsJob",
       "queue": "athlete-enrollment",
       "purpose": "Every 15 minutes: for each team, if capacity has opened (active enrollments < team.capacity), promote the earliest-waitlisted enrollment. Fires EnrollmentPromotedFromWaitlist. Recomputes waitlist_position for the remaining waitlisted rows on the team.",
       "steps": [
@@ -48,12 +48,12 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Jobs\\ReconcileEnrollmentTeamMemberInvariantJob",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Jobs\\ReconcileEnrollmentTeamMemberInvariantJob",
       "queue": "athlete-enrollment",
       "purpose": "Nightly: verify the atomic conversion invariant. Every enrollment with status='active' MUST have a live TeamMember; every TeamMember MUST have a matching active enrollment. Every finding is a P1 signal.",
       "steps": [
         "Enrollment-side check: SELECT id FROM athlete_enrollments WHERE status='active' AND (team_member_id IS NULL OR NOT EXISTS(SELECT 1 FROM team_members WHERE id=athlete_enrollments.team_member_id AND deleted_at IS NULL))",
-        "  For each: fire diagnostic event EnrollmentInvariantBroken + emit metric academorix.athlete_enrollment.invariant.broken",
+        "  For each: fire diagnostic event EnrollmentInvariantBroken + emit metric stackra.athlete_enrollment.invariant.broken",
         "TeamMember-side check: SELECT id FROM team_members WHERE member_type='athlete' AND status='active' AND deleted_at IS NULL AND NOT EXISTS(SELECT 1 FROM athlete_enrollments WHERE team_member_id=team_members.id AND status='active' AND deleted_at IS NULL)",
         "  For each: fire diagnostic event OrphanTeamMemberDetected — a TeamMember without a corresponding enrollment (likely from manual roster edits bypassing the enrollment flow — a compliance smell)"
       ],
@@ -63,7 +63,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Jobs\\PurgeCompletedEnrollmentsJob",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Jobs\\PurgeCompletedEnrollmentsJob",
       "queue": "athlete-enrollment",
       "purpose": "Yearly: hard-purge completed / withdrawn / expelled / expired enrollments past 7 years retention.",
       "steps": [
@@ -76,7 +76,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Jobs\\NotifyEnrollmentDeadlineJob",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Jobs\\NotifyEnrollmentDeadlineJob",
       "queue": "athlete-enrollment",
       "purpose": "Daily: sweep pending enrollments (status='submitted' or 'payment_pending' or 'consent_pending') within N days of the season's registration_closes_at. Dispatches EnrollmentDeadlineApproachingNotification at 14/7/1-day thresholds.",
       "steps": [

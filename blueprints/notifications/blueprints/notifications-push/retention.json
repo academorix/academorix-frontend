@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-push/retention",
+  "id": "stackra://modules/notifications-push/retention",
   "$version": 1,
   "title": "notifications-push \u2014 retention windows",
   "description": "Device tokens (RESTRICTED tier) purged aggressively \u2014 idle 90d \u2192 soft delete \u2192 30d grace \u2192 hard purge. GDPR Art. 17 user erasure cascades to immediate hard delete.",

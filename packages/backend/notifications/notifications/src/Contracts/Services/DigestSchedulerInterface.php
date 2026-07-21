@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Contracts\Services;
+namespace Stackra\Notifications\Contracts\Services;
 
-use Academorix\Notifications\Models\Notification;
-use Academorix\Notifications\Models\NotificationDigest;
-use Academorix\Notifications\Services\DefaultDigestScheduler;
+use Stackra\Notifications\Models\Notification;
+use Stackra\Notifications\Models\NotificationDigest;
+use Stackra\Notifications\Services\DefaultDigestScheduler;
 use Illuminate\Container\Attributes\Bind;
 
 /**

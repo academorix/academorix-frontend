@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/rbac/data-classes",
+  "id": "stackra://modules/rbac/data-classes",
   "$version": 1,
   "title": "rbac \u2014 field classification",
   "description": "Roles + permissions + pivot rows are structural authorization metadata \u2014 internal by default. `role_definitions` labels + descriptions are public (they render in tenant admin UI). No regulated-minor / regulated-health / regulated-financial fields on RBAC's own tables \u2014 those tiers apply to the DATA the permissions protect, not to the permission rows themselves.",

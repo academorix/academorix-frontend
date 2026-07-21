@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tax/data/providers/taxjar-config",
+  "id": "stackra://modules/tax/data/providers/taxjar-config",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "TaxJar provider config",
@@ -42,7 +42,7 @@
     "customer_id_prefix": {
       "type": ["string", "null"],
       "maxLength": 32,
-      "description": "Optional prefix for the TaxJar customer_id field. Useful for multi-tenant Academorix accounts sharing a single TaxJar account.",
+      "description": "Optional prefix for the TaxJar customer_id field. Useful for multi-tenant Stackra accounts sharing a single TaxJar account.",
       "default": null
     },
     "product_tax_code_default": {

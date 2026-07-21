@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Contracts\Repositories;
+namespace Stackra\Activity\Contracts\Repositories;
 
-use Academorix\Activity\Models\Activity;
-use Academorix\Activity\Repositories\EloquentActivityRepository;
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Activity\Models\Activity;
+use Stackra\Activity\Repositories\EloquentActivityRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
 use DateTimeInterface;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;

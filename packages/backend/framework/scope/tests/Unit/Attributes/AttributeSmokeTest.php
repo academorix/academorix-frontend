@@ -11,9 +11,9 @@
 
 declare(strict_types=1);
 
-use Academorix\Scope\Attributes\AsScopeResolver;
-use Academorix\Scope\Attributes\BypassScope;
-use Academorix\Scope\Attributes\ScopedTo;
+use Stackra\Scope\Attributes\AsScopeResolver;
+use Stackra\Scope\Attributes\BypassScope;
+use Stackra\Scope\Attributes\ScopedTo;
 
 uses()->group('unit', 'scope');
 

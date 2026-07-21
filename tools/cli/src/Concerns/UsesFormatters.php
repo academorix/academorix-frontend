@@ -2,7 +2,7 @@
 
 /**
  * @file UsesFormatters.php
- * @module Academorix\Cli\Concerns
+ * @module Stackra\Cli\Concerns
  * @description Post-emit format dispatch. Maps a file extension to the right
  *   formatter (Pint for PHP, Prettier for everything else). Silent no-op
  *   when the formatter isn't on PATH.
@@ -10,15 +10,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Concerns;
+namespace Stackra\Cli\Concerns;
 
-use Academorix\Cli\Support\ProcessRunner;
+use Stackra\Cli\Support\ProcessRunner;
 use Symfony\Component\Process\ExecutableFinder;
 
 /**
- * Composed by every command through {@see \Academorix\Cli\Commands\AbstractCommand}.
+ * Composed by every command through {@see \Stackra\Cli\Commands\AbstractCommand}.
  *
- * @property \Academorix\Cli\Container $container populated by {@see \Academorix\Cli\Commands\AbstractCommand}
+ * @property \Stackra\Cli\Container $container populated by {@see \Stackra\Cli\Commands\AbstractCommand}
  */
 trait UsesFormatters
 {

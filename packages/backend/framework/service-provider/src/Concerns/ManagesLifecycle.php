@@ -27,9 +27,9 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\ServiceProvider\Concerns;
+namespace Stackra\ServiceProvider\Concerns;
 
-use Academorix\ServiceProvider\Enums\ModuleLifecycleEvent;
+use Stackra\ServiceProvider\Enums\ModuleLifecycleEvent;
 
 /**
  * Fires module lifecycle events at REGISTERING / REGISTERED /

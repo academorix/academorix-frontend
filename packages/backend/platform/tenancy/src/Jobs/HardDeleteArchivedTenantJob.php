@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Jobs;
+namespace Stackra\Tenancy\Jobs;
 
-use Academorix\Tenancy\Contracts\Data\TenantInterface;
-use Academorix\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
-use Academorix\Tenancy\Events\TenantErased;
-use Academorix\Tenancy\Models\Tenant;
+use Stackra\Tenancy\Contracts\Data\TenantInterface;
+use Stackra\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
+use Stackra\Tenancy\Events\TenantErased;
+use Stackra\Tenancy\Models\Tenant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

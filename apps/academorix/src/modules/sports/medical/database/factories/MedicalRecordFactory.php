@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Medical\Database\Factories;
+namespace Stackra\Medical\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Medical\Contracts\Data\MedicalRecordInterface;
-use Academorix\Medical\Models\MedicalRecord;
+use Stackra\Medical\Contracts\Data\MedicalRecordInterface;
+use Stackra\Medical\Models\MedicalRecord;
 
 /**
- * Factory for {@see \Academorix\Medical\Models\MedicalRecord}.
+ * Factory for {@see \Stackra\Medical\Models\MedicalRecord}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Medical\Models\MedicalRecord>
+ * @extends Factory<\Stackra\Medical\Models\MedicalRecord>
  *
  * @category Medical
  *

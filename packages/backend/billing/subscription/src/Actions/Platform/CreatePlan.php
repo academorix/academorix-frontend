@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Actions\Platform;
+namespace Stackra\Subscription\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Subscription\Contracts\Data\PlanInterface;
-use Academorix\Subscription\Contracts\Repositories\PlanRepositoryInterface;
-use Academorix\Subscription\Data\PlanData;
-use Academorix\Subscription\Data\Requests\CreatePlanRequestData;
-use Academorix\Subscription\Enums\SubscriptionPermission;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Subscription\Contracts\Data\PlanInterface;
+use Stackra\Subscription\Contracts\Repositories\PlanRepositoryInterface;
+use Stackra\Subscription\Data\PlanData;
+use Stackra\Subscription\Data\Requests\CreatePlanRequestData;
+use Stackra\Subscription\Enums\SubscriptionPermission;
 
 /**
  * `POST /api/v1/platform/plans` — create a new plan in the catalogue.

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Repositories;
+namespace Stackra\Audit\Repositories;
 
-use Academorix\Audit\Contracts\Data\AuditInterface;
-use Academorix\Audit\Contracts\Repositories\AuditRepositoryInterface;
-use Academorix\Audit\Models\Audit;
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
+use Stackra\Audit\Contracts\Data\AuditInterface;
+use Stackra\Audit\Contracts\Repositories\AuditRepositoryInterface;
+use Stackra\Audit\Models\Audit;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
 use Illuminate\Support\Collection;
 
 /**

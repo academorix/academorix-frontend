@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Repositories;
+namespace Stackra\Monitoring\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Monitoring\Contracts\Data\HealthCheckRunInterface;
-use Academorix\Monitoring\Contracts\Repositories\HealthCheckRunRepositoryInterface;
-use Academorix\Monitoring\Models\HealthCheckRun;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Monitoring\Contracts\Data\HealthCheckRunInterface;
+use Stackra\Monitoring\Contracts\Repositories\HealthCheckRunRepositoryInterface;
+use Stackra\Monitoring\Models\HealthCheckRun;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Monitoring\Models\HealthCheckRun}.
+ * Attribute-first Eloquent repository for {@see Stackra\Monitoring\Models\HealthCheckRun}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(HealthCheckRunInterface::class)]` which resolves to
  * `HealthCheckRun` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Monitoring\Models\HealthCheckRun>
+ * @extends Repository<\Stackra\Monitoring\Models\HealthCheckRun>
  *
  * @category Monitoring
  *

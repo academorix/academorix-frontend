@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Services;
+namespace Stackra\Notifications\Push\Services;
 
-use Academorix\Notifications\Push\Contracts\Services\PushTransportManagerInterface;
-use Academorix\Notifications\Push\Contracts\Services\TokenValidatorInterface;
+use Stackra\Notifications\Push\Contracts\Services\PushTransportManagerInterface;
+use Stackra\Notifications\Push\Contracts\Services\TokenValidatorInterface;
 use Illuminate\Container\Attributes\Cache;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\Singleton;

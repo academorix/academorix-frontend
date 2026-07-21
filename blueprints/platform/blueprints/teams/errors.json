@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/teams/errors",
+  "id": "stackra://modules/teams/errors",
   "$version": 1,
   "title": "teams — error codes",
   "namespace": "teams",

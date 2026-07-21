@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/application/retention",
+  "id": "stackra://modules/application/retention",
   "$version": 1,
   "title": "application — data retention windows",
   "description": "Per-entity retention windows the retention runner respects.",

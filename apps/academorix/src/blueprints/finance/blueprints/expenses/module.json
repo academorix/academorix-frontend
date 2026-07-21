@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "expenses",
   "alias": "expenses",
-  "namespace": "Academorix\\Finance\\Expenses",
+  "namespace": "Stackra\\Finance\\Expenses",
   "description": "Money-out + payroll per blueprint §10.19. V1 keeps deliberately simple manual expense tracking; leaves upgrade path to automated operational-cost analysis. Ships SIX owned entities: `Expense` (category + amount + currency + is_recurring + recurrence + attached receipt storage::File; state draft → approved → paid), `ExpenseCategory` (tenant taxonomy — rent / utilities / equipment / maintenance / salaries / marketing / other), `PayrollRun` (periodic payroll job — computes staff pay from delivered sessions + bonuses + hourly; state draft → approved → paid), `PayrollLine` (per-staff line — staff_id + gross + deductions + net + branch_allocations JSONB when multi-branch per D2 locked), `Budget` (per-branch or per-category budget — period + amount + used_amount + variance), `CostCenter` (optional grouping for expense analytics). Every expense MUST attach a receipt document — finance team can trace to source PDF/image via storage.",
   "keywords": [
     "expenses",
@@ -15,7 +15,7 @@
     "wave-2"
   ],
   "priority": 74,
-  "providers": ["Academorix\\Finance\\Expenses\\Providers\\ExpensesServiceProvider"],
+  "providers": ["Stackra\\Finance\\Expenses\\Providers\\ExpensesServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

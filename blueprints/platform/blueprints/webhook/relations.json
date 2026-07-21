@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/webhook/relations",
+  "id": "stackra://modules/webhook/relations",
   "$version": 1,
   "title": "webhook \u2014 model relationships",
   "description": "WebhookSubscription hasMany WebhookDelivery. Subscription optionally FKs to ApiVersion.slug for payload version pinning.",

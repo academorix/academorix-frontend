@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Rules;
+namespace Stackra\Webhook\Rules;
 
-use Academorix\Webhook\Contracts\Services\WebhookRegistryInterface;
+use Stackra\Webhook\Contracts\Services\WebhookRegistryInterface;
 use Closure;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Validation\ValidationRule;

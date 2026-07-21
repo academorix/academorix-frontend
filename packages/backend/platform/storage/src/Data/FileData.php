@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Data;
+namespace Stackra\Storage\Data;
 
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Enums\FileVisibility;
-use Academorix\Storage\Enums\VirusScanState;
-use Academorix\Storage\Models\File;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Enums\FileVisibility;
+use Stackra\Storage\Enums\VirusScanState;
+use Stackra\Storage\Models\File;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Athlete\Enums;
+namespace Stackra\Athlete\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `dominant_hand` on `athlete`.

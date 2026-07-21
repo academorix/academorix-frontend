@@ -4,7 +4,7 @@
 
 Editorial publication + audience management module. Ships five aggregates and
 the full CAN-SPAM + CASL enforcement surface. Consumes
-`academorix/notifications- mail` for outbound delivery; itself is NOT a channel
+`stackra/notifications- mail` for outbound delivery; itself is NOT a channel
 driver.
 
 ### Owned artefacts

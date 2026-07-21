@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Console;
+namespace Stackra\Geography\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Geography\Contracts\Repositories\CountryRepositoryInterface;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Geography\Contracts\Repositories\CountryRepositoryInterface;
 
 /**
  * `php artisan geography:reconcile-vendor` — compare our DB against

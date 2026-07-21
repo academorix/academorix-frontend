@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Contracts\Services;
+namespace Stackra\Match\Contracts\Services;
 
-use Academorix\Match\Services\ScoringStrategyResolver;
+use Stackra\Match\Services\ScoringStrategyResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Database\Factories;
+namespace Stackra\Compliance\Database\Factories;
 
-use Academorix\Compliance\Contracts\Data\DsarInterface;
-use Academorix\Compliance\Enums\DsarAction;
-use Academorix\Compliance\Enums\DsarState;
-use Academorix\Compliance\Models\Dsar;
+use Stackra\Compliance\Contracts\Data\DsarInterface;
+use Stackra\Compliance\Enums\DsarAction;
+use Stackra\Compliance\Enums\DsarState;
+use Stackra\Compliance\Models\Dsar;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

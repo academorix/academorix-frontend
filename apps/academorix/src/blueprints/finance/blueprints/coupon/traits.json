@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/coupon/traits",
+  "id": "stackra://modules/coupon/traits",
   "$version": 1,
   "title": "coupon — trait composition",
   "description": "Two owned traits. `BelongsToCoupon` is the FK trait for downstream models (CouponRedemption + future consumers like a marketing-event row tied to a specific coupon). `HasCouponRedemptions` is the inverse-side convenience on the parent Coupon model. Order matters when composed with `BelongsToTenant`: tenant MUST come first so subsequent traits observe the tenant context.",
   "owned": [
     {
-      "trait": "Academorix\\Finance\\Coupon\\Concerns\\BelongsToCoupon",
+      "trait": "Stackra\\Finance\\Coupon\\Concerns\\BelongsToCoupon",
       "description": "Mixed into any domain model that carries a `coupon_id` FK. Adds the `coupon()` belongsTo relation and refuses cross-tenant writes at save time. Applied to CouponRedemption directly + planned marketing::MarketingEvent (Wave 5) that carries coupon_id for revenue attribution.",
       "public": true,
       "usedBy": [
@@ -14,7 +14,7 @@
       ]
     },
     {
-      "trait": "Academorix\\Finance\\Coupon\\Concerns\\HasCouponRedemptions",
+      "trait": "Stackra\\Finance\\Coupon\\Concerns\\HasCouponRedemptions",
       "description": "Composed onto the Coupon model. Adds `->redemptions()` (hasMany), `->activeRedemptions()` (scope filter reversed_at IS NULL), `->reversedRedemptions()` (scope filter reversed_at IS NOT NULL). Convenience: `$coupon->redemptions_count` for the count.",
       "public": true,
       "usedBy": ["coupon::Coupon"]
@@ -30,27 +30,27 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
     "tenants": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
         "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
       }
     ],
     "audit": [
       {
-        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "trait": "Stackra\\Audit\\Concerns\\Auditable",
         "reason": "Every write is compliance-relevant (financial-record 7-year retention). Every state transition on Coupon (is_active, valid_until, usage_count, applicable_plan_ids) + every reversed_at on CouponRedemption is audit-critical."
       }
     ],
     "activity": [
       {
-        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
         "reason": "Coupon lifecycle transitions (created / activated / deactivated / expired / usage_cap_reached) feed the staff-visible activity feed. NOT on CouponRedemption (high volume — redemptions surface via CouponRedeemed event + the redemption ledger UI instead)."
       }
     ]

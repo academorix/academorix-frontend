@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Contracts\Services;
+namespace Stackra\Coupon\Contracts\Services;
 
-use Academorix\Coupon\Models\CouponRedemption;
-use Academorix\Coupon\Services\ClawbackHandler;
+use Stackra\Coupon\Models\CouponRedemption;
+use Stackra\Coupon\Services\ClawbackHandler;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -38,9 +38,9 @@ interface ClawbackHandlerInterface
      * @param  string  $clawbackReason      `refund` / `chargeback` / `fraud` / `manual_admin`.
      * @param  string  $triggeringEventId   Finance event id that initiated the clawback.
      *
-     * @throws \Academorix\Coupon\Exceptions\CouponRedemptionNotFoundException
-     * @throws \Academorix\Coupon\Exceptions\CouponRedemptionAlreadyReversedException
-     * @throws \Academorix\Coupon\Exceptions\CouponClawbackFailedException
+     * @throws \Stackra\Coupon\Exceptions\CouponRedemptionNotFoundException
+     * @throws \Stackra\Coupon\Exceptions\CouponRedemptionAlreadyReversedException
+     * @throws \Stackra\Coupon\Exceptions\CouponClawbackFailedException
      *
      * @return CouponRedemption The reversed redemption row.
      */

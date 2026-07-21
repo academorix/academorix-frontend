@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Exceptions;
+namespace Stackra\Match\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to hard-delete an opponent_logos row while at least one match references it.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MatchOpponentLogoInUseException extends AcademorixException
+final class MatchOpponentLogoInUseException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

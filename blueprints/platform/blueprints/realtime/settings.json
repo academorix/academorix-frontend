@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/realtime/settings",
+  "id": "stackra://modules/realtime/settings",
   "$version": 1,
   "title": "realtime — tenant-editable settings",
   "description": "Settings this module registers against the settings substrate.",

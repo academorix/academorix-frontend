@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/storage/data/kinds",
+  "id": "stackra://modules/storage/data/kinds",
   "$version": 1,
   "title": "storage \u2014 default file kinds catalogue",
   "description": "Reference catalogue of platform-default file kinds. Every kind here is a suggested #[FileKind] declaration. Modules extending the catalogue with domain-specific kinds (e.g. sports::medical_certificate) add their own #[FileKind] classes; the runtime FileKindRegistry aggregates both.",

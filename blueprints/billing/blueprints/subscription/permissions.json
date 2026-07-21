@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/subscription/permissions",
+  "id": "stackra://modules/subscription/permissions",
   "$version": 1,
   "title": "subscription \u2014 permissions",
-  "seeder": "Academorix\\Subscription\\Database\\Seeders\\SubscriptionPermissionSeeder",
+  "seeder": "Stackra\\Subscription\\Database\\Seeders\\SubscriptionPermissionSeeder",
   "isSystem": true,
   "permissions": [
     { "name": "plans.viewAny", "guard": "sanctum", "seededOn": ["member", "admin", "owner"] },

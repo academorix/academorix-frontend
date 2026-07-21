@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Exceptions;
+namespace Stackra\Marketing\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * ReconcileMarketingEventStatusJob found an event stuck in 'dispatching' for > 24h.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MarketingStuckEventDetectedException extends AcademorixException
+final class MarketingStuckEventDetectedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

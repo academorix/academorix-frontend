@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Progress\Services;
+namespace Stackra\Progress\Services;
 
-use Academorix\Progress\Contracts\Services\BeltProgressionValidatorInterface;
+use Stackra\Progress\Contracts\Services\BeltProgressionValidatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Progress\Contracts\Repositories\BeltRankRepositoryInterface;
+use Stackra\Progress\Contracts\Repositories\BeltRankRepositoryInterface;
 
 /**
  * Concrete service — BeltProgressionValidator.

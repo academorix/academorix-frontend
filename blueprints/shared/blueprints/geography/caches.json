@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geography/caches",
+  "id": "stackra://modules/geography/caches",
   "$version": 1,
   "title": "geography \u2014 cache keys + tags",
   "driver": "redis",

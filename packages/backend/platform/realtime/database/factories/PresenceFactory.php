@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Realtime\Database\Factories;
+namespace Stackra\Realtime\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Realtime\Contracts\Data\PresenceInterface;
-use Academorix\Realtime\Models\Presence;
+use Stackra\Realtime\Contracts\Data\PresenceInterface;
+use Stackra\Realtime\Models\Presence;
 
 /**
- * Factory for {@see \Academorix\Realtime\Models\Presence}.
+ * Factory for {@see \Stackra\Realtime\Models\Presence}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Realtime\Models\Presence>
+ * @extends Factory<\Stackra\Realtime\Models\Presence>
  *
  * @category Realtime
  *

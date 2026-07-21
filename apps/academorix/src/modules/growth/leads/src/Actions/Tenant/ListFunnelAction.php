@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Actions\Tenant;
+namespace Stackra\Leads\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Leads\Contracts\Services\LeadFunnelReporterInterface;
-use Academorix\Leads\Enums\LeadsPermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Leads\Contracts\Services\LeadFunnelReporterInterface;
+use Stackra\Leads\Enums\LeadsPermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\Request;
 
 /**

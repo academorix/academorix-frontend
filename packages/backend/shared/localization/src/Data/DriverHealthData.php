@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Data;
+namespace Stackra\Localization\Data;
 
 use Spatie\LaravelData\Data;
 
 /**
  * Result of a
- * {@see \Academorix\Localization\Contracts\Services\TranslatorDriverInterface::healthcheck()}
+ * {@see \Stackra\Localization\Contracts\Services\TranslatorDriverInterface::healthcheck()}
  * call — a non-billable reachability probe. Powers the driver-status
  * endpoint and the `localization:describe` command.
  *

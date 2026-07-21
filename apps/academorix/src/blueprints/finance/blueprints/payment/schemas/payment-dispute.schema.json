@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/payment/schemas/payment-dispute",
+  "id": "stackra://modules/payment/schemas/payment-dispute",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "PaymentDispute",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "pdi_",
     "incrementing": false,
-    "model": "Academorix\\Finance\\Payment\\Models\\PaymentDispute",
-    "interface": "Academorix\\Finance\\Payment\\Contracts\\Data\\PaymentDisputeInterface",
-    "implements": ["Academorix\\Finance\\Payment\\Contracts\\Data\\PaymentDisputeInterface"],
+    "model": "Stackra\\Finance\\Payment\\Models\\PaymentDispute",
+    "interface": "Stackra\\Finance\\Payment\\Contracts\\Data\\PaymentDisputeInterface",
+    "implements": ["Stackra\\Finance\\Payment\\Contracts\\Data\\PaymentDisputeInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

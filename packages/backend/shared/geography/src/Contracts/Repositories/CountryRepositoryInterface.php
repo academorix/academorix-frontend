@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Contracts\Repositories;
+namespace Stackra\Geography\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Geography\Models\Country;
-use Academorix\Geography\Repositories\EloquentCountryRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Geography\Models\Country;
+use Stackra\Geography\Repositories\EloquentCountryRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

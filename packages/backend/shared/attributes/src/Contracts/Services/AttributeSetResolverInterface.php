@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attributes\Contracts\Services;
+namespace Stackra\Attributes\Contracts\Services;
 
-use Academorix\Attributes\Services\AttributeSetResolver;
+use Stackra\Attributes\Services\AttributeSetResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

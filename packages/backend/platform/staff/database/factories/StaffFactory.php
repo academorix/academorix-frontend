@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Staff\Database\Factories;
+namespace Stackra\Staff\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Staff\Contracts\Data\StaffInterface;
-use Academorix\Staff\Models\Staff;
+use Stackra\Staff\Contracts\Data\StaffInterface;
+use Stackra\Staff\Models\Staff;
 
 /**
- * Factory for {@see \Academorix\Staff\Models\Staff}.
+ * Factory for {@see \Stackra\Staff\Models\Staff}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Staff\Models\Staff>
+ * @extends Factory<\Stackra\Staff\Models\Staff>
  *
  * @category Staff
  *

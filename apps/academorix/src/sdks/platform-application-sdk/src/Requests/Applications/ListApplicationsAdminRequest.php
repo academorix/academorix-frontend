@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file apps/academorix/src/sdks/platform-application-sdk/src/Requests/Applications/ListApplicationsAdminRequest.php
+ * @file apps/stackra/src/sdks/platform-application-sdk/src/Requests/Applications/ListApplicationsAdminRequest.php
  *
  * @description
  * `GET /api/v1/applications` — the **platform-admin** audience. Auth
@@ -15,13 +15,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformApplicationSdk\Requests\Applications;
+namespace Stackra\PlatformApplicationSdk\Requests\Applications;
 
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\ApiSdk\Data\PaginationLinks;
-use Academorix\ApiSdk\Data\PaginationMeta;
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\PlatformApplicationSdk\Data\ApplicationData;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\ApiSdk\Data\PaginationLinks;
+use Stackra\ApiSdk\Data\PaginationMeta;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\PlatformApplicationSdk\Data\ApplicationData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

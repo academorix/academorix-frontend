@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Exceptions;
+namespace Stackra\Geography\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised (or attached as context) when both MaxMind AND ip-api.com
@@ -16,7 +16,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GeographyGeolocateUnresolvableException extends AcademorixException
+final class GeographyGeolocateUnresolvableException extends StackraException
 {
     public const CODE = 'GEOGRAPHY_GEOLOCATE_UNRESOLVABLE';
 

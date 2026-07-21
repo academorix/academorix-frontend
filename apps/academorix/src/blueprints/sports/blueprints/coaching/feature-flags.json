@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/coaching/feature-flags",
+  "id": "stackra://modules/coaching/feature-flags",
   "$version": 1,
   "title": "coaching — kill switches",
   "engine": "laravel/pennant",

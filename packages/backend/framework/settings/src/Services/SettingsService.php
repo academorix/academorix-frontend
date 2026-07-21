@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Settings\Services;
+namespace Stackra\Settings\Services;
 
-use Academorix\Scope\Contracts\ScopeContextInterface;
-use Academorix\Scope\Contracts\ScopeResolutionInterface;
-use Academorix\Settings\Contracts\SettingsRegistryInterface;
-use Academorix\Settings\Contracts\SettingsServiceInterface;
-use Academorix\Settings\Data\SettingDefinitionData;
-use Academorix\Settings\Data\SettingFieldData;
-use Academorix\Settings\Events\AppUpdateEvent;
-use Academorix\Settings\Events\SettingsChangeEvent;
+use Stackra\Scope\Contracts\ScopeContextInterface;
+use Stackra\Scope\Contracts\ScopeResolutionInterface;
+use Stackra\Settings\Contracts\SettingsRegistryInterface;
+use Stackra\Settings\Contracts\SettingsServiceInterface;
+use Stackra\Settings\Data\SettingDefinitionData;
+use Stackra\Settings\Data\SettingFieldData;
+use Stackra\Settings\Events\AppUpdateEvent;
+use Stackra\Settings\Events\SettingsChangeEvent;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
@@ -21,7 +21,7 @@ use Spatie\LaravelSettings\Settings;
 /**
  * Reference implementation of {@see SettingsServiceInterface}.
  *
- * Delegates every hierarchy concern to `academorix/scope` — the
+ * Delegates every hierarchy concern to `stackra/scope` — the
  * scope substrate resolves values by walking the active node's
  * materialised path (`global → application → tenant → org →
  * region → branch → team → user`), so this service never touches

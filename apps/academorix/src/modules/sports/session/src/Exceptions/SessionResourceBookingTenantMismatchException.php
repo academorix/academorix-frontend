@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Session\Exceptions;
+namespace Stackra\Session\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Cross-tenant FK smuggling — booking belongs to a different tenant.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SessionResourceBookingTenantMismatchException extends AcademorixException
+final class SessionResourceBookingTenantMismatchException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

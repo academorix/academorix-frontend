@@ -5,7 +5,7 @@
  *
  * @description
  * Account-lockout tunables. Ported from private constants on
- * `Academorix\Auth\Services\AccountLockoutService` in the old
+ * `Stackra\Auth\Services\AccountLockoutService` in the old
  * codebase — MAX_ATTEMPTS, WINDOW_SECONDS, MAX_LOCKOUT_SECONDS,
  * TIER_TTL_SECONDS. Moved to settings so an operator can adjust
  * lockout severity in response to an active credential-stuffing
@@ -27,12 +27,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Authorization\Settings;
+namespace Stackra\Authorization\Settings;
 
-use Academorix\Settings\Attributes\AsSetting;
-use Academorix\Settings\Attributes\SettingField;
-use Academorix\Settings\Enums\ControlType;
-use Academorix\Settings\Enums\SettingScope;
+use Stackra\Settings\Attributes\AsSetting;
+use Stackra\Settings\Attributes\SettingField;
+use Stackra\Settings\Enums\ControlType;
+use Stackra\Settings\Enums\SettingScope;
 
 /**
  * Rolling-window account-lockout policy.

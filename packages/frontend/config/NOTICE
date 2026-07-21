@@ -13,4 +13,4 @@ Divergences from upstream:
 - Added ConfigService.describe() introspection API
 - Files split per code-standards.md one-export-per-file rule
 
-Full changes: /Users/akouta/Projects/academorix-frontend/.kiro/specs/stackra-config-package/PLAN.md
+Full changes: /Users/akouta/Projects/stackra-frontend/.kiro/specs/stackra-config-package/PLAN.md

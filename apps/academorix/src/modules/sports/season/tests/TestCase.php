@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Season\Tests;
+namespace Stackra\Season\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/season.
+ * Base test case for stackra/season.
  *
  * @category Season
  *

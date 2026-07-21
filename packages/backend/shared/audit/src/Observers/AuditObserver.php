@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Observers;
+namespace Stackra\Audit\Observers;
 
-use Academorix\Audit\Contracts\Data\AuditInterface;
-use Academorix\Audit\Contracts\Services\AuditChainVerifierInterface;
-use Academorix\Audit\Events\AuditRecorded;
-use Academorix\Audit\Models\Audit;
+use Stackra\Audit\Contracts\Data\AuditInterface;
+use Stackra\Audit\Contracts\Services\AuditChainVerifierInterface;
+use Stackra\Audit\Events\AuditRecorded;
+use Stackra\Audit\Models\Audit;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Facade;
 

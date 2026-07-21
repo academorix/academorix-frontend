@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/staff/retention",
+  "id": "stackra://modules/staff/retention",
   "$version": 1,
   "title": "staff — retention windows",
   "description": "Active + on_leave + suspended staff never expire. Offboarded staff enter a two-phase retention: 90-day grace hold on emergency_contact_* + tax_id_last4 (GDPR Art. 5(1)(c) minimisation), then 7-year retention on the employment metadata (SOC 2 CC6.3 + national tax + labour law). Compensation history rows retain 7 years even after the parent Staff is hard-deleted — migrated to a compliance-archive table for the residual window. Coaches retain in lockstep with the parent Staff (a coach cannot outlive its parent).",
@@ -49,7 +49,7 @@
       "purge": {
         "trigger": "> 7 years past history_row.created_at",
         "action": "hard delete from staff_compensation_history table",
-        "notes": "PARENT-INDEPENDENT retention. When a tenant is erased (TenantErased), compensation_history rows migrate to a compliance-archive table (retained in encrypted form by ops for the residual 7-year window). This is a regulator-compliance requirement — pay-equity claims can look back up to 6-7 years even after the tenant has fully offboarded from Academorix."
+        "notes": "PARENT-INDEPENDENT retention. When a tenant is erased (TenantErased), compensation_history rows migrate to a compliance-archive table (retained in encrypted form by ops for the residual 7-year window). This is a regulator-compliance requirement — pay-equity claims can look back up to 6-7 years even after the tenant has fully offboarded from Stackra."
       }
     },
     {

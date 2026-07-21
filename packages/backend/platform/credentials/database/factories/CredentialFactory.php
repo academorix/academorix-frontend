@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Credentials\Database\Factories;
+namespace Stackra\Credentials\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Credentials\Contracts\Data\CredentialInterface;
-use Academorix\Credentials\Models\Credential;
+use Stackra\Credentials\Contracts\Data\CredentialInterface;
+use Stackra\Credentials\Models\Credential;
 
 /**
- * Factory for {@see \Academorix\Credentials\Models\Credential}.
+ * Factory for {@see \Stackra\Credentials\Models\Credential}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Credentials\Models\Credential>
+ * @extends Factory<\Stackra\Credentials\Models\Credential>
  *
  * @category Credentials
  *

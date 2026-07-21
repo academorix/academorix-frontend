@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/event/errors",
+  "id": "stackra://modules/event/errors",
   "$version": 1,
   "title": "event — error codes",
   "namespace": "event",

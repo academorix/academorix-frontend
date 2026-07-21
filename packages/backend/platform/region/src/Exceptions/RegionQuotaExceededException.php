@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Region\Exceptions;
+namespace Stackra\Region\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Reached the `region_slot` entitlement cap for this tenant (Small=1, Medium=3, Enterprise=unlimited).

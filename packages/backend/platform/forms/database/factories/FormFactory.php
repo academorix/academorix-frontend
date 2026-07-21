@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Database\Factories;
+namespace Stackra\Forms\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Forms\Contracts\Data\FormInterface;
-use Academorix\Forms\Models\Form;
+use Stackra\Forms\Contracts\Data\FormInterface;
+use Stackra\Forms\Models\Form;
 
 /**
- * Factory for {@see \Academorix\Forms\Models\Form}.
+ * Factory for {@see \Stackra\Forms\Models\Form}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Forms\Models\Form>
+ * @extends Factory<\Stackra\Forms\Models\Form>
  *
  * @category Forms
  *

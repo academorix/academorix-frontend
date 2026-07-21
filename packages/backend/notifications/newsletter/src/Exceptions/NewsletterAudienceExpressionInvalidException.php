@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Exceptions;
+namespace Stackra\Newsletter\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when an audience expression fails validation.
@@ -13,7 +13,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NewsletterAudienceExpressionInvalidException extends AcademorixException
+final class NewsletterAudienceExpressionInvalidException extends StackraException
 {
     public const CODE = 'newsletter.audience_expression_invalid';
 

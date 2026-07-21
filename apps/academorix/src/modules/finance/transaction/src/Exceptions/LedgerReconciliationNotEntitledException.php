@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transaction\Exceptions;
+namespace Stackra\Transaction\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Programmatic reconciliation via GET /api/v1/ledger/reconciliation requires the Enterprise-only transaction_ledger_reconciliation_api entitlement.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class LedgerReconciliationNotEntitledException extends AcademorixException
+final class LedgerReconciliationNotEntitledException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,14 +1,14 @@
 {
-  "name": "academorix/retention",
+  "name": "stackra/retention",
   "type": "library",
   "description": "Retention scanner — scans classes carrying #[AsRetentionPolicy] and applies delete / archive / anonymize actions on a scheduled cadence.",
   "license": "proprietary",
   "require": {
     "php": "^8.3",
-    "academorix/console": "@dev",
-    "academorix/foundation": "@dev",
-    "academorix/scheduling": "@dev",
-    "academorix/service-provider": "@dev",
+    "stackra/console": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/scheduling": "@dev",
+    "stackra/service-provider": "@dev",
     "illuminate/console": "^13.0",
     "illuminate/contracts": "^13.0",
     "illuminate/database": "^13.0",
@@ -16,13 +16,13 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Retention\\": "src/"
+      "Stackra\\Retention\\": "src/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Retention\\Providers\\RetentionServiceProvider"
+        "Stackra\\Retention\\Providers\\RetentionServiceProvider"
       ]
     }
   },

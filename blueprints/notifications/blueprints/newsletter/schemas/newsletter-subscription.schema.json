@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/newsletter/schemas/newsletter-subscription",
+  "id": "stackra://modules/newsletter/schemas/newsletter-subscription",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "NewsletterSubscription",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "nls_",
     "incrementing": false,
-    "model": "Academorix\\Newsletter\\Models\\NewsletterSubscription",
-    "interface": "Academorix\\Newsletter\\Contracts\\Data\\NewsletterSubscriptionInterface",
-    "implements": ["Academorix\\Newsletter\\Contracts\\Data\\NewsletterSubscriptionInterface"],
+    "model": "Stackra\\Newsletter\\Models\\NewsletterSubscription",
+    "interface": "Stackra\\Newsletter\\Contracts\\Data\\NewsletterSubscriptionInterface",
+    "implements": ["Stackra\\Newsletter\\Contracts\\Data\\NewsletterSubscriptionInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

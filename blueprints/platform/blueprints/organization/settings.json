@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/organization/settings",
+  "id": "stackra://modules/organization/settings",
   "$version": 1,
   "title": "organization — settings",
   "description": "Tenant-facing preferences for the Organization module. One group (tenant scope). No per-user preferences — the user's default_organization_id lives on their profile in the user module, not here.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "organization",
-      "class": "Academorix\\Organization\\Settings\\OrganizationSettings",
+      "class": "Stackra\\Organization\\Settings\\OrganizationSettings",
       "label": "Organizations",
       "description": "Tenant-wide Organization behaviour preferences. Distinct from per-Organization branding (which lives on each row).",
       "icon": "building-office-2",

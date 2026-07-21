@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Events;
+namespace Stackra\Match\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog
  * - match::CacheOpponentLogoOnMatchScheduled (writes / bumps the opponent_logos row for the named opponent)
- * - monitoring::MetricsCollector (increments academorix.matches.scheduled_total)
+ * - monitoring::MetricsCollector (increments stackra.matches.scheduled_total)
  *
  * @category Match
  *

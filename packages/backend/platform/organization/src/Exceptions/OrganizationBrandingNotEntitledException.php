@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Organization\Exceptions;
+namespace Stackra\Organization\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Tenant lacks the `organization_branding` boolean entitlement + attempted to write logo_url/primary_color/secondary_color/description.

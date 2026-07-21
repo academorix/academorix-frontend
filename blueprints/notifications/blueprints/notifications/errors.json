@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/errors",
+  "id": "stackra://modules/notifications/errors",
   "$version": 1,
   "title": "notifications core \u2014 error codes",
   "description": "Module-scoped error codes. Every code follows foundation's envelope contract: uppercase snake_case, module-namespaced prefix `NOTIFICATIONS_`. Downstream error codes exist per channel module (NOTIFICATIONS_MAIL_HARD_BOUNCE, NOTIFICATIONS_SMS_PROVIDER_ERROR, NOTIFICATIONS_PUSH_INVALID_TOKEN).",

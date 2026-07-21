@@ -4,8 +4,8 @@ audit-composer-naming.py — survey every composer.json name.
 
 Buckets every package into one of:
   - laravel-prefixed  : name after '/' starts with 'laravel-'
-  - unprefixed        : everything else in the `academorix*` vendor
-  - non-academorix    : third-party / unknown
+  - unprefixed        : everything else in the `stackra*` vendor
+  - non-stackra    : third-party / unknown
 
 For each package also reports whether its `require` block hints at
 Laravel-coupling (mentions `laravel/*`, `illuminate/*`, `orchestra/*`)
@@ -36,8 +36,8 @@ def is_laravel_coupled(require: dict) -> bool:
 
 def main() -> int:
     laravel_prefixed: list[dict] = []
-    unprefixed_academorix: list[dict] = []
-    non_academorix: list[dict] = []
+    unprefixed_stackra: list[dict] = []
+    non_stackra: list[dict] = []
 
     for cj in WORKSPACE.rglob("composer.json"):
         if any(part in SKIP_DIR_NAMES for part in cj.parts):
@@ -60,25 +60,25 @@ def main() -> int:
             "laravel_coupled": laravel_coupled,
         }
 
-        if not vendor.startswith("academorix"):
-            non_academorix.append(row)
+        if not vendor.startswith("stackra"):
+            non_stackra.append(row)
         elif tail.startswith("laravel-"):
             laravel_prefixed.append(row)
         else:
-            unprefixed_academorix.append(row)
+            unprefixed_stackra.append(row)
 
-    total = len(laravel_prefixed) + len(unprefixed_academorix) + len(non_academorix)
+    total = len(laravel_prefixed) + len(unprefixed_stackra) + len(non_stackra)
 
     print(f"Total composer.json packages: {total}")
     print()
     print("Buckets:")
-    print(f"  laravel-prefixed academorix : {len(laravel_prefixed)}")
-    print(f"  unprefixed academorix       : {len(unprefixed_academorix)}")
-    print(f"  non-academorix              : {len(non_academorix)}")
+    print(f"  laravel-prefixed stackra : {len(laravel_prefixed)}")
+    print(f"  unprefixed stackra       : {len(unprefixed_stackra)}")
+    print(f"  non-stackra              : {len(non_stackra)}")
     print()
 
     print("=" * 72)
-    print(f"Laravel-prefixed academorix packages ({len(laravel_prefixed)}):")
+    print(f"Laravel-prefixed stackra packages ({len(laravel_prefixed)}):")
     print("=" * 72)
     for row in sorted(laravel_prefixed, key=lambda r: r["name"]):
         marker = "  [laravel-coupled]" if row["laravel_coupled"] else "  [framework-neutral]"
@@ -86,14 +86,14 @@ def main() -> int:
         print(f"    {row['path']}")
     print()
 
-    if unprefixed_academorix:
+    if unprefixed_stackra:
         print("=" * 72)
-        print(f"Unprefixed academorix packages ({len(unprefixed_academorix)}):")
+        print(f"Unprefixed stackra packages ({len(unprefixed_stackra)}):")
         print("=" * 72)
         print("(showing only Laravel-coupled ones — candidates for a rename)")
-        laravel_coupled_unprefixed = [r for r in unprefixed_academorix if r["laravel_coupled"]]
+        laravel_coupled_unprefixed = [r for r in unprefixed_stackra if r["laravel_coupled"]]
         print(f"  Laravel-coupled but UNPREFIXED: {len(laravel_coupled_unprefixed)}")
-        print(f"  Framework-neutral (correctly unprefixed): {len(unprefixed_academorix) - len(laravel_coupled_unprefixed)}")
+        print(f"  Framework-neutral (correctly unprefixed): {len(unprefixed_stackra) - len(laravel_coupled_unprefixed)}")
         print()
         print("Laravel-coupled unprefixed packages (first 40):")
         for row in sorted(laravel_coupled_unprefixed, key=lambda r: r["name"])[:40]:

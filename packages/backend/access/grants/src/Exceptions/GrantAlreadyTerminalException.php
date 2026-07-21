@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Grants\Exceptions;
+namespace Stackra\Grants\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Attempt to update / revoke a grant that is already revoked or expired.

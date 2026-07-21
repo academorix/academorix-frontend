@@ -221,7 +221,7 @@
   "notes": [
     "The provider enum + capabilities are the authoritative source. Adding a new provider = adding a new entry here + shipping the driver class + JSON config schema + webhook handler + adding the enum value.",
     "supports_multi_currency=true means the provider accepts non-domicile-currency payments (transacts in the specified currency). supports_multi_currency=false means the tenant is locked to the provider's home currency.",
-    "supports_marketplaces=true means the provider supports multi-party splits between the platform + sub-merchants. Required for Academorix's Split Payments feature (future).",
+    "supports_marketplaces=true means the provider supports multi-party splits between the platform + sub-merchants. Required for Stackra's Split Payments feature (future).",
     "supports_setup_intent=true means the provider has a dedicated SetupIntent-equivalent flow for saving methods WITHOUT charging (e.g. saving a card during signup for later use). Stripe SetupIntent, Adyen storedPaymentMethod flow. PayPal + Paddle do not have this — customers save methods via a full first payment.",
     "Fee estimates are TYPICAL DOMESTIC card rates as of 2026-01. Actual fees vary by tenant contract + card type + region. Used only as sanity checks on Payment.fee_cents values reported by the provider.",
     "3DS2 versions 2.1.0 + 2.2.0 are the two currently-active variants. 3DS 1.0.2 is legacy — issuers may reject or downgrade. supports_3ds2_versions documents what each provider will emit in the three_ds_version field of resulting Payment rows."

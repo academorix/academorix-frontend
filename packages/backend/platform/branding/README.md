@@ -1,6 +1,6 @@
-# academorix/branding
+# stackra/branding
 
-White-label branding substrate for Academorix tenants. Owns the `Branding`
+White-label branding substrate for Stackra tenants. Owns the `Branding`
 aggregate — theme, palette, logo variants, typography, and custom CSS variables.
 
 ## Aggregate
@@ -12,7 +12,7 @@ aggregate — theme, palette, logo variants, typography, and custom CSS variable
 ## Install
 
 ```bash
-composer require academorix/branding
+composer require stackra/branding
 ```
 
 ## Blueprint

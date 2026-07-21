@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/grants/listeners",
+  "id": "stackra://modules/grants/listeners",
   "$version": 1,
   "title": "grants — subscribed events",
   "description": "Cross-module reactions handled by the grants module. The primary bridge is `AccessRequestApprovedListener` on `workflow/approvals::ApprovalExecuted` — this is the seam through which access requests become grants (per design §6). Also listens to tenant / user / resource lifecycle events so grants stay consistent when their referenced entities change state.",
   "listeners": [
     {
       "event": "workflow/approvals::ApprovalExecuted",
-      "listener": "Academorix\\Grant\\Listeners\\AccessRequestApprovedListener",
+      "listener": "Stackra\\Grant\\Listeners\\AccessRequestApprovedListener",
       "queue": "notifications",
       "purpose": "The canonical access-request → grant bridge (design §6.3). Fires when a workflow/approvals instance completes with action_key='access.grants.create'. Reads approval_instance.context_json — { subject_id, resource_type, resource_id, permissions_wanted, reason, decision } — and calls GrantIssuer::issue() with source='access_request' + source_reference=approval_instance.id. Skipped when action_key != 'access.grants.create'. Idempotent — if the grant row already exists for this source_reference (double-listener bug guard), no-op.",
       "conditions": ["event.approvalInstance.action_key === 'access.grants.create'"],
@@ -16,56 +16,56 @@
     },
     {
       "event": "workflow/approvals::ApprovalRejected",
-      "listener": "Academorix\\Grant\\Listeners\\LogAccessRequestRejected",
+      "listener": "Stackra\\Grant\\Listeners\\LogAccessRequestRejected",
       "queue": "notifications",
       "purpose": "When an access-request approval was rejected, write an activity_log row on the tenant with actor=requester + action='access_request_rejected' + subject=resource. No grant is created (obviously) — this is just the log entry for the failed path. Skipped when action_key != 'access.grants.create'.",
       "conditions": ["event.approvalInstance.action_key === 'access.grants.create'"]
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Grant\\Listeners\\PurgeGrantsForErasedTenant",
+      "listener": "Stackra\\Grant\\Listeners\\PurgeGrantsForErasedTenant",
       "queue": "retention",
       "purpose": "Cascade delete outstanding grants for the erased tenant. Cascade FK already handles the DB rows; this listener writes the compliance audit trail entry + emits count metric + fires GrantRevoked (with revoker=null, reason='tenant_erased') so downstream ACL caches invalidate cleanly.",
       "shouldQueue": true
     },
     {
       "event": "user::UserDeleted",
-      "listener": "Academorix\\Grant\\Listeners\\RevokeGrantsForDeletedSubject",
+      "listener": "Stackra\\Grant\\Listeners\\RevokeGrantsForDeletedSubject",
       "queue": "notifications",
       "purpose": "When a User is soft-deleted (or hard-deleted post-erasure), revoke any active grants where they are the subject. Sets revoked_at + revoked_reason='subject_deleted' + revoked_by=null. Ensures the ACL layer never returns access to a non-existent user.",
       "shouldQueue": true
     },
     {
       "event": "user::UserDeleted",
-      "listener": "Academorix\\Grant\\Listeners\\NullifyGrantsFromDeletedGrantor",
+      "listener": "Stackra\\Grant\\Listeners\\NullifyGrantsFromDeletedGrantor",
       "queue": "notifications",
       "purpose": "When a User is deleted, their `granted_by` FKs on outstanding grants are nulled by the DB (onDelete=set null). This listener writes the compliance audit row noting which grants lost their grantor + emits an ops metric so the ratio of NULL grantors stays observable.",
       "shouldQueue": true
     },
     {
       "event": "user::IdentityErased",
-      "listener": "Academorix\\Grant\\Listeners\\PurgeGrantsForErasedIdentity",
+      "listener": "Stackra\\Grant\\Listeners\\PurgeGrantsForErasedIdentity",
       "queue": "retention",
       "purpose": "GDPR Art. 17 erasure cascade. Hard-purge every grant WHERE subject is a User linked to the erased identity. Preserves the reason field verbatim (retained indefinitely for audit) but redacts the subject to `erased-<hash>` in the activity log entries the grants produced.",
       "shouldQueue": true
     },
     {
       "event": "access/rbac::PermissionDeleted",
-      "listener": "Academorix\\Grant\\Listeners\\RevokeGrantsForDeletedPermission",
+      "listener": "Stackra\\Grant\\Listeners\\RevokeGrantsForDeletedPermission",
       "queue": "notifications",
       "purpose": "When a permission is deleted from the access/rbac permissions table, revoke every grant whose `permissions` array contains that name. Sets revoked_reason='permission_deleted' + fires GrantRevoked. Safety net — should be rare (permissions are is_system almost always).",
       "shouldQueue": true
     },
     {
       "event": "access/delegation::DelegationCreated",
-      "listener": "Academorix\\Grant\\Listeners\\WarmDelegateGrantCache",
+      "listener": "Stackra\\Grant\\Listeners\\WarmDelegateGrantCache",
       "queue": "notifications",
       "purpose": "When a delegation is created (delegator hands over to delegate for a window), pre-warm the grant evaluation cache for the delegate → union of (delegate's own grants + delegator's grants). Cache is cold before the delegation starts; warming avoids the first-request penalty for the delegate.",
       "shouldQueue": true
     },
     {
       "event": "access/delegation::DelegationRevoked",
-      "listener": "Academorix\\Grant\\Listeners\\InvalidateDelegateGrantCache",
+      "listener": "Stackra\\Grant\\Listeners\\InvalidateDelegateGrantCache",
       "queue": "notifications",
       "purpose": "When a delegation is revoked, invalidate the delegate's cached grants immediately so the next check re-computes without the delegator's overlay.",
       "shouldQueue": true

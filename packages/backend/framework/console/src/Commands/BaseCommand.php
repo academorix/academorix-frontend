@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * Base Command.
  *
- * Abstract base class for all Academorix console commands. Uses OmniTerm
+ * Abstract base class for all Stackra console commands. Uses OmniTerm
  * for rich terminal output with animated spinners, live tasks, progress
  * bars, and Tailwind-styled HTML rendering.
  *
@@ -14,11 +14,11 @@ declare(strict_types=1);
  * @since    2.0.0
  */
 
-namespace Academorix\Console\Commands;
+namespace Stackra\Console\Commands;
 
-use Academorix\Console\Concerns\UsesOmniTerm;
+use Stackra\Console\Concerns\UsesOmniTerm;
 use Illuminate\Console\Command;
-use Academorix\Console\Registry\CommandExtensionRegistry;
+use Stackra\Console\Registry\CommandExtensionRegistry;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 

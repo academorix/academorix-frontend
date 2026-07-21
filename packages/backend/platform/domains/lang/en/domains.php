@@ -4,7 +4,7 @@
  * @file modules/platform/domains/lang/en/domains.php
  *
  * @description
- * English translations for the `academorix/domains` module. Loaded
+ * English translations for the `stackra/domains` module. Loaded
  * under the `domains::` namespace.
  */
 

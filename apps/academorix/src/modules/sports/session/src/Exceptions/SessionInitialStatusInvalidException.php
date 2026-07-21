@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Session\Exceptions;
+namespace Stackra\Session\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to create with status IN (in_progress, completed, cancelled, rescheduled).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SessionInitialStatusInvalidException extends AcademorixException
+final class SessionInitialStatusInvalidException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Exceptions;
+namespace Stackra\AgeGroup\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to flip is_default=false without a sibling AgeGroup in the same (tenant, organization, sport_key) tuple carrying is_default=true.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AgeGroupMissingDefaultException extends AcademorixException
+final class AgeGroupMissingDefaultException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

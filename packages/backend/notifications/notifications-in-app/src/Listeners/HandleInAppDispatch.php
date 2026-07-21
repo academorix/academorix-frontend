@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Listeners;
+namespace Stackra\Notifications\InApp\Listeners;
 
-use Academorix\Events\Attributes\OnEvent;
-use Academorix\Notifications\InApp\Jobs\BroadcastInAppNotificationJob;
+use Stackra\Events\Attributes\OnEvent;
+use Stackra\Notifications\InApp\Jobs\BroadcastInAppNotificationJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Psr\Log\LoggerInterface;
 
@@ -74,7 +74,7 @@ final class HandleInAppDispatch implements ShouldQueue
      * We read via property_exists so this listener stays compatible
      * with either property name the parent picks.
      */
-    #[OnEvent(event: 'Academorix\Notifications\Events\NotificationDispatched')]
+    #[OnEvent(event: 'Stackra\Notifications\Events\NotificationDispatched')]
     public function handle(object $event): void
     {
         if (! (bool) \config('notifications-in-app.enabled', true)) {

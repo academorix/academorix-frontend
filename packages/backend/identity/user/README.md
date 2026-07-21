@@ -1,4 +1,4 @@
-# academorix/user
+# stackra/user
 
 Server-side Laravel package for the `user` module. Auto-generated from the
 blueprint at `modules/identity/blueprints/user/`.
@@ -46,6 +46,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-identity/user-sdk` under `sdk/identity-user-sdk/`. Consumers cross
+`stackra-identity/user-sdk` under `sdk/identity-user-sdk/`. Consumers cross
 the service boundary through the SDK; this package is the SERVER-side owner of
 the domain.

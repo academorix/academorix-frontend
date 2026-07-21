@@ -52,13 +52,13 @@ Every persistent model in every downstream module composes some subset:
 > `foundation.search-indexing` kill switch, `platform.search.manage` permission,
 > and `POST /api/v1/platform/search/*` routes \u2014 moved to `modules/search/`
 > on Wave 6 module inception. Consumer models now use
-> `Academorix\Search\Concerns\HasSearchable` alongside the `#[Searchable]` PHP
+> `Stackra\Search\Concerns\HasSearchable` alongside the `#[Searchable]` PHP
 > attribute. See `modules/search/readme.md` \u00a7 10 for the full rename map.
 
 > **Import / export moved out.** `Importable` and `Exportable` traits — along
 > with their `->importable()` / `->exportable()` blueprint macros — moved to
 > `modules/transfer/` on Wave 2 module inception. Consumer models now use
-> `Academorix\Transfer\Concerns\HasImportable` / `HasExportable` alongside the
+> `Stackra\Transfer\Concerns\HasImportable` / `HasExportable` alongside the
 > `#[Importable]` / `#[Exportable]` PHP attributes. See
 > `modules/transfer/readme.md` § 11 for the full rename map.
 
@@ -131,24 +131,24 @@ and `modules/localization/readme.md` for the macro definition + the
 
 | Primitive            | Class                                               | Role                                                                                                                                |
 | -------------------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| Base data DTO        | `Academorix\Foundation\Data\BaseData`               | Extends `spatie/laravel-data` with `SnakeCaseMapper` + wire envelope defaults.                                                      |
-| Base request         | `Academorix\Foundation\Http\BaseFormRequest`        | Standardises validation error envelope + error code mapping.                                                                        |
-| Base controller      | `Academorix\Foundation\Http\BaseController`         | Response envelope helpers + policy binding + `include=` param parsing.                                                              |
-| Base CRUD controller | `Academorix\Foundation\Http\CrudController`         | RESTful defaults built on spatie/laravel-query-builder. Every entity-resource controller extends this.                              |
-| Base exception       | `Academorix\Foundation\Exceptions\ApiException`     | Structured error code + HTTP status + i18n key + audit severity. Base of every custom exception.                                    |
-| Base repository      | `Academorix\Foundation\Repositories\BaseRepository` | Query builder + eager-load defaults + spatie/query-builder integration + cache invalidation hooks.                                  |
-| Base service         | `Academorix\Foundation\Services\BaseService`        | Repository binding + event dispatch + audit trail integration.                                                                      |
-| Base job             | `Academorix\Foundation\Jobs\BaseJob`                | Automatic Sentry tags + tenants context capture + retry backoff defaults.                                                           |
-| Response envelope    | `Academorix\Foundation\Http\ResponseEnvelope`       | Wraps every controller response into `{ data, meta, links }` per the API contract.                                                  |
-| Health aggregator    | `Academorix\Foundation\Health\HealthAggregator`     | Discovers registered probes from every module + reports readiness + liveness on `/api/health`.                                      |
-| Module registry      | `Academorix\Foundation\Modules\ModuleRegistry`      | Discovers every `modules/*/module.json` at boot + resolves dependency graph.                                                        |
-| Module route loader  | `Academorix\Foundation\Modules\ModuleRouteLoader`   | Reads every module's `routes.json` and mounts route groups under the correct middleware stack. No per-module route provider needed. |
+| Base data DTO        | `Stackra\Foundation\Data\BaseData`               | Extends `spatie/laravel-data` with `SnakeCaseMapper` + wire envelope defaults.                                                      |
+| Base request         | `Stackra\Foundation\Http\BaseFormRequest`        | Standardises validation error envelope + error code mapping.                                                                        |
+| Base controller      | `Stackra\Foundation\Http\BaseController`         | Response envelope helpers + policy binding + `include=` param parsing.                                                              |
+| Base CRUD controller | `Stackra\Foundation\Http\CrudController`         | RESTful defaults built on spatie/laravel-query-builder. Every entity-resource controller extends this.                              |
+| Base exception       | `Stackra\Foundation\Exceptions\ApiException`     | Structured error code + HTTP status + i18n key + audit severity. Base of every custom exception.                                    |
+| Base repository      | `Stackra\Foundation\Repositories\BaseRepository` | Query builder + eager-load defaults + spatie/query-builder integration + cache invalidation hooks.                                  |
+| Base service         | `Stackra\Foundation\Services\BaseService`        | Repository binding + event dispatch + audit trail integration.                                                                      |
+| Base job             | `Stackra\Foundation\Jobs\BaseJob`                | Automatic Sentry tags + tenants context capture + retry backoff defaults.                                                           |
+| Response envelope    | `Stackra\Foundation\Http\ResponseEnvelope`       | Wraps every controller response into `{ data, meta, links }` per the API contract.                                                  |
+| Health aggregator    | `Stackra\Foundation\Health\HealthAggregator`     | Discovers registered probes from every module + reports readiness + liveness on `/api/health`.                                      |
+| Module registry      | `Stackra\Foundation\Modules\ModuleRegistry`      | Discovers every `modules/*/module.json` at boot + resolves dependency graph.                                                        |
+| Module route loader  | `Stackra\Foundation\Modules\ModuleRouteLoader`   | Reads every module's `routes.json` and mounts route groups under the correct middleware stack. No per-module route provider needed. |
 
 ### 4. Middleware (see `middleware.json`)
 
 | Alias               | Role                                                                                                         |
 | ------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `api.version`       | Enforces `Accept: application/vnd.academorix.v1+json` on `/api/v1/*`. Emits `X-API-Version` on the response. |
+| `api.version`       | Enforces `Accept: application/vnd.stackra.v1+json` on `/api/v1/*`. Emits `X-API-Version` on the response. |
 | `request.id`        | Assigns / propagates `X-Request-ID` for cross-service tracing.                                               |
 | `response.envelope` | Wraps controller responses into the standard `{data, meta, links}` shape.                                    |
 | `throttle.base`     | Global rate limiter. Every route composes this on top of its per-feature limiter.                            |
@@ -392,7 +392,7 @@ event's payload:
 
 | Field                                            | Purpose                                                                         |
 | ------------------------------------------------ | ------------------------------------------------------------------------------- |
-| `id`                                             | `academorix://modules/<owner>/contracts/<event>.v<N>`                           |
+| `id`                                             | `stackra://modules/<owner>/contracts/<event>.v<N>`                           |
 | `draft`                                          | Points at JSON Schema draft-2020-12                                             |
 | `x-emitter`                                      | Fully-qualified PHP class of the dispatching event                              |
 | `x-owning-module`                                | Module slug (matches folder name)                                               |

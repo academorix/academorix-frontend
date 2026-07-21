@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PublicSite\Database\Factories;
+namespace Stackra\PublicSite\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\PublicSite\Contracts\Data\ContentBlockInterface;
-use Academorix\PublicSite\Models\ContentBlock;
+use Stackra\PublicSite\Contracts\Data\ContentBlockInterface;
+use Stackra\PublicSite\Models\ContentBlock;
 
 /**
- * Factory for {@see \Academorix\PublicSite\Models\ContentBlock}.
+ * Factory for {@see \Stackra\PublicSite\Models\ContentBlock}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\PublicSite\Models\ContentBlock>
+ * @extends Factory<\Stackra\PublicSite\Models\ContentBlock>
  *
  * @category PublicSite
  *

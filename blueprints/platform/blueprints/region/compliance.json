@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/region/compliance",
+  "id": "stackra://modules/region/compliance",
   "$version": 1,
   "title": "region — compliance evidence",
   "description": "Region is the commercial + regulatory reference table. No PII on the row itself. The bulk of compliance responsibility is around FINANCIAL-record retention (tax_config changes generate 7-year audit rows) + SOC 2 CC6.3 change tracking (region_id changes to Branch / Membership are audit-logged). Tenant tax registration_number is confidential.",

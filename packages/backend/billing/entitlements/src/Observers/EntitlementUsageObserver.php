@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Observers;
+namespace Stackra\Entitlements\Observers;
 
-use Academorix\Entitlements\Contracts\Data\EntitlementUsageInterface;
-use Academorix\Entitlements\Contracts\Repositories\EntitlementRepositoryInterface;
-use Academorix\Entitlements\Events\EntitlementConsumed;
-use Academorix\Entitlements\Models\EntitlementUsage;
+use Stackra\Entitlements\Contracts\Data\EntitlementUsageInterface;
+use Stackra\Entitlements\Contracts\Repositories\EntitlementRepositoryInterface;
+use Stackra\Entitlements\Events\EntitlementConsumed;
+use Stackra\Entitlements\Models\EntitlementUsage;
 
 /**
  * Lifecycle side effects on {@see EntitlementUsage}.

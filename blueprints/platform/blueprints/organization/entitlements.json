@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/organization/entitlements",
+  "id": "stackra://modules/organization/entitlements",
   "$version": 1,
   "title": "organization — declared entitlements",
   "description": "Four entitlement keys. `organization_slot` is a slot (concurrent cap on rows). Three booleans gate distinct capabilities: nesting via parent_id, per-org branding, and post-create reparent moves. Every key is composite-scoped by (application_id, tenant_id) per hierarchy.md §7.",

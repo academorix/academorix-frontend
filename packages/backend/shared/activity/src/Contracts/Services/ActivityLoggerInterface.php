@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Contracts\Services;
+namespace Stackra\Activity\Contracts\Services;
 
-use Academorix\Activity\Models\Activity;
-use Academorix\Activity\Services\DefaultActivityLogger;
+use Stackra\Activity\Models\Activity;
+use Stackra\Activity\Services\DefaultActivityLogger;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Database\Eloquent\Model;
 

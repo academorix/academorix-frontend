@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Enums;
+namespace Stackra\Storage\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
  * State machine for a
- * {@see \Academorix\Storage\Models\ChunkedUpload}.
+ * {@see \Stackra\Storage\Models\ChunkedUpload}.
  *
  * State machine:
  * `initiating` → `uploading` → `finalizing` → `completed` |

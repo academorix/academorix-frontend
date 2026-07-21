@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/subscription/schemas/subscription-event",
+  "id": "stackra://modules/subscription/schemas/subscription-event",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "SubscriptionEvent",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "sev_",
     "incrementing": false,
-    "model": "Academorix\\Subscription\\Models\\SubscriptionEvent",
-    "interface": "Academorix\\Subscription\\Contracts\\Data\\SubscriptionEventInterface",
-    "implements": ["Academorix\\Subscription\\Contracts\\Data\\SubscriptionEventInterface"],
+    "model": "Stackra\\Subscription\\Models\\SubscriptionEvent",
+    "interface": "Stackra\\Subscription\\Contracts\\Data\\SubscriptionEventInterface",
+    "implements": ["Stackra\\Subscription\\Contracts\\Data\\SubscriptionEventInterface"],
     "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "Filterable"],
     "casts": {
       "kind": "SubscriptionEventKind",

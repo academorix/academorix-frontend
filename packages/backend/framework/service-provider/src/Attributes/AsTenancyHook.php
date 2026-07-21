@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceProvider\Attributes;
+namespace Stackra\ServiceProvider\Attributes;
 
-use Academorix\ServiceProvider\Bootstrappers\TenancyHookBootstrapper;
-use Academorix\ServiceProvider\Contracts\TenancyHookInterface;
-use Academorix\ServiceProvider\Registry\TenancyHookRegistry;
+use Stackra\ServiceProvider\Bootstrappers\TenancyHookBootstrapper;
+use Stackra\ServiceProvider\Contracts\TenancyHookInterface;
+use Stackra\ServiceProvider\Registry\TenancyHookRegistry;
 use Attribute;
 
 /**

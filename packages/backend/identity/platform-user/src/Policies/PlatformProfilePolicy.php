@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformUser\Policies;
+namespace Stackra\PlatformUser\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\PlatformUser\Models\PlatformProfile;
+use Stackra\User\Models\User;
+use Stackra\PlatformUser\Models\PlatformProfile;
 
 /**
- * Authorization policy for {@see \Academorix\PlatformUser\Models\PlatformProfile}.
+ * Authorization policy for {@see \Stackra\PlatformUser\Models\PlatformProfile}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

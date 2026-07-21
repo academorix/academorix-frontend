@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsMedicalSdk\Resources;
+namespace Stackra\SportsMedicalSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsMedicalSdk\Data\MedicalClearanceData;
-use Academorix\SportsMedicalSdk\Requests\MedicalClearances\CreateMedicalClearanceRequest;
-use Academorix\SportsMedicalSdk\Requests\MedicalClearances\ListMedicalClearancesRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsMedicalSdk\Data\MedicalClearanceData;
+use Stackra\SportsMedicalSdk\Requests\MedicalClearances\CreateMedicalClearanceRequest;
+use Stackra\SportsMedicalSdk\Requests\MedicalClearances\ListMedicalClearancesRequest;
 use Saloon\Http\Response;
 
 /**
@@ -55,7 +55,7 @@ final readonly class MedicalClearancesResource
      *
      * @return MedicalClearanceData
      */
-    public function create(\Academorix\SportsMedicalSdk\Payloads\MedicalClearances\CreateMedicalClearancePayload $payload, ?string $idempotencyKey = null): MedicalClearanceData
+    public function create(\Stackra\SportsMedicalSdk\Payloads\MedicalClearances\CreateMedicalClearancePayload $payload, ?string $idempotencyKey = null): MedicalClearanceData
     {
         return $this->connector->send(new CreateMedicalClearanceRequest($payload, $idempotencyKey))->dto();
     }

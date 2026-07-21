@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Exceptions;
+namespace Stackra\Chargeback\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * payment_dispute_id references a dispute for a different payment than chargeback.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ChargebackDisputeMismatchException extends AcademorixException
+final class ChargebackDisputeMismatchException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

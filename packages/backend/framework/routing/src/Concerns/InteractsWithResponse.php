@@ -15,20 +15,20 @@
  *
  * ## History
  *
- * Previously the trait delegated to `Academorix\Response\Facades\Response`
+ * Previously the trait delegated to `Stackra\Response\Facades\Response`
  * — the extracted response package. That package was deleted in
  * favour of a slim in-routing builder ({@see ResponseBuilder}).
  * Every helper here now returns a fresh builder instance backed
  * by that class.
  *
- * @see \Academorix\Routing\Http\ResponseBuilder Value object emitted by every helper.
+ * @see \Stackra\Routing\Http\ResponseBuilder Value object emitted by every helper.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Routing\Concerns;
+namespace Stackra\Routing\Concerns;
 
-use Academorix\Routing\Http\ResponseBuilder;
+use Stackra\Routing\Http\ResponseBuilder;
 
 /**
  * Provides semantic HTTP-status helpers on controllers.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformIntegrationsSdk\Data;
+namespace Stackra\PlatformIntegrationsSdk\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
@@ -26,7 +26,7 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
  * ## Example
  *
  * ```php
- * use Academorix\PlatformSdk\Client\PlatformSdk;
+ * use Stackra\PlatformSdk\Client\PlatformSdk;
  *
  * $row = app(PlatformSdk::class)->integrations()->apps()->show($id);
  * ```
@@ -45,7 +45,7 @@ final class AppData extends Data
      * @param  string                       $developerName
      * @param  string                       $developerEmail
      * @param  string                       $status                     draft / in_review / approved / suspended / retired.
-     * @param  bool                         $isFirstParty               True for apps built by Academorix or a vetted partner.
+     * @param  bool                         $isFirstParty               True for apps built by Stackra or a vetted partner.
      * @param  array<string, mixed>         $allowedScopes              Array of permission strings the app may request.
      * @param  bool                         $requiresChildDataScopes    Computed: true if allowed_scopes intersects with athletes / medical / attendance / safeguarding scopes.
      * @param  array<string, mixed>         $webhookEvents              Array of event names the app subscribes to.

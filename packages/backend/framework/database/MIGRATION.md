@@ -1,6 +1,6 @@
-# Migration notes — academorix/database
+# Migration notes — stackra/database
 
-Origin package split from `academorix/crud` per the "Model = what the data IS,
+Origin package split from `stackra/crud` per the "Model = what the data IS,
 Repository = how the data is QUERIED" rule documented in
 `old/crud/ARCHITECTURE.md`.
 
@@ -49,7 +49,7 @@ Repository = how the data is QUERIED" rule documented in
 
 | File                                        | Reason                                                                                                                                               |
 | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/Attributes/AsDatabaseBlueprint.php`    | Local port of the marker previously in `academorix/database`. Consumed by `DatabaseServiceProvider` for Blueprint macro auto-registration.           |
+| `src/Attributes/AsDatabaseBlueprint.php`    | Local port of the marker previously in `stackra/database`. Consumed by `DatabaseServiceProvider` for Blueprint macro auto-registration.           |
 | `src/Providers/DatabaseServiceProvider.php` | New — Laravel service provider that runs the macro-registration pass.                                                                                |
 | `src/Support/AttributeReader.php`           | Runtime attribute-reader shim replacing `Pixielity\Discovery\Facades\Discovery::forClass()`. Uses `ReflectionClass::getAttributes()` under the hood. |
 | `src/Support/ClassAttributeView.php`        | Value object returned by `AttributeReader::forClass()`.                                                                                              |
@@ -58,16 +58,16 @@ Repository = how the data is QUERIED" rule documented in
 
 | Old namespace                                            | New namespace                                          |
 | -------------------------------------------------------- | ------------------------------------------------------ |
-| `Academorix\Crud\Attributes\{data attrs}`                | `Academorix\Database\Attributes\{name}`                |
-| `Academorix\Crud\Concerns\Model\{name}`                  | `Academorix\Database\Concerns\Model\{name}`            |
-| `Academorix\Crud\Schema\{name}`                          | `Academorix\Database\Schema\{name}`                    |
-| `Academorix\Database\Attributes\AsDatabaseBlueprint`     | `Academorix\Database\Attributes\AsDatabaseBlueprint`   |
-| `Academorix\Foundation\Cache\{name}`                     | `Academorix\Database\Cache\{name}`                     |
-| `Academorix\Foundation\Concerns\HasMetadata` (+ friends) | `Academorix\Database\Concerns\HasMetadata` (+ friends) |
+| `Stackra\Crud\Attributes\{data attrs}`                | `Stackra\Database\Attributes\{name}`                |
+| `Stackra\Crud\Concerns\Model\{name}`                  | `Stackra\Database\Concerns\Model\{name}`            |
+| `Stackra\Crud\Schema\{name}`                          | `Stackra\Database\Schema\{name}`                    |
+| `Stackra\Database\Attributes\AsDatabaseBlueprint`     | `Stackra\Database\Attributes\AsDatabaseBlueprint`   |
+| `Stackra\Foundation\Cache\{name}`                     | `Stackra\Database\Cache\{name}`                     |
+| `Stackra\Foundation\Concerns\HasMetadata` (+ friends) | `Stackra\Database\Concerns\HasMetadata` (+ friends) |
 
 ## Discovery mechanism change
 
-- **Old**: `academorix/discovery` / `pixielity/laravel-discovery` runtime facade
+- **Old**: `stackra/discovery` / `pixielity/laravel-discovery` runtime facade
   (`Discovery::attribute(X::class)->get()`, `Discovery::forClass($class)`).
   Cached class map with dot-shorthand facade access.
 - **New**: `olvlvl/composer-attribute-collector`. Attribute targets are compiled
@@ -80,7 +80,7 @@ Repository = how the data is QUERIED" rule documented in
 ## TODOs
 
 - **`Attributes/Taggable.php`** — the `$tagModel` default is
-  `'Academorix\\Crud\\Models\\Tag'`. `Academorix\Crud\Models\Tag` is a phantom
+  `'Stackra\\Crud\\Models\\Tag'`. `Stackra\Crud\Models\Tag` is a phantom
   reference — the old codebase also carried this default without providing the
   class. Consumer apps override with their own tag model via
   `#[Taggable(tagModel: MyTag::class)]`. Same phantom reference appears in

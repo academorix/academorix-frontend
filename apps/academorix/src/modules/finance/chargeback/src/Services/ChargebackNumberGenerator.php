@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Services;
+namespace Stackra\Chargeback\Services;
 
-use Academorix\Chargeback\Contracts\Data\ChargebackInterface;
-use Academorix\Chargeback\Contracts\Repositories\ChargebackRepositoryInterface;
-use Academorix\Chargeback\Contracts\Services\ChargebackNumberGeneratorInterface;
+use Stackra\Chargeback\Contracts\Data\ChargebackInterface;
+use Stackra\Chargeback\Contracts\Repositories\ChargebackRepositoryInterface;
+use Stackra\Chargeback\Contracts\Services\ChargebackNumberGeneratorInterface;
 use Illuminate\Container\Attributes\DB;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Database\ConnectionInterface;

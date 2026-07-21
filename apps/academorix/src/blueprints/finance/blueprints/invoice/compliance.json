@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invoice/compliance",
+  "id": "stackra://modules/invoice/compliance",
   "$version": 1,
   "title": "invoice — compliance evidence",
   "description": "Invoice is the archetypal financial-record module. SOX §404 mandates 7-year retention (10 for Enterprise); GAAP + IFRS mandate sequential immutable numbering + immutable-after-finalize; PCI-DSS Requirement 3 forbids card data (payment tokens live in the payment module); EU VAT Directive 2006/112/EC mandates specific field ordering + customer_tax_id on VAT invoices; GDPR Art. 6(1)(b) contractual basis for retention; CAN-SPAM applies to dunning emails.",
@@ -140,7 +140,7 @@
         {
           "criterion": "CC7.2",
           "principle": "system monitoring",
-          "evidence": "InvoiceUncollectible + InvoiceSentToCollections + InvoiceWrittenOff + academorix.invoice.reconcile.drift_detected_total are P1 signals. Every fire pages on-call. The reconciliation job runs nightly + reports drift between invoices and transactions."
+          "evidence": "InvoiceUncollectible + InvoiceSentToCollections + InvoiceWrittenOff + stackra.invoice.reconcile.drift_detected_total are P1 signals. Every fire pages on-call. The reconciliation job runs nightly + reports drift between invoices and transactions."
         }
       ]
     },

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Jobs;
+namespace Stackra\Notifications\Push\Jobs;
 
-use Academorix\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
-use Academorix\Notifications\Push\Contracts\Repositories\PushSubscriptionRepositoryInterface;
-use Academorix\Notifications\Push\Enums\PushSubscriptionExpiredReason;
-use Academorix\Notifications\Push\Events\PushInvalidToken;
+use Stackra\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
+use Stackra\Notifications\Push\Contracts\Repositories\PushSubscriptionRepositoryInterface;
+use Stackra\Notifications\Push\Enums\PushSubscriptionExpiredReason;
+use Stackra\Notifications\Push\Events\PushInvalidToken;
 use Illuminate\Bus\Queueable;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Contracts\Queue\ShouldBeUnique;

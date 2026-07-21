@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Repositories;
+namespace Stackra\Geography\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Geography\Contracts\Data\CurrencyInterface;
-use Academorix\Geography\Contracts\Repositories\CurrencyRepositoryInterface;
-use Academorix\Geography\Models\Currency;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Geography\Contracts\Data\CurrencyInterface;
+use Stackra\Geography\Contracts\Repositories\CurrencyRepositoryInterface;
+use Stackra\Geography\Models\Currency;
 
 /**
  * Eloquent implementation of {@see CurrencyRepositoryInterface}.

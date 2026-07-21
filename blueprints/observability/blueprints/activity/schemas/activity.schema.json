@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/activity/schemas/activity",
+  "id": "stackra://modules/activity/schemas/activity",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Activity",
@@ -31,10 +31,10 @@
     "keyPrefixReserved": true,
     "keyPrefixNote": "The `act_` prefix is reserved for a future ULID conversion (Wave 7+). Wave 6 vendor-adaptation keeps the bigint auto-increment id — the vendor's Activity model expects it, and adding a ULID prefix here would require rewriting the whole vendor read path.",
     "incrementing": true,
-    "model": "Academorix\\Observability\\Activity\\Models\\Activity",
-    "interface": "Academorix\\Observability\\Activity\\Contracts\\Data\\ActivityInterface",
+    "model": "Stackra\\Observability\\Activity\\Models\\Activity",
+    "interface": "Stackra\\Observability\\Activity\\Contracts\\Data\\ActivityInterface",
     "implements": [
-      "Academorix\\Observability\\Activity\\Contracts\\Data\\ActivityInterface",
+      "Stackra\\Observability\\Activity\\Contracts\\Data\\ActivityInterface",
       "Spatie\\Activitylog\\Contracts\\Activity"
     ],
     "traits": ["HasFactory", "BelongsToTenant", "Filterable", "Searchable"],

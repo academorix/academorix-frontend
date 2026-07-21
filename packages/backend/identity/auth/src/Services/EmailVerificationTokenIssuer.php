@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Services;
+namespace Stackra\Auth\Services;
 
-use Academorix\Auth\Contracts\Services\EmailVerificationTokenIssuerInterface;
+use Stackra\Auth\Contracts\Services\EmailVerificationTokenIssuerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Auth\Contracts\Repositories\AuthCrossAppGrantRepositoryInterface;
+use Stackra\Auth\Contracts\Repositories\AuthCrossAppGrantRepositoryInterface;
 
 /**
  * Concrete service — EmailVerificationTokenIssuer.

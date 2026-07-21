@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "transaction",
   "alias": "transaction",
-  "namespace": "Academorix\\Finance\\Transaction",
+  "namespace": "Stackra\\Finance\\Transaction",
   "description": "The money-movement ledger. Answers 'where has every dollar flowed across accounts?'. FUNDAMENTALLY DISTINCT from Membership (the contract), Invoice (money owed), and Payment (a successful capture) — Transaction is the append-only double-entry ledger that records the movement itself. Ships TWO tables: `transactions` (root record — one row per business-level money movement; ties together the source + destination + amount + kind of movement) and `transaction_ledger_entries` (double-entry line items — debit + credit pair for every movement — enforces the balanced-books invariant). Every transaction has AT LEAST TWO ledger entries summing to zero (double-entry principle). Twelve transaction kinds (invoice_payment / refund_issued / chargeback_debit / coupon_credit / tax_remittance / fee_charge / adjustment / write_off / bank_deposit / bank_withdrawal / currency_conversion / opening_balance) map onto twelve chart-of-accounts entries (revenue / accounts_receivable / cash / refunds_owed / refunds_expense / tax_payable / gateway_fees / bank_deposits / write_offs / coupons_expense / chargebacks_expense / accounts_payable / prepayments / deferred_revenue). Transactions IMMUTABLE after commit — reversal happens via a NEW offsetting transaction (pointing at the original via source_transaction_id + reversal_reason), never mutation. Multi-currency support: transaction.currency frozen at commit; if a cross-currency movement (tenant base currency ≠ transaction currency), exchange_rate_to_base + base_amount_cents captured atomically. Every ledger entry constraint: exactly one of debit_cents / credit_cents > 0 per row. Invariant: SUM(debit_cents) == SUM(credit_cents) per transaction (enforced by TransactionObserver at commit + reasserted nightly by LedgerReconciler). Ships the `TransactionRecorder` service used atomically by invoice / payment / refund / chargeback modules during their own operations — every invoice paid → one transaction recorded → [debit: cash, credit: accounts_receivable] ledger entries; every refund issued → one transaction recorded → [debit: refunds_owed, credit: cash] + [debit: refunds_expense, credit: revenue]. Read-only HTTP surface (admin + finance role only) — writes ONLY through internal service. Reversal via POST /transactions/{txn}/reverse (admin-only, requires reason + approval). LedgerImbalanceDetected is the module's CRITICAL P0 event — it should NEVER fire; if it does, ledger is broken + new transactions halt until resolved.",
   "keywords": [
     "transaction",
@@ -43,7 +43,7 @@
     "wave-4"
   ],
   "priority": 64,
-  "providers": ["Academorix\\Finance\\Transaction\\Providers\\TransactionServiceProvider"],
+  "providers": ["Stackra\\Finance\\Transaction\\Providers\\TransactionServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

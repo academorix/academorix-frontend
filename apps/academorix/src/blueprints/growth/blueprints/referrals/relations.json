@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/referrals/relations",
+  "id": "stackra://modules/referrals/relations",
   "$version": 1,
   "title": "referrals — model relationships",
   "description": "Five owned entities. Every row is tenant-scoped (cascades on tenant delete). ReferralProgram is the aggregate root; ReferralCode belongs to a Program; Referral belongs to a Program + optional Code; ReferralReward belongs to a Referral; ReferralFraudFlag belongs to a Referral. Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / organization_id / region_id / branch_id / scope_node_id on any owned row — all cascade through tenant_id.",
@@ -204,6 +204,6 @@
     "ReferralReward does NOT carry `referral_program_id` directly — it cascades through `referral_id -> program_id`. Denormalisation deferred until proven necessary for query planning.",
     "The composite unique index on (tenant_id, referral_program_id, referrer_id, referred_id) partial WHERE deleted_at IS NULL enforces one referral per program per referrer-referred pair — a referred user cannot be re-referred by the same referrer for the same program.",
     "ReferralFraudFlag can have MULTIPLE rows per Referral (one per detection pass + flag type). A referral flagged for `self_ip_match` at claim time may accumulate a `velocity_exceeded` flag at trigger time.",
-    "polymorphic morphTo on referrer/referred/recipient uses `academorix/foundation`'s HasPolyRelation trait — refuses cross-tenant morph resolution at write time."
+    "polymorphic morphTo on referrer/referred/recipient uses `stackra/foundation`'s HasPolyRelation trait — refuses cross-tenant morph resolution at write time."
   ]
 }

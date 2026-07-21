@@ -1,7 +1,7 @@
-# academorix-sports/registrations-sdk
+# stackra-sports/registrations-sdk
 
 Wire-visible SDK surface for the `registrations` module of the Sports service.
-Auto-discovered by `academorix/sports-sdk` (the service umbrella) via
+Auto-discovered by `stackra/sports-sdk` (the service umbrella) via
 `#[AsSdkResource(name: 'registrations', service: 'sports')]`.
 
 ## Aggregates
@@ -30,7 +30,7 @@ src/
 Consumed only over HTTP via the umbrella client:
 
 ```php
-app(\Academorix\SportsSdk\Client\SportsSdk::class)
+app(\Stackra\SportsSdk\Client\SportsSdk::class)
     ->registrations()
     ->offers()
     ->list();

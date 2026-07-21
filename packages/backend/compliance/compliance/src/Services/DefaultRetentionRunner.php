@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Services;
+namespace Stackra\Compliance\Services;
 
-use Academorix\Compliance\Contracts\Data\RetentionRunInterface;
-use Academorix\Compliance\Contracts\Repositories\RetentionRunRepositoryInterface;
-use Academorix\Compliance\Contracts\Services\RetentionRunnerInterface;
-use Academorix\Compliance\Events\RetentionSweepCompleted;
-use Academorix\Compliance\Events\RetentionSweepStarted;
-use Academorix\Compliance\Models\RetentionRun;
+use Stackra\Compliance\Contracts\Data\RetentionRunInterface;
+use Stackra\Compliance\Contracts\Repositories\RetentionRunRepositoryInterface;
+use Stackra\Compliance\Contracts\Services\RetentionRunnerInterface;
+use Stackra\Compliance\Events\RetentionSweepCompleted;
+use Stackra\Compliance\Events\RetentionSweepStarted;
+use Stackra\Compliance\Models\RetentionRun;
 use Illuminate\Container\Attributes\Scoped;
 
 /**

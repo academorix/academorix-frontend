@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/versioning/analytics",
+  "id": "stackra://modules/versioning/analytics",
   "$version": 1,
   "title": "versioning \u2014 product analytics events",
   "description": "Product analytics events for version lifecycle. Consent tier: functional (versioning is service functionality, not marketing insight).",

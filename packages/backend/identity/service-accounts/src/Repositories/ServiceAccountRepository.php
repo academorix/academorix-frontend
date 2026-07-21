@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Repositories;
+namespace Stackra\ServiceAccounts\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\ServiceAccounts\Contracts\Data\ServiceAccountInterface;
-use Academorix\ServiceAccounts\Contracts\Repositories\ServiceAccountRepositoryInterface;
-use Academorix\ServiceAccounts\Models\ServiceAccount;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\ServiceAccounts\Contracts\Data\ServiceAccountInterface;
+use Stackra\ServiceAccounts\Contracts\Repositories\ServiceAccountRepositoryInterface;
+use Stackra\ServiceAccounts\Models\ServiceAccount;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\ServiceAccounts\Models\ServiceAccount}.
+ * Attribute-first Eloquent repository for {@see Stackra\ServiceAccounts\Models\ServiceAccount}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ServiceAccountInterface::class)]` which resolves to
  * `ServiceAccount` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\ServiceAccounts\Models\ServiceAccount>
+ * @extends Repository<\Stackra\ServiceAccounts\Models\ServiceAccount>
  *
  * @category ServiceAccounts
  *

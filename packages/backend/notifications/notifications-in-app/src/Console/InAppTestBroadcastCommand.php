@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsInApp\Console;
+namespace Stackra\NotificationsInApp\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan notifications:in-app:test-broadcast` — In app:test broadcast — notifications command.

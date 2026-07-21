@@ -4,7 +4,7 @@
  * @file modules/platform/webhook/lang/en/webhook.php
  *
  * @description
- * English translations for the `academorix/webhook` module.
+ * English translations for the `stackra/webhook` module.
  */
 
 declare(strict_types=1);

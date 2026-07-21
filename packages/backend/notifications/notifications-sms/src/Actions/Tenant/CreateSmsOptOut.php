@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Actions\Tenant;
+namespace Stackra\Notifications\Sms\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Notifications\Sms\Contracts\Data\SmsOptOutInterface;
-use Academorix\Notifications\Sms\Contracts\Repositories\SmsOptOutRepositoryInterface;
-use Academorix\Notifications\Sms\Data\Requests\CreateSmsOptOutRequestData;
-use Academorix\Notifications\Sms\Data\SmsOptOutData;
-use Academorix\Notifications\Sms\Enums\NotificationsSmsPermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Notifications\Sms\Contracts\Data\SmsOptOutInterface;
+use Stackra\Notifications\Sms\Contracts\Repositories\SmsOptOutRepositoryInterface;
+use Stackra\Notifications\Sms\Data\Requests\CreateSmsOptOutRequestData;
+use Stackra\Notifications\Sms\Data\SmsOptOutData;
+use Stackra\Notifications\Sms\Enums\NotificationsSmsPermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 
 /**
  * `POST /api/v1/tenant/sms-opt-outs` — tenant admin manually adds an opt-out.

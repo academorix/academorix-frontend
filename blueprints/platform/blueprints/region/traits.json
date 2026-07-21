@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/region/traits",
+  "id": "stackra://modules/region/traits",
   "$version": 1,
   "title": "region — trait composition",
   "description": "One owned trait — `BelongsToRegion` — for domain models that carry a `region_id` FK (Branch, Finance::Membership, Finance::Transaction, Finance::Invoice). Order matters when composed with `BelongsToTenant`: tenant MUST come first so the scope chain observes the tenant context in this trait's `booted()` hook.",
   "owned": [
     {
-      "trait": "Academorix\\Region\\Concerns\\BelongsToRegion",
+      "trait": "Stackra\\Region\\Concerns\\BelongsToRegion",
       "description": "Mixed into any domain model that carries a Region FK. Adds the `region()` belongsTo relation, a `resolveInRegion(?Region $region = null)` query scope that filters `WHERE region_id = ?` (falling back to the caller's `Request::activeRegion()` when the arg is omitted), and a `booted()` hook that fills `region_id = active_region_id()` on `creating` when the field is null AND the current request carries a resolved active region. Refuses to save a row whose `region_id` points at a Region in a different tenant than the row itself (defense-in-depth against cross-tenant FK smuggling — the compliance-auditor would catch a bad schema, this catches a bad write).",
       "public": true,
       "usedBy": [
@@ -30,22 +30,22 @@
       { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
-    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "tenants": [{ "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" }],
     "audit": [
       {
-        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "trait": "Stackra\\Audit\\Concerns\\Auditable",
         "reason": "Region mutations (rename, tax_config changes, status transitions, is_default flip) write to the `audits` table — every one of them is compliance-relevant."
       }
     ],
     "activity": [
       {
-        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
         "reason": "Region lifecycle events feed the tenant admin's product-facing activity feed."
       }
     ]

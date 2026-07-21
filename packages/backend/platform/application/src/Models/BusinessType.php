@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Models;
+namespace Stackra\Application\Models;
 
-use Academorix\Application\Contracts\Data\BusinessTypeInterface;
-use Academorix\Application\Database\Factories\BusinessTypeFactory;
-use Academorix\Application\Observers\BusinessTypeObserver;
-use Academorix\Application\Policies\BusinessTypePolicy;
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Database\Concerns\HasSystemFlag;
-use Academorix\Database\Concerns\HasTranslations;
+use Stackra\Application\Contracts\Data\BusinessTypeInterface;
+use Stackra\Application\Database\Factories\BusinessTypeFactory;
+use Stackra\Application\Observers\BusinessTypeObserver;
+use Stackra\Application\Policies\BusinessTypePolicy;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Database\Concerns\HasSystemFlag;
+use Stackra\Database\Concerns\HasTranslations;
 use Closure;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;

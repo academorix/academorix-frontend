@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/localization/policies",
+  "id": "stackra://modules/localization/policies",
   "$version": 1,
   "title": "localization \u2014 authorization policies",
   "policies": [
     {
       "model": "PlatformLanguage",
-      "class": "Academorix\\Localization\\Policies\\PlatformLanguagePolicy",
+      "class": "Stackra\\Localization\\Policies\\PlatformLanguagePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -21,7 +21,7 @@
     },
     {
       "model": "TenantLocale",
-      "class": "Academorix\\Localization\\Policies\\TenantLocalePolicy",
+      "class": "Stackra\\Localization\\Policies\\TenantLocalePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -34,7 +34,7 @@
     },
     {
       "model": "Translation",
-      "class": "Academorix\\Localization\\Policies\\TranslationPolicy",
+      "class": "Stackra\\Localization\\Policies\\TranslationPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "translations.viewAny" },
         { "action": "view", "permission": "translations.view" },
@@ -51,7 +51,7 @@
     },
     {
       "model": "TranslationJob",
-      "class": "Academorix\\Localization\\Policies\\TranslationJobPolicy",
+      "class": "Stackra\\Localization\\Policies\\TranslationJobPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "translation_jobs.viewAny" },
         { "action": "view", "permission": "translation_jobs.view" },

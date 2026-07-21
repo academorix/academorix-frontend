@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Enums;
+namespace Stackra\Tenancy\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `business_type` on `tenant`.

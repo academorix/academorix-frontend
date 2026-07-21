@@ -4,7 +4,7 @@
  * @file modules/products/geofencing/lang/en/geofencing.php
  *
  * @description
- * English translations for the `academorix/geofencing` module. Loaded under
+ * English translations for the `stackra/geofencing` module. Loaded under
  * the `geofencing::` namespace.
  */
 

@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Teams\Models;
+namespace Stackra\Teams\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Teams\Contracts\Data\TeamInterface;
-use Academorix\Teams\Database\Factories\TeamFactory;
-use Academorix\Branch\Concerns\BelongsToBranch;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Organization\Concerns\BelongsToOrganization;
-use Academorix\Teams\Enums\TeamStatus;
-use Academorix\Teams\Policies\TeamPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Teams\Contracts\Data\TeamInterface;
+use Stackra\Teams\Database\Factories\TeamFactory;
+use Stackra\Branch\Concerns\BelongsToBranch;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Organization\Concerns\BelongsToOrganization;
+use Stackra\Teams\Enums\TeamStatus;
+use Stackra\Teams\Policies\TeamPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "audit",
   "alias": "audit",
-  "namespace": "Academorix\\Observability\\Audit",
+  "namespace": "Stackra\\Observability\\Audit",
   "description": "The audit lane. Wraps vendor `owen-it/laravel-auditing` to provide compliance-grade, immutable-after-write field-level diff records for every mutating operation across every module. Answers 'who did what, when?' with a regulator/DPO audience. Zero loss tolerance — every audit row survives a rolled-back transaction (deliberate — the audit trail records the ATTEMPT, not just success). 7-year retention default (extends to 10y with `audit_retention_extended` Enterprise entitlement). Adapts the vendor `audits` table by adding `tenant_id` NOT NULL + `application_id` NULLABLE + composite indexes (tenant_id, created_at) + (application_id, tenant_id, created_at) + (auditable_type, auditable_id, created_at) + (user_type, user_id, created_at) + (event, tenant_id, created_at), and backfilling from existing `new_values.tenant_id` jsonb blobs. Ships two aggregates: `Audit` (the vendor's audits table wrapped with our BelongsToTenant trait + a strict read-only surface), and `AuditRetentionPolicy` (per-tenant retention override — Enterprise tenants can extend past the default 7y with an override_reason + override window). Every module in the codebase adds the vendor's `Auditable` trait to its models; the vendor observer captures create/update/delete/restored + custom events automatically. This module does NOT capture events — it OWNS the storage schema adaptation + query surface + retention scheduling + regulator/DSAR export. The consumer contract is: use the vendor `Auditable` trait; this module handles the rest.",
   "keywords": [
     "audit",
@@ -31,7 +31,7 @@
     "wave-6"
   ],
   "priority": 20,
-  "providers": ["Academorix\\Observability\\Audit\\Providers\\AuditServiceProvider"],
+  "providers": ["Stackra\\Observability\\Audit\\Providers\\AuditServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "application", "user"],
   "extendedBy": [],
@@ -116,7 +116,7 @@
       "Add `tenant_id UUID NOT NULL` column (backfilled from `new_values.tenant_id` for existing rows)",
       "Add `application_id UUID NULLABLE` column (NULL = platform-plane audit)",
       "Add composite indexes for tenant + application + entity + actor + event query patterns",
-      "Wrap vendor `Audit` model with our own `Academorix\\Observability\\Audit\\Models\\Audit` that adds `BelongsToTenant` trait (global scope + auto-fill on save)",
+      "Wrap vendor `Audit` model with our own `Stackra\\Observability\\Audit\\Models\\Audit` that adds `BelongsToTenant` trait (global scope + auto-fill on save)",
       "Add read-only enforcement middleware on every /audits route (refuses non-GET methods)",
       "Add AuditRetentionPolicy aggregate for per-tenant retention overrides",
       "Add scheduled PurgeExpiredAuditsJob per-tenant honoring the retention policy",

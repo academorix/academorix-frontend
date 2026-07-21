@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/access/requests/feature-flags",
+  "id": "stackra://modules/access/requests/feature-flags",
   "$version": 1,
   "title": "requests \u2014 rollout flags",
   "description": "Rollout / change-management flags for THIS module. Distinct from `features.json` (tenant-facing catalogue entries). Every material change ships behind a flag per SOC 2 CC8.1.",
@@ -66,7 +66,7 @@
       "cohorts": [
         {
           "name": "internal-compliance-team",
-          "predicate": "user.email ENDS WITH '@academorix.com' AND user.groups CONTAINS 'compliance'",
+          "predicate": "user.email ENDS WITH '@stackra.com' AND user.groups CONTAINS 'compliance'",
           "state": "on"
         }
       ],

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Models;
+namespace Stackra\Rbac\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Rbac\Contracts\Data\RoleDefinitionInterface;
-use Academorix\Rbac\Database\Factories\RoleDefinitionFactory;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
+use Stackra\Rbac\Contracts\Data\RoleDefinitionInterface;
+use Stackra\Rbac\Database\Factories\RoleDefinitionFactory;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -26,7 +26,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 /**
  * Eloquent model for a RoleDefinition.
  *
- * Academorix metadata layer FK-linked to system roles.
+ * Stackra metadata layer FK-linked to system roles.
  *
  * @category Rbac
  *

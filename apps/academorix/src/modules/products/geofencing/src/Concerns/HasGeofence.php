@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Concerns;
+namespace Stackra\Geofencing\Concerns;
 
-use Academorix\Geofencing\Attributes\Geofenceable as GeofenceableAttribute;
-use Academorix\Geofencing\Contracts\Data\GeofenceCheckInterface;
-use Academorix\Geofencing\Models\GeofenceCheck;
+use Stackra\Geofencing\Attributes\Geofenceable as GeofenceableAttribute;
+use Stackra\Geofencing\Contracts\Data\GeofenceCheckInterface;
+use Stackra\Geofencing\Models\GeofenceCheck;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use ReflectionClass;
 
@@ -14,7 +14,7 @@ use ReflectionClass;
  * Mixed into any Eloquent model that carries a geofence.
  *
  * Provides column-backed default implementations of every method on the
- * {@see \Academorix\Geofencing\Contracts\Geofenceable} interface. Models with
+ * {@see \Stackra\Geofencing\Contracts\Geofenceable} interface. Models with
  * non-standard geometry storage (linked spatial_features table, external
  * service) implement the interface directly and skip the trait.
  *

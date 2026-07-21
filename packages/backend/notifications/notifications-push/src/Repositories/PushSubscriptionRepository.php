@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsPush\Repositories;
+namespace Stackra\NotificationsPush\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\NotificationsPush\Contracts\Data\PushSubscriptionInterface;
-use Academorix\NotificationsPush\Contracts\Repositories\PushSubscriptionRepositoryInterface;
-use Academorix\NotificationsPush\Models\PushSubscription;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\NotificationsPush\Contracts\Data\PushSubscriptionInterface;
+use Stackra\NotificationsPush\Contracts\Repositories\PushSubscriptionRepositoryInterface;
+use Stackra\NotificationsPush\Models\PushSubscription;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\NotificationsPush\Models\PushSubscription}.
+ * Attribute-first Eloquent repository for {@see Stackra\NotificationsPush\Models\PushSubscription}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(PushSubscriptionInterface::class)]` which resolves to
  * `PushSubscription` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\NotificationsPush\Models\PushSubscription>
+ * @extends Repository<\Stackra\NotificationsPush\Models\PushSubscription>
  *
  * @category NotificationsPush
  *

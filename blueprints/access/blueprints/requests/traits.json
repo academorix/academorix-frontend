@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/access/requests/traits",
+  "id": "stackra://modules/access/requests/traits",
   "$version": 1,
   "title": "requests \u2014 model traits",
   "description": "One trait: the `IsAccessRequestable` marker. Composed as an OPTIONAL alternative to the `#[AccessRequestable]` PHP attribute for policy authors who prefer trait composition. The trait itself carries no behaviour \u2014 boot-time discovery accepts either signal into the same `AccessRequestableRegistry` map. This module ALSO consumes traits from foundation / tenancy / user / access/rbac for the read + join paths, but composes none of them on its own tables (there are no local tables).",
   "owned": [
     {
       "trait": "IsAccessRequestable",
-      "class": "Academorix\\AccessRequest\\Concerns\\IsAccessRequestable",
+      "class": "Stackra\\AccessRequest\\Concerns\\IsAccessRequestable",
       "schemaRef": null,
       "description": "Marker trait \u2014 composed on any Eloquent model that can be the SUBJECT of an access request. Zero runtime behaviour; discovery walks every model in the classmap, unions those composing this trait with those carrying `#[AccessRequestable]`, and populates the registry with the union set. Prefer the attribute (it lets you declare the permission set inline); use the trait when a model already carries an attribute-heavy class docblock and you want to keep signals separated.",
       "pairedBlueprint": "access-requestable",
@@ -39,7 +39,7 @@
         "organization::Organization (planned)"
       ],
       "notAppliedBy": [
-        "Every platform-admin surface \u2014 Academorix staff use impersonation via access/delegation, not the access-request loop.",
+        "Every platform-admin surface \u2014 Stackra staff use impersonation via access/delegation, not the access-request loop.",
         "Root tenancy surfaces (`Application`, `Tenant`) \u2014 access is granted via user provisioning + invitations, not the request loop.",
         "System-of-record substrate rows (audit rows, activity rows) \u2014 access is granted via tenant-admin permission on the substrate, never per-row."
       ]
@@ -48,13 +48,13 @@
   "consumed": [
     {
       "trait": "BelongsToApplication",
-      "class": "Academorix\\Tenancy\\Concerns\\BelongsToApplication",
+      "class": "Stackra\\Tenancy\\Concerns\\BelongsToApplication",
       "source": "tenancy",
       "description": "Consumed indirectly \u2014 the underlying approval_instance carries application_id and the DTO surfaces it. This module reads via that trait's global scope on `workflow/approvals::ApprovalInstance`."
     },
     {
       "trait": "BelongsToTenant",
-      "class": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+      "class": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
       "source": "tenancy",
       "description": "Consumed indirectly \u2014 same as above; approval_instance is tenant-scoped so every access-request read is auto-filtered."
     }
@@ -62,8 +62,8 @@
   "compositionExample": {
     "language": "php",
     "note": "A requestable model chooses ONE of the two idioms below. Both feed the same registry.",
-    "codeAttribute": "use Academorix\\AccessRequest\\Attributes\\AccessRequestable;\n\n#[AccessRequestable(\n    resourceType: 'invoice',\n    permissions: ['invoices.view', 'invoices.update', 'invoices.export'],\n)]\nfinal class Invoice extends Model\n{\n    // \u2026\n}",
-    "codeTrait": "use Academorix\\AccessRequest\\Concerns\\IsAccessRequestable;\n\nfinal class Invoice extends Model\n{\n    use IsAccessRequestable;\n\n    public static function accessRequestResourceType(): string\n    {\n        return 'invoice';\n    }\n\n    public static function accessRequestPermissions(): array\n    {\n        return ['invoices.view', 'invoices.update', 'invoices.export'];\n    }\n}"
+    "codeAttribute": "use Stackra\\AccessRequest\\Attributes\\AccessRequestable;\n\n#[AccessRequestable(\n    resourceType: 'invoice',\n    permissions: ['invoices.view', 'invoices.update', 'invoices.export'],\n)]\nfinal class Invoice extends Model\n{\n    // \u2026\n}",
+    "codeTrait": "use Stackra\\AccessRequest\\Concerns\\IsAccessRequestable;\n\nfinal class Invoice extends Model\n{\n    use IsAccessRequestable;\n\n    public static function accessRequestResourceType(): string\n    {\n        return 'invoice';\n    }\n\n    public static function accessRequestPermissions(): array\n    {\n        return ['invoices.view', 'invoices.update', 'invoices.export'];\n    }\n}"
   },
   "blueprintExample": {
     "language": "php",

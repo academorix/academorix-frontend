@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/invitations/traits",
+  "id": "stackra://modules/invitations/traits",
   "$version": 1,
   "title": "invitations — model traits",
   "description": "Trait contract this module owns (HasInvitations, BelongsToInvitation) and consumes from foundation / tenants / framework. HasInvitations is the primary extension point — every module with an invitable resource composes it on the target model.",
   "owned": [
     {
       "trait": "HasInvitations",
-      "class": "Academorix\\Invitations\\Concerns\\HasInvitations",
-      "schemaRef": "academorix://modules/invitations/schemas/invitation",
+      "class": "Stackra\\Invitations\\Concerns\\HasInvitations",
+      "schemaRef": "stackra://modules/invitations/schemas/invitation",
       "description": "Composed on any target model that can receive invitations (Tenant, Team, Athlete, Federation, TrialSession, ...). Adds a polymorphic `invitations()` MorphMany relation + fluent helpers to send / list / revoke. Requires the composing model to register its `target_type` key with InvitationTargetRegistry in the owner module's service provider boot.",
       "pairedBlueprint": "invitable",
       "adds": {
@@ -19,7 +19,7 @@
           {
             "name": "invitations",
             "type": "MorphMany",
-            "target": "Academorix\\Invitations\\Models\\Invitation",
+            "target": "Stackra\\Invitations\\Models\\Invitation",
             "morphType": "target_type",
             "morphId": "target_id",
             "description": "All invitations targeting this row, regardless of state."
@@ -27,7 +27,7 @@
           {
             "name": "pendingInvitations",
             "type": "MorphMany",
-            "target": "Academorix\\Invitations\\Models\\Invitation",
+            "target": "Stackra\\Invitations\\Models\\Invitation",
             "morphType": "target_type",
             "morphId": "target_id",
             "scopes": ["pending"],
@@ -61,7 +61,7 @@
     },
     {
       "trait": "BelongsToInvitation",
-      "class": "Academorix\\Invitations\\Concerns\\BelongsToInvitation",
+      "class": "Stackra\\Invitations\\Concerns\\BelongsToInvitation",
       "description": "Composed on models CREATED from an invitation. Adds a nullable `invitation_id` FK + BelongsTo relation for provenance / traceability. Primary consumer: the User row that results from `acceptInvitation()` gets its origin invitation stamped for audit ('this user was invited by X on Y date via role Z'). Optional — most modules don't need it; useful for user, teams, guardians.",
       "adds": {
         "columns": [
@@ -86,7 +86,7 @@
           {
             "name": "originInvitation",
             "type": "BelongsTo",
-            "target": "Academorix\\Invitations\\Models\\Invitation"
+            "target": "Stackra\\Invitations\\Models\\Invitation"
           }
         ]
       },
@@ -110,19 +110,19 @@
     },
     {
       "trait": "BelongsToApplication",
-      "class": "Academorix\\Tenancy\\Concerns\\BelongsToApplication",
+      "class": "Stackra\\Tenancy\\Concerns\\BelongsToApplication",
       "source": "tenants",
       "description": "Adds application_id + auto-fill + BelongsTo relation."
     },
     {
       "trait": "BelongsToTenantOptional",
-      "class": "Academorix\\Tenancy\\Concerns\\BelongsToTenantOptional",
+      "class": "Stackra\\Tenancy\\Concerns\\BelongsToTenantOptional",
       "source": "tenants",
       "description": "Variant of BelongsToTenant that allows tenant_id to be NULL. Global scope is applied only when a tenant context is present in the request (i.e. filters out NULL tenant_id on tenant hosts but leaves everything visible on central + platform-admin hosts). Owned by tenants; this module is the first consumer. Needs to be added to tenants/traits.json when authored."
     },
     {
       "trait": "HasMetadata",
-      "class": "Academorix\\Foundation\\Concerns\\HasMetadata",
+      "class": "Stackra\\Foundation\\Concerns\\HasMetadata",
       "source": "foundation",
       "description": "Free-form metadata JSONB column + fluent accessors."
     },
@@ -134,13 +134,13 @@
     },
     {
       "trait": "HasUserstamps",
-      "class": "Academorix\\Foundation\\Concerns\\HasUserstamps",
+      "class": "Stackra\\Foundation\\Concerns\\HasUserstamps",
       "source": "foundation",
       "description": "created_by / updated_by / deleted_by. NOT applied to InvitationEvent (immutable log)."
     },
     {
       "trait": "HasAuditable",
-      "class": "Academorix\\Foundation\\Concerns\\HasAuditable",
+      "class": "Stackra\\Foundation\\Concerns\\HasAuditable",
       "source": "foundation",
       "description": "Audit-trail integration. Invitation logs every state transition here in addition to writing an InvitationEvent row (double-write is deliberate — audits live per-tenant retention, events live per-analytics retention)."
     },

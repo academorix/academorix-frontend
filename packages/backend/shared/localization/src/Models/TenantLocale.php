@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Models;
+namespace Stackra\Localization\Models;
 
-use Academorix\Activity\Concerns\HasActivityLog;
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Database\Concerns\Model\HasUserStamp;
-use Academorix\Localization\Contracts\Data\TenantLocaleInterface;
-use Academorix\Localization\Database\Factories\TenantLocaleFactory;
-use Academorix\Localization\Enums\TranslatorDriverName;
-use Academorix\Localization\Observers\TenantLocaleObserver;
-use Academorix\Localization\Policies\TenantLocalePolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Activity\Concerns\HasActivityLog;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Database\Concerns\Model\HasUserStamp;
+use Stackra\Localization\Contracts\Data\TenantLocaleInterface;
+use Stackra\Localization\Database\Factories\TenantLocaleFactory;
+use Stackra\Localization\Enums\TranslatorDriverName;
+use Stackra\Localization\Observers\TenantLocaleObserver;
+use Stackra\Localization\Policies\TenantLocalePolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -113,7 +113,7 @@ final class TenantLocale extends Model implements AuditableContract, TenantLocal
     public function getLanguageCodeAttribute(): ?string
     {
         return $this->language?->getAttribute(
-            \Academorix\Localization\Contracts\Data\PlatformLanguageInterface::ATTR_BCP47_CODE,
+            \Stackra\Localization\Contracts\Data\PlatformLanguageInterface::ATTR_BCP47_CODE,
         );
     }
 

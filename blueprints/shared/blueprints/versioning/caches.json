@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/versioning/caches",
+  "id": "stackra://modules/versioning/caches",
   "$version": 1,
   "title": "versioning \u2014 cache keys + tags",
   "description": "Registries cached in Redis with tag-based invalidation. Cache keys on the hot path (resolver lookup) have short TTL for reactive invalidation + long TTL as a safety net.",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/region/relations",
+  "id": "stackra://modules/region/relations",
   "$version": 1,
   "title": "region — model relationships",
   "description": "Region is a leaf below Tenant with no children of its own inside this module. Inbound relations arrive from Branch (Wave 2b) + Finance::Membership (Wave 4) via the `BelongsToRegion` trait shipped here. Every FK from a Region to another aggregate is same-tenant — cross-tenant FKs are forbidden per `.kiro/steering/tenancy-columns.md` §5. `region_id` NEVER carries `application_id` (hierarchy.md §2 forbids it — Application cascades through `tenants.application_id`).",
@@ -32,7 +32,7 @@
       "target": {
         "module": "scope",
         "model": "ScopeNode",
-        "class": "Academorix\\Scope\\Models\\ScopeNode"
+        "class": "Stackra\\Scope\\Models\\ScopeNode"
       },
       "morphType": "entity_type",
       "morphId": "entity_id",

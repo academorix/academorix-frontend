@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Expenses\Contracts\Data;
+namespace Stackra\Expenses\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Expenses\Models\ExpenseCategory;
+use Stackra\Expenses\Models\ExpenseCategory;
 
 /**
  * Table shape for the `expense_categories` table.

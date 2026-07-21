@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/analytics/data/batch-defaults",
+  "id": "stackra://modules/analytics/data/batch-defaults",
   "$version": 1,
   "title": "analytics — per-provider batch defaults",
   "description": "Default batch_config values per provider. Applied when creating a new AnalyticsProviderConfig without an explicit batch_config. Tenants with analytics_batch_configuration entitlement may override.",

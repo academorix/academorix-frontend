@@ -1,18 +1,18 @@
 {
-  "id": "academorix://modules/subscription/traits",
+  "id": "stackra://modules/subscription/traits",
   "$version": 1,
   "title": "subscription \u2014 trait composition",
   "description": "Two owned traits. HasSubscription mixed into Tenant exposes ->subscription() + ->plan() helpers. IsBillable is the union wrapper over Cashier's Billable variants \u2014 tenants get whichever variant matches their Application's payment_provider.",
   "owned": [
     {
-      "trait": "Academorix\\Subscription\\Concerns\\HasSubscription",
+      "trait": "Stackra\\Subscription\\Concerns\\HasSubscription",
       "description": "Mixed into `Tenant`. Adds `subscription()` hasOne (active), `subscriptions()` hasMany (history), `plan()` accessor, `onTrial()` / `subscribed()` / `subscribedToPlan($key)` helpers matching Cashier's semantics.",
       "public": true,
       "usedBy": ["tenancy::Tenant"],
       "conflicts_with": []
     },
     {
-      "trait": "Academorix\\Subscription\\Concerns\\IsBillable",
+      "trait": "Stackra\\Subscription\\Concerns\\IsBillable",
       "description": "Union wrapper. Depending on Application.payment_provider, dynamically composes `\\Laravel\\Cashier\\Billable` (Stripe) or `\\Laravel\\Paddle\\Billable` (Paddle). Provides a uniform surface (`createCheckoutSession()`, `redirectToBillingPortal()`, `reportUsage()`) regardless of underlying provider.",
       "public": true,
       "usedBy": ["tenancy::Tenant"],
@@ -37,18 +37,18 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasSystemFlag" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
-    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
-    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }],
+    "tenants": [{ "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "activity": [{ "trait": "Stackra\\Activity\\Concerns\\HasActivityLog" }],
     "audit": [
       {
-        "trait": "Academorix\\Audit\\Concerns\\HasAudit",
+        "trait": "Stackra\\Audit\\Concerns\\HasAudit",
         "reason": "Subscription state changes are compliance-material \u2014 SOX 404 requires auditable history for revenue recognition."
       }
     ]

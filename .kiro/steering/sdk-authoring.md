@@ -27,11 +27,11 @@ the generator would emit.
   `apps/<service>-service/src/modules/`. Per-module SDKs are shared packages
   consumed by every service, every product monolith, and the frontend — they
   belong alongside the kernel + service umbrellas in `packages/sdk/`.
-- **Composer name:** `academorix-<service>/<module>-sdk`. Examples:
-  `academorix-platform/application-sdk`, `academorix-platform/workspaces-sdk`,
-  `academorix-identity/oauth-sdk`.
-- **PSR-4 root:** `Academorix\<Service><Module>Sdk\` — PascalCase concatenation
-  of service and module. Example: `Academorix\PlatformApplicationSdk\`.
+- **Composer name:** `stackra-<service>/<module>-sdk`. Examples:
+  `stackra-platform/application-sdk`, `stackra-platform/workspaces-sdk`,
+  `stackra-identity/oauth-sdk`.
+- **PSR-4 root:** `Stackra\<Service><Module>Sdk\` — PascalCase concatenation
+  of service and module. Example: `Stackra\PlatformApplicationSdk\`.
 - **Type:** `library`. **License:** `proprietary`.
 
 ## Folder layout — enforced convention
@@ -111,7 +111,7 @@ HTTP-request transport folder. Input DTOs live in `Payloads/`.
 
 ### `Requests/<Aggregate>/*Request.php` — HTTP transport (Saloon)
 
-- Extend `Academorix\ApiSdk\Requests\BaseSdkRequest` from the kernel.
+- Extend `Stackra\ApiSdk\Requests\BaseSdkRequest` from the kernel.
 - Concrete classes declare ONLY what varies per endpoint: verb, path builder,
   payload, response DTO type.
 - Never re-implement retry policy, correlation-ID header, bearer auth, or
@@ -172,7 +172,7 @@ final class UpdateApplicationRequest extends BaseSdkRequest implements HasBody
 
 ### `Resources/<Module>SdkResource.php` — the module entry point
 
-- `final class` extending `Academorix\ApiSdk\Resources\BaseSdkResource`.
+- `final class` extending `Stackra\ApiSdk\Resources\BaseSdkResource`.
 - Carries **`#[AsSdkResource(name: '<module>', service: '<service>')]`** — the
   discovery attribute the service umbrella scans for at boot.
 - Owns NO HTTP calls. Its only job: lazily construct + cache the peer Resources
@@ -221,7 +221,7 @@ aggregate has both audiences. Never split for other reasons.
 ### `Enums/*.php` — wire enums
 
 - Backed enums (`: string`) for closed-set wire values.
-- Compose `use Enum;` from `academorix/enum`.
+- Compose `use Enum;` from `stackra/enum`.
 - Only author enums for values that appear in `x-database.columns.*.enum` in the
   schema — do not author enums the schema doesn't declare.
 
@@ -229,7 +229,7 @@ aggregate has both audiences. Never split for other reasons.
 
 - Only if the module has specific error codes worth typing (e.g.,
   `ApplicationSlugTakenException`). Extend
-  `Academorix\ApiSdk\Exceptions\ApiRequestException` (or a closer kernel base).
+  `Stackra\ApiSdk\Exceptions\ApiRequestException` (or a closer kernel base).
 - If none needed, do not create the folder.
 
 ## Docblock discipline (per `docblocks.md`)
@@ -315,6 +315,6 @@ the drift check.
   plan that consumes this standard.
 - `packages/sdk/api-sdk/src/` — the kernel that every module SDK builds on
   (Stackra core, stays in `packages/sdk/`).
-- `apps/academorix/src/sdks/platform-application-sdk/` — the pilot reference
-  implementation (moved out of `packages/sdk/` since it's Academorix product
+- `apps/stackra/src/sdks/platform-application-sdk/` — the pilot reference
+  implementation (moved out of `packages/sdk/` since it's Stackra product
   surface).

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Database\Factories;
+namespace Stackra\FeatureFlags\Database\Factories;
 
-use Academorix\FeatureFlags\Contracts\Data\FeatureRolloutInterface;
-use Academorix\FeatureFlags\Models\FeatureRollout;
+use Stackra\FeatureFlags\Contracts\Data\FeatureRolloutInterface;
+use Stackra\FeatureFlags\Models\FeatureRollout;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

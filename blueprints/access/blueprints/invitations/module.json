@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "invitations",
   "alias": "invitations",
-  "namespace": "Academorix\\Invitations",
+  "namespace": "Stackra\\Invitations",
   "description": "Agnostic invitation substrate. Owns the Invitation model, InvitationEvent audit log, the HasInvitations trait, and the token / delivery / acceptance state machine. Consumers (user, teams, federation, sports, ...) register their `target_type` string at boot; the invitation module handles delivery, bounce tracking, expiry, rate limits, and acceptance orchestration. Not coupled to any specific target or credential provider.",
   "keywords": [
     "invitations",
@@ -15,7 +15,7 @@
     "multi-channel"
   ],
   "priority": 25,
-  "providers": ["Academorix\\Invitations\\Providers\\InvitationsServiceProvider"],
+  "providers": ["Stackra\\Invitations\\Providers\\InvitationsServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy"],
   "extendedBy": [],

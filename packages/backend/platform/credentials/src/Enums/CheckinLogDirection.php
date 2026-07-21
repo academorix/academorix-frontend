@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Credentials\Enums;
+namespace Stackra\Credentials\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `direction` on `checkin-log`.

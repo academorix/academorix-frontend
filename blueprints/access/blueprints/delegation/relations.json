@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/delegation/relations",
+  "id": "stackra://modules/delegation/relations",
   "$version": 1,
   "title": "delegation — model relationships",
   "description": "Two aggregates, each with its own relationship tree. RoleDelegation is tenant-plane (delegator + delegate + role are all tenant-scoped). ImpersonationSession is cross-plane — impersonator is a PlatformUser (central-plane); everything else is tenant-plane. This is the ONE place in the tenant-plane where a central-plane FK is permitted, per tenancy-columns.md §5 exception for platform-plane FKs tracking cross-plane operations.",
@@ -45,7 +45,7 @@
       "foreignKey": "impersonator_platform_user_id",
       "nullable": true,
       "onDelete": "set null",
-      "description": "The Academorix staff member who initiated the session. NULLABLE — SET NULL on PlatformUser hard-delete at the end of the 90-day retention hold. Snapshot columns (impersonator_display_name + impersonator_department) preserve identity for compliance queries after this FK NULLs. This is the ONE cross-plane FK in the tenant-plane delegation module — deliberate + documented (see tenancy-columns.md §5 exception)."
+      "description": "The Stackra staff member who initiated the session. NULLABLE — SET NULL on PlatformUser hard-delete at the end of the 90-day retention hold. Snapshot columns (impersonator_display_name + impersonator_department) preserve identity for compliance queries after this FK NULLs. This is the ONE cross-plane FK in the tenant-plane delegation module — deliberate + documented (see tenancy-columns.md §5 exception)."
     },
     {
       "from": "ImpersonationSession",

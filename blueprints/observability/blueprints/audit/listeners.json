@@ -1,91 +1,91 @@
 {
-  "id": "academorix://modules/audit/listeners",
+  "id": "stackra://modules/audit/listeners",
   "$version": 1,
   "title": "audit — subscribed events",
   "description": "Subscribes to cross-module lifecycle events (TenantErased, UserErased, IdentityMerged, TenantSuspended) for compliance-driven cascades — plus own retention-policy events for cache invalidation. Audit does NOT subscribe to arbitrary domain events (capture is via the vendor Auditable trait's observer, not via listeners).",
   "listeners": [
     {
       "event": "audit::AuditRetentionPolicyCreated",
-      "listener": "Academorix\\Observability\\Audit\\Listeners\\InvalidateRetentionCacheListener",
+      "listener": "Stackra\\Observability\\Audit\\Listeners\\InvalidateRetentionCacheListener",
       "queue": "audit",
       "purpose": "Clears the per-tenant retention cache (audit:retention:{tenant_id}) so PurgeExpiredAuditsJob picks up the new cutoff on its next scheduled run."
     },
     {
       "event": "audit::AuditRetentionPolicyUpdated",
-      "listener": "Academorix\\Observability\\Audit\\Listeners\\InvalidateRetentionCacheListener",
+      "listener": "Stackra\\Observability\\Audit\\Listeners\\InvalidateRetentionCacheListener",
       "queue": "audit",
       "purpose": "Same as above — unconditional cache eviction on any policy CRUD."
     },
     {
       "event": "audit::AuditRetentionExtensionExpired",
-      "listener": "Academorix\\Observability\\Audit\\Listeners\\InvalidateRetentionCacheListener",
+      "listener": "Stackra\\Observability\\Audit\\Listeners\\InvalidateRetentionCacheListener",
       "queue": "audit",
       "purpose": "Cache eviction — retention_years is now back to default; the next purge cycle will use it."
     },
     {
       "event": "audit::AuditRetentionPolicyCreated",
-      "listener": "Academorix\\Observability\\Audit\\Listeners\\DispatchRetentionPolicyExtendedNotificationListener",
+      "listener": "Stackra\\Observability\\Audit\\Listeners\\DispatchRetentionPolicyExtendedNotificationListener",
       "queue": "audit",
       "purpose": "Fires AuditRetentionPolicyExtendedNotification to the tenant's compliance officer + owner. Informs them that a retention override is now active + what the extended cutoff is."
     },
     {
       "event": "audit::AuditRetentionExtensionExpired",
-      "listener": "Academorix\\Observability\\Audit\\Listeners\\DispatchExtensionExpiredNotificationListener",
+      "listener": "Stackra\\Observability\\Audit\\Listeners\\DispatchExtensionExpiredNotificationListener",
       "queue": "audit",
       "purpose": "Fires AuditRetentionExtensionExpiringSoonNotification (30d ahead) + a completion notification when actually expired."
     },
     {
       "event": "audit::AuditPurgeExecuted",
-      "listener": "Academorix\\Observability\\Audit\\Listeners\\WritePurgeMetaAuditListener",
+      "listener": "Stackra\\Observability\\Audit\\Listeners\\WritePurgeMetaAuditListener",
       "queue": "audit",
       "purpose": "Writes a summary audit row via the vendor Auditable trait so the trail records itself being purged. Config-gated by audit.compliance.write_purge_meta_audit=true (default). Skipped in test envs to avoid noisy audit rows."
     },
     {
       "event": "audit::AuditPurgeExecuted",
-      "listener": "Academorix\\Observability\\Audit\\Listeners\\AccumulatePurgeDigestListener",
+      "listener": "Stackra\\Observability\\Audit\\Listeners\\AccumulatePurgeDigestListener",
       "queue": "audit",
       "purpose": "Accumulates purge counts into a Redis key (audit:purge:digest:{tenant_id}:{week_bucket}) for the weekly AuditPurgeCompletedNotification digest sent on Sundays."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Observability\\Audit\\Listeners\\PurgeAuditDataForErasedTenantListener",
+      "listener": "Stackra\\Observability\\Audit\\Listeners\\PurgeAuditDataForErasedTenantListener",
       "queue": "compliance",
       "purpose": "Migrates the tenant's audit rows to the compliance archive (NOT cascade-delete). Regulators may need proof of erasure years later. See retention.json §TenantErased cascade — audit is deliberately different from analytics/marketing/activity."
     },
     {
       "event": "user::UserErased",
-      "listener": "Academorix\\Observability\\Audit\\Listeners\\AuditRedactionListener",
+      "listener": "Stackra\\Observability\\Audit\\Listeners\\AuditRedactionListener",
       "queue": "compliance",
       "purpose": "GDPR Art. 17 cascade for the erased user_id. REDACTS old_values + new_values fields matching the erased subject's PII to a SHA-256 hash. Fact-of-mutation record (event, auditable_type, auditable_id, created_at) IS PRESERVED. Writes a summary redaction audit row referencing the erased user."
     },
     {
       "event": "identity::IdentityErased",
-      "listener": "Academorix\\Observability\\Audit\\Listeners\\AuditRedactionListener",
+      "listener": "Stackra\\Observability\\Audit\\Listeners\\AuditRedactionListener",
       "queue": "compliance",
       "purpose": "Same redaction cascade for cross-application identity erasure (Wave 6+). An Identity spans multiple User rows across applications; the redaction pass runs against every audit row for every affected user_id."
     },
     {
       "event": "tenancy::TenantSuspended",
-      "listener": "Academorix\\Observability\\Audit\\Listeners\\FreezeRetentionOnTenantSuspendedListener",
+      "listener": "Stackra\\Observability\\Audit\\Listeners\\FreezeRetentionOnTenantSuspendedListener",
       "queue": "audit",
       "purpose": "When a tenant is suspended (billing lapse, ToS violation), FREEZE the retention cutoff at now(). Suspended tenants may need extended access to their pre-suspension audit trail during dispute resolution — the freeze prevents PurgeExpiredAuditsJob from deleting rows during suspension. On tenant resume the freeze is lifted."
     },
     {
       "event": "tenancy::TenantResumed",
-      "listener": "Academorix\\Observability\\Audit\\Listeners\\ThawRetentionOnTenantResumedListener",
+      "listener": "Stackra\\Observability\\Audit\\Listeners\\ThawRetentionOnTenantResumedListener",
       "queue": "audit",
       "purpose": "Lifts the retention freeze. Normal PurgeExpiredAuditsJob cadence resumes."
     },
     {
       "event": "entitlements::EntitlementRevoked",
-      "listener": "Academorix\\Observability\\Audit\\Listeners\\UnbindObserverOnCaptureRevokedListener",
+      "listener": "Stackra\\Observability\\Audit\\Listeners\\UnbindObserverOnCaptureRevokedListener",
       "queue": "audit",
       "filter": "entitlement.key === 'audit_capture'",
       "purpose": "Emergency kill switch. When audit_capture is revoked (compliance-officer override), unbind the vendor AuditableObserver so subsequent mutations write no audit rows. Retention purge continues to run on existing rows. Requires compliance-officer approval + logged reason (writes a security audit row for the revocation)."
     },
     {
       "event": "entitlements::EntitlementGranted",
-      "listener": "Academorix\\Observability\\Audit\\Listeners\\BindObserverOnCaptureGrantedListener",
+      "listener": "Stackra\\Observability\\Audit\\Listeners\\BindObserverOnCaptureGrantedListener",
       "queue": "audit",
       "filter": "entitlement.key === 'audit_capture'",
       "purpose": "Re-binds the vendor AuditableObserver after audit_capture is restored."

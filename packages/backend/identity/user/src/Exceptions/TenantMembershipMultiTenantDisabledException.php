@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\User\Exceptions;
+namespace Stackra\User\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * `multi_tenant_membership` entitlement is off (small tier).

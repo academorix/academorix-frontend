@@ -1,10 +1,10 @@
 {
-  "name": "academorix/coupon",
+  "name": "stackra/coupon",
   "type": "library",
-  "description": "Academorix Coupon module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/coupon/`. Complements the wire SDK at `academorix-finance/coupon-sdk`.",
+  "description": "Stackra Coupon module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/coupon/`. Complements the wire SDK at `stackra-finance/coupon-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "finance",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-finance/coupon-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-finance/coupon-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Coupon\\": "src/"
+      "Stackra\\Coupon\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Coupon\\Tests\\": "tests/"
+      "Stackra\\Coupon\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Coupon\\Providers\\CouponServiceProvider"
+        "Stackra\\Coupon\\Providers\\CouponServiceProvider"
       ],
       "aliases": {}
     }

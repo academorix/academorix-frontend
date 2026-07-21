@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/audit/health",
+  "id": "stackra://modules/audit/health",
   "$version": 1,
   "title": "audit — health probes",
   "description": "Health probes covering vendor observer wiring + retention policy cache + purge job liveness + archive bucket reachability + orchestration invariants (immutability enforcement, non-null tenant_id).",
   "probes": [
     {
       "name": "audit-vendor-observer-bound",
-      "class": "Academorix\\Observability\\Audit\\Health\\Probes\\VendorObserverBoundProbe",
+      "class": "Stackra\\Observability\\Audit\\Health\\Probes\\VendorObserverBoundProbe",
       "category": "readiness",
       "critical": true,
       "description": "Verifies the vendor `AuditableObserver` is bound to the Model event dispatcher. Reflection check on `Model::getEventDispatcher()`. Critical — without it, capture is silently broken.",
@@ -14,7 +14,7 @@
     },
     {
       "name": "audit-observer-registered",
-      "class": "Academorix\\Observability\\Audit\\Health\\Probes\\AuditObserverRegisteredProbe",
+      "class": "Stackra\\Observability\\Audit\\Health\\Probes\\AuditObserverRegisteredProbe",
       "category": "readiness",
       "critical": true,
       "description": "Verifies our AuditObserver is registered on our Audit model wrapper. Immutability enforcement depends on this observer running on every creating/updating/deleting event.",
@@ -22,7 +22,7 @@
     },
     {
       "name": "audit-immutability-enforced",
-      "class": "Academorix\\Observability\\Audit\\Health\\Probes\\ImmutabilityEnforcedProbe",
+      "class": "Stackra\\Observability\\Audit\\Health\\Probes\\ImmutabilityEnforcedProbe",
       "category": "liveness",
       "critical": true,
       "description": "Attempts to UPDATE a probe audit row (fabricated in a transaction, immediately rolled back). Verifies AuditObserver::updating throws NOTIFICATIONS_AUDIT_ROW_IMMUTABLE. Critical — silent failure of this invariant is a compliance breach.",
@@ -30,7 +30,7 @@
     },
     {
       "name": "audit-tenant-id-column-present",
-      "class": "Academorix\\Observability\\Audit\\Health\\Probes\\TenantIdColumnPresentProbe",
+      "class": "Stackra\\Observability\\Audit\\Health\\Probes\\TenantIdColumnPresentProbe",
       "category": "readiness",
       "critical": true,
       "description": "Verifies the audits.tenant_id column exists + is NOT NULL. Fails if the module's migration hasn't run. Critical — everything else depends on this schema shape.",
@@ -38,7 +38,7 @@
     },
     {
       "name": "audit-application-id-column-present",
-      "class": "Academorix\\Observability\\Audit\\Health\\Probes\\ApplicationIdColumnPresentProbe",
+      "class": "Stackra\\Observability\\Audit\\Health\\Probes\\ApplicationIdColumnPresentProbe",
       "category": "readiness",
       "critical": true,
       "description": "Verifies the audits.application_id column exists (NULLABLE per §tenancy-columns.md §2 — audits is one of 8 named rows that carry application_id but nullable for platform-plane audits).",
@@ -46,7 +46,7 @@
     },
     {
       "name": "audit-retention-policies-table-present",
-      "class": "Academorix\\Observability\\Audit\\Health\\Probes\\RetentionPoliciesTablePresentProbe",
+      "class": "Stackra\\Observability\\Audit\\Health\\Probes\\RetentionPoliciesTablePresentProbe",
       "category": "readiness",
       "critical": false,
       "description": "Verifies audit_retention_policies table exists with expected columns. Non-critical — if missing, retention defaults to 7y config value.",
@@ -54,7 +54,7 @@
     },
     {
       "name": "audit-archive-bucket-reachable",
-      "class": "Academorix\\Observability\\Audit\\Health\\Probes\\ArchiveBucketReachableProbe",
+      "class": "Stackra\\Observability\\Audit\\Health\\Probes\\ArchiveBucketReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "HEAD probe of AUDIT_ARCHIVE_S3_BUCKET. Verifies IAM credentials + bucket existence. Non-critical — hot-tier writes continue even if archive is unreachable; ExportAuditsToArchiveJob would fail on its next run.",
@@ -62,7 +62,7 @@
     },
     {
       "name": "audit-erasure-archive-bucket-reachable",
-      "class": "Academorix\\Observability\\Audit\\Health\\Probes\\ErasureArchiveBucketReachableProbe",
+      "class": "Stackra\\Observability\\Audit\\Health\\Probes\\ErasureArchiveBucketReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "HEAD probe of AUDIT_ERASURE_ARCHIVE_S3_BUCKET. Non-critical for steady state, but critical when a TenantErased event fires (PurgeAuditDataForErasedTenantHook would fail).",
@@ -70,7 +70,7 @@
     },
     {
       "name": "audit-purge-job-liveness",
-      "class": "Academorix\\Observability\\Audit\\Health\\Probes\\PurgeJobLivenessProbe",
+      "class": "Stackra\\Observability\\Audit\\Health\\Probes\\PurgeJobLivenessProbe",
       "category": "liveness",
       "critical": false,
       "description": "Verifies PurgeExpiredAuditsJob ran successfully within the last 25 hours (nightly at 03:00 UTC + 1h buffer). Reads Redis key `audit:purge:last_completed_at`. Non-critical single-run miss; escalates if multiple consecutive missed.",
@@ -82,7 +82,7 @@
     },
     {
       "name": "audit-fire-rate-anomaly",
-      "class": "Academorix\\Observability\\Audit\\Health\\Probes\\FireRateAnomalyProbe",
+      "class": "Stackra\\Observability\\Audit\\Health\\Probes\\FireRateAnomalyProbe",
       "category": "liveness",
       "critical": false,
       "description": "Compares last-hour audit fire rate against the 7-day-rolling baseline per tenant. Warns on >3x spike (potential data-mutation storm — importer, migration, or exfiltration attempt). Non-critical — informational for the on-call dashboard.",

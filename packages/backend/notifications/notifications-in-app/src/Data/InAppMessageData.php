@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Data;
+namespace Stackra\Notifications\InApp\Data;
 
-use Academorix\Notifications\InApp\Contracts\Data\InAppMessageInterface;
-use Academorix\Notifications\InApp\Contracts\Data\InAppMessageReadInterface;
-use Academorix\Notifications\InApp\Models\InAppMessage;
-use Academorix\Notifications\InApp\Models\InAppMessageRead;
+use Stackra\Notifications\InApp\Contracts\Data\InAppMessageInterface;
+use Stackra\Notifications\InApp\Contracts\Data\InAppMessageReadInterface;
+use Stackra\Notifications\InApp\Models\InAppMessage;
+use Stackra\Notifications\InApp\Models\InAppMessageRead;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

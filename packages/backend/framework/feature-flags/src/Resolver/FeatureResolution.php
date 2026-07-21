@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Resolver;
+namespace Stackra\FeatureFlags\Resolver;
 
-use Academorix\FeatureFlags\Enums\ResolutionSource;
+use Stackra\FeatureFlags\Enums\ResolutionSource;
 
 /**
  * Outcome of a single flag evaluation — value plus deciding layer name.

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/theme/schemas/theme",
+  "id": "stackra://modules/theme/schemas/theme",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Theme",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "thm_",
     "incrementing": false,
-    "model": "Academorix\\Platform\\Theme\\Models\\Theme",
-    "interface": "Academorix\\Platform\\Theme\\Contracts\\Data\\ThemeInterface",
-    "implements": ["Academorix\\Platform\\Theme\\Contracts\\Data\\ThemeInterface"],
+    "model": "Stackra\\Platform\\Theme\\Models\\Theme",
+    "interface": "Stackra\\Platform\\Theme\\Contracts\\Data\\ThemeInterface",
+    "implements": ["Stackra\\Platform\\Theme\\Contracts\\Data\\ThemeInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -226,11 +226,11 @@
   },
   "x-related": [
     {
-      "schema": "academorix://modules/theme/schemas/theme-preset",
+      "schema": "stackra://modules/theme/schemas/theme-preset",
       "kind": "the preset this theme references"
     },
     {
-      "schema": "academorix://modules/theme/schemas/theme-token-override",
+      "schema": "stackra://modules/theme/schemas/theme-token-override",
       "kind": "sparse token patches applied on top of the preset"
     }
   ]

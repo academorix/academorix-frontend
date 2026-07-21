@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Events;
+namespace Stackra\Chargeback\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -19,7 +19,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - cache::InvalidateTenantChargebackListCache
  * - notifications::DispatchChargebackFiledNotification (P0 admin — immediate SMS + push + email)
  * - chargeback::CollectChargebackEvidenceJob (auto-collect evidence)
- * - observability::MetricsCollector (academorix.chargeback.filed_total labelled by network + reason_category)
+ * - observability::MetricsCollector (stackra.chargeback.filed_total labelled by network + reason_category)
  *
  * @category Chargeback
  *

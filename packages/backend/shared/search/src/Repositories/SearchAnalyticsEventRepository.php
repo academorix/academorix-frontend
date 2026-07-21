@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Repositories;
+namespace Stackra\Search\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Search\Contracts\Data\SearchAnalyticsEventInterface;
-use Academorix\Search\Contracts\Repositories\SearchAnalyticsEventRepositoryInterface;
-use Academorix\Search\Models\SearchAnalyticsEvent;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Search\Contracts\Data\SearchAnalyticsEventInterface;
+use Stackra\Search\Contracts\Repositories\SearchAnalyticsEventRepositoryInterface;
+use Stackra\Search\Models\SearchAnalyticsEvent;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Search\Models\SearchAnalyticsEvent}.
+ * Attribute-first Eloquent repository for {@see Stackra\Search\Models\SearchAnalyticsEvent}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(SearchAnalyticsEventInterface::class)]` which resolves to
  * `SearchAnalyticsEvent` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Search\Models\SearchAnalyticsEvent>
+ * @extends Repository<\Stackra\Search\Models\SearchAnalyticsEvent>
  *
  * @category Search
  *

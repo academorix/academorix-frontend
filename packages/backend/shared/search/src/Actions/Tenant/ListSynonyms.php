@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Actions\Tenant;
+namespace Stackra\Search\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Search\Contracts\Repositories\SearchSynonymRepositoryInterface;
-use Academorix\Search\Data\SearchSynonymData;
-use Academorix\Search\Enums\SearchPermission;
-use Academorix\Search\Models\SearchSynonym;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Search\Contracts\Repositories\SearchSynonymRepositoryInterface;
+use Stackra\Search\Data\SearchSynonymData;
+use Stackra\Search\Enums\SearchPermission;
+use Stackra\Search\Models\SearchSynonym;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Spatie\LaravelData\DataCollection;
 
 /**

@@ -262,8 +262,8 @@ as `resource_type` in `POST /api/v1/access-requests` (§2.3), the owning model
 must be marked `#[AccessRequestable]`:
 
 ```php
-use Academorix\AccessRequest\Attributes\AccessRequestable;
-use Academorix\Foundation\Concerns\HasUlids;
+use Stackra\AccessRequest\Attributes\AccessRequestable;
+use Stackra\Foundation\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 
 #[AccessRequestable(
@@ -313,7 +313,7 @@ Composition-example is documented in `traits.json`.
 ### Platform-admin host (`platform_admin` guard)
 
 Read-only cross-tenant compliance surface. Never approves or rejects — those are
-always tenant-plane decisions authored by tenant users, not Academorix staff.
+always tenant-plane decisions authored by tenant users, not Stackra staff.
 
 | Method + path                                       |
 | --------------------------------------------------- |

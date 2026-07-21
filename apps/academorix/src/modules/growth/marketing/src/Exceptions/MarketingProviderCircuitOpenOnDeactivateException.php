@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Exceptions;
+namespace Stackra\Marketing\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Cannot deactivate a provider config while its circuit-breaker is open.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MarketingProviderCircuitOpenOnDeactivateException extends AcademorixException
+final class MarketingProviderCircuitOpenOnDeactivateException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

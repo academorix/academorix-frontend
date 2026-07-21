@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/telemetry/subprocessors",
+  "id": "stackra://modules/telemetry/subprocessors",
   "$version": 1,
   "title": "telemetry \u2014 subprocessors",
   "description": "Telemetry data (span attributes, metric labels, log records) leaves the application via OTLP + Monolog sinks. Where the collector / sink is third-party-hosted, that vendor is a subprocessor. Self-hosted collectors on our infra are NOT subprocessors.",

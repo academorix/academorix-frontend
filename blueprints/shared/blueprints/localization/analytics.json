@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/localization/analytics",
+  "id": "stackra://modules/localization/analytics",
   "$version": 1,
   "title": "localization \u2014 product analytics",
   "sink": "segment",

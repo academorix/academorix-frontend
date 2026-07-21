@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Delegation\Exceptions;
+namespace Stackra\Delegation\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * The session is is_read_only=true; the mutating verb is refused by enforce_read_only middleware.

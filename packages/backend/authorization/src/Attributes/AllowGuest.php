@@ -6,7 +6,7 @@
  * @description
  * `#[AllowGuest]` — declarative "no authentication required"
  * marker. The
- * {@see \Academorix\Authorization\Middleware\AuthorizeControllerAction}
+ * {@see \Stackra\Authorization\Middleware\AuthorizeControllerAction}
  * middleware short-circuits its unauthenticated-caller check when
  * this attribute is present on the class or method, letting the
  * request proceed without a resolved user.
@@ -60,7 +60,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Authorization\Attributes;
+namespace Stackra\Authorization\Attributes;
 
 use Attribute;
 

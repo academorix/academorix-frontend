@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Repositories;
+namespace Stackra\Geofencing\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Geofencing\Contracts\Data\GeofenceCheckInterface;
-use Academorix\Geofencing\Contracts\Repositories\GeofenceCheckRepositoryInterface;
-use Academorix\Geofencing\Models\GeofenceCheck;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Geofencing\Contracts\Data\GeofenceCheckInterface;
+use Stackra\Geofencing\Contracts\Repositories\GeofenceCheckRepositoryInterface;
+use Stackra\Geofencing\Models\GeofenceCheck;
 use DateTimeInterface;
 use Illuminate\Support\Collection;
 

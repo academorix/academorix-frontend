@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Services;
+namespace Stackra\Leads\Services;
 
-use Academorix\Leads\Contracts\Services\LeadAttributionSnapshotterInterface;
+use Stackra\Leads\Contracts\Services\LeadAttributionSnapshotterInterface;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Contracts\Container\Container;
 
@@ -42,7 +42,7 @@ final class LeadAttributionSnapshotter implements LeadAttributionSnapshotterInte
         // we soft-check its presence rather than hard-require it so
         // the leads package can stand alone in installations that
         // don't ship attribution.
-        $contextInterface = 'Academorix\\Attribution\\Contracts\\Services\\AttributionContextInterface';
+        $contextInterface = 'Stackra\\Attribution\\Contracts\\Services\\AttributionContextInterface';
 
         if (! $this->container->bound($contextInterface)) {
             return null;

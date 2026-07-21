@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/telemetry/health",
+  "id": "stackra://modules/telemetry/health",
   "$version": 1,
   "title": "telemetry \u2014 health probes",
   "description": "Combined probes across the three signals. Each probe is scoped to the signal it exercises; the aggregator groups them under one telemetry module surface.",
   "probes": [
     {
       "name": "telemetry-otel-sdk-initialized",
-      "class": "Academorix\\Telemetry\\Otel\\Health\\Probes\\SdkInitializedProbe",
+      "class": "Stackra\\Telemetry\\Otel\\Health\\Probes\\SdkInitializedProbe",
       "signal": "traces",
       "category": "startup",
       "critical": true,
@@ -15,7 +15,7 @@
     },
     {
       "name": "telemetry-otel-registry-hydrated",
-      "class": "Academorix\\Telemetry\\Otel\\Health\\Probes\\RegistryHydratedProbe",
+      "class": "Stackra\\Telemetry\\Otel\\Health\\Probes\\RegistryHydratedProbe",
       "signal": "traces",
       "category": "startup",
       "critical": true,
@@ -24,7 +24,7 @@
     },
     {
       "name": "telemetry-otel-exporter-reachable",
-      "class": "Academorix\\Telemetry\\Otel\\Health\\Probes\\ExporterReachableProbe",
+      "class": "Stackra\\Telemetry\\Otel\\Health\\Probes\\ExporterReachableProbe",
       "signal": "traces",
       "category": "readiness",
       "critical": false,
@@ -33,7 +33,7 @@
     },
     {
       "name": "telemetry-otel-dropped-spans-ratio",
-      "class": "Academorix\\Telemetry\\Otel\\Health\\Probes\\DroppedSpansRatioProbe",
+      "class": "Stackra\\Telemetry\\Otel\\Health\\Probes\\DroppedSpansRatioProbe",
       "signal": "traces",
       "category": "readiness",
       "critical": false,
@@ -43,7 +43,7 @@
     },
     {
       "name": "telemetry-otel-batch-processor-buffer",
-      "class": "Academorix\\Telemetry\\Otel\\Health\\Probes\\BatchProcessorBufferProbe",
+      "class": "Stackra\\Telemetry\\Otel\\Health\\Probes\\BatchProcessorBufferProbe",
       "signal": "traces",
       "category": "readiness",
       "critical": false,
@@ -52,7 +52,7 @@
     },
     {
       "name": "telemetry-logs-pipeline-initialized",
-      "class": "Academorix\\Telemetry\\Logs\\Health\\Probes\\PipelineInitializedProbe",
+      "class": "Stackra\\Telemetry\\Logs\\Health\\Probes\\PipelineInitializedProbe",
       "signal": "logs",
       "category": "startup",
       "critical": true,
@@ -61,7 +61,7 @@
     },
     {
       "name": "telemetry-logs-registry-hydrated",
-      "class": "Academorix\\Telemetry\\Logs\\Health\\Probes\\RegistryHydratedProbe",
+      "class": "Stackra\\Telemetry\\Logs\\Health\\Probes\\RegistryHydratedProbe",
       "signal": "logs",
       "category": "startup",
       "critical": true,
@@ -70,7 +70,7 @@
     },
     {
       "name": "telemetry-logs-sink-reachable",
-      "class": "Academorix\\Telemetry\\Logs\\Health\\Probes\\SinkReachableProbe",
+      "class": "Stackra\\Telemetry\\Logs\\Health\\Probes\\SinkReachableProbe",
       "signal": "logs",
       "category": "readiness",
       "critical": false,
@@ -79,7 +79,7 @@
     },
     {
       "name": "telemetry-logs-dropped-records-ratio",
-      "class": "Academorix\\Telemetry\\Logs\\Health\\Probes\\DroppedRecordsRatioProbe",
+      "class": "Stackra\\Telemetry\\Logs\\Health\\Probes\\DroppedRecordsRatioProbe",
       "signal": "logs",
       "category": "readiness",
       "critical": false,
@@ -89,7 +89,7 @@
     },
     {
       "name": "telemetry-logs-redaction-enabled",
-      "class": "Academorix\\Telemetry\\Logs\\Health\\Probes\\RedactionEnabledProbe",
+      "class": "Stackra\\Telemetry\\Logs\\Health\\Probes\\RedactionEnabledProbe",
       "signal": "logs",
       "category": "readiness",
       "critical": true,

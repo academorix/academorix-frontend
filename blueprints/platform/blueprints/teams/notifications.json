@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/teams/notifications",
+  "id": "stackra://modules/teams/notifications",
   "$version": 1,
   "title": "teams — notification classes + categories",
-  "namespace": "Academorix\\Teams\\Notifications",
+  "namespace": "Stackra\\Teams\\Notifications",
   "notifications": [
     "TeamMemberJoinedNotification",
     "TeamMemberLeftNotification",

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SharedAttributesSdk\Resources;
+namespace Stackra\SharedAttributesSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SharedAttributesSdk\Data\AttributeDefinitionData;
-use Academorix\SharedAttributesSdk\Requests\AttributeDefinitions\CreateAttributeDefinitionRequest;
-use Academorix\SharedAttributesSdk\Requests\AttributeDefinitions\ListAttributeDefinitionsRequest;
-use Academorix\SharedAttributesSdk\Requests\AttributeDefinitions\ShowAttributeDefinitionRequest;
-use Academorix\SharedAttributesSdk\Requests\AttributeDefinitions\UpdateAttributeDefinitionRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SharedAttributesSdk\Data\AttributeDefinitionData;
+use Stackra\SharedAttributesSdk\Requests\AttributeDefinitions\CreateAttributeDefinitionRequest;
+use Stackra\SharedAttributesSdk\Requests\AttributeDefinitions\ListAttributeDefinitionsRequest;
+use Stackra\SharedAttributesSdk\Requests\AttributeDefinitions\ShowAttributeDefinitionRequest;
+use Stackra\SharedAttributesSdk\Requests\AttributeDefinitions\UpdateAttributeDefinitionRequest;
 use Saloon\Http\Response;
 
 /**
@@ -57,7 +57,7 @@ final readonly class AttributeDefinitionsResource
      *
      * @return AttributeDefinitionData
      */
-    public function create(\Academorix\SharedAttributesSdk\Payloads\AttributeDefinitions\CreateAttributeDefinitionPayload $payload, ?string $idempotencyKey = null): AttributeDefinitionData
+    public function create(\Stackra\SharedAttributesSdk\Payloads\AttributeDefinitions\CreateAttributeDefinitionPayload $payload, ?string $idempotencyKey = null): AttributeDefinitionData
     {
         return $this->connector->send(new CreateAttributeDefinitionRequest($payload, $idempotencyKey))->dto();
     }
@@ -85,7 +85,7 @@ final readonly class AttributeDefinitionsResource
      *
      * @return AttributeDefinitionData
      */
-    public function update(string $def, \Academorix\SharedAttributesSdk\Payloads\AttributeDefinitions\UpdateAttributeDefinitionPayload $payload, ?string $idempotencyKey = null): AttributeDefinitionData
+    public function update(string $def, \Stackra\SharedAttributesSdk\Payloads\AttributeDefinitions\UpdateAttributeDefinitionPayload $payload, ?string $idempotencyKey = null): AttributeDefinitionData
     {
         return $this->connector->send(new UpdateAttributeDefinitionRequest($def, $payload, $idempotencyKey))->dto();
     }

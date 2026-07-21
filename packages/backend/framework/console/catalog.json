@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/console",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/console",
   "tier": "framework",
   "surfaces": ["core"],
   "kind": "framework-plumbing",
@@ -12,9 +12,9 @@
     "AOP before/after hooks + duration tracking",
     "Per-command extension discovery"
   ],
-  "when_to_use": "Every Academorix Artisan command extends the shipped BaseCommand for uniform rendering and lifecycle hooks.",
-  "when_not_to_use": "For raw terminal rendering primitives without the BaseCommand contract, use academorix/omniterm directly.",
-  "peer_deps": ["academorix/omniterm"],
+  "when_to_use": "Every Stackra Artisan command extends the shipped BaseCommand for uniform rendering and lifecycle hooks.",
+  "when_not_to_use": "For raw terminal rendering primitives without the BaseCommand contract, use stackra/omniterm directly.",
+  "peer_deps": ["stackra/omniterm"],
   "backend_pair": null,
   "size_gzip_kb": {},
   "maturity": "alpha",

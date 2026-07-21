@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attributes\Policies;
+namespace Stackra\Attributes\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Attributes\Models\AttributeGroup;
+use Stackra\User\Models\User;
+use Stackra\Attributes\Models\AttributeGroup;
 
 /**
- * Authorization policy for {@see \Academorix\Attributes\Models\AttributeGroup}.
+ * Authorization policy for {@see \Stackra\Attributes\Models\AttributeGroup}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

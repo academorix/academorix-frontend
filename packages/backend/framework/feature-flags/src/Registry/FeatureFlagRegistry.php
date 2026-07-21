@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Registry;
+namespace Stackra\FeatureFlags\Registry;
 
-use Academorix\FeatureFlags\Exceptions\DuplicateFeatureFlagException;
+use Stackra\FeatureFlags\Exceptions\DuplicateFeatureFlagException;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Singleton;
 

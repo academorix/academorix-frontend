@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/payment/macros",
+  "id": "stackra://modules/payment/macros",
   "$version": 1,
   "title": "payment — published macros",
   "description": "The payment module publishes ZERO framework macros. Every consumer touches the payment surface via injected services (PaymentIntentOrchestrator, PaymentProviderManager) or the domain-event listener path.",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/activity/compliance",
+  "id": "stackra://modules/activity/compliance",
   "$version": 1,
   "title": "activity — regulatory compliance",
   "description": "Compliance controls this module produces evidence for. Activity is the user-facing feed lane — its compliance surface is user-oriented (right of access, right to erasure, right to know) rather than regulator-oriented (that's audit's job). GDPR Art. 15 is satisfied by the /activities/mine endpoint; Art. 17 cascades on Identity erasure; CCPA §1798.100 right to know is satisfied by the feed itself.",

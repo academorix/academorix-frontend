@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Reporting\Services;
+namespace Stackra\Reporting\Services;
 
-use Academorix\Reporting\Contracts\Services\ReportRunnerInterface;
+use Stackra\Reporting\Contracts\Services\ReportRunnerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Reporting\Contracts\Repositories\DashboardRepositoryInterface;
+use Stackra\Reporting\Contracts\Repositories\DashboardRepositoryInterface;
 
 /**
  * Concrete service — ReportRunner.

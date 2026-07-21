@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Actions\Tenant;
+namespace Stackra\Geofencing\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Geofencing\Contracts\Repositories\GeofenceCheckRepositoryInterface;
-use Academorix\Geofencing\Data\GeofenceCheckData;
-use Academorix\Geofencing\Enums\GeofencingPermission;
-use Academorix\Geofencing\Exceptions\FenceableNotInTenantException;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Geofencing\Contracts\Repositories\GeofenceCheckRepositoryInterface;
+use Stackra\Geofencing\Data\GeofenceCheckData;
+use Stackra\Geofencing\Enums\GeofencingPermission;
+use Stackra\Geofencing\Exceptions\FenceableNotInTenantException;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `GET /api/v1/geofence/checks/{check}` — show a single geofence check.

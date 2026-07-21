@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SharedOfflineSyncSdk\Data;
+namespace Stackra\SharedOfflineSyncSdk\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
@@ -26,7 +26,7 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
  * ## Example
  *
  * ```php
- * use Academorix\SharedSdk\Client\SharedSdk;
+ * use Stackra\SharedSdk\Client\SharedSdk;
  *
  * $row = app(SharedSdk::class)->offlineSync()->syncCursors()->show($id);
  * ```

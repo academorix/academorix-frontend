@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Competition\Concerns;
+namespace Stackra\Competition\Concerns;
 
 /**
  * Trait — ContributesToStandings.

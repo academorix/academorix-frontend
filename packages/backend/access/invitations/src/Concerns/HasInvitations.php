@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Concerns;
+namespace Stackra\Invitations\Concerns;
 
-use Academorix\Invitations\Contracts\Data\InvitationInterface;
-use Academorix\Invitations\Contracts\Services\InvitationTargetRegistryInterface;
-use Academorix\Invitations\Enums\InvitationStatus;
-use Academorix\Invitations\Exceptions\InvitationStateTransitionForbiddenException;
-use Academorix\Invitations\Models\Invitation;
+use Stackra\Invitations\Contracts\Data\InvitationInterface;
+use Stackra\Invitations\Contracts\Services\InvitationTargetRegistryInterface;
+use Stackra\Invitations\Enums\InvitationStatus;
+use Stackra\Invitations\Exceptions\InvitationStateTransitionForbiddenException;
+use Stackra\Invitations\Models\Invitation;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * helpers `invite()` / `revokeInvitation()`. The composing model
  * must ALSO be registered with
  * {@see InvitationTargetRegistryInterface} by carrying
- * `#[\Academorix\Invitations\Attributes\Invitable]` — the framework's
+ * `#[\Stackra\Invitations\Attributes\Invitable]` — the framework's
  * generic hydration pump discovers every attributed class at boot
  * and calls
  * {@see InvitationTargetRegistryInterface::register()} on each hit.

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Exceptions;
+namespace Stackra\Versioning\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted publish on a notice already in state=published.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class VersioningNoticeAlreadyPublishedException extends AcademorixException
+final class VersioningNoticeAlreadyPublishedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

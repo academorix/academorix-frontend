@@ -12,10 +12,10 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Serializer\Contracts;
+namespace Stackra\Serializer\Contracts;
 
-use Academorix\Foundation\Exceptions\InvalidArgumentException;
-use Academorix\Serializer\Json;
+use Stackra\Foundation\Exceptions\InvalidArgumentException;
+use Stackra\Serializer\Json;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Singleton;
 

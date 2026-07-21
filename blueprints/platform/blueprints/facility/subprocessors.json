@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/facility/subprocessors",
+  "id": "stackra://modules/facility/subprocessors",
   "$version": 1,
   "title": "facility — subprocessors",
-  "description": "The Facility module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. The Notifications module dispatches booking confirmations + reminders via its own subprocessors (mail, SMS, push); those are declared in notifications::subprocessors.json. The Finance module (Wave 4) will engage payment processors for the money side of bookings + day-passes + passes; those live in finance::subprocessors.json. This file lists ZERO active subprocessors to be explicit about the module's boundary — booking state is fully first-party.",
+  "description": "The Facility module itself engages ZERO third-party subprocessors — every state transition happens within the Stackra platform. The Notifications module dispatches booking confirmations + reminders via its own subprocessors (mail, SMS, push); those are declared in notifications::subprocessors.json. The Finance module (Wave 4) will engage payment processors for the money side of bookings + day-passes + passes; those live in finance::subprocessors.json. This file lists ZERO active subprocessors to be explicit about the module's boundary — booking state is fully first-party.",
   "subprocessors": [],
   "downstream_subprocessors_referenced": [
     {

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Policies;
+namespace Stackra\Localization\Policies;
 
-use Academorix\Localization\Contracts\Data\TenantLocaleInterface;
-use Academorix\Localization\Enums\LocalizationPermission;
-use Academorix\Localization\Models\TenantLocale;
+use Stackra\Localization\Contracts\Data\TenantLocaleInterface;
+use Stackra\Localization\Enums\LocalizationPermission;
+use Stackra\Localization\Models\TenantLocale;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

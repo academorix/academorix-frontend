@@ -2,8 +2,8 @@
   "$version": 1,
   "name": "telemetry",
   "alias": "telemetry",
-  "namespace": "Academorix\\Telemetry",
-  "description": "Unified observability surface. Owns the THREE OpenTelemetry signals \u2014 traces, metrics, structured logs \u2014 under one boundary. Wraps `keepsuit/laravel-opentelemetry` for framework-native auto-instrumentation of HTTP, DB, queue, cache, view; wraps Monolog with a processor pipeline emitting newline-delimited JSON. Two sub-namespaces preserve the separation-of-concerns internally without splitting the module: `Academorix\\Telemetry\\Otel\\*` for span + metric emission (via keepsuit's Tracer + Meter facades) and `Academorix\\Telemetry\\Logs\\*` for the log record pipeline. Attribute-driven manual instrumentation (10 attributes: AsSpan / AsCounter / AsHistogram / AsGauge / AsUpDownCounter / AsContext / AsBaggage for OTel; AsLogContext / AsLogChannel / RedactedForLogs for logs). Fire-and-forget \u2014 no data stored locally; every signal exports via OTLP or a Monolog sink and the downstream backend (Grafana Cloud / DataDog / Honeycomb / Loki / self-hosted collector) owns retention. Trace-to-logs correlation is automatic: every log record picks up the active `trace_id` + `span_id` from the current OTel context.",
+  "namespace": "Stackra\\Telemetry",
+  "description": "Unified observability surface. Owns the THREE OpenTelemetry signals \u2014 traces, metrics, structured logs \u2014 under one boundary. Wraps `keepsuit/laravel-opentelemetry` for framework-native auto-instrumentation of HTTP, DB, queue, cache, view; wraps Monolog with a processor pipeline emitting newline-delimited JSON. Two sub-namespaces preserve the separation-of-concerns internally without splitting the module: `Stackra\\Telemetry\\Otel\\*` for span + metric emission (via keepsuit's Tracer + Meter facades) and `Stackra\\Telemetry\\Logs\\*` for the log record pipeline. Attribute-driven manual instrumentation (10 attributes: AsSpan / AsCounter / AsHistogram / AsGauge / AsUpDownCounter / AsContext / AsBaggage for OTel; AsLogContext / AsLogChannel / RedactedForLogs for logs). Fire-and-forget \u2014 no data stored locally; every signal exports via OTLP or a Monolog sink and the downstream backend (Grafana Cloud / DataDog / Honeycomb / Loki / self-hosted collector) owns retention. Trace-to-logs correlation is automatic: every log record picks up the active `trace_id` + `span_id` from the current OTel context.",
   "keywords": [
     "telemetry",
     "opentelemetry",
@@ -19,10 +19,10 @@
     "keepsuit"
   ],
   "priority": 12,
-  "providers": ["Academorix\\Telemetry\\Providers\\TelemetryServiceProvider"],
+  "providers": ["Stackra\\Telemetry\\Providers\\TelemetryServiceProvider"],
   "internal_providers": [
-    "Academorix\\Telemetry\\Otel\\Providers\\OtelServiceProvider",
-    "Academorix\\Telemetry\\Logs\\Providers\\LogsServiceProvider"
+    "Stackra\\Telemetry\\Otel\\Providers\\OtelServiceProvider",
+    "Stackra\\Telemetry\\Logs\\Providers\\LogsServiceProvider"
   ],
   "files": [],
   "dependencies": ["foundation"],
@@ -105,7 +105,7 @@
   "signals": {
     "traces": {
       "description": "OpenTelemetry spans exported via OTLP. Auto-instruments HTTP server, HTTP client, DB queries, queue jobs; manual instrumentation via #[AsSpan] attribute.",
-      "namespace": "Academorix\\Telemetry\\Otel",
+      "namespace": "Stackra\\Telemetry\\Otel",
       "auto_instrumentation": {
         "http_server": { "enabled_by_default": true, "package": "keepsuit/laravel-opentelemetry" },
         "http_client": { "enabled_by_default": true, "package": "keepsuit/laravel-opentelemetry" },
@@ -123,11 +123,11 @@
     },
     "metrics": {
       "description": "OpenTelemetry metric instruments (counters, histograms, gauges, up-down counters) exported via OTLP metrics.",
-      "namespace": "Academorix\\Telemetry\\Otel"
+      "namespace": "Stackra\\Telemetry\\Otel"
     },
     "logs": {
       "description": "Structured JSON log records emitted through Monolog with a processor pipeline. Every record carries request_id + tenant_id + causer_id + trace_id + span_id.",
-      "namespace": "Academorix\\Telemetry\\Logs",
+      "namespace": "Stackra\\Telemetry\\Logs",
       "processor_pipeline": [
         {
           "name": "MessageInterpolator",
@@ -142,8 +142,8 @@
           "purpose": "Adds source class + line + function to every record."
         },
         {
-          "name": "AcademorixContextProcessor",
-          "purpose": "Injects academorix.request_id, academorix.tenant_id, academorix.causer_id from RequestContext."
+          "name": "StackraContextProcessor",
+          "purpose": "Injects stackra.request_id, stackra.tenant_id, stackra.causer_id from RequestContext."
         },
         {
           "name": "OtelTraceContextProcessor",
@@ -200,8 +200,8 @@
     "date": "2026-07-14",
     "rationale": "Two modules were splitting one observability surface. Traces + metrics + logs are the three OTel signals \u2014 OTLP handles all three natively since spec v1.19. Merging removes duplicate providers/config/health probes and lets the trace-to-logs correlation processor live inside a single boot boundary.",
     "namespace_mapping": {
-      "Academorix\\TelemetryOtel\\*": "Academorix\\Telemetry\\Otel\\*",
-      "Academorix\\TelemetryLogs\\*": "Academorix\\Telemetry\\Logs\\*"
+      "Stackra\\TelemetryOtel\\*": "Stackra\\Telemetry\\Otel\\*",
+      "Stackra\\TelemetryLogs\\*": "Stackra\\Telemetry\\Logs\\*"
     },
     "config_mapping": {
       "config('telemetry-otel.*')": "config('telemetry.otel.*') or config('telemetry.traces.*') / config('telemetry.metrics.*')",

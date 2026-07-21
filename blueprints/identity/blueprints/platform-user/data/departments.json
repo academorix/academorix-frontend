@@ -1,7 +1,7 @@
 {
   "$version": 1,
   "title": "PlatformDepartment enum seed",
-  "description": "Canonical department taxonomy for the Academorix internal-workforce plane. Consumed at boot by `PlatformDepartment` enum registration + by the `valid_department` validation rule. Adding a new department here requires a schema migration (the department column is an enum type in Postgres) AND a coordinated update to the settings-module's default `notifications.department_channel_map`. Reordering rows is free \u2014 sort_order drives the picker UI, not the enum discriminator.",
+  "description": "Canonical department taxonomy for the Stackra internal-workforce plane. Consumed at boot by `PlatformDepartment` enum registration + by the `valid_department` validation rule. Adding a new department here requires a schema migration (the department column is an enum type in Postgres) AND a coordinated update to the settings-module's default `notifications.department_channel_map`. Reordering rows is free \u2014 sort_order drives the picker UI, not the enum discriminator.",
   "columns_note": "Fields on each row: `key` (enum member name, snake_case, stable identifier for FKs), `display_name` (human-readable label), `slug` (URL-safe form for API filters), `sort_order` (picker sort ascending), `default_notifications_channel` (Slack channel or similar for department-wide broadcasts), `on_call_rotation` (whether this department participates in the on-call rotation by default).",
   "departments": [
     {

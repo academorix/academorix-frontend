@@ -4,34 +4,34 @@
  * @file packages/events/tests/Unit/EventDiscoveryTest.php
  *
  * @description
- * Unit coverage for {@see \Academorix\Events\Support\EventDiscovery}.
+ * Unit coverage for {@see \Stackra\Events\Support\EventDiscovery}.
  *
  * ## Strategy — inject a fake DiscoversAttributes
  *
  * The scanner talks to the unified
- * {@see \Academorix\Foundation\Contracts\DiscoversAttributes}
+ * {@see \Stackra\Foundation\Contracts\DiscoversAttributes}
  * contract. Tests supply an anonymous-class implementation whose
  * `forClass()` / `forMethod()` methods return hand-built target
- * lists ({@see \Academorix\Foundation\Discovery\ClassTarget} /
- * {@see \Academorix\Foundation\Discovery\MethodTarget}). No
+ * lists ({@see \Stackra\Foundation\Discovery\ClassTarget} /
+ * {@see \Stackra\Foundation\Discovery\MethodTarget}). No
  * `composer dump-autoload` is needed for the fixtures.
  */
 
 declare(strict_types=1);
 
-use Academorix\Events\Attributes\AfterCommit;
-use Academorix\Events\Attributes\Broadcastable;
-use Academorix\Events\Attributes\BroadcastAs;
-use Academorix\Events\Attributes\BroadcastOn;
-use Academorix\Events\Attributes\BroadcastQueue;
-use Academorix\Events\Attributes\ListensFor;
-use Academorix\Events\Attributes\OnEvent;
-use Academorix\Events\Support\DiscoveryManifest;
-use Academorix\Events\Support\EventDiscovery;
-use Academorix\Events\Support\ListenerBinding;
-use Academorix\Foundation\Contracts\DiscoversAttributes;
-use Academorix\Foundation\Discovery\ClassTarget;
-use Academorix\Foundation\Discovery\MethodTarget;
+use Stackra\Events\Attributes\AfterCommit;
+use Stackra\Events\Attributes\Broadcastable;
+use Stackra\Events\Attributes\BroadcastAs;
+use Stackra\Events\Attributes\BroadcastOn;
+use Stackra\Events\Attributes\BroadcastQueue;
+use Stackra\Events\Attributes\ListensFor;
+use Stackra\Events\Attributes\OnEvent;
+use Stackra\Events\Support\DiscoveryManifest;
+use Stackra\Events\Support\EventDiscovery;
+use Stackra\Events\Support\ListenerBinding;
+use Stackra\Foundation\Contracts\DiscoversAttributes;
+use Stackra\Foundation\Discovery\ClassTarget;
+use Stackra\Foundation\Discovery\MethodTarget;
 
 /**
  * Build an in-memory {@see DiscoversAttributes} that returns the

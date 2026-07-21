@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Jobs;
+namespace Stackra\Newsletter\Jobs;
 
-use Academorix\Newsletter\Contracts\Data\NewsletterAudienceInterface;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterAudienceRepositoryInterface;
-use Academorix\Newsletter\Contracts\Services\AudienceEvaluatorInterface;
-use Academorix\Newsletter\Events\NewsletterAudienceRefreshed;
+use Stackra\Newsletter\Contracts\Data\NewsletterAudienceInterface;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterAudienceRepositoryInterface;
+use Stackra\Newsletter\Contracts\Services\AudienceEvaluatorInterface;
+use Stackra\Newsletter\Events\NewsletterAudienceRefreshed;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;

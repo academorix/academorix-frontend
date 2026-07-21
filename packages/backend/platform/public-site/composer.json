@@ -1,10 +1,10 @@
 {
-  "name": "academorix/public-site",
+  "name": "stackra/public-site",
   "type": "library",
-  "description": "Academorix PublicSite module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/public-site/`. Complements the wire SDK at `academorix-platform/public-site-sdk`.",
+  "description": "Stackra PublicSite module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/public-site/`. Complements the wire SDK at `stackra-platform/public-site-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "platform",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-platform/public-site-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-platform/public-site-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\PublicSite\\": "src/"
+      "Stackra\\PublicSite\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\PublicSite\\Tests\\": "tests/"
+      "Stackra\\PublicSite\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\PublicSite\\Providers\\PublicSiteServiceProvider"
+        "Stackra\\PublicSite\\Providers\\PublicSiteServiceProvider"
       ],
       "aliases": {}
     }
@@ -68,7 +68,7 @@
   "repositories": [
     {
       "type": "path",
-      "url": "../../../../apps/academorix/src/sdks/platform-public-site-sdk",
+      "url": "../../../../apps/stackra/src/sdks/platform-public-site-sdk",
       "options": {
         "symlink": true
       }

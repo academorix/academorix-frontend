@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformFormsSdk\Resources;
+namespace Stackra\PlatformFormsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\PlatformFormsSdk\Data\FormData;
-use Academorix\PlatformFormsSdk\Requests\Forms\CreateFormRequest;
-use Academorix\PlatformFormsSdk\Requests\Forms\DeleteFormRequest;
-use Academorix\PlatformFormsSdk\Requests\Forms\ListFormsRequest;
-use Academorix\PlatformFormsSdk\Requests\Forms\ShowFormRequest;
-use Academorix\PlatformFormsSdk\Requests\Forms\UpdateFormRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\PlatformFormsSdk\Data\FormData;
+use Stackra\PlatformFormsSdk\Requests\Forms\CreateFormRequest;
+use Stackra\PlatformFormsSdk\Requests\Forms\DeleteFormRequest;
+use Stackra\PlatformFormsSdk\Requests\Forms\ListFormsRequest;
+use Stackra\PlatformFormsSdk\Requests\Forms\ShowFormRequest;
+use Stackra\PlatformFormsSdk\Requests\Forms\UpdateFormRequest;
 use Saloon\Http\Response;
 
 /**
@@ -58,7 +58,7 @@ final readonly class FormsResource
      *
      * @return FormData
      */
-    public function create(\Academorix\PlatformFormsSdk\Payloads\Forms\CreateFormPayload $payload, ?string $idempotencyKey = null): FormData
+    public function create(\Stackra\PlatformFormsSdk\Payloads\Forms\CreateFormPayload $payload, ?string $idempotencyKey = null): FormData
     {
         return $this->connector->send(new CreateFormRequest($payload, $idempotencyKey))->dto();
     }
@@ -86,7 +86,7 @@ final readonly class FormsResource
      *
      * @return FormData
      */
-    public function update(string $form, \Academorix\PlatformFormsSdk\Payloads\Forms\UpdateFormPayload $payload, ?string $idempotencyKey = null): FormData
+    public function update(string $form, \Stackra\PlatformFormsSdk\Payloads\Forms\UpdateFormPayload $payload, ?string $idempotencyKey = null): FormData
     {
         return $this->connector->send(new UpdateFormRequest($form, $payload, $idempotencyKey))->dto();
     }

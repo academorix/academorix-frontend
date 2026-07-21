@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Contracts\Repositories;
+namespace Stackra\Storage\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Storage\Models\ChunkedUpload;
-use Academorix\Storage\Repositories\EloquentChunkedUploadRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Storage\Models\ChunkedUpload;
+use Stackra\Storage\Repositories\EloquentChunkedUploadRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 
@@ -24,7 +24,7 @@ interface ChunkedUploadRepositoryInterface extends RepositoryInterface
 {
     /**
      * Every row past its `expires_at` deadline — consumed by
-     * {@see \Academorix\Storage\Jobs\PurgeAbortedChunkedUploadsJob}.
+     * {@see \Stackra\Storage\Jobs\PurgeAbortedChunkedUploadsJob}.
      *
      * @return Collection<int, ChunkedUpload>
      */

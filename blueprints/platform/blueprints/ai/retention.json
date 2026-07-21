@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/ai/retention",
+  "id": "stackra://modules/ai/retention",
   "$version": 1,
   "title": "ai — data retention windows",
   "description": "AI conversations retained 1 year rolling for user access + support. AiRun + AiToolCall retained 7 years for audit (regulatory horizon on AI-driven decisions). Embeddings anonymized on source deletion.",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/data/notification-channels",
+  "id": "stackra://modules/notifications/data/notification-channels",
   "$version": 1,
   "title": "notifications core \u2014 channel enum reference",
   "description": "The canonical list of channel slugs used across the notifications wave. NOT a seeded table \u2014 channels are compile-time enum values (referenced by NotificationDelivery.channel, NotificationTemplate.channel, NotificationPreference.channel, NotificationCategory.default_channels, NotificationDigest.channel). This file is the single source of truth; each channel module registers its NotificationChannelInterface implementation into `NotificationChannelRegistry` at boot referencing its slug here.",

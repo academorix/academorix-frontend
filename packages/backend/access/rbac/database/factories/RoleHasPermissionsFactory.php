@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Database\Factories;
+namespace Stackra\Rbac\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Rbac\Contracts\Data\RoleHasPermissionsInterface;
-use Academorix\Rbac\Models\RoleHasPermissions;
+use Stackra\Rbac\Contracts\Data\RoleHasPermissionsInterface;
+use Stackra\Rbac\Models\RoleHasPermissions;
 
 /**
- * Factory for {@see \Academorix\Rbac\Models\RoleHasPermissions}.
+ * Factory for {@see \Stackra\Rbac\Models\RoleHasPermissions}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Rbac\Models\RoleHasPermissions>
+ * @extends Factory<\Stackra\Rbac\Models\RoleHasPermissions>
  *
  * @category Rbac
  *

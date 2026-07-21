@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/payment/retention",
+  "id": "stackra://modules/payment/retention",
   "$version": 1,
   "title": "payment — retention windows",
   "description": "Payments are financial records (7 years default, 10 for Enterprise). Payment methods retain while active + 90-day grace after deactivation. Payment intents retain 90 days (transient state — success → creates payment; failure → audit only). Payment disputes retain per financial retention (7y baseline; 10y Enterprise).",

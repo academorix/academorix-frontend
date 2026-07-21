@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/integrations/schemas/tenant-integration",
+  "id": "stackra://modules/integrations/schemas/tenant-integration",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "TenantIntegration",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "wit_",
     "incrementing": false,
-    "model": "Academorix\\Integrations\\Models\\TenantIntegration",
-    "interface": "Academorix\\Integrations\\Contracts\\Data\\TenantIntegrationInterface",
-    "implements": ["Academorix\\Integrations\\Contracts\\Data\\TenantIntegrationInterface"],
+    "model": "Stackra\\Integrations\\Models\\TenantIntegration",
+    "interface": "Stackra\\Integrations\\Contracts\\Data\\TenantIntegrationInterface",
+    "implements": ["Stackra\\Integrations\\Contracts\\Data\\TenantIntegrationInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

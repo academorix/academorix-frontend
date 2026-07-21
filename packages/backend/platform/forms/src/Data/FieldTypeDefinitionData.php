@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Data;
+namespace Stackra\Forms\Data;
 
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
@@ -12,7 +12,7 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
  * Metadata describing one registered form field type.
  *
  * Emitted by
- * {@see \Academorix\Forms\Services\FieldTypeRegistry::get} and
+ * {@see \Stackra\Forms\Services\FieldTypeRegistry::get} and
  * consumed by the FormValidator (validation rules), the
  * FormRenderer (SDUI widget mapping), and the AnswerCipher
  * (sensitivity flag).

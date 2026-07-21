@@ -12,11 +12,11 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Enum\Meta;
+namespace Stackra\Enum\Meta;
 
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Concerns\Metable;
-use Academorix\Support\Arr;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Concerns\Metable;
+use Stackra\Support\Arr;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionEnumUnitCase;
@@ -28,7 +28,7 @@ use UnitEnum;
  *
  * Provides reflection utilities for working with enum metadata.
  *
- * @author  Academorix Development Team
+ * @author  Stackra Development Team
  *
  * @since   1.0.0
  */

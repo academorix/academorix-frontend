@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformCredentialsSdk\Resources;
+namespace Stackra\PlatformCredentialsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\PlatformCredentialsSdk\Data\CheckinLogData;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\PlatformCredentialsSdk\Data\CheckinLogData;
 use Saloon\Http\Response;
 
 /**

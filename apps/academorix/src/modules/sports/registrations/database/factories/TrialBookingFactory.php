@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registrations\Database\Factories;
+namespace Stackra\Registrations\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Registrations\Contracts\Data\TrialBookingInterface;
-use Academorix\Registrations\Models\TrialBooking;
+use Stackra\Registrations\Contracts\Data\TrialBookingInterface;
+use Stackra\Registrations\Models\TrialBooking;
 
 /**
- * Factory for {@see \Academorix\Registrations\Models\TrialBooking}.
+ * Factory for {@see \Stackra\Registrations\Models\TrialBooking}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Registrations\Models\TrialBooking>
+ * @extends Factory<\Stackra\Registrations\Models\TrialBooking>
  *
  * @category Registrations
  *

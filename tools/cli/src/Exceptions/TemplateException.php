@@ -2,16 +2,16 @@
 
 /**
  * @file TemplateException.php
- * @module Academorix\Cli\Exceptions
+ * @module Stackra\Cli\Exceptions
  * @description Template-specific errors. Thrown by
- *   {@see \Academorix\Cli\Templates\TemplateRegistry},
- *   {@see \Academorix\Cli\Templates\TemplateHydrator}, and
- *   {@see \Academorix\Cli\Templates\TemplateManager}.
+ *   {@see \Stackra\Cli\Templates\TemplateRegistry},
+ *   {@see \Stackra\Cli\Templates\TemplateHydrator}, and
+ *   {@see \Stackra\Cli\Templates\TemplateManager}.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Exceptions;
+namespace Stackra\Cli\Exceptions;
 
 /**
  * Named factories for every template error the CLI raises.

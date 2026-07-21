@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/private-sessions/subprocessors",
+  "id": "stackra://modules/private-sessions/subprocessors",
   "$version": 1,
   "title": "private-sessions — subprocessors used",
   "description": "Third-party subprocessors this module uses for its own operation.",

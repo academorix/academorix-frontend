@@ -11,10 +11,10 @@ declare(strict_types=1);
  * — one row per enum case, idempotent via `updateOrCreate`.
  *
  * Owns the LOOP; consumer traits (e.g.
- * {@see \Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum})
+ * {@see \Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum})
  * own the mapping from an enum case to the target model's columns.
  *
- * Composes {@see \Academorix\Foundation\Concerns\Lifecyclable} so
+ * Composes {@see \Stackra\Foundation\Concerns\Lifecyclable} so
  * consumers get before/after hooks for cache invalidation, event
  * dispatch, or any pre/post book-keeping — override only the phase
  * you actually use.
@@ -38,9 +38,9 @@ declare(strict_types=1);
  * @since    0.1.0
  */
 
-namespace Academorix\Database\Concerns;
+namespace Stackra\Database\Concerns;
 
-use Academorix\Foundation\Concerns\Lifecyclable;
+use Stackra\Foundation\Concerns\Lifecyclable;
 use UnitEnum;
 
 /**
@@ -49,7 +49,7 @@ use UnitEnum;
  * ## Usage
  *
  * ```php
- * use Academorix\Database\Concerns\Enumable;
+ * use Stackra\Database\Concerns\Enumable;
  * use Illuminate\Database\Seeder;
  *
  * #[AsSeeder(priority: 44)]
@@ -128,8 +128,8 @@ trait Enumable
     /**
      * Seed every enum's cases into the target table.
      *
-     * Runs {@see \Academorix\Foundation\Concerns\Lifecyclable::before()}
-     * → the enum walk → {@see \Academorix\Foundation\Concerns\Lifecyclable::after()}.
+     * Runs {@see \Stackra\Foundation\Concerns\Lifecyclable::before()}
+     * → the enum walk → {@see \Stackra\Foundation\Concerns\Lifecyclable::after()}.
      * Each case becomes one idempotent `updateOrCreate` write.
      */
     public function run(): void

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Actions\Tenant;
+namespace Stackra\Leads\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Leads\Contracts\Data\LeadActivityInterface;
-use Academorix\Leads\Contracts\Repositories\LeadActivityRepositoryInterface;
-use Academorix\Leads\Contracts\Repositories\LeadRepositoryInterface;
-use Academorix\Leads\Data\LeadActivityData;
-use Academorix\Leads\Enums\LeadsPermission;
-use Academorix\Leads\Models\LeadActivity;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Leads\Contracts\Data\LeadActivityInterface;
+use Stackra\Leads\Contracts\Repositories\LeadActivityRepositoryInterface;
+use Stackra\Leads\Contracts\Repositories\LeadRepositoryInterface;
+use Stackra\Leads\Data\LeadActivityData;
+use Stackra\Leads\Enums\LeadsPermission;
+use Stackra\Leads\Models\LeadActivity;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\LaravelData\PaginatedDataCollection;

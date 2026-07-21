@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/age-group/schedule",
+  "id": "stackra://modules/age-group/schedule",
   "$version": 1,
   "title": "age-group — scheduled tasks",
   "entries": [
@@ -8,7 +8,7 @@
       "command": "age-group:reconcile-defaults",
       "cron": "30 3 * * *",
       "timezone": "UTC",
-      "purpose": "Daily 03:30 UTC. Verifies every (tenant, organization, sport_key) tuple has exactly one is_default=true AgeGroup. Reports drift + optionally auto-heals per `age_group.reconciliation.auto_heal` config. Feeds the `academorix.age_group.default_invariant_drift.count` gauge."
+      "purpose": "Daily 03:30 UTC. Verifies every (tenant, organization, sport_key) tuple has exactly one is_default=true AgeGroup. Reports drift + optionally auto-heals per `age_group.reconciliation.auto_heal` config. Feeds the `stackra.age_group.default_invariant_drift.count` gauge."
     },
     {
       "name": "age-group-purge-archived",
@@ -22,7 +22,7 @@
       "command": "age-group:metrics:snapshot",
       "cron": "0 * * * *",
       "timezone": "UTC",
-      "purpose": "Hourly. Compute `academorix.age_group.active.count` per (is_youth, is_seeded) + `academorix.age_group.per_tenant.count` histogram + `academorix.age_group.purge_pending.count`. Publishes to the OpenTelemetry endpoint."
+      "purpose": "Hourly. Compute `stackra.age_group.active.count` per (is_youth, is_seeded) + `stackra.age_group.per_tenant.count` histogram + `stackra.age_group.purge_pending.count`. Publishes to the OpenTelemetry endpoint."
     },
     {
       "name": "age-group-cache-warm-default-catalog",

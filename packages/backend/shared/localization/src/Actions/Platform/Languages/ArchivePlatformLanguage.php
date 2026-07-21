@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Actions\Platform\Languages;
+namespace Stackra\Localization\Actions\Platform\Languages;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Localization\Contracts\Data\PlatformLanguageInterface;
-use Academorix\Localization\Enums\LocalizationPermission;
-use Academorix\Localization\Models\PlatformLanguage;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Delete;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Localization\Contracts\Data\PlatformLanguageInterface;
+use Stackra\Localization\Enums\LocalizationPermission;
+use Stackra\Localization\Models\PlatformLanguage;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Delete;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\JsonResponse;
 
 /**

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Casts;
+namespace Stackra\Invitations\Casts;
 
-use Academorix\Invitations\Contracts\Services\InvitationTargetRegistryInterface;
+use Stackra\Invitations\Contracts\Services\InvitationTargetRegistryInterface;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/access/requests/analytics",
+  "id": "stackra://modules/access/requests/analytics",
   "$version": 1,
   "title": "requests \u2014 product analytics events",
   "description": "Product analytics events (Segment / Mixpanel / PostHog). Distinct from `events.json` (server-side pub/sub) and `metrics.json` (ops telemetry). Every event carries a `consent_tier` gating delivery against the caller's consent state. Access-request events are `essential` (they trace the authorization loop essential to operating the platform) or `functional` (optimisation), never `marketing`.",

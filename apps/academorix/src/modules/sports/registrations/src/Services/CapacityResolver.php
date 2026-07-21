@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registrations\Services;
+namespace Stackra\Registrations\Services;
 
-use Academorix\Registrations\Contracts\Data\RegistrationInterface;
-use Academorix\Registrations\Contracts\Repositories\RegistrationRepositoryInterface;
-use Academorix\Registrations\Contracts\Services\CapacityResolverInterface;
-use Academorix\Registrations\Data\CapacityStatusData;
-use Academorix\Registrations\Enums\RegistrationStage;
+use Stackra\Registrations\Contracts\Data\RegistrationInterface;
+use Stackra\Registrations\Contracts\Repositories\RegistrationRepositoryInterface;
+use Stackra\Registrations\Contracts\Services\CapacityResolverInterface;
+use Stackra\Registrations\Data\CapacityStatusData;
+use Stackra\Registrations\Enums\RegistrationStage;
 use Illuminate\Container\Attributes\DB;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Database\ConnectionInterface;
 
 /**
  * Reference implementation of
- * {@see \Academorix\Registrations\Contracts\Services\CapacityResolverInterface}.
+ * {@see \Stackra\Registrations\Contracts\Services\CapacityResolverInterface}.
  *
  * Query strategy:
  *  1. Look up `capacity` on either `teams.<team_id>.capacity`

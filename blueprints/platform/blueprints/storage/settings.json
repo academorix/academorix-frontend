@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/storage/settings",
+  "id": "stackra://modules/storage/settings",
   "$version": 1,
   "title": "storage \u2014 tenant + user settings",
   "description": "Tenant-facing preferences resolved via the settings module's #[AsSetting] classes. Distinct from config('storage.*') (deployment-owned). Every setting is scoped to a tenant + optionally per-user.",
@@ -7,7 +7,7 @@
   "groups": [
     {
       "key": "storage",
-      "class": "Academorix\\Storage\\Settings\\StorageTenantSettings",
+      "class": "Stackra\\Storage\\Settings\\StorageTenantSettings",
       "scope": "tenant",
       "label": "File storage",
       "description": "Configure how your tenant handles file uploads, retention, and sharing.",

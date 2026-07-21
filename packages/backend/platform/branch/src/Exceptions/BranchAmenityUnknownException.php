@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branch\Exceptions;
+namespace Stackra\Branch\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Submitted amenity tag is not in the platform catalogue AND tenant lacks `branch_amenities: custom` (Enterprise).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class BranchAmenityUnknownException extends AcademorixException
+final class BranchAmenityUnknownException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

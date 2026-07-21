@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transaction\Contracts\Services;
+namespace Stackra\Transaction\Contracts\Services;
 
-use Academorix\Transaction\Services\LedgerReporter;
+use Stackra\Transaction\Services\LedgerReporter;
 use Illuminate\Container\Attributes\Bind;
 
 /**

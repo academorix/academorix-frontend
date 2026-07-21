@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/athlete-enrollment/notifications",
+  "id": "stackra://modules/athlete-enrollment/notifications",
   "$version": 1,
   "title": "athlete-enrollment — notification classes + categories",
-  "namespace": "Academorix\\Sports\\AthleteEnrollment\\Notifications",
+  "namespace": "Stackra\\Sports\\AthleteEnrollment\\Notifications",
   "notifications": [
     "EnrollmentSubmittedNotification",
     "EnrollmentConfirmedNotification",

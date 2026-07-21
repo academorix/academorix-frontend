@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-in-app/subprocessors",
+  "id": "stackra://modules/notifications-in-app/subprocessors",
   "$version": 1,
   "title": "notifications-in-app \u2014 subprocessors",
   "description": "None. The in-app transport uses our own broadcast layer (Laravel Reverb / Pusher-compatible driver hosted on our infra); no third-party vendor sees the notification content. If the tenant's deployment swaps in Pusher / Ably / Soketi as the broadcaster, that vendor becomes a subprocessor \u2014 update this file per deployment. Marker file with an explanation.",

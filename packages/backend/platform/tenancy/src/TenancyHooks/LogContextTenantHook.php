@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\TenancyHooks;
+namespace Stackra\Tenancy\TenancyHooks;
 
-use Academorix\ServiceProvider\Attributes\AsTenancyHook;
-use Academorix\ServiceProvider\Contracts\TenancyHookInterface;
-use Academorix\ServiceProvider\Support\TenantHookContext;
-use Academorix\Tenancy\Contracts\Data\TenantInterface;
-use Academorix\Tenancy\Models\Tenant;
+use Stackra\ServiceProvider\Attributes\AsTenancyHook;
+use Stackra\ServiceProvider\Contracts\TenancyHookInterface;
+use Stackra\ServiceProvider\Support\TenantHookContext;
+use Stackra\Tenancy\Contracts\Data\TenantInterface;
+use Stackra\Tenancy\Models\Tenant;
 use Illuminate\Log\Context\Repository as LogContext;
 
 /**

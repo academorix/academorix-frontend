@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Contracts\Services;
+namespace Stackra\Forms\Contracts\Services;
 
-use Academorix\Forms\Services\SessionSignatureMinter;
+use Stackra\Forms\Services\SessionSignatureMinter;
 use Illuminate\Container\Attributes\Bind;
 
 /**

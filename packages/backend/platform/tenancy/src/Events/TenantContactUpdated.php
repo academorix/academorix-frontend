@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Events;
+namespace Stackra\Tenancy\Events;
 
-use Academorix\Events\Attributes\AsEvent;
-use Academorix\Tenancy\Models\TenantContact;
+use Stackra\Events\Attributes\AsEvent;
+use Stackra\Tenancy\Models\TenantContact;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 

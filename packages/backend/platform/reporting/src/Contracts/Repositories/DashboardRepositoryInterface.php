@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Reporting\Contracts\Repositories;
+namespace Stackra\Reporting\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Reporting\Models\Dashboard}.
+ * Repository contract for {@see Stackra\Reporting\Models\Dashboard}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `DashboardRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Reporting\Models\Dashboard>
+ * @extends RepositoryInterface<\Stackra\Reporting\Models\Dashboard>
  *
  * @category Reporting
  *

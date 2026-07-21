@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Staff\Exceptions;
+namespace Stackra\Staff\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * sport_key not in the sports registry (soft-warn in Wave 2b, hard-fail in Wave 3).

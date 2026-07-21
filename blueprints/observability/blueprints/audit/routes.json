@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/audit/routes",
+  "id": "stackra://modules/audit/routes",
   "$version": 1,
   "title": "audit — HTTP routes",
   "description": "Two hosts: tenant (compliance dashboards + retention policy CRUD + export request) + platform-admin (cross-tenant support + regulator export). Every /audits* row-route enforces the audit.enforce_read_only middleware. Retention-policy + export routes are exempted from that middleware because they legitimately need non-GET methods.",
@@ -24,28 +24,28 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditController@index",
+          "controller": "Stackra\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditController@index",
           "permission": "audit.audits.viewAny",
           "description": "Paginated list. Filters: user_id, auditable_type, auditable_id, event, since, until."
         },
         {
           "method": "GET",
           "path": "/{audit}",
-          "controller": "Academorix\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditController@show",
+          "controller": "Stackra\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditController@show",
           "permission": "audit.audits.view",
           "description": "Single audit row detail. Diff blobs redacted by default; ?include=raw_diff reveals + writes a chain-of-custody row."
         },
         {
           "method": "GET",
           "path": "/by-entity/{auditable_type}/{auditable_id}",
-          "controller": "Academorix\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditController@byEntity",
+          "controller": "Stackra\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditController@byEntity",
           "permission": "audit.audits.viewAny",
           "description": "Full audit trail for a specific entity (Membership, Team, etc). Requires the auditable's own view permission in addition to audit.audits.viewAny."
         },
         {
           "method": "GET",
           "path": "/by-user/{user}",
-          "controller": "Academorix\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditController@byUser",
+          "controller": "Stackra\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditController@byUser",
           "permission": "audit.audits.viewAny",
           "description": "Actor-scoped audit trail. Compliance investigation of a specific user's mutations."
         }
@@ -70,7 +70,7 @@
         {
           "method": "POST",
           "path": "/export",
-          "controller": "Academorix\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditExportController@store",
+          "controller": "Stackra\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditExportController@store",
           "permission": "audit.audits.export",
           "entitlements": ["audit_export"],
           "throttle": "custom:20,86400",
@@ -79,14 +79,14 @@
         {
           "method": "GET",
           "path": "/exports",
-          "controller": "Academorix\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditExportController@index",
+          "controller": "Stackra\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditExportController@index",
           "permission": "audit.audits.export",
           "description": "List past export requests + status."
         },
         {
           "method": "GET",
           "path": "/exports/{export}",
-          "controller": "Academorix\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditExportController@show",
+          "controller": "Stackra\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditExportController@show",
           "permission": "audit.audits.export",
           "description": "Single export detail. Includes signed_url + signed_url_expires_at when ready."
         }
@@ -111,14 +111,14 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditRetentionPolicyController@index",
+          "controller": "Stackra\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditRetentionPolicyController@index",
           "permission": "audit.retention-policies.viewAny",
           "description": "Current retention policy (there is only ever one active per tenant). Returns null-shaped envelope if no policy is active (baseline 7y applies)."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditRetentionPolicyController@store",
+          "controller": "Stackra\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditRetentionPolicyController@store",
           "permission": "audit.retention-policies.create",
           "entitlements": ["audit_retention_extended"],
           "description": "Create a retention policy override. Refused if a policy is already active (409). Refused if retention_years > config.audit.retention.max_years (422). Requires override_reason."
@@ -126,7 +126,7 @@
         {
           "method": "PATCH",
           "path": "/{policy}",
-          "controller": "Academorix\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditRetentionPolicyController@update",
+          "controller": "Stackra\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditRetentionPolicyController@update",
           "permission": "audit.retention-policies.update",
           "entitlements": ["audit_retention_extended"],
           "description": "Update retention_years, override_ends_at, or override_reason. tenant_id + provider_config_id are immutable."
@@ -134,7 +134,7 @@
         {
           "method": "DELETE",
           "path": "/{policy}",
-          "controller": "Academorix\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditRetentionPolicyController@destroy",
+          "controller": "Stackra\\Observability\\Audit\\Http\\Controllers\\Tenant\\AuditRetentionPolicyController@destroy",
           "permission": "audit.retention-policies.delete",
           "description": "Soft-delete the policy. Retention resets to config default (7y). Historical policy row preserved for compliance trail."
         }
@@ -158,7 +158,7 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Observability\\Audit\\Http\\Controllers\\Platform\\AuditController@index",
+          "controller": "Stackra\\Observability\\Audit\\Http\\Controllers\\Platform\\AuditController@index",
           "permission": "audit.audits.viewAny (platform_admin guard)",
           "description": "Cross-tenant audit list. Compliance-officer + on-call scoped."
         }
@@ -181,7 +181,7 @@
         {
           "method": "POST",
           "path": "/export",
-          "controller": "Academorix\\Observability\\Audit\\Http\\Controllers\\Platform\\AuditExportController@store",
+          "controller": "Stackra\\Observability\\Audit\\Http\\Controllers\\Platform\\AuditExportController@store",
           "permission": "audit.audits.export (platform_admin guard)",
           "throttle": "custom:50,86400",
           "description": "Regulator-shaped cross-tenant export. Payload includes chain-of-custody metadata + signed manifest. 50/day platform-wide."

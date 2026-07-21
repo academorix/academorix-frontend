@@ -7,7 +7,7 @@
  * Source rule: every concrete class in a
  * `**\/database/seeders/**\/*.php` path (except the root
  * `DatabaseSeeder`) must carry `#[AsSeeder]` from
- * `Academorix\ServiceProvider\Attributes\AsSeeder`.
+ * `Stackra\ServiceProvider\Attributes\AsSeeder`.
  *
  * ## Why (ADR 0011)
  *
@@ -34,11 +34,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Support\SourceFile;
-use Academorix\Architecture\Violations\Severity;
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Support\SourceFile;
+use Stackra\Architecture\Violations\Severity;
+use Stackra\Architecture\Violations\Violation;
 
 /**
  * Enforce `#[AsSeeder]` on every leaf seeder.
@@ -54,7 +54,7 @@ final class SeedersCarryAsSeederAttributeRule extends AbstractRule
 
     public function description(): string
     {
-        return 'Every leaf seeder must carry `#[AsSeeder]` from `academorix/service-provider` for automatic dispatch discovery.';
+        return 'Every leaf seeder must carry `#[AsSeeder]` from `stackra/service-provider` for automatic dispatch discovery.';
     }
 
     protected function defaultSeverity(): Severity
@@ -96,7 +96,7 @@ final class SeedersCarryAsSeederAttributeRule extends AbstractRule
                     $file->classFqcn ?? $file->className,
                 ),
                 line: null,
-                hint: 'Run `php dev-tools/migrations/bin/academorix-migrate seeders --apply` to fix every violation of this rule automatically.',
+                hint: 'Run `php dev-tools/migrations/bin/stackra-migrate seeders --apply` to fix every violation of this rule automatically.',
             ),
         ];
     }

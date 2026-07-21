@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/digital-passes/rules",
+  "id": "stackra://modules/digital-passes/rules",
   "$version": 1,
   "title": "digital-passes — validation rules",
   "description": "Named validation rules this module ships (registered via Validator::extend).",

@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Competition\Actions\Tenant;
+namespace Stackra\Competition\Actions\Tenant;
 
-use Academorix\Competition\Contracts\Repositories\CompetitionRepositoryInterface;
-use Academorix\Competition\Data\CompetitionData;
-use Academorix\Competition\Data\Requests\CreateCompetitionRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Competition\Contracts\Repositories\CompetitionRepositoryInterface;
+use Stackra\Competition\Data\CompetitionData;
+use Stackra\Competition\Data\Requests\CreateCompetitionRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/competitions` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Competition

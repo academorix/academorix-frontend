@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Exceptions;
+namespace Stackra\Audit\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * AuditObserver::creating received an event name outside the closed set (vendor defaults + registered custom events).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsAuditUnknownEventTypeException extends AcademorixException
+final class NotificationsAuditUnknownEventTypeException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

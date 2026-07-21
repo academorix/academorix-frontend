@@ -1,6 +1,6 @@
 ---
 description: >-
-  API Contract Designer for Academorix — writes cross-service JSON Schema
+  API Contract Designer for Stackra — writes cross-service JSON Schema
   contracts (docs/contracts/*.schema.json) and OpenAPI fragments before
   implementation begins. Coordinates with data-modeler on shared row shapes and
   with solution-architect on ADRs. Emits JSON schemas + accompanying

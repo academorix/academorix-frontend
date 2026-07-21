@@ -5,15 +5,15 @@
  *
  * @description
  * Controller-side accessors for the API version resolved by
- * {@see \Academorix\Routing\Middleware\DetectApiVersion}. Provides
+ * {@see \Stackra\Routing\Middleware\DetectApiVersion}. Provides
  * ergonomic helpers on top of the
- * {@see \Academorix\Routing\Support\ApiVersionRegistry} scoped
+ * {@see \Stackra\Routing\Support\ApiVersionRegistry} scoped
  * binding so controller code doesn't have to reach into the
  * container manually.
  *
  * ## Trait, not a base class
  *
- * Composed into {@see \Academorix\Routing\Controller} alongside
+ * Composed into {@see \Stackra\Routing\Controller} alongside
  * the other `InteractsWith*` traits. Kept a trait (not extension)
  * so services / listeners / jobs can adopt the same helpers
  * without inheriting from the routing base class.
@@ -45,16 +45,16 @@
  * }
  * ```
  *
- * @see \Academorix\Routing\Support\ApiVersionRegistry
- * @see \Academorix\Routing\Services\VersionComparator
+ * @see \Stackra\Routing\Support\ApiVersionRegistry
+ * @see \Stackra\Routing\Services\VersionComparator
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Routing\Concerns;
+namespace Stackra\Routing\Concerns;
 
-use Academorix\Routing\Services\VersionComparator;
-use Academorix\Routing\Support\ApiVersionRegistry;
+use Stackra\Routing\Services\VersionComparator;
+use Stackra\Routing\Support\ApiVersionRegistry;
 
 /**
  * Controller helpers that expose the resolved API version.
@@ -123,7 +123,7 @@ trait InteractsWithApiVersion
     /**
      * `true` when the resolved version satisfies the supplied
      * constraint (see
-     * {@see \Academorix\Routing\Services\VersionComparator::satisfies()}
+     * {@see \Stackra\Routing\Services\VersionComparator::satisfies()}
      * for the DSL). Returns `false` for neutral endpoints.
      */
     protected function apiVersionSatisfies(string $constraint): bool
@@ -149,11 +149,11 @@ trait InteractsWithApiVersion
     }
 
     /**
-     * Convenience → the {@see \Academorix\Routing\Attributes\Sunsets}
+     * Convenience → the {@see \Stackra\Routing\Attributes\Sunsets}
      * instance in play for the current request, or `null` when
      * nothing was declared.
      */
-    protected function apiVersionSunset(): ?\Academorix\Routing\Attributes\Sunsets
+    protected function apiVersionSunset(): ?\Stackra\Routing\Attributes\Sunsets
     {
         return $this->apiVersionRegistry()->sunsets();
     }

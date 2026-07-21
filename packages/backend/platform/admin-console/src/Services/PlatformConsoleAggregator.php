@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AdminConsole\Services;
+namespace Stackra\AdminConsole\Services;
 
-use Academorix\AdminConsole\Contracts\Services\PlatformConsoleAggregatorInterface;
+use Stackra\AdminConsole\Contracts\Services\PlatformConsoleAggregatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\AdminConsole\Contracts\Repositories\AdminDashboardConfigRepositoryInterface;
+use Stackra\AdminConsole\Contracts\Repositories\AdminDashboardConfigRepositoryInterface;
 
 /**
  * Concrete service — PlatformConsoleAggregator.

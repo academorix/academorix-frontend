@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/auth/errors",
+  "id": "stackra://modules/auth/errors",
   "$version": 1,
   "title": "auth \u2014 error codes",
   "namespace": "auth",

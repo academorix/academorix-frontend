@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/mfa/sdui/resources/mfa/webauthn-register",
+  "id": "stackra://modules/mfa/sdui/resources/mfa/webauthn-register",
   "$version": 1,
   "kind": "screen",
   "route": "/me/mfa/webauthn/register",

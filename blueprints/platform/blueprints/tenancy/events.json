@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tenancy/events",
+  "id": "stackra://modules/tenancy/events",
   "$version": 1,
   "title": "tenants — domain events",
   "description": "Domain events THIS module publishes. Payload contract only — no listeners. Subscriber ownership lives in each subscribing module's `listeners.json` so a listener change never mutates the publisher's file. Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write.",
@@ -7,7 +7,7 @@
   "events": [
     {
       "name": "TenantProvisioning",
-      "class": "Academorix\\Tenancy\\Events\\TenantProvisioning",
+      "class": "Stackra\\Tenancy\\Events\\TenantProvisioning",
       "when": "Fired inside the DB transaction that creates a new Tenant, BEFORE the transaction commits. Used by same-transaction sub-provisioners (default Organization, default Branch, default Region, owner User) so they land in the same commit as the Tenant row.",
       "afterCommit": false,
       "payload": {
@@ -17,7 +17,7 @@
     },
     {
       "name": "TenantProvisioned",
-      "class": "Academorix\\Tenancy\\Events\\TenantProvisioned",
+      "class": "Stackra\\Tenancy\\Events\\TenantProvisioned",
       "when": "Fired AFTER the provisioning transaction commits. Safe surface for side effects that hit external systems (send-welcome-email, provision-dns, index-search).",
       "afterCommit": true,
       "wire_contract_file": "contracts/tenant-provisioned.v1.json",
@@ -30,7 +30,7 @@
     },
     {
       "name": "TenantSuspended",
-      "class": "Academorix\\Tenancy\\Events\\TenantSuspended",
+      "class": "Stackra\\Tenancy\\Events\\TenantSuspended",
       "when": "Set `status=suspended` + `suspended_at=now`. Fired by the billing suspension pipeline or a platform-admin action.",
       "afterCommit": true,
       "payload": {
@@ -42,7 +42,7 @@
     },
     {
       "name": "TenantUnsuspended",
-      "class": "Academorix\\Tenancy\\Events\\TenantUnsuspended",
+      "class": "Stackra\\Tenancy\\Events\\TenantUnsuspended",
       "when": "Reverse of TenantSuspended. Platform-admin manually unsuspends a tenant. Distinct from TenantResumed \u2014 unsuspension is a platform-admin action that requires re-enabling of integrations (webhook / SSO / SCIM); resume is the general lifecycle transition.",
       "afterCommit": true,
       "payload": {
@@ -53,7 +53,7 @@
     },
     {
       "name": "TenantResumed",
-      "class": "Academorix\\Tenancy\\Events\\TenantResumed",
+      "class": "Stackra\\Tenancy\\Events\\TenantResumed",
       "when": "Reverse of TenantSuspended. Set `status=active`, clear `suspended_at` + `grace_ends_at`.",
       "afterCommit": true,
       "payload": {
@@ -63,7 +63,7 @@
     },
     {
       "name": "TenantArchived",
-      "class": "Academorix\\Tenancy\\Events\\TenantArchived",
+      "class": "Stackra\\Tenancy\\Events\\TenantArchived",
       "when": "Soft-delete the Tenant. Retention job picks it up after 30d for hard-delete.",
       "afterCommit": true,
       "payload": {
@@ -73,7 +73,7 @@
     },
     {
       "name": "TenantErased",
-      "class": "Academorix\\Tenancy\\Events\\TenantErased",
+      "class": "Stackra\\Tenancy\\Events\\TenantErased",
       "when": "Hard-delete the Tenant after the 30d grace window. GDPR Art. 17 cascade signal \u2014 every dependent row must be removed or anonymised. Fired by HardDeleteArchivedTenantJob BEFORE the actual DELETE runs so downstream listeners can produce their compliance-anonymisation entries first.",
       "afterCommit": true,
       "payload": {
@@ -91,7 +91,7 @@
     },
     {
       "name": "TenantSettingsUpdated",
-      "class": "Academorix\\Tenancy\\Events\\TenantSettingsUpdated",
+      "class": "Stackra\\Tenancy\\Events\\TenantSettingsUpdated",
       "when": "Fires when a Tenant's own settings (branding, sender_config, feature toggles) are updated via PATCH /api/current-tenant. Distinct from settings::SettingsChangeEvent \u2014 that's per-field, this is per-tenant summary.",
       "afterCommit": true,
       "payload": {
@@ -105,7 +105,7 @@
     },
     {
       "name": "TenantBrandingUpdated",
-      "class": "Academorix\\Tenancy\\Events\\TenantBrandingUpdated",
+      "class": "Stackra\\Tenancy\\Events\\TenantBrandingUpdated",
       "when": "Fires when the primary Branding row is updated OR promoted. `before` / `after` reference the full Branding snapshot.",
       "afterCommit": true,
       "payload": {
@@ -117,7 +117,7 @@
     },
     {
       "name": "DomainAdded",
-      "class": "Academorix\\Tenancy\\Events\\DomainAdded",
+      "class": "Stackra\\Tenancy\\Events\\DomainAdded",
       "when": "A Domain row is created (customer added a custom domain). DomainObserver generates the verification token BEFORE this event fires.",
       "afterCommit": true,
       "payload": {
@@ -127,7 +127,7 @@
     },
     {
       "name": "DomainVerified",
-      "class": "Academorix\\Tenancy\\Events\\DomainVerified",
+      "class": "Stackra\\Tenancy\\Events\\DomainVerified",
       "when": "VerifyDomainDnsJob observes every expected DomainRecord matches. Sets `verified_at`.",
       "afterCommit": true,
       "payload": {
@@ -137,7 +137,7 @@
     },
     {
       "name": "DomainVerificationFailed",
-      "class": "Academorix\\Tenancy\\Events\\DomainVerificationFailed",
+      "class": "Stackra\\Tenancy\\Events\\DomainVerificationFailed",
       "when": "VerifyDomainDnsJob hit `verification_attempts >= 100` without success. Fires once (not per attempt).",
       "afterCommit": true,
       "payload": {
@@ -148,7 +148,7 @@
     },
     {
       "name": "DomainRemoved",
-      "class": "Academorix\\Tenancy\\Events\\DomainRemoved",
+      "class": "Stackra\\Tenancy\\Events\\DomainRemoved",
       "when": "Domain soft-deleted.",
       "afterCommit": true,
       "payload": {
@@ -159,7 +159,7 @@
     },
     {
       "name": "TenantContactAdded",
-      "class": "Academorix\\Tenancy\\Events\\TenantContactAdded",
+      "class": "Stackra\\Tenancy\\Events\\TenantContactAdded",
       "when": "TenantContact created.",
       "afterCommit": true,
       "payload": {
@@ -169,7 +169,7 @@
     },
     {
       "name": "TenantContactUpdated",
-      "class": "Academorix\\Tenancy\\Events\\TenantContactUpdated",
+      "class": "Stackra\\Tenancy\\Events\\TenantContactUpdated",
       "when": "TenantContact fields changed. Fires whenever `verified_at` transitions from null → not-null too.",
       "afterCommit": true,
       "payload": {
@@ -180,7 +180,7 @@
     },
     {
       "name": "TenantContactRemoved",
-      "class": "Academorix\\Tenancy\\Events\\TenantContactRemoved",
+      "class": "Stackra\\Tenancy\\Events\\TenantContactRemoved",
       "when": "TenantContact soft-deleted.",
       "afterCommit": true,
       "payload": {
@@ -191,7 +191,7 @@
     },
     {
       "name": "TenantIntegrationConfigured",
-      "class": "Academorix\\Tenancy\\Events\\TenantIntegrationConfigured",
+      "class": "Stackra\\Tenancy\\Events\\TenantIntegrationConfigured",
       "when": "TenantIntegration created or `is_active` transitions to true.",
       "afterCommit": true,
       "payload": {
@@ -201,7 +201,7 @@
     },
     {
       "name": "TenantIntegrationSyncFailed",
-      "class": "Academorix\\Tenancy\\Events\\TenantIntegrationSyncFailed",
+      "class": "Stackra\\Tenancy\\Events\\TenantIntegrationSyncFailed",
       "when": "SyncTenantIntegrationJob left `last_sync_status=failed`. Fires on the first failure; subsequent consecutive failures are collapsed until a success.",
       "afterCommit": true,
       "payload": {
@@ -212,7 +212,7 @@
     },
     {
       "name": "IdentityCreated",
-      "class": "Academorix\\Tenancy\\Events\\IdentityCreated",
+      "class": "Stackra\\Tenancy\\Events\\IdentityCreated",
       "when": "First-ever Identity row for an email under an Application. Subsequent User rows under the same email reuse the Identity, no event.",
       "afterCommit": true,
       "payload": {
@@ -222,7 +222,7 @@
     },
     {
       "name": "IdentityErased",
-      "class": "Academorix\\Tenancy\\Events\\IdentityErased",
+      "class": "Stackra\\Tenancy\\Events\\IdentityErased",
       "when": "Cross-tenant Identity row anonymised. Cascades from user::UserErased when the erased User was the last one referencing the Identity for a given Application. Compliance-anonymises the Identity (email hashed, name cleared).",
       "afterCommit": true,
       "payload": {

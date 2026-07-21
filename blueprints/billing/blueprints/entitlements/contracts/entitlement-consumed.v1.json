@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/entitlements/contracts/entitlement-consumed.v1",
+  "id": "stackra://modules/entitlements/contracts/entitlement-consumed.v1",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "title": "entitlement-consumed event \u2014 v1 wire contract",
   "description": "FROZEN wire shape for the `entitlements::EntitlementConsumed` event. Emitted afterCommit on the EntitlementUsage row for every successful consume(). High-volume in production \u2014 subscribers should be careful about downstream write amplification. Every consumer reads this shape unchanged; breaking changes require a v2 per the versioning policy in `foundation/readme.md` \u00a712.",
-  "x-emitter": "Academorix\\Entitlements\\Events\\EntitlementConsumed",
+  "x-emitter": "Stackra\\Entitlements\\Events\\EntitlementConsumed",
   "x-owning-module": "entitlements",
   "x-event-name": "entitlements.entitlement.consumed",
   "x-version": "v1",

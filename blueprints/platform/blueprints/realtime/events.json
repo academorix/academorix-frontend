@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/realtime/events",
+  "id": "stackra://modules/realtime/events",
   "$version": 1,
   "title": "realtime — published events",
-  "namespace": "Academorix\\Realtime\\Events",
+  "namespace": "Stackra\\Realtime\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit`. Auth + subscription lifecycle events feed the monitoring dashboards (broadcast health) + audit trail. Presence-join/leave events are HIGH-VOLUME — audit only samples them.",
   "events": [

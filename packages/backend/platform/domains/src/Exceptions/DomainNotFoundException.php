@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Exceptions;
+namespace Stackra\Domains\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Raised when a request lands on a Host header that maps to no

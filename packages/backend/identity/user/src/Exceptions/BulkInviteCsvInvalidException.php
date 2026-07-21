@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\User\Exceptions;
+namespace Stackra\User\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * CSV parse failed or a required column (email) is missing on ≥ 1 row.

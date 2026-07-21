@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Policies;
+namespace Stackra\Domains\Policies;
 
-use Academorix\Domains\Contracts\Data\DomainInterface;
-use Academorix\Domains\Enums\DomainsPermission;
-use Academorix\Domains\Models\Domain;
+use Stackra\Domains\Contracts\Data\DomainInterface;
+use Stackra\Domains\Enums\DomainsPermission;
+use Stackra\Domains\Models\Domain;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

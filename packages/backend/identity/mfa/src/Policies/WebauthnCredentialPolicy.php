@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Policies;
+namespace Stackra\Mfa\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Mfa\Models\WebauthnCredential;
+use Stackra\User\Models\User;
+use Stackra\Mfa\Models\WebauthnCredential;
 
 /**
- * Authorization policy for {@see \Academorix\Mfa\Models\WebauthnCredential}.
+ * Authorization policy for {@see \Stackra\Mfa\Models\WebauthnCredential}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Actions\Platform;
+namespace Stackra\Versioning\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Versioning\Contracts\Data\DeprecationNoticeInterface;
-use Academorix\Versioning\Contracts\Repositories\DeprecationNoticeRepositoryInterface;
-use Academorix\Versioning\Data\DeprecationNoticeData;
-use Academorix\Versioning\Data\Requests\CreateDeprecationNoticeRequestData;
-use Academorix\Versioning\Enums\VersioningPermission;
-use Academorix\Versioning\Jobs\PublishDeprecationNoticeJob;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Versioning\Contracts\Data\DeprecationNoticeInterface;
+use Stackra\Versioning\Contracts\Repositories\DeprecationNoticeRepositoryInterface;
+use Stackra\Versioning\Data\DeprecationNoticeData;
+use Stackra\Versioning\Data\Requests\CreateDeprecationNoticeRequestData;
+use Stackra\Versioning\Enums\VersioningPermission;
+use Stackra\Versioning\Jobs\PublishDeprecationNoticeJob;
 
 /**
  * `POST /api/v1/platform/versioning/deprecation-notices` — create a

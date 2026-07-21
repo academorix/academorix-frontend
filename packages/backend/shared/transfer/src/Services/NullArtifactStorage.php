@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Services;
+namespace Stackra\Transfer\Services;
 
-use Academorix\Transfer\Contracts\Data\XferArtifactInterface;
-use Academorix\Transfer\Contracts\Services\ArtifactStorageInterface;
-use Academorix\Transfer\Enums\XferArtifactKind;
-use Academorix\Transfer\Models\XferArtifact;
+use Stackra\Transfer\Contracts\Data\XferArtifactInterface;
+use Stackra\Transfer\Contracts\Services\ArtifactStorageInterface;
+use Stackra\Transfer\Enums\XferArtifactKind;
+use Stackra\Transfer\Models\XferArtifact;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

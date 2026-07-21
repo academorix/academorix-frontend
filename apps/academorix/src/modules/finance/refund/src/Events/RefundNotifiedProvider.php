@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Refund\Events;
+namespace Stackra\Refund\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog
  * - activity::WriteToActivityLog
- * - observability::MetricsCollector (academorix.refund.provider_dispatch_total labelled by provider)
+ * - observability::MetricsCollector (stackra.refund.provider_dispatch_total labelled by provider)
  *
  * @category Refund
  *

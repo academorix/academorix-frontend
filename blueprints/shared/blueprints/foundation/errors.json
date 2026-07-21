@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/foundation/errors",
+  "id": "stackra://modules/foundation/errors",
   "$version": 1,
   "title": "foundation — base error envelope contract + universal codes",
   "description": "The error envelope shape every controller returns, plus the universal codes that don't belong to any specific module (401, 403, 404, 429, 500, ...). Downstream modules extend by adding module-specific codes with a namespace prefix (INVITATIONS_*, TENANCY_*, NOTIFICATIONS_*).",

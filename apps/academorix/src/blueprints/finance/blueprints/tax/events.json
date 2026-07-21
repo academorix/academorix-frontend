@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/tax/events",
+  "id": "stackra://modules/tax/events",
   "$version": 1,
   "title": "tax — published events",
-  "namespace": "Academorix\\Finance\\Tax\\Events",
+  "namespace": "Stackra\\Finance\\Tax\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. TaxCalculationFailed + TaxProviderCircuitBreakerOpened are the CRITICAL events of the module — the former signals a blocked invoice line (regulator-relevant); the latter signals a provider outage that will accumulate blocked lines until reset. TaxCalculationDriftDetected is regulator-critical — surfaces when a spot-check reconciliation shows a snapshotted rate diverges from the current-day computation.",
   "events": [
     {
       "name": "TaxRateCreated",
-      "class": "Academorix\\Finance\\Tax\\Events\\TaxRateCreated",
+      "class": "Stackra\\Finance\\Tax\\Events\\TaxRateCreated",
       "trigger": "TaxRateObserver.creating committed a new tax_rates row. Fires exactly once per (tenant_id, tax_jurisdiction_id, rate_type, effective_from) tuple.",
       "queue": "tax",
       "consumers": [
@@ -30,7 +30,7 @@
     },
     {
       "name": "TaxRateUpdated",
-      "class": "Academorix\\Finance\\Tax\\Events\\TaxRateUpdated",
+      "class": "Stackra\\Finance\\Tax\\Events\\TaxRateUpdated",
       "trigger": "TaxRateObserver.updating committed a mutation on an existing rate.",
       "queue": "tax",
       "consumers": [
@@ -47,7 +47,7 @@
     },
     {
       "name": "TaxRateExpired",
-      "class": "Academorix\\Finance\\Tax\\Events\\TaxRateExpired",
+      "class": "Stackra\\Finance\\Tax\\Events\\TaxRateExpired",
       "trigger": "Scheduled sweep found a rate whose effective_to <= today. Automatic transition. Note: this does NOT delete the rate — historical rates persist for calculation-freeze lookups.",
       "queue": "tax",
       "consumers": [
@@ -65,7 +65,7 @@
     },
     {
       "name": "TaxJurisdictionCreated",
-      "class": "Academorix\\Finance\\Tax\\Events\\TaxJurisdictionCreated",
+      "class": "Stackra\\Finance\\Tax\\Events\\TaxJurisdictionCreated",
       "trigger": "TaxJurisdictionObserver.creating committed a new jurisdiction.",
       "queue": "tax",
       "consumers": [
@@ -86,7 +86,7 @@
     },
     {
       "name": "TaxJurisdictionUpdated",
-      "class": "Academorix\\Finance\\Tax\\Events\\TaxJurisdictionUpdated",
+      "class": "Stackra\\Finance\\Tax\\Events\\TaxJurisdictionUpdated",
       "trigger": "TaxJurisdictionObserver.updating committed a mutation.",
       "queue": "tax",
       "consumers": [
@@ -102,7 +102,7 @@
     },
     {
       "name": "TaxExemptionCreated",
-      "class": "Academorix\\Finance\\Tax\\Events\\TaxExemptionCreated",
+      "class": "Stackra\\Finance\\Tax\\Events\\TaxExemptionCreated",
       "trigger": "TaxExemptionObserver.creating committed a new exemption row with verification_status='pending'.",
       "queue": "tax",
       "consumers": [
@@ -123,7 +123,7 @@
     },
     {
       "name": "TaxExemptionVerified",
-      "class": "Academorix\\Finance\\Tax\\Events\\TaxExemptionVerified",
+      "class": "Stackra\\Finance\\Tax\\Events\\TaxExemptionVerified",
       "trigger": "VerifyTaxExemptionJob succeeded OR admin manually approved via /verify. verification_status transitions pending → verified. Sets verified_at + verified_by_user_id.",
       "queue": "tax",
       "consumers": [
@@ -142,7 +142,7 @@
     },
     {
       "name": "TaxExemptionRejected",
-      "class": "Academorix\\Finance\\Tax\\Events\\TaxExemptionRejected",
+      "class": "Stackra\\Finance\\Tax\\Events\\TaxExemptionRejected",
       "trigger": "VerifyTaxExemptionJob failed cross-check OR admin manually rejected via /reject. verification_status transitions pending → rejected. Requires --reason.",
       "queue": "tax",
       "consumers": [
@@ -161,7 +161,7 @@
     },
     {
       "name": "TaxExemptionExpired",
-      "class": "Academorix\\Finance\\Tax\\Events\\TaxExemptionExpired",
+      "class": "Stackra\\Finance\\Tax\\Events\\TaxExemptionExpired",
       "trigger": "Scheduled ExpireExemptionsJob found an exemption whose valid_until <= today. Automatic transition verified → expired.",
       "queue": "tax",
       "consumers": [
@@ -180,7 +180,7 @@
     },
     {
       "name": "TaxCalculationRequested",
-      "class": "Academorix\\Finance\\Tax\\Events\\TaxCalculationRequested",
+      "class": "Stackra\\Finance\\Tax\\Events\\TaxCalculationRequested",
       "trigger": "TaxCalculator::calculate() invoked. Fires BEFORE the provider call. Distinct from TaxCalculationCompleted (per-provider-per-attempt success). Reserved for provider-latency observability + drift detection instrumentation.",
       "queue": "tax",
       "consumers": ["monitoring::MetricsCollector (starts calculation-duration histogram)"],
@@ -196,13 +196,13 @@
     },
     {
       "name": "TaxCalculationCompleted",
-      "class": "Academorix\\Finance\\Tax\\Events\\TaxCalculationCompleted",
+      "class": "Stackra\\Finance\\Tax\\Events\\TaxCalculationCompleted",
       "trigger": "TaxCalculator::calculate() persisted a tax_calculations row. Terminal state — the calculation is IMMUTABLE thereafter.",
       "queue": "tax",
       "consumers": [
         "audit::WriteToAuditLog (retention: 7 years / 10 for Enterprise)",
         "tax::InvalidateCalculationCountCache",
-        "monitoring::MetricsCollector (increments academorix.tax.calculations.completed_total; records dispatch duration)"
+        "monitoring::MetricsCollector (increments stackra.tax.calculations.completed_total; records dispatch duration)"
       ],
       "payload": {
         "tax_calculation_id": "ULID (txc_*)",
@@ -219,13 +219,13 @@
     },
     {
       "name": "TaxCalculationFailed",
-      "class": "Academorix\\Finance\\Tax\\Events\\TaxCalculationFailed",
+      "class": "Stackra\\Finance\\Tax\\Events\\TaxCalculationFailed",
       "trigger": "CRITICAL. Provider call failed after 3 retry attempts OR jurisdiction unresolvable OR provider mandated but circuit-breaker open. NO tax_calculations row persisted. The invoice line is BLOCKED (fail-safe against under-charging tax).",
       "queue": "tax-critical",
       "consumers": [
         "audit::WriteToAuditLog",
         "notifications::DispatchTaxCalculationBlockedNotification (P1 — pages finance ops)",
-        "monitoring::MetricsCollector (increments academorix.tax.calculations.failed_total)",
+        "monitoring::MetricsCollector (increments stackra.tax.calculations.failed_total)",
         "tax::MaybeOpenCircuitBreaker"
       ],
       "payload": {
@@ -242,7 +242,7 @@
     },
     {
       "name": "TaxProviderConfigured",
-      "class": "Academorix\\Finance\\Tax\\Events\\TaxProviderConfigured",
+      "class": "Stackra\\Finance\\Tax\\Events\\TaxProviderConfigured",
       "trigger": "TaxProviderConfigObserver committed a new provider config row.",
       "queue": "tax",
       "consumers": [
@@ -261,13 +261,13 @@
     },
     {
       "name": "TaxProviderCircuitBreakerOpened",
-      "class": "Academorix\\Finance\\Tax\\Events\\TaxProviderCircuitBreakerOpened",
+      "class": "Stackra\\Finance\\Tax\\Events\\TaxProviderCircuitBreakerOpened",
       "trigger": "CRITICAL. consecutive_failure_count reached failure_threshold. Sets circuit_breaker_open_until = now() + open_duration_seconds. Blocks all subsequent calculations until the timer elapses. Every fire is P1 — invoice lines are queuing up blocked.",
       "queue": "tax-critical",
       "consumers": [
         "audit::WriteToAuditLog",
         "notifications::DispatchTaxProviderCircuitBreakerOpenedNotification (cannot-opt-out — pages finance ops)",
-        "monitoring::MetricsCollector (increments academorix.tax.circuit_breakers.opened_total)"
+        "monitoring::MetricsCollector (increments stackra.tax.circuit_breakers.opened_total)"
       ],
       "payload": {
         "tenant_id": "ULID",

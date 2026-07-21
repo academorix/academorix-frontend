@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Exceptions;
+namespace Stackra\Tenancy\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Host header did not resolve to a Tenant on the current Application.

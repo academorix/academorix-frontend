@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Database\Factories;
+namespace Stackra\Application\Database\Factories;
 
-use Academorix\Application\Contracts\Data\ApplicationInterface;
-use Academorix\Application\Enums\BusinessTypeEnum;
-use Academorix\Application\Models\Application;
+use Stackra\Application\Contracts\Data\ApplicationInterface;
+use Stackra\Application\Enums\BusinessTypeEnum;
+use Stackra\Application\Models\Application;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -52,8 +52,8 @@ final class ApplicationFactory extends Factory
             ApplicationInterface::ATTR_DEFAULT_LOCALE        => 'en',
             ApplicationInterface::ATTR_DEFAULT_TIMEZONE      => 'UTC',
             ApplicationInterface::ATTR_DEFAULT_CURRENCY      => 'USD',
-            ApplicationInterface::ATTR_CENTRAL_HOST          => $slug.'.academorix.app',
-            ApplicationInterface::ATTR_PLATFORM_ADMIN_HOST   => 'admin.'.$slug.'.academorix.app',
+            ApplicationInterface::ATTR_CENTRAL_HOST          => $slug.'.stackra.app',
+            ApplicationInterface::ATTR_PLATFORM_ADMIN_HOST   => 'admin.'.$slug.'.stackra.app',
             ApplicationInterface::ATTR_CONFIG                => [],
             ApplicationInterface::ATTR_IS_DEFAULT            => false,
             ApplicationInterface::ATTR_IS_SYSTEM             => false,
@@ -81,15 +81,15 @@ final class ApplicationFactory extends Factory
     }
 
     /**
-     * State — the canonical "Academorix" default row (used by tests + seeders).
+     * State — the canonical "Stackra" default row (used by tests + seeders).
      */
-    public function academorix(): static
+    public function stackra(): static
     {
         return $this->state(fn () => [
-            ApplicationInterface::ATTR_SLUG                => 'academorix',
-            ApplicationInterface::ATTR_NAME                => 'Academorix',
-            ApplicationInterface::ATTR_CENTRAL_HOST        => 'academorix.app',
-            ApplicationInterface::ATTR_PLATFORM_ADMIN_HOST => 'admin.academorix.app',
+            ApplicationInterface::ATTR_SLUG                => 'stackra',
+            ApplicationInterface::ATTR_NAME                => 'Stackra',
+            ApplicationInterface::ATTR_CENTRAL_HOST        => 'stackra.app',
+            ApplicationInterface::ATTR_PLATFORM_ADMIN_HOST => 'admin.stackra.app',
             ApplicationInterface::ATTR_IS_DEFAULT          => true,
         ]);
     }

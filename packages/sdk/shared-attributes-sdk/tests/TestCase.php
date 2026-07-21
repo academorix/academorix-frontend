@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SharedAttributesSdk\Tests;
+namespace Stackra\SharedAttributesSdk\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix-shared/attributes-sdk.
+ * Base test case for stackra-shared/attributes-sdk.
  *
  * @category AttributesSdk
  *

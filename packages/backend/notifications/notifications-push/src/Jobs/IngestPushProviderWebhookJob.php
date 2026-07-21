@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Jobs;
+namespace Stackra\Notifications\Push\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -17,9 +17,9 @@ use Illuminate\Queue\SerializesModels;
 
 /**
  * Normalise an inbound provider webhook payload into
- * {@see \Academorix\Notifications\Push\Events\PushDelivered} /
- * {@see \Academorix\Notifications\Push\Events\PushInvalidToken} /
- * {@see \Academorix\Notifications\Push\Events\PushOpened} events.
+ * {@see \Stackra\Notifications\Push\Events\PushDelivered} /
+ * {@see \Stackra\Notifications\Push\Events\PushInvalidToken} /
+ * {@see \Stackra\Notifications\Push\Events\PushOpened} events.
  *
  * The webhook module receives + verifies the payload signature via one of the
  * per-provider signature strategies registered by this module at boot. This

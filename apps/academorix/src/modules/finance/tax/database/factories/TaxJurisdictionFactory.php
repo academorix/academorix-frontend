@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Database\Factories;
+namespace Stackra\Tax\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Tax\Contracts\Data\TaxJurisdictionInterface;
-use Academorix\Tax\Models\TaxJurisdiction;
+use Stackra\Tax\Contracts\Data\TaxJurisdictionInterface;
+use Stackra\Tax\Models\TaxJurisdiction;
 
 /**
- * Factory for {@see \Academorix\Tax\Models\TaxJurisdiction}.
+ * Factory for {@see \Stackra\Tax\Models\TaxJurisdiction}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Tax\Models\TaxJurisdiction>
+ * @extends Factory<\Stackra\Tax\Models\TaxJurisdiction>
  *
  * @category Tax
  *

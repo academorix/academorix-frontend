@@ -1,7 +1,7 @@
-# academorix-finance/digital-passes-sdk
+# stackra-finance/digital-passes-sdk
 
 Wire-visible SDK surface for the `digital-passes` module of the Finance service.
-Auto-discovered by `academorix/finance-sdk` (the service umbrella) via
+Auto-discovered by `stackra/finance-sdk` (the service umbrella) via
 `#[AsSdkResource(name: 'digital-passes', service: 'finance')]`.
 
 ## Aggregates
@@ -24,7 +24,7 @@ src/
 Consumed only over HTTP via the umbrella client:
 
 ```php
-app(\Academorix\FinanceSdk\Client\FinanceSdk::class)
+app(\Stackra\FinanceSdk\Client\FinanceSdk::class)
     ->digitalPasses()
     ->walletPasses()
     ->list();

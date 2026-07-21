@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branch\Models;
+namespace Stackra\Branch\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Branch\Contracts\Data\BranchInterface;
-use Academorix\Branch\Database\Factories\BranchFactory;
-use Academorix\Branch\Enums\BranchStatus;
-use Academorix\Branch\Policies\BranchPolicy;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Organization\Concerns\BelongsToOrganization;
-use Academorix\Region\Concerns\BelongsToRegion;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Branch\Contracts\Data\BranchInterface;
+use Stackra\Branch\Database\Factories\BranchFactory;
+use Stackra\Branch\Enums\BranchStatus;
+use Stackra\Branch\Policies\BranchPolicy;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Organization\Concerns\BelongsToOrganization;
+use Stackra\Region\Concerns\BelongsToRegion;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

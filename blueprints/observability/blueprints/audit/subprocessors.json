@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/audit/subprocessors",
+  "id": "stackra://modules/audit/subprocessors",
   "$version": 1,
   "title": "audit — subprocessors (GDPR Art. 28)",
-  "description": "Third-party services that process tenant subject data on behalf of Academorix as part of the audit lane. Only one meaningful subprocessor: the S3 archive storage provider (AWS S3 or region-specific equivalent) that holds cold-tier + regulator export payloads. The vendor `owen-it/laravel-auditing` PHP package is a code dependency (in-process), NOT a subprocessor (it doesn't leave our infrastructure).",
+  "description": "Third-party services that process tenant subject data on behalf of Stackra as part of the audit lane. Only one meaningful subprocessor: the S3 archive storage provider (AWS S3 or region-specific equivalent) that holds cold-tier + regulator export payloads. The vendor `owen-it/laravel-auditing` PHP package is a code dependency (in-process), NOT a subprocessor (it doesn't leave our infrastructure).",
   "regulatoryBasis": ["gdpr Art. 28", "uk_gdpr Art. 28", "ccpa §1798.140(w) service provider"],
   "subprocessors": [
     {

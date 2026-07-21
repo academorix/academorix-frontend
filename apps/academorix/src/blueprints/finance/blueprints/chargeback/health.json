@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/chargeback/health",
+  "id": "stackra://modules/chargeback/health",
   "$version": 1,
   "title": "chargeback — health probes",
   "probes": [
     {
       "name": "chargeback-schema-migrations-applied",
-      "class": "Academorix\\Finance\\Chargeback\\Health\\Probes\\SchemaMigrationsAppliedProbe",
+      "class": "Stackra\\Finance\\Chargeback\\Health\\Probes\\SchemaMigrationsAppliedProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms both migrations this module ships have run: chargebacks + chargeback_evidence, plus their composite unique indexes.",
@@ -13,7 +13,7 @@
     },
     {
       "name": "chargeback-unique-indexes-present",
-      "class": "Academorix\\Finance\\Chargeback\\Health\\Probes\\UniqueIndexesPresentProbe",
+      "class": "Stackra\\Finance\\Chargeback\\Health\\Probes\\UniqueIndexesPresentProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms the composite unique indexes exist: (tenant_id, chargeback_number) on chargebacks; (tenant_id, chargeback_id, submission_attempt_number) on chargeback_evidence. Missing any index risks duplicate chargeback_number generation OR duplicate evidence submission attempts.",
@@ -21,7 +21,7 @@
     },
     {
       "name": "chargeback-reason-catalog-loaded",
-      "class": "Academorix\\Finance\\Chargeback\\Health\\Probes\\ReasonCatalogLoadedProbe",
+      "class": "Stackra\\Finance\\Chargeback\\Health\\Probes\\ReasonCatalogLoadedProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms data/reason-code-catalog.json + data/reason-category-catalog.json + data/network-catalog.json are loaded + parsed. Missing catalogues fails chargeback creation.",
@@ -29,7 +29,7 @@
     },
     {
       "name": "chargeback-evidence-deadlines-not-stale",
-      "class": "Academorix\\Finance\\Chargeback\\Health\\Probes\\EvidenceDeadlinesNotStaleProbe",
+      "class": "Stackra\\Finance\\Chargeback\\Health\\Probes\\EvidenceDeadlinesNotStaleProbe",
       "category": "readiness",
       "critical": false,
       "description": "Warns when > 5 chargebacks sit in pending_evidence with evidence_due_by within the next 24 hours. Actionable — evidence deadline missed = auto-loss. Fires per-tenant.",
@@ -37,7 +37,7 @@
     },
     {
       "name": "chargeback-expired-processing-clearing",
-      "class": "Academorix\\Finance\\Chargeback\\Health\\Probes\\ExpiredProcessingClearingProbe",
+      "class": "Stackra\\Finance\\Chargeback\\Health\\Probes\\ExpiredProcessingClearingProbe",
       "category": "readiness",
       "critical": false,
       "description": "Warns when > 10 chargebacks in status='expired' exist with transaction_id IS NULL (finalization chain step 1 failed). Actionable via chargeback:reconcile admin CLI.",
@@ -45,15 +45,15 @@
     },
     {
       "name": "chargeback-finalization-chain-clean",
-      "class": "Academorix\\Finance\\Chargeback\\Health\\Probes\\FinalizationChainCleanProbe",
+      "class": "Stackra\\Finance\\Chargeback\\Health\\Probes\\FinalizationChainCleanProbe",
       "category": "readiness",
       "critical": true,
-      "description": "Reads academorix.chargeback.finalization_failures_total counter. Any non-zero value in the last 24h is a P1 signal — FinalizeChargebackJob failed to complete the two-transaction + invoice state + clawback + marketing chain, leaving a lost/expired chargeback with orphan side effects.",
+      "description": "Reads stackra.chargeback.finalization_failures_total counter. Any non-zero value in the last 24h is a P1 signal — FinalizeChargebackJob failed to complete the two-transaction + invoice state + clawback + marketing chain, leaving a lost/expired chargeback with orphan side effects.",
       "timeoutMs": 200
     },
     {
       "name": "chargeback-terminal-orphans-clean",
-      "class": "Academorix\\Finance\\Chargeback\\Health\\Probes\\TerminalOrphansCleanProbe",
+      "class": "Stackra\\Finance\\Chargeback\\Health\\Probes\\TerminalOrphansCleanProbe",
       "category": "readiness",
       "critical": false,
       "description": "Detects chargebacks in status IN ('lost', 'expired') with transaction_id IS NULL OR fee_transaction_id IS NULL — the finalization chain partially failed. Warn signal, actionable via chargeback:reconcile admin CLI.",
@@ -61,14 +61,14 @@
     },
     {
       "name": "chargeback-reconciler-recent",
-      "class": "Academorix\\Finance\\Chargeback\\Health\\Probes\\ReconcilerRecentProbe",
+      "class": "Stackra\\Finance\\Chargeback\\Health\\Probes\\ReconcilerRecentProbe",
       "category": "readiness",
       "critical": false,
       "description": "Confirms CheckChargebackStatusJob completed within the last 25 hours (nightly cadence + 1h slop). Stale reconciler indicates scheduler drift."
     },
     {
       "name": "chargeback-rate-monitor-recent",
-      "class": "Academorix\\Finance\\Chargeback\\Health\\Probes\\RateMonitorRecentProbe",
+      "class": "Stackra\\Finance\\Chargeback\\Health\\Probes\\RateMonitorRecentProbe",
       "category": "readiness",
       "critical": false,
       "description": "Confirms MonitorChargebackRateJob completed within the last 25 hours. Stale rate monitoring = merchant-account risk visibility lost.",
@@ -76,7 +76,7 @@
     },
     {
       "name": "chargeback-rate-thresholds-not-breached",
-      "class": "Academorix\\Finance\\Chargeback\\Health\\Probes\\RateThresholdsNotBreachedProbe",
+      "class": "Stackra\\Finance\\Chargeback\\Health\\Probes\\RateThresholdsNotBreachedProbe",
       "category": "readiness",
       "critical": false,
       "description": "Reads latest rate cache (cbk:rate:{tenant_id}:{network}) + flags tenants over threshold. P1 signal per tenant — sustained breach risks merchant-account termination.",
@@ -84,7 +84,7 @@
     },
     {
       "name": "chargeback-provider-manager-healthy",
-      "class": "Academorix\\Finance\\Chargeback\\Health\\Probes\\ProviderManagerHealthyProbe",
+      "class": "Stackra\\Finance\\Chargeback\\Health\\Probes\\ProviderManagerHealthyProbe",
       "category": "readiness",
       "critical": false,
       "description": "Delegates to payment::PaymentProviderManager health check. Chargeback can't dispatch evidence if payment providers are down. Warn when any provider circuit breaker is open.",
@@ -92,7 +92,7 @@
     },
     {
       "name": "chargeback-clawback-backlog",
-      "class": "Academorix\\Finance\\Chargeback\\Health\\Probes\\ClawbackBacklogProbe",
+      "class": "Stackra\\Finance\\Chargeback\\Health\\Probes\\ClawbackBacklogProbe",
       "category": "readiness",
       "critical": false,
       "description": "Warns when > 10 ChargebackClawbackReferral / ChargebackClawbackCoupon events are stuck in the queue > 30 min. Indicates downstream referrals/coupon modules are failing to process cascades.",

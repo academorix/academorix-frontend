@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/analytics/compliance",
+  "id": "stackra://modules/analytics/compliance",
   "$version": 1,
   "title": "analytics — compliance evidence",
   "description": "Primary control points for GDPR (Art. 6, 7, 17, 21, 30, 32), CCPA §1798.140 profiling, and SOC 2 Type 2 (CC7.3, CC8.1). Consent gate + PII-refusal + retention runner are the load-bearing compliance surfaces.",

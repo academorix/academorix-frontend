@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Organization\Services;
+namespace Stackra\Organization\Services;
 
-use Academorix\Organization\Contracts\Services\CycleDetectorInterface;
+use Stackra\Organization\Contracts\Services\CycleDetectorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Organization\Contracts\Repositories\OrganizationRepositoryInterface;
+use Stackra\Organization\Contracts\Repositories\OrganizationRepositoryInterface;
 
 /**
  * Concrete service — CycleDetector.

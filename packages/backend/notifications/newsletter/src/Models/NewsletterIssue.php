@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Models;
+namespace Stackra\Newsletter\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Newsletter\Contracts\Data\NewsletterCampaignInterface;
-use Academorix\Newsletter\Contracts\Data\NewsletterInterface;
-use Academorix\Newsletter\Contracts\Data\NewsletterIssueInterface;
-use Academorix\Newsletter\Database\Factories\NewsletterIssueFactory;
-use Academorix\Newsletter\Enums\NewsletterIssueStatus;
-use Academorix\Newsletter\Observers\NewsletterIssueObserver;
-use Academorix\Newsletter\Policies\NewsletterIssuePolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Newsletter\Contracts\Data\NewsletterCampaignInterface;
+use Stackra\Newsletter\Contracts\Data\NewsletterInterface;
+use Stackra\Newsletter\Contracts\Data\NewsletterIssueInterface;
+use Stackra\Newsletter\Database\Factories\NewsletterIssueFactory;
+use Stackra\Newsletter\Enums\NewsletterIssueStatus;
+use Stackra\Newsletter\Observers\NewsletterIssueObserver;
+use Stackra\Newsletter\Policies\NewsletterIssuePolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

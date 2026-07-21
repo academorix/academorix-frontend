@@ -1,39 +1,39 @@
 {
-  "id": "academorix://modules/staff/schedule",
+  "id": "stackra://modules/staff/schedule",
   "$version": 1,
   "title": "staff — scheduled tasks",
   "entries": [
     {
       "name": "staff-check-probation-ending",
-      "command": "queue:dispatch --job=Academorix\\Staff\\Jobs\\CheckProbationEndingSoonJob",
+      "command": "queue:dispatch --job=Stackra\\Staff\\Jobs\\CheckProbationEndingSoonJob",
       "cron": "0 6 * * *",
       "timezone": "UTC",
       "purpose": "Daily 06:00 UTC: probation-ending reminders at 14 / 7 / 1 day thresholds."
     },
     {
       "name": "staff-expire-coach-certifications",
-      "command": "queue:dispatch --job=Academorix\\Staff\\Jobs\\ExpireCoachCertificationsJob",
+      "command": "queue:dispatch --job=Stackra\\Staff\\Jobs\\ExpireCoachCertificationsJob",
       "cron": "0 2 * * *",
       "timezone": "UTC",
       "purpose": "Daily 02:00 UTC: mark expired certifications + fire 30/14/7-day pre-expiry reminders."
     },
     {
       "name": "staff-reconcile-branch-manager",
-      "command": "queue:dispatch --job=Academorix\\Staff\\Jobs\\ReconcileBranchManagerInvariantJob",
+      "command": "queue:dispatch --job=Stackra\\Staff\\Jobs\\ReconcileBranchManagerInvariantJob",
       "cron": "0 3 * * *",
       "timezone": "UTC",
       "purpose": "Nightly 03:00 UTC: verify one-active-branch-manager-per-branch invariant. Every finding is a P1 signal."
     },
     {
       "name": "staff-purge-offboarded",
-      "command": "queue:dispatch --job=Academorix\\Staff\\Jobs\\PurgeOffboardedStaffJob",
+      "command": "queue:dispatch --job=Stackra\\Staff\\Jobs\\PurgeOffboardedStaffJob",
       "cron": "0 4 * * *",
       "timezone": "UTC",
       "purpose": "Daily 04:00 UTC: 90-day PII redaction pass + 7-year hard-purge pass."
     },
     {
       "name": "staff-aggregate-coach-ratings",
-      "command": "queue:dispatch --job=Academorix\\Staff\\Jobs\\AggregateCoachRatingsJob",
+      "command": "queue:dispatch --job=Stackra\\Staff\\Jobs\\AggregateCoachRatingsJob",
       "cron": "0 5 * * *",
       "timezone": "UTC",
       "purpose": "Daily 05:00 UTC: recompute Coach.rating from Wave 3+ SessionRating rows. Wave 2b no-op placeholder."

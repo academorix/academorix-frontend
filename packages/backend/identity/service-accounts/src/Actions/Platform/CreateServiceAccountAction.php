@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Actions\Platform;
+namespace Stackra\ServiceAccounts\Actions\Platform;
 
-use Academorix\ServiceAccounts\Contracts\Repositories\ServiceAccountRepositoryInterface;
-use Academorix\ServiceAccounts\Data\ServiceAccountData;
-use Academorix\ServiceAccounts\Data\Requests\CreateServiceAccountRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\ServiceAccounts\Contracts\Repositories\ServiceAccountRepositoryInterface;
+use Stackra\ServiceAccounts\Data\ServiceAccountData;
+use Stackra\ServiceAccounts\Data\Requests\CreateServiceAccountRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/platform/service-accounts` — create action (platform-admin audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category ServiceAccounts

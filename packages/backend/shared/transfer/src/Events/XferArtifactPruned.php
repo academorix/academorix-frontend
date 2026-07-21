@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Events;
+namespace Stackra\Transfer\Events;
 
-use Academorix\Events\Attributes\AsEvent;
-use Academorix\Transfer\Models\XferArtifact;
+use Stackra\Events\Attributes\AsEvent;
+use Stackra\Transfer\Models\XferArtifact;
 use Illuminate\Foundation\Events\Dispatchable;
 
 /**

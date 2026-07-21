@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformFormsSdk\Requests\FormSubmissions;
+namespace Stackra\PlatformFormsSdk\Requests\FormSubmissions;
 
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\ApiSdk\Data\PaginationLinks;
-use Academorix\ApiSdk\Data\PaginationMeta;
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\PlatformFormsSdk\Data\FormSubmissionData;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\ApiSdk\Data\PaginationLinks;
+use Stackra\ApiSdk\Data\PaginationMeta;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\PlatformFormsSdk\Data\FormSubmissionData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

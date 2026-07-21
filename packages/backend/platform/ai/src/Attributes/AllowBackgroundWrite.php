@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Ai\Attributes;
+namespace Stackra\Ai\Attributes;
 
 use Attribute;
 

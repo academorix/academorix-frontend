@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Enums;
+namespace Stackra\Rbac\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `model_type` on `model-has-permissions`.
@@ -21,7 +21,7 @@ enum ModelHasPermissionsModelType: string
 {
     use Enum;
 
-    case AcademorixUserModelsUser = 'Academorix\User\Models\User';
-    case AcademorixPlatformUserModelsPlatformUser = 'Academorix\PlatformUser\Models\PlatformUser';
-    case AcademorixServiceAccountsModelsServiceAccount = 'Academorix\ServiceAccounts\Models\ServiceAccount';
+    case AcademorixUserModelsUser = 'Stackra\User\Models\User';
+    case AcademorixPlatformUserModelsPlatformUser = 'Stackra\PlatformUser\Models\PlatformUser';
+    case AcademorixServiceAccountsModelsServiceAccount = 'Stackra\ServiceAccounts\Models\ServiceAccount';
 }

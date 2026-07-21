@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PublicSite\Database\Factories;
+namespace Stackra\PublicSite\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\PublicSite\Contracts\Data\PublicPageInterface;
-use Academorix\PublicSite\Models\PublicPage;
+use Stackra\PublicSite\Contracts\Data\PublicPageInterface;
+use Stackra\PublicSite\Models\PublicPage;
 
 /**
- * Factory for {@see \Academorix\PublicSite\Models\PublicPage}.
+ * Factory for {@see \Stackra\PublicSite\Models\PublicPage}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\PublicSite\Models\PublicPage>
+ * @extends Factory<\Stackra\PublicSite\Models\PublicPage>
  *
  * @category PublicSite
  *

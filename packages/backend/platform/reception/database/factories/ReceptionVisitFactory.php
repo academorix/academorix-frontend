@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Reception\Database\Factories;
+namespace Stackra\Reception\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Reception\Contracts\Data\ReceptionVisitInterface;
-use Academorix\Reception\Models\ReceptionVisit;
+use Stackra\Reception\Contracts\Data\ReceptionVisitInterface;
+use Stackra\Reception\Models\ReceptionVisit;
 
 /**
- * Factory for {@see \Academorix\Reception\Models\ReceptionVisit}.
+ * Factory for {@see \Stackra\Reception\Models\ReceptionVisit}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Reception\Models\ReceptionVisit>
+ * @extends Factory<\Stackra\Reception\Models\ReceptionVisit>
  *
  * @category Reception
  *

@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/mfa/commands",
+  "id": "stackra://modules/mfa/commands",
   "$version": 1,
   "title": "mfa — Artisan commands",
   "commands": [
     {
       "signature": "mfa:list-methods {user : User ULID (usr_...)} {--json}",
-      "class": "Academorix\\Mfa\\Console\\Commands\\ListMethodsCommand",
+      "class": "Stackra\\Mfa\\Console\\Commands\\ListMethodsCommand",
       "purpose": "Print the MFA posture for a User's underlying Identity (which methods are enrolled, credential list, recovery-code count). Every field is redacted-by-default; support runs this to answer 'is MFA enrolled for this user?' without ever seeing secret material. --json outputs machine-readable format for scripting.",
       "usage_examples": [
         "php artisan mfa:list-methods usr_01H2K3M4N5P6Q7R8S9TAVBWCXDY",
@@ -14,7 +14,7 @@
     },
     {
       "signature": "mfa:describe-method {user : User ULID} {method : totp|webauthn|recovery_codes} {--credential=} {--reveal-metadata}",
-      "class": "Academorix\\Mfa\\Console\\Commands\\DescribeMethodCommand",
+      "class": "Stackra\\Mfa\\Console\\Commands\\DescribeMethodCommand",
       "purpose": "Print detail for one method. For webauthn, --credential=<wac_ulid> narrows to one credential. --reveal-metadata exposes the AAGUID + full transports list (normally internal-tier); every reveal is audit-logged with the operator + reason.",
       "usage_examples": [
         "php artisan mfa:describe-method usr_01H... totp",
@@ -23,7 +23,7 @@
     },
     {
       "signature": "mfa:force-disable {user : User ULID} {--reason=} {--notify-user}",
-      "class": "Academorix\\Mfa\\Console\\Commands\\ForceDisableCommand",
+      "class": "Stackra\\Mfa\\Console\\Commands\\ForceDisableCommand",
       "purpose": "Platform-security force-disables MFA for a User during account-recovery flows (lost device + lost recovery codes). Cascades: TOTP secret nulled on Identity, every active WebauthnCredential.disabled_at set to now(), MfaDisabled(trigger=admin_action) event fired. --reason is MANDATORY in production (config('mfa.commands.require_reason')); --notify-user dispatches MfaDisabledConfirmationNotification (default: yes). Audit-critical — every invocation writes to the compliance-audit log with the operator's Identity + reason.",
       "usage_examples": [
         "php artisan mfa:force-disable usr_01H... --reason='Support ticket #12345, user lost hardware key + recovery codes, verified user identity via video call'"
@@ -32,7 +32,7 @@
     },
     {
       "signature": "mfa:regenerate-recovery-codes {user : User ULID} {--reason=} {--email}",
-      "class": "Academorix\\Mfa\\Console\\Commands\\RegenerateRecoveryCodesCommand",
+      "class": "Stackra\\Mfa\\Console\\Commands\\RegenerateRecoveryCodesCommand",
       "purpose": "Regenerate recovery codes for a user + optionally email them the new codes. Used when a user reports lost recovery codes but retains the TOTP device. --reason mandatory in production; --email defaults on; audit-logged. Plaintext codes are echoed to the terminal ONLY when --email is absent (so support can read them back on a call), otherwise dispatched via email and NEVER printed.",
       "usage_examples": [
         "php artisan mfa:regenerate-recovery-codes usr_01H... --reason='Support ticket #12345, user lost recovery codes' --email"
@@ -41,7 +41,7 @@
     },
     {
       "signature": "mfa:list-webauthn-credentials {user : User ULID} {--include-disabled}",
-      "class": "Academorix\\Mfa\\Console\\Commands\\ListWebauthnCredentialsCommand",
+      "class": "Stackra\\Mfa\\Console\\Commands\\ListWebauthnCredentialsCommand",
       "purpose": "List the User's registered WebAuthn credentials. Default filters to active only (disabled_at IS NULL); --include-disabled surfaces the 90-day retention window. Fields shown: id, device_name, attestation_format, is_platform_authenticator, transports, sign_count, last_used_at, disabled_at.",
       "usage_examples": [
         "php artisan mfa:list-webauthn-credentials usr_01H...",
@@ -50,7 +50,7 @@
     },
     {
       "signature": "mfa:purge-unconfirmed {--dry-run}",
-      "class": "Academorix\\Mfa\\Console\\Commands\\PurgeUnconfirmedCommand",
+      "class": "Stackra\\Mfa\\Console\\Commands\\PurgeUnconfirmedCommand",
       "purpose": "Run PurgeUnconfirmedEnrollmentsJob synchronously. --dry-run reports counts without deleting. Useful for offline environments where the scheduler isn't running, or for a post-incident cleanup after a rate-limit spike.",
       "usage_examples": [
         "php artisan mfa:purge-unconfirmed",
@@ -59,7 +59,7 @@
     },
     {
       "signature": "mfa:audit-suspicious-activity {--hours=24} {--threshold=5} {--json}",
-      "class": "Academorix\\Mfa\\Console\\Commands\\AuditSuspiciousActivityCommand",
+      "class": "Stackra\\Mfa\\Console\\Commands\\AuditSuspiciousActivityCommand",
       "purpose": "Report Identities with N or more MfaChallengeFailed events in the last H hours. Default: 5 failures in 24 hours. --json emits machine-readable output for integration with the incident-response pipeline. Every row includes: identity_fingerprint (SHA-256, never plaintext), failed_count, distinct_ips_count, first_failed_at, last_failed_at, methods_used[]. Useful for pattern-hunt after a suspected credential-stuffing wave.",
       "usage_examples": [
         "php artisan mfa:audit-suspicious-activity",

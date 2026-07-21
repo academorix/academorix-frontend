@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "order",
   "alias": "order",
-  "namespace": "Academorix\\Finance\\Order",
+  "namespace": "Stackra\\Finance\\Order",
   "description": "Order model as parent aggregate to Invoice. Represents 'intent to purchase' composing multiple line items with totals, adjustments, and split-payment resolution. The Order is the source of truth for what the customer intended to buy; the Invoice mirrors what actually happened for accounting. Owns three tables: orders (checkout attempts, polymorphic buyer, state machine: draft -> pending -> paid | partially_paid | abandoned | cancelled | refunded), order_lines (line items, polymorphic purchasable — Product / MembershipPlan / PassPackage / EventTicket / ClinicSession), order_adjustments (coupon / credit / manual-discount / tax / fee rows, signed). Line-item purchasable resolution via a purchasable_type registry (module extensions register their own resolvers via #[AsPurchasable]). Coupon integration wires through finance/coupon; wallet integration wires through finance/wallet (wallet_hold at checkout, wallet_transaction on commit). Per DL-2 in tasks.md: Orders reference wallet + coupon + invoice + payment.",
   "keywords": [
     "order",
@@ -18,7 +18,7 @@
     "finance"
   ],
   "priority": 47,
-  "providers": ["Academorix\\Finance\\Order\\Providers\\OrderServiceProvider"],
+  "providers": ["Stackra\\Finance\\Order\\Providers\\OrderServiceProvider"],
   "dependencies": ["foundation", "tenancy", "application", "gateway", "wallet", "coupon"],
   "extendedBy": [],
   "contributes": {

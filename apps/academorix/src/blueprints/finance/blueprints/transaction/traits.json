@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/transaction/traits",
+  "id": "stackra://modules/transaction/traits",
   "$version": 1,
   "title": "transaction — trait composition",
   "description": "Two owned traits. `BelongsToTransaction` is the FK trait for downstream models (TransactionLedgerEntry). `HasLedgerEntries` is the inverse-side convenience on the Transaction model, exposing scoped query helpers (->balancedEntries(), ->debitEntries(), ->creditEntries(), ->entriesForAccount()). Order matters when composed with BelongsToTenant — tenant MUST come first so the scope chain observes the tenant context.",
   "owned": [
     {
-      "trait": "Academorix\\Finance\\Transaction\\Concerns\\BelongsToTransaction",
+      "trait": "Stackra\\Finance\\Transaction\\Concerns\\BelongsToTransaction",
       "description": "Mixed into any downstream model that carries a `transaction_id` FK. Adds the `transaction()` belongsTo relation. Only used by TransactionLedgerEntry currently — no downstream module currently attaches to transactions directly. Provides a `resolveInTransaction(?Transaction)` scope for cross-cutting queries.",
       "public": true,
       "usedBy": [
@@ -19,7 +19,7 @@
       ]
     },
     {
-      "trait": "Academorix\\Finance\\Transaction\\Concerns\\HasLedgerEntries",
+      "trait": "Stackra\\Finance\\Transaction\\Concerns\\HasLedgerEntries",
       "description": "Composed onto the Transaction model itself. Adds `->ledgerEntries()` (hasMany over TransactionLedgerEntry), `->balancedEntries()` (returns entries with a computed running balance), `->debitEntries()` (scope filter debit_cents > 0), `->creditEntries()` (scope filter credit_cents > 0), `->entriesForAccount($account)` (filter by account), `->sumDebits()` + `->sumCredits()` (used by the observer's balance check). Also adds `->isBalanced()` boolean helper.",
       "public": true,
       "usedBy": ["transaction::Transaction"]
@@ -31,33 +31,33 @@
       { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasMetadata",
+        "trait": "Stackra\\Foundation\\Concerns\\HasMetadata",
         "reason": "Transaction only. TransactionLedgerEntry does NOT carry metadata — the description field is auto-generated + bounded to 256 chars."
       },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\Searchable",
+        "trait": "Stackra\\Foundation\\Concerns\\Searchable",
         "reason": "Transaction (searchable by transaction_number). NOT TransactionLedgerEntry (accessed via relations from Transaction only)."
       }
     ],
     "tenants": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
         "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
       }
     ],
     "audit": [
       {
-        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "trait": "Stackra\\Audit\\Concerns\\Auditable",
         "reason": "Every write to transactions + transaction_ledger_entries is compliance-critical (SOX 404 + AML + regulator record retention). 7-year audit retention."
       }
     ],
     "activity": [
       {
-        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
         "reason": "Transaction only (Wave 4.5 will roll up ledger movements onto the tenant admin activity feed). NOT TransactionLedgerEntry — line items are too high-volume for the activity feed + already covered by the transaction-level entry."
       }
     ]

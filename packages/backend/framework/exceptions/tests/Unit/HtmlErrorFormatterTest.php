@@ -4,7 +4,7 @@
  * @file packages/exceptions/tests/Unit/HtmlErrorFormatterTest.php
  *
  * @description
- * Locks in the fall-through behaviour of {@see \Academorix\Exceptions\Formatters\HtmlErrorFormatter}
+ * Locks in the fall-through behaviour of {@see \Stackra\Exceptions\Formatters\HtmlErrorFormatter}
  * — the formatter that renders a full-page Blade response when the
  * JSON formatter declined the request.
  *
@@ -42,10 +42,10 @@
 
 declare(strict_types=1);
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Formatters\HtmlErrorFormatter;
-use Academorix\Exceptions\Http\NotFoundException;
-use Academorix\Exceptions\Support\ExceptionMapper;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Formatters\HtmlErrorFormatter;
+use Stackra\Exceptions\Http\NotFoundException;
+use Stackra\Exceptions\Support\ExceptionMapper;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Http\Request;
 use Orchestra\Testbench\TestCase;
@@ -53,7 +53,7 @@ use Orchestra\Testbench\TestCase;
 uses(TestCase::class);
 
 if (! class_exists('HtmlFormatterFixtureException', false)) {
-    final class HtmlFormatterFixtureException extends AcademorixException
+    final class HtmlFormatterFixtureException extends StackraException
     {
         public const CODE = 'fixture.html';
 

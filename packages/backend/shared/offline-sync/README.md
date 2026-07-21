@@ -1,4 +1,4 @@
-# academorix/offline-sync
+# stackra/offline-sync
 
 Server-side Laravel package for the `offline-sync` module. Auto-generated from
 the blueprint at `modules/shared/blueprints/offline-sync/`.
@@ -43,6 +43,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-shared/offline-sync-sdk` under `sdk/shared-offline-sync-sdk/`.
+`stackra-shared/offline-sync-sdk` under `sdk/shared-offline-sync-sdk/`.
 Consumers cross the service boundary through the SDK; this package is the
 SERVER-side owner of the domain.

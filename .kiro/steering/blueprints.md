@@ -19,7 +19,7 @@ point, one attribute, one class per macro family. No static `register()`.
   `packages/framework/database/src/Schema/*Blueprint.php`.
 - Class name is `<Concept>Blueprint`: `UuidableBlueprint`,
   `UserstampsBlueprint`, `PrefixedUlidBlueprint`, `SoftDeletesBlueprint`.
-- Namespace: `Academorix\Database\Schema`.
+- Namespace: `Stackra\Database\Schema`.
 - `final class` — leaves. No blueprint subclasses another blueprint.
 
 ## The contract
@@ -31,9 +31,9 @@ Every blueprint follows this exact shape:
 
 declare(strict_types=1);
 
-namespace Academorix\Database\Schema;
+namespace Stackra\Database\Schema;
 
-use Academorix\Database\Attributes\AsDatabaseBlueprint;
+use Stackra\Database\Attributes\AsDatabaseBlueprint;
 use Illuminate\Database\Schema\Blueprint;
 
 /**
@@ -102,7 +102,7 @@ Two lines, no static state, no discovery-pipeline dependency.
 ## The attribute
 
 ```php
-namespace Academorix\Database\Attributes;
+namespace Stackra\Database\Attributes;
 
 use Attribute;
 

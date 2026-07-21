@@ -12,12 +12,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Contracts;
+namespace Stackra\Scope\Contracts;
 
-use Academorix\Scope\Data\ScopeContextData;
-use Academorix\Scope\Exceptions\ScopeContextRequiredException;
-use Academorix\Scope\Models\ScopeNode;
-use Academorix\Scope\Services\ScopeEmulator;
+use Stackra\Scope\Data\ScopeContextData;
+use Stackra\Scope\Exceptions\ScopeContextRequiredException;
+use Stackra\Scope\Models\ScopeNode;
+use Stackra\Scope\Services\ScopeEmulator;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Singleton;
 

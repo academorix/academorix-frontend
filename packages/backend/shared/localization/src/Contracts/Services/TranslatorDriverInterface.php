@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Contracts\Services;
+namespace Stackra\Localization\Contracts\Services;
 
-use Academorix\Localization\Data\DriverHealthData;
-use Academorix\Localization\Data\TranslationResultData;
+use Stackra\Localization\Data\DriverHealthData;
+use Stackra\Localization\Data\TranslationResultData;
 
 /**
  * Common contract every machine-translation driver satisfies.
  *
  * Discovered via
- * {@see \Academorix\Localization\Attributes\AsTranslatorDriver} and
+ * {@see \Stackra\Localization\Attributes\AsTranslatorDriver} and
  * resolved through
- * {@see \Academorix\Localization\Services\TranslatorDriverManager}.
+ * {@see \Stackra\Localization\Services\TranslatorDriverManager}.
  *
  * Every driver receives ALREADY-REDACTED source strings — the shared
  * telemetry redactor runs upstream so PII never reaches a
@@ -78,7 +78,7 @@ interface TranslatorDriverInterface
 
     /**
      * The driver's registered name — matches
-     * {@see \Academorix\Localization\Attributes\AsTranslatorDriver::name}.
+     * {@see \Stackra\Localization\Attributes\AsTranslatorDriver::name}.
      */
     public function name(): string;
 }

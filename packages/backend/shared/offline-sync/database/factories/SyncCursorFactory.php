@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\OfflineSync\Database\Factories;
+namespace Stackra\OfflineSync\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\OfflineSync\Contracts\Data\SyncCursorInterface;
-use Academorix\OfflineSync\Models\SyncCursor;
+use Stackra\OfflineSync\Contracts\Data\SyncCursorInterface;
+use Stackra\OfflineSync\Models\SyncCursor;
 
 /**
- * Factory for {@see \Academorix\OfflineSync\Models\SyncCursor}.
+ * Factory for {@see \Stackra\OfflineSync\Models\SyncCursor}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\OfflineSync\Models\SyncCursor>
+ * @extends Factory<\Stackra\OfflineSync\Models\SyncCursor>
  *
  * @category OfflineSync
  *

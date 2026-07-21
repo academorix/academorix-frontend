@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/application/schemas/application",
+  "id": "stackra://modules/application/schemas/application",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Application",
-  "description": "The top-level Academorix product / deployment container. Every Tenant belongs to exactly one Application. Applications rarely change in count (~1-8 on the platform: production, EU-production, staging, dev-preview, demo). One of the rows carrying `application_id` directly rather than inheriting it via BelongsToTenant.",
+  "description": "The top-level Stackra product / deployment container. Every Tenant belongs to exactly one Application. Applications rarely change in count (~1-8 on the platform: production, EU-production, staging, dev-preview, demo). One of the rows carrying `application_id` directly rather than inheriting it via BelongsToTenant.",
   "type": "object",
   "x-module": "application",
   "x-eloquent": {
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "app_",
     "incrementing": false,
-    "model": "Academorix\\Application\\Models\\Application",
-    "interface": "Academorix\\Application\\Contracts\\Data\\ApplicationInterface",
-    "implements": ["Academorix\\Application\\Contracts\\Data\\ApplicationInterface"],
+    "model": "Stackra\\Application\\Models\\Application",
+    "interface": "Stackra\\Application\\Contracts\\Data\\ApplicationInterface",
+    "implements": ["Stackra\\Application\\Contracts\\Data\\ApplicationInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -55,7 +55,7 @@
         "type": "string",
         "length": 200,
         "nullable": false,
-        "description": "Display name (e.g. 'Academorix', 'Academorix EU')."
+        "description": "Display name (e.g. 'Stackra', 'Stackra EU')."
       },
       "description": {
         "type": "text",
@@ -89,13 +89,13 @@
         "type": "string",
         "length": 200,
         "nullable": false,
-        "description": "Marketing + tenant-picker host (e.g. 'academorix.app'). Hard-refused as a tenant subdomain by `platform.domain` middleware."
+        "description": "Marketing + tenant-picker host (e.g. 'stackra.app'). Hard-refused as a tenant subdomain by `platform.domain` middleware."
       },
       "platform_admin_host": {
         "type": "string",
         "length": 200,
         "nullable": false,
-        "description": "Academorix staff surface host (e.g. 'admin.academorix.app')."
+        "description": "Stackra staff surface host (e.g. 'admin.stackra.app')."
       },
       "config": {
         "type": "jsonb",

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Rules;
+namespace Stackra\Notifications\Rules;
 
-use Academorix\Notifications\Enums\NotificationChannel;
+use Stackra\Notifications\Enums\NotificationChannel;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 

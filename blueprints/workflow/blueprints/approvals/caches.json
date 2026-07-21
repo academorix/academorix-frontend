@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/caches",
+  "id": "stackra://modules/workflow/approvals/caches",
   "$version": 1,
   "title": "approvals — cache keys + tags",
   "driver": "redis",
@@ -74,7 +74,7 @@
   "commands": [
     {
       "signature": "approvals:cache-clear {--all} {--tag=*} {--pattern=}",
-      "class": "Academorix\\Approval\\Console\\Commands\\CacheClearCommand",
+      "class": "Stackra\\Approval\\Console\\Commands\\CacheClearCommand",
       "purpose": "Support-tooling. --all flushes every apv:* key; --tag flushes tag(s); --pattern flushes matching keys. Used during template-import + delegation-corruption remediation."
     }
   ]

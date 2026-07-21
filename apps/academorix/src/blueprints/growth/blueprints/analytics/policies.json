@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/analytics/policies",
+  "id": "stackra://modules/analytics/policies",
   "$version": 1,
   "title": "analytics — authorization policies",
   "description": "Four policies matching the four entities. Read-only entities (event, delivery) refuse create/update/delete at the policy level; write operations for providers + identities scope-check by tenant + guard.",
   "policies": [
     {
       "model": "AnalyticsEvent",
-      "class": "Academorix\\Growth\\Analytics\\Policies\\AnalyticsEventPolicy",
+      "class": "Stackra\\Growth\\Analytics\\Policies\\AnalyticsEventPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -37,7 +37,7 @@
     },
     {
       "model": "AnalyticsDelivery",
-      "class": "Academorix\\Growth\\Analytics\\Policies\\AnalyticsDeliveryPolicy",
+      "class": "Stackra\\Growth\\Analytics\\Policies\\AnalyticsDeliveryPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -74,7 +74,7 @@
     },
     {
       "model": "AnalyticsProviderConfig",
-      "class": "Academorix\\Growth\\Analytics\\Policies\\AnalyticsProviderConfigPolicy",
+      "class": "Stackra\\Growth\\Analytics\\Policies\\AnalyticsProviderConfigPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -115,7 +115,7 @@
     },
     {
       "model": "AnalyticsIdentity",
-      "class": "Academorix\\Growth\\Analytics\\Policies\\AnalyticsIdentityPolicy",
+      "class": "Stackra\\Growth\\Analytics\\Policies\\AnalyticsIdentityPolicy",
       "abilities": [
         {
           "action": "viewAny",

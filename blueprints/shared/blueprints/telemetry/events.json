@@ -1,17 +1,17 @@
 {
-  "id": "academorix://modules/telemetry/events",
+  "id": "stackra://modules/telemetry/events",
   "$version": 1,
   "title": "telemetry \u2014 published events",
   "namespaces": {
-    "otel": "Academorix\\Telemetry\\Otel\\Events",
-    "logs": "Academorix\\Telemetry\\Logs\\Events"
+    "otel": "Stackra\\Telemetry\\Otel\\Events",
+    "logs": "Stackra\\Telemetry\\Logs\\Events"
   },
   "dispatchMode": "sync",
   "note": "These events exist for internal debugging + testing. They are NOT the primary output \u2014 spans go out via OTLP; log records go out via Monolog. Enable at runtime via telemetry.otel.emit_span_events + telemetry.logs.emit_events (debug builds only).",
   "events": [
     {
       "name": "TracerInitialized",
-      "class": "Academorix\\Telemetry\\Otel\\Events\\TracerInitialized",
+      "class": "Stackra\\Telemetry\\Otel\\Events\\TracerInitialized",
       "signal": "traces",
       "trigger": "On app boot, once the SDK + provider are wired up.",
       "queue": null,
@@ -19,7 +19,7 @@
     },
     {
       "name": "SpanStarted",
-      "class": "Academorix\\Telemetry\\Otel\\Events\\SpanStarted",
+      "class": "Stackra\\Telemetry\\Otel\\Events\\SpanStarted",
       "signal": "traces",
       "trigger": "Fired only when config('telemetry.otel.emit_span_events')=true (debug builds).",
       "queue": null,
@@ -32,7 +32,7 @@
     },
     {
       "name": "SpanEnded",
-      "class": "Academorix\\Telemetry\\Otel\\Events\\SpanEnded",
+      "class": "Stackra\\Telemetry\\Otel\\Events\\SpanEnded",
       "signal": "traces",
       "trigger": "Debug-only.",
       "queue": null,
@@ -45,7 +45,7 @@
     },
     {
       "name": "SpanErrored",
-      "class": "Academorix\\Telemetry\\Otel\\Events\\SpanErrored",
+      "class": "Stackra\\Telemetry\\Otel\\Events\\SpanErrored",
       "signal": "traces",
       "trigger": "A span was recorded with status=ERROR.",
       "queue": null,
@@ -59,7 +59,7 @@
     },
     {
       "name": "LogRecordEmitted",
-      "class": "Academorix\\Telemetry\\Logs\\Events\\LogRecordEmitted",
+      "class": "Stackra\\Telemetry\\Logs\\Events\\LogRecordEmitted",
       "signal": "logs",
       "trigger": "Fired only when config('telemetry.logs.emit_events')=true.",
       "queue": null,
@@ -67,9 +67,9 @@
     },
     {
       "name": "LogPipelineErrored",
-      "class": "Academorix\\Telemetry\\Logs\\Events\\LogPipelineErrored",
+      "class": "Stackra\\Telemetry\\Logs\\Events\\LogPipelineErrored",
       "signal": "logs",
-      "trigger": "A processor or formatter threw during record processing. The offending record is dropped; the pipeline continues; the error is exposed via metric `academorix.logs.records_dropped_total{reason=\"pipeline_error\"}`.",
+      "trigger": "A processor or formatter threw during record processing. The offending record is dropped; the pipeline continues; the error is exposed via metric `stackra.logs.records_dropped_total{reason=\"pipeline_error\"}`.",
       "queue": null,
       "payload": {
         "processor": "string",

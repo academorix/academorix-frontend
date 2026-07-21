@@ -2,7 +2,7 @@
 inclusion: manual
 ---
 
-# Academorix — Localization Content Strategy
+# Stackra — Localization Content Strategy
 
 Two translation problems. Do not conflate them.
 

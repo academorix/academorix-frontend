@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FinanceDigitalPassesSdk\Requests\WalletPasses;
+namespace Stackra\FinanceDigitalPassesSdk\Requests\WalletPasses;
 
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\ApiSdk\Data\PaginationLinks;
-use Academorix\ApiSdk\Data\PaginationMeta;
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\FinanceDigitalPassesSdk\Data\WalletPassData;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\ApiSdk\Data\PaginationLinks;
+use Stackra\ApiSdk\Data\PaginationMeta;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\FinanceDigitalPassesSdk\Data\WalletPassData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/newsletter/retention",
+  "id": "stackra://modules/newsletter/retention",
   "$version": 1,
   "title": "newsletter \u2014 retention windows",
   "compliance_regimes_referenced": [

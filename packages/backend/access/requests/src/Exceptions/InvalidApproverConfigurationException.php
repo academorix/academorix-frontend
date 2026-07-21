@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Requests\Exceptions;
+namespace Stackra\Requests\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * AccessRequestApproverResolver produced an empty approver set + resource-owner fallback also failed.

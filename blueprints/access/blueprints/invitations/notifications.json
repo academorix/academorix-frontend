@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/invitations/notifications",
+  "id": "stackra://modules/invitations/notifications",
   "$version": 1,
   "title": "invitations — Laravel notifications",
   "description": "Four notifications this module owns. All classified `transactional` (essential) — invitations are directly-solicited communications, so opt-out does not apply for the invitation itself. Downstream consent captured on accept (the invitee explicitly consents to receive further comms).",
-  "namespace": "Academorix\\Invitations\\Notifications",
+  "namespace": "Stackra\\Invitations\\Notifications",
   "notifications": [
     {
-      "class": "Academorix\\Invitations\\Notifications\\InvitationNotification",
+      "class": "Stackra\\Invitations\\Notifications\\InvitationNotification",
       "channels": ["mail", "sms", "slack"],
       "consentTier": "transactional",
       "targets": [
@@ -22,7 +22,7 @@
       "description": "The invitation itself. Body: greeting, inviter name, target label, custom message, big CTA button linking to `https://{application.central_host}/invitations/{raw_token}`, expiry note, decline link, unsubscribe-if-not-you link. Localised to the invitee's preferred locale when known; falls back to the tenant's default locale otherwise. Channel selection driven by the invitation's `channel` field."
     },
     {
-      "class": "Academorix\\Invitations\\Notifications\\InvitationReminderNotification",
+      "class": "Stackra\\Invitations\\Notifications\\InvitationReminderNotification",
       "channels": ["mail"],
       "consentTier": "transactional",
       "targets": ["Invitation"],
@@ -31,7 +31,7 @@
       "description": "Sent 48h before an invitation expires if it's still in a non-terminal state. Body reminds the invitee, restates the CTA. Frequency: at most one reminder per invitation (checked via `invitation.metadata.reminder_sent_at`)."
     },
     {
-      "class": "Academorix\\Invitations\\Notifications\\InvitationAcceptedNotification",
+      "class": "Stackra\\Invitations\\Notifications\\InvitationAcceptedNotification",
       "channels": ["mail", "database"],
       "consentTier": "transactional",
       "targets": ["User (the inviter)"],
@@ -40,7 +40,7 @@
       "description": "Sent to the inviter (a User, not a ServiceAccount — bots don't need email) when the invitee accepts. Body: 'X accepted your invitation to Y', with a link to view the new team member's profile."
     },
     {
-      "class": "Academorix\\Invitations\\Notifications\\InvitationBouncedNotification",
+      "class": "Stackra\\Invitations\\Notifications\\InvitationBouncedNotification",
       "channels": ["mail", "database", "slack"],
       "consentTier": "transactional",
       "targets": [
@@ -52,6 +52,6 @@
     }
   ],
   "consentTierNotes": {
-    "transactional": "Directly-solicited or safety-of-service communications. Not gated by marketing opt-out. Invitations are always transactional at the send level; downstream product communications from Academorix require explicit consent captured on accept."
+    "transactional": "Directly-solicited or safety-of-service communications. Not gated by marketing opt-out. Invitations are always transactional at the send level; downstream product communications from Stackra require explicit consent captured on accept."
   }
 }

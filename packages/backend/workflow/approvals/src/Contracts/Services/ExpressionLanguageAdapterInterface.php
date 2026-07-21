@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Contracts\Services;
+namespace Stackra\Approvals\Contracts\Services;
 
-use Academorix\Approvals\Services\ExpressionLanguageAdapter;
+use Stackra\Approvals\Services\ExpressionLanguageAdapter;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -41,9 +41,9 @@ interface ExpressionLanguageAdapterInterface
      *
      * @return mixed  The expression's return value.
      *
-     * @throws \Academorix\Approvals\Exceptions\ApprovalExpressionTimeoutException
+     * @throws \Stackra\Approvals\Exceptions\ApprovalExpressionTimeoutException
      *   When the evaluation exceeds the 250 ms hard cap.
-     * @throws \Academorix\Approvals\Exceptions\ApprovalExpressionInvalidException
+     * @throws \Stackra\Approvals\Exceptions\ApprovalExpressionInvalidException
      *   When the expression fails to parse or references an unknown
      *   selector.
      */
@@ -56,7 +56,7 @@ interface ExpressionLanguageAdapterInterface
      *
      * @param  string  $expression  Symfony expression syntax.
      *
-     * @throws \Academorix\Approvals\Exceptions\ApprovalExpressionInvalidException
+     * @throws \Stackra\Approvals\Exceptions\ApprovalExpressionInvalidException
      *   When the expression fails to parse.
      */
     public function compile(string $expression): void;

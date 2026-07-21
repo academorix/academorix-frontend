@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/activity/rules",
+  "id": "stackra://modules/activity/rules",
   "$version": 1,
   "title": "activity — validation rules",
   "description": "Custom Laravel validation rules published by `ActivityServiceProvider::boot()` so any FormRequest / Data class can validate activity + retention payloads. Rules run at the request boundary before observers fire — clean 422 errors on invalid input.",
-  "namespace": "Academorix\\Observability\\Activity\\Rules",
+  "namespace": "Stackra\\Observability\\Activity\\Rules",
   "rules": [
     {
       "name": "valid_retention_days",
-      "class": "Academorix\\Observability\\Activity\\Rules\\ValidRetentionDays",
+      "class": "Stackra\\Observability\\Activity\\Rules\\ValidRetentionDays",
       "signature": "valid_retention_days",
       "description": "Verifies retention_days is between 30 and 730 (inclusive). Nullable — the rule only fires when a value is passed. Entitlement gate (retention_days > 90 requires `activity_retention_extended`) is enforced at the policy layer, NOT here — a rule cannot enforce entitlements.",
       "params": [],
@@ -17,7 +17,7 @@
     },
     {
       "name": "valid_log_name",
-      "class": "Academorix\\Observability\\Activity\\Rules\\ValidLogName",
+      "class": "Stackra\\Observability\\Activity\\Rules\\ValidLogName",
       "signature": "valid_log_name",
       "description": "Verifies log_name matches one of the registered names in data/log-names-catalog.json (loaded from the module's cache). Enforces the format constraint too — alphanumeric + dash only, starting with a letter. Nullable — the rule only fires on non-null values.",
       "params": [],
@@ -27,9 +27,9 @@
     },
     {
       "name": "valid_causer_type",
-      "class": "Academorix\\Observability\\Activity\\Rules\\ValidCauserType",
+      "class": "Stackra\\Observability\\Activity\\Rules\\ValidCauserType",
       "signature": "valid_causer_type",
-      "description": "Verifies causer_type is one of `Academorix\\User\\Models\\User`, `Academorix\\User\\Models\\PlatformUser`, `Academorix\\Identity\\Models\\ServiceAccount`, or the sentinel `Academorix\\Observability\\Activity\\Causers\\SystemCauser`. Rejects arbitrary class names. Runs at write time (not read time — read filters trust the DB values).",
+      "description": "Verifies causer_type is one of `Stackra\\User\\Models\\User`, `Stackra\\User\\Models\\PlatformUser`, `Stackra\\Identity\\Models\\ServiceAccount`, or the sentinel `Stackra\\Observability\\Activity\\Causers\\SystemCauser`. Rejects arbitrary class names. Runs at write time (not read time — read filters trust the DB values).",
       "params": [],
       "example_field_rule": "causer_type: [nullable, string, valid_causer_type]",
       "error_message_key": "activity::validation.valid_causer_type",
@@ -37,7 +37,7 @@
     },
     {
       "name": "valid_subject_type",
-      "class": "Academorix\\Observability\\Activity\\Rules\\ValidSubjectType",
+      "class": "Stackra\\Observability\\Activity\\Rules\\ValidSubjectType",
       "signature": "valid_subject_type",
       "description": "Verifies subject_type is a class registered with `LogsActivity` (via the vendor morph map). Reads the morph map at boot; refreshed on `config:cache` clear. Refuses arbitrary class names — a subject that doesn't compose LogsActivity has no business appearing on an activity row.",
       "params": [],
@@ -47,7 +47,7 @@
     },
     {
       "name": "valid_batch_uuid",
-      "class": "Academorix\\Observability\\Activity\\Rules\\ValidBatchUuid",
+      "class": "Stackra\\Observability\\Activity\\Rules\\ValidBatchUuid",
       "signature": "valid_batch_uuid",
       "description": "Verifies batch_uuid is a valid v4 UUID. Not FK-constrained (there's no batches table — batch_uuid is a request-scoped grouping key), so the rule enforces the shape only.",
       "params": [],

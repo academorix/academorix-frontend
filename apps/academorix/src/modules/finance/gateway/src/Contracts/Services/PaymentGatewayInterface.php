@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Gateway\Contracts\Services;
+namespace Stackra\Gateway\Contracts\Services;
 
-use Academorix\Gateway\Data\PaymentIntentRequest;
-use Academorix\Gateway\Data\PaymentIntentResponse;
-use Academorix\Gateway\Data\RefundRequest;
-use Academorix\Gateway\Data\RefundResponse;
-use Academorix\Gateway\Data\WebhookEnvelope;
+use Stackra\Gateway\Data\PaymentIntentRequest;
+use Stackra\Gateway\Data\PaymentIntentResponse;
+use Stackra\Gateway\Data\RefundRequest;
+use Stackra\Gateway\Data\RefundResponse;
+use Stackra\Gateway\Data\WebhookEnvelope;
 
 /**
  * Provider-agnostic payment-gateway contract.
@@ -29,7 +29,7 @@ use Academorix\Gateway\Data\WebhookEnvelope;
  *    driver auto-generates a ULID otherwise). Providers dedupe on the key.
  *  - **Amounts**: minor units only (integer cents). Currency is ISO-4217.
  *  - **Errors**: drivers translate provider-specific error shapes into
- *    `Academorix\Gateway\Exceptions\*` subclasses of `AcademorixException`.
+ *    `Stackra\Gateway\Exceptions\*` subclasses of `StackraException`.
  *  - **Webhooks**: `verifyWebhookSignature()` + `parseWebhook()` split the
  *    two responsibilities — signature verify is a security concern (must
  *    NEVER be bypassed); parse is a mapping concern (may evolve per
@@ -55,7 +55,7 @@ interface PaymentGatewayInterface
      *
      * @param  PaymentIntentRequest  $request  Amount + currency + customer + metadata.
      *
-     * @throws \Academorix\Gateway\Exceptions\PaymentGatewayException  On provider error.
+     * @throws \Stackra\Gateway\Exceptions\PaymentGatewayException  On provider error.
      *
      * @return PaymentIntentResponse  Client-facing confirmation payload.
      */
@@ -70,7 +70,7 @@ interface PaymentGatewayInterface
      * @param  string                $providerIntentId Provider-side intent id.
      * @param  string|null           $paymentMethodId  Optional pre-tokenised method.
      *
-     * @throws \Academorix\Gateway\Exceptions\PaymentGatewayException
+     * @throws \Stackra\Gateway\Exceptions\PaymentGatewayException
      *
      * @return PaymentIntentResponse  Post-confirmation status.
      */
@@ -86,28 +86,28 @@ interface PaymentGatewayInterface
      * @param  string   $providerIntentId Provider-side intent id.
      * @param  int|null $amountMinor      `null` = full authorised amount; integer = partial capture.
      *
-     * @throws \Academorix\Gateway\Exceptions\PaymentGatewayException
+     * @throws \Stackra\Gateway\Exceptions\PaymentGatewayException
      */
     public function captureIntent(string $providerIntentId, ?int $amountMinor = null): PaymentIntentResponse;
 
     /**
      * Cancel a payment intent that hasn't been captured yet.
      *
-     * @throws \Academorix\Gateway\Exceptions\PaymentGatewayException
+     * @throws \Stackra\Gateway\Exceptions\PaymentGatewayException
      */
     public function cancelIntent(string $providerIntentId, string $reason = 'requested_by_customer'): PaymentIntentResponse;
 
     /**
      * Retrieve a payment intent by provider id (audit / reconciliation).
      *
-     * @throws \Academorix\Gateway\Exceptions\PaymentGatewayException
+     * @throws \Stackra\Gateway\Exceptions\PaymentGatewayException
      */
     public function retrieveIntent(string $providerIntentId): PaymentIntentResponse;
 
     /**
      * Refund a captured payment.
      *
-     * @throws \Academorix\Gateway\Exceptions\PaymentGatewayException
+     * @throws \Stackra\Gateway\Exceptions\PaymentGatewayException
      */
     public function refund(RefundRequest $request): RefundResponse;
 
@@ -122,7 +122,7 @@ interface PaymentGatewayInterface
      * @param  string  $signature  Provider-supplied signature header.
      * @param  string  $secret     Provider-side webhook signing secret from Doppler.
      *
-     * @throws \Academorix\Gateway\Exceptions\WebhookSignatureInvalidException
+     * @throws \Stackra\Gateway\Exceptions\WebhookSignatureInvalidException
      */
     public function verifyWebhookSignature(string $payload, string $signature, string $secret): void;
 
@@ -131,7 +131,7 @@ interface PaymentGatewayInterface
      *
      * @param  string  $payload  Verified raw payload.
      *
-     * @throws \Academorix\Gateway\Exceptions\PaymentGatewayException  On unparseable payload.
+     * @throws \Stackra\Gateway\Exceptions\PaymentGatewayException  On unparseable payload.
      */
     public function parseWebhook(string $payload): WebhookEnvelope;
 

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/teams/relations",
+  "id": "stackra://modules/teams/relations",
   "$version": 1,
   "title": "teams — model relationships",
   "description": "Four owned entities. Team is below Branch (which is under Region + Organization). TeamMember attaches to Team via team_id AND polymorphically to Athlete/Coach/Staff/User via member_type + member_id. TeamTrial attaches to Team via team_id AND polymorphically to Athlete/User via trialist_type + trialist_id (or fully anonymous with no FK). EventTeam attaches to Team via team_id AND to (Wave 3) Event via event_id (nullable pre-Wave-3). Every outbound FK stays same-tenant per tenancy-columns.md §5. NO organization_id / region_id / application_id / scope_node_id on any owned row.",

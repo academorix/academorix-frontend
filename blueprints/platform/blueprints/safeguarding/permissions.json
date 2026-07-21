@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/safeguarding/permissions",
+  "id": "stackra://modules/safeguarding/permissions",
   "$version": 1,
   "title": "safeguarding — permissions",
-  "seeder": "Academorix\\Platform\\Safeguarding\\Database\\Seeders\\SafeguardingPermissionSeeder",
+  "seeder": "Stackra\\Platform\\Safeguarding\\Database\\Seeders\\SafeguardingPermissionSeeder",
   "isSystem": true,
   "description": "Safeguarding is CHILD PROTECTION-CRITICAL. Reporting is broadly permitted (anyone can flag); everything downstream is tightly gated to officer + owner. Case-access grants provide per-incident visibility to specific investigators.",
   "permissions": [

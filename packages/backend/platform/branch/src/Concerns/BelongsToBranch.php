@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branch\Concerns;
+namespace Stackra\Branch\Concerns;
 
 /**
  * Trait — BelongsToBranch.

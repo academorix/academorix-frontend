@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/progress/schemas/belt-rank",
+  "id": "stackra://modules/progress/schemas/belt-rank",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "BeltRank",

@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/people/features",
+  "id": "stackra://modules/people/features",
   "$version": 1,
   "title": "people — feature keys",
   "features": [
     {
       "key": "people.core",
       "displayName": "People registry",
-      "description": "Master feature — central identity + Academorix ID issuance. On every tier for consuming tenants.",
+      "description": "Master feature — central identity + Stackra ID issuance. On every tier for consuming tenants.",
       "defaultEnabled": true,
       "planTiers": ["small", "medium", "enterprise"]
     },

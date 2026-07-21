@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Awards\Tests;
+namespace Stackra\Awards\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/awards.
+ * Base test case for stackra/awards.
  *
  * @category Awards
  *

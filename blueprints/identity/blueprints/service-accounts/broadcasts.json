@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/service-accounts/broadcasts",
+  "id": "stackra://modules/service-accounts/broadcasts",
   "$version": 1,
   "title": "service-accounts \u2014 broadcast channels",
   "description": "service-accounts publishes NO broadcast channels. The module is internal-only \u2014 every state change is either (a) a fire-and-forget event consumed by server-side modules or (b) a mail / Slack notification routed through the notifications module.",

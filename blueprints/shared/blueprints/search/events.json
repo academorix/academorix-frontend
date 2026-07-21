@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/search/events",
+  "id": "stackra://modules/search/events",
   "$version": 1,
   "title": "search \u2014 published events",
-  "namespace": "Academorix\\Search\\Events",
+  "namespace": "Stackra\\Search\\Events",
   "dispatchMode": "afterCommit",
   "events": [
     {
       "name": "SearchIndexRegistered",
-      "class": "Academorix\\Search\\Events\\SearchIndexRegistered",
+      "class": "Stackra\\Search\\Events\\SearchIndexRegistered",
       "trigger": "New SearchIndex row inserted. Fires from SearchIndexObserver.created (afterCommit).",
       "queue": "search",
       "broadcastable": false,
@@ -27,7 +27,7 @@
     },
     {
       "name": "SearchIndexUnregistered",
-      "class": "Academorix\\Search\\Events\\SearchIndexUnregistered",
+      "class": "Stackra\\Search\\Events\\SearchIndexUnregistered",
       "trigger": "SearchIndex soft-deleted. Fires from SearchIndexObserver.deleting.",
       "queue": "search",
       "broadcastable": false,
@@ -45,7 +45,7 @@
     },
     {
       "name": "SearchSyncJobQueued",
-      "class": "Academorix\\Search\\Events\\SearchSyncJobQueued",
+      "class": "Stackra\\Search\\Events\\SearchSyncJobQueued",
       "trigger": "SearchSyncJob row inserted (status=queued). Fires from SearchSyncJobObserver.created.",
       "queue": "search",
       "broadcastable": true,
@@ -66,7 +66,7 @@
     },
     {
       "name": "SearchSyncJobStarted",
-      "class": "Academorix\\Search\\Events\\SearchSyncJobStarted",
+      "class": "Stackra\\Search\\Events\\SearchSyncJobStarted",
       "trigger": "SearchSyncJob transitioned from queued \u2192 running. Fires from SearchSyncJobObserver.updating.",
       "queue": "search",
       "broadcastable": true,
@@ -78,7 +78,7 @@
     },
     {
       "name": "SearchSyncJobProgress",
-      "class": "Academorix\\Search\\Events\\SearchSyncJobProgress",
+      "class": "Stackra\\Search\\Events\\SearchSyncJobProgress",
       "trigger": "Fires every `config('search.progress.every_rows')` rows during a chunk. NOT audit-worthy \u2014 broadcast only.",
       "queue": null,
       "broadcastable": true,
@@ -92,7 +92,7 @@
     },
     {
       "name": "SearchSyncJobShardCompleted",
-      "class": "Academorix\\Search\\Events\\SearchSyncJobShardCompleted",
+      "class": "Stackra\\Search\\Events\\SearchSyncJobShardCompleted",
       "trigger": "One shard of a sharded reindex transitioned to succeeded or failed. Fires from ReindexModelShardJob handle().",
       "queue": "search",
       "broadcastable": true,
@@ -109,7 +109,7 @@
     },
     {
       "name": "SearchSyncJobCompleted",
-      "class": "Academorix\\Search\\Events\\SearchSyncJobCompleted",
+      "class": "Stackra\\Search\\Events\\SearchSyncJobCompleted",
       "trigger": "SearchSyncJob transitioned to succeeded OR partially_succeeded. Fires from ReindexCoordinatorJob after final aggregation. Consumers filter on status for the partial variant.",
       "queue": "search",
       "broadcastable": true,
@@ -130,7 +130,7 @@
     },
     {
       "name": "SearchSyncJobFailed",
-      "class": "Academorix\\Search\\Events\\SearchSyncJobFailed",
+      "class": "Stackra\\Search\\Events\\SearchSyncJobFailed",
       "trigger": "SearchSyncJob transitioned to failed. Fires from ReindexModelShardJob::failed(Throwable).",
       "queue": "search",
       "broadcastable": true,
@@ -149,7 +149,7 @@
     },
     {
       "name": "SearchSyncJobCancelled",
-      "class": "Academorix\\Search\\Events\\SearchSyncJobCancelled",
+      "class": "Stackra\\Search\\Events\\SearchSyncJobCancelled",
       "trigger": "SearchSyncJob transitioned to cancelled by user request OR stale sweep. Fires from SearchSyncJobObserver.updating.",
       "queue": "search",
       "broadcastable": true,
@@ -164,7 +164,7 @@
     },
     {
       "name": "SearchIndexAliasSwapped",
-      "class": "Academorix\\Search\\Events\\SearchIndexAliasSwapped",
+      "class": "Stackra\\Search\\Events\\SearchIndexAliasSwapped",
       "trigger": "SwapIndexAliasJob successfully repointed the live alias. Fires afterCommit on the SearchIndex.current_version + live_alias update.",
       "queue": "search",
       "broadcastable": true,
@@ -184,7 +184,7 @@
     },
     {
       "name": "SearchSynonymCreated",
-      "class": "Academorix\\Search\\Events\\SearchSynonymCreated",
+      "class": "Stackra\\Search\\Events\\SearchSynonymCreated",
       "trigger": "SearchSynonym row inserted. Fires from SearchSynonymObserver.created.",
       "queue": "search",
       "broadcastable": false,
@@ -199,7 +199,7 @@
     },
     {
       "name": "SearchSynonymUpdated",
-      "class": "Academorix\\Search\\Events\\SearchSynonymUpdated",
+      "class": "Stackra\\Search\\Events\\SearchSynonymUpdated",
       "trigger": "SearchSynonym row updated. Fires from SearchSynonymObserver.updated.",
       "queue": "search",
       "broadcastable": false,
@@ -211,7 +211,7 @@
     },
     {
       "name": "SearchSynonymDeleted",
-      "class": "Academorix\\Search\\Events\\SearchSynonymDeleted",
+      "class": "Stackra\\Search\\Events\\SearchSynonymDeleted",
       "trigger": "SearchSynonym soft-deleted. Fires from SearchSynonymObserver.deleted.",
       "queue": "search",
       "broadcastable": false,
@@ -224,7 +224,7 @@
     },
     {
       "name": "SearchQueryRecorded",
-      "class": "Academorix\\Search\\Events\\SearchQueryRecorded",
+      "class": "Stackra\\Search\\Events\\SearchQueryRecorded",
       "trigger": "One kind=query analytics event was persisted. Fires from RecordSearchAnalyticsEventJob (fire-and-forget \u2014 not afterCommit).",
       "queue": null,
       "broadcastable": false,
@@ -241,7 +241,7 @@
     },
     {
       "name": "SearchNoResultsRecorded",
-      "class": "Academorix\\Search\\Events\\SearchNoResultsRecorded",
+      "class": "Stackra\\Search\\Events\\SearchNoResultsRecorded",
       "trigger": "One kind=no_results analytics event was persisted. Zero-result queries indicate index gaps, synonym gaps, or user typos beyond the tolerance threshold \u2014 admin dashboards watch this.",
       "queue": null,
       "broadcastable": false,
@@ -257,7 +257,7 @@
     },
     {
       "name": "SearchClickThroughRecorded",
-      "class": "Academorix\\Search\\Events\\SearchClickThroughRecorded",
+      "class": "Stackra\\Search\\Events\\SearchClickThroughRecorded",
       "trigger": "One kind=click_through analytics event was persisted via POST /api/v1/search/click. Position is 1-based.",
       "queue": null,
       "broadcastable": false,
@@ -275,7 +275,7 @@
     },
     {
       "name": "SearchSavedQueryCreated",
-      "class": "Academorix\\Search\\Events\\SearchSavedQueryCreated",
+      "class": "Stackra\\Search\\Events\\SearchSavedQueryCreated",
       "trigger": "New SearchSavedQuery row inserted. Fires from SearchSavedQuery model observer.created.",
       "queue": "search",
       "broadcastable": false,

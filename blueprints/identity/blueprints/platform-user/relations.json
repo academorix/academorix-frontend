@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/platform-user/relations",
+  "id": "stackra://modules/platform-user/relations",
   "$version": 1,
   "title": "platform-user \u2014 model relationships",
-  "description": "PlatformUser is the aggregate root for the Academorix-staff plane. Outbound FKs: `identity_id` (reuses the Identity credential substrate), `profile_id` (1:1 PII satellite), `manager_id` (self-referential org chart, nullable). Inbound FKs from `access::PlatformRoleAssignment` (roles on the `platform_admin` guard), `access::PlatformImpersonationSession` (tenant-side act-as sessions, Wave 1b), `audit::Audit` (polymorphic actor pointing at PlatformUsers for platform-plane writes). NEVER carries `tenant_id` or `application_id` \u2014 the platform_users table is cross-plane by definition (see tenancy-columns.md \u00a72 exception + design.md \u00a74.3).",
+  "description": "PlatformUser is the aggregate root for the Stackra-staff plane. Outbound FKs: `identity_id` (reuses the Identity credential substrate), `profile_id` (1:1 PII satellite), `manager_id` (self-referential org chart, nullable). Inbound FKs from `access::PlatformRoleAssignment` (roles on the `platform_admin` guard), `access::PlatformImpersonationSession` (tenant-side act-as sessions, Wave 1b), `audit::Audit` (polymorphic actor pointing at PlatformUsers for platform-plane writes). NEVER carries `tenant_id` or `application_id` \u2014 the platform_users table is cross-plane by definition (see tenancy-columns.md \u00a72 exception + design.md \u00a74.3).",
   "internal": [
     {
       "from": "PlatformUser",
@@ -46,7 +46,7 @@
       "targetTable": "identities",
       "targetKey": "id",
       "onDelete": "restrict",
-      "description": "Reuses the global credential record. `RESTRICT` on delete so a compliance-officer erasing an Identity must first offboard every PlatformUser row referencing that Identity (prevents accidental Identity-side erasure orphaning a staff row). One Identity may back at most ONE PlatformUser (UNIQUE(identity_id) on platform_users) \u2014 an Academorix employee is a distinct human, not a projection like User is."
+      "description": "Reuses the global credential record. `RESTRICT` on delete so a compliance-officer erasing an Identity must first offboard every PlatformUser row referencing that Identity (prevents accidental Identity-side erasure orphaning a staff row). One Identity may back at most ONE PlatformUser (UNIQUE(identity_id) on platform_users) \u2014 an Stackra employee is a distinct human, not a projection like User is."
     }
   ],
   "inbound": [

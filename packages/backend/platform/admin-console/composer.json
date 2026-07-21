@@ -1,10 +1,10 @@
 {
-  "name": "academorix/admin-console",
+  "name": "stackra/admin-console",
   "type": "library",
-  "description": "Academorix AdminConsole module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/admin-console/`. Complements the wire SDK at `academorix-platform/admin-console-sdk`.",
+  "description": "Stackra AdminConsole module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/admin-console/`. Complements the wire SDK at `stackra-platform/admin-console-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "platform",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-platform/admin-console-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-platform/admin-console-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\AdminConsole\\": "src/"
+      "Stackra\\AdminConsole\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\AdminConsole\\Tests\\": "tests/"
+      "Stackra\\AdminConsole\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\AdminConsole\\Providers\\AdminConsoleServiceProvider"
+        "Stackra\\AdminConsole\\Providers\\AdminConsoleServiceProvider"
       ],
       "aliases": {}
     }
@@ -68,7 +68,7 @@
   "repositories": [
     {
       "type": "path",
-      "url": "../../../../apps/academorix/src/sdks/platform-admin-console-sdk",
+      "url": "../../../../apps/stackra/src/sdks/platform-admin-console-sdk",
       "options": {
         "symlink": true
       }

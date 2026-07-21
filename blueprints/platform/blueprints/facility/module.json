@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "facility",
   "alias": "facility",
-  "namespace": "Academorix\\Facility",
+  "namespace": "Stackra\\Facility",
   "description": "Bookable resource inside a Branch. Answers 'which slot did I book?'. Ships four tables that model the booking substrate: (1) `facilities` — the resource catalogue (courts, fields, rooms, pools, studios), (2) `resource_bookings` — timed reservations against a facility, (3) `day_passes` — untimed same-day admission for casual visitors, (4) `passes` — the credit + eligibility record binding a Membership (Finance module, Wave 4) to Facility access rights over a period. Small tier: facilities feature DISABLED entirely (entitlement `facilities` off). Medium: basic booking (facilities + resource_bookings). Enterprise: advanced (facilities + resource_bookings + day_passes + passes + recurring bookings + blackouts + package integration). The `resource_bookings` table is the write-side of Wave 3+ session scheduling — this module owns the reservation primitive; downstream Sports module composes it. Facility has structured availability_json (which days/hours it's available, distinct from parent Branch hours which set the outer envelope). Booking observer enforces: within-branch-hours + within-facility-hours + no-overlap-with-blackouts + capacity-not-exceeded + booking-not-in-past. Ships pricing_json for per-hour or per-slot pricing consumed by Finance. Bookings cascade on facility close; day_passes never cascade (financial records).",
   "keywords": [
     "facility",
@@ -34,7 +34,7 @@
     "wave-2"
   ],
   "priority": 48,
-  "providers": ["Academorix\\Facility\\Providers\\FacilityServiceProvider"],
+  "providers": ["Stackra\\Facility\\Providers\\FacilityServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

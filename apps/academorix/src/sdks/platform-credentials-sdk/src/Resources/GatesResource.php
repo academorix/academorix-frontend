@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformCredentialsSdk\Resources;
+namespace Stackra\PlatformCredentialsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\PlatformCredentialsSdk\Data\GateData;
-use Academorix\PlatformCredentialsSdk\Requests\Gates\CreateGateRequest;
-use Academorix\PlatformCredentialsSdk\Requests\Gates\ListGatesAdminRequest;
-use Academorix\PlatformCredentialsSdk\Requests\Gates\ListGatesRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\PlatformCredentialsSdk\Data\GateData;
+use Stackra\PlatformCredentialsSdk\Requests\Gates\CreateGateRequest;
+use Stackra\PlatformCredentialsSdk\Requests\Gates\ListGatesAdminRequest;
+use Stackra\PlatformCredentialsSdk\Requests\Gates\ListGatesRequest;
 use Saloon\Http\Response;
 
 /**
@@ -56,7 +56,7 @@ final readonly class GatesResource
      *
      * @return GateData
      */
-    public function create(\Academorix\PlatformCredentialsSdk\Payloads\Gates\CreateGatePayload $payload, ?string $idempotencyKey = null): GateData
+    public function create(\Stackra\PlatformCredentialsSdk\Payloads\Gates\CreateGatePayload $payload, ?string $idempotencyKey = null): GateData
     {
         return $this->connector->send(new CreateGateRequest($payload, $idempotencyKey))->dto();
     }

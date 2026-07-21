@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Athlete\Exceptions;
+namespace Stackra\Athlete\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Athlete age must be between 3 and 100 years (platform bounds).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AthleteAgeOutOfBoundsException extends AcademorixException
+final class AthleteAgeOutOfBoundsException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

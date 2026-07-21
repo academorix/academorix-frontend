@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Contracts\Data;
+namespace Stackra\Search\Contracts\Data;
 
-use Academorix\Search\Models\SearchAnalyticsEvent;
+use Stackra\Search\Models\SearchAnalyticsEvent;
 use Illuminate\Container\Attributes\Bind;
 
 /**

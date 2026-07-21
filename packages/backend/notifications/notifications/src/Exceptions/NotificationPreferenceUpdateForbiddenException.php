@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Exceptions;
+namespace Stackra\Notifications\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a user attempts to set `enabled=false` on a category
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationPreferenceUpdateForbiddenException extends AcademorixException
+final class NotificationPreferenceUpdateForbiddenException extends StackraException
 {
     public const CODE = 'NOTIFICATIONS_PREFERENCE_UPDATE_FORBIDDEN';
 

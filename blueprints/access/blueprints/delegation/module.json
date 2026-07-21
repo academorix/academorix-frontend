@@ -2,8 +2,8 @@
   "$version": 1,
   "name": "delegation",
   "alias": "delegation",
-  "namespace": "Academorix\\Delegation",
-  "description": "Time-bounded role delegation + real-time impersonation sessions. Two distinct-but-related concerns: (1) role_delegations — 'Alice is on vacation, delegate her manager role to Bob until next Friday' — a tenant User temporarily grants their role assignments to another tenant User in the same tenant, and (2) impersonation_sessions — a PlatformUser (Academorix staff) starts a short-lived act-as session for a specific tenant User, for support / debug purposes. Both concerns integrate with workflow/approvals: the approver selector engine walks role_delegations rows so a Manager's approver requirement resolves to their delegate during OOF (see access-approvals/design.md §7). Delegation is audited via HasActivityLog; impersonation is audited via a dedicated heavy trail preserved indefinitely for compliance evidence retention (SOC 2 CC6.1 + CC6.7, PCI-DSS 8.5). Impersonation session records survive the impersonator's PlatformUser offboarding — the row keeps an anonymised impersonator_display_name + impersonator_department snapshot after the platform_users row hard-deletes at the end of its 90-day retention hold (see platform-user/module.json). The impersonation Sanctum PAT is issued by identity/auth's ImpersonateStartAction (start-point per identity/design.md §12) and is a NEW PAT scoped to the impersonation — never the impersonator's own PlatformUser PAT — so on session end the token dies without invalidating the operator's regular platform-admin session.",
+  "namespace": "Stackra\\Delegation",
+  "description": "Time-bounded role delegation + real-time impersonation sessions. Two distinct-but-related concerns: (1) role_delegations — 'Alice is on vacation, delegate her manager role to Bob until next Friday' — a tenant User temporarily grants their role assignments to another tenant User in the same tenant, and (2) impersonation_sessions — a PlatformUser (Stackra staff) starts a short-lived act-as session for a specific tenant User, for support / debug purposes. Both concerns integrate with workflow/approvals: the approver selector engine walks role_delegations rows so a Manager's approver requirement resolves to their delegate during OOF (see access-approvals/design.md §7). Delegation is audited via HasActivityLog; impersonation is audited via a dedicated heavy trail preserved indefinitely for compliance evidence retention (SOC 2 CC6.1 + CC6.7, PCI-DSS 8.5). Impersonation session records survive the impersonator's PlatformUser offboarding — the row keeps an anonymised impersonator_display_name + impersonator_department snapshot after the platform_users row hard-deletes at the end of its 90-day retention hold (see platform-user/module.json). The impersonation Sanctum PAT is issued by identity/auth's ImpersonateStartAction (start-point per identity/design.md §12) and is a NEW PAT scoped to the impersonation — never the impersonator's own PlatformUser PAT — so on session end the token dies without invalidating the operator's regular platform-admin session.",
   "keywords": [
     "delegation",
     "role-delegation",
@@ -22,7 +22,7 @@
     "compliance-evidence"
   ],
   "priority": 33,
-  "providers": ["Academorix\\Delegation\\Providers\\DelegationServiceProvider"],
+  "providers": ["Stackra\\Delegation\\Providers\\DelegationServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

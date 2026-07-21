@@ -4,9 +4,9 @@
  * @file packages/compliance/retention/src/Providers/RetentionServiceProvider.php
  *
  * @description
- * Root service provider for `academorix/retention`. Extends the
+ * Root service provider for `stackra/retention`. Extends the
  * attribute-first
- * {@see \Academorix\ServiceProvider\Providers\ServiceProvider}
+ * {@see \Stackra\ServiceProvider\Providers\ServiceProvider}
  * base — every boot-phase concern is an `#[OnBoot]` method the
  * base's `bootModule()` dispatches in priority order.
  *
@@ -20,9 +20,9 @@
  *
  *   2. Ships the {@see RetentionPolicyBootstrapper} — registered
  *      via the `$bootstrappers` array. The framework's shared
- *      {@see \Academorix\ServiceProvider\Support\BootstrapperRunner}
+ *      {@see \Stackra\ServiceProvider\Support\BootstrapperRunner}
  *      iterates the registry at boot and populates the
- *      {@see \Academorix\Retention\Registry\RetentionPolicyRegistry}
+ *      {@see \Stackra\Retention\Registry\RetentionPolicyRegistry}
  *      through the bootstrapper's cache-aware lifecycle. The
  *      previous `afterResolving(RetentionPolicyRegistry::class, …)`
  *      hook was removed in Phase 2.C — the framework runner
@@ -35,17 +35,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Retention\Providers;
+namespace Stackra\Retention\Providers;
 
-use Academorix\Retention\Bootstrappers\RetentionPolicyBootstrapper;
-use Academorix\Retention\Console\RunRetentionCommand;
-use Academorix\Retention\Registry\RetentionPolicyRegistry;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Attributes\OnBoot;
-use Academorix\ServiceProvider\Bootstrappers\AbstractBootstrapper;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
-use Academorix\ServiceProvider\Support\BootstrapperRunner;
+use Stackra\Retention\Bootstrappers\RetentionPolicyBootstrapper;
+use Stackra\Retention\Console\RunRetentionCommand;
+use Stackra\Retention\Registry\RetentionPolicyRegistry;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\OnBoot;
+use Stackra\ServiceProvider\Bootstrappers\AbstractBootstrapper;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Support\BootstrapperRunner;
 
 /**
  * Root provider for the retention package.
@@ -80,12 +80,12 @@ final class RetentionServiceProvider extends ServiceProvider
      *
      * The base's `#[LoadsResources(commands: true)]` scan targets
      * Symfony's `\Symfony\Component\Console\Attribute\AsCommand`
-     * attribute — our command carries the Academorix variant which
+     * attribute — our command carries the Stackra variant which
      * is a distinct class. Register the concrete class explicitly
      * so it survives the mismatch.
      *
      * TODO(console-package-discovery): drop this method once
-     * `academorix/console` ships an `#[AsCommand]` discoverer
+     * `stackra/console` ships an `#[AsCommand]` discoverer
      * bridged into the service-provider base.
      */
     #[OnBoot(priority: 20)]

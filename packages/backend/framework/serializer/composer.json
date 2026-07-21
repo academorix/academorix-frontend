@@ -1,5 +1,5 @@
 {
-  "name": "academorix/serializer",
+  "name": "stackra/serializer",
   "description": "Data serialization and transformation utilities",
   "type": "library",
   "license": "MIT",
@@ -8,12 +8,12 @@
     "transformation",
     "data",
     "laravel",
-    "academorix"
+    "stackra"
   ],
   "authors": [
     {
-      "name": "Academorix Team",
-      "email": "dev@academorix.com"
+      "name": "Stackra Team",
+      "email": "dev@stackra.com"
     }
   ],
   "require": {
@@ -22,13 +22,13 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Serializer\\": "src/"
+      "Stackra\\Serializer\\": "src/"
     }
   },
   "extra": {
     "laravel": {
       "aliases": {
-        "Serializer": "Academorix\\Serializer\\Facades\\Serializer"
+        "Serializer": "Stackra\\Serializer\\Facades\\Serializer"
       }
     }
   },
@@ -37,10 +37,10 @@
     "mockery/mockery": "^1.6",
     "orchestra/testbench": "^10.0"
   },
-  "homepage": "https://github.com/academorix-inc/laravel-framework/serializer",
+  "homepage": "https://github.com/stackra-inc/laravel-framework/serializer",
   "support": {
-    "issues": "https://github.com/academorix-inc/laravel-framework/serializer/-/issues",
-    "source": "https://github.com/academorix-inc/laravel-framework/serializer"
+    "issues": "https://github.com/stackra-inc/laravel-framework/serializer/-/issues",
+    "source": "https://github.com/stackra-inc/laravel-framework/serializer"
   },
   "config": {
     "sort-packages": true,

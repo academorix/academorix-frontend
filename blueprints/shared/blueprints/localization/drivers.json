@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/localization/drivers",
+  "id": "stackra://modules/localization/drivers",
   "$version": 1,
   "title": "localization \u2014 translation driver specifications",
-  "description": "Every driver implements Academorix\\Localization\\Contracts\\TranslatorDriverInterface. Resolved by TranslatorDriverManager via config('localization.default_driver') or tenant_locale.auto_translate_driver.",
+  "description": "Every driver implements Stackra\\Localization\\Contracts\\TranslatorDriverInterface. Resolved by TranslatorDriverManager via config('localization.default_driver') or tenant_locale.auto_translate_driver.",
   "contract": {
-    "interface": "Academorix\\Localization\\Contracts\\TranslatorDriverInterface",
+    "interface": "Stackra\\Localization\\Contracts\\TranslatorDriverInterface",
     "methods": [
       {
         "signature": "translate(string $sourceText, string $sourceLocale, string $targetLocale, array $context = []): TranslationResult",
@@ -24,7 +24,7 @@
   "drivers": [
     {
       "name": "openai",
-      "class": "Academorix\\Localization\\Drivers\\OpenAITranslatorDriver",
+      "class": "Stackra\\Localization\\Drivers\\OpenAITranslatorDriver",
       "underlying_package": "openai-php/laravel",
       "strengths": [
         "Context-aware; excellent for UI copy",
@@ -40,7 +40,7 @@
     },
     {
       "name": "google",
-      "class": "Academorix\\Localization\\Drivers\\GoogleTranslatorDriver",
+      "class": "Stackra\\Localization\\Drivers\\GoogleTranslatorDriver",
       "underlying_package": "google/cloud-translate",
       "strengths": [
         "Broadest language coverage (100+)",
@@ -56,7 +56,7 @@
     },
     {
       "name": "deepl",
-      "class": "Academorix\\Localization\\Drivers\\DeepLTranslatorDriver",
+      "class": "Stackra\\Localization\\Drivers\\DeepLTranslatorDriver",
       "underlying_package": "deeplcom/deepl-php",
       "strengths": [
         "Highest quality on European languages",
@@ -103,7 +103,7 @@
     },
     {
       "name": "aws-translate",
-      "class": "Academorix\\Localization\\Drivers\\AwsTranslateDriver",
+      "class": "Stackra\\Localization\\Drivers\\AwsTranslateDriver",
       "underlying_package": "aws/aws-sdk-php",
       "strengths": ["AWS-native; keeps traffic in customer's VPC", "Real-time + batch modes"],
       "weaknesses": ["Requires AWS credentials", "Quality below DeepL on European languages"],
@@ -113,7 +113,7 @@
     },
     {
       "name": "azure-translator",
-      "class": "Academorix\\Localization\\Drivers\\AzureTranslatorDriver",
+      "class": "Stackra\\Localization\\Drivers\\AzureTranslatorDriver",
       "underlying_package": "microsoft/cognitive-services-translator",
       "strengths": ["Azure-native", "Custom Translator (train on tenant's terminology)"],
       "weaknesses": ["Requires Azure setup"],
@@ -123,7 +123,7 @@
     },
     {
       "name": "null",
-      "class": "Academorix\\Localization\\Drivers\\NullTranslatorDriver",
+      "class": "Stackra\\Localization\\Drivers\\NullTranslatorDriver",
       "purpose": "No-op driver. Returns source text unchanged with quality_score=null. Used in tests + when auto-translate is off.",
       "supports_all_locales": true
     }

@@ -2,8 +2,8 @@
   "$version": 1,
   "name": "versioning",
   "alias": "versioning",
-  "namespace": "Academorix\\Versioning",
-  "description": "Public interface versioning substrate. Owns the ApiVersion entity + DeprecationNotice entity + resolver chain (URL, header, query, webhook subscription, GraphQL) + payload transformer registry + version scheme adapters (SemVer, CalVer) + RFC 8594 Sunset workflow. Covers four surfaces: (1) REST endpoints (`/api/v1/...`), (2) content-negotiated payloads (`Accept: application/vnd.academorix.v2+json`), (3) webhook subscribers pinned to specific versions (`WebhookSubscription.api_version`), and (4) GraphQL schema versioning (feature-flag guarded, ships with #[VersionedField] + @deprecated support). Distinct from foundation's `HasVersions` trait, which handles ROW-LEVEL model history (snapshots + rollback for Eloquent models) — this module handles SURFACE-LEVEL version lifecycle. Both concerns coexist via the same word 'version' but tackle different problems.",
+  "namespace": "Stackra\\Versioning",
+  "description": "Public interface versioning substrate. Owns the ApiVersion entity + DeprecationNotice entity + resolver chain (URL, header, query, webhook subscription, GraphQL) + payload transformer registry + version scheme adapters (SemVer, CalVer) + RFC 8594 Sunset workflow. Covers four surfaces: (1) REST endpoints (`/api/v1/...`), (2) content-negotiated payloads (`Accept: application/vnd.stackra.v2+json`), (3) webhook subscribers pinned to specific versions (`WebhookSubscription.api_version`), and (4) GraphQL schema versioning (feature-flag guarded, ships with #[VersionedField] + @deprecated support). Distinct from foundation's `HasVersions` trait, which handles ROW-LEVEL model history (snapshots + rollback for Eloquent models) — this module handles SURFACE-LEVEL version lifecycle. Both concerns coexist via the same word 'version' but tackle different problems.",
   "keywords": [
     "versioning",
     "api-versioning",
@@ -18,7 +18,7 @@
     "payload-transformers"
   ],
   "priority": 12,
-  "providers": ["Academorix\\Versioning\\Providers\\VersioningServiceProvider"],
+  "providers": ["Stackra\\Versioning\\Providers\\VersioningServiceProvider"],
   "files": [],
   "dependencies": ["foundation"],
   "extendedBy": [
@@ -77,19 +77,19 @@
     "list": [
       {
         "name": "AsPayloadTransformer",
-        "class": "Academorix\\Versioning\\Attributes\\AsPayloadTransformer",
+        "class": "Stackra\\Versioning\\Attributes\\AsPayloadTransformer",
         "usage": "#[AsPayloadTransformer(surface: 'webhook', event: 'invitation.sent', from: 'v1', to: 'v2')]",
         "description": "Auto-registers a payload transformer class with the PayloadTransformerRegistry. Build-time compiler discovers + validates the transformer signature. Transformers are pure functions: `transform(array $payload): array`."
       },
       {
         "name": "VersionedField",
-        "class": "Academorix\\Versioning\\Attributes\\VersionedField",
+        "class": "Stackra\\Versioning\\Attributes\\VersionedField",
         "usage": "#[VersionedField(introducedIn: 'v2', deprecatedIn: 'v3', removedIn: 'v4')]",
         "description": "Marks a field on a data class (Spatie Data / GraphQL type) with its version lifecycle. Renderers strip fields based on the resolved request version. Feature-flag guarded via `versioning.graphql_support`."
       },
       {
         "name": "AsApiSurface",
-        "class": "Academorix\\Versioning\\Attributes\\AsApiSurface",
+        "class": "Stackra\\Versioning\\Attributes\\AsApiSurface",
         "usage": "#[AsApiSurface(name: 'invitations', versions: ['v1', 'v2'])]",
         "description": "Marks a controller or GraphQL resolver as versioned. Build-time compiler ensures every declared version has a resolver present."
       }
@@ -101,32 +101,32 @@
     "resolvers": [
       {
         "name": "url",
-        "class": "Academorix\\Versioning\\Resolvers\\UrlPathResolver",
+        "class": "Stackra\\Versioning\\Resolvers\\UrlPathResolver",
         "matches": "/api/{version}/... e.g. /api/v1/",
         "confidence": "high"
       },
       {
         "name": "header",
-        "class": "Academorix\\Versioning\\Resolvers\\ContentNegotiationResolver",
-        "matches": "Accept: application/vnd.academorix.{version}+json",
+        "class": "Stackra\\Versioning\\Resolvers\\ContentNegotiationResolver",
+        "matches": "Accept: application/vnd.stackra.{version}+json",
         "confidence": "highest"
       },
       {
         "name": "query",
-        "class": "Academorix\\Versioning\\Resolvers\\QueryParamResolver",
+        "class": "Stackra\\Versioning\\Resolvers\\QueryParamResolver",
         "matches": "?version={version}",
         "confidence": "low",
         "note": "Enabled only in non-production by default — for public docs + integration testing."
       },
       {
         "name": "webhook",
-        "class": "Academorix\\Versioning\\Resolvers\\WebhookSubscriptionResolver",
+        "class": "Stackra\\Versioning\\Resolvers\\WebhookSubscriptionResolver",
         "matches": "WebhookSubscription.api_version at dispatch time",
         "confidence": "high"
       },
       {
         "name": "graphql",
-        "class": "Academorix\\Versioning\\Resolvers\\GraphQlContextResolver",
+        "class": "Stackra\\Versioning\\Resolvers\\GraphQlContextResolver",
         "matches": "@api(version: v2) directive on the operation OR schema-inferred",
         "confidence": "high",
         "note": "Feature-flag guarded via versioning.graphql_support."
@@ -138,13 +138,13 @@
     "supported": [
       {
         "name": "semver",
-        "class": "Academorix\\Versioning\\Schemes\\SemVerScheme",
+        "class": "Stackra\\Versioning\\Schemes\\SemVerScheme",
         "example": "v1.2.3",
         "description": "Standard SemVer. Major bump = breaking. Wildcards: ^1.0 (any 1.x), ~1.2 (any 1.2.x)."
       },
       {
         "name": "calver",
-        "class": "Academorix\\Versioning\\Schemes\\CalVerScheme",
+        "class": "Stackra\\Versioning\\Schemes\\CalVerScheme",
         "example": "2024.10.15 or 2024-10-15",
         "description": "CalVer. Preferred for consumer-facing APIs where release cadence matches calendar. Every release is potentially breaking."
       }

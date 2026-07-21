@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Actions\Platform;
+namespace Stackra\Entitlements\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Entitlements\Enums\EntitlementsPermission;
-use Academorix\Entitlements\Jobs\SyncEntitlementsFromPlanJob;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Entitlements\Enums\EntitlementsPermission;
+use Stackra\Entitlements\Jobs\SyncEntitlementsFromPlanJob;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

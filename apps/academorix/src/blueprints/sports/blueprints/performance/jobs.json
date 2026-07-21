@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/performance/jobs",
+  "id": "stackra://modules/performance/jobs",
   "$version": 1,
   "title": "performance — queued jobs",
   "description": "Queued jobs this module dispatches.",

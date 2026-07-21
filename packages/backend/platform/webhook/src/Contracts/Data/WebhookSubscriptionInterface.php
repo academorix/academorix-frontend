@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Contracts\Data;
+namespace Stackra\Webhook\Contracts\Data;
 
-use Academorix\Webhook\Models\WebhookSubscription;
+use Stackra\Webhook\Models\WebhookSubscription;
 use Illuminate\Container\Attributes\Bind;
 
 /**

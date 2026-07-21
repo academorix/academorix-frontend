@@ -6,10 +6,10 @@
  * @description
  * Publishable configuration for the routing package's API-versioning
  * subsystem. Merged into the host app under the `api-versioning.*`
- * key by {@see \Academorix\Routing\Providers\ApiVersioningServiceProvider}.
+ * key by {@see \Stackra\Routing\Providers\ApiVersioningServiceProvider}.
  *
  * Every value below is INJECTED into
- * {@see \Academorix\Routing\Middleware\DetectApiVersion} as a
+ * {@see \Stackra\Routing\Middleware\DetectApiVersion} as a
  * plain array at boot time, so the middleware never touches the
  * config store during request handling. That keeps the hot path
  * allocation-free and avoids surprising behaviour when the

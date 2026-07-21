@@ -12,13 +12,13 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Foundation\Middlewares\Request;
+namespace Stackra\Foundation\Middlewares\Request;
 
 use Closure;
 use Illuminate\Http\Request;
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Support\Arr;
-use Academorix\Support\CaseConverter;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Support\Arr;
+use Stackra\Support\CaseConverter;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -43,7 +43,7 @@ use Symfony\Component\HttpFoundation\Response;
  * ```php
  * // In app/Http/Kernel.php
  * protected $middleware = [
- *     \Academorix\Foundation\Middlewares\SnakeCaseMiddleware::class,
+ *     \Stackra\Foundation\Middlewares\SnakeCaseMiddleware::class,
  * ];
  * ```
  *
@@ -51,7 +51,7 @@ use Symfony\Component\HttpFoundation\Response;
  * ```php
  * // In app/Http/Kernel.php
  * protected $middlewareAliases = [
- *     'snakecase' => \Academorix\Foundation\Middlewares\SnakeCaseMiddleware::class,
+ *     'snakecase' => \Stackra\Foundation\Middlewares\SnakeCaseMiddleware::class,
  * ];
  *
  * // In routes

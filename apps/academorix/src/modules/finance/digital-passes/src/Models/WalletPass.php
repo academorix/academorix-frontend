@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\DigitalPasses\Models;
+namespace Stackra\DigitalPasses\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\DigitalPasses\Contracts\Data\WalletPassInterface;
-use Academorix\DigitalPasses\Database\Factories\WalletPassFactory;
-use Academorix\DigitalPasses\Policies\WalletPassPolicy;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\DigitalPasses\Contracts\Data\WalletPassInterface;
+use Stackra\DigitalPasses\Database\Factories\WalletPassFactory;
+use Stackra\DigitalPasses\Policies\WalletPassPolicy;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;

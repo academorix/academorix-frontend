@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Data\Requests;
+namespace Stackra\Notifications\Mail\Data\Requests;
 
 use Spatie\LaravelData\Data;
 
@@ -11,10 +11,10 @@ use Spatie\LaravelData\Data;
  *
  * Providers ship wildly different shapes — this DTO models the
  * common outer envelope
- * ({@see \Academorix\Notifications\Mail\Actions\Central\ReceiveMailWebhook}
+ * ({@see \Stackra\Notifications\Mail\Actions\Central\ReceiveMailWebhook}
  * captures `provider`, `payload`, `headers` and hands them straight
  * to the normalisation job). Provider-specific parsing lives inside
- * {@see \Academorix\Notifications\Mail\Contracts\Services\MailProviderWebhookIngestorInterface}.
+ * {@see \Stackra\Notifications\Mail\Contracts\Services\MailProviderWebhookIngestorInterface}.
  *
  * `Data` intentionally has NO validation attributes — the middleware
  * has already verified the signature; downstream normalisation

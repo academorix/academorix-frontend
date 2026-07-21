@@ -4,16 +4,16 @@
  * @file tests/Unit/Services/ScopeContextTest.php
  *
  * @description
- * Pure unit tests for {@see \Academorix\Scope\Services\ScopeContext}
+ * Pure unit tests for {@see \Stackra\Scope\Services\ScopeContext}
  * — the push/pop/get/clear stack semantics that every downstream
  * service relies on. No container, no DB, no Testbench.
  */
 
 declare(strict_types=1);
 
-use Academorix\Scope\Data\ScopeContextData;
-use Academorix\Scope\Exceptions\ScopeContextRequiredException;
-use Academorix\Scope\Services\ScopeContext;
+use Stackra\Scope\Data\ScopeContextData;
+use Stackra\Scope\Exceptions\ScopeContextRequiredException;
+use Stackra\Scope\Services\ScopeContext;
 
 // Pure-unit tests — override the Testbench default from Pest.php.
 uses()->group('unit', 'scope');

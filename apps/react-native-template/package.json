@@ -18,9 +18,9 @@
     "react-native-safe-area-context": "^5.5.2"
   },
   "devDependencies": {
-    "@academorix/config-eslint": "workspace:*",
-    "@academorix/config-tsconfig": "workspace:*",
-    "@academorix/config-tsup": "workspace:*",
+    "@stackra/config-eslint": "workspace:*",
+    "@stackra/config-tsconfig": "workspace:*",
+    "@stackra/config-tsup": "workspace:*",
     "@babel/core": "catalog:",
     "@babel/preset-env": "^7.25.3",
     "@babel/runtime": "^7.25.0",

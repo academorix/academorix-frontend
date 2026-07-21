@@ -36,14 +36,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Routing\Http\Exceptions;
+namespace Stackra\Routing\Http\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-final class UnsupportedApiVersionException extends AcademorixException
+final class UnsupportedApiVersionException extends StackraException
 {
     /** Stable public code. */
     public const CODE = 'routing.api_version.unsupported';

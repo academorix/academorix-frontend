@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Console;
+namespace Stackra\Transfer\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Transfer\Contracts\Data\XferJobInterface;
-use Academorix\Transfer\Contracts\Repositories\XferJobRepositoryInterface;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Transfer\Contracts\Data\XferJobInterface;
+use Stackra\Transfer\Contracts\Repositories\XferJobRepositoryInterface;
 
 /**
  * `php artisan transfer:jobs` — list xfer_jobs for support triage.

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use Academorix\Foundation\Enums\FileExtension;
-use Academorix\Foundation\Exceptions\NodeNotFoundException;
-use Academorix\Support\Arr;
-use Academorix\Support\Path;
-use Academorix\Support\Str;
+use Stackra\Foundation\Enums\FileExtension;
+use Stackra\Foundation\Exceptions\NodeNotFoundException;
+use Stackra\Support\Arr;
+use Stackra\Support\Path;
+use Stackra\Support\Str;
 use Symfony\Component\Process\ExecutableFinder;
 
 /*
@@ -442,7 +442,7 @@ if (! function_exists('tsx_binary')) {
      */
     function tsx_binary(): string
     {
-        return new ExecutableFinder()->find('tsx') ?? base_path(join_paths('node_academorix', '.bin', 'tsx'));
+        return new ExecutableFinder()->find('tsx') ?? base_path(join_paths('node_stackra', '.bin', 'tsx'));
     }
 }
 

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Contracts\Repositories;
+namespace Stackra\Compliance\Contracts\Repositories;
 
-use Academorix\Compliance\Models\Subprocessor;
-use Academorix\Compliance\Repositories\EloquentSubprocessorRepository;
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Compliance\Models\Subprocessor;
+use Stackra\Compliance\Repositories\EloquentSubprocessorRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

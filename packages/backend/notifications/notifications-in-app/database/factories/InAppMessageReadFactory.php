@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Database\Factories;
+namespace Stackra\Notifications\InApp\Database\Factories;
 
-use Academorix\Notifications\InApp\Contracts\Data\InAppMessageReadInterface;
-use Academorix\Notifications\InApp\Models\InAppMessageRead;
+use Stackra\Notifications\InApp\Contracts\Data\InAppMessageReadInterface;
+use Stackra\Notifications\InApp\Models\InAppMessageRead;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

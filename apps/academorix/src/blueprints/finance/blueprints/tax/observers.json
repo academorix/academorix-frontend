@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/tax/observers",
+  "id": "stackra://modules/tax/observers",
   "$version": 1,
   "title": "tax — Eloquent observers",
   "description": "Four observers enforce the module's write-time invariants: rate creation with effective-range validation + overlap detection, jurisdiction with ISO 3166 validation, exemption with certificate URL + verification workflow, and calculation with the immutable snapshot pattern.",
   "observers": [
     {
       "model": "TaxRate",
-      "observer": "Academorix\\Finance\\Tax\\Observers\\TaxRateObserver",
+      "observer": "Stackra\\Finance\\Tax\\Observers\\TaxRateObserver",
       "handles": [
         "creating → populate ULID prefix `txr_`",
         "creating → refuse when tenant does NOT hold `tax_capture` entitlement (returns `TAX_FEATURE_NOT_ENTITLED`)",
@@ -24,7 +24,7 @@
     },
     {
       "model": "TaxJurisdiction",
-      "observer": "Academorix\\Finance\\Tax\\Observers\\TaxJurisdictionObserver",
+      "observer": "Stackra\\Finance\\Tax\\Observers\\TaxJurisdictionObserver",
       "handles": [
         "creating → populate ULID prefix `txj_`",
         "creating → validate country_code against ISO 3166-1 alpha-2 catalog via league/iso3166 (returns `TAX_JURISDICTION_INVALID_COUNTRY`)",
@@ -42,7 +42,7 @@
     },
     {
       "model": "TaxExemption",
-      "observer": "Academorix\\Finance\\Tax\\Observers\\TaxExemptionObserver",
+      "observer": "Stackra\\Finance\\Tax\\Observers\\TaxExemptionObserver",
       "handles": [
         "creating → populate ULID prefix `txe_`",
         "creating → refuse when tenant does NOT hold `tax_exemption_management` entitlement (returns `TAX_EXEMPTION_MANAGEMENT_NOT_ENTITLED`)",
@@ -67,7 +67,7 @@
     },
     {
       "model": "TaxCalculation",
-      "observer": "Academorix\\Finance\\Tax\\Observers\\TaxCalculationObserver",
+      "observer": "Stackra\\Finance\\Tax\\Observers\\TaxCalculationObserver",
       "handles": [
         "creating → populate ULID prefix `txc_`",
         "creating → refuse when tenant does NOT hold `tax_capture` entitlement (returns `TAX_FEATURE_NOT_ENTITLED`)",

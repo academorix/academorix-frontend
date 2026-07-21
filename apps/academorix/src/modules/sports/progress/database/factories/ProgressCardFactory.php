@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Progress\Database\Factories;
+namespace Stackra\Progress\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Progress\Contracts\Data\ProgressCardInterface;
-use Academorix\Progress\Models\ProgressCard;
+use Stackra\Progress\Contracts\Data\ProgressCardInterface;
+use Stackra\Progress\Models\ProgressCard;
 
 /**
- * Factory for {@see \Academorix\Progress\Models\ProgressCard}.
+ * Factory for {@see \Stackra\Progress\Models\ProgressCard}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Progress\Models\ProgressCard>
+ * @extends Factory<\Stackra\Progress\Models\ProgressCard>
  *
  * @category Progress
  *

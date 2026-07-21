@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Performance\Contracts\Data;
+namespace Stackra\Performance\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Performance\Models\Benchmark;
+use Stackra\Performance\Models\Benchmark;
 
 /**
  * Table shape for the `benchmarks` table.

@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Services;
+namespace Stackra\Notifications\Services;
 
-use Academorix\Notifications\Contracts\Services\NotificationPreferenceResolverInterface;
+use Stackra\Notifications\Contracts\Services\NotificationPreferenceResolverInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Notifications\Contracts\Repositories\NotificationCategoryRepositoryInterface;
+use Stackra\Notifications\Contracts\Repositories\NotificationCategoryRepositoryInterface;
 
 /**
  * Concrete service — NotificationPreferenceResolver.

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Events;
+namespace Stackra\Facility\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -17,7 +17,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - audit::WriteToAuditLog
  * - activity::WriteToActivityLog
  * - notifications::AlertOpsOnBookingOverlap (page the on-call)
- * - observability::MetricsCollector (increments academorix.facility.overlaps.detected — this counter should stay at 0)
+ * - observability::MetricsCollector (increments stackra.facility.overlaps.detected — this counter should stay at 0)
  *
  * @category Facility
  *

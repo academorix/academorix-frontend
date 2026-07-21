@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/analytics/routes",
+  "id": "stackra://modules/analytics/routes",
   "$version": 1,
   "title": "analytics — HTTP routes",
   "description": "Two hosts: tenant (main admin surface) + platform-admin (cross-tenant support). Every route enforces analytics_capture entitlement + tenant.resolve middleware. Event + delivery routes are READ-only; provider + identity have full CRUD; funnel + experiment are report endpoints. No public endpoints \u2014 analytics ingestion is via the internal listener path, never via an HTTP verb from the browser (that's `@stackra/analytics` frontend's job).",
@@ -23,13 +23,13 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsEventController@index",
+          "controller": "Stackra\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsEventController@index",
           "permission": "analytics.events.viewAny"
         },
         {
           "method": "GET",
           "path": "/{event}",
-          "controller": "Academorix\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsEventController@show",
+          "controller": "Stackra\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsEventController@show",
           "permission": "analytics.events.view"
         }
       ]
@@ -53,7 +53,7 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsDeliveryController@index",
+          "controller": "Stackra\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsDeliveryController@index",
           "permission": "analytics.deliveries.viewAny"
         }
       ]
@@ -77,13 +77,13 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsProviderConfigController@index",
+          "controller": "Stackra\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsProviderConfigController@index",
           "permission": "analytics.providers.viewAny"
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsProviderConfigController@store",
+          "controller": "Stackra\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsProviderConfigController@store",
           "permission": "analytics.providers.create",
           "entitlements": ["analytics_provider_slot"],
           "description": "Consumes analytics_provider_slot; refused with 403 when no slot remaining."
@@ -91,26 +91,26 @@
         {
           "method": "GET",
           "path": "/{provider}",
-          "controller": "Academorix\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsProviderConfigController@show",
+          "controller": "Stackra\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsProviderConfigController@show",
           "permission": "analytics.providers.view"
         },
         {
           "method": "PATCH",
           "path": "/{provider}",
-          "controller": "Academorix\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsProviderConfigController@update",
+          "controller": "Stackra\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsProviderConfigController@update",
           "permission": "analytics.providers.update"
         },
         {
           "method": "DELETE",
           "path": "/{provider}",
-          "controller": "Academorix\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsProviderConfigController@destroy",
+          "controller": "Stackra\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsProviderConfigController@destroy",
           "permission": "analytics.providers.delete",
           "description": "Soft-delete. Releases the analytics_provider_slot after the batch buffer drains."
         },
         {
           "method": "POST",
           "path": "/{provider}/test",
-          "controller": "Academorix\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsProviderConfigController@test",
+          "controller": "Stackra\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsProviderConfigController@test",
           "permission": "analytics.providers.test",
           "throttle": "custom:30,3600",
           "description": "Dispatches a synthetic test event. Rate-limited to 30 tests/hour."
@@ -118,7 +118,7 @@
         {
           "method": "POST",
           "path": "/{provider}/reset-circuit-breaker",
-          "controller": "Academorix\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsProviderConfigController@resetCircuitBreaker",
+          "controller": "Stackra\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsProviderConfigController@resetCircuitBreaker",
           "permission": "analytics.providers.reset_circuit_breaker",
           "description": "Manually forces circuit_breaker_state.state \u2192 closed. Emits an audit row + AnalyticsProviderCircuitBreakerClosed event."
         }
@@ -143,13 +143,13 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsIdentityController@index",
+          "controller": "Stackra\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsIdentityController@index",
           "permission": "analytics.identities.viewAny"
         },
         {
           "method": "POST",
           "path": "/{identity}/merge",
-          "controller": "Academorix\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsIdentityController@merge",
+          "controller": "Stackra\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsIdentityController@merge",
           "permission": "analytics.identities.merge",
           "entitlements": ["analytics_identity_merge"],
           "description": "Merges one or more identities into this one. Enterprise-only entitlement."
@@ -157,7 +157,7 @@
         {
           "method": "POST",
           "path": "/{identity}/identify",
-          "controller": "Academorix\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsIdentityController@identify",
+          "controller": "Stackra\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsIdentityController@identify",
           "permission": "analytics.identities.identify",
           "description": "Server-side identify \u2014 associates an anonymous_id with a User.id."
         }
@@ -183,7 +183,7 @@
         {
           "method": "GET",
           "path": "/{funnel_key}/report",
-          "controller": "Academorix\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsFunnelController@report",
+          "controller": "Stackra\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsFunnelController@report",
           "permission": "analytics.funnels.view"
         }
       ]
@@ -207,7 +207,7 @@
         {
           "method": "GET",
           "path": "/{experiment_key}/results",
-          "controller": "Academorix\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsExperimentController@results",
+          "controller": "Stackra\\Growth\\Analytics\\Http\\Controllers\\Tenant\\AnalyticsExperimentController@results",
           "permission": "analytics.experiments.view"
         }
       ]
@@ -229,13 +229,13 @@
         {
           "method": "GET",
           "path": "/deliveries",
-          "controller": "Academorix\\Growth\\Analytics\\Http\\Controllers\\Platform\\AnalyticsDeliveryController@index",
+          "controller": "Stackra\\Growth\\Analytics\\Http\\Controllers\\Platform\\AnalyticsDeliveryController@index",
           "permission": "analytics.deliveries.viewAny (platform_admin guard)"
         },
         {
           "method": "GET",
           "path": "/circuit-breakers",
-          "controller": "Academorix\\Growth\\Analytics\\Http\\Controllers\\Platform\\AnalyticsCircuitBreakerController@index",
+          "controller": "Stackra\\Growth\\Analytics\\Http\\Controllers\\Platform\\AnalyticsCircuitBreakerController@index",
           "permission": "analytics.circuit_breakers.viewAny (platform_admin guard)",
           "description": "Cross-tenant view of every open + half-open circuit breaker. Sorted by opened_at desc."
         }

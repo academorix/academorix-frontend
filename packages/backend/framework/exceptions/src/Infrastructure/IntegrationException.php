@@ -22,22 +22,22 @@
  *   exceptions::infrastructure.upstream_error        (class default)
  *   exceptions::infrastructure.upstream_error_named  ({@see upstream()})
  *
- * @see \Academorix\Exceptions\AcademorixException  Base class.
+ * @see \Stackra\Exceptions\StackraException  Base class.
  * @see TimeoutException  Subclass for the "took too long" flavour.
  * @see ServiceUnavailableException  Sibling class for INTERNAL dependency outages.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Infrastructure;
+namespace Stackra\Exceptions\Infrastructure;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class IntegrationException extends AcademorixException
+class IntegrationException extends StackraException
 {
     /**
      * Machine-readable code — clients that special-case third-party

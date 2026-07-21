@@ -10,8 +10,8 @@
 
 declare(strict_types=1);
 
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Contracts\Data\SignedUrlAuditInterface;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Contracts\Data\SignedUrlAuditInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

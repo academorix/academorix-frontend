@@ -14,10 +14,10 @@
  * `HasSortOrder`, `HasUuid`, `HasUserStamp`, `HasArchive`) read
  * their per-model configuration from a class attribute at
  * `booted<Trait>` time — the same pattern used across the
- * `academorix/database` attribute surface (`#[Sluggable]`,
+ * `stackra/database` attribute surface (`#[Sluggable]`,
  * `#[Taggable]`, `#[StatusColumn]`, …).
  *
- * The old codebase used `academorix/discovery` /
+ * The old codebase used `stackra/discovery` /
  * `pixielity/laravel-discovery` for this so the read hit a cached
  * attribute map and cost O(1). The new monorepo has moved to
  * `olvlvl/composer-attribute-collector` which exposes attribute
@@ -56,7 +56,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Database\Support;
+namespace Stackra\Database\Support;
 
 use ReflectionClass;
 
@@ -70,13 +70,13 @@ use ReflectionClass;
  * instance form so consumers can `instanceof`-check without
  * touching PHP reflection themselves.
  *
- * @see \Academorix\Database\Concerns\Model\HasSlug
- * @see \Academorix\Database\Concerns\Model\HasTags
- * @see \Academorix\Database\Concerns\Model\HasStatus
- * @see \Academorix\Database\Concerns\Model\HasSortOrder
- * @see \Academorix\Database\Concerns\Model\HasUuid
- * @see \Academorix\Database\Concerns\Model\HasUserStamp
- * @see \Academorix\Database\Concerns\Model\HasArchive
+ * @see \Stackra\Database\Concerns\Model\HasSlug
+ * @see \Stackra\Database\Concerns\Model\HasTags
+ * @see \Stackra\Database\Concerns\Model\HasStatus
+ * @see \Stackra\Database\Concerns\Model\HasSortOrder
+ * @see \Stackra\Database\Concerns\Model\HasUuid
+ * @see \Stackra\Database\Concerns\Model\HasUserStamp
+ * @see \Stackra\Database\Concerns\Model\HasArchive
  */
 final class AttributeReader
 {

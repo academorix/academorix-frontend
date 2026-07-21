@@ -1,90 +1,90 @@
 {
-  "id": "academorix://modules/marketing/rules",
+  "id": "stackra://modules/marketing/rules",
   "$version": 1,
   "title": "marketing — validation rules",
   "description": "Custom Laravel validation rules published by MarketingServiceProvider::boot(). All rules are used both by the observer chain (for authoritative refusal on write) AND by FormRequest data classes (for early request-time validation with clear error surfaces).",
-  "namespace": "Academorix\\Growth\\Marketing\\Rules",
+  "namespace": "Stackra\\Growth\\Marketing\\Rules",
   "rules": [
     {
       "name": "valid_event_type",
-      "class": "Academorix\\Growth\\Marketing\\Rules\\ValidEventType",
+      "class": "Stackra\\Growth\\Marketing\\Rules\\ValidEventType",
       "signature": "valid_event_type",
       "description": "Value is one of the 25+ marketing event types: signup / trial_started / trial_ended / trial_converted / subscription_started / subscription_upgraded / subscription_downgraded / subscription_cancelled / membership_purchased / lead_captured / session_booked / event_registered / athlete_enrolled / athlete_withdrawn / cart_abandoned / churn_predicted / referral_completed / refund_issued / chargeback_filed / feature_used_high_value / demo_scheduled / demo_attended / newsletter_subscribed / newsletter_unsubscribed / contact_form_submitted / app_install. Backed by the MarketingEventType enum cast + data/event-type-catalog.json.",
       "default_message": "The :attribute must be a valid marketing event type. See data/event-type-catalog.json for the full list."
     },
     {
       "name": "valid_provider",
-      "class": "Academorix\\Growth\\Marketing\\Rules\\ValidProvider",
+      "class": "Stackra\\Growth\\Marketing\\Rules\\ValidProvider",
       "signature": "valid_provider",
       "description": "Value is one of the 9 supported provider slugs: meta_capi / google_ads / google_analytics_4 / gtm_server / tiktok_events / linkedin_insight / snapchat_capi / pinterest_capi / custom_webhook. Backed by the MarketingProvider enum cast.",
       "default_message": "The :attribute must be one of: meta_capi, google_ads, google_analytics_4, gtm_server, tiktok_events, linkedin_insight, snapchat_capi, pinterest_capi, custom_webhook."
     },
     {
       "name": "valid_currency",
-      "class": "Academorix\\Growth\\Marketing\\Rules\\ValidCurrency",
+      "class": "Stackra\\Growth\\Marketing\\Rules\\ValidCurrency",
       "signature": "valid_currency",
       "description": "ISO 4217 3-letter uppercase currency code. Skipped when value_amount_cents is null (currency is only required for revenue events).",
       "default_message": "The :attribute must be a valid ISO 4217 currency code (e.g. USD, EUR, GBP)."
     },
     {
       "name": "valid_positive_amount",
-      "class": "Academorix\\Growth\\Marketing\\Rules\\ValidPositiveAmount",
+      "class": "Stackra\\Growth\\Marketing\\Rules\\ValidPositiveAmount",
       "signature": "valid_positive_amount",
       "description": "value_amount_cents is a non-negative integer when set. Refund + chargeback events allow negative values (they represent revenue reversal).",
       "default_message": "The :attribute must be non-negative (or negative for refund/chargeback event types)."
     },
     {
       "name": "valid_attribution_snapshot_shape",
-      "class": "Academorix\\Growth\\Marketing\\Rules\\ValidAttributionSnapshotShape",
+      "class": "Stackra\\Growth\\Marketing\\Rules\\ValidAttributionSnapshotShape",
       "signature": "valid_attribution_snapshot_shape",
       "description": "attribution jsonb matches the shape: { utm_source?, utm_medium?, utm_campaign?, utm_content?, utm_term?, gclid?, fbclid?, ttclid?, msclkid?, sccid?, first_touch_at?, last_touch_at?, landing_page?, referrer?, session_id? }. Every field optional; empty object {} allowed (server-side signup with no cookies). Validated against schemas/attribution-snapshot.embed.json (embedded in marketing-event.schema.json).",
       "default_message": "The :attribute is not a valid attribution snapshot."
     },
     {
       "name": "valid_consent_snapshot_shape",
-      "class": "Academorix\\Growth\\Marketing\\Rules\\ValidConsentSnapshotShape",
+      "class": "Stackra\\Growth\\Marketing\\Rules\\ValidConsentSnapshotShape",
       "signature": "valid_consent_snapshot_shape",
       "description": "consent_snapshot jsonb matches the shape: { marketing: boolean, advertising: boolean, personalized_advertising: boolean, recorded_at: ISO 8601 }. Every field required.",
       "default_message": "The :attribute is not a valid consent snapshot."
     },
     {
       "name": "valid_deduplication_key",
-      "class": "Academorix\\Growth\\Marketing\\Rules\\ValidDeduplicationKey",
+      "class": "Stackra\\Growth\\Marketing\\Rules\\ValidDeduplicationKey",
       "signature": "valid_deduplication_key",
       "description": "String, 1-128 characters, alphanumeric + underscores + dashes only. Uniqueness enforced by DB composite index (tenant_id, deduplication_key) partial WHERE deleted_at IS NULL — this rule enforces shape only.",
       "default_message": "The :attribute must be 1-128 alphanumeric characters (underscores + dashes allowed)."
     },
     {
       "name": "valid_provider_config_shape",
-      "class": "Academorix\\Growth\\Marketing\\Rules\\ValidProviderConfigShape",
+      "class": "Stackra\\Growth\\Marketing\\Rules\\ValidProviderConfigShape",
       "signature": "valid_provider_config_shape",
       "description": "config jsonb validates against the per-provider JSON Schema in data/providers/<provider>-config.schema.json. Meta CAPI: pixel_id + access_token. Google Ads: customer_id + api_key + conversion_action_id. GA4: measurement_id + api_secret. GTM Server: webhook_url + hmac_secret. TikTok: pixel_code + access_token. LinkedIn: conversion_urn + oauth_token. Snapchat: pixel_id + access_token. Pinterest: ad_account_id + oauth_token. Custom Webhook: url + hmac_secret.",
       "default_message": "The provider config does not match the schema for the ':provider' provider. Missing required fields: :missing_fields."
     },
     {
       "name": "valid_test_event_code",
-      "class": "Academorix\\Growth\\Marketing\\Rules\\ValidTestEventCode",
+      "class": "Stackra\\Growth\\Marketing\\Rules\\ValidTestEventCode",
       "signature": "valid_test_event_code",
       "description": "When provider = meta_capi AND test_mode = true: test_event_code must match ^TEST[0-9]+$ (Meta's format). Skipped for other providers (they don't use test_event_code).",
       "default_message": "The Meta CAPI test event code must match TEST[0-9]+ (e.g. TEST12345)."
     },
     {
       "name": "valid_circuit_breaker_config",
-      "class": "Academorix\\Growth\\Marketing\\Rules\\ValidCircuitBreakerConfig",
+      "class": "Stackra\\Growth\\Marketing\\Rules\\ValidCircuitBreakerConfig",
       "signature": "valid_circuit_breaker_config",
       "description": "circuit_breaker_config jsonb matches the shape: { failure_threshold: int [1, 100], open_duration_seconds: int [60, 86400], half_open_test_events: int [1, 5] }.",
       "default_message": "The :attribute is not a valid circuit-breaker configuration."
     },
     {
       "name": "valid_retry_config",
-      "class": "Academorix\\Growth\\Marketing\\Rules\\ValidRetryConfig",
+      "class": "Stackra\\Growth\\Marketing\\Rules\\ValidRetryConfig",
       "signature": "valid_retry_config",
       "description": "retry_config jsonb matches: { max_attempts: int [1, 10], backoff_seconds: int[] with length = max_attempts AND every value in [1, 86400] AND monotonically non-decreasing }.",
       "default_message": "The :attribute is not a valid retry configuration. backoff_seconds must have exactly max_attempts entries + be non-decreasing."
     },
     {
       "name": "valid_enabled_event_types",
-      "class": "Academorix\\Growth\\Marketing\\Rules\\ValidEnabledEventTypes",
+      "class": "Stackra\\Growth\\Marketing\\Rules\\ValidEnabledEventTypes",
       "signature": "valid_enabled_event_types",
       "description": "enabled_event_types is a non-empty jsonb array AND every element is a valid MarketingEventType AND every element is in the provider's supports() list (per data/provider-capability-matrix.json — e.g. LinkedIn Insight does not support 'refund_issued').",
       "default_message": "One or more event types in :attribute are not supported by the ':provider' provider. See data/provider-capability-matrix.json."

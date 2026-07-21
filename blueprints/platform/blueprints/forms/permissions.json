@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/forms/permissions",
+  "id": "stackra://modules/forms/permissions",
   "$version": 1,
   "title": "forms — permissions",
-  "seeder": "Academorix\\Platform\\Forms\\Database\\Seeders\\FormsPermissionSeeder",
+  "seeder": "Stackra\\Platform\\Forms\\Database\\Seeders\\FormsPermissionSeeder",
   "isSystem": true,
   "description": "Form authoring gated to admin roles. Public submission requires no permission — the signed session URL IS the auth. Submissions carrying medical / safeguarding classified fields require the equivalent role to read.",
   "permissions": [

@@ -31,7 +31,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Domain;
+namespace Stackra\Exceptions\Domain;
 
 class BusinessRuleException extends DomainException
 {

@@ -4,7 +4,7 @@
  * @file packages/health/tests/Pest.php
  *
  * @description
- * Pest bootstrap for the `academorix/health` test suite. Kept
+ * Pest bootstrap for the `stackra/health` test suite. Kept
  * minimal — Feature tests boot Testbench per case, and Unit tests
  * run in isolation without a framework instance.
  *

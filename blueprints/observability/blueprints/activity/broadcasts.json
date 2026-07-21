@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/activity/broadcasts",
+  "id": "stackra://modules/activity/broadcasts",
   "$version": 1,
   "title": "activity — broadcast channels",
   "description": "Two broadcast channels this module owns. Registered by `ActivityServiceProvider::registerBroadcastChannels()`. Tenant-scoped channel for admin dashboards + shared feed views; user-scoped channel for the caller's own 'My activity' panel. Broadcast is entitled — Free-tier tenants fall back to polling.",

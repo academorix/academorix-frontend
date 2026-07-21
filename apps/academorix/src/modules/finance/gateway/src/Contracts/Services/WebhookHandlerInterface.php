@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Gateway\Contracts\Services;
+namespace Stackra\Gateway\Contracts\Services;
 
-use Academorix\Gateway\Data\WebhookEnvelope;
-use Academorix\Gateway\Services\WebhookHandler;
+use Stackra\Gateway\Data\WebhookEnvelope;
+use Stackra\Gateway\Services\WebhookHandler;
 use Illuminate\Container\Attributes\Bind;
 
 /**

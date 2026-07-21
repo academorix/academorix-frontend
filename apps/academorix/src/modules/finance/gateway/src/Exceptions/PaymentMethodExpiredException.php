@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Gateway\Exceptions;
+namespace Stackra\Gateway\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Card exp_month + exp_year in the past.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PaymentMethodExpiredException extends AcademorixException
+final class PaymentMethodExpiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

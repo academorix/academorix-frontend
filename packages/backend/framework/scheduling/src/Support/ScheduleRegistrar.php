@@ -7,7 +7,7 @@
  * Turns the {@see ScheduledTask} list produced by
  * {@see ScheduleDiscovery} into concrete registrations on
  * Laravel's `Schedule` instance. Invoked from
- * {@see \Academorix\Scheduling\Providers\SchedulingServiceProvider}
+ * {@see \Stackra\Scheduling\Providers\SchedulingServiceProvider}
  * inside `$this->callAfterResolving(Schedule::class, ...)` so the
  * scheduler binding is guaranteed available.
  *
@@ -16,7 +16,7 @@
  *   1. `Schedule::job()` or `Schedule::command()` — chosen from
  *      the task's `$isCommand` flag which the discovery layer
  *      derives via reflection on `Illuminate\Console\Command`.
- *   2. Apply cadence — either the {@see \Academorix\Scheduling\Enums\Frequency}'s
+ *   2. Apply cadence — either the {@see \Stackra\Scheduling\Enums\Frequency}'s
  *      own `apply()` helper OR `->cron($expression)` for raw
  *      expressions.
  *   3. Layer modifiers, in the order the spec dictates:
@@ -45,9 +45,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scheduling\Support;
+namespace Stackra\Scheduling\Support;
 
-use Academorix\Scheduling\Contracts\ScheduleGate;
+use Stackra\Scheduling\Contracts\ScheduleGate;
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Container\Attributes\Config;

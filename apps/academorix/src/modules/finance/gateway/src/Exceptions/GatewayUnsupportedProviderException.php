@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Gateway\Exceptions;
+namespace Stackra\Gateway\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
- * Provider is not yet supported by this Academorix version.
+ * Provider is not yet supported by this Stackra version.
  *
  * @category Gateway
  *
  * @since    0.1.0
  */
-final class GatewayUnsupportedProviderException extends AcademorixException
+final class GatewayUnsupportedProviderException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

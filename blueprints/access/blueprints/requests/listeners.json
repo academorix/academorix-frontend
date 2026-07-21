@@ -1,66 +1,66 @@
 {
-  "id": "academorix://modules/access/requests/listeners",
+  "id": "stackra://modules/access/requests/listeners",
   "$version": 1,
   "title": "requests \u2014 subscribed events",
   "description": "Cross-module reactions handled by this module. Most of the module's PUBLIC events fire from these listeners \u2014 they subscribe to workflow/approvals lifecycle events, filter on `action_key='access.grants.create'`, and re-broadcast as the matching AccessRequest event. This is the SHIM layer that decouples this module's public interface from workflow/approvals' internals.",
   "listeners": [
     {
       "event": "workflow/approvals::ApprovalRequested",
-      "listener": "Academorix\\AccessRequest\\Listeners\\ShimApprovalRequestedListener",
+      "listener": "Stackra\\AccessRequest\\Listeners\\ShimApprovalRequestedListener",
       "queue": "notifications",
       "purpose": "Filters ApprovalRequested events to `action_key='access.grants.create'`. Fetches the requester + resolved approvers via the AccessRequestPresenter and re-broadcasts as `AccessRequestSubmitted`. This is the entry-point of the bridge \u2014 without this listener no downstream consumer of AccessRequest events would ever fire on submit."
     },
     {
       "event": "workflow/approvals::ApprovalGranted",
-      "listener": "Academorix\\AccessRequest\\Listeners\\ShimApprovalGrantedListener",
+      "listener": "Stackra\\AccessRequest\\Listeners\\ShimApprovalGrantedListener",
       "queue": "notifications",
       "purpose": "Filters to `action_key='access.grants.create'`. Re-broadcasts as `AccessRequestApproved`. Note: this fires BEFORE the grant is materialised \u2014 the requester's approval notification includes optimistic language ('you should now be able to access X'). AccessRequestGrantMaterializer fires next on ApprovalExecuted."
     },
     {
       "event": "workflow/approvals::ApprovalExecuted",
-      "listener": "Academorix\\AccessRequest\\Listeners\\AccessRequestGrantMaterializer",
+      "listener": "Stackra\\AccessRequest\\Listeners\\AccessRequestGrantMaterializer",
       "queue": "default",
       "purpose": "The BRIDGE. Filters ApprovalExecuted to `action_key='access.grants.create'`. Calls `access/grants::GrantIssuer::issue()` with the request's requester as subject, requested resource as resource, and requested permissions as the grant scope. Writes back `context_json.materialised_grant_id = <new_grant_id>` on the approval_instance via `workflow/approvals::AppendInstanceContextAction`. Fires `AccessRequestGrantIssued` on success. On failure (grant creation raises), records an audit event + fires no downstream event \u2014 the approval_instance is left in `approved` status but with `context_json.materialised_grant_id=null` so operators can retry via `access-requests:remediate-orphaned-approvals`."
     },
     {
       "event": "workflow/approvals::ApprovalRejected",
-      "listener": "Academorix\\AccessRequest\\Listeners\\ShimApprovalRejectedListener",
+      "listener": "Stackra\\AccessRequest\\Listeners\\ShimApprovalRejectedListener",
       "queue": "notifications",
       "purpose": "Filters to `action_key='access.grants.create'`. Re-broadcasts as `AccessRequestRejected`. Extracts the rejecting decision's comment as the human-readable reason for the requester's notification."
     },
     {
       "event": "workflow/approvals::ApprovalExpired",
-      "listener": "Academorix\\AccessRequest\\Listeners\\ShimApprovalExpiredListener",
+      "listener": "Stackra\\AccessRequest\\Listeners\\ShimApprovalExpiredListener",
       "queue": "notifications",
       "purpose": "Filters to `action_key='access.grants.create'`. Re-broadcasts as `AccessRequestExpired`."
     },
     {
       "event": "workflow/approvals::ApprovalCancelled",
-      "listener": "Academorix\\AccessRequest\\Listeners\\ShimApprovalCancelledListener",
+      "listener": "Stackra\\AccessRequest\\Listeners\\ShimApprovalCancelledListener",
       "queue": "notifications",
       "purpose": "Filters to `action_key='access.grants.create'`. Re-broadcasts as `AccessRequestCancelled` with `cancelledByRequester=true`."
     },
     {
       "event": "access/grants::GrantRevoked",
-      "listener": "Academorix\\AccessRequest\\Listeners\\CleanupOrphanedRequestOnGrantRevocationListener",
+      "listener": "Stackra\\AccessRequest\\Listeners\\CleanupOrphanedRequestOnGrantRevocationListener",
       "queue": "default",
       "purpose": "When a grant sourced from an access request is revoked (via `access/grants::RevokeGrantAction`), this listener finds the underlying approval_instance via `source_reference` and writes an `access_grant_revoked` audit note to `context_json.audit_trail[]`. Does NOT cancel the approval_instance \u2014 the request WAS approved historically; the grant was later revoked, which is a separate lifecycle event."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\AccessRequest\\Listeners\\CleanupOrphanedRequestOnTenantErasureListener",
+      "listener": "Stackra\\AccessRequest\\Listeners\\CleanupOrphanedRequestOnTenantErasureListener",
       "queue": "default",
       "purpose": "Deletes pending access requests for the erased tenant. Cascade FK on approval_instances.tenant_id already handles the row delete; this listener writes the compliance-side audit trail entry."
     },
     {
       "event": "user::UserDeleted",
-      "listener": "Academorix\\AccessRequest\\Listeners\\CancelOrphanedRequestsOnRequesterDeletionListener",
+      "listener": "Stackra\\AccessRequest\\Listeners\\CancelOrphanedRequestsOnRequesterDeletionListener",
       "queue": "default",
       "purpose": "When a User is deleted, auto-cancels their pending access requests (POST to workflow/approvals::withdraw with system actor) so the approvers' inbox doesn't carry stale entries. Sets `context_json.cancellation_reason='requester_deleted'`."
     },
     {
       "event": "access/rbac::PermissionRevokedFromResourceType",
-      "listener": "Academorix\\AccessRequest\\Listeners\\InvalidateAccessRequestableRegistryEntryListener",
+      "listener": "Stackra\\AccessRequest\\Listeners\\InvalidateAccessRequestableRegistryEntryListener",
       "queue": "default",
       "purpose": "When a resource type's permission set changes (e.g. `invoices.export` was removed from the resource type's declared permissions), the registry entry is refreshed on the next boot. This listener also clears the `access-requests:requestable-registry` cache key so the change takes effect without a redeploy."
     }

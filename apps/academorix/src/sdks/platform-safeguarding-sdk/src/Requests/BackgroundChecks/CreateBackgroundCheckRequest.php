@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformSafeguardingSdk\Requests\BackgroundChecks;
+namespace Stackra\PlatformSafeguardingSdk\Requests\BackgroundChecks;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\PlatformSafeguardingSdk\Data\BackgroundCheckData;
-use Academorix\PlatformSafeguardingSdk\Payloads\BackgroundChecks\CreateBackgroundCheckPayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\PlatformSafeguardingSdk\Data\BackgroundCheckData;
+use Stackra\PlatformSafeguardingSdk\Payloads\BackgroundChecks\CreateBackgroundCheckPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

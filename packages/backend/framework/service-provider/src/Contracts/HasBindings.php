@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\ServiceProvider\Contracts;
+namespace Stackra\ServiceProvider\Contracts;
 
 /**
  * Contract for service providers that register container bindings.

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Console\Commands;
+namespace Stackra\Notifications\Push\Console\Commands;
 
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
-use Academorix\Notifications\Push\Contracts\Repositories\PushSubscriptionRepositoryInterface;
-use Academorix\Notifications\Push\Jobs\ValidatePushTokenJob;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
+use Stackra\Notifications\Push\Contracts\Repositories\PushSubscriptionRepositoryInterface;
+use Stackra\Notifications\Push\Jobs\ValidatePushTokenJob;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 /**

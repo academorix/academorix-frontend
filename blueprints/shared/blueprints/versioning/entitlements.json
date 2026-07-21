@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/versioning/entitlements",
+  "id": "stackra://modules/versioning/entitlements",
   "$version": 1,
   "title": "versioning \u2014 entitlements",
   "description": "Empty. Versioning is a platform capability; per-tenant metered entitlements don't apply. The relevant entitlements (custom-templates.count, webhooks.subscriptions.count) live in the modules that own the metered resource. Reference kinds block retained for consistency with the module contract.",

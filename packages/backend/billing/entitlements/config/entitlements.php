@@ -4,7 +4,7 @@
  * @file modules/billing/entitlements/config/entitlements.php
  *
  * @description
- * Runtime knobs for the `academorix/entitlements` module. Every knob
+ * Runtime knobs for the `stackra/entitlements` module. Every knob
  * is env-overridable so per-environment tuning stays out of code.
  */
 

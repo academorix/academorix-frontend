@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Concerns;
+namespace Stackra\Monitoring\Concerns;
 
 /**
  * Trait — BelongsToMonitoringAlertPolicy.

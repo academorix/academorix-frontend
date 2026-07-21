@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformCredentialsSdk\Requests\Gates;
+namespace Stackra\PlatformCredentialsSdk\Requests\Gates;
 
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\ApiSdk\Data\PaginationLinks;
-use Academorix\ApiSdk\Data\PaginationMeta;
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\PlatformCredentialsSdk\Data\GateData;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\ApiSdk\Data\PaginationLinks;
+use Stackra\ApiSdk\Data\PaginationMeta;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\PlatformCredentialsSdk\Data\GateData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

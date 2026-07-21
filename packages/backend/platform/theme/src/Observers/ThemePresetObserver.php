@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Observers;
+namespace Stackra\Theme\Observers;
 
-use Academorix\Theme\Contracts\Data\ThemePresetInterface;
-use Academorix\Theme\Exceptions\ThemePresetSystemImmutableException;
-use Academorix\Theme\Models\ThemePreset;
+use Stackra\Theme\Contracts\Data\ThemePresetInterface;
+use Stackra\Theme\Exceptions\ThemePresetSystemImmutableException;
+use Stackra\Theme\Models\ThemePreset;
 
 /**
  * Guardrail observer for the dual-source `theme_presets` catalogue.

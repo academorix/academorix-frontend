@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Enums;
+namespace Stackra\Localization\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `driver` on `translation-job`.

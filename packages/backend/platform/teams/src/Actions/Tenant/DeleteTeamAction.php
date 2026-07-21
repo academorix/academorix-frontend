@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Teams\Actions\Tenant;
+namespace Stackra\Teams\Actions\Tenant;
 
-use Academorix\Teams\Contracts\Repositories\TeamRepositoryInterface;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Delete;
+use Stackra\Teams\Contracts\Repositories\TeamRepositoryInterface;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Delete;
 use Illuminate\Http\Response;
 
 /**
  * `DELETE /api/v1/teams/{team}` — delete action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Delete(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Teams

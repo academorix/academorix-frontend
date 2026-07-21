@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Console;
+namespace Stackra\Storage\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Storage\Jobs\DedupOrphanBlobsJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Storage\Jobs\DedupOrphanBlobsJob;
 
 /**
  * `php artisan storage:purge-orphans` — dispatch the orphan-blob

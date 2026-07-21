@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FinanceExpensesSdk\Resources;
+namespace Stackra\FinanceExpensesSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\FinanceExpensesSdk\Data\ExpenseData;
-use Academorix\FinanceExpensesSdk\Requests\Expenses\CreateExpenseRequest;
-use Academorix\FinanceExpensesSdk\Requests\Expenses\ListExpensesRequest;
-use Academorix\FinanceExpensesSdk\Requests\Expenses\ShowExpenseRequest;
-use Academorix\FinanceExpensesSdk\Requests\Expenses\UpdateExpenseRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\FinanceExpensesSdk\Data\ExpenseData;
+use Stackra\FinanceExpensesSdk\Requests\Expenses\CreateExpenseRequest;
+use Stackra\FinanceExpensesSdk\Requests\Expenses\ListExpensesRequest;
+use Stackra\FinanceExpensesSdk\Requests\Expenses\ShowExpenseRequest;
+use Stackra\FinanceExpensesSdk\Requests\Expenses\UpdateExpenseRequest;
 use Saloon\Http\Response;
 
 /**
@@ -57,7 +57,7 @@ final readonly class ExpensesResource
      *
      * @return ExpenseData
      */
-    public function create(\Academorix\FinanceExpensesSdk\Payloads\Expenses\CreateExpensePayload $payload, ?string $idempotencyKey = null): ExpenseData
+    public function create(\Stackra\FinanceExpensesSdk\Payloads\Expenses\CreateExpensePayload $payload, ?string $idempotencyKey = null): ExpenseData
     {
         return $this->connector->send(new CreateExpenseRequest($payload, $idempotencyKey))->dto();
     }
@@ -85,7 +85,7 @@ final readonly class ExpensesResource
      *
      * @return ExpenseData
      */
-    public function update(string $expense, \Academorix\FinanceExpensesSdk\Payloads\Expenses\UpdateExpensePayload $payload, ?string $idempotencyKey = null): ExpenseData
+    public function update(string $expense, \Stackra\FinanceExpensesSdk\Payloads\Expenses\UpdateExpensePayload $payload, ?string $idempotencyKey = null): ExpenseData
     {
         return $this->connector->send(new UpdateExpenseRequest($expense, $payload, $idempotencyKey))->dto();
     }

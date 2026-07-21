@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Data;
+namespace Stackra\Localization\Data;
 
 use Spatie\LaravelData\Data;
 
 /**
- * Wire-visible result of a single {@see \Academorix\Localization\Contracts\Services\TranslatorDriverInterface::translate()}
+ * Wire-visible result of a single {@see \Stackra\Localization\Contracts\Services\TranslatorDriverInterface::translate()}
  * call. Every driver returns this same shape so consumers stay
  * driver-agnostic.
  *

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Contracts\Repositories;
+namespace Stackra\Application\Contracts\Repositories;
 
-use Academorix\Application\Models\Application;
-use Academorix\Application\Repositories\EloquentApplicationRepository;
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Application\Models\Application;
+use Stackra\Application\Repositories\EloquentApplicationRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
 use Illuminate\Container\Attributes\Bind;
 
 /**
  * Repository contract for {@see Application}.
  *
- * CRUD comes from {@see RepositoryInterface} (via `academorix/crud`'s
+ * CRUD comes from {@see RepositoryInterface} (via `stackra/crud`'s
  * `Repository` base). Domain methods declared below cover the
  * host-resolution + fallback lookups the `resolve.application`
  * middleware needs on every request.

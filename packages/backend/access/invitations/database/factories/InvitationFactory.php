@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Database\Factories;
+namespace Stackra\Invitations\Database\Factories;
 
-use Academorix\Invitations\Contracts\Data\InvitationInterface;
-use Academorix\Invitations\Enums\InvitationChannel;
-use Academorix\Invitations\Enums\InvitationStatus;
-use Academorix\Invitations\Models\Invitation;
+use Stackra\Invitations\Contracts\Data\InvitationInterface;
+use Stackra\Invitations\Enums\InvitationChannel;
+use Stackra\Invitations\Enums\InvitationStatus;
+use Stackra\Invitations\Models\Invitation;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

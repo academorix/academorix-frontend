@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/domains/schemas/domain-record",
+  "id": "stackra://modules/domains/schemas/domain-record",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "DomainRecord",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "drc_",
     "incrementing": false,
-    "model": "Academorix\\Domains\\Models\\DomainRecord",
-    "interface": "Academorix\\Domains\\Contracts\\Data\\DomainRecordInterface",
-    "implements": ["Academorix\\Domains\\Contracts\\Data\\DomainRecordInterface"],
+    "model": "Stackra\\Domains\\Models\\DomainRecord",
+    "interface": "Stackra\\Domains\\Contracts\\Data\\DomainRecordInterface",
+    "implements": ["Stackra\\Domains\\Contracts\\Data\\DomainRecordInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

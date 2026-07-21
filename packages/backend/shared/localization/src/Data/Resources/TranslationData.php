@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Data\Resources;
+namespace Stackra\Localization\Data\Resources;
 
-use Academorix\Localization\Contracts\Data\TranslationInterface;
-use Academorix\Localization\Models\Translation;
+use Stackra\Localization\Contracts\Data\TranslationInterface;
+use Stackra\Localization\Models\Translation;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

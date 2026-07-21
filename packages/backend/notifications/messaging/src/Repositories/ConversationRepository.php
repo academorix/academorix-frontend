@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Messaging\Repositories;
+namespace Stackra\Messaging\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Messaging\Contracts\Data\ConversationInterface;
-use Academorix\Messaging\Contracts\Repositories\ConversationRepositoryInterface;
-use Academorix\Messaging\Models\Conversation;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Messaging\Contracts\Data\ConversationInterface;
+use Stackra\Messaging\Contracts\Repositories\ConversationRepositoryInterface;
+use Stackra\Messaging\Models\Conversation;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Messaging\Models\Conversation}.
+ * Attribute-first Eloquent repository for {@see Stackra\Messaging\Models\Conversation}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ConversationInterface::class)]` which resolves to
  * `Conversation` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Messaging\Models\Conversation>
+ * @extends Repository<\Stackra\Messaging\Models\Conversation>
  *
  * @category Messaging
  *

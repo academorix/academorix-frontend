@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Actions\Tenant;
+namespace Stackra\Activity\Actions\Tenant;
 
-use Academorix\Activity\Contracts\Repositories\ActivityRepositoryInterface;
-use Academorix\Activity\Data\ActivityData;
-use Academorix\Activity\Data\Requests\ListActivitiesRequestData;
-use Academorix\Activity\Enums\ActivityPermission;
-use Academorix\Activity\Models\Activity;
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Activity\Contracts\Repositories\ActivityRepositoryInterface;
+use Stackra\Activity\Data\ActivityData;
+use Stackra\Activity\Data\Requests\ListActivitiesRequestData;
+use Stackra\Activity\Enums\ActivityPermission;
+use Stackra\Activity\Models\Activity;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Spatie\LaravelData\DataCollection;
 
 /**

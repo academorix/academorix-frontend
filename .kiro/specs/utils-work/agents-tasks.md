@@ -40,9 +40,9 @@ Master Day-0 → Day-90 pipeline plan. ~1,000 lines.
 ```
 Phase 0. INTAKE           spec-intake-analyst
    ↓                       (PDF/MD/DOCX → structured brief.json)
-Phase 1. DISCOVERY        academorix-product + ux-research-lead + market-research-analyst
+Phase 1. DISCOVERY        stackra-product + ux-research-lead + market-research-analyst
    ↓                       (personas, JTBD, competitive matrix, opportunity brief)
-Phase 2. DEFINITION       academorix-product
+Phase 2. DEFINITION       stackra-product
    ↓                       (PRD, INVEST stories, v1/v2/later scope)
 Phase 3. DESIGN           solution-architect + api-contract-designer + data-modeler
                           + threat-modeler + product-designer + content-designer
@@ -73,7 +73,7 @@ Phase 7. OPERATE          sre-lead + observability-engineer + incident-commander
 
 ```yaml
 ---
-title: Academorix Agent Roster & Pipeline Plan
+title: Stackra Agent Roster & Pipeline Plan
 status: v1.0 adopted
 version: 1.0
 last_updated: 2026-07-20
@@ -95,7 +95,7 @@ LinkedIn-ready persona dossier for all 51 agents. ~1,272 lines.
 
 ```yaml
 ---
-title: Academorix Agent Personas — Team Dossier
+title: Stackra Agent Personas — Team Dossier
 status: adopted
 tranche: complete
 total_personas: 51
@@ -155,7 +155,7 @@ Same lock-in from fullplan.md:
 | Slug                    | Name            | Role                                 |
 | ----------------------- | --------------- | ------------------------------------ |
 | spec-intake-analyst     | Rafael Mendes   | Product Analyst · Intake & Discovery |
-| academorix-product      | Rohan Kapoor    | Product Manager · Enterprise         |
+| stackra-product      | Rohan Kapoor    | Product Manager · Enterprise         |
 | laravel-feature-builder | Hicham El-Fassi | Senior Backend Engineer              |
 | heroui-ui-builder       | Isla Bennett    | Senior Frontend Engineer             |
 | python-service-builder  | Linh Nguyen     | AI Service Engineer                  |
@@ -229,7 +229,7 @@ Full 51-agent roster tabulated by tier. ~437 lines.
 
 Every charter follows the canonical shape (match the format of
 `.kiro/agents/laravel-feature-builder.md` and
-`.kiro/agents/academorix-product.md` which already exist in the workspace):
+`.kiro/agents/stackra-product.md` which already exist in the workspace):
 
 ```markdown
 ---
@@ -347,7 +347,7 @@ date: 2026-07-20
   `.ref/agents/`, sibling repo `.kiro/agents/`). Cross-repo drift is a real
   risk.
 - **Decision** — Three-tier canonical directory model:
-  1. Truly cross-repo agents live in `academorix/.kiro/agents/` (parent of all
+  1. Truly cross-repo agents live in `stackra/.kiro/agents/` (parent of all
      repos), sub-repos symlink
   2. Repo-specific agents live in their repo's `.kiro/agents/`
   3. Reference-only copies in `.ref/agents/` (git-ignored)

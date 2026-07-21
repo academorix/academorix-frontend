@@ -1,4 +1,4 @@
-# academorix/domains
+# stackra/domains
 
 Custom-domain substrate for tenant white-label. Owns the `Domain` aggregate
 (canonical hostname bound to a Tenant) and `DomainRecord` (the expected DNS
@@ -14,7 +14,7 @@ records diffed by the verification job).
 ## Install
 
 ```bash
-composer require academorix/domains
+composer require stackra/domains
 ```
 
 Auto-registers via `extra.laravel.providers`.

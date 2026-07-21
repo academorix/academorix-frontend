@@ -1,76 +1,76 @@
 {
-  "id": "academorix://modules/membership/commands",
+  "id": "stackra://modules/membership/commands",
   "$version": 1,
   "title": "membership — Artisan commands",
   "commands": [
     {
       "signature": "membership:list {--tenant=} {--branch=} {--athlete=} {--plan=} {--status=}",
-      "class": "Academorix\\Finance\\Membership\\Console\\Commands\\ListMembershipsCommand",
+      "class": "Stackra\\Finance\\Membership\\Console\\Commands\\ListMembershipsCommand",
       "purpose": "Table view of memberships."
     },
     {
       "signature": "membership:describe {membership}",
-      "class": "Academorix\\Finance\\Membership\\Console\\Commands\\DescribeMembershipCommand",
+      "class": "Stackra\\Finance\\Membership\\Console\\Commands\\DescribeMembershipCommand",
       "purpose": "Verbose read of one membership: base fields + linked athlete + plan + primary_guardian + coupon_snapshot + tax_calculation_snapshot + renewal history + pass ledger + lifetime value."
     },
     {
       "signature": "membership:create {athlete} {plan} {--guardian=} {--coupon=} {--dry-run}",
-      "class": "Academorix\\Finance\\Membership\\Console\\Commands\\CreateMembershipCommand",
+      "class": "Stackra\\Finance\\Membership\\Console\\Commands\\CreateMembershipCommand",
       "purpose": "Scriptable membership signup. Triggers atomic invoice creation. --dry-run computes tax + coupon without persisting."
     },
     {
       "signature": "membership:pause {membership} {--reason=}",
-      "class": "Academorix\\Finance\\Membership\\Console\\Commands\\PauseMembershipCommand",
+      "class": "Stackra\\Finance\\Membership\\Console\\Commands\\PauseMembershipCommand",
       "purpose": "Transition active → paused."
     },
     {
       "signature": "membership:resume {membership}",
-      "class": "Academorix\\Finance\\Membership\\Console\\Commands\\ResumeMembershipCommand",
+      "class": "Stackra\\Finance\\Membership\\Console\\Commands\\ResumeMembershipCommand",
       "purpose": "Transition paused → active. Recompute next_renewal_at."
     },
     {
       "signature": "membership:cancel {membership} {--kind=soft_period_end} {--reason=}",
-      "class": "Academorix\\Finance\\Membership\\Console\\Commands\\CancelMembershipCommand",
+      "class": "Stackra\\Finance\\Membership\\Console\\Commands\\CancelMembershipCommand",
       "purpose": "Cancel membership. --kind=hard_immediate requires Enterprise entitlement."
     },
     {
       "signature": "membership:renew {membership} {--force}",
-      "class": "Academorix\\Finance\\Membership\\Console\\Commands\\RenewMembershipCommand",
+      "class": "Stackra\\Finance\\Membership\\Console\\Commands\\RenewMembershipCommand",
       "purpose": "Manually trigger a renewal cycle. --force bypasses next_renewal_at check (admin override during support case)."
     },
     {
       "signature": "membership:reissue-passes {membership} {count} {--type=bonus} {--valid-until=}",
-      "class": "Academorix\\Finance\\Membership\\Console\\Commands\\ReissuePassesCommand",
+      "class": "Stackra\\Finance\\Membership\\Console\\Commands\\ReissuePassesCommand",
       "purpose": "Issue extra passes outside normal per-period grant. Audit-critical."
     },
     {
       "signature": "membership-plan:list {--tenant=} {--branch=} {--active}",
-      "class": "Academorix\\Finance\\Membership\\Console\\Commands\\ListMembershipPlansCommand",
+      "class": "Stackra\\Finance\\Membership\\Console\\Commands\\ListMembershipPlansCommand",
       "purpose": "Table view of plan catalog."
     },
     {
       "signature": "membership-plan:create {name} {price_cents} {currency} {billing_interval} {--branch=} {--trial-days=0}",
-      "class": "Academorix\\Finance\\Membership\\Console\\Commands\\CreateMembershipPlanCommand",
+      "class": "Stackra\\Finance\\Membership\\Console\\Commands\\CreateMembershipPlanCommand",
       "purpose": "Scaffold a new plan. Consumes membership_plan_slot."
     },
     {
       "signature": "membership-plan:archive {plan}",
-      "class": "Academorix\\Finance\\Membership\\Console\\Commands\\ArchiveMembershipPlanCommand",
+      "class": "Stackra\\Finance\\Membership\\Console\\Commands\\ArchiveMembershipPlanCommand",
       "purpose": "Archive a plan. Refused when active memberships reference it."
     },
     {
       "signature": "membership-plan:duplicate {plan} {--branch=} {--slug=} {--name=}",
-      "class": "Academorix\\Finance\\Membership\\Console\\Commands\\DuplicateMembershipPlanCommand",
+      "class": "Stackra\\Finance\\Membership\\Console\\Commands\\DuplicateMembershipPlanCommand",
       "purpose": "Clone a plan (same shape at same or different branch)."
     },
     {
       "signature": "membership:report {--tenant=} {--branch=} {--period=this-month}",
-      "class": "Academorix\\Finance\\Membership\\Console\\Commands\\MembershipReportCommand",
+      "class": "Stackra\\Finance\\Membership\\Console\\Commands\\MembershipReportCommand",
       "purpose": "MRR + churn + lapsed + trial-conversion + dunning-recovery metrics report. Outputs to console + optional PDF via --pdf."
     },
     {
       "signature": "pass:list {--membership=} {--status=available}",
-      "class": "Academorix\\Finance\\Membership\\Console\\Commands\\ListPassesCommand",
+      "class": "Stackra\\Finance\\Membership\\Console\\Commands\\ListPassesCommand",
       "purpose": "Table view of passes."
     }
   ]

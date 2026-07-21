@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/public-site/caches",
+  "id": "stackra://modules/public-site/caches",
   "$version": 1,
   "title": "public-site — cache keys",
   "description": "Cache keys the module owns + TTLs + invalidation triggers + tags.",

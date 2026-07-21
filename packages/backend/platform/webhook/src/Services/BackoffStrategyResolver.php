@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Services;
+namespace Stackra\Webhook\Services;
 
-use Academorix\Webhook\Contracts\Services\BackoffStrategyResolverInterface;
+use Stackra\Webhook\Contracts\Services\BackoffStrategyResolverInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Webhook\Contracts\Repositories\WebhookDeliveryRepositoryInterface;
+use Stackra\Webhook\Contracts\Repositories\WebhookDeliveryRepositoryInterface;
 
 /**
  * Concrete service — BackoffStrategyResolver.

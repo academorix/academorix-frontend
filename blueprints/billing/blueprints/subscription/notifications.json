@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/subscription/notifications",
+  "id": "stackra://modules/subscription/notifications",
   "$version": 1,
   "title": "subscription \u2014 notification classes + categories",
-  "namespace": "Academorix\\Subscription\\Notifications",
+  "namespace": "Stackra\\Subscription\\Notifications",
   "notifications": [
     "SubscriptionStartedNotification",
     "TrialEndingNotification",

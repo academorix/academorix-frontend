@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Contracts\Repositories;
+namespace Stackra\FeatureFlags\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\FeatureFlags\Models\Feature;
-use Academorix\FeatureFlags\Registry\FeatureDefinition;
-use Academorix\FeatureFlags\Repositories\EloquentFeatureRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\FeatureFlags\Models\Feature;
+use Stackra\FeatureFlags\Registry\FeatureDefinition;
+use Stackra\FeatureFlags\Repositories\EloquentFeatureRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Database\Eloquent\Collection;

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Contracts\Data;
+namespace Stackra\Match\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Match\Models\MatchEvent;
+use Stackra\Match\Models\MatchEvent;
 
 /**
  * Table shape for the `match_events` table.

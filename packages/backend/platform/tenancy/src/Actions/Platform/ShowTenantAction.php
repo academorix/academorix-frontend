@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Actions\Platform;
+namespace Stackra\Tenancy\Actions\Platform;
 
-use Academorix\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
-use Academorix\Tenancy\Data\TenantData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
+use Stackra\Tenancy\Data\TenantData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 
 /**
  * `GET /api/v1/tenants/{id}` — show action (platform-admin audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Tenancy

@@ -101,7 +101,7 @@
                 "label": "Migration guide URL",
                 "name": "sunset_notice_url",
                 "type": "url",
-                "placeholder": "https://docs.academorix.com/migration/v1-to-v2"
+                "placeholder": "https://docs.stackra.com/migration/v1-to-v2"
               },
               "bindings": { "defaultValue": { "$ref": "apiVersion.sunset_notice_url" } }
             },

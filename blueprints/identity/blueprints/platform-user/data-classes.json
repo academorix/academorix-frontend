@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/platform-user/data-classes",
+  "id": "stackra://modules/platform-user/data-classes",
   "$version": 1,
   "title": "platform-user \u2014 field classification",
-  "description": "PlatformUser + PlatformProfile carry two field classes: EMPLOYMENT metadata (hire_date, department, employment_type, job_title, manager_id) which is `internal` \u2014 visible to Academorix ops but never leaks to tenants \u2014 and PII (phone, avatar, Slack/GitHub handles) on PlatformProfile which is `restricted` \u2014 gated behind the platform-admin `platform.platform_profiles.view.pii` permission. Credential fields live on the referenced Identity row and are governed by identity::data-classes (regulated_secret). This module classifies its OWN columns only. The audit trail (via HasAudit) writes every column mutation \u2014 old + new values \u2014 because SOC2 CC7.2 requires the fuller trail on the staff plane.",
+  "description": "PlatformUser + PlatformProfile carry two field classes: EMPLOYMENT metadata (hire_date, department, employment_type, job_title, manager_id) which is `internal` \u2014 visible to Stackra ops but never leaks to tenants \u2014 and PII (phone, avatar, Slack/GitHub handles) on PlatformProfile which is `restricted` \u2014 gated behind the platform-admin `platform.platform_profiles.view.pii` permission. Credential fields live on the referenced Identity row and are governed by identity::data-classes (regulated_secret). This module classifies its OWN columns only. The audit trail (via HasAudit) writes every column mutation \u2014 old + new values \u2014 because SOC2 CC7.2 requires the fuller trail on the staff plane.",
   "reference": "foundation::data-classes.json.tiers",
   "classes": {
     "public": [],
@@ -123,7 +123,7 @@
   },
   "input_dtos": [
     {
-      "class": "Academorix\\PlatformUser\\Data\\HirePlatformUserInput",
+      "class": "Stackra\\PlatformUser\\Data\\HirePlatformUserInput",
       "shape": {
         "identity_id": "ULID (validated: identity row exists, is not soft-deleted, has email_verified, has mfa_enabled)",
         "first_name": "string (required)",
@@ -146,7 +146,7 @@
       ]
     },
     {
-      "class": "Academorix\\PlatformUser\\Data\\UpdatePlatformProfileInput",
+      "class": "Stackra\\PlatformUser\\Data\\UpdatePlatformProfileInput",
       "shape": {
         "display_name": "string | null",
         "avatar_url": "string | null",
@@ -158,7 +158,7 @@
       "scope": "Only the PlatformUser themselves OR a super_admin can invoke."
     },
     {
-      "class": "Academorix\\PlatformUser\\Data\\OffboardPlatformUserInput",
+      "class": "Stackra\\PlatformUser\\Data\\OffboardPlatformUserInput",
       "shape": {
         "reason": "string (required, min 20 chars, max 1000 \u2014 becomes offboarding_reason on the row)",
         "effective_at": "timestamp | null (default = now(); allow scheduling up to 30 days out for planned offboardings)"
@@ -170,7 +170,7 @@
       ]
     },
     {
-      "class": "Academorix\\PlatformUser\\Data\\ReassignManagerInput",
+      "class": "Stackra\\PlatformUser\\Data\\ReassignManagerInput",
       "shape": {
         "new_manager_id": "ULID | null (null = orphans the report to top-of-tree)"
       }
@@ -178,19 +178,19 @@
   ],
   "output_dtos": [
     {
-      "class": "Academorix\\PlatformUser\\Data\\PlatformUserListItemData",
+      "class": "Stackra\\PlatformUser\\Data\\PlatformUserListItemData",
       "purpose": "List view. See platform_admin_list_shape above."
     },
     {
-      "class": "Academorix\\PlatformUser\\Data\\PlatformUserDetailData",
+      "class": "Stackra\\PlatformUser\\Data\\PlatformUserDetailData",
       "purpose": "Detail view. See platform_admin_detail_shape above."
     },
     {
-      "class": "Academorix\\PlatformUser\\Data\\PlatformProfileData",
+      "class": "Stackra\\PlatformUser\\Data\\PlatformProfileData",
       "purpose": "Standalone profile shape for the `/platform-profiles/me` self-service endpoint. Always unredacted for the caller (they own the row) \u2014 gated only by the standard `sanctum` self-view rules on the platform_admin guard."
     },
     {
-      "class": "Academorix\\PlatformUser\\Data\\PlatformUserOnCallResolutionData",
+      "class": "Stackra\\PlatformUser\\Data\\PlatformUserOnCallResolutionData",
       "shape": {
         "resolved_at": "ISO-8601 timestamp of resolution",
         "current_shift": {
@@ -205,7 +205,7 @@
       "purpose": "Response body of `GET /platform-users/on-call/current`. Consumed by internal escalation tooling."
     },
     {
-      "class": "Academorix\\PlatformUser\\Data\\PlatformUserAuditReportData",
+      "class": "Stackra\\PlatformUser\\Data\\PlatformUserAuditReportData",
       "shape": {
         "platform_user_id": "ULID",
         "window_start": "ISO-8601 timestamp",

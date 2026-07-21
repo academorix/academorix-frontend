@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Exceptions;
+namespace Stackra\Approvals\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Manual reminder-dispatch endpoint hit the throttle guard (> 3 reminders/hour to the same approver-requirement).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ReminderRateLimitException extends AcademorixException
+final class ReminderRateLimitException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

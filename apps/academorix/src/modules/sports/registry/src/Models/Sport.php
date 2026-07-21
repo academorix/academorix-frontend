@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Models;
+namespace Stackra\Registry\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Registry\Contracts\Data\SportInterface;
-use Academorix\Registry\Database\Factories\SportFactory;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Registry\Policies\SportPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Registry\Contracts\Data\SportInterface;
+use Stackra\Registry\Database\Factories\SportFactory;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Registry\Policies\SportPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -85,9 +85,9 @@ final class Sport extends Model implements SportInterface, AuditableContract
         SportInterface::ATTR_AGE_RANGE_MIN => 'integer',
         SportInterface::ATTR_AGE_RANGE_MAX => 'integer',
         SportInterface::ATTR_SORT_ORDER => 'integer',
-        SportInterface::ATTR_CATEGORY => \Academorix\Sports\Registry\Enums\SportCategory::class,
-        SportInterface::ATTR_GENDER_TYPICAL => \Academorix\Sports\Registry\Enums\GenderTypical::class,
-        SportInterface::ATTR_PRIMARY_COLOR => \Academorix\Sports\Registry\Casts\HexColor::class,
+        SportInterface::ATTR_CATEGORY => \Stackra\Sports\Registry\Enums\SportCategory::class,
+        SportInterface::ATTR_GENDER_TYPICAL => \Stackra\Sports\Registry\Enums\GenderTypical::class,
+        SportInterface::ATTR_PRIMARY_COLOR => \Stackra\Sports\Registry\Casts\HexColor::class,
         SportInterface::ATTR_METADATA => 'array',
     ];
 }

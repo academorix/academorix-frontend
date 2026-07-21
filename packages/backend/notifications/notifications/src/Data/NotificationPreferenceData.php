@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Data;
+namespace Stackra\Notifications\Data;
 
-use Academorix\Notifications\Contracts\Data\NotificationPreferenceInterface;
-use Academorix\Notifications\Enums\DigestMode;
-use Academorix\Notifications\Enums\NotificationChannel;
-use Academorix\Notifications\Models\NotificationPreference;
+use Stackra\Notifications\Contracts\Data\NotificationPreferenceInterface;
+use Stackra\Notifications\Enums\DigestMode;
+use Stackra\Notifications\Enums\NotificationChannel;
+use Stackra\Notifications\Models\NotificationPreference;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;

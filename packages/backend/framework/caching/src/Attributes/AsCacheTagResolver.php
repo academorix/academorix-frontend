@@ -4,12 +4,12 @@
  * @file packages/framework/caching/src/Attributes/AsCacheTagResolver.php
  *
  * @description
- * Discovery marker for {@see \Academorix\Caching\Contracts\CacheTagResolver}
+ * Discovery marker for {@see \Stackra\Caching\Contracts\CacheTagResolver}
  * implementations. Placed on the class body — the
  * `CachingServiceProvider` calls `olvlvl/composer-attribute-collector`
  * once at boot to enumerate every class carrying this attribute,
  * sorts them by `priority`, and hydrates
- * {@see \Academorix\Caching\Registry\CacheTagResolverRegistry}.
+ * {@see \Stackra\Caching\Registry\CacheTagResolverRegistry}.
  *
  * ## Why an attribute and not `bindings()`
  *
@@ -45,13 +45,13 @@
  * Ties are broken by the resolver's fully-qualified class name
  * (alphabetical) so the tag order stays stable across runs.
  *
- * @see \Academorix\Caching\Contracts\CacheTagResolver Contract implementers satisfy.
- * @see \Academorix\Caching\Registry\CacheTagResolverRegistry Discovery target.
+ * @see \Stackra\Caching\Contracts\CacheTagResolver Contract implementers satisfy.
+ * @see \Stackra\Caching\Registry\CacheTagResolverRegistry Discovery target.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Caching\Attributes;
+namespace Stackra\Caching\Attributes;
 
 use Attribute;
 

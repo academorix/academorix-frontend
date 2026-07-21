@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/branch/compliance",
+  "id": "stackra://modules/branch/compliance",
   "$version": 1,
   "title": "branch — compliance evidence",
   "description": "Branch carries no PII directly (the address is business location, the phone / email are business contacts). Compliance responsibilities concentrate around three axes: (a) every branch state change (create/close/reopen/pause) is compliance-audited under SOC 2 CC6.3, (b) closure cascades to notify staff — a subject notification requirement under GDPR + regional labor law, (c) financial regulation (many jurisdictions require historic invoice records for 7 years, and invoices reference branch_id snapshot — Branch rows can never be silently disappeared).",
@@ -54,7 +54,7 @@
         {
           "criterion": "CC7.2",
           "principle": "system monitoring",
-          "evidence": "Health probes cover FK integrity (Organization + Region + Tenant), default-branch invariant integrity, geocoder reachability, stuck-geocoding-job detection. `academorix.branch.reconcile.corrections` metric alerts on drift."
+          "evidence": "Health probes cover FK integrity (Organization + Region + Tenant), default-branch invariant integrity, geocoder reachability, stuck-geocoding-job detection. `stackra.branch.reconcile.corrections` metric alerts on drift."
         }
       ]
     },

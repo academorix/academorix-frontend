@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Services;
+namespace Stackra\Audit\Services;
 
-use Academorix\Audit\Contracts\Services\KmsCipherInterface;
+use Stackra\Audit\Contracts\Services\KmsCipherInterface;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\Encryption\Encrypter;

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Repositories;
+namespace Stackra\Marketing\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Marketing\Contracts\Data\MarketingDeadLetterInterface;
-use Academorix\Marketing\Contracts\Repositories\MarketingDeadLetterRepositoryInterface;
-use Academorix\Marketing\Models\MarketingDeadLetter;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Marketing\Contracts\Data\MarketingDeadLetterInterface;
+use Stackra\Marketing\Contracts\Repositories\MarketingDeadLetterRepositoryInterface;
+use Stackra\Marketing\Models\MarketingDeadLetter;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Marketing\Models\MarketingDeadLetter}.
+ * Attribute-first Eloquent repository for {@see Stackra\Marketing\Models\MarketingDeadLetter}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(MarketingDeadLetterInterface::class)]` which resolves to
  * `MarketingDeadLetter` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Marketing\Models\MarketingDeadLetter>
+ * @extends Repository<\Stackra\Marketing\Models\MarketingDeadLetter>
  *
  * @category Marketing
  *

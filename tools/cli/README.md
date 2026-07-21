@@ -1,6 +1,6 @@
-# academorix — workspace CLI
+# stackra — workspace CLI
 
-Symfony Console app that scaffolds Academorix projects, packages, and modules.
+Symfony Console app that scaffolds Stackra projects, packages, and modules.
 Runs against the local workspace; never against a remote registry.
 
 ## Installation
@@ -9,13 +9,13 @@ Runs against the local workspace; never against a remote registry.
 composer install --working-dir=tools/cli
 ```
 
-That's it. The binary is at `tools/cli/bin/academorix` and is executable.
+That's it. The binary is at `tools/cli/bin/stackra` and is executable.
 
 ## Commands
 
 | Command              | Purpose                                                  | Status       |
 | -------------------- | -------------------------------------------------------- | ------------ |
-| `new`                | Bootstrap a new Academorix project                       | v0.1 shipped |
+| `new`                | Bootstrap a new Stackra project                       | v0.1 shipped |
 | `make:action`        | Emit a single Laravel action                             | v0.1 shipped |
 | `catalog:list`       | List every catalog entry                                 | v0.1 shipped |
 | `catalog:search`     | Search catalog by capability                             | v0.1 shipped |
@@ -27,7 +27,7 @@ That's it. The binary is at `tools/cli/bin/academorix` and is executable.
 | `make:page`          | Emit a Refine page set (list + create + edit + show)     | v0.2 planned |
 | `make:native-screen` | Emit a HeroUI Native screen                              | v0.2 planned |
 
-Run `bin/academorix list` to see every command with its live description.
+Run `bin/stackra list` to see every command with its live description.
 
 ## Development
 
@@ -61,7 +61,7 @@ tools/cli/vendor/bin/phpunit
 
 ```
 tools/cli/
-├── bin/academorix              # executable entry point
+├── bin/stackra              # executable entry point
 ├── composer.json               # dependencies + PSR-4 autoload
 ├── phpstan.neon                # level max
 ├── phpunit.xml                 # test config

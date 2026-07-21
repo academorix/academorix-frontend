@@ -4,7 +4,7 @@
  * @file modules/notifications/notifications-in-app/lang/en/notifications-in-app.php
  *
  * @description
- * English translations for the `academorix/notifications-in-app` module.
+ * English translations for the `stackra/notifications-in-app` module.
  */
 
 declare(strict_types=1);

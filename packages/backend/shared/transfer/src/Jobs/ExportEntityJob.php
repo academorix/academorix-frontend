@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Jobs;
+namespace Stackra\Transfer\Jobs;
 
-use Academorix\Transfer\Contracts\Services\ExportManagerInterface;
-use Academorix\Transfer\Models\XferJob;
+use Stackra\Transfer\Contracts\Services\ExportManagerInterface;
+use Stackra\Transfer\Models\XferJob;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

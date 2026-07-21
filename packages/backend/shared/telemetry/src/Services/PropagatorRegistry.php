@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Telemetry\Services;
+namespace Stackra\Telemetry\Services;
 
-use Academorix\Telemetry\Contracts\Services\PropagatorRegistryInterface;
+use Stackra\Telemetry\Contracts\Services\PropagatorRegistryInterface;
 use Illuminate\Container\Attributes\Scoped;
 
 

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/application/schemas/business-type",
+  "id": "stackra://modules/application/schemas/business-type",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "BusinessType",
@@ -8,11 +8,11 @@
   "x-module": "application",
   "x-storage": {
     "kind": "config",
-    "phpEnum": "Academorix\\Application\\Enums\\BusinessType",
+    "phpEnum": "Stackra\\Application\\Enums\\BusinessType",
     "phpEnumBacking": "string",
     "configFile": "config/application.php",
     "configKey": "application.business_types",
-    "seeder": "Academorix\\Application\\Database\\Seeders\\BusinessTypeSeeder",
+    "seeder": "Stackra\\Application\\Database\\Seeders\\BusinessTypeSeeder",
     "syncCommand": "application:sync-catalogue",
     "note": "`php artisan application:sync-catalogue` mirrors `data/business-types.json` into `config/application.php` on every deploy so a Laravel dev never edits config directly."
   },

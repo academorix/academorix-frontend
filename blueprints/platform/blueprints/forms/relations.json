@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/forms/relations",
+  "id": "stackra://modules/forms/relations",
   "$version": 1,
   "title": "forms — model relationships",
   "description": "Eloquent relations rooted at this module's models. `internal` = same-module edges; `outbound` = edges to other modules' models.",

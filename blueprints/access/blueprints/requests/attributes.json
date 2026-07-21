@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/access/requests/attributes",
+  "id": "stackra://modules/access/requests/attributes",
   "$version": 1,
   "title": "requests \u2014 PHP attribute contracts",
   "description": "Two attributes. `#[AccessRequestable]` marks a class as a legitimate SUBJECT for access requests; boot-time discovery reads it into `AccessRequestableRegistry`. `#[AsAccessRequestListener]` marks a service that reacts to access-request lifecycle events; discovery wires it into the event bus at boot.",
-  "namespace": "Academorix\\AccessRequest\\Attributes",
+  "namespace": "Stackra\\AccessRequest\\Attributes",
   "attributes": [
     {
       "name": "AccessRequestable",
-      "class": "Academorix\\AccessRequest\\Attributes\\AccessRequestable",
+      "class": "Stackra\\AccessRequest\\Attributes\\AccessRequestable",
       "targets": ["class"],
       "description": "Marks an Eloquent model as requestable. Populates AccessRequestableRegistry at boot with the (resource_type, class, permissions) tuple. The `access.request_hint_on_denial` middleware consults the registry to decide whether to enrich a 403 body with the `request_url`. The `valid_requestable_resource` rule + `permission_belongs_to_resource_type` rule consult it at write time.",
       "params": [
@@ -36,11 +36,11 @@
           "description": "Per-resource-type override for the grant TTL. Falls back to `config('access.requests.default_grant_ttl_days')` (default 7). Higher values are allowed but audited."
         }
       ],
-      "example": "use Academorix\\AccessRequest\\Attributes\\AccessRequestable;\n\n#[AccessRequestable(\n    resourceType: 'invoice',\n    permissions: ['invoices.view', 'invoices.update', 'invoices.export'],\n    displayNameSource: 'reference',\n    defaultGrantTtlDays: 14,\n)]\nfinal class Invoice extends Model\n{\n    // \u2026\n}"
+      "example": "use Stackra\\AccessRequest\\Attributes\\AccessRequestable;\n\n#[AccessRequestable(\n    resourceType: 'invoice',\n    permissions: ['invoices.view', 'invoices.update', 'invoices.export'],\n    displayNameSource: 'reference',\n    defaultGrantTtlDays: 14,\n)]\nfinal class Invoice extends Model\n{\n    // \u2026\n}"
     },
     {
       "name": "AsAccessRequestListener",
-      "class": "Academorix\\AccessRequest\\Attributes\\AsAccessRequestListener",
+      "class": "Stackra\\AccessRequest\\Attributes\\AsAccessRequestListener",
       "targets": ["class"],
       "description": "Marks a service as an access-request lifecycle listener. Boot-time discovery walks classes carrying this attribute + registers them with the framework event bus. Preferred over declaring the listener in `$listen[]` on the ServiceProvider because it keeps the wiring local to the class.",
       "params": [
@@ -63,7 +63,7 @@
           "description": "Delivers only after the outer DB transaction commits. Default true \u2014 prevents listeners from acting on rolled-back state changes."
         }
       ],
-      "example": "use Academorix\\AccessRequest\\Attributes\\AsAccessRequestListener;\nuse Academorix\\AccessRequest\\Events\\AccessRequestApproved;\nuse Academorix\\AccessRequest\\Events\\AccessRequestRejected;\n\n#[AsAccessRequestListener(\n    events: [AccessRequestApproved::class, AccessRequestRejected::class],\n    queue: 'notifications',\n)]\nfinal class NotifyRequesterOfDecisionListener\n{\n    public function handle(AccessRequestApproved|AccessRequestRejected $event): void\n    {\n        // \u2026\n    }\n}"
+      "example": "use Stackra\\AccessRequest\\Attributes\\AsAccessRequestListener;\nuse Stackra\\AccessRequest\\Events\\AccessRequestApproved;\nuse Stackra\\AccessRequest\\Events\\AccessRequestRejected;\n\n#[AsAccessRequestListener(\n    events: [AccessRequestApproved::class, AccessRequestRejected::class],\n    queue: 'notifications',\n)]\nfinal class NotifyRequesterOfDecisionListener\n{\n    public function handle(AccessRequestApproved|AccessRequestRejected $event): void\n    {\n        // \u2026\n    }\n}"
     }
   ],
   "discoveryNotes": [

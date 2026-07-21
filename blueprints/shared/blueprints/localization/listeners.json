@@ -1,47 +1,47 @@
 {
-  "id": "academorix://modules/localization/listeners",
+  "id": "stackra://modules/localization/listeners",
   "$version": 1,
   "title": "localization \u2014 subscribed events",
   "listeners": [
     {
       "event": "foundation::ApplicationBooted",
-      "listener": "Academorix\\Localization\\Listeners\\HydrateTranslationCache",
+      "listener": "Stackra\\Localization\\Listeners\\HydrateTranslationCache",
       "queue": null,
       "purpose": "Warms in-memory LRU cache with the 200 most-hit translations per active locale. Reduces DB round-trips on cold requests."
     },
     {
       "event": "tenancy::TenantProvisioned",
-      "listener": "Academorix\\Localization\\Listeners\\SeedInitialTenantLocale",
+      "listener": "Stackra\\Localization\\Listeners\\SeedInitialTenantLocale",
       "queue": "notifications",
       "purpose": "Enables the tenant's business_type default locales (usually en + native language of the tenant's country) as TenantLocale rows."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Localization\\Listeners\\PurgeTranslationsForErasedTenant",
+      "listener": "Stackra\\Localization\\Listeners\\PurgeTranslationsForErasedTenant",
       "queue": "notifications",
       "purpose": "Cascade delete via FK; this listener writes the compliance audit trail entry + emits count metric."
     },
     {
       "event": "localization::TranslationCacheMiss",
-      "listener": "Academorix\\Localization\\Listeners\\MaybeDispatchAutoTranslate",
+      "listener": "Stackra\\Localization\\Listeners\\MaybeDispatchAutoTranslate",
       "queue": null,
       "purpose": "If tenant_locale.auto_translate=true AND localization.auto_translate feature enabled AND entitlement quota available: dispatch TranslateJob for this single key. Debounced 60s per (tenant, namespace, key, locale) to prevent stampedes."
     },
     {
       "event": "localization::TranslationWritten",
-      "listener": "Academorix\\Localization\\Listeners\\BackfillMissingLocalesViaAutoTranslate",
+      "listener": "Stackra\\Localization\\Listeners\\BackfillMissingLocalesViaAutoTranslate",
       "queue": "notifications",
       "purpose": "When a #[Translatable] field is written for one locale, look up the other enabled TenantLocale rows where auto_translate=true AND the target locale has no value yet in this row's translations blob \u2014 dispatch one TranslateJob per missing locale to backfill. Debounced 60s per (tenant, model_type, model_id, field) to survive rapid successive edits. Requires localization.auto_translate feature + a live localization.ai_translations.month entitlement (fails silent when exhausted so the write succeeds either way)."
     },
     {
       "event": "localization::MachineTranslationCompleted",
-      "listener": "Academorix\\Localization\\Listeners\\ConsumeAutoTranslateEntitlement",
+      "listener": "Stackra\\Localization\\Listeners\\ConsumeAutoTranslateEntitlement",
       "queue": "notifications",
       "purpose": "Consumes 1 unit of localization.ai_translations.month for the tenant. Aggregated per hour to reduce entitlement write pressure."
     },
     {
       "event": "users::UserProfileUpdated",
-      "listener": "Academorix\\Localization\\Listeners\\HandleUserLocaleChange",
+      "listener": "Stackra\\Localization\\Listeners\\HandleUserLocaleChange",
       "queue": null,
       "purpose": "When user.profile.preferred_locale changed, fire LocaleChanged event + invalidate any per-user translation caches."
     }

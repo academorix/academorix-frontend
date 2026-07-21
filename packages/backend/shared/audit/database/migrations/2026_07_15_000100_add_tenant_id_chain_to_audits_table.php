@@ -4,7 +4,7 @@
  * @file modules/shared/audit/database/migrations/2026_07_15_000100_add_tenant_id_chain_to_audits_table.php
  *
  * @description
- * Add the four Academorix columns on top of owen-it/laravel-auditing's
+ * Add the four Stackra columns on top of owen-it/laravel-auditing's
  * default `audits` table:
  *
  *   - `tenant_id`         — nullable ULID pointing at the owning tenant.
@@ -26,7 +26,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Audit\Contracts\Data\AuditInterface;
+use Stackra\Audit\Contracts\Data\AuditInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

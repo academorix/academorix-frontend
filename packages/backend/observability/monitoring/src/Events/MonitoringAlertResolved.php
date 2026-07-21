@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Events;
+namespace Stackra\Monitoring\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog
  * - monitoring::MaybeResolveIncident (if this was the last firing alert in its incident → transition incident.status = 'resolved')
- * - monitoring::MetricsCollector (increments academorix.monitoring.alerts.resolved_total{resolved_by=auto|manual})
+ * - monitoring::MetricsCollector (increments stackra.monitoring.alerts.resolved_total{resolved_by=auto|manual})
  *
  * @category Monitoring
  *

@@ -9,7 +9,7 @@
 - `Concerns/HasCredentialLifecycle.php` — failed-attempts counter management
   (recordSuccessfulLogin, recordFailedLogin, lockUntil).
 - `Concerns/CanResetPassword.php` — bridges Laravel's password broker to the
-  Academorix column contract.
+  Stackra column contract.
 - `Models/Identity.php` — recomposed. Implements `AuthenticatableContract` +
   `CanResetPasswordContract` + `IdentityInterface`; uses
   `Illuminate\Auth\Authenticatable` + `HasApiTokens` (Sanctum) + `Notifiable` +

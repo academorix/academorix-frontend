@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Settings\Bootstrappers;
+namespace Stackra\Settings\Bootstrappers;
 
-use Academorix\Foundation\Contracts\DiscoversAttributes;
-use Academorix\Settings\Attributes\AsSetting;
-use Academorix\Settings\Attributes\SettingField;
-use Academorix\Settings\Attributes\SettingGroup;
-use Academorix\Settings\Contracts\SettingsRegistryInterface;
-use Academorix\Settings\Data\SettingDefinitionData;
-use Academorix\Settings\Data\SettingFieldData;
-use Academorix\Settings\Data\SettingGroupData;
-use Academorix\ServiceProvider\Bootstrappers\AbstractBootstrapper;
+use Stackra\Foundation\Contracts\DiscoversAttributes;
+use Stackra\Settings\Attributes\AsSetting;
+use Stackra\Settings\Attributes\SettingField;
+use Stackra\Settings\Attributes\SettingGroup;
+use Stackra\Settings\Contracts\SettingsRegistryInterface;
+use Stackra\Settings\Data\SettingDefinitionData;
+use Stackra\Settings\Data\SettingFieldData;
+use Stackra\Settings\Data\SettingGroupData;
+use Stackra\ServiceProvider\Bootstrappers\AbstractBootstrapper;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Container\Attributes\Singleton;
 use Psr\Log\LoggerInterface;

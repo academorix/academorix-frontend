@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/refund/observers",
+  "id": "stackra://modules/refund/observers",
   "$version": 1,
   "title": "refund — Eloquent observers",
   "description": "Two observers enforce this module's write-time invariants. RefundObserver validates entitlement + amount within refundable + currency match at creation; determines requires_approval per threshold; dispatches InitiateProviderRefundJob on approval; runs the finalization chain (credit note + transaction + clawback fan-out + marketing negative-conversion) on succeeded transition; REFUSES ALL mutations post-succeeded (refunds are IMMUTABLE). RefundLineObserver enforces sum-consistency (refund_lines.amount_cents SUM must equal parent refund.amount_cents), refuses double-refunding an already-refunded invoice line, validates proration_config shape.",
   "observers": [
     {
       "model": "Refund",
-      "observer": "Academorix\\Finance\\Refund\\Observers\\RefundObserver",
+      "observer": "Stackra\\Finance\\Refund\\Observers\\RefundObserver",
       "handles": [
         "creating -> populate ULID prefix `rfd_`",
         "creating -> refuse when tenant does NOT hold `refund_capture` entitlement (returns `REFUND_CAPTURE_NOT_ENTITLED`)",
@@ -47,7 +47,7 @@
     },
     {
       "model": "RefundLine",
-      "observer": "Academorix\\Finance\\Refund\\Observers\\RefundLineObserver",
+      "observer": "Stackra\\Finance\\Refund\\Observers\\RefundLineObserver",
       "handles": [
         "creating -> populate ULID prefix `rfl_`",
         "creating -> refuse when parent refund.status NOT IN ('pending', 'awaiting_approval', 'approved') — refund_lines cannot be added once dispatch begins (returns `REFUND_LINE_PARENT_LOCKED`)",

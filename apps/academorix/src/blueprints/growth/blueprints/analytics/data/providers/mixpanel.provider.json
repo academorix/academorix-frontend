@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/analytics/data/providers/mixpanel",
+  "id": "stackra://modules/analytics/data/providers/mixpanel",
   "$version": 1,
   "provider": "mixpanel",
   "displayName": "Mixpanel",
@@ -55,11 +55,11 @@
   },
   "test_event": {
     "event_kind": "track",
-    "event_name": "test_event_from_academorix",
+    "event_name": "test_event_from_stackra",
     "properties": {
       "__test": true,
       "$insert_id": "test-{ULID}",
-      "source": "academorix_provider_test"
+      "source": "stackra_provider_test"
     }
   }
 }

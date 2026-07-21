@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/drills/middleware",
+  "id": "stackra://modules/drills/middleware",
   "$version": 1,
   "title": "drills — HTTP middleware",
   "description": "Middleware aliases this module contributes.",

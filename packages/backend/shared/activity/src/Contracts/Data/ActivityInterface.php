@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Contracts\Data;
+namespace Stackra\Activity\Contracts\Data;
 
-use Academorix\Activity\Models\Activity;
+use Stackra\Activity\Models\Activity;
 use Illuminate\Container\Attributes\Bind;
 
 /**

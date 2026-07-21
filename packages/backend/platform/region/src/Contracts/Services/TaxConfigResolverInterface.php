@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Region\Contracts\Services;
+namespace Stackra\Region\Contracts\Services;
 
-use Academorix\Region\Services\TaxConfigResolver;
+use Stackra\Region\Services\TaxConfigResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

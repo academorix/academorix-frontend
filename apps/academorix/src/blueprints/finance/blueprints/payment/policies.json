@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/payment/policies",
+  "id": "stackra://modules/payment/policies",
   "$version": 1,
   "title": "payment — authorization policies",
   "description": "Four policies, one per owned model. Every ability resolves through spatie/laravel-permission, then narrows by tenant scope. PaymentPolicy customer-side abilities auto-scope to the caller's own payments; admin abilities see tenant-wide. Write on Payment is NEVER allowed via customer HTTP — captures happen server-side via the payment intent lifecycle. Support-tool re-dispatch is admin+support only.",
   "policies": [
     {
       "model": "Payment",
-      "class": "Academorix\\Finance\\Payment\\Policies\\PaymentPolicy",
+      "class": "Stackra\\Finance\\Payment\\Policies\\PaymentPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -53,7 +53,7 @@
     },
     {
       "model": "PaymentMethod",
-      "class": "Academorix\\Finance\\Payment\\Policies\\PaymentMethodPolicy",
+      "class": "Stackra\\Finance\\Payment\\Policies\\PaymentMethodPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -94,7 +94,7 @@
     },
     {
       "model": "PaymentIntent",
-      "class": "Academorix\\Finance\\Payment\\Policies\\PaymentIntentPolicy",
+      "class": "Stackra\\Finance\\Payment\\Policies\\PaymentIntentPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -135,7 +135,7 @@
     },
     {
       "model": "PaymentDispute",
-      "class": "Academorix\\Finance\\Payment\\Policies\\PaymentDisputePolicy",
+      "class": "Stackra\\Finance\\Payment\\Policies\\PaymentDisputePolicy",
       "abilities": [
         {
           "action": "viewAny",

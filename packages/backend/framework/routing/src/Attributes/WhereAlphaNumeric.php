@@ -11,7 +11,7 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use Spatie\RouteAttributes\Attributes\WhereAlphaNumeric as SpatieWhereAlphaNumeric;
@@ -29,8 +29,8 @@ use Spatie\RouteAttributes\Attributes\WhereAlphaNumeric as SpatieWhereAlphaNumer
  *
  * ## Usage:
  * ```php
- * use Academorix\Routing\Attributes\WhereAlphaNumeric;
- * use Academorix\Routing\Attributes\Get;
+ * use Stackra\Routing\Attributes\WhereAlphaNumeric;
+ * use Stackra\Routing\Attributes\Get;
  *
  * class ProductController
  * {

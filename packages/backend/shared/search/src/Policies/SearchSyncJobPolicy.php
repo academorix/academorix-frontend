@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Policies;
+namespace Stackra\Search\Policies;
 
-use Academorix\Search\Contracts\Data\SearchSyncJobInterface;
-use Academorix\Search\Enums\SearchPermission;
-use Academorix\Search\Enums\SearchSyncJobStatus;
-use Academorix\Search\Models\SearchSyncJob;
+use Stackra\Search\Contracts\Data\SearchSyncJobInterface;
+use Stackra\Search\Enums\SearchPermission;
+use Stackra\Search\Enums\SearchSyncJobStatus;
+use Stackra\Search\Models\SearchSyncJob;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Auth\User;
 

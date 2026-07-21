@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/localization/schemas/platform-language",
+  "id": "stackra://modules/localization/schemas/platform-language",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "PlatformLanguage",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "lng_",
     "incrementing": false,
-    "model": "Academorix\\Localization\\Models\\PlatformLanguage",
-    "interface": "Academorix\\Localization\\Contracts\\Data\\PlatformLanguageInterface",
-    "implements": ["Academorix\\Localization\\Contracts\\Data\\PlatformLanguageInterface"],
+    "model": "Stackra\\Localization\\Models\\PlatformLanguage",
+    "interface": "Stackra\\Localization\\Contracts\\Data\\PlatformLanguageInterface",
+    "implements": ["Stackra\\Localization\\Contracts\\Data\\PlatformLanguageInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -230,7 +230,7 @@
     "accepts": ["ULID (`lng_<26>`)", "bcp47_code (case-insensitive, matches `bcp47_code` column)"]
   },
   "migration_notes": {
-    "prior_shape": "Older `Language` schema at `academorix://modules/localization/schemas/language` (deleted this pass) carried duplicated ISO-639 + ISO-3166 fields (code, iso_639_1, iso_639_3, name, native_name, direction, script_code, country_code as plain string, flag_emoji, is_system, is_active_on_platform, is_beta, sort_order, notes, metadata).",
+    "prior_shape": "Older `Language` schema at `stackra://modules/localization/schemas/language` (deleted this pass) carried duplicated ISO-639 + ISO-3166 fields (code, iso_639_1, iso_639_3, name, native_name, direction, script_code, country_code as plain string, flag_emoji, is_system, is_active_on_platform, is_beta, sort_order, notes, metadata).",
     "removed_columns": [
       "code",
       "iso_639_1",

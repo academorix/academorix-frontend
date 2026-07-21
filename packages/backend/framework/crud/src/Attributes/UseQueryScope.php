@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Crud\Attributes;
+namespace Stackra\Crud\Attributes;
 
 use Attribute;
 use Closure;
@@ -27,7 +27,7 @@ use Closure;
  *
  * ## Mode 1: Named Model Scopes
  * ```php
- * use Academorix\Crud\Attributes\UseQueryScope;
+ * use Stackra\Crud\Attributes\UseQueryScope;
  *
  * #[UseQueryScope('active')]
  * #[UseQueryScope('verified')]

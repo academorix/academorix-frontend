@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Models;
+namespace Stackra\AgeGroup\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\AgeGroup\Contracts\Data\AgeGroupInterface;
-use Academorix\AgeGroup\Database\Factories\AgeGroupFactory;
-use Academorix\AgeGroup\Policies\AgeGroupPolicy;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Organization\Concerns\BelongsToOrganization;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\AgeGroup\Contracts\Data\AgeGroupInterface;
+use Stackra\AgeGroup\Database\Factories\AgeGroupFactory;
+use Stackra\AgeGroup\Policies\AgeGroupPolicy;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Organization\Concerns\BelongsToOrganization;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -91,9 +91,9 @@ final class AgeGroup extends Model implements AgeGroupInterface, AuditableContra
         AgeGroupInterface::ATTR_IS_YOUTH => 'boolean',
         AgeGroupInterface::ATTR_IS_DEFAULT => 'boolean',
         AgeGroupInterface::ATTR_IS_SEEDED => 'boolean',
-        AgeGroupInterface::ATTR_CUTOFF_DATE_KIND => \Academorix\Sports\AgeGroup\Enums\CutoffDateKind::class,
-        AgeGroupInterface::ATTR_GENDER_CATEGORY => \Academorix\Sports\AgeGroup\Enums\GenderCategory::class,
-        AgeGroupInterface::ATTR_COLOR => \Academorix\Sports\AgeGroup\Casts\HexColor::class,
+        AgeGroupInterface::ATTR_CUTOFF_DATE_KIND => \Stackra\Sports\AgeGroup\Enums\CutoffDateKind::class,
+        AgeGroupInterface::ATTR_GENDER_CATEGORY => \Stackra\Sports\AgeGroup\Enums\GenderCategory::class,
+        AgeGroupInterface::ATTR_COLOR => \Stackra\Sports\AgeGroup\Casts\HexColor::class,
         AgeGroupInterface::ATTR_METADATA => 'array',
     ];
 }

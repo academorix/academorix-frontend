@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Resolvers;
+namespace Stackra\Versioning\Resolvers;
 
-use Academorix\Versioning\Contracts\Services\VersionResolverInterface;
+use Stackra\Versioning\Contracts\Services\VersionResolverInterface;
 use Illuminate\Http\Request;
 
 /**
@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
  * request attribute the webhook module's inbound receiver populates.
  *
  * The webhook module (or any consumer that pins deliveries to a
- * specific version) sets `academorix.versioning.webhook_subscription_version`
+ * specific version) sets `stackra.versioning.webhook_subscription_version`
  * on the request before this resolver runs. The attribute name is
  * configurable via `versioning.resolvers.webhook.request_attribute`.
  *
@@ -34,7 +34,7 @@ final class WebhookSubscriptionResolver implements VersionResolverInterface
     {
         $attribute = (string) \config(
             'versioning.resolvers.webhook.request_attribute',
-            'academorix.versioning.webhook_subscription_version',
+            'stackra.versioning.webhook_subscription_version',
         );
 
         $value = $request->attributes->get($attribute);

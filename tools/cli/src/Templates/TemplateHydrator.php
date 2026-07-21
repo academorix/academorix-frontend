@@ -2,7 +2,7 @@
 
 /**
  * @file TemplateHydrator.php
- * @module Academorix\Cli\Templates
+ * @module Stackra\Cli\Templates
  * @description Walks a source directory and copies every file to the
  *   destination. Text files run through token substitution; binary files
  *   copy unchanged. Binary detection: read first 512 bytes, count
@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Templates;
+namespace Stackra\Cli\Templates;
 
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;

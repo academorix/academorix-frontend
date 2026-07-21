@@ -1,11 +1,11 @@
 <?php
 
 /**
- * @file packages/architecture/src/Rules/EnumUsesAcademorixEnumTraitRule.php
+ * @file packages/architecture/src/Rules/EnumUsesStackraEnumTraitRule.php
  *
  * @description
  * Source rule: every PHP enum in the monorepo must `use Enum;`
- * from `Academorix\Enum\Enum` so it inherits the framework's
+ * from `Stackra\Enum\Enum` so it inherits the framework's
  * enum helpers (Callable cases, Nameable, Valuable, Optionable,
  * Metable, Comparable, Translatable).
  *
@@ -22,10 +22,10 @@
  * For files whose {@see SourceFile::$classKeyword} is `'enum'`,
  * either of these two conditions fails the rule:
  *
- *   1. No `use Academorix\Enum\Enum;` in the file's `use` block.
+ *   1. No `use Stackra\Enum\Enum;` in the file's `use` block.
  *   2. No `use Enum;` inside the enum body.
  *
- * The `dev-tools/migrations/bin/academorix-migrate enums` script
+ * The `dev-tools/migrations/bin/stackra-migrate enums` script
  * is the paired remedy — running it fixes every violation this
  * rule surfaces.
  *
@@ -35,7 +35,7 @@
  * can't `use` itself. The layer resolver's `test_path_prefixes`
  * exempt test-fixture enums automatically. Any other
  * intentionally-excluded enum should carry a
- * `@architecture-allow enum-uses-academorix-enum-trait` docblock
+ * `@architecture-allow enum-uses-stackra-enum-trait` docblock
  * comment (handled by the base rule's `severity: off` config).
  *
  * ## Paired migrator
@@ -46,29 +46,29 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Support\SourceFile;
-use Academorix\Architecture\Violations\Severity;
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Support\SourceFile;
+use Stackra\Architecture\Violations\Severity;
+use Stackra\Architecture\Violations\Violation;
 
 /**
- * Enforce `use Enum;` (the Academorix trait) on every enum.
+ * Enforce `use Enum;` (the Stackra trait) on every enum.
  *
  * @final
  */
-final class EnumUsesAcademorixEnumTraitRule extends AbstractRule
+final class EnumUsesStackraEnumTraitRule extends AbstractRule
 {
-    private const string ENUM_TRAIT_FQCN = 'Academorix\\Enum\\Enum';
+    private const string ENUM_TRAIT_FQCN = 'Stackra\\Enum\\Enum';
 
     public function id(): string
     {
-        return 'architecture.enum_uses_academorix_enum_trait';
+        return 'architecture.enum_uses_stackra_enum_trait';
     }
 
     public function description(): string
     {
-        return 'Every enum must import `Academorix\\Enum\\Enum` and `use Enum;` in its body — the framework enum trait bundles the required helpers.';
+        return 'Every enum must import `Stackra\\Enum\\Enum` and `use Enum;` in its body — the framework enum trait bundles the required helpers.';
     }
 
     protected function defaultSeverity(): Severity
@@ -89,7 +89,7 @@ final class EnumUsesAcademorixEnumTraitRule extends AbstractRule
 
         // The framework's own enum package defines the trait —
         // it obviously can't `use` itself.
-        if ($file->classFqcn !== null && str_starts_with($file->classFqcn, 'Academorix\\Enum\\')) {
+        if ($file->classFqcn !== null && str_starts_with($file->classFqcn, 'Stackra\\Enum\\')) {
             return [];
         }
 
@@ -115,7 +115,7 @@ final class EnumUsesAcademorixEnumTraitRule extends AbstractRule
 
         $missing = [];
         if (! $hasImport) {
-            $missing[] = 'use Academorix\\Enum\\Enum;';
+            $missing[] = 'use Stackra\\Enum\\Enum;';
         }
         if (! $hasBodyUse) {
             $missing[] = 'use Enum; (inside the enum body)';
@@ -131,7 +131,7 @@ final class EnumUsesAcademorixEnumTraitRule extends AbstractRule
                     \implode(' + ', $missing),
                 ),
                 line: null,
-                hint: 'Run `php dev-tools/migrations/bin/academorix-migrate enums --apply` to fix every violation of this rule automatically.',
+                hint: 'Run `php dev-tools/migrations/bin/stackra-migrate enums --apply` to fix every violation of this rule automatically.',
             ),
         ];
     }

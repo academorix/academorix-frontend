@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Exceptions;
+namespace Stackra\Marketing\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Direct API creation of marketing events is forbidden — capture is via the MarketingEventCapturer domain-event listener path only.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MarketingEventManualCreateForbiddenException extends AcademorixException
+final class MarketingEventManualCreateForbiddenException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

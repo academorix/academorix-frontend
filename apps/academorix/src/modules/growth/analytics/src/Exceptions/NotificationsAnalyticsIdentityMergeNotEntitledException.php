@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Analytics\Exceptions;
+namespace Stackra\Analytics\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Tenant lacks analytics_identity_merge entitlement (Enterprise-only).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsAnalyticsIdentityMergeNotEntitledException extends AcademorixException
+final class NotificationsAnalyticsIdentityMergeNotEntitledException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

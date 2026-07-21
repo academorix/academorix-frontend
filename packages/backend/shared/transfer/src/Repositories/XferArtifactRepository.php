@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Repositories;
+namespace Stackra\Transfer\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Transfer\Contracts\Data\XferArtifactInterface;
-use Academorix\Transfer\Contracts\Repositories\XferArtifactRepositoryInterface;
-use Academorix\Transfer\Models\XferArtifact;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Transfer\Contracts\Data\XferArtifactInterface;
+use Stackra\Transfer\Contracts\Repositories\XferArtifactRepositoryInterface;
+use Stackra\Transfer\Models\XferArtifact;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Transfer\Models\XferArtifact}.
+ * Attribute-first Eloquent repository for {@see Stackra\Transfer\Models\XferArtifact}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(XferArtifactInterface::class)]` which resolves to
  * `XferArtifact` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Transfer\Models\XferArtifact>
+ * @extends Repository<\Stackra\Transfer\Models\XferArtifact>
  *
  * @category Transfer
  *

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FinanceDigitalPassesSdk\Enums;
+namespace Stackra\FinanceDigitalPassesSdk\Enums;
 
 /**
  * Wire-visible backed enum for `wallet-pass.provider`.

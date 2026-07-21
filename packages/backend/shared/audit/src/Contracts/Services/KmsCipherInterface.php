@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Contracts\Services;
+namespace Stackra\Audit\Contracts\Services;
 
-use Academorix\Audit\Services\NullKmsCipher;
+use Stackra\Audit\Services\NullKmsCipher;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Singleton;
 

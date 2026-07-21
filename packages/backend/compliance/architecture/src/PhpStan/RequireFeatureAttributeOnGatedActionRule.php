@@ -18,7 +18,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\PhpStan;
+namespace Stackra\Architecture\PhpStan;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
@@ -43,7 +43,7 @@ final class RequireFeatureAttributeOnGatedActionRule implements Rule
     /**
      * FQN of the attribute the rule looks for.
      */
-    private const string ATTRIBUTE_FQN = 'Academorix\\FeatureFlags\\Attributes\\RequireFeature';
+    private const string ATTRIBUTE_FQN = 'Stackra\\FeatureFlags\\Attributes\\RequireFeature';
 
     /**
      * The AST node type this rule inspects.
@@ -93,7 +93,7 @@ final class RequireFeatureAttributeOnGatedActionRule implements Rule
             RuleErrorBuilder::message($message)
                 ->identifier('feature_flags.gated_action_needs_attribute')
                 ->line($node->getStartLine())
-                ->tip('Add `#[\\Academorix\\FeatureFlags\\Attributes\\RequireFeature(name: \'' . $docFeature . '\')]` on the class so the routing package appends the `feature:<name>` middleware.')
+                ->tip('Add `#[\\Stackra\\FeatureFlags\\Attributes\\RequireFeature(name: \'' . $docFeature . '\')]` on the class so the routing package appends the `feature:<name>` middleware.')
                 ->build(),
         ];
     }

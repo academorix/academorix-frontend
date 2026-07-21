@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Policies;
+namespace Stackra\Chargeback\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Chargeback\Models\Chargeback;
+use Stackra\User\Models\User;
+use Stackra\Chargeback\Models\Chargeback;
 
 /**
- * Authorization policy for {@see \Academorix\Chargeback\Models\Chargeback}.
+ * Authorization policy for {@see \Stackra\Chargeback\Models\Chargeback}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *
@@ -120,7 +120,7 @@ final class ChargebackPolicy
         return $user->can('platform.chargebacks.view');
     }
     /**
-     * Academorix platform ops for cross-tenant merchant-account risk monitoring — surfaces every tenant approaching VDMP/MDMP thresholds.
+     * Stackra platform ops for cross-tenant merchant-account risk monitoring — surfaces every tenant approaching VDMP/MDMP thresholds.
      *
      * @return bool
      */

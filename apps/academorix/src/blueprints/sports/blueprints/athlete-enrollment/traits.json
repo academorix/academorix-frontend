@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/athlete-enrollment/traits",
+  "id": "stackra://modules/athlete-enrollment/traits",
   "$version": 1,
   "title": "athlete-enrollment — trait composition",
   "description": "Two owned traits — BelongsToAthleteEnrollment for downstream models with enrollment_id FK, HasEnrollmentHistory on Athlete for the reverse-relation accessors.",
   "owned": [
     {
-      "trait": "Academorix\\Sports\\AthleteEnrollment\\Concerns\\BelongsToAthleteEnrollment",
+      "trait": "Stackra\\Sports\\AthleteEnrollment\\Concerns\\BelongsToAthleteEnrollment",
       "description": "Mixed into downstream models that carry an `enrollment_id` FK. Adds `enrollment()` belongsTo + query scope + cross-tenant guard.",
       "public": true,
       "usedBy": [
@@ -15,7 +15,7 @@
       ]
     },
     {
-      "trait": "Academorix\\Sports\\AthleteEnrollment\\Concerns\\HasEnrollmentHistory",
+      "trait": "Stackra\\Sports\\AthleteEnrollment\\Concerns\\HasEnrollmentHistory",
       "description": "Composed onto the Athlete model. Adds `enrollments()` (hasMany), `activeEnrollments()` (status IN active/confirmed), `enrollmentHistory()` (all including terminal states), `currentTeams()` (distinct teams from active enrollments).",
       "public": true,
       "usedBy": ["athlete::Athlete"]
@@ -28,19 +28,19 @@
       { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
-    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
-    "branch": [{ "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch" }],
-    "teams": [{ "trait": "Academorix\\Teams\\Concerns\\BelongsToTeam" }],
-    "athlete": [{ "trait": "Academorix\\Sports\\Athlete\\Concerns\\BelongsToAthlete" }],
-    "season": [{ "trait": "Academorix\\Sports\\Season\\Concerns\\BelongsToSeason" }],
-    "audit": [{ "trait": "Academorix\\Audit\\Concerns\\Auditable" }],
-    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
+    "tenants": [{ "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "branch": [{ "trait": "Stackra\\Branch\\Concerns\\BelongsToBranch" }],
+    "teams": [{ "trait": "Stackra\\Teams\\Concerns\\BelongsToTeam" }],
+    "athlete": [{ "trait": "Stackra\\Sports\\Athlete\\Concerns\\BelongsToAthlete" }],
+    "season": [{ "trait": "Stackra\\Sports\\Season\\Concerns\\BelongsToSeason" }],
+    "audit": [{ "trait": "Stackra\\Audit\\Concerns\\Auditable" }],
+    "activity": [{ "trait": "Stackra\\Activity\\Concerns\\HasActivityLog" }]
   },
   "composition": {
     "athleteEnrollment": {

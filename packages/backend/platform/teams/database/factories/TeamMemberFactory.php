@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Teams\Database\Factories;
+namespace Stackra\Teams\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Teams\Contracts\Data\TeamMemberInterface;
-use Academorix\Teams\Models\TeamMember;
+use Stackra\Teams\Contracts\Data\TeamMemberInterface;
+use Stackra\Teams\Models\TeamMember;
 
 /**
- * Factory for {@see \Academorix\Teams\Models\TeamMember}.
+ * Factory for {@see \Stackra\Teams\Models\TeamMember}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Teams\Models\TeamMember>
+ * @extends Factory<\Stackra\Teams\Models\TeamMember>
  *
  * @category Teams
  *

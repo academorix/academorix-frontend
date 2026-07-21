@@ -1,4 +1,4 @@
-# academorix/people
+# stackra/people
 
 Server-side Laravel package for the `people` module. Auto-generated from the
 blueprint at `modules/identity/blueprints/people/`.
@@ -8,7 +8,7 @@ blueprint at `modules/identity/blueprints/people/`.
 - **PersonGuardianLink** (`pgl_...`) — CENTRAL-plane guardian↔minor link that
   survives cross-tenant.
 - **PersonIdentity** (`pin_...`) — CENTRAL-plane global identity carrying the
-  Academorix ID.
+  Stackra ID.
 - **TenantLinkRequest** (`tlr_...`) — Consent-gated request from a tenant to
   link a local Athlete/Staff to a central PersonIdentity.
 
@@ -48,6 +48,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-identity/people-sdk` under `sdk/identity-people-sdk/`. Consumers
+`stackra-identity/people-sdk` under `sdk/identity-people-sdk/`. Consumers
 cross the service boundary through the SDK; this package is the SERVER-side
 owner of the domain.

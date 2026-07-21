@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Contracts\Services;
+namespace Stackra\Forms\Contracts\Services;
 
-use Academorix\Forms\Data\FormValidationResultData;
-use Academorix\Forms\Models\FormVersion;
-use Academorix\Forms\Services\FormValidator;
+use Stackra\Forms\Data\FormValidationResultData;
+use Stackra\Forms\Models\FormVersion;
+use Stackra\Forms\Services\FormValidator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

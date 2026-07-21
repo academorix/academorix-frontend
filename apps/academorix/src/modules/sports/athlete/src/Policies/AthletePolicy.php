@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Athlete\Policies;
+namespace Stackra\Athlete\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Athlete\Models\Athlete;
+use Stackra\User\Models\User;
+use Stackra\Athlete\Models\Athlete;
 
 /**
- * Authorization policy for {@see \Academorix\Athlete\Models\Athlete}.
+ * Authorization policy for {@see \Stackra\Athlete\Models\Athlete}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

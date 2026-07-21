@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Exceptions;
+namespace Stackra\Coaching\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `COACHING_PROFILE_ALREADY_VERIFIED` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CoachingProfileAlreadyVerifiedException extends AcademorixException
+final class CoachingProfileAlreadyVerifiedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

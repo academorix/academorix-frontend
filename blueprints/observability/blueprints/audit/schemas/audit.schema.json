@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/audit/schemas/audit",
+  "id": "stackra://modules/audit/schemas/audit",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Audit",
@@ -12,10 +12,10 @@
     "keyType": "int",
     "incrementing": true,
     "keyPrefixReserved": "aud_ (Wave 7+ redesign; PK stays bigint in Wave 6)",
-    "model": "Academorix\\Observability\\Audit\\Models\\Audit",
-    "interface": "Academorix\\Observability\\Audit\\Contracts\\Data\\AuditInterface",
+    "model": "Stackra\\Observability\\Audit\\Models\\Audit",
+    "interface": "Stackra\\Observability\\Audit\\Contracts\\Data\\AuditInterface",
     "implements": [
-      "Academorix\\Observability\\Audit\\Contracts\\Data\\AuditInterface",
+      "Stackra\\Observability\\Audit\\Contracts\\Data\\AuditInterface",
       "OwenIt\\Auditing\\Contracts\\Audit"
     ],
     "extends": "OwenIt\\Auditing\\Models\\Audit",
@@ -203,7 +203,7 @@
     },
     "auditable_short_type": {
       "type": "string",
-      "description": "Computed. class_basename(auditable_type). E.g. 'Membership' rather than 'Academorix\\Finance\\Models\\Membership'."
+      "description": "Computed. class_basename(auditable_type). E.g. 'Membership' rather than 'Stackra\\Finance\\Models\\Membership'."
     },
     "diff_summary": {
       "type": "object",

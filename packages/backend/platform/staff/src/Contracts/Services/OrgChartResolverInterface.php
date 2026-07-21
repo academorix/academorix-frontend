@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Staff\Contracts\Services;
+namespace Stackra\Staff\Contracts\Services;
 
-use Academorix\Staff\Services\OrgChartResolver;
+use Stackra\Staff\Services\OrgChartResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Exceptions;
+namespace Stackra\Notifications\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a lookup expects a Notification row but none is
@@ -16,7 +16,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationNotFoundException extends AcademorixException
+final class NotificationNotFoundException extends StackraException
 {
     public const CODE = 'notifications.not_found';
 

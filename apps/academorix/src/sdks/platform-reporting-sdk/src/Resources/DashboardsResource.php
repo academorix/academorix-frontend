@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformReportingSdk\Resources;
+namespace Stackra\PlatformReportingSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\PlatformReportingSdk\Data\DashboardData;
-use Academorix\PlatformReportingSdk\Requests\Dashboards\CreateDashboardRequest;
-use Academorix\PlatformReportingSdk\Requests\Dashboards\ListDashboardsRequest;
-use Academorix\PlatformReportingSdk\Requests\Dashboards\ShowDashboardRequest;
-use Academorix\PlatformReportingSdk\Requests\Dashboards\UpdateDashboardRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\PlatformReportingSdk\Data\DashboardData;
+use Stackra\PlatformReportingSdk\Requests\Dashboards\CreateDashboardRequest;
+use Stackra\PlatformReportingSdk\Requests\Dashboards\ListDashboardsRequest;
+use Stackra\PlatformReportingSdk\Requests\Dashboards\ShowDashboardRequest;
+use Stackra\PlatformReportingSdk\Requests\Dashboards\UpdateDashboardRequest;
 use Saloon\Http\Response;
 
 /**
@@ -57,7 +57,7 @@ final readonly class DashboardsResource
      *
      * @return DashboardData
      */
-    public function create(\Academorix\PlatformReportingSdk\Payloads\Dashboards\CreateDashboardPayload $payload, ?string $idempotencyKey = null): DashboardData
+    public function create(\Stackra\PlatformReportingSdk\Payloads\Dashboards\CreateDashboardPayload $payload, ?string $idempotencyKey = null): DashboardData
     {
         return $this->connector->send(new CreateDashboardRequest($payload, $idempotencyKey))->dto();
     }
@@ -85,7 +85,7 @@ final readonly class DashboardsResource
      *
      * @return DashboardData
      */
-    public function update(string $dashboard, \Academorix\PlatformReportingSdk\Payloads\Dashboards\UpdateDashboardPayload $payload, ?string $idempotencyKey = null): DashboardData
+    public function update(string $dashboard, \Stackra\PlatformReportingSdk\Payloads\Dashboards\UpdateDashboardPayload $payload, ?string $idempotencyKey = null): DashboardData
     {
         return $this->connector->send(new UpdateDashboardRequest($dashboard, $payload, $idempotencyKey))->dto();
     }

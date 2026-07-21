@@ -8,10 +8,10 @@ declare(strict_types=1);
  * @description
  * Trait that adds `#[AsCriteria]` discovery to a service provider (or
  * any host with access to the service container). Resolves the unified
- * {@see \Academorix\Foundation\Contracts\DiscoversAttributes} contract
+ * {@see \Stackra\Foundation\Contracts\DiscoversAttributes} contract
  * — no direct dependency on the underlying attribute-manifest backend
  * (currently `olvlvl/composer-attribute-collector`, wrapped by
- * {@see \Academorix\Foundation\Discovery\AttributeDiscovery}).
+ * {@see \Stackra\Foundation\Discovery\AttributeDiscovery}).
  *
  * ## Boot-time contract
  *
@@ -32,12 +32,12 @@ declare(strict_types=1);
  * @since 2.0.0
  */
 
-namespace Academorix\Crud\Concerns\Discovery;
+namespace Stackra\Crud\Concerns\Discovery;
 
-use Academorix\Crud\Attributes\AsCriteria;
-use Academorix\Crud\Contracts\CriteriaInterface;
-use Academorix\Crud\Registries\CriteriaRegistry;
-use Academorix\Foundation\Contracts\DiscoversAttributes;
+use Stackra\Crud\Attributes\AsCriteria;
+use Stackra\Crud\Contracts\CriteriaInterface;
+use Stackra\Crud\Registries\CriteriaRegistry;
+use Stackra\Foundation\Contracts\DiscoversAttributes;
 use Throwable;
 
 /**

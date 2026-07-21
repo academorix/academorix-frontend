@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Console;
+namespace Stackra\Search\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Search\Contracts\Repositories\SearchSynonymRepositoryInterface;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Search\Contracts\Repositories\SearchSynonymRepositoryInterface;
 
 /**
  * `php artisan search:synonyms` — CRUD + bulk ops on `search_synonyms`.

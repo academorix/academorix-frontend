@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/access/requests/caches",
+  "id": "stackra://modules/access/requests/caches",
   "$version": 1,
   "title": "requests \u2014 cache keys",
   "description": "Cache keys this module owns. The registry cache is application-wide; per-user + per-tenant caches carry the tenant prefix via CachePrefixTenantHook. All keys use the redis store.",

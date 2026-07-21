@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Athlete\Contracts\Services;
+namespace Stackra\Athlete\Contracts\Services;
 
-use Academorix\Athlete\Enums\AthleteStatus;
-use Academorix\Athlete\Models\Athlete;
-use Academorix\Athlete\Services\AthleteStatusMachine;
+use Stackra\Athlete\Enums\AthleteStatus;
+use Stackra\Athlete\Models\Athlete;
+use Stackra\Athlete\Services\AthleteStatusMachine;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -45,11 +45,11 @@ interface AthleteStatusMachineInterface
      *                                         payload — carries reasons /
      *                                         actor id / notes.
      *
-     * @throws \Academorix\Athlete\Exceptions\AthleteStatusTransitionInvalidException
+     * @throws \Stackra\Athlete\Exceptions\AthleteStatusTransitionInvalidException
      *         When the source→target pair is not allowed.
-     * @throws \Academorix\Athlete\Exceptions\AthleteWithdrawalReasonRequiredException
+     * @throws \Stackra\Athlete\Exceptions\AthleteWithdrawalReasonRequiredException
      *         When transitioning to Withdrawn without a reason.
-     * @throws \Academorix\Athlete\Exceptions\AthletePauseReasonRequiredException
+     * @throws \Stackra\Athlete\Exceptions\AthletePauseReasonRequiredException
      *         When transitioning to Paused without a reason.
      */
     public function transition(Athlete $athlete, AthleteStatus $target, array $context = []): Athlete;

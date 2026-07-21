@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Order\Models;
+namespace Stackra\Order\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Order\Contracts\Data\OrderInterface;
-use Academorix\Order\Database\Factories\OrderFactory;
-use Academorix\Branch\Concerns\BelongsToBranch;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Order\Enums\OrderChannel;
-use Academorix\Order\Enums\OrderStatus;
-use Academorix\Order\Policies\OrderPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Order\Contracts\Data\OrderInterface;
+use Stackra\Order\Database\Factories\OrderFactory;
+use Stackra\Branch\Concerns\BelongsToBranch;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Order\Enums\OrderChannel;
+use Stackra\Order\Enums\OrderStatus;
+use Stackra\Order\Policies\OrderPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

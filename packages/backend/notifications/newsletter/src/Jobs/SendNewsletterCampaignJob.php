@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Jobs;
+namespace Stackra\Newsletter\Jobs;
 
-use Academorix\Newsletter\Contracts\Data\NewsletterAudienceInterface;
-use Academorix\Newsletter\Contracts\Data\NewsletterCampaignInterface;
-use Academorix\Newsletter\Contracts\Data\NewsletterInterface;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterAudienceRepositoryInterface;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterCampaignRepositoryInterface;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterRepositoryInterface;
-use Academorix\Newsletter\Enums\NewsletterCampaignStatus;
-use Academorix\Newsletter\Enums\NewsletterStatus;
+use Stackra\Newsletter\Contracts\Data\NewsletterAudienceInterface;
+use Stackra\Newsletter\Contracts\Data\NewsletterCampaignInterface;
+use Stackra\Newsletter\Contracts\Data\NewsletterInterface;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterAudienceRepositoryInterface;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterCampaignRepositoryInterface;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterRepositoryInterface;
+use Stackra\Newsletter\Enums\NewsletterCampaignStatus;
+use Stackra\Newsletter\Enums\NewsletterStatus;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -174,7 +174,7 @@ final class SendNewsletterCampaignJob implements ShouldBeUnique, ShouldQueue
     /**
      * Mark the campaign failed with a reason string.
      */
-    private function fail(\Academorix\Newsletter\Models\NewsletterCampaign $campaign, string $reason): void
+    private function fail(\Stackra\Newsletter\Models\NewsletterCampaign $campaign, string $reason): void
     {
         $campaign->update([
             NewsletterCampaignInterface::ATTR_STATUS         => NewsletterCampaignStatus::Failed->value,

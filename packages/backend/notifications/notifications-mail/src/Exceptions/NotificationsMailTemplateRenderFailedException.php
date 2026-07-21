@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsMail\Exceptions;
+namespace Stackra\NotificationsMail\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Blade rendering of body_rendered_html threw.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsMailTemplateRenderFailedException extends AcademorixException
+final class NotificationsMailTemplateRenderFailedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

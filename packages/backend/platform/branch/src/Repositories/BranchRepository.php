@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branch\Repositories;
+namespace Stackra\Branch\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Branch\Contracts\Data\BranchInterface;
-use Academorix\Branch\Contracts\Repositories\BranchRepositoryInterface;
-use Academorix\Branch\Models\Branch;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Branch\Contracts\Data\BranchInterface;
+use Stackra\Branch\Contracts\Repositories\BranchRepositoryInterface;
+use Stackra\Branch\Models\Branch;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Branch\Models\Branch}.
+ * Attribute-first Eloquent repository for {@see Stackra\Branch\Models\Branch}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(BranchInterface::class)]` which resolves to
  * `Branch` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Branch\Models\Branch>
+ * @extends Repository<\Stackra\Branch\Models\Branch>
  *
  * @category Branch
  *

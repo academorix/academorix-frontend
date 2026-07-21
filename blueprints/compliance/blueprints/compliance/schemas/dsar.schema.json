@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/compliance/schemas/dsar",
+  "id": "stackra://modules/compliance/schemas/dsar",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Dsar",
@@ -12,9 +12,9 @@
     "keyType": "string",
     "keyPrefix": "dsr_",
     "incrementing": false,
-    "model": "Academorix\\Compliance\\Models\\Dsar",
-    "interface": "Academorix\\Compliance\\Contracts\\Data\\DsarInterface",
-    "implements": ["Academorix\\Compliance\\Contracts\\Data\\DsarInterface"],
+    "model": "Stackra\\Compliance\\Models\\Dsar",
+    "interface": "Stackra\\Compliance\\Contracts\\Data\\DsarInterface",
+    "implements": ["Stackra\\Compliance\\Contracts\\Data\\DsarInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -59,7 +59,7 @@
         "type": "string",
         "length": 128,
         "nullable": false,
-        "description": "e.g. `Academorix\\User\\Models\\User` or a walk-in ExternalSubject class."
+        "description": "e.g. `Stackra\\User\\Models\\User` or a walk-in ExternalSubject class."
       },
       "subject_id": {
         "type": "string",

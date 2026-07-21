@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Channels;
+namespace Stackra\Notifications\InApp\Channels;
 
-use Academorix\Notifications\Contracts\Data\NotificationInterface;
-use Academorix\Notifications\InApp\Attributes\AsNotificationChannel;
-use Academorix\Notifications\InApp\Contracts\Data\InAppMessageInterface;
-use Academorix\Notifications\InApp\Contracts\Repositories\InAppMessageRepositoryInterface;
-use Academorix\Notifications\InApp\Contracts\Services\InAppChannelInterface;
-use Academorix\Notifications\InApp\Events\InAppMessageDelivered;
-use Academorix\Notifications\Models\Notification;
+use Stackra\Notifications\Contracts\Data\NotificationInterface;
+use Stackra\Notifications\InApp\Attributes\AsNotificationChannel;
+use Stackra\Notifications\InApp\Contracts\Data\InAppMessageInterface;
+use Stackra\Notifications\InApp\Contracts\Repositories\InAppMessageRepositoryInterface;
+use Stackra\Notifications\InApp\Contracts\Services\InAppChannelInterface;
+use Stackra\Notifications\InApp\Events\InAppMessageDelivered;
+use Stackra\Notifications\Models\Notification;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Contracts\Broadcasting\Factory as BroadcastFactory;
@@ -21,7 +21,7 @@ use Psr\Log\LoggerInterface;
  *
  * Translates one persisted {@see Notification} into:
  *
- *   1. An {@see \Academorix\Notifications\InApp\Models\InAppMessage}
+ *   1. An {@see \Stackra\Notifications\InApp\Models\InAppMessage}
  *      row — the denormalised inbox card the bell UI renders.
  *   2. A Reverb broadcast on the private `user.{id}.notifications`
  *      channel so open tabs receive the notification without a poll.

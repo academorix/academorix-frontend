@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformReceptionSdk\Enums;
+namespace Stackra\PlatformReceptionSdk\Enums;
 
 /**
  * Wire-visible backed enum for `reception-visit.status`.

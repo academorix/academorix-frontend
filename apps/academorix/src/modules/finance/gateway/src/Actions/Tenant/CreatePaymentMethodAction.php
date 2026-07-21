@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Gateway\Actions\Tenant;
+namespace Stackra\Gateway\Actions\Tenant;
 
-use Academorix\Gateway\Contracts\Repositories\PaymentMethodRepositoryInterface;
-use Academorix\Gateway\Data\PaymentMethodData;
-use Academorix\Gateway\Data\Requests\CreatePaymentMethodRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Gateway\Contracts\Repositories\PaymentMethodRepositoryInterface;
+use Stackra\Gateway\Data\PaymentMethodData;
+use Stackra\Gateway\Data\Requests\CreatePaymentMethodRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/payment-methods` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Gateway

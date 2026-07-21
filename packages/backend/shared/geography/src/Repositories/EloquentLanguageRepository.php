@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Repositories;
+namespace Stackra\Geography\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Geography\Contracts\Data\LanguageInterface;
-use Academorix\Geography\Contracts\Repositories\LanguageRepositoryInterface;
-use Academorix\Geography\Models\Language;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Geography\Contracts\Data\LanguageInterface;
+use Stackra\Geography\Contracts\Repositories\LanguageRepositoryInterface;
+use Stackra\Geography\Models\Language;
 
 /**
  * Eloquent implementation of {@see LanguageRepositoryInterface}.

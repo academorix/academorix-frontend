@@ -11,7 +11,7 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Foundation\Middlewares\Request;
+namespace Stackra\Foundation\Middlewares\Request;
 
 use function chr;
 
@@ -25,8 +25,8 @@ use function in_array;
 use function is_array;
 use function is_string;
 
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Support\Str;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Support\Str;
 
 use function strip_tags;
 

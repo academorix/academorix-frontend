@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/audit/config",
+  "id": "stackra://modules/audit/config",
   "$version": 1,
   "title": "audit — developer configuration",
   "description": "Deploy-static configuration. Mirrors `config/audit.php`. Governs storage adaptation (table name), retention windows (default + max years, hot-tier days), backfill batch tuning, export format + archive bucket, and per-tenant PII-redaction opt-in. Wraps + extends the vendor `owen-it/laravel-auditing` config; keys that overlap are intentionally repeated at our namespace so a change here does not require touching the vendor's `config/audit.php`.",

@@ -2,11 +2,11 @@
   "$version": 1,
   "name": "branding",
   "alias": "branding",
-  "namespace": "Academorix\\Branding",
+  "namespace": "Stackra\\Branding",
   "description": "White-label branding profile per Tenant — theme, palette, logo variants, typography, and OG-image seeds. Extracted from tenants at v0.3 for two reasons: (1) Branding has a high read/write ratio (every render path reads it; tenant owners mutate frequently) and warrants its own cache pattern; (2) the BrandingPayload cast + BrandingPolicy + BrandingObserver have their own tight coupling and don't belong in the tenants core.",
   "keywords": ["branding", "theme", "logo", "palette", "typography", "white-label", "og-image"],
   "priority": 12,
-  "providers": ["Academorix\\Branding\\Providers\\BrandingServiceProvider"],
+  "providers": ["Stackra\\Branding\\Providers\\BrandingServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy"],
   "extendedBy": [],
@@ -34,7 +34,7 @@
   },
   "hosts": {
     "platform-admin": {
-      "description": "Academorix staff surface. Full CRUD.",
+      "description": "Stackra staff surface. Full CRUD.",
       "routes": ["* /api/v1/brandings*"]
     },
     "tenant": {

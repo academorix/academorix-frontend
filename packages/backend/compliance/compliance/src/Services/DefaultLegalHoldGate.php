@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Services;
+namespace Stackra\Compliance\Services;
 
-use Academorix\Compliance\Attributes\LegalHoldable;
-use Academorix\Compliance\Contracts\Repositories\LegalHoldRepositoryInterface;
-use Academorix\Compliance\Contracts\Services\LegalHoldGateInterface;
+use Stackra\Compliance\Attributes\LegalHoldable;
+use Stackra\Compliance\Contracts\Repositories\LegalHoldRepositoryInterface;
+use Stackra\Compliance\Contracts\Services\LegalHoldGateInterface;
 use Illuminate\Container\Attributes\Scoped;
 
 /**

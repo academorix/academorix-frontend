@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Services;
+namespace Stackra\Invitations\Services;
 
-use Academorix\Invitations\Contracts\Services\InvitationTargetRegistryInterface;
+use Stackra\Invitations\Contracts\Services\InvitationTargetRegistryInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Invitations\Contracts\Repositories\InvitationEventRepositoryInterface;
+use Stackra\Invitations\Contracts\Repositories\InvitationEventRepositoryInterface;
 
 /**
  * Concrete service — InvitationTargetRegistry.

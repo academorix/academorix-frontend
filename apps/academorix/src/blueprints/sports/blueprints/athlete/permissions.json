@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/athlete/permissions",
+  "id": "stackra://modules/athlete/permissions",
   "$version": 1,
   "title": "athlete — permissions",
-  "seeder": "Academorix\\Sports\\Athlete\\Database\\Seeders\\AthletePermissionSeeder",
+  "seeder": "Stackra\\Sports\\Athlete\\Database\\Seeders\\AthletePermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — Athlete CRUD by admin / owner / hr / coach / reception / guardian (via .own scope), self-service via .own scope suffix for adult athletes. Platform plane (platform_admin) — cross-tenant read + medical-audit for compliance ops. All permissions carry the `athletes.` prefix (or `platform.athletes.` on platform audience) to align with hierarchy.md §4 audience-boundary rules. Note: this module introduces the `guardian` role via the RoleDefinition catalogue in the rbac module — the `guardian` role gets `.own` scoped read + limited write permissions (record consent, view medical for own children when consent_medical_disclosure is true).",
   "permissions": [

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Event\Contracts\Services;
+namespace Stackra\Event\Contracts\Services;
 
-use Academorix\Event\Services\EventEligibilityEvaluator;
+use Stackra\Event\Services\EventEligibilityEvaluator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

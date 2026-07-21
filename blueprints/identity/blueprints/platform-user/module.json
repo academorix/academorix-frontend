@@ -2,13 +2,13 @@
   "$version": 1,
   "name": "platform-user",
   "alias": "platform-user",
-  "namespace": "Academorix\\PlatformUser",
-  "description": "Academorix-staff principal — cross-tenant, cross-application. One PlatformUser per real Academorix employee. Sits on the `platform_admin` guard, distinct from the `sanctum` guard used by tenant Users. Reuses the same Identity substrate (email + password + MFA) via `identity_id` FK so a Academorix engineer authenticates the same way a tenant customer does — but never inherits a tenant scope. Owns two entities: PlatformUser (employment lifecycle + department + on-call metadata) and PlatformProfile (1:1 PII satellite carrying first/last name, phone, avatar, timezone, Slack + GitHub handles for internal correlation). Powers every Academorix internal admin surface (`/api/v1/platform/*`), support tooling, tenant-side impersonation start-points (via the future `access/delegation` module), the on-call escalation resolver (optionally backed by PagerDuty), and the SOC2 heavy-audit trail (`platform.audit` middleware stamps every platform-plane write with an audit row + correlation id). Enforces least-privilege by design — newly-hired PlatformUsers land with zero roles; access is granted post-hire by a super_admin. MFA is MANDATORY on the `platform_admin` guard regardless of the underlying Identity's MFA state (`platform.mfa_required` middleware refuses tokens issued to Identities without MFA). Offboarding is a two-phase lifecycle: `offboard` writes the terminal status and dispatches `RevokePlatformUserAccessJob` (revokes all tokens, terminates active impersonations, invalidates JWTs) within a 24-hour SLA; a 90-day retention hold preserves audit correlation for compliance retrieval; then `PurgeOffboardedPlatformUsersJob` hard-deletes. NEVER carries `tenant_id` or `application_id` — platform staff are cross-plane by construction (see design.md §3 + §4.3). The platform-user table is the ONE central-plane row that reuses `identity_id` — the row is a projection of Identity into the Academorix-staff plane, mirroring how `users` projects Identity into a tenant-plane Application.",
+  "namespace": "Stackra\\PlatformUser",
+  "description": "Stackra-staff principal — cross-tenant, cross-application. One PlatformUser per real Stackra employee. Sits on the `platform_admin` guard, distinct from the `sanctum` guard used by tenant Users. Reuses the same Identity substrate (email + password + MFA) via `identity_id` FK so a Stackra engineer authenticates the same way a tenant customer does — but never inherits a tenant scope. Owns two entities: PlatformUser (employment lifecycle + department + on-call metadata) and PlatformProfile (1:1 PII satellite carrying first/last name, phone, avatar, timezone, Slack + GitHub handles for internal correlation). Powers every Stackra internal admin surface (`/api/v1/platform/*`), support tooling, tenant-side impersonation start-points (via the future `access/delegation` module), the on-call escalation resolver (optionally backed by PagerDuty), and the SOC2 heavy-audit trail (`platform.audit` middleware stamps every platform-plane write with an audit row + correlation id). Enforces least-privilege by design — newly-hired PlatformUsers land with zero roles; access is granted post-hire by a super_admin. MFA is MANDATORY on the `platform_admin` guard regardless of the underlying Identity's MFA state (`platform.mfa_required` middleware refuses tokens issued to Identities without MFA). Offboarding is a two-phase lifecycle: `offboard` writes the terminal status and dispatches `RevokePlatformUserAccessJob` (revokes all tokens, terminates active impersonations, invalidates JWTs) within a 24-hour SLA; a 90-day retention hold preserves audit correlation for compliance retrieval; then `PurgeOffboardedPlatformUsersJob` hard-deletes. NEVER carries `tenant_id` or `application_id` — platform staff are cross-plane by construction (see design.md §3 + §4.3). The platform-user table is the ONE central-plane row that reuses `identity_id` — the row is a projection of Identity into the Stackra-staff plane, mirroring how `users` projects Identity into a tenant-plane Application.",
   "keywords": [
     "platform-user",
     "platform-admin",
     "platform-staff",
-    "academorix-staff",
+    "stackra-staff",
     "employee",
     "central-plane",
     "cross-tenant",
@@ -23,7 +23,7 @@
     "audit-heavy"
   ],
   "priority": 19,
-  "providers": ["Academorix\\PlatformUser\\Providers\\PlatformUserServiceProvider"],
+  "providers": ["Stackra\\PlatformUser\\Providers\\PlatformUserServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "identity"],
   "extendedBy": ["rbac", "delegation", "auth"],
@@ -82,7 +82,7 @@
   },
   "hosts": {
     "platform-admin": {
-      "description": "Every route lives on the `platform_admin` guard. There is NO tenant-facing surface — tenant users cannot see Academorix staff. `/api/v1/platform/platform-users` is the primary CRUD surface (super_admin-gated), `/api/v1/platform/platform-profiles/me` is the self-service surface every PlatformUser reaches, and `/api/v1/platform/platform-users/on-call/current` resolves the current on-call rotation for internal escalation routing.",
+      "description": "Every route lives on the `platform_admin` guard. There is NO tenant-facing surface — tenant users cannot see Stackra staff. `/api/v1/platform/platform-users` is the primary CRUD surface (super_admin-gated), `/api/v1/platform/platform-profiles/me` is the self-service surface every PlatformUser reaches, and `/api/v1/platform/platform-users/on-call/current` resolves the current on-call rotation for internal escalation routing.",
       "routes": [
         "GET/POST /api/v1/platform/platform-users",
         "GET/PATCH /api/v1/platform/platform-users/{platformUser}",
@@ -97,5 +97,5 @@
     }
   },
   "compliance_note": "SOC 2 Type II heavy-audit trail. Every write on the `platform_admin` guard is stamped with an audit row + correlation id via the `platform.audit` middleware — stricter than the tenant-plane default. Offboarding SLA (24h) is enforced by the `platform-user:offboard` action + scheduled `PurgeOffboardedPlatformUsersJob` reconciliation. Audit correlation is preserved indefinitely (compliance evidence retention) even after PlatformUser row is hard-deleted post 90-day hold.",
-  "cross_plane_note": "The identity_id FK is INTENTIONALLY shared with `users.identity_id`. One human can be both an Academorix engineer (PlatformUser) AND a tenant customer (User rows in one or more Applications) using the same Identity credentials. The guard boundary is what separates them at request time — the same Sanctum PAT never gains both guards' abilities. See design.md §3 — guard boundary is inviolable."
+  "cross_plane_note": "The identity_id FK is INTENTIONALLY shared with `users.identity_id`. One human can be both an Stackra engineer (PlatformUser) AND a tenant customer (User rows in one or more Applications) using the same Identity credentials. The guard boundary is what separates them at request time — the same Sanctum PAT never gains both guards' abilities. See design.md §3 — guard boundary is inviolable."
 }

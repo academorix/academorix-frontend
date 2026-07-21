@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Contracts\Services;
+namespace Stackra\Localization\Contracts\Services;
 
-use Academorix\Localization\Services\TranslatorDriverManager;
+use Stackra\Localization\Services\TranslatorDriverManager;
 use Illuminate\Container\Attributes\Bind;
 
 /**

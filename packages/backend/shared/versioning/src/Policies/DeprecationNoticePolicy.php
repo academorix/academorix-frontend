@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Policies;
+namespace Stackra\Versioning\Policies;
 
-use Academorix\Versioning\Enums\VersioningPermission;
-use Academorix\Versioning\Models\DeprecationNotice;
+use Stackra\Versioning\Enums\VersioningPermission;
+use Stackra\Versioning\Models\DeprecationNotice;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

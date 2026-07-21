@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/athlete-enrollment/middleware",
+  "id": "stackra://modules/athlete-enrollment/middleware",
   "$version": 1,
   "title": "athlete-enrollment — HTTP middleware",
   "middleware": [
     {
       "alias": "athlete_enrollment.enforce_capacity",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Http\\Middleware\\EnforceTeamCapacity",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Http\\Middleware\\EnforceTeamCapacity",
       "priority": 44,
       "description": "Refuses submission when team is at capacity AND tenant lacks athlete_enrollment_waitlist entitlement. When waitlist entitlement is on, the middleware does NOT refuse — the observer transitions to waitlisted state instead. Returns 409 TEAM_AT_CAPACITY.",
       "auto_applied": false,
@@ -13,7 +13,7 @@
     },
     {
       "alias": "athlete_enrollment.enforce_registration_window",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Http\\Middleware\\EnforceRegistrationWindow",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Http\\Middleware\\EnforceRegistrationWindow",
       "priority": 43,
       "description": "Refuses submission when Season.status NOT IN ('registration_open', 'in_progress'). When status='in_progress', the enrollment is created with enrollment_type='late' (with fee, tenant-configurable). Returns 422 ENROLLMENT_SEASON_NOT_OPEN when neither.",
       "auto_applied": false,

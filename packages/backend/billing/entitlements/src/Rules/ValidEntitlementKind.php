@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Rules;
+namespace Stackra\Entitlements\Rules;
 
-use Academorix\Entitlements\Enums\EntitlementKind;
+use Stackra\Entitlements\Enums\EntitlementKind;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 

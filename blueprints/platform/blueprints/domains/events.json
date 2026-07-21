@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/domains/events",
+  "id": "stackra://modules/domains/events",
   "$version": 1,
   "title": "domains — domain events",
   "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",

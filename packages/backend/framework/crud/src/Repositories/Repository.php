@@ -28,30 +28,30 @@ declare(strict_types=1);
  * @implements RepositoryInterface<TModel>
  */
 
-namespace Academorix\Crud\Repositories;
+namespace Stackra\Crud\Repositories;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Concerns\Repository\BootsFromRegistry;
-use Academorix\Crud\Concerns\Repository\HasCriteria;
-use Academorix\Crud\Concerns\Repository\HasEvents;
-use Academorix\Crud\Concerns\Repository\HasQueryModifiers;
-use Academorix\Crud\Concerns\Repository\HasRequestFiltering;
-use Academorix\Crud\Concerns\Repository\HasTranslatable;
-use Academorix\Crud\Concerns\Repository\PreparesQueries;
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Crud\Events\EntityCreated;
-use Academorix\Crud\Events\EntityDeleted;
-use Academorix\Crud\Events\EntityUpdated;
-// TODO: RoutesToIndex trait is provided by academorix/indexer in the old
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Concerns\Repository\BootsFromRegistry;
+use Stackra\Crud\Concerns\Repository\HasCriteria;
+use Stackra\Crud\Concerns\Repository\HasEvents;
+use Stackra\Crud\Concerns\Repository\HasQueryModifiers;
+use Stackra\Crud\Concerns\Repository\HasRequestFiltering;
+use Stackra\Crud\Concerns\Repository\HasTranslatable;
+use Stackra\Crud\Concerns\Repository\PreparesQueries;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Events\EntityCreated;
+use Stackra\Crud\Events\EntityDeleted;
+use Stackra\Crud\Events\EntityUpdated;
+// TODO: RoutesToIndex trait is provided by stackra/indexer in the old
 // codebase. That package has not been ported into the new monorepo yet — see
 // MIGRATION.md. Uncomment both the import + the `use RoutesToIndex;` line
-// below once an `academorix/indexer` (or equivalent) package ships the trait.
-// use Academorix\Indexer\Concerns\RoutesToIndex;
+// below once an `stackra/indexer` (or equivalent) package ships the trait.
+// use Stackra\Indexer\Concerns\RoutesToIndex;
 
 /**
  * Abstract base repository backed by Eloquent.
@@ -72,7 +72,7 @@ abstract class Repository implements RepositoryInterface
     use HasTranslatable;
     use PreparesQueries;
     // TODO: See top-of-file note. RoutesToIndex is temporarily disabled until
-    // an `academorix/indexer` package ships the trait.
+    // an `stackra/indexer` package ships the trait.
     // use RoutesToIndex;
 
     /**

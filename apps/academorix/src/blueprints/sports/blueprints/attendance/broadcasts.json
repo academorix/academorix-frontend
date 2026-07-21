@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/attendance/broadcasts",
+  "id": "stackra://modules/attendance/broadcasts",
   "$version": 1,
   "title": "attendance — realtime broadcast channels",
   "description": "Five broadcast channels: tenant / session / athlete / user / coach. Powers live session-roster views for coaches, live check-in dashboards for admins, and per-athlete attendance status for guardians.",
   "channels": [
     {
       "name": "tenant.{tenantId}.attendance",
-      "class": "Academorix\\Sports\\Attendance\\Broadcasts\\TenantAttendanceChannel",
+      "class": "Stackra\\Sports\\Attendance\\Broadcasts\\TenantAttendanceChannel",
       "description": "Tenant-wide attendance lifecycle stream. Powers the admin's real-time attendance dashboard.",
       "authorization": "sanctum::authed AND tenant_matches AND permission `attendance.viewAny`",
       "events": [
@@ -24,7 +24,7 @@
     },
     {
       "name": "session.{sessionId}.attendance",
-      "class": "Academorix\\Sports\\Attendance\\Broadcasts\\SessionAttendanceChannel",
+      "class": "Stackra\\Sports\\Attendance\\Broadcasts\\SessionAttendanceChannel",
       "description": "Session-scoped roster + check-in stream. Powers the coach's session-day dashboard — head coach sees athletes check in live during session start.",
       "authorization": "sanctum::authed AND (permission `attendance.viewAny.coach` scoped to session's assignments OR permission `attendance.viewAny` scoped to session's branch)",
       "events": [
@@ -40,7 +40,7 @@
     },
     {
       "name": "athlete.{athleteId}.attendance",
-      "class": "Academorix\\Sports\\Attendance\\Broadcasts\\AthleteAttendanceChannel",
+      "class": "Stackra\\Sports\\Attendance\\Broadcasts\\AthleteAttendanceChannel",
       "description": "Per-athlete attendance stream. Powers the athlete detail page's attendance timeline + guardian dashboard.",
       "authorization": "sanctum::authed AND (permission `attendance.view` scoped to athlete OR athlete's guardian via .own OR self as adult athlete)",
       "events": [
@@ -54,7 +54,7 @@
     },
     {
       "name": "user.{userId}.attendance",
-      "class": "Academorix\\Sports\\Attendance\\Broadcasts\\UserAttendanceChannel",
+      "class": "Stackra\\Sports\\Attendance\\Broadcasts\\UserAttendanceChannel",
       "description": "Per-user attendance stream — powers the /me/attendance live widget for guardians + adult athletes. Fans out attendance events for every athlete the user is linked to (self as adult athlete OR guardian's assigned athletes).",
       "authorization": "sanctum::authed AND user_matches",
       "events": [
@@ -68,7 +68,7 @@
     },
     {
       "name": "coach.{coachId}.attendance",
-      "class": "Academorix\\Sports\\Attendance\\Broadcasts\\CoachAttendanceChannel",
+      "class": "Stackra\\Sports\\Attendance\\Broadcasts\\CoachAttendanceChannel",
       "description": "Per-coach attendance stream — attendance events across every session the coach is assigned to. Powers the coach's roster dashboard.",
       "authorization": "sanctum::authed AND (coach_matches OR permission `attendance.viewAny.coach`)",
       "events": [

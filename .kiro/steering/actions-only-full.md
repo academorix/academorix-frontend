@@ -88,7 +88,7 @@ src/Actions/
   clarity, PHPStan diagnostics clarity, stack trace clarity — all three break
   when the class name relies on its folder for context.
 - **Namespace mirrors folder.**
-  `Academorix\Tenancy\Actions\Tenants\CreateTenant`.
+  `Stackra\Tenancy\Actions\Tenants\CreateTenant`.
 - **Route name derived from `#[AsAction(name: '...')]`.** Dot-separated,
   lowercase, singular unless the noun is intrinsically plural (a "list"
   endpoint):
@@ -158,17 +158,17 @@ Two different concepts. Never conflate:
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Actions\Tenants;
+namespace Stackra\Tenancy\Actions\Tenants;
 
-use Academorix\Access\Attributes\RequirePermission;
-use Academorix\Access\Enums\TenancyPermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
-use Academorix\Tenancy\Data\Requests\CreateTenantRequestData;
-use Academorix\Tenancy\Data\Resources\TenantResourceData;
+use Stackra\Access\Attributes\RequirePermission;
+use Stackra\Access\Enums\TenancyPermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
+use Stackra\Tenancy\Data\Requests\CreateTenantRequestData;
+use Stackra\Tenancy\Data\Resources\TenantResourceData;
 
 /**
  * `POST /api/v1/tenants` — create a new tenant.

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Contracts\Data;
+namespace Stackra\Notifications\InApp\Contracts\Data;
 
-use Academorix\Notifications\InApp\Models\InAppMessage;
+use Stackra\Notifications\InApp\Models\InAppMessage;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -17,7 +17,7 @@ use Illuminate\Container\Attributes\Bind;
  * joining the base `notifications` table on every read.
  *
  * The row is created synchronously by
- * {@see \Academorix\Notifications\InApp\Listeners\HandleNotificationDispatched}
+ * {@see \Stackra\Notifications\InApp\Listeners\HandleNotificationDispatched}
  * when the parent module fires `NotificationDispatched` with
  * `in_app` in `channels_requested`.
  *

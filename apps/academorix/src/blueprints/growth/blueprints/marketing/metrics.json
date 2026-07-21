@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/marketing/metrics",
+  "id": "stackra://modules/marketing/metrics",
   "$version": 1,
   "title": "marketing — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "academorix.marketing",
+  "namespace": "stackra.marketing",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["event_type", "provider", "status", "reason", "consent_category"],
@@ -20,49 +20,49 @@
   },
   "metrics": [
     {
-      "name": "academorix.marketing.events.captured_total",
+      "name": "stackra.marketing.events.captured_total",
       "kind": "counter",
       "unit": "events",
       "labels": ["event_type", "source", "subject_type"],
       "description": "Number of marketing events captured (persisted to marketing_events with status='pending'). Rate signal for business milestone volume."
     },
     {
-      "name": "academorix.marketing.events.delivered_total",
+      "name": "stackra.marketing.events.delivered_total",
       "kind": "counter",
       "unit": "events",
       "labels": ["event_type"],
       "description": "Number of events where every eligible provider delivery succeeded. The primary success metric."
     },
     {
-      "name": "academorix.marketing.events.partially_delivered_total",
+      "name": "stackra.marketing.events.partially_delivered_total",
       "kind": "counter",
       "unit": "events",
       "labels": ["event_type"],
       "description": "Number of events where SOME providers succeeded + SOME dead-lettered."
     },
     {
-      "name": "academorix.marketing.events.failed_total",
+      "name": "stackra.marketing.events.failed_total",
       "kind": "counter",
       "unit": "events",
       "labels": ["event_type"],
       "description": "Number of events where every eligible provider dead-lettered. Every increment is a fully lost paid conversion signal."
     },
     {
-      "name": "academorix.marketing.events.suppressed_by_consent_total",
+      "name": "stackra.marketing.events.suppressed_by_consent_total",
       "kind": "counter",
       "unit": "events",
       "labels": ["event_type", "missing_consent_category"],
       "description": "Capture-time consent-suppressed events. Spike drives MarketingConsentSuppressionSpikeNotification."
     },
     {
-      "name": "academorix.marketing.events.superseded_total",
+      "name": "stackra.marketing.events.superseded_total",
       "kind": "counter",
       "unit": "events",
       "labels": ["event_type"],
       "description": "Older event marked superseded by a newer same-dedup-key row. Non-zero is normal (retries at the domain layer)."
     },
     {
-      "name": "academorix.marketing.events.capture_duration_ms",
+      "name": "stackra.marketing.events.capture_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1, 5, 20, 100, 500, 2000],
@@ -70,47 +70,47 @@
       "description": "MarketingEventObserver.creating latency. Should stay < 20ms P99 (consent snapshot + attribution snapshot + eligible-provider computation)."
     },
     {
-      "name": "academorix.marketing.deliveries.attempted_total",
+      "name": "stackra.marketing.deliveries.attempted_total",
       "kind": "counter",
       "unit": "attempts",
       "labels": ["provider", "attempt_number"],
       "description": "attempt_number is bucketed as string ('1', '2', '3', '4+') to bound cardinality."
     },
     {
-      "name": "academorix.marketing.deliveries.succeeded_total",
+      "name": "stackra.marketing.deliveries.succeeded_total",
       "kind": "counter",
       "unit": "deliveries",
       "labels": ["provider"]
     },
     {
-      "name": "academorix.marketing.deliveries.failed_total",
+      "name": "stackra.marketing.deliveries.failed_total",
       "kind": "counter",
       "unit": "deliveries",
       "labels": ["provider", "error_code_bucket", "is_transient"],
       "description": "error_code_bucket is pre-computed (auth_failure / invalid_payload / rate_limit / server_error / network / timeout) to bound cardinality."
     },
     {
-      "name": "academorix.marketing.deliveries.rate_limited_total",
+      "name": "stackra.marketing.deliveries.rate_limited_total",
       "kind": "counter",
       "unit": "deliveries",
       "labels": ["provider"],
       "description": "429 or pre-dispatch RateLimitGate refusal. Spike indicates tenant ceiling breached or provider-side throttle."
     },
     {
-      "name": "academorix.marketing.deliveries.suppressed_by_consent_total",
+      "name": "stackra.marketing.deliveries.suppressed_by_consent_total",
       "kind": "counter",
       "unit": "deliveries",
       "labels": ["provider", "revoked_between_capture_and_dispatch"],
       "description": "revoked_between_capture_and_dispatch true = user revoked consent AFTER capture; the re-check-at-dispatch saved us."
     },
     {
-      "name": "academorix.marketing.deliveries.suppressed_by_circuit_breaker_total",
+      "name": "stackra.marketing.deliveries.suppressed_by_circuit_breaker_total",
       "kind": "counter",
       "unit": "deliveries",
       "labels": ["provider"]
     },
     {
-      "name": "academorix.marketing.deliveries.dispatch_duration_ms",
+      "name": "stackra.marketing.deliveries.dispatch_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 200, 1000, 5000, 15000],
@@ -118,7 +118,7 @@
       "description": "End-to-end DispatchToProviderJob latency (gate check → transform → HTTP → response parse → observer bookkeeping). Provider-specific — Meta CAPI typically < 500ms P99; GA4 < 300ms; GTM Server / Custom Webhook varies."
     },
     {
-      "name": "academorix.marketing.deliveries.http_duration_ms",
+      "name": "stackra.marketing.deliveries.http_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 100, 500, 2000, 10000],
@@ -126,93 +126,93 @@
       "description": "response_status_class = '2xx' / '3xx' / '4xx' / '5xx' / 'timeout' / 'network_error'. Just the HTTP round-trip."
     },
     {
-      "name": "academorix.marketing.circuit_breakers.opened_total",
+      "name": "stackra.marketing.circuit_breakers.opened_total",
       "kind": "counter",
       "unit": "opens",
       "labels": ["provider"],
       "description": "Every increment is a P1 signal. Should stay near 0 in a healthy system."
     },
     {
-      "name": "academorix.marketing.circuit_breakers.closed_total",
+      "name": "stackra.marketing.circuit_breakers.closed_total",
       "kind": "counter",
       "unit": "closes",
       "labels": ["provider", "was_auto_close"]
     },
     {
-      "name": "academorix.marketing.circuit_breakers.half_open_probes_total",
+      "name": "stackra.marketing.circuit_breakers.half_open_probes_total",
       "kind": "counter",
       "unit": "probes",
       "labels": ["provider", "outcome"],
       "description": "outcome = 'succeeded' / 'failed'."
     },
     {
-      "name": "academorix.marketing.circuit_breakers.currently_open",
+      "name": "stackra.marketing.circuit_breakers.currently_open",
       "kind": "gauge",
       "unit": "breakers",
       "labels": ["provider"],
       "description": "Current count of open circuit-breakers per provider across all tenants."
     },
     {
-      "name": "academorix.marketing.dead_letters.created_total",
+      "name": "stackra.marketing.dead_letters.created_total",
       "kind": "counter",
       "unit": "dead_letters",
       "labels": ["provider", "reason"],
       "description": "Every increment is a paid conversion loss. Ops + finance both care."
     },
     {
-      "name": "academorix.marketing.dead_letters.replayed_total",
+      "name": "stackra.marketing.dead_letters.replayed_total",
       "kind": "counter",
       "unit": "replays",
       "labels": ["provider", "outcome"],
       "description": "outcome = 'succeeded' / 'failed'."
     },
     {
-      "name": "academorix.marketing.dead_letters.resolved_total",
+      "name": "stackra.marketing.dead_letters.resolved_total",
       "kind": "counter",
       "unit": "resolutions",
       "labels": ["was_auto_resolved"]
     },
     {
-      "name": "academorix.marketing.dead_letters.unresolved",
+      "name": "stackra.marketing.dead_letters.unresolved",
       "kind": "gauge",
       "unit": "dead_letters",
       "labels": ["provider"],
       "description": "Current count of unresolved dead letters per provider."
     },
     {
-      "name": "academorix.marketing.providers.configured_total",
+      "name": "stackra.marketing.providers.configured_total",
       "kind": "counter",
       "unit": "configs",
       "labels": ["provider", "test_mode"]
     },
     {
-      "name": "academorix.marketing.providers.deactivated_total",
+      "name": "stackra.marketing.providers.deactivated_total",
       "kind": "counter",
       "unit": "deactivations",
       "labels": ["provider", "reason"]
     },
     {
-      "name": "academorix.marketing.providers.test_events_sent_total",
+      "name": "stackra.marketing.providers.test_events_sent_total",
       "kind": "counter",
       "unit": "tests",
       "labels": ["provider", "outcome"]
     },
     {
-      "name": "academorix.marketing.roas.value_delivered_cents",
+      "name": "stackra.marketing.roas.value_delivered_cents",
       "kind": "counter",
       "unit": "cents",
       "labels": ["provider", "utm_source_bucket"],
       "description": "Cumulative delivered revenue (from event.value_amount_cents where status='delivered') per provider + utm_source_bucket. utm_source_bucket = 'google' / 'meta' / 'tiktok' / 'linkedin' / 'organic' / 'referral' / 'direct' / 'other' (bucketed to bound cardinality)."
     },
     {
-      "name": "academorix.marketing.entitlement.gate_refusals_total",
+      "name": "stackra.marketing.entitlement.gate_refusals_total",
       "kind": "counter",
       "unit": "refusals",
       "labels": ["entitlement_key"],
       "description": "Number of route hits refused by the entitlement middleware. Product signal for upgrade-CTA impressions."
     },
     {
-      "name": "academorix.marketing.reconcile.stuck_events_found",
+      "name": "stackra.marketing.reconcile.stuck_events_found",
       "kind": "counter",
       "unit": "events",
       "labels": [],

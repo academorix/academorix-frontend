@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/localization/config",
+  "id": "stackra://modules/localization/config",
   "$version": 1,
   "title": "localization \u2014 developer configuration",
   "configFile": "config/localization.php",

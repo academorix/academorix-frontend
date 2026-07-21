@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "competition",
   "alias": "competition",
-  "namespace": "Academorix\\Sports\\Competition",
+  "namespace": "Stackra\\Sports\\Competition",
   "description": "Leagues + tournaments + standings per blueprint §15.1. Ships FIVE owned entities: `Competition` (league/knockout root — season + status + scoring_strategy from sport registry; round-robin OR bracket format), `CompetitionTeam` (team registration — seed + registration_status; feeds standings + bracket), `CompetitionFixture` (scheduled matchup — realized via sports/event; round_number + bracket_position; standings recompute triggered on result), `StandingRow` (denormalised league table row — games_played + wins + draws + losses + goals_for + goals_against + points; recomputed on result), `BracketNode` (knockout bracket node — round + position + participant refs + winner_advances_to_node_id). Realizes LEAGUE_TABLE + BRACKET_TOURNAMENT capabilities from the sport registry. Uses scoring strategy per ScoringType (goals/points/sets/time/distance/apparatus).",
   "keywords": [
     "competition",
@@ -14,7 +14,7 @@
     "wave-3"
   ],
   "priority": 85,
-  "providers": ["Academorix\\Sports\\Competition\\Providers\\CompetitionServiceProvider"],
+  "providers": ["Stackra\\Sports\\Competition\\Providers\\CompetitionServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

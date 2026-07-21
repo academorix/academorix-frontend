@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Observers;
+namespace Stackra\Subscription\Observers;
 
-use Academorix\Subscription\Contracts\Data\PlanInterface;
-use Academorix\Subscription\Contracts\Repositories\PlanRepositoryInterface;
-use Academorix\Subscription\Events\PlanArchived;
-use Academorix\Subscription\Events\PlanCreated;
-use Academorix\Subscription\Events\PlanUpdated;
-use Academorix\Subscription\Exceptions\PlanInUseException;
-use Academorix\Subscription\Models\Plan;
+use Stackra\Subscription\Contracts\Data\PlanInterface;
+use Stackra\Subscription\Contracts\Repositories\PlanRepositoryInterface;
+use Stackra\Subscription\Events\PlanArchived;
+use Stackra\Subscription\Events\PlanCreated;
+use Stackra\Subscription\Events\PlanUpdated;
+use Stackra\Subscription\Exceptions\PlanInUseException;
+use Stackra\Subscription\Models\Plan;
 
 /**
  * Lifecycle side effects on {@see Plan}.

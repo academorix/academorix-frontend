@@ -12,14 +12,14 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Foundation\Middlewares\Request;
+namespace Stackra\Foundation\Middlewares\Request;
 
 use Closure;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Support\Str;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -49,7 +49,7 @@ use Symfony\Component\HttpFoundation\Response;
  * ```php
  * // In app/Http/Kernel.php
  * protected $middleware = [
- *     \Academorix\Foundation\Middlewares\RequestIdMiddleware::class,
+ *     \Stackra\Foundation\Middlewares\RequestIdMiddleware::class,
  * ];
  * ```
  *
@@ -57,7 +57,7 @@ use Symfony\Component\HttpFoundation\Response;
  * ```php
  * // In app/Http/Kernel.php
  * protected $middlewareAliases = [
- *     'request.id' => \Academorix\Foundation\Middlewares\RequestIdMiddleware::class,
+ *     'request.id' => \Stackra\Foundation\Middlewares\RequestIdMiddleware::class,
  * ];
  * ```
  *

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlagsSdk\Saloon\Overrides;
+namespace Stackra\FeatureFlagsSdk\Saloon\Overrides;
 
-use Academorix\FeatureFlagsSdk\Data\FeatureOverrideData;
+use Stackra\FeatureFlagsSdk\Data\FeatureOverrideData;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;

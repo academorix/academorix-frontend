@@ -6,8 +6,8 @@
  * @description
  * Class-level marker attribute that opts a listener class into the
  * "fire only after DB commit" behaviour without requiring the flag
- * on every single {@see \Academorix\Events\Attributes\OnEvent} /
- * {@see \Academorix\Events\Attributes\ListensFor} declaration on
+ * on every single {@see \Stackra\Events\Attributes\OnEvent} /
+ * {@see \Stackra\Events\Attributes\ListensFor} declaration on
  * the class.
  *
  * ## Semantics
@@ -29,7 +29,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Events\Attributes;
+namespace Stackra\Events\Attributes;
 
 use Attribute;
 

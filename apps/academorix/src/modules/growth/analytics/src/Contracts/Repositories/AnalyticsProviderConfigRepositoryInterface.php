@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Analytics\Contracts\Repositories;
+namespace Stackra\Analytics\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Analytics\Models\AnalyticsProviderConfig}.
+ * Repository contract for {@see Stackra\Analytics\Models\AnalyticsProviderConfig}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `AnalyticsProviderConfigRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Analytics\Models\AnalyticsProviderConfig>
+ * @extends RepositoryInterface<\Stackra\Analytics\Models\AnalyticsProviderConfig>
  *
  * @category Analytics
  *

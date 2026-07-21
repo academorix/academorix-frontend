@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Reporting\Contracts\Data;
+namespace Stackra\Reporting\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Reporting\Models\ReportDefinition;
+use Stackra\Reporting\Models\ReportDefinition;
 
 /**
  * Table shape for the `report_definitions` table.

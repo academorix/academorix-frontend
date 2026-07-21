@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Middleware;
+namespace Stackra\Localization\Middleware;
 
-use Academorix\Localization\Contracts\Services\LocaleResolverInterface;
-use Academorix\Localization\Events\LocaleResolved;
-use Academorix\Localization\Services\CachedTranslator;
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Localization\Contracts\Services\LocaleResolverInterface;
+use Stackra\Localization\Events\LocaleResolved;
+use Stackra\Localization\Services\CachedTranslator;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Closure;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Contracts\Container\Container;

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Awards\Contracts\Services;
+namespace Stackra\Awards\Contracts\Services;
 
-use Academorix\Awards\Services\CertificateRenderer;
+use Stackra\Awards\Services\CertificateRenderer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

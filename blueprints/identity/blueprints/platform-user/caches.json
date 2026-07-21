@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/platform-user/caches",
+  "id": "stackra://modules/platform-user/caches",
   "$version": 1,
   "title": "platform-user \u2014 cache keys + tags",
   "driver": "redis",
@@ -50,7 +50,7 @@
     },
     {
       "pattern": "platform-user:active-count:{department?}",
-      "description": "Active PlatformUser headcount by department. Feeds the `academorix.platform_user.active.count` metric + the ops dashboard.",
+      "description": "Active PlatformUser headcount by department. Feeds the `stackra.platform_user.active.count` metric + the ops dashboard.",
       "ttlSeconds": 3600,
       "tags": ["platform-user"],
       "invalidatedBy": [

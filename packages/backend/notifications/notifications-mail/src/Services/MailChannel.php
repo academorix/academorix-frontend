@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsMail\Services;
+namespace Stackra\NotificationsMail\Services;
 
-use Academorix\NotificationsMail\Contracts\Services\MailChannelInterface;
+use Stackra\NotificationsMail\Contracts\Services\MailChannelInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\NotificationsMail\Contracts\Repositories\MailSuppressionRepositoryInterface;
+use Stackra\NotificationsMail\Contracts\Repositories\MailSuppressionRepositoryInterface;
 
 /**
  * Concrete service — MailChannel.

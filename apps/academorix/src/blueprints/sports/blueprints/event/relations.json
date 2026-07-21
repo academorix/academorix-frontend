@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/event/relations",
+  "id": "stackra://modules/event/relations",
   "$version": 1,
   "title": "event — model relationships",
   "description": "Event sits below Tenant + Organization + optionally Branch + optionally Season. Its outbound relations reach up to those parents; its inbound relations arrive from Session (Wave 3b), teams::EventTeam (Wave 2b nullable), athlete-enrollment (Wave 3+). Every FK is same-tenant. Event NEVER carries application_id / region_id / scope_node_id.",

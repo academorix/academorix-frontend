@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Models;
+namespace Stackra\Activity\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Activity\Contracts\Data\ActivityRetentionPolicyInterface;
-use Academorix\Activity\Database\Factories\ActivityRetentionPolicyFactory;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Activity\Contracts\Data\ActivityRetentionPolicyInterface;
+use Stackra\Activity\Database\Factories\ActivityRetentionPolicyFactory;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;

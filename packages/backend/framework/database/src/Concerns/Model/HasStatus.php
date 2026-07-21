@@ -43,7 +43,7 @@ declare(strict_types=1);
  *
  * ## Usage:
  * ```php
- * use Academorix\Database\Concerns\Model\HasStatus;
+ * use Stackra\Database\Concerns\Model\HasStatus;
  *
  * class Order extends Model
  * {
@@ -70,7 +70,7 @@ declare(strict_types=1);
  * @see \BackedEnum
  */
 
-namespace Academorix\Database\Concerns\Model;
+namespace Stackra\Database\Concerns\Model;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -91,9 +91,9 @@ trait HasStatus
     {
         // Read attribute configuration (if present)
         $config = null;
-        $forClass = \Academorix\Database\Support\AttributeReader::forClass(static::class);
+        $forClass = \Stackra\Database\Support\AttributeReader::forClass(static::class);
         foreach ($forClass->classAttributes as $attr) {
-            if ($attr instanceof \Academorix\Database\Attributes\StatusColumn) {
+            if ($attr instanceof \Stackra\Database\Attributes\StatusColumn) {
                 $config = $attr;
                 break;
             }
@@ -129,9 +129,9 @@ trait HasStatus
      */
     public function statusEnum(): string
     {
-        $forClass = \Academorix\Database\Support\AttributeReader::forClass(static::class);
+        $forClass = \Stackra\Database\Support\AttributeReader::forClass(static::class);
         foreach ($forClass->classAttributes as $attr) {
-            if ($attr instanceof \Academorix\Database\Attributes\StatusColumn) {
+            if ($attr instanceof \Stackra\Database\Attributes\StatusColumn) {
                 return $attr->enum;
             }
         }
@@ -149,9 +149,9 @@ trait HasStatus
      */
     public function statusColumn(): string
     {
-        $forClass = \Academorix\Database\Support\AttributeReader::forClass(static::class);
+        $forClass = \Stackra\Database\Support\AttributeReader::forClass(static::class);
         foreach ($forClass->classAttributes as $attr) {
-            if ($attr instanceof \Academorix\Database\Attributes\StatusColumn) {
+            if ($attr instanceof \Stackra\Database\Attributes\StatusColumn) {
                 return $attr->column;
             }
         }

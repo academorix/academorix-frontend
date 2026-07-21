@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Event\Policies;
+namespace Stackra\Event\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Event\Models\Event;
+use Stackra\User\Models\User;
+use Stackra\Event\Models\Event;
 
 /**
- * Authorization policy for {@see \Academorix\Event\Models\Event}.
+ * Authorization policy for {@see \Stackra\Event\Models\Event}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

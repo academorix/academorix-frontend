@@ -2,13 +2,13 @@
   "$version": 1,
   "name": "people",
   "alias": "people",
-  "namespace": "Academorix\\People",
-  "description": "The CENTRAL-plane person registry — cross-academy shared profile substrate per blueprint 2.2. Owns the human-readable Academorix ID (AX-XXXX-XXXX) and issues one PersonIdentity row per real human GLOBAL across tenants + Applications. Ships THREE owned entities: `PersonIdentity` (central; minimal PII — legal_name, dob, nationality, verified_at; NO tenant_id), `PersonGuardianLink` (central; guardian↔minor link that survives cross-tenant), `TenantLinkRequest` (consent-gated request from a tenant to link a local Athlete/Staff to a global PersonIdentity — state requested → approved / declined → revoked; enumeration-resistant lookup requires ID + DOB and reveals no PII pre-consent). Tenant `athletes` / `staff` rows carry a NULLABLE `person_identity_id` FK back into this central registry — this is the ONLY cross-DB reference in the platform, and it points from tenant DBs INTO central (never the reverse). Consent flow: guardian receives notification of link request → picks a shareable subset (e.g. emergency contact, allergies, passport doc) → tenant B receives a local Athlete pre-filled with only consented fields → adds its own sport enrollment + cards which stay 100% tenant-local. Revoking a link stops future sync, but each academy keeps the local data it created (subject to retention/GDPR). Rate-limited lookup (10/hr per IP + 100/day per originating tenant) + monotonic 3-of-5 sliding-window failed-attempts lockout.",
+  "namespace": "Stackra\\People",
+  "description": "The CENTRAL-plane person registry — cross-academy shared profile substrate per blueprint 2.2. Owns the human-readable Stackra ID (AX-XXXX-XXXX) and issues one PersonIdentity row per real human GLOBAL across tenants + Applications. Ships THREE owned entities: `PersonIdentity` (central; minimal PII — legal_name, dob, nationality, verified_at; NO tenant_id), `PersonGuardianLink` (central; guardian↔minor link that survives cross-tenant), `TenantLinkRequest` (consent-gated request from a tenant to link a local Athlete/Staff to a global PersonIdentity — state requested → approved / declined → revoked; enumeration-resistant lookup requires ID + DOB and reveals no PII pre-consent). Tenant `athletes` / `staff` rows carry a NULLABLE `person_identity_id` FK back into this central registry — this is the ONLY cross-DB reference in the platform, and it points from tenant DBs INTO central (never the reverse). Consent flow: guardian receives notification of link request → picks a shareable subset (e.g. emergency contact, allergies, passport doc) → tenant B receives a local Athlete pre-filled with only consented fields → adds its own sport enrollment + cards which stay 100% tenant-local. Revoking a link stops future sync, but each academy keeps the local data it created (subject to retention/GDPR). Rate-limited lookup (10/hr per IP + 100/day per originating tenant) + monotonic 3-of-5 sliding-window failed-attempts lockout.",
   "keywords": [
     "people",
     "person",
     "global-identity",
-    "academorix-id",
+    "stackra-id",
     "central-plane",
     "cross-tenant",
     "cross-academy",
@@ -20,7 +20,7 @@
     "wave-1"
   ],
   "priority": 14,
-  "providers": ["Academorix\\People\\Providers\\PeopleServiceProvider"],
+  "providers": ["Stackra\\People\\Providers\\PeopleServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "application"],
   "extendedBy": [],
@@ -43,7 +43,7 @@
     ],
     "policies": ["PersonIdentityPolicy", "TenantLinkRequestPolicy", "PersonGuardianLinkPolicy"],
     "hooks": [
-      "AssignAcademorixIdOnCreate",
+      "AssignStackraIdOnCreate",
       "PurgeLookupAttemptsOnLockout",
       "RevokeLinkOnPersonErased",
       "RefuseCrossTenantMerge"
@@ -75,7 +75,7 @@
       "PersonGuardianLinkObserver"
     ],
     "rules": [
-      "valid_academorix_id_format",
+      "valid_stackra_id_format",
       "valid_iso_country_code",
       "valid_dob_not_future",
       "valid_shareable_field_subset",
@@ -87,7 +87,7 @@
     "config": ["people"],
     "macros": [],
     "bindings": [
-      "AcademorixIdIssuer",
+      "StackraIdIssuer",
       "PersonLookupService",
       "LinkRequestOrchestrator",
       "LookupAttemptLogger",

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Contracts\Services;
+namespace Stackra\Compliance\Contracts\Services;
 
-use Academorix\Compliance\Attributes\ConsentRequired;
-use Academorix\Compliance\Services\DefaultConsentRegistry;
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Compliance\Attributes\ConsentRequired;
+use Stackra\Compliance\Services\DefaultConsentRegistry;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
 use Illuminate\Container\Attributes\Bind;
 
 /**

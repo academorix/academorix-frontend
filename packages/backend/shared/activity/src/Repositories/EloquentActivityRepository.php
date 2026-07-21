@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Repositories;
+namespace Stackra\Activity\Repositories;
 
-use Academorix\Activity\Contracts\Data\ActivityInterface;
-use Academorix\Activity\Contracts\Repositories\ActivityRepositoryInterface;
-use Academorix\Activity\Models\Activity;
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
+use Stackra\Activity\Contracts\Data\ActivityInterface;
+use Stackra\Activity\Contracts\Repositories\ActivityRepositoryInterface;
+use Stackra\Activity\Models\Activity;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
 use DateTimeInterface;
 use Illuminate\Support\Collection;
 

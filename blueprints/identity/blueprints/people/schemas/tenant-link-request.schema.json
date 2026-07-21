@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/people/schemas/tenant-link-request",
+  "id": "stackra://modules/people/schemas/tenant-link-request",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "TenantLinkRequest",

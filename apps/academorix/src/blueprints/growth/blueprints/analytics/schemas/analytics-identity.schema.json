@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/analytics/schemas/analytics-identity",
+  "id": "stackra://modules/analytics/schemas/analytics-identity",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "AnalyticsIdentity",
@@ -12,9 +12,9 @@
     "keyType": "string",
     "keyPrefix": "aid_",
     "incrementing": false,
-    "model": "Academorix\\Growth\\Analytics\\Models\\AnalyticsIdentity",
-    "interface": "Academorix\\Growth\\Analytics\\Contracts\\Data\\AnalyticsIdentityInterface",
-    "implements": ["Academorix\\Growth\\Analytics\\Contracts\\Data\\AnalyticsIdentityInterface"],
+    "model": "Stackra\\Growth\\Analytics\\Models\\AnalyticsIdentity",
+    "interface": "Stackra\\Growth\\Analytics\\Contracts\\Data\\AnalyticsIdentityInterface",
+    "implements": ["Stackra\\Growth\\Analytics\\Contracts\\Data\\AnalyticsIdentityInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/webhook/features",
+  "id": "stackra://modules/webhook/features",
   "$version": 1,
   "title": "webhook \u2014 feature keys",
   "description": "Features exposed at /auth/me. Gates destination drivers + advanced capabilities by plan tier.",

@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Requests\Services;
+namespace Stackra\Requests\Services;
 
-use Academorix\Requests\Contracts\Services\AccessRequestableRegistryInterface;
+use Stackra\Requests\Contracts\Services\AccessRequestableRegistryInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Requests\Contracts\Repositories\AccessRequestProjectionRepositoryInterface;
+use Stackra\Requests\Contracts\Repositories\AccessRequestProjectionRepositoryInterface;
 
 /**
  * Concrete service — AccessRequestableRegistry.

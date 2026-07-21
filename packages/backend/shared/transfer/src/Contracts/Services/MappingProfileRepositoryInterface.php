@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Contracts\Services;
+namespace Stackra\Transfer\Contracts\Services;
 
-use Academorix\Transfer\Models\XferMappingProfile;
-use Academorix\Transfer\Services\NullMappingProfileRepository;
+use Stackra\Transfer\Models\XferMappingProfile;
+use Stackra\Transfer\Services\NullMappingProfileRepository;
 use Illuminate\Container\Attributes\Bind;
 
 /**
  * High-level accessor for {@see XferMappingProfile} rows.
  *
  * Distinct from
- * {@see \Academorix\Transfer\Contracts\Repositories\XferMappingProfileRepositoryInterface}
+ * {@see \Stackra\Transfer\Contracts\Repositories\XferMappingProfileRepositoryInterface}
  * — this contract wraps mapping-profile lookups with the domain
  * semantics the import pipeline needs (resolve-for-entity, apply-to-
  * headers, mark-used). Consumers override the two together when

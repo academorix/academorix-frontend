@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Console;
+namespace Stackra\Notifications\InApp\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Notifications\InApp\Jobs\BroadcastInAppNotificationJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Notifications\InApp\Jobs\BroadcastInAppNotificationJob;
 
 /**
  * `php artisan notifications:in-app:test-broadcast` — dispatch a

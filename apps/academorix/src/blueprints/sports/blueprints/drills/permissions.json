@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/drills/permissions",
+  "id": "stackra://modules/drills/permissions",
   "$version": 1,
   "title": "drills — permissions",
-  "seeder": "Academorix\\Sports\\Drills\\Database\\Seeders\\DrillsPermissionSeeder",
+  "seeder": "Stackra\\Sports\\Drills\\Database\\Seeders\\DrillsPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

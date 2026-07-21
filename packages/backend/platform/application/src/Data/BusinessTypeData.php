@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Data;
+namespace Stackra\Application\Data;
 
-use Academorix\Application\Contracts\Data\BusinessTypeInterface;
-use Academorix\Application\Enums\BusinessTypeEnum;
-use Academorix\Application\Models\BusinessType;
+use Stackra\Application\Contracts\Data\BusinessTypeInterface;
+use Stackra\Application\Enums\BusinessTypeEnum;
+use Stackra\Application\Models\BusinessType;
 use Spatie\LaravelData\Attributes\Computed;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;

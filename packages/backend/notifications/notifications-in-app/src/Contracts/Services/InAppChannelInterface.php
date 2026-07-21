@@ -2,27 +2,27 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Contracts\Services;
+namespace Stackra\Notifications\InApp\Contracts\Services;
 
-use Academorix\Notifications\InApp\Channels\InAppChannel;
-use Academorix\Notifications\Models\Notification;
+use Stackra\Notifications\InApp\Channels\InAppChannel;
+use Stackra\Notifications\Models\Notification;
 use Illuminate\Container\Attributes\Bind;
 
 /**
  * Contract for the in-app notification channel driver.
  *
  * The driver knows how to translate one persisted
- * {@see \Academorix\Notifications\Models\Notification} into:
+ * {@see \Stackra\Notifications\Models\Notification} into:
  *
  *   1. A denormalised
- *      {@see \Academorix\Notifications\InApp\Models\InAppMessage}
+ *      {@see \Stackra\Notifications\InApp\Models\InAppMessage}
  *      row (the inbox card the bell UI renders).
  *   2. A Reverb broadcast on `user.{id}.notifications` so open tabs
  *      receive the notification without a poll.
  *
  * The parent notifications module fires `NotificationDispatched`;
  * this module's listener dispatches
- * {@see \Academorix\Notifications\InApp\Jobs\BroadcastInAppNotificationJob}
+ * {@see \Stackra\Notifications\InApp\Jobs\BroadcastInAppNotificationJob}
  * which resolves this contract to do the work.
  *
  * `#[Bind(InAppChannel::class)]` — Pattern A per

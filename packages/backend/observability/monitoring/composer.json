@@ -1,10 +1,10 @@
 {
-  "name": "academorix/monitoring",
+  "name": "stackra/monitoring",
   "type": "library",
-  "description": "Academorix Monitoring module — server-side Laravel package emitted from the module blueprint at `modules/observability/blueprints/monitoring/`. Complements the wire SDK at `academorix-observability/monitoring-sdk`.",
+  "description": "Stackra Monitoring module — server-side Laravel package emitted from the module blueprint at `modules/observability/blueprints/monitoring/`. Complements the wire SDK at `stackra-observability/monitoring-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "observability",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-observability/monitoring-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-observability/monitoring-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Monitoring\\": "src/"
+      "Stackra\\Monitoring\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Monitoring\\Tests\\": "tests/"
+      "Stackra\\Monitoring\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Monitoring\\Providers\\MonitoringServiceProvider"
+        "Stackra\\Monitoring\\Providers\\MonitoringServiceProvider"
       ],
       "aliases": {}
     }

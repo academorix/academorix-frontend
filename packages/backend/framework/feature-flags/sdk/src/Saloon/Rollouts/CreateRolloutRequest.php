@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlagsSdk\Saloon\Rollouts;
+namespace Stackra\FeatureFlagsSdk\Saloon\Rollouts;
 
-use Academorix\FeatureFlagsSdk\Data\FeatureRolloutData;
+use Stackra\FeatureFlagsSdk\Data\FeatureRolloutData;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;

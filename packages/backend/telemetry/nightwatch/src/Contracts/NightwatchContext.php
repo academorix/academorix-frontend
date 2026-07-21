@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Nightwatch\Contracts;
+namespace Stackra\Nightwatch\Contracts;
 
 /**
  * Nightwatch Context Contract.

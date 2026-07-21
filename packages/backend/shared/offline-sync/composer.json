@@ -1,10 +1,10 @@
 {
-  "name": "academorix/offline-sync",
+  "name": "stackra/offline-sync",
   "type": "library",
-  "description": "Academorix OfflineSync module — server-side Laravel package emitted from the module blueprint at `modules/shared/blueprints/offline-sync/`. Complements the wire SDK at `academorix-shared/offline-sync-sdk`.",
+  "description": "Stackra OfflineSync module — server-side Laravel package emitted from the module blueprint at `modules/shared/blueprints/offline-sync/`. Complements the wire SDK at `stackra-shared/offline-sync-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "shared",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-shared/offline-sync-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-shared/offline-sync-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\OfflineSync\\": "src/"
+      "Stackra\\OfflineSync\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\OfflineSync\\Tests\\": "tests/"
+      "Stackra\\OfflineSync\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\OfflineSync\\Providers\\OfflineSyncServiceProvider"
+        "Stackra\\OfflineSync\\Providers\\OfflineSyncServiceProvider"
       ],
       "aliases": {}
     }

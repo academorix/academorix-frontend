@@ -1,66 +1,66 @@
 {
-  "id": "academorix://modules/user/commands",
+  "id": "stackra://modules/user/commands",
   "$version": 1,
   "title": "user \u2014 Artisan commands",
   "commands": [
     {
       "signature": "user:list {--tenant=} {--application=} {--status=} {--role=} {--limit=50}",
-      "class": "Academorix\\User\\Console\\Commands\\ListUsersCommand",
+      "class": "Stackra\\User\\Console\\Commands\\ListUsersCommand",
       "purpose": "Enumerate Users. Filter by tenant / application / status / role. Prints a table with id, email, status, tenant, default role. Ops tooling only \u2014 not run in tenant hot paths."
     },
     {
       "signature": "user:describe {user : ULID or email} {--tenant=} {--include-profile} {--include-tenants}",
-      "class": "Academorix\\User\\Console\\Commands\\DescribeUserCommand",
+      "class": "Stackra\\User\\Console\\Commands\\DescribeUserCommand",
       "purpose": "Print the resolution trace for one User: identity + profile + tenant memberships + effective permissions per tenant + last_login_at. --include-profile expands the PII cluster (requires the operator's account to hold profile.view.pii)."
     },
     {
       "signature": "user:provision {email} {--application=} {--tenant=} {--role=} {--first-name=} {--last-name=} {--send-verification}",
-      "class": "Academorix\\User\\Console\\Commands\\ProvisionUserCommand",
+      "class": "Stackra\\User\\Console\\Commands\\ProvisionUserCommand",
       "purpose": "Create a User synchronously. Resolves the Identity by email (creates it if missing), invokes UserProvisioner, and prints the resulting ULID + login URL. Used for support-agent-triggered provisioning + seed scripts."
     },
     {
       "signature": "user:suspend {user : ULID or email} {--reason=} {--reactivate-at=}",
-      "class": "Academorix\\User\\Console\\Commands\\SuspendUserCommand",
+      "class": "Stackra\\User\\Console\\Commands\\SuspendUserCommand",
       "purpose": "Set status=suspended + fire UserSuspended. --reactivate-at accepts an ISO 8601 timestamp; the scheduler auto-reactivates at the boundary."
     },
     {
       "signature": "user:restore {user : ULID or email}",
-      "class": "Academorix\\User\\Console\\Commands\\RestoreUserCommand",
+      "class": "Stackra\\User\\Console\\Commands\\RestoreUserCommand",
       "purpose": "Restore a soft-deleted User row within the erasure hold window. Refuses when the window has expired (the row has been purged)."
     },
     {
       "signature": "user:erase {user : ULID or email} {--reason=} {--force}",
-      "class": "Academorix\\User\\Console\\Commands\\EraseUserCommand",
+      "class": "Stackra\\User\\Console\\Commands\\EraseUserCommand",
       "purpose": "GDPR Art. 17 erasure. Soft-deletes the User + schedules PurgeErasedUsersJob for `now() + user.privacy.erasure_hold_days`. --force skips the hold and hard-deletes immediately (dangerous; ops sign-off required)."
     },
     {
       "signature": "user:switch-default-tenant {user : ULID or email} {tenant : ULID or slug}",
-      "class": "Academorix\\User\\Console\\Commands\\SwitchDefaultTenantCommand",
+      "class": "Stackra\\User\\Console\\Commands\\SwitchDefaultTenantCommand",
       "purpose": "Change the User's default TenantMember. The observer enforces exactly-one-default across the User's memberships. Fires UserSwitchedActiveTenant."
     },
     {
       "signature": "user:bulk-invite {--file=} {--application=} {--tenant=} {--role=} {--dry-run}",
-      "class": "Academorix\\User\\Console\\Commands\\BulkInviteCommand",
+      "class": "Stackra\\User\\Console\\Commands\\BulkInviteCommand",
       "purpose": "CSV bulk-invite entry point. Each row: email,first_name,last_name,role_slug. Creates access::Invitation rows + dispatches ProvisionUserJob per accepted invitation. Gated by the `bulk_user_provision` entitlement + quota. --dry-run parses + validates without persisting."
     },
     {
       "signature": "profile:update {user : ULID or email} {--first-name=} {--last-name=} {--display-name=} {--phone=} {--locale=} {--timezone=}",
-      "class": "Academorix\\User\\Console\\Commands\\UpdateProfileCommand",
+      "class": "Stackra\\User\\Console\\Commands\\UpdateProfileCommand",
       "purpose": "Admin-side profile update. Fires ProfileUpdated with the touched fields. Refuses PII writes unless the operator carries profile.update.pii."
     },
     {
       "signature": "tenant-member:add {user : ULID or email} {tenant : ULID or slug} {--role=} {--staff-only}",
-      "class": "Academorix\\User\\Console\\Commands\\AddTenantMemberCommand",
+      "class": "Stackra\\User\\Console\\Commands\\AddTenantMemberCommand",
       "purpose": "Grant the User a TenantMember row in the target Tenant. Refused when the Tenant's application_id differs from the User's application_id."
     },
     {
       "signature": "tenant-member:remove {user : ULID or email} {tenant : ULID or slug} {--reason=}",
-      "class": "Academorix\\User\\Console\\Commands\\RemoveTenantMemberCommand",
+      "class": "Stackra\\User\\Console\\Commands\\RemoveTenantMemberCommand",
       "purpose": "Soft-delete the TenantMember row + revoke tokens scoped to (user, tenant). Refused when the target is the User's default AND they have no other memberships \u2014 use `user:erase` instead."
     },
     {
       "signature": "tenant-member:list {user : ULID or email}",
-      "class": "Academorix\\User\\Console\\Commands\\ListTenantMembersCommand",
+      "class": "Stackra\\User\\Console\\Commands\\ListTenantMembersCommand",
       "purpose": "Print every membership the User holds across the caller's visible Tenants + their roles + last_active_at."
     }
   ]

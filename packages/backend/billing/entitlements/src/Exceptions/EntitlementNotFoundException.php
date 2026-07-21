@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Exceptions;
+namespace Stackra\Entitlements\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a lookup expects an entitlement row but finds none.
@@ -16,7 +16,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class EntitlementNotFoundException extends AcademorixException
+final class EntitlementNotFoundException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Exceptions;
+namespace Stackra\FeatureFlags\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\FeatureFlags\Enums\ResolutionSource;
-use Academorix\FeatureFlags\Resolver\FeatureResolution;
+use Stackra\Exceptions\AcademorixException;
+use Stackra\FeatureFlags\Enums\ResolutionSource;
+use Stackra\FeatureFlags\Resolver\FeatureResolution;
 
 /**
  * Raised when a required feature is off for the current caller.

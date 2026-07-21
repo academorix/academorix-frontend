@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Services;
+namespace Stackra\Branding\Services;
 
-use Academorix\Branding\Contracts\Services\OgImageRendererInterface;
+use Stackra\Branding\Contracts\Services\OgImageRendererInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Branding\Contracts\Repositories\BrandingRepositoryInterface;
+use Stackra\Branding\Contracts\Repositories\BrandingRepositoryInterface;
 
 /**
  * Concrete service — OgImageRenderer.

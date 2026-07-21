@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Reception\Services;
+namespace Stackra\Reception\Services;
 
-use Academorix\Reception\Contracts\Services\CheckInMonitorInterface;
+use Stackra\Reception\Contracts\Services\CheckInMonitorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Reception\Contracts\Repositories\ReceptionVisitRepositoryInterface;
+use Stackra\Reception\Contracts\Repositories\ReceptionVisitRepositoryInterface;
 
 /**
  * Concrete service — CheckInMonitor.

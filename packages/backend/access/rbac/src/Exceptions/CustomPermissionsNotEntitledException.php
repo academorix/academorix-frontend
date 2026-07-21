@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Exceptions;
+namespace Stackra\Rbac\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Non-Enterprise tenant attempted to create a NEW permission string (not just attach an existing one).

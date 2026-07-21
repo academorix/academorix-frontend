@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Actions\Tenant;
+namespace Stackra\Facility\Actions\Tenant;
 
-use Academorix\Facility\Contracts\Repositories\PassRepositoryInterface;
-use Academorix\Facility\Data\PassData;
-use Academorix\Facility\Data\Requests\UpdatePassRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\Facility\Contracts\Repositories\PassRepositoryInterface;
+use Stackra\Facility\Data\PassData;
+use Stackra\Facility\Data\Requests\UpdatePassRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Patch;
 
 /**
  * `PATCH /api/v1/passes/{pass}` — update action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Patch(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Facility

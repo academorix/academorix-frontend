@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Wallet\Exceptions;
+namespace Stackra\Wallet\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `WALLET_HOLD_NOT_FOUND` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class WalletHoldNotFoundException extends AcademorixException
+final class WalletHoldNotFoundException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

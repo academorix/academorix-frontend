@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\MarketplaceFee\Policies;
+namespace Stackra\MarketplaceFee\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\MarketplaceFee\Models\FeePayout;
+use Stackra\User\Models\User;
+use Stackra\MarketplaceFee\Models\FeePayout;
 
 /**
- * Authorization policy for {@see \Academorix\MarketplaceFee\Models\FeePayout}.
+ * Authorization policy for {@see \Stackra\MarketplaceFee\Models\FeePayout}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

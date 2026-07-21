@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/delegation/traits",
+  "id": "stackra://modules/delegation/traits",
   "$version": 1,
   "title": "delegation — trait composition",
   "description": "Two owned traits. HasDelegations composes on the tenant `User` model + exposes the outbound + inbound delegation relations plus fluent helpers. HasImpersonationHistory is dual-use — composes on BOTH tenant `User` (the impersonated party's retrospective view) AND PlatformUser (the impersonator's history of sessions they operated).",
   "owned": [
     {
-      "trait": "Academorix\\Delegation\\Concerns\\HasDelegations",
+      "trait": "Stackra\\Delegation\\Concerns\\HasDelegations",
       "description": "Mixed into the tenant `User` model. Adds `outboundDelegations()` (as delegator) + `inboundDelegations()` (as delegate) + `activeOutboundDelegations()` (scoped to now-within-window + not-revoked) + `activeInboundDelegations()` (same, from delegate perspective). Also adds fluent helpers `delegate(User $to, ?Role $role, DateTimeInterface $ends_at, string $reason, DelegationType $type = OOF)` for creating a delegation + `revokeDelegation(string $id, string $reason)` for early revocation. The active-* scopes are the primary reads for the /me/delegations UI + the DelegationResolver service.",
       "public": true,
       "usedBy": ["user::User"],
@@ -13,7 +13,7 @@
       "example_use": "$user->delegate($bob, role: $manager, ends_at: now()->addDays(5), reason: 'On vacation Aug 20-25, delegating manager approvals to Bob');\n$user->outboundDelegations()->pending()->get();\n$user->activeInboundDelegations()->with('delegator.profile', 'role')->get();"
     },
     {
-      "trait": "Academorix\\Delegation\\Concerns\\HasImpersonationHistory",
+      "trait": "Stackra\\Delegation\\Concerns\\HasImpersonationHistory",
       "description": "Dual-use trait mixed into BOTH tenant `User` AND PlatformUser. On the User side, exposes `impersonationSessionsAsTarget()` — historical sessions where they were impersonated (the affected party's retrospective view). On the PlatformUser side, exposes `impersonationSessionsAsOperator()` — sessions they initiated (their operator history, used by the audit + the platform-admin UI). Both relations point at `impersonation_sessions` via different FK columns (`impersonated_user_id` vs `impersonator_platform_user_id`) so no relation collision. Snapshot fields (impersonator_display_name + impersonator_department) preserve the operator relation view even after the PlatformUser row hard-deletes.",
       "public": true,
       "usedBy": ["user::User", "platform-user::PlatformUser"],
@@ -31,23 +31,23 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
-    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
-    "application": [{ "trait": "Academorix\\Application\\Concerns\\BelongsToApplication" }],
+    "tenants": [{ "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "application": [{ "trait": "Stackra\\Application\\Concerns\\BelongsToApplication" }],
     "activity": [
       {
-        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
         "reason": "RoleDelegation ONLY. Lightweight activity log for the delegator + delegate audit trail. Not on ImpersonationSession — impersonation uses HasAudit's heavier trail for compliance evidence."
       }
     ],
     "audit": [
       {
-        "trait": "Academorix\\Compliance\\Concerns\\HasAudit",
+        "trait": "Stackra\\Compliance\\Concerns\\HasAudit",
         "reason": "BOTH RoleDelegation AND ImpersonationSession — but ImpersonationSession's audit rows are flagged with `is_compliance_evidence=true` so the retention job leaves them untouched at 7-year hot (see retention.json)."
       }
     ]

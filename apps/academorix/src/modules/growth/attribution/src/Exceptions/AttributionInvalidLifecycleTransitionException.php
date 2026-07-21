@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Exceptions;
+namespace Stackra\Attribution\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted backward lifecycle transition (e.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AttributionInvalidLifecycleTransitionException extends AcademorixException
+final class AttributionInvalidLifecycleTransitionException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

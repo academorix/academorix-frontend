@@ -1,8 +1,8 @@
 setup:
-  project: academorix-monorepo
+  project: stackra-monorepo
   config: dev_monorepo
 
-# This file pins the workspace root to Doppler's academorix-monorepo project.
+# This file pins the workspace root to Doppler's stackra-monorepo project.
 # Doppler CLI: `doppler run -- pnpm turbo run build` — all scripts wrapped at
 # root pull secrets from THIS project's dev_monorepo config.
 #

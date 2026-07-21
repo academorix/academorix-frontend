@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Wallet\Policies;
+namespace Stackra\Wallet\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Wallet\Models\WalletHold;
+use Stackra\User\Models\User;
+use Stackra\Wallet\Models\WalletHold;
 
 /**
- * Authorization policy for {@see \Academorix\Wallet\Models\WalletHold}.
+ * Authorization policy for {@see \Stackra\Wallet\Models\WalletHold}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

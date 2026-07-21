@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Settings\Actions;
+namespace Stackra\Settings\Actions;
 
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Put;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Settings\Contracts\SettingsServiceInterface;
-use Academorix\Settings\Data\UpdateSettingsRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Put;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Settings\Contracts\SettingsServiceInterface;
+use Stackra\Settings\Data\UpdateSettingsRequestData;
 use InvalidArgumentException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

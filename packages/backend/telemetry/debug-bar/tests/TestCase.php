@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Debugbar\Tests;
+namespace Stackra\Debugbar\Tests;
 
 use Illuminate\Foundation\Application;
 use Mockery;
@@ -22,7 +22,7 @@ use Override;
  * - Clean test environment setup
  * - Module facade mocking support
  *
- * @author  Academorix Development Team
+ * @author  Stackra Development Team
  *
  * @since   1.0.0
  */

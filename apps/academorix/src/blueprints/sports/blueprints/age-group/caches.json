@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/age-group/caches",
+  "id": "stackra://modules/age-group/caches",
   "$version": 1,
   "title": "age-group — cache keys + tags",
   "driver": "redis",

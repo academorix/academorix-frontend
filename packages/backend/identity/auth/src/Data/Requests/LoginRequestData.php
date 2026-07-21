@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Data\Requests;
+namespace Stackra\Auth\Data\Requests;
 
 use SensitiveParameter;
 use Spatie\LaravelData\Attributes\MapInputName;

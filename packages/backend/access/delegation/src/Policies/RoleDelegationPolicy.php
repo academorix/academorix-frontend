@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Delegation\Policies;
+namespace Stackra\Delegation\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Delegation\Models\RoleDelegation;
+use Stackra\User\Models\User;
+use Stackra\Delegation\Models\RoleDelegation;
 
 /**
- * Authorization policy for {@see \Academorix\Delegation\Models\RoleDelegation}.
+ * Authorization policy for {@see \Stackra\Delegation\Models\RoleDelegation}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Data;
+namespace Stackra\Webhook\Data;
 
-use Academorix\Webhook\Contracts\Data\WebhookDeliveryInterface;
-use Academorix\Webhook\Enums\WebhookDeliveryStatus;
-use Academorix\Webhook\Models\WebhookDelivery;
+use Stackra\Webhook\Contracts\Data\WebhookDeliveryInterface;
+use Stackra\Webhook\Enums\WebhookDeliveryStatus;
+use Stackra\Webhook\Models\WebhookDelivery;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

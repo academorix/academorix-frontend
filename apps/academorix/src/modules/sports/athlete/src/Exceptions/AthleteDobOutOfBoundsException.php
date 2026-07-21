@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Athlete\Exceptions;
+namespace Stackra\Athlete\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when `date_of_birth` lies outside the accepted range —
@@ -23,7 +23,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AthleteDobOutOfBoundsException extends AcademorixException
+final class AthleteDobOutOfBoundsException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

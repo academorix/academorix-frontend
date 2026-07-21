@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Exceptions;
+namespace Stackra\AgeGroup\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * min_age_inclusive > max_age_inclusive OR both outside the platform floor/ceiling [3, 100].
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvalidAgeBoundsException extends AcademorixException
+final class InvalidAgeBoundsException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

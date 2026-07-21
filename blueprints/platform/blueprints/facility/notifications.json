@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/facility/notifications",
+  "id": "stackra://modules/facility/notifications",
   "$version": 1,
   "title": "facility — notification classes + categories",
-  "namespace": "Academorix\\Facility\\Notifications",
+  "namespace": "Stackra\\Facility\\Notifications",
   "notifications": [
     "BookingConfirmedNotification",
     "BookingCancelledNotification",

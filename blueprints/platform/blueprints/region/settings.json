@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/region/settings",
+  "id": "stackra://modules/region/settings",
   "$version": 1,
   "title": "region — settings",
   "description": "Tenant-scoped policy for region provisioning + retention + reconciliation behaviour. Compliance floors clamp retention_days up when the tenant's regulatory profile requires it (financial-record retention floor: 730 days).",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "region",
-      "class": "Academorix\\Region\\Settings\\RegionSettings",
+      "class": "Stackra\\Region\\Settings\\RegionSettings",
       "label": "Regions",
       "description": "Tenant-wide policy for commercial + regulatory zones.",
       "icon": "globe-alt",

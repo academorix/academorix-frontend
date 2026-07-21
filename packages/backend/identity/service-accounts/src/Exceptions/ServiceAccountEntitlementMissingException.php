@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Exceptions;
+namespace Stackra\ServiceAccounts\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Requested capability requires a paid-plan entitlement.

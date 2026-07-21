@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Events;
+namespace Stackra\Chargeback\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -18,7 +18,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - activity::WriteToActivityLog
  * - chargeback::FinalizeChargebackJob (invokes the LOST finalization chain — auto-loss)
  * - notifications::DispatchChargebackLostNotification (P1 admin — 'auto-lost due to missed evidence deadline')
- * - observability::MetricsCollector (academorix.chargeback.expired_total labelled by network)
+ * - observability::MetricsCollector (stackra.chargeback.expired_total labelled by network)
  *
  * @category Chargeback
  *

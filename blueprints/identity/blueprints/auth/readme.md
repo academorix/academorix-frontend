@@ -68,7 +68,7 @@ interactive tenant-user session lifecycle:
 ### 2.2 Platform plane — `/api/v1/platform/auth/*` + `/api/v1/platform/identities/*` + `/api/v1/platform/jwt-*`
 
 Guard: `platform_admin`. No `X-Application-Id` (platform staff are
-cross-Application). Handles Academorix-staff auth, identity CRUD, JWT key
+cross-Application). Handles Stackra-staff auth, identity CRUD, JWT key
 management, impersonation.
 
 - POST `/platform/auth/login` / `/mfa/verify` / `/refresh` / `/logout`
@@ -126,8 +126,8 @@ Signed by identity-service, verified locally by every downstream service.
 Carries:
 
 ```
-iss: https://identity.academorix.com
-aud: [sports.academorix.com]
+iss: https://identity.stackra.com
+aud: [sports.stackra.com]
 sub: usr_01H...
 app: app_sports          ← per-Application binding
 tid: tnt_01H...
@@ -279,7 +279,7 @@ parent-consent workflow when `RequiresGuardianConsent` fires.
 
 ## 9. Scope-suffix resolution — the `.own` / `.tenant` / etc. pattern
 
-Permissions in Academorix carry a scope suffix by convention:
+Permissions in Stackra carry a scope suffix by convention:
 
 | Suffix          | Filter applied by base repository                               |
 | --------------- | --------------------------------------------------------------- |
@@ -309,7 +309,7 @@ Framework defaults (config/auth.php)
     ↓ overridden by
 Business-type defaults (from tenants.business_type.default_config)
     ↓ overridden by
-Tenant settings (via academorix/settings, per-tenant DB rows)
+Tenant settings (via stackra/settings, per-tenant DB rows)
     ↓ overridden by
 Region overrides (when tenant operates cross-region)
 

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Actions\Tenant;
+namespace Stackra\Search\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\WhereUlid;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Search\Data\SearchSavedQueryData;
-use Academorix\Search\Enums\SearchPermission;
-use Academorix\Search\Models\SearchSavedQuery;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\WhereUlid;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Search\Data\SearchSavedQueryData;
+use Stackra\Search\Enums\SearchPermission;
+use Stackra\Search\Models\SearchSavedQuery;
 
 /**
  * `GET /api/v1/search/saved-queries/{query}` — read one saved query.

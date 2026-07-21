@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Exceptions;
+namespace Stackra\Referrals\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `REFERRAL_CODE_USAGE_CAP_REACHED` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ReferralCodeUsageCapReachedException extends AcademorixException
+final class ReferralCodeUsageCapReachedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

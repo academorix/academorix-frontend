@@ -7,7 +7,7 @@
  * Class-level, repeatable attribute that attaches a raw cron
  * expression to a Job or Command. Preferred over
  * {@see Schedule} when the cadence does NOT fit one of the
- * named {@see \Academorix\Scheduling\Enums\Frequency} cases —
+ * named {@see \Stackra\Scheduling\Enums\Frequency} cases —
  * things like "every 15 minutes between 09:00 and 17:00 on
  * weekdays" (`*\/15 9-17 * * 1-5`).
  *
@@ -25,7 +25,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scheduling\Attributes;
+namespace Stackra\Scheduling\Attributes;
 
 use Attribute;
 

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Contracts\Services;
+namespace Stackra\Geofencing\Contracts\Services;
 
-use Academorix\Geofencing\Services\GeofenceMetricsRecorder;
+use Stackra\Geofencing\Services\GeofenceMetricsRecorder;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Realtime\Contracts\Services;
+namespace Stackra\Realtime\Contracts\Services;
 
-use Academorix\Realtime\Services\PresenceStore;
+use Stackra\Realtime\Services\PresenceStore;
 use Illuminate\Container\Attributes\Bind;
 
 /**

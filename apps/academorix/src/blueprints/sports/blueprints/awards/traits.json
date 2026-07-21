@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/awards/traits",
+  "id": "stackra://modules/awards/traits",
   "$version": 1,
   "title": "awards — model traits",
   "description": "Traits owned by this module and traits consumed from foundation + framework. Fill in when the module ships its first trait; blueprint-driven scaffold otherwise.",

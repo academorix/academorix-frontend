@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Contracts\Services;
+namespace Stackra\Payment\Contracts\Services;
 
-use Academorix\Payment\Services\PaymentNumberGenerator;
+use Stackra\Payment\Services\PaymentNumberGenerator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

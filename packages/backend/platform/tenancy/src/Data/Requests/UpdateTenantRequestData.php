@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Data\Requests;
+namespace Stackra\Tenancy\Data\Requests;
 
-use Academorix\Application\Enums\BusinessTypeEnum;
+use Stackra\Application\Enums\BusinessTypeEnum;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Enum;
 use Spatie\LaravelData\Attributes\Validation\Max;

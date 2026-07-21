@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/platform-user/metrics",
+  "id": "stackra://modules/platform-user/metrics",
   "$version": 1,
   "title": "platform-user \u2014 OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "academorix.platform_user",
+  "namespace": "stackra.platform_user",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["department", "employment_type", "status", "outcome", "trigger"],
@@ -17,35 +17,35 @@
   },
   "metrics": [
     {
-      "name": "academorix.platform_user.hired.total",
+      "name": "stackra.platform_user.hired.total",
       "kind": "counter",
       "unit": "hires",
       "labels": ["department", "employment_type"],
       "description": "Fired on PlatformUserHired. Feeds the ops onboarding dashboard + monthly headcount reports."
     },
     {
-      "name": "academorix.platform_user.suspended.total",
+      "name": "stackra.platform_user.suspended.total",
       "kind": "counter",
       "unit": "suspensions",
       "labels": ["department"],
       "description": "Fired on PlatformUserSuspended. A rising rate is a signal for security review."
     },
     {
-      "name": "academorix.platform_user.restored.total",
+      "name": "stackra.platform_user.restored.total",
       "kind": "counter",
       "unit": "restorations",
       "labels": ["department"],
       "description": "Fired on PlatformUserRestored. Feeds the same dashboard as suspensions \u2014 the delta is 'active suspensions in flight'."
     },
     {
-      "name": "academorix.platform_user.offboarded.total",
+      "name": "stackra.platform_user.offboarded.total",
       "kind": "counter",
       "unit": "offboardings",
       "labels": ["department", "employment_type", "trigger"],
       "description": "Fired on PlatformUserOffboarded. `trigger` label distinguishes voluntary_resignation, involuntary_termination, contract_expiry, restructuring. Feeds headcount + attrition dashboards."
     },
     {
-      "name": "academorix.platform_user.offboarding.access_revoked.duration_seconds",
+      "name": "stackra.platform_user.offboarding.access_revoked.duration_seconds",
       "kind": "histogram",
       "unit": "seconds",
       "buckets": [60, 300, 900, 3600, 14400, 43200, 86400, 172800],
@@ -53,42 +53,42 @@
       "description": "Time from PlatformUserOffboarded emission to RevokePlatformUserAccessJob completion. SLA is 24h (86400s). P99 must be < 86400 \u2014 alerting fires at 12h (43200s) on the p95."
     },
     {
-      "name": "academorix.platform_user.offboarding.sla_breach.total",
+      "name": "stackra.platform_user.offboarding.sla_breach.total",
       "kind": "counter",
       "unit": "breaches",
       "labels": [],
       "description": "Number of RevokePlatformUserAccessJob runs that did NOT complete within `platform-user.offboarding.sla_hours`. Any non-zero value pages PagerDuty."
     },
     {
-      "name": "academorix.platform_user.retention.purged.total",
+      "name": "stackra.platform_user.retention.purged.total",
       "kind": "counter",
       "unit": "purges",
       "labels": [],
       "description": "PlatformUser rows hard-deleted by PurgeOffboardedPlatformUsersJob after the retention hold."
     },
     {
-      "name": "academorix.platform_user.retention.blocked.total",
+      "name": "stackra.platform_user.retention.blocked.total",
       "kind": "counter",
       "unit": "blocked_purges",
       "labels": ["reason"],
       "description": "PurgeOffboardedPlatformUsersJob refused to hard-delete a row. `reason` label: `revocation_incomplete`, `audit_correlation_pending`, `retention_extended_by_compliance`."
     },
     {
-      "name": "academorix.platform_user.active.count",
+      "name": "stackra.platform_user.active.count",
       "kind": "gauge",
       "unit": "users",
       "labels": ["department"],
       "description": "Active PlatformUser headcount per department. Sampled hourly by a scheduled command."
     },
     {
-      "name": "academorix.platform_user.mfa.coverage_ratio",
+      "name": "stackra.platform_user.mfa.coverage_ratio",
       "kind": "gauge",
       "unit": "ratio",
       "labels": [],
       "description": "Ratio of active PlatformUsers whose Identity has mfa_secret_encrypted NOT NULL. Target: 1.0 (every platform staffer has MFA). Anything less than 1.0 is a compliance drift."
     },
     {
-      "name": "academorix.platform_user.on_call.resolver.duration_ms",
+      "name": "stackra.platform_user.on_call.resolver.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1, 10, 50, 200, 1000, 5000],
@@ -96,35 +96,35 @@
       "description": "OnCallResolver latency. `backend` label: `internal` | `pagerduty`. P99 target < 200ms so escalation routing does not slow the incident-response critical path."
     },
     {
-      "name": "academorix.platform_user.on_call.resolver.miss.total",
+      "name": "stackra.platform_user.on_call.resolver.miss.total",
       "kind": "counter",
       "unit": "misses",
       "labels": ["backend", "reason"],
       "description": "OnCallResolver returned null (no shift resolved). `reason` label: `no_current_shift`, `backend_timeout`, `backend_error`, `disabled`. Non-zero misses during business hours warrant an ops review."
     },
     {
-      "name": "academorix.platform_user.audit_row.written.total",
+      "name": "stackra.platform_user.audit_row.written.total",
       "kind": "counter",
       "unit": "rows",
       "labels": ["subject_type", "event"],
       "description": "Every audit row the `platform.audit` middleware writes. Feeds the SOC 2 CC7.2 volume dashboard."
     },
     {
-      "name": "academorix.platform_user.pii_access.total",
+      "name": "stackra.platform_user.pii_access.total",
       "kind": "counter",
       "unit": "accesses",
       "labels": ["ability"],
       "description": "Every time `viewPii` OR `viewHrContext` OR `viewOnCallPhone` was invoked. `ability` label maps to the specific permission. Fed to the DPO for periodic review."
     },
     {
-      "name": "academorix.platform_user.manager_reassignments.total",
+      "name": "stackra.platform_user.manager_reassignments.total",
       "kind": "counter",
       "unit": "reassignments",
       "labels": [],
       "description": "PlatformUserManagerReassigned occurrences. Spikes correlate with re-org events."
     },
     {
-      "name": "academorix.platform_user.department_changes.total",
+      "name": "stackra.platform_user.department_changes.total",
       "kind": "counter",
       "unit": "changes",
       "labels": ["from_department", "to_department"],

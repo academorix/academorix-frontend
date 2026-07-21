@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Grants\Exceptions;
+namespace Stackra\Grants\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Cross-role grants (grantor lacks the permission) require the `cross_role_grants` entitlement AND a matching workflow/approvals template.

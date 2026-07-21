@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformPublicSiteSdk\Enums;
+namespace Stackra\PlatformPublicSiteSdk\Enums;
 
 /**
  * Wire-visible backed enum for `public-page.status`.

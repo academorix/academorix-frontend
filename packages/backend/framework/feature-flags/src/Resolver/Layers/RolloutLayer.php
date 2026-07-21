@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Resolver\Layers;
+namespace Stackra\FeatureFlags\Resolver\Layers;
 
-use Academorix\FeatureFlags\Contracts\Data\FeatureRolloutInterface;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureRolloutRepositoryInterface;
-use Academorix\FeatureFlags\Resolver\FeatureResolution;
-use Academorix\FeatureFlags\Resolver\ResolutionContext;
-use Academorix\FeatureFlags\Support\RolloutHasher;
+use Stackra\FeatureFlags\Contracts\Data\FeatureRolloutInterface;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureRolloutRepositoryInterface;
+use Stackra\FeatureFlags\Resolver\FeatureResolution;
+use Stackra\FeatureFlags\Resolver\ResolutionContext;
+use Stackra\FeatureFlags\Support\RolloutHasher;
 
 /**
  * Third layer — decides via the deterministic bucket hash.

@@ -12,10 +12,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Models;
+namespace Stackra\Scope\Models;
 
-use Academorix\Scope\Contracts\Data\ScopeNodeInterface;
-use Academorix\Scope\Database\Factories\ScopeNodeFactory;
+use Stackra\Scope\Contracts\Data\ScopeNodeInterface;
+use Stackra\Scope\Database\Factories\ScopeNodeFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;

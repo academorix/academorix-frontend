@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/storage/health",
+  "id": "stackra://modules/storage/health",
   "$version": 1,
   "title": "storage \u2014 health probes",
   "description": "Probes registered with the foundation HealthAggregator. Startup probes gate app boot; readiness probes gate traffic acceptance (K8s readiness endpoint). Critical probes fail app boot when they fail; non-critical probes surface as warnings.",
   "probes": [
     {
       "name": "storage-registry-hydrated",
-      "class": "Academorix\\Storage\\Health\\Probes\\RegistryHydratedProbe",
+      "class": "Stackra\\Storage\\Health\\Probes\\RegistryHydratedProbe",
       "category": "startup",
       "critical": true,
       "timeoutMs": 200,
@@ -14,7 +14,7 @@
     },
     {
       "name": "storage-default-disk-reachable",
-      "class": "Academorix\\Storage\\Health\\Probes\\DefaultDiskReachableProbe",
+      "class": "Stackra\\Storage\\Health\\Probes\\DefaultDiskReachableProbe",
       "category": "startup",
       "critical": true,
       "timeoutMs": 5000,
@@ -22,7 +22,7 @@
     },
     {
       "name": "storage-antivirus-reachable",
-      "class": "Academorix\\Storage\\Health\\Probes\\AntivirusReachableProbe",
+      "class": "Stackra\\Storage\\Health\\Probes\\AntivirusReachableProbe",
       "category": "readiness",
       "critical": true,
       "timeoutMs": 3000,
@@ -30,7 +30,7 @@
     },
     {
       "name": "storage-cdn-reachable",
-      "class": "Academorix\\Storage\\Health\\Probes\\CdnReachableProbe",
+      "class": "Stackra\\Storage\\Health\\Probes\\CdnReachableProbe",
       "category": "readiness",
       "critical": false,
       "timeoutMs": 2000,
@@ -38,7 +38,7 @@
     },
     {
       "name": "storage-variant-queue-depth",
-      "class": "Academorix\\Storage\\Health\\Probes\\VariantQueueDepthProbe",
+      "class": "Stackra\\Storage\\Health\\Probes\\VariantQueueDepthProbe",
       "category": "readiness",
       "critical": false,
       "timeoutMs": 200,
@@ -47,7 +47,7 @@
     },
     {
       "name": "storage-antivirus-queue-depth",
-      "class": "Academorix\\Storage\\Health\\Probes\\AntivirusQueueDepthProbe",
+      "class": "Stackra\\Storage\\Health\\Probes\\AntivirusQueueDepthProbe",
       "category": "readiness",
       "critical": false,
       "timeoutMs": 200,
@@ -56,7 +56,7 @@
     },
     {
       "name": "storage-quota-drift",
-      "class": "Academorix\\Storage\\Health\\Probes\\QuotaDriftProbe",
+      "class": "Stackra\\Storage\\Health\\Probes\\QuotaDriftProbe",
       "category": "readiness",
       "critical": false,
       "timeoutMs": 5000,
@@ -65,7 +65,7 @@
     },
     {
       "name": "storage-quarantine-review-lag",
-      "class": "Academorix\\Storage\\Health\\Probes\\QuarantineReviewLagProbe",
+      "class": "Stackra\\Storage\\Health\\Probes\\QuarantineReviewLagProbe",
       "category": "readiness",
       "critical": false,
       "timeoutMs": 200,
@@ -74,7 +74,7 @@
     },
     {
       "name": "storage-chunked-upload-stuck",
-      "class": "Academorix\\Storage\\Health\\Probes\\ChunkedUploadStuckProbe",
+      "class": "Stackra\\Storage\\Health\\Probes\\ChunkedUploadStuckProbe",
       "category": "readiness",
       "critical": false,
       "timeoutMs": 200,
@@ -83,7 +83,7 @@
     },
     {
       "name": "storage-signature-key-freshness",
-      "class": "Academorix\\Storage\\Health\\Probes\\SignatureKeyFreshnessProbe",
+      "class": "Stackra\\Storage\\Health\\Probes\\SignatureKeyFreshnessProbe",
       "category": "readiness",
       "critical": true,
       "timeoutMs": 100,

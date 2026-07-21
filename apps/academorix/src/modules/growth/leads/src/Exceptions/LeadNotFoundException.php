@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Exceptions;
+namespace Stackra\Leads\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `LEAD_NOT_FOUND` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class LeadNotFoundException extends AcademorixException
+final class LeadNotFoundException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

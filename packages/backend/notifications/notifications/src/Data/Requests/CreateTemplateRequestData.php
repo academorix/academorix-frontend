@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Data\Requests;
+namespace Stackra\Notifications\Data\Requests;
 
-use Academorix\Notifications\Enums\NotificationChannel;
+use Stackra\Notifications\Enums\NotificationChannel;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Enum;
 use Spatie\LaravelData\Attributes\Validation\Max;

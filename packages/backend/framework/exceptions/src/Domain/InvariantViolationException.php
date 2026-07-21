@@ -26,7 +26,7 @@
  *
  *   exceptions::domain.invariant_violation
  *
- * @see \Academorix\Exceptions\AcademorixException  Base class.
+ * @see \Stackra\Exceptions\StackraException  Base class.
  * @see DomainException  Preferred when the failure is a recoverable
  *                       business-rule outcome rather than a
  *                       "should never happen" state.
@@ -34,14 +34,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Domain;
+namespace Stackra\Exceptions\Domain;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class InvariantViolationException extends AcademorixException
+class InvariantViolationException extends StackraException
 {
     /**
      * Machine-readable code — reporters use this literal to route

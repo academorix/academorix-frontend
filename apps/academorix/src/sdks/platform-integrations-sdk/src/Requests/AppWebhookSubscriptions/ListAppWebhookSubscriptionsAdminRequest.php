@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformIntegrationsSdk\Requests\AppWebhookSubscriptions;
+namespace Stackra\PlatformIntegrationsSdk\Requests\AppWebhookSubscriptions;
 
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\ApiSdk\Data\PaginationLinks;
-use Academorix\ApiSdk\Data\PaginationMeta;
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\PlatformIntegrationsSdk\Data\AppWebhookSubscriptionData;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\ApiSdk\Data\PaginationLinks;
+use Stackra\ApiSdk\Data\PaginationMeta;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\PlatformIntegrationsSdk\Data\AppWebhookSubscriptionData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

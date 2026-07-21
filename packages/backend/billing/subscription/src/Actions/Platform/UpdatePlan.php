@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Actions\Platform;
+namespace Stackra\Subscription\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Patch;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Subscription\Contracts\Data\PlanInterface;
-use Academorix\Subscription\Contracts\Repositories\PlanRepositoryInterface;
-use Academorix\Subscription\Data\PlanData;
-use Academorix\Subscription\Data\Requests\UpdatePlanRequestData;
-use Academorix\Subscription\Enums\SubscriptionPermission;
-use Academorix\Subscription\Exceptions\PlanNotFoundException;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Patch;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Subscription\Contracts\Data\PlanInterface;
+use Stackra\Subscription\Contracts\Repositories\PlanRepositoryInterface;
+use Stackra\Subscription\Data\PlanData;
+use Stackra\Subscription\Data\Requests\UpdatePlanRequestData;
+use Stackra\Subscription\Enums\SubscriptionPermission;
+use Stackra\Subscription\Exceptions\PlanNotFoundException;
 
 /**
  * `PATCH /api/v1/platform/plans/{plan}` — update a plan's fields.

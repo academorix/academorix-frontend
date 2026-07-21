@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDevelopmentSdk\Requests\ScoutingReports;
+namespace Stackra\SportsDevelopmentSdk\Requests\ScoutingReports;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsDevelopmentSdk\Data\ScoutingReportData;
-use Academorix\SportsDevelopmentSdk\Payloads\ScoutingReports\CreateScoutingReportPayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsDevelopmentSdk\Data\ScoutingReportData;
+use Stackra\SportsDevelopmentSdk\Payloads\ScoutingReports\CreateScoutingReportPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

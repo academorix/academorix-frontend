@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsRegistrationsSdk\Requests\WaitlistEntries;
+namespace Stackra\SportsRegistrationsSdk\Requests\WaitlistEntries;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsRegistrationsSdk\Data\WaitlistEntryData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsRegistrationsSdk\Data\WaitlistEntryData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

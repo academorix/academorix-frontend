@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Data;
+namespace Stackra\Versioning\Data;
 
-use Academorix\Versioning\Contracts\Data\DeprecationNoticeInterface;
-use Academorix\Versioning\Enums\DeprecationSurface;
-use Academorix\Versioning\Models\DeprecationNotice;
+use Stackra\Versioning\Contracts\Data\DeprecationNoticeInterface;
+use Stackra\Versioning\Enums\DeprecationSurface;
+use Stackra\Versioning\Models\DeprecationNotice;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

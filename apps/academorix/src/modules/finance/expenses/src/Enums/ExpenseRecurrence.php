@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Expenses\Enums;
+namespace Stackra\Expenses\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `recurrence` on `expense`.

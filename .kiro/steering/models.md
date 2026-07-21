@@ -30,7 +30,7 @@ column names via `ModelInterface::ATTR_*` — never raw strings.
 
 declare(strict_types=1);
 
-namespace Academorix\<Package>\Contracts\Data;
+namespace Stackra\<Package>\Contracts\Data;
 
 /**
  * Table shape for the `<table>` table.
@@ -126,12 +126,12 @@ Rules:
 
 declare(strict_types=1);
 
-namespace Academorix\<Package>\Models;
+namespace Stackra\<Package>\Models;
 
-use Academorix\<Package>\Contracts\Data\<Model>Interface;
-use Academorix\<Package>\Database\Factories\<Model>Factory;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\<Package>\Contracts\Data\<Model>Interface;
+use Stackra\<Package>\Database\Factories\<Model>Factory;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -183,7 +183,7 @@ final class <Model> extends Model implements AuditableContract, <Model>Interface
 
 declare(strict_types=1);
 
-use Academorix\<Package>\Contracts\Data\<Model>Interface;
+use Stackra\<Package>\Contracts\Data\<Model>Interface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -223,12 +223,12 @@ return new class() extends Migration
 
 ## 3. What the old backend already codified — reuse it
 
-- `AbstractEloquentRepository` (from `academorix/crud`) is the base every
+- `AbstractEloquentRepository` (from `stackra/crud`) is the base every
   `Eloquent<Model>Repository` extends. Never re-implement `find` / `findOrFail`
   / `all` / `paginate` / `create` / `update` / `delete` / `restore` on a
   per-model basis.
 - Repository interface extends
-  `Academorix\Crud\Contracts\RepositoryInterface<Model>` and adds only
+  `Stackra\Crud\Contracts\RepositoryInterface<Model>` and adds only
   domain-specific finders.
 - Repositories reach columns via `ModelInterface::ATTR_*` — never string
   literals.
@@ -246,7 +246,7 @@ return new class() extends Migration
 | Multi-section class docblock with `## Why` / `## Rationale` | 3-8 line class docblock; put rationale in an ADR                                    |
 | Per-package `xyz_audit_log` table                           | Compose `Auditable` on the writable model; use shared `audits` table                |
 | `@property string $name` dump on the model                  | Skip — `implements <Model>Interface` already documents columns                      |
-| Duplicating `paginate` / `findById` on the repo interface   | Extend `RepositoryInterface<Model>` from `academorix/crud`; add only domain finders |
+| Duplicating `paginate` / `findById` on the repo interface   | Extend `RepositoryInterface<Model>` from `stackra/crud`; add only domain finders |
 
 ## 5. File structure and traits — one file per model
 
@@ -282,7 +282,7 @@ packages/framework/database/src/Concerns/
 Per-domain examples:
 
 ```
-academorix-backend/apps/api/src/modules/tenancy/src/Concerns/BelongsToTenant.php
+stackra-backend/apps/api/src/modules/tenancy/src/Concerns/BelongsToTenant.php
 old/backend/modules/reviewing/Branch/src/Concerns/BelongsToBranch.php
 ```
 

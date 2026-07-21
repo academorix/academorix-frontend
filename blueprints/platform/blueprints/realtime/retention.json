@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/realtime/retention",
+  "id": "stackra://modules/realtime/retention",
   "$version": 1,
   "title": "realtime — data retention windows",
   "description": "Ephemeral module. Presence rows evicted 15m after last heartbeat. Subscription rows purged 30d post-disconnect. Channels retained indefinitely (config).",

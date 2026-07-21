@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Exceptions;
+namespace Stackra\Approvals\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to withdraw an instance NOT submitted by the caller.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CallerNotRequesterException extends AcademorixException
+final class CallerNotRequesterException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/identity/traits",
+  "id": "stackra://modules/identity/traits",
   "$version": 1,
   "title": "identity \u2014 trait composition",
   "description": "Two owned traits. `IsIdentity` is a marker composed by the Identity model itself and any future variant (e.g. a shadow Identity used during merge flows). `HasCredentialLifecycle` provides the composable audit/reset/lockout methods that both `Identity` and the downstream principals which reuse Identity substrate (`PlatformUser`) need. NO BelongsToTenant \u2014 Identity is global by design.",
   "owned": [
     {
-      "trait": "Academorix\\Identity\\Concerns\\IsIdentity",
+      "trait": "Stackra\\Identity\\Concerns\\IsIdentity",
       "description": "Marker trait composed by the Identity model. Provides the shared shape identifier for reflection-based tooling (audit redactors, seeders, factories) that need to enumerate every Identity-shaped row without hard-coding the class. Adds no accessor / mutator / scope of its own \u2014 those live on HasCredentialLifecycle.",
       "public": true,
       "usedBy": ["identity::Identity"],
@@ -14,7 +14,7 @@
       "conflicts_with": []
     },
     {
-      "trait": "Academorix\\Identity\\Concerns\\HasCredentialLifecycle",
+      "trait": "Stackra\\Identity\\Concerns\\HasCredentialLifecycle",
       "description": "Composable audit/reset/lockout methods for principals whose credentials live on the `identities` table. Ships: `->verifyPassword($plain)`, `->markLoginSuccess()`, `->markLoginFailure()`, `->lock($minutes = null)`, `->unlock()`, `->enrollMfa($secret)`, `->disableMfa()`, `->regenerateRecoveryCodes()`, `->consumeRecoveryCode($code)`, `->recordPasswordChange($newHash)`, `->requiresEmailVerification()`. Each method wraps the operation in a transaction, fires the matching event, and writes to the audit trail via `HasActivityLog` when composed alongside it.",
       "public": true,
       "usedBy": ["identity::Identity"],
@@ -35,13 +35,13 @@
       { "trait": "Illuminate\\Auth\\Passwords\\CanResetPassword" }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
-    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
+    "activity": [{ "trait": "Stackra\\Activity\\Concerns\\HasActivityLog" }]
   },
   "composition": {
     "identity": {

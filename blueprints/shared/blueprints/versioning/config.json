@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/versioning/config",
+  "id": "stackra://modules/versioning/config",
   "$version": 1,
   "title": "versioning \u2014 developer configuration",
   "description": "Deploy-static config. Mirrors `config/versioning.php`.",
@@ -35,7 +35,7 @@
         {
           "path": "versioning.resolvers.header.accept_pattern",
           "type": "string",
-          "default": "application/vnd.academorix.{version}+json",
+          "default": "application/vnd.stackra.{version}+json",
           "description": "Accept header pattern. {version} is the capture group."
         },
         {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Jobs;
+namespace Stackra\Storage\Jobs;
 
-use Academorix\Storage\Contracts\Data\SignedUrlAuditInterface;
-use Academorix\Storage\Contracts\Repositories\SignedUrlAuditRepositoryInterface;
+use Stackra\Storage\Contracts\Data\SignedUrlAuditInterface;
+use Stackra\Storage\Contracts\Repositories\SignedUrlAuditRepositoryInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -16,7 +16,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 /**
- * Sweep every expired {@see \Academorix\Storage\Models\SignedUrlAudit}
+ * Sweep every expired {@see \Stackra\Storage\Models\SignedUrlAudit}
  * row that has NOT been revoked yet — flip `revoked_at` +
  * `revoked_reason = expired_by_sweep`.
  *

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Contracts\Services;
+namespace Stackra\Coupon\Contracts\Services;
 
-use Academorix\Coupon\Models\Coupon;
-use Academorix\Coupon\Services\CouponIssuer;
+use Stackra\Coupon\Models\Coupon;
+use Stackra\Coupon\Services\CouponIssuer;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

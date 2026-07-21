@@ -503,7 +503,7 @@ Applies everywhere per `.kiro/steering/support-utilities.md`:
   name; no exports from it until Phase 2.
 - No migration of `apps/dashboard/src/modules/dashboard/**` — the app keeps
   working against its local module until Phase 2 swaps the imports over. Verify
-  `pnpm --filter @academorix/dashboard build` after the package is done (should
+  `pnpm --filter @stackra/dashboard build` after the package is done (should
   still be green — no imports touch the new package yet).
 - No routing (`pages/*.tsx` stay in the app; routing is app-shaped Refine /
   react-router composition, not framework).

@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/delegation/observers",
+  "id": "stackra://modules/delegation/observers",
   "$version": 1,
   "title": "delegation — Eloquent observers",
   "observers": [
     {
       "model": "RoleDelegation",
-      "observer": "Academorix\\Delegation\\Observers\\RoleDelegationObserver",
+      "observer": "Stackra\\Delegation\\Observers\\RoleDelegationObserver",
       "handles": [
         "creating → populate ULID prefix `dlg_`",
         "creating → refuse when delegator_id and delegate_id share the same tenant_id (same_tenant_delegation rule) — cross-tenant delegation is impossible in the domain",
@@ -26,7 +26,7 @@
     },
     {
       "model": "ImpersonationSession",
-      "observer": "Academorix\\Delegation\\Observers\\ImpersonationSessionObserver",
+      "observer": "Stackra\\Delegation\\Observers\\ImpersonationSessionObserver",
       "handles": [
         "creating → populate ULID prefix `imp_`",
         "creating → validate impersonator (PlatformUser) is loaded + status = 'active' + holds `platform.impersonate` entitlement. Failure: refuse + fire ImpersonationAttemptRefused with refusal_reason.",

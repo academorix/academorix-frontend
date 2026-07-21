@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/user/data-classes",
+  "id": "stackra://modules/user/data-classes",
   "$version": 1,
   "title": "user \u2014 field classification",
   "description": "User carries administrative metadata (tenant + application + status). Profile is the PII cluster \u2014 every column is regulated at least at the `confidential` tier, some at `restricted_minor` when the underlying Identity is a minor. TenantMember is administrative. The redactor pipeline (from telemetry) is applied on egress to any Profile field unless the caller carries the `profile.view.pii` permission.",

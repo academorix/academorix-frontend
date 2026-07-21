@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/mfa/subprocessors",
+  "id": "stackra://modules/mfa/subprocessors",
   "$version": 1,
   "title": "mfa — subprocessors",
   "description": "MFA has NO subprocessors of its own — every third-party integration required for MFA is transitively via identity/identity (KMS / Vault for secret encryption) or via the browser + user's authenticator (for WebAuthn attestation, which is an on-device operation). The WebAuthn spec is designed so that no subprocessor sees the private key — all cryptography is authenticator-local.",

@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Announcements\Models;
+namespace Stackra\Announcements\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Announcements\Contracts\Data\AnnouncementViewInterface;
-use Academorix\Announcements\Database\Factories\AnnouncementViewFactory;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Announcements\Contracts\Data\AnnouncementViewInterface;
+use Stackra\Announcements\Database\Factories\AnnouncementViewFactory;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;

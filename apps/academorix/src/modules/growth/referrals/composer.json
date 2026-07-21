@@ -1,10 +1,10 @@
 {
-  "name": "academorix/referrals",
+  "name": "stackra/referrals",
   "type": "library",
-  "description": "Academorix Referrals module — server-side Laravel package emitted from the module blueprint at `modules/growth/blueprints/referrals/`. Complements the wire SDK at `academorix-growth/referrals-sdk`.",
+  "description": "Stackra Referrals module — server-side Laravel package emitted from the module blueprint at `modules/growth/blueprints/referrals/`. Complements the wire SDK at `stackra-growth/referrals-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "growth",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-growth/referrals-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-growth/referrals-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Referrals\\": "src/"
+      "Stackra\\Referrals\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Referrals\\Tests\\": "tests/"
+      "Stackra\\Referrals\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Referrals\\Providers\\ReferralsServiceProvider"
+        "Stackra\\Referrals\\Providers\\ReferralsServiceProvider"
       ],
       "aliases": {}
     }

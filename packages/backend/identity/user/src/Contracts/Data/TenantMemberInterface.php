@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\User\Contracts\Data;
+namespace Stackra\User\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\User\Models\TenantMember;
+use Stackra\User\Models\TenantMember;
 
 /**
  * Table shape for the `tenant_members` table.

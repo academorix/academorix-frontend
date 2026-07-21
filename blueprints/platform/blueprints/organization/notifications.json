@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/organization/notifications",
+  "id": "stackra://modules/organization/notifications",
   "$version": 1,
   "title": "organization — notification classes + categories",
-  "namespace": "Academorix\\Organization\\Notifications",
+  "namespace": "Stackra\\Organization\\Notifications",
   "notifications": [
     "OrganizationCreatedNotification",
     "OrganizationDefaultChangedNotification",

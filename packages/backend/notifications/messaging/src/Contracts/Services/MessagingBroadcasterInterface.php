@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Messaging\Contracts\Services;
+namespace Stackra\Messaging\Contracts\Services;
 
-use Academorix\Messaging\Services\MessagingBroadcaster;
+use Stackra\Messaging\Services\MessagingBroadcaster;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Actions\Platform;
+namespace Stackra\Branding\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Branding\Contracts\Data\BrandingInterface;
-use Academorix\Branding\Contracts\Repositories\BrandingRepositoryInterface;
-use Academorix\Branding\Data\BrandingData;
-use Academorix\Branding\Data\Requests\CreateBrandingRequestData;
-use Academorix\Branding\Enums\BrandingPermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Branding\Contracts\Data\BrandingInterface;
+use Stackra\Branding\Contracts\Repositories\BrandingRepositoryInterface;
+use Stackra\Branding\Data\BrandingData;
+use Stackra\Branding\Data\Requests\CreateBrandingRequestData;
+use Stackra\Branding\Enums\BrandingPermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `POST /api/v1/platform/brandings` — platform admin creates a

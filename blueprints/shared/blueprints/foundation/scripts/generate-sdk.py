@@ -47,7 +47,7 @@ Scope note — module-side vs SDK-side artifacts:
 
       - `#[Illuminate\\Container\\Attributes\\Bind(Concrete::class)]` goes
         ON the ABSTRACT (interface / abstract class we own) — Pattern A.
-      - `#[Academorix\\Container\\Attributes\\Overrides(Vendor::class)]`
+      - `#[Stackra\\Container\\Attributes\\Overrides(Vendor::class)]`
         goes ON the CONCRETE, and only when the abstract is a vendor /
         third-party class we cannot annotate — Pattern B.
 
@@ -110,7 +110,7 @@ def emit_composer_json(m: Module) -> str:
         f"Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + "
         f"fluent Resources) for the `{m.name}` module of the "
         f"{studly(m.tier)} service. Auto-discovered at boot by "
-        f"academorix/{m.tier}-sdk via "
+        f"stackra/{m.tier}-sdk via "
         f"#[AsSdkResource(name: '{m.name}', service: '{m.tier}')]; consumed by "
         f"every cross-service caller strictly over HTTP."
     )
@@ -121,15 +121,15 @@ def emit_composer_json(m: Module) -> str:
         "description": description,
         "license": "proprietary",
         "keywords": [
-            "academorix", "sdk", "saloon", "spatie-data", "api-client",
+            "stackra", "sdk", "saloon", "spatie-data", "api-client",
             m.tier, f"{m.tier}-service", m.name, "wire-contract",
         ],
         "require": {
             "php": "^8.3",
-            "academorix/api-sdk": "@dev",
-            "academorix/enum": "@dev",
-            "academorix/exceptions": "@dev",
-            "academorix/foundation": "@dev",
+            "stackra/api-sdk": "@dev",
+            "stackra/enum": "@dev",
+            "stackra/exceptions": "@dev",
+            "stackra/foundation": "@dev",
             "saloonphp/saloon": "^3.10",
             "spatie/laravel-data": "^4.11",
         },
@@ -206,11 +206,11 @@ def emit_phpunit_xml(m: Module) -> str:
 def emit_readme(m: Module) -> str:
     aggregates = sorted({e.aggregate for e in m.entities})
     aggregate_list = "\n".join(f"- **{a}** — {_agg_description(m, a)}" for a in aggregates)
-    return f"""# academorix-{m.tier}/{m.name}-sdk
+    return f"""# stackra-{m.tier}/{m.name}-sdk
 
 Wire-visible SDK surface for the `{m.name}` module of the
 {studly(m.tier)} service. Auto-discovered by
-`academorix/{m.tier}-sdk` (the service umbrella) via
+`stackra/{m.tier}-sdk` (the service umbrella) via
 `#[AsSdkResource(name: '{m.name}', service: '{m.tier}')]`.
 
 ## Aggregates
@@ -233,7 +233,7 @@ src/
 Consumed only over HTTP via the umbrella client:
 
 ```php
-app(\\Academorix\\{studly(m.tier)}Sdk\\Client\\{studly(m.tier)}Sdk::class)
+app(\\Stackra\\{studly(m.tier)}Sdk\\Client\\{studly(m.tier)}Sdk::class)
     ->{camel(m.name)}()
     ->{camel(aggregates[0]) if aggregates else 'items'}()
     ->list();
@@ -307,7 +307,7 @@ def emit_data_dto(m: Module, e: Entity) -> str:
         "## Example",
         "",
         "```php",
-        f"use Academorix\\{studly(m.tier)}Sdk\\Client\\{studly(m.tier)}Sdk;",
+        f"use Stackra\\{studly(m.tier)}Sdk\\Client\\{studly(m.tier)}Sdk;",
         "",
         f"$row = app({studly(m.tier)}Sdk::class)->{camel(m.name)}()->{camel(e.aggregate)}()->show($id);",
         "```",
@@ -559,7 +559,7 @@ def emit_request(m: Module, e: Entity, route: Route) -> str:
     data_ns = f"{m.ns_root}\\Data"
 
     imports = [
-        "use Academorix\\ApiSdk\\Requests\\BaseSdkRequest;",
+        "use Stackra\\ApiSdk\\Requests\\BaseSdkRequest;",
         f"use {data_ns}\\{e.class_name}Data;",
         "use Saloon\\Enums\\Method;",
         "use Saloon\\Http\\Response;",
@@ -589,9 +589,9 @@ def emit_request(m: Module, e: Entity, route: Route) -> str:
         ctor_doc_lines.append("@param  string|null  $idempotencyKey  Optional idempotency token.")
 
     if route.op == "list":
-        imports.append("use Academorix\\ApiSdk\\Data\\PaginatedResponse;")
-        imports.append("use Academorix\\ApiSdk\\Data\\PaginationLinks;")
-        imports.append("use Academorix\\ApiSdk\\Data\\PaginationMeta;")
+        imports.append("use Stackra\\ApiSdk\\Data\\PaginatedResponse;")
+        imports.append("use Stackra\\ApiSdk\\Data\\PaginationLinks;")
+        imports.append("use Stackra\\ApiSdk\\Data\\PaginationMeta;")
 
     # Sort + dedupe imports.
     imports = sorted(set(imports))
@@ -898,8 +898,8 @@ declare(strict_types=1);
 
 namespace {ns};
 
-use Academorix\\ApiSdk\\Attributes\\AsSdkResource;
-use Academorix\\ApiSdk\\Resources\\BaseSdkResource;
+use Stackra\\ApiSdk\\Attributes\\AsSdkResource;
+use Stackra\\ApiSdk\\Resources\\BaseSdkResource;
 
 {class_doc}
 #[AsSdkResource(name: '{m.name}', service: '{m.tier}')]
@@ -921,7 +921,7 @@ def emit_peer_resource(m: Module, aggregate: str, routes: list[Route], entities:
     imports = ["use Saloon\\Http\\Response;"]
     data_ns = f"{m.ns_root}\\Data"
     imports.append(f"use {data_ns}\\{entity.class_name}Data;")
-    imports.append("use Academorix\\ApiSdk\\Data\\PaginatedResponse;")
+    imports.append("use Stackra\\ApiSdk\\Data\\PaginatedResponse;")
 
     method_bodies = []
     for route in routes:
@@ -955,7 +955,7 @@ declare(strict_types=1);
 
 namespace {ns};
 
-use Academorix\\ApiSdk\\Client\\ApiConnector;
+use Stackra\\ApiSdk\\Client\\ApiConnector;
 {imports_block}
 
 {class_doc}

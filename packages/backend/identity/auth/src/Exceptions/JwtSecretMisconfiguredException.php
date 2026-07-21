@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Exceptions;
+namespace Stackra\Auth\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Raised at boot when the HS256 shared secret is unset or too short.

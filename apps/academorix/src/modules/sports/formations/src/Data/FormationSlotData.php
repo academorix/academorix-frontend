@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Formations\Data;
+namespace Stackra\Formations\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Server-side output DTO for {@see \Academorix\Formations\Models\FormationSlot}.
+ * Server-side output DTO for {@see \Stackra\Formations\Models\FormationSlot}.
  *
  * Consumed by controllers + services on the SERVER side. This is
  * distinct from the wire SDK's DTO (which sits under
- * `Academorix\SportsFormationsSdk\Data`) — the wire DTO travels across the HTTP
+ * `Stackra\SportsFormationsSdk\Data`) — the wire DTO travels across the HTTP
  * boundary; this one stays in-process.
  *
  * @category Formations

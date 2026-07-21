@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Medical\Concerns;
+namespace Stackra\Medical\Concerns;
 
 /**
  * Trait — HasMedicalRecord.

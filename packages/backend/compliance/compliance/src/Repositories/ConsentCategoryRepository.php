@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Repositories;
+namespace Stackra\Compliance\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Compliance\Contracts\Data\ConsentCategoryInterface;
-use Academorix\Compliance\Contracts\Repositories\ConsentCategoryRepositoryInterface;
-use Academorix\Compliance\Models\ConsentCategory;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Compliance\Contracts\Data\ConsentCategoryInterface;
+use Stackra\Compliance\Contracts\Repositories\ConsentCategoryRepositoryInterface;
+use Stackra\Compliance\Models\ConsentCategory;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Compliance\Models\ConsentCategory}.
+ * Attribute-first Eloquent repository for {@see Stackra\Compliance\Models\ConsentCategory}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ConsentCategoryInterface::class)]` which resolves to
  * `ConsentCategory` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Compliance\Models\ConsentCategory>
+ * @extends Repository<\Stackra\Compliance\Models\ConsentCategory>
  *
  * @category Compliance
  *

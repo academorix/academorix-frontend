@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Contracts\Repositories;
+namespace Stackra\Tenancy\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Tenancy\Enums\TenantContactKind;
-use Academorix\Tenancy\Models\TenantContact;
-use Academorix\Tenancy\Repositories\EloquentTenantContactRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Tenancy\Enums\TenantContactKind;
+use Stackra\Tenancy\Models\TenantContact;
+use Stackra\Tenancy\Repositories\EloquentTenantContactRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

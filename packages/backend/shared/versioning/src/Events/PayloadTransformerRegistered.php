@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Events;
+namespace Stackra\Versioning\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Foundation\Events\Dispatchable;
 
 /**
  * Dispatched at boot every time
- * {@see \Academorix\Versioning\Services\PayloadTransformerRegistry::register()}
+ * {@see \Stackra\Versioning\Services\PayloadTransformerRegistry::register()}
  * receives a `#[AsPayloadTransformer]` hit from the framework's
  * generic
- * {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ * {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  * pump.
  *
  * Consumers listen to build the introspection surface for the

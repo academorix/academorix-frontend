@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/theme/attributes",
+  "id": "stackra://modules/theme/attributes",
   "$version": 1,
   "title": "theme — declarative attributes",
   "description": "One PHP attribute — #[AsThemeConsumer] — that a downstream module uses to mark itself as a theme-token consumer. Discovery at boot compiles a list of consumers used for cache warming + fanout on ThemeCacheInvalidated.",
-  "namespace": "Academorix\\Platform\\Theme\\Attributes",
+  "namespace": "Stackra\\Platform\\Theme\\Attributes",
   "attributes": [
     {
       "name": "AsThemeConsumer",
-      "class": "Academorix\\Platform\\Theme\\Attributes\\AsThemeConsumer",
+      "class": "Stackra\\Platform\\Theme\\Attributes\\AsThemeConsumer",
       "target": "class",
       "repeatable": false,
       "purpose": "Marks a class as a theme-token consumer. Registers with the ThemeConsumerRegistry so downstream cache-warming + ThemeCacheInvalidated fanout know to bust the consumer's own caches. Applied to notification templates, email renderers, PDF invoice renderers, SDUI screen resolvers.",

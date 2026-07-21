@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Region\Exceptions;
+namespace Stackra\Region\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * The `X-Region-Id` header points at a Region in a different tenant.

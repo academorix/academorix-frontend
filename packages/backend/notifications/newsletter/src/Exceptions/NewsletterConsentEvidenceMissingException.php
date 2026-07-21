@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Exceptions;
+namespace Stackra\Newsletter\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when an import row is missing the required
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NewsletterConsentEvidenceMissingException extends AcademorixException
+final class NewsletterConsentEvidenceMissingException extends StackraException
 {
     public const CODE = 'newsletter.consent_evidence_missing';
 

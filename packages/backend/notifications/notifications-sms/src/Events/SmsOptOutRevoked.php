@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Events;
+namespace Stackra\Notifications\Sms\Events;
 
-use Academorix\Notifications\Sms\Models\SmsOptOut;
+use Stackra\Notifications\Sms\Models\SmsOptOut;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 /**
  * An SMS opt-out was revoked (either admin action or START-keyword reply).
  *

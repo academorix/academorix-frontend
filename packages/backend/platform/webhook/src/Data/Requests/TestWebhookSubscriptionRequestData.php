@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Data\Requests;
+namespace Stackra\Webhook\Data\Requests;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Max;

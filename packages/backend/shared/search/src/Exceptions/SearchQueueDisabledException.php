@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Exceptions;
+namespace Stackra\Search\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the search queue kill switch is off.
@@ -13,7 +13,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SearchQueueDisabledException extends AcademorixException
+final class SearchQueueDisabledException extends StackraException
 {
     public const CODE = 'SEARCH_QUEUE_DISABLED';
 

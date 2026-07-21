@@ -41,15 +41,15 @@
  *
  * Anything else raises {@see \InvalidArgumentException}. The
  * middleware catches that and rethrows as
- * {@see \Academorix\Routing\Http\Exceptions\MalformedApiVersionException}.
+ * {@see \Stackra\Routing\Http\Exceptions\MalformedApiVersionException}.
  *
- * @see \Academorix\Routing\Middleware\DetectApiVersion  Primary consumer.
- * @see \Academorix\Routing\Support\ApiVersionRegistry    Uses this for satisfies() checks.
+ * @see \Stackra\Routing\Middleware\DetectApiVersion  Primary consumer.
+ * @see \Stackra\Routing\Support\ApiVersionRegistry    Uses this for satisfies() checks.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Routing\Services;
+namespace Stackra\Routing\Services;
 
 use Illuminate\Container\Attributes\Singleton;
 use InvalidArgumentException;

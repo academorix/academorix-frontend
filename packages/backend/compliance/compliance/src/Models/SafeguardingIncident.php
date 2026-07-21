@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Models;
+namespace Stackra\Compliance\Models;
 
-use Academorix\Compliance\Contracts\Data\SafeguardingIncidentInterface;
-use Academorix\Compliance\Database\Factories\SafeguardingIncidentFactory;
-use Academorix\Compliance\Enums\SafeguardingIncidentState;
-use Academorix\Compliance\Enums\SafeguardingSeverity;
-use Academorix\Compliance\Observers\SafeguardingIncidentObserver;
-use Academorix\Compliance\Policies\SafeguardingIncidentPolicy;
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Compliance\Contracts\Data\SafeguardingIncidentInterface;
+use Stackra\Compliance\Database\Factories\SafeguardingIncidentFactory;
+use Stackra\Compliance\Enums\SafeguardingIncidentState;
+use Stackra\Compliance\Enums\SafeguardingSeverity;
+use Stackra\Compliance\Observers\SafeguardingIncidentObserver;
+use Stackra\Compliance\Policies\SafeguardingIncidentPolicy;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

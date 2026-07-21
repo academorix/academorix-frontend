@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/geography/policies",
+  "id": "stackra://modules/geography/policies",
   "$version": 1,
   "title": "geography \u2014 authorization policies",
   "description": "Read policies accept nullable Authenticatable so anonymous requests pass. Write policies gate to platform admin only.",
   "policies": [
     {
       "model": "Country",
-      "class": "Academorix\\Geography\\Policies\\CountryPolicy",
+      "class": "Stackra\\Geography\\Policies\\CountryPolicy",
       "abilities": [
         { "action": "viewAny", "permission": null, "scope": "public" },
         { "action": "view", "permission": null, "scope": "public" },
@@ -17,7 +17,7 @@
     },
     {
       "model": "State",
-      "class": "Academorix\\Geography\\Policies\\StatePolicy",
+      "class": "Stackra\\Geography\\Policies\\StatePolicy",
       "abilities": [
         { "action": "viewAny", "permission": null },
         { "action": "view", "permission": null },
@@ -28,7 +28,7 @@
     },
     {
       "model": "City",
-      "class": "Academorix\\Geography\\Policies\\CityPolicy",
+      "class": "Stackra\\Geography\\Policies\\CityPolicy",
       "abilities": [
         { "action": "viewAny", "permission": null },
         { "action": "view", "permission": null },
@@ -39,7 +39,7 @@
     },
     {
       "model": "Currency",
-      "class": "Academorix\\Geography\\Policies\\CurrencyPolicy",
+      "class": "Stackra\\Geography\\Policies\\CurrencyPolicy",
       "abilities": [
         { "action": "viewAny", "permission": null },
         { "action": "view", "permission": null },
@@ -50,7 +50,7 @@
     },
     {
       "model": "Language",
-      "class": "Academorix\\Geography\\Policies\\LanguagePolicy",
+      "class": "Stackra\\Geography\\Policies\\LanguagePolicy",
       "abilities": [
         { "action": "viewAny", "permission": null },
         { "action": "view", "permission": null },
@@ -61,7 +61,7 @@
     },
     {
       "model": "Timezone",
-      "class": "Academorix\\Geography\\Policies\\TimezonePolicy",
+      "class": "Stackra\\Geography\\Policies\\TimezonePolicy",
       "abilities": [
         { "action": "viewAny", "permission": null },
         { "action": "view", "permission": null },

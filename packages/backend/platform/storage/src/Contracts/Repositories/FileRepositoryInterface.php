@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Contracts\Repositories;
+namespace Stackra\Storage\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Storage\Models\File;
-use Academorix\Storage\Repositories\EloquentFileRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Storage\Models\File;
+use Stackra\Storage\Repositories\EloquentFileRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

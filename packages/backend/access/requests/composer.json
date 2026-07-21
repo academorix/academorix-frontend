@@ -1,10 +1,10 @@
 {
-  "name": "academorix/requests",
+  "name": "stackra/requests",
   "type": "library",
-  "description": "Academorix Requests module — server-side Laravel package emitted from the module blueprint at `modules/access/blueprints/requests/`. Complements the wire SDK at `academorix-access/requests-sdk`.",
+  "description": "Stackra Requests module — server-side Laravel package emitted from the module blueprint at `modules/access/blueprints/requests/`. Complements the wire SDK at `stackra-access/requests-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "access",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-access/requests-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-access/requests-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Requests\\": "src/"
+      "Stackra\\Requests\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Requests\\Tests\\": "tests/"
+      "Stackra\\Requests\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Requests\\Providers\\RequestsServiceProvider"
+        "Stackra\\Requests\\Providers\\RequestsServiceProvider"
       ],
       "aliases": {}
     }

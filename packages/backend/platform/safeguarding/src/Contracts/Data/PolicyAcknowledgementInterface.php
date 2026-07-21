@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Safeguarding\Contracts\Data;
+namespace Stackra\Safeguarding\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Safeguarding\Models\PolicyAcknowledgement;
+use Stackra\Safeguarding\Models\PolicyAcknowledgement;
 
 /**
  * Table shape for the `policy_acknowledgements` table.

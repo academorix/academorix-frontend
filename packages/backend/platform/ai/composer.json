@@ -1,10 +1,10 @@
 {
-  "name": "academorix/ai",
+  "name": "stackra/ai",
   "type": "library",
-  "description": "Academorix Ai module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/ai/`. Complements the wire SDK at `academorix-platform/ai-sdk`.",
+  "description": "Stackra Ai module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/ai/`. Complements the wire SDK at `stackra-platform/ai-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "platform",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-platform/ai-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-platform/ai-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Ai\\": "src/"
+      "Stackra\\Ai\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Ai\\Tests\\": "tests/"
+      "Stackra\\Ai\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Ai\\Providers\\AiServiceProvider"
+        "Stackra\\Ai\\Providers\\AiServiceProvider"
       ],
       "aliases": {}
     }
@@ -68,7 +68,7 @@
   "repositories": [
     {
       "type": "path",
-      "url": "../../../../apps/academorix/src/sdks/platform-ai-sdk",
+      "url": "../../../../apps/stackra/src/sdks/platform-ai-sdk",
       "options": {
         "symlink": true
       }

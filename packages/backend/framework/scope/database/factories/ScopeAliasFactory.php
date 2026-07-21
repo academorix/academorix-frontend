@@ -4,7 +4,7 @@
  * @file database/factories/ScopeAliasFactory.php
  *
  * @description
- * Factory for {@see \Academorix\Scope\Models\ScopeAlias}. Emits a
+ * Factory for {@see \Stackra\Scope\Models\ScopeAlias}. Emits a
  * per-owner display rename of a scope-definition slug — for tests
  * that assert on the aliasing behaviour (admin UI shows the
  * override label instead of the definition's default).
@@ -12,10 +12,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Database\Factories;
+namespace Stackra\Scope\Database\Factories;
 
-use Academorix\Scope\Contracts\Data\ScopeAliasInterface;
-use Academorix\Scope\Models\ScopeAlias;
+use Stackra\Scope\Contracts\Data\ScopeAliasInterface;
+use Stackra\Scope\Models\ScopeAlias;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/workflow/approvals/health",
+  "id": "stackra://modules/workflow/approvals/health",
   "$version": 1,
   "title": "approvals — health probes",
   "probes": [
     {
       "name": "approvals-registry-seeded",
-      "class": "Academorix\\Approval\\Health\\Probes\\RegistrySeededProbe",
+      "class": "Stackra\\Approval\\Health\\Probes\\RegistrySeededProbe",
       "category": "startup",
       "critical": true,
       "description": "approvable_actions table has at least 1 row (boot-time discovery ran + inserted decorated actions). Zero rows suggests discovery failed or nothing decorates yet.",
@@ -13,7 +13,7 @@
     },
     {
       "name": "approvals-templates-consistent",
-      "class": "Academorix\\Approval\\Health\\Probes\\TemplateConsistencyProbe",
+      "class": "Stackra\\Approval\\Health\\Probes\\TemplateConsistencyProbe",
       "category": "readiness",
       "critical": false,
       "description": "Every (tenant, application, action_key, name) group has AT MOST one is_active=true row (defensive check of the observer's enforcement). Alerts on drift → ReconcileTemplateVersionsJob handles the fix.",
@@ -21,7 +21,7 @@
     },
     {
       "name": "approvals-executor-not-wedged",
-      "class": "Academorix\\Approval\\Health\\Probes\\ExecutorNotWedgedProbe",
+      "class": "Stackra\\Approval\\Health\\Probes\\ExecutorNotWedgedProbe",
       "category": "readiness",
       "critical": true,
       "description": "Zero approval_instances in the wedged state (status='approved' AND executed_at IS NULL AND updated_at older than 1 hour). Non-zero = immediate human intervention required via approvals:remediate-failed-executions.",
@@ -29,7 +29,7 @@
     },
     {
       "name": "approvals-sweep-not-lagging",
-      "class": "Academorix\\Approval\\Health\\Probes\\SweepNotLaggingProbe",
+      "class": "Stackra\\Approval\\Health\\Probes\\SweepNotLaggingProbe",
       "category": "readiness",
       "critical": false,
       "description": "The ExpireOverdueApprovalsJob's last run finished within the last 2× config('approvals.expiration.sweep_frequency_minutes'). Lag suggests the queue worker is falling behind — instances past expires_at aren't transitioning.",
@@ -37,7 +37,7 @@
     },
     {
       "name": "approvals-reminders-not-lagging",
-      "class": "Academorix\\Approval\\Health\\Probes\\RemindersNotLaggingProbe",
+      "class": "Stackra\\Approval\\Health\\Probes\\RemindersNotLaggingProbe",
       "category": "readiness",
       "critical": false,
       "description": "The DispatchApprovalRemindersJob's last run finished within the last 2 hours (job runs hourly). Lag = approvers not getting timely nudges.",
@@ -45,7 +45,7 @@
     },
     {
       "name": "approvals-expression-cache-reachable",
-      "class": "Academorix\\Approval\\Health\\Probes\\ExpressionCacheReachableProbe",
+      "class": "Stackra\\Approval\\Health\\Probes\\ExpressionCacheReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "Redis expression-cache namespace reachable. Falls back to always-recompile on failure (correctness preserved; performance degraded).",
@@ -53,7 +53,7 @@
     },
     {
       "name": "approvals-symfony-expression-language-loaded",
-      "class": "Academorix\\Approval\\Health\\Probes\\ExpressionLanguageLoadedProbe",
+      "class": "Stackra\\Approval\\Health\\Probes\\ExpressionLanguageLoadedProbe",
       "category": "startup",
       "critical": true,
       "description": "symfony/expression-language package resolvable. Zero-hit → the engine cannot evaluate any expression → all instance-creates would fail. Package integrity check.",
@@ -61,7 +61,7 @@
     },
     {
       "name": "approvals-audit-trail-integrity",
-      "class": "Academorix\\Approval\\Health\\Probes\\AuditTrailIntegrityProbe",
+      "class": "Stackra\\Approval\\Health\\Probes\\AuditTrailIntegrityProbe",
       "category": "readiness",
       "critical": false,
       "description": "Zero approval_decisions rows exist where approver_id NOT IN the parent requirement.resolved_approvers (defensive check of the observer's enforcement — a leak indicates the observer was bypassed by a direct DB write).",
@@ -69,7 +69,7 @@
     },
     {
       "name": "approvals-security-violations-low",
-      "class": "Academorix\\Approval\\Health\\Probes\\SecurityViolationsLowProbe",
+      "class": "Stackra\\Approval\\Health\\Probes\\SecurityViolationsLowProbe",
       "category": "readiness",
       "critical": false,
       "description": "Rolling 15-minute count of ApprovalSecurityViolation events is under 5. Above 5 → the module fires a P0 alert to #security-alerts (metric-based; this probe is a redundant safety net).",

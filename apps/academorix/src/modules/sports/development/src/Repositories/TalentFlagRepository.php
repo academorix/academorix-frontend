@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Development\Repositories;
+namespace Stackra\Development\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Development\Contracts\Data\TalentFlagInterface;
-use Academorix\Development\Contracts\Repositories\TalentFlagRepositoryInterface;
-use Academorix\Development\Models\TalentFlag;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Development\Contracts\Data\TalentFlagInterface;
+use Stackra\Development\Contracts\Repositories\TalentFlagRepositoryInterface;
+use Stackra\Development\Models\TalentFlag;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Development\Models\TalentFlag}.
+ * Attribute-first Eloquent repository for {@see Stackra\Development\Models\TalentFlag}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(TalentFlagInterface::class)]` which resolves to
  * `TalentFlag` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Development\Models\TalentFlag>
+ * @extends Repository<\Stackra\Development\Models\TalentFlag>
  *
  * @category Development
  *

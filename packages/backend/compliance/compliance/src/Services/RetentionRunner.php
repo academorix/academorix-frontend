@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Services;
+namespace Stackra\Compliance\Services;
 
-use Academorix\Compliance\Contracts\Services\RetentionRunnerInterface;
+use Stackra\Compliance\Contracts\Services\RetentionRunnerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Compliance\Contracts\Repositories\ConsentCategoryRepositoryInterface;
+use Stackra\Compliance\Contracts\Repositories\ConsentCategoryRepositoryInterface;
 
 /**
  * Concrete service — RetentionRunner.

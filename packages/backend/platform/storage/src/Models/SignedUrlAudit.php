@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Models;
+namespace Stackra\Storage\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Storage\Contracts\Data\SignedUrlAuditInterface;
-use Academorix\Storage\Database\Factories\SignedUrlAuditFactory;
-use Academorix\Storage\Enums\SignedUrlPurpose;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Storage\Contracts\Data\SignedUrlAuditInterface;
+use Stackra\Storage\Database\Factories\SignedUrlAuditFactory;
+use Stackra\Storage\Enums\SignedUrlPurpose;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;

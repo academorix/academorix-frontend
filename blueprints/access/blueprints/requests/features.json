@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/access/requests/features",
+  "id": "stackra://modules/access/requests/features",
   "$version": 1,
   "title": "requests \u2014 feature keys",
   "description": "Feature keys this module publishes for the tenant-facing entitlements catalogue. Every tenant on every plan tier gets base access requests on by default \u2014 the module is a substrate, not a premium feature. Reminder + bulk-approve are tier-gated.",

@@ -5,7 +5,7 @@
  *
  * @description
  * Immutable value object emitted by
- * {@see \Academorix\Retention\Bootstrappers\RetentionPolicyBootstrapper}
+ * {@see \Stackra\Retention\Bootstrappers\RetentionPolicyBootstrapper}
  * for every discovered `#[AsRetentionPolicy]` marker.
  *
  * The descriptor collapses the discovery-time knowledge into a
@@ -17,22 +17,22 @@
  *     query.
  *   - The `retentionDays` threshold + `dateColumn` name the
  *     runner uses to build the WHERE clause.
- *   - The {@see \Academorix\Retention\Enums\RetentionAction} enum
+ *   - The {@see \Stackra\Retention\Enums\RetentionAction} enum
  *     case the runner branches on.
  *
  * Descriptors are `final readonly` — safe to share across a
  * request's lifetime. The registry holds a single descriptor per
  * `key`; duplicate keys throw at boot for diagnostics.
  *
- * @see \Academorix\Retention\Registry\RetentionPolicyRegistry Storage.
- * @see \Academorix\Retention\Runner\RetentionRunner Consumer.
+ * @see \Stackra\Retention\Registry\RetentionPolicyRegistry Storage.
+ * @see \Stackra\Retention\Runner\RetentionRunner Consumer.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Retention\Support;
+namespace Stackra\Retention\Support;
 
-use Academorix\Retention\Enums\RetentionAction;
+use Stackra\Retention\Enums\RetentionAction;
 
 /**
  * A single retention policy resolved from `#[AsRetentionPolicy]`.

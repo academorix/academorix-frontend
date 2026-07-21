@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/drills/errors",
+  "id": "stackra://modules/drills/errors",
   "$version": 1,
   "title": "drills — error catalogue",
   "description": "Domain exception classes + HTTP status + translation keys.",

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Events;
+namespace Stackra\Audit\Events;
 
-use Academorix\Audit\Models\Audit;
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Audit\Models\Audit;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Foundation\Events\Dispatchable;
 
 /**

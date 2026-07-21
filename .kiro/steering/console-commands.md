@@ -13,12 +13,12 @@ every consumer package.
 
 Every command:
 
-1. Extends `Academorix\Console\Commands\BaseCommand` — **never** Laravel's
+1. Extends `Stackra\Console\Commands\BaseCommand` — **never** Laravel's
    `Illuminate\Console\Command` directly. See "Where commands live" below for
    the file layout every command lands at.
-2. Carries a `#[Academorix\Console\Attributes\AsCommand(...)]` attribute —
+2. Carries a `#[Stackra\Console\Attributes\AsCommand(...)]` attribute —
    **never** Symfony's `Symfony\Component\Console\Attribute\AsCommand`. The
-   Academorix one is a superset that supports the extension registry
+   Stackra one is a superset that supports the extension registry
    (`extends:`, `priority:`, `extensionDescription:`).
 3. Uses `$this->omni` for **all** output. No `$this->info(...)`,
    `$this->error(...)`, `$this->warn(...)`, `$this->line(...)`. These still work
@@ -39,25 +39,25 @@ disambiguate FROM. The internal shape is:
 
 ```
 packages/backend/framework/console/src/
-├── Attributes/      Academorix\Console\Attributes\        (#[AsCommand], siblings)
-├── Commands/        Academorix\Console\Commands\          (BaseCommand, GeneratorCommand — abstract bases)
-├── Concerns/        Academorix\Console\Concerns\          (UsesOmniTerm trait)
-└── Registry/        Academorix\Console\Registry\          (CommandExtensionRegistry)
+├── Attributes/      Stackra\Console\Attributes\        (#[AsCommand], siblings)
+├── Commands/        Stackra\Console\Commands\          (BaseCommand, GeneratorCommand — abstract bases)
+├── Concerns/        Stackra\Console\Concerns\          (UsesOmniTerm trait)
+└── Registry/        Stackra\Console\Registry\          (CommandExtensionRegistry)
 ```
 
 Never `src/Console/Commands/…` — the doubled `Console\Console\Commands\`
-namespace is a bug, never a feature. Same reasoning as `academorix/exceptions`
+namespace is a bug, never a feature. Same reasoning as `stackra/exceptions`
 carrying `src/Renderers/` (not `src/Exceptions/Renderers/`), or
-`academorix/routing` carrying `src/Attributes/` (not `src/Routing/Attributes/`).
+`stackra/routing` carrying `src/Attributes/` (not `src/Routing/Attributes/`).
 
 **Domain packages** (every `packages/backend/<domain>/` and every
-`apps/academorix/src/modules/<domain>/`) — commands live at `src/Console/` FLAT,
+`apps/stackra/src/modules/<domain>/`) — commands live at `src/Console/` FLAT,
 no nested `Commands/`:
 
 ```
 packages/backend/notifications/notifications-sms/src/
-├── Actions/        Academorix\Notifications\Sms\Actions\
-├── Console/        Academorix\Notifications\Sms\Console\   ← commands here, one per file, no subfolders
+├── Actions/        Stackra\Notifications\Sms\Actions\
+├── Console/        Stackra\Notifications\Sms\Console\   ← commands here, one per file, no subfolders
 │   ├── OptOutAddCommand.php
 │   ├── CostReportCommand.php
 │   └── TestCommand.php
@@ -109,7 +109,7 @@ setup is silently bypassed. `$this->omni` stays uninitialised. The first
 `$this->omni->…` call in `handle()` fatals with:
 
 ```
-Typed property Academorix\...\BaseCommand::$omni must not be accessed before initialization
+Typed property Stackra\...\BaseCommand::$omni must not be accessed before initialization
 ```
 
 ### Correct pattern — trait aliasing
@@ -181,7 +181,7 @@ happened BEFORE `initialize()` ran — because `$this->omni` is not yet set. The
 secondary fatal then masks the ACTUAL root cause, and the operator sees only:
 
 ```
-Typed property Academorix\...\BaseCommand::$omni must not be accessed before initialization
+Typed property Stackra\...\BaseCommand::$omni must not be accessed before initialization
 ```
 
 instead of the real problem. Debugging becomes archaeology.
@@ -238,8 +238,8 @@ declare(strict_types=1);
 
 namespace App\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 #[AsCommand(
     name: 'domain:do-thing',
@@ -341,8 +341,8 @@ declare(strict_types=1);
 
 namespace App\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 use App\Contracts\TenantRepositoryInterface;
 
 #[AsCommand(
@@ -379,20 +379,20 @@ Every consumer package (module) that ships commands must add:
 ```json
 {
   "require": {
-    "academorix/console": "@dev"
+    "stackra/console": "@dev"
   }
 }
 ```
 
 The path repository is already declared at the app level so no `repositories`
 entry is needed on the consumer side. Run
-`composer update academorix/console --working-dir=apps/<app>` after adding the
+`composer update stackra/console --working-dir=apps/<app>` after adding the
 require.
 
 ## OmniTerm — how to output
 
 `BaseCommand::initialize()` creates `$this->omni` (an
-`Academorix\OmniTerm\OmniTerm` instance) before `handle()` runs. Use it for
+`Stackra\OmniTerm\OmniTerm` instance) before `handle()` runs. Use it for
 every piece of output. The API is fluent and reads left to right.
 
 ### Cheat sheet — most-used methods
@@ -526,13 +526,13 @@ $this->omni->render(
 - ❌ `extends Command` — must be `extends BaseCommand`.
 - ❌ `use Illuminate\Console\Command;` on a class that extends `BaseCommand` —
   drop the import (dead code, misleading).
-- ❌ `use Academorix\Console\Console\Commands\BaseCommand;` (doubled namespace)
-  — the class lives at `Academorix\Console\Commands\BaseCommand` (single
+- ❌ `use Stackra\Console\Console\Commands\BaseCommand;` (doubled namespace)
+  — the class lives at `Stackra\Console\Commands\BaseCommand` (single
   `Console`). The doubled path is a legacy accident.
 - ❌ `src/Console/Commands/*Command.php` in a domain package — flatten to
   `src/Console/*Command.php`. `Console/` IS the primitive folder.
 - ❌ `use Symfony\Component\Console\Attribute\AsCommand;` — must be
-  `use Academorix\Console\Attributes\AsCommand;`.
+  `use Stackra\Console\Attributes\AsCommand;`.
 - ❌ Constructor injection of runtime dependencies. Deps go on `handle()`'s
   signature. See the "Dependency injection" section above.
 - ❌ `$this->info(...)`, `$this->error(...)`, `$this->warn(...)`,

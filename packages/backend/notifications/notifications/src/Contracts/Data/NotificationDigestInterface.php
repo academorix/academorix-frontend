@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Contracts\Data;
+namespace Stackra\Notifications\Contracts\Data;
 
-use Academorix\Notifications\Models\NotificationDigest;
+use Stackra\Notifications\Models\NotificationDigest;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/auth/relations",
+  "id": "stackra://modules/auth/relations",
   "$version": 1,
   "title": "auth \u2014 model relationships",
   "description": "Six owned tables plus Sanctum's shipped `personal_access_tokens`. Every table references either `identities` (password resets, verifications, MFA challenges, cross-app grants) or is unrelated to a specific identity (JWT signing keys, JWT deny list). Refresh tokens reference the Sanctum `tokenable` polymorphically (User OR PlatformUser). NO tenant scope on ANY of these tables \u2014 tenant / application scope propagates through the referring User / PlatformUser or through the encoded JWT claims.",

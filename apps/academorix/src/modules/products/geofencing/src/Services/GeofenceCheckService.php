@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Services;
+namespace Stackra\Geofencing\Services;
 
-use Academorix\Geofencing\Contracts\Services\GeofenceCheckServiceInterface;
+use Stackra\Geofencing\Contracts\Services\GeofenceCheckServiceInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Geofencing\Contracts\Repositories\GeofenceCheckRepositoryInterface;
+use Stackra\Geofencing\Contracts\Repositories\GeofenceCheckRepositoryInterface;
 
 /**
  * Concrete service — GeofenceCheckService.

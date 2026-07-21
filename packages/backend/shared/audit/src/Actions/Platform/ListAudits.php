@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Actions\Platform;
+namespace Stackra\Audit\Actions\Platform;
 
-use Academorix\Audit\Contracts\Repositories\AuditRepositoryInterface;
-use Academorix\Audit\Data\AuditData;
-use Academorix\Audit\Enums\AuditPermission;
-use Academorix\Audit\Models\Audit;
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Audit\Contracts\Repositories\AuditRepositoryInterface;
+use Stackra\Audit\Data\AuditData;
+use Stackra\Audit\Enums\AuditPermission;
+use Stackra\Audit\Models\Audit;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 use Spatie\LaravelData\DataCollection;
 
 /**

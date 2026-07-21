@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Contracts\Services;
+namespace Stackra\Forms\Contracts\Services;
 
-use Academorix\Forms\Data\FieldTypeDefinitionData;
-use Academorix\Forms\Services\FieldTypeRegistry;
+use Stackra\Forms\Data\FieldTypeDefinitionData;
+use Stackra\Forms\Services\FieldTypeRegistry;
 use Illuminate\Container\Attributes\Bind;
 
 /**

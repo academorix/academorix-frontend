@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\DigitalPasses\Actions\Central;
+namespace Stackra\DigitalPasses\Actions\Central;
 
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Delete;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Delete;
 
 /**
  * `DELETE /v1/devices/{deviceId}/registrations/{passTypeId}/{serial}` — delete action (central audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Delete(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category DigitalPasses

@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/user/traits",
+  "id": "stackra://modules/user/traits",
   "$version": 1,
   "title": "user \u2014 trait composition",
   "description": "Three owned traits. `BelongsToUser` pairs a domain model with a User FK + auto-fills `user_id` on save. `HasProfile` gives services the accessor chain into the Profile satellite without wide model exposure. `IsUserOwnable` is a marker interface + tiny helper that the `.own` scope resolver consults when narrowing queries by `user_id = current_user_id`.",
   "owned": [
     {
-      "trait": "Academorix\\User\\Concerns\\BelongsToUser",
+      "trait": "Stackra\\User\\Concerns\\BelongsToUser",
       "description": "Mixed into any domain model that carries a User FK. Adds the `user()` belongsTo relation, the global scope filter used by the base repository, and a `booted()` hook that fills `user_id = auth()->id()` on `creating` when the field is null AND the current request has an authenticated User principal. Order-sensitive when composed with `BelongsToTenant` \u2014 tenant MUST come first so the scope chain observes the tenant context in this trait's `booted()` hook.",
       "public": true,
       "usedBy": [
@@ -18,14 +18,14 @@
       "conflicts_with": []
     },
     {
-      "trait": "Academorix\\User\\Concerns\\HasProfile",
+      "trait": "Stackra\\User\\Concerns\\HasProfile",
       "description": "Exposes `profile()` hasOne + a set of accessors that pull from the Profile satellite (`full_name`, `display_name`, `avatar_url`, `locale`, `timezone`, `dob`) with fallbacks to identity + tenant defaults. Composed by the User model. Callers that only need to read profile fields go through the accessors on User rather than joining Profile directly \u2014 that keeps the PII cluster behind one redactor boundary.",
       "public": true,
       "usedBy": ["User"],
       "conflicts_with": []
     },
     {
-      "trait": "Academorix\\User\\Concerns\\IsUserOwnable",
+      "trait": "Stackra\\User\\Concerns\\IsUserOwnable",
       "description": "Marker interface + one helper: `scopeOwnedBy(User $user)` on the composing model, applying `WHERE user_id = $user->id`. Consumed by the `ScopeSuffixResolver` when a caller's permission carries the `.own` suffix. The trait doesn't need `booted()` \u2014 it's a query-time helper; the actual filter is applied by the base repository, not the model.",
       "public": true,
       "usedBy": [
@@ -56,22 +56,22 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
-    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "tenants": [{ "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" }],
     "audit": [
       {
-        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "trait": "Stackra\\Audit\\Concerns\\Auditable",
         "reason": "User + Profile mutations write to the `audits` table (compliance signal)."
       }
     ],
     "activity": [
       {
-        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
         "reason": "User lifecycle events also feed the product-facing activity feed."
       }
     ]

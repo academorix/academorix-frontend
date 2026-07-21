@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Grants\Exceptions;
+namespace Stackra\Grants\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * One or more permission names in the array don't resolve to rows in the access/rbac permissions table.

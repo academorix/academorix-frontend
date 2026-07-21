@@ -4,7 +4,7 @@
 
 The **first** platform-service build. This document is the phase-by-phase plan
 to take `modules/platform/` blueprints and materialise them as runtime code
-under `academorix-backend/apps/platform-service/src/modules/<module>/`.
+under `stackra-backend/apps/platform-service/src/modules/<module>/`.
 
 Platform is the **pilot** — the pattern established here is applied identically
 to identity-service, access-service, billing-service, notifications-service, and
@@ -22,14 +22,14 @@ SDK sub-package per module:
 
 | Blueprint                        | Runtime package                                   | SDK sub-package                        |
 | -------------------------------- | ------------------------------------------------- | -------------------------------------- |
-| `modules/platform/application/`  | `apps/platform-service/src/modules/application/`  | `academorix-platform/application-sdk`  |
-| `modules/platform/workspaces/`   | `apps/platform-service/src/modules/workspaces/`   | `academorix-platform/workspaces-sdk`   |
-| `modules/platform/domains/`      | `apps/platform-service/src/modules/domains/`      | `academorix-platform/domains-sdk`      |
-| `modules/platform/branding/`     | `apps/platform-service/src/modules/branding/`     | `academorix-platform/branding-sdk`     |
-| `modules/platform/integrations/` | `apps/platform-service/src/modules/integrations/` | `academorix-platform/integrations-sdk` |
-| `modules/platform/settings/`     | `apps/platform-service/src/modules/settings/`     | `academorix-platform/settings-sdk`     |
-| `modules/platform/webhook/`      | `apps/platform-service/src/modules/webhook/`      | `academorix-platform/webhook-sdk`      |
-| `modules/platform/storage/`      | `apps/platform-service/src/modules/storage/`      | `academorix-platform/storage-sdk`      |
+| `modules/platform/application/`  | `apps/platform-service/src/modules/application/`  | `stackra-platform/application-sdk`  |
+| `modules/platform/workspaces/`   | `apps/platform-service/src/modules/workspaces/`   | `stackra-platform/workspaces-sdk`   |
+| `modules/platform/domains/`      | `apps/platform-service/src/modules/domains/`      | `stackra-platform/domains-sdk`      |
+| `modules/platform/branding/`     | `apps/platform-service/src/modules/branding/`     | `stackra-platform/branding-sdk`     |
+| `modules/platform/integrations/` | `apps/platform-service/src/modules/integrations/` | `stackra-platform/integrations-sdk` |
+| `modules/platform/settings/`     | `apps/platform-service/src/modules/settings/`     | `stackra-platform/settings-sdk`     |
+| `modules/platform/webhook/`      | `apps/platform-service/src/modules/webhook/`      | `stackra-platform/webhook-sdk`      |
+| `modules/platform/storage/`      | `apps/platform-service/src/modules/storage/`      | `stackra-platform/storage-sdk`      |
 
 **Total: 8 modules, 17 entities, 8 SDK sub-packages.**
 
@@ -75,12 +75,12 @@ Before any code writes, three things must be true:
 ### 2.1 Shared-tier packages are ready
 
 Platform depends on `shared/` packages. Confirm they publish as Composer
-packages under `academorix-backend/packages/`:
+packages under `stackra-backend/packages/`:
 
-- `academorix/foundation` — base traits + discovery + service provider base.
-- `academorix/versioning` — needed by `webhook`.
-- `academorix/audit` — needed by `settings` + `storage`.
-- `academorix/activity` — needed by `settings` + `storage`.
+- `stackra/foundation` — base traits + discovery + service provider base.
+- `stackra/versioning` — needed by `webhook`.
+- `stackra/audit` — needed by `settings` + `storage`.
+- `stackra/activity` — needed by `settings` + `storage`.
 
 If any of these packages don't yet exist as backend code, they land BEFORE
 Platform. This is not "Phase 0 of the platform plan" — it's a hard blocker.
@@ -93,7 +93,7 @@ show 5/5 green. Any failure here blocks the whole plan.
 ### 2.3 Service app is scaffolded
 
 `apps/platform-service/` already exists (cloned from `apps/template`) with
-`composer.json` naming `academorix/platform-service`, `.doppler.yaml` pointing
+`composer.json` naming `stackra/platform-service`, `.doppler.yaml` pointing
 at `dev_platform_service`, and `.env.example` pre-filled. Verify:
 
 ```bash
@@ -285,7 +285,7 @@ Depends on `foundation`, `versioning`, `workspaces`.
 
 Entities: `WebhookSubscription`, `WebhookDelivery`. Central concerns:
 
-- **HMAC signing** — every outbound POST carries `X-Academorix-Signature`
+- **HMAC signing** — every outbound POST carries `X-Stackra-Signature`
   (`sha256=<hmac>`) with the tenant's per-subscription secret.
 - **Retry policy** — exponential backoff (10s, 30s, 2m, 10m, 1h, 6h), max 6
   attempts. Configurable per subscription tier via entitlements.
@@ -340,15 +340,15 @@ this phase. Non-negotiable outcomes:
 - **Location:** `packages/sdk/<service>-<module>-sdk/`. Never inside
   `apps/<service>-service/src/modules/`. Per-module SDKs are shared packages
   consumed by every service, every product monolith, and the frontend.
-- **Composer name:** `academorix-<service>/<module>-sdk`. Example:
-  `academorix-platform/application-sdk`.
+- **Composer name:** `stackra-<service>/<module>-sdk`. Example:
+  `stackra-platform/application-sdk`.
 - **Folder layout:** `Data/` (read DTOs) + `Payloads/` (write DTOs) +
   `Requests/` (Saloon HTTP transport) + `Resources/` (all Resource-shaped
   classes — top-level `<Module>SdkResource` AND every peer Resource).
 - **No `SubResources/`, no `Saloon/`.** See the anti-patterns table in
   `sdk-authoring.md`.
 - **Reference implementation:**
-  `apps/academorix/src/sdks/platform-application-sdk/` is the pilot; every
+  `apps/stackra/src/sdks/platform-application-sdk/` is the pilot; every
   subsequent module SDK matches its shape byte-for-byte, and the Stage 3
   generator emits into the same shape.
 
@@ -359,7 +359,7 @@ The `scripts/new-module-sdk.sh` generator emits the correct
 runtime lands:
 
 ```bash
-cd academorix-backend
+cd stackra-backend
 ./scripts/new-module-sdk.sh platform workspaces   # after Phase 1
 ./scripts/new-module-sdk.sh platform settings     # after Phase 2
 ./scripts/new-module-sdk.sh platform webhook      # after Phase 2
@@ -369,7 +369,7 @@ cd academorix-backend
 Each scaffold creates `packages/sdk/platform-<module>-sdk/` with the folder
 layout from `sdk-authoring.md`:
 
-- `composer.json` naming `academorix-platform/<module>-sdk`.
+- `composer.json` naming `stackra-platform/<module>-sdk`.
 - `src/Resources/<Module>SdkResource.php` marked
   `#[AsSdkResource(name: '<module>', service: 'platform')]` — the discovery
   entry.
@@ -454,7 +454,7 @@ the deviation is a bug.
 
 Every attribute-driven registry consumes `IDiscoveryService` from
 `@stackra/container`'s PHP equivalent
-(`Academorix\Foundation\Contracts\DiscoversAttributes`). Never scan reflection
+(`Stackra\Foundation\Contracts\DiscoversAttributes`). Never scan reflection
 at request time; never write a bootstrap class that does side-effect work in the
 constructor.
 
@@ -568,9 +568,9 @@ Confirm or answer these before writing any code:
    the stub in workspaces initially or start identity-service first because "no
    auth = no service works"? My recommendation: **stub in workspaces now**,
    migrate at the identity-service kickoff.
-4. **Naming: `academorix/*` vs `figentra/*`.** DECISION.md §9 defers this.
-   Confirm we keep `academorix/*` for Phase 1-4. My recommendation: **keep
-   `academorix/*`.**
+4. **Naming: `stackra/*` vs `figentra/*`.** DECISION.md §9 defers this.
+   Confirm we keep `stackra/*` for Phase 1-4. My recommendation: **keep
+   `stackra/*`.**
 
 ---
 

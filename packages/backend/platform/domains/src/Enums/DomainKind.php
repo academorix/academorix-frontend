@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Enums;
+namespace Stackra\Domains\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
- * Kind of a {@see \Academorix\Domains\Models\Domain}.
+ * Kind of a {@see \Stackra\Domains\Models\Domain}.
  *
  * ## Cases
  *

@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Progress\Database\Factories;
+namespace Stackra\Progress\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Progress\Contracts\Data\ProgressAssessmentInterface;
-use Academorix\Progress\Models\ProgressAssessment;
+use Stackra\Progress\Contracts\Data\ProgressAssessmentInterface;
+use Stackra\Progress\Models\ProgressAssessment;
 
 /**
- * Factory for {@see \Academorix\Progress\Models\ProgressAssessment}.
+ * Factory for {@see \Stackra\Progress\Models\ProgressAssessment}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Progress\Models\ProgressAssessment>
+ * @extends Factory<\Stackra\Progress\Models\ProgressAssessment>
  *
  * @category Progress
  *

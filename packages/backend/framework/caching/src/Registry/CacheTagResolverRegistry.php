@@ -6,8 +6,8 @@
  * @description
  * Boot-time discovery result. Holds the sorted, deduplicated
  * chain of every registered
- * {@see \Academorix\Caching\Contracts\CacheTagResolver} — the
- * {@see \Academorix\Caching\Support\CacheTagBuilder} consumes
+ * {@see \Stackra\Caching\Contracts\CacheTagResolver} — the
+ * {@see \Stackra\Caching\Support\CacheTagBuilder} consumes
  * this registry when composing tags.
  *
  * ## Lifecycle
@@ -36,15 +36,15 @@
  *   - A single point to swap for a `NullRegistry` in tests
  *     without instantiating every resolver in the app.
  *
- * @see \Academorix\Caching\Attributes\AsCacheTagResolver Discovery marker.
- * @see \Academorix\Caching\Support\CacheTagBuilder Consumer.
+ * @see \Stackra\Caching\Attributes\AsCacheTagResolver Discovery marker.
+ * @see \Stackra\Caching\Support\CacheTagBuilder Consumer.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Caching\Registry;
+namespace Stackra\Caching\Registry;
 
-use Academorix\Caching\Contracts\CacheTagResolver;
+use Stackra\Caching\Contracts\CacheTagResolver;
 
 /**
  * Sorted resolver chain populated at boot.

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Middleware;
+namespace Stackra\Versioning\Middleware;
 
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Versioning\Contracts\Services\SunsetHeaderEmitterInterface;
-use Academorix\Versioning\Contracts\Services\VersionResolverChainInterface;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Versioning\Contracts\Services\SunsetHeaderEmitterInterface;
+use Stackra\Versioning\Contracts\Services\VersionResolverChainInterface;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -32,7 +32,7 @@ final class ResolveVersioning
     /**
      * Request attribute the resolved slug is bound to.
      */
-    public const string REQUEST_ATTRIBUTE = 'academorix.versioning.resolved';
+    public const string REQUEST_ATTRIBUTE = 'stackra.versioning.resolved';
 
     public function __construct(
         private readonly VersionResolverChainInterface $chain,

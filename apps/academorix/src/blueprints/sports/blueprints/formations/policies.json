@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/formations/policies",
+  "id": "stackra://modules/formations/policies",
   "$version": 1,
   "title": "formations — authorization policies",
   "policies": [
     {
       "model": "Formation",
-      "class": "Academorix\\Sports\\Formations\\Policies\\FormationPolicy",
+      "class": "Stackra\\Sports\\Formations\\Policies\\FormationPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -20,7 +20,7 @@
     },
     {
       "model": "SetPiece",
-      "class": "Academorix\\Sports\\Formations\\Policies\\SetPiecePolicy",
+      "class": "Stackra\\Sports\\Formations\\Policies\\SetPiecePolicy",
       "abilities": [
         { "action": "viewAny", "permission": "formations.set-pieces.viewAny" },
         { "action": "view", "permission": "formations.set-pieces.view" },

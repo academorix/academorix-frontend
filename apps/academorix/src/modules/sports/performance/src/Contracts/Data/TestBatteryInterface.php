@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Performance\Contracts\Data;
+namespace Stackra\Performance\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Performance\Models\TestBattery;
+use Stackra\Performance\Models\TestBattery;
 
 /**
  * Table shape for the `test_batteries` table.

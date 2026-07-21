@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PrivateSessions\Contracts\Data;
+namespace Stackra\PrivateSessions\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\PrivateSessions\Models\PrivateSessionRequest;
+use Stackra\PrivateSessions\Models\PrivateSessionRequest;
 
 /**
  * Table shape for the `private_session_requests` table.

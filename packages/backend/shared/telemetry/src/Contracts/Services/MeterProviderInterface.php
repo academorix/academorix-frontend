@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Telemetry\Contracts\Services;
+namespace Stackra\Telemetry\Contracts\Services;
 
-use Academorix\Telemetry\Services\MeterProvider;
+use Stackra\Telemetry\Services\MeterProvider;
 use Illuminate\Container\Attributes\Bind;
 
 /**

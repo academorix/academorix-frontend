@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AthleteGuardian\Services;
+namespace Stackra\AthleteGuardian\Services;
 
-use Academorix\AthleteGuardian\Contracts\Data\AthleteGuardianInterface;
-use Academorix\AthleteGuardian\Contracts\Services\GuardianVerificationGateInterface;
-use Academorix\AthleteGuardian\Enums\AthleteGuardianVerificationStatus;
-use Academorix\AthleteGuardian\Models\AthleteGuardian;
+use Stackra\AthleteGuardian\Contracts\Data\AthleteGuardianInterface;
+use Stackra\AthleteGuardian\Contracts\Services\GuardianVerificationGateInterface;
+use Stackra\AthleteGuardian\Enums\AthleteGuardianVerificationStatus;
+use Stackra\AthleteGuardian\Models\AthleteGuardian;
 use Illuminate\Container\Attributes\Scoped;
 
 /**

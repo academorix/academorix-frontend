@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/membership/helpers",
+  "id": "stackra://modules/membership/helpers",
   "$version": 1,
   "title": "membership — helper functions",
-  "namespace": "Academorix\\Finance\\Membership\\Support",
+  "namespace": "Stackra\\Finance\\Membership\\Support",
   "helpers": [
     {
       "signature": "current_memberships_for_athlete(Athlete $athlete): Collection<Membership>",

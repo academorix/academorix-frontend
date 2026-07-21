@@ -77,7 +77,7 @@
                 "name": "slug",
                 "isRequired": true,
                 "placeholder": "acme",
-                "description": "Becomes the primary subdomain (acme.academorix.app)."
+                "description": "Becomes the primary subdomain (acme.stackra.app)."
               }
             },
             {

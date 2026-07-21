@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Attributes;
+namespace Stackra\Versioning\Attributes;
 
 use Attribute;
 
 /**
  * Register a class as a payload transformer with the
- * {@see \Academorix\Versioning\Services\PayloadTransformerRegistry}.
+ * {@see \Stackra\Versioning\Services\PayloadTransformerRegistry}.
  *
  * A transformer is a pure function `transform(array $payload): array`
  * that converts a payload from `$from` to `$to` on a single surface

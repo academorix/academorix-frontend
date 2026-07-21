@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/rbac/helpers",
+  "id": "stackra://modules/rbac/helpers",
   "$version": 1,
   "title": "rbac \u2014 helper functions",
   "description": "Two short helpers on top of the resolver + spatie facade. Both are convenience wrappers \u2014 nothing prevents callers from using `Gate::allows(...)` directly, which routes through the same resolver.",
-  "namespace": "Academorix\\Rbac\\Support",
+  "namespace": "Stackra\\Rbac\\Support",
   "helpers": [
     {
       "signature": "can(string $permission, ?object $resource = null): bool",

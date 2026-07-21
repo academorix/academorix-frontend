@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Attributes;
+namespace Stackra\Tax\Attributes;
 
 use Attribute;
 

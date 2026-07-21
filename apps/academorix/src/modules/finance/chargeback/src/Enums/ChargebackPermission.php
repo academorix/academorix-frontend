@@ -4,14 +4,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Enums;
+namespace Stackra\Chargeback\Enums;
 
-use Academorix\Authorization\Contracts\PermissionEnum;
-use Academorix\Authorization\Enums\Guard;
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Authorization\Contracts\PermissionEnum;
+use Stackra\Authorization\Enums\Guard;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
  * Permissions the Chargeback module contributes.
@@ -111,7 +111,7 @@ enum ChargebackPermission: string implements PermissionEnum
      * `platform.chargebacks.view-rate-alerts` — Cross-tenant merchant-account risk monitoring — surfaces every tenant approaching VDMP/MDMP thresholds.
      */
     #[Label('Cross-tenant merchant-account risk monitoring — surfaces every tenant approachin')]
-    #[Description('Cross-tenant merchant-account risk monitoring — surfaces every tenant approaching VDMP/MDMP thresholds. Actionable for Academorix ops (fraud review recommendations, RDR enrollment suggestions, in extreme cases account termination).')]
+    #[Description('Cross-tenant merchant-account risk monitoring — surfaces every tenant approaching VDMP/MDMP thresholds. Actionable for Stackra ops (fraud review recommendations, RDR enrollment suggestions, in extreme cases account termination).')]
     case PlatformChargebacksViewRateAlerts = 'platform.chargebacks.view-rate-alerts';
 
     /**

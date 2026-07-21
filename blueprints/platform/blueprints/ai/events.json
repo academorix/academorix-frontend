@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/ai/events",
+  "id": "stackra://modules/ai/events",
   "$version": 1,
   "title": "ai — published events",
-  "namespace": "Academorix\\Ai\\Events",
+  "namespace": "Stackra\\Ai\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit`. RunStarted / RunCompleted / RunFailed pair up for observability + cost tracking. SensitiveDataBlocked is a P1 event — every fire indicates the AI SensitiveDataGate refused a prompt that would have leaked medical / safeguarding data. TokenPoolExhausted is P1 for entitlement governance.",
   "events": [
     {
       "name": "ConversationStarted",
-      "class": "Academorix\\Ai\\Events\\ConversationStarted",
+      "class": "Stackra\\Ai\\Events\\ConversationStarted",
       "trigger": "New AiConversation committed on first user message.",
       "queue": "ai",
       "consumers": [
@@ -25,7 +25,7 @@
     },
     {
       "name": "RunStarted",
-      "class": "Academorix\\Ai\\Events\\RunStarted",
+      "class": "Stackra\\Ai\\Events\\RunStarted",
       "trigger": "New AiRun created — model call in-flight. Feeds cost-tracking pre-commit.",
       "queue": "ai",
       "consumers": ["audit::WriteToAuditLog (verbose channel)", "ai::TrackTokenUsage"],
@@ -41,7 +41,7 @@
     },
     {
       "name": "RunCompleted",
-      "class": "Academorix\\Ai\\Events\\RunCompleted",
+      "class": "Stackra\\Ai\\Events\\RunCompleted",
       "trigger": "AiRun.status flipped to 'completed'. Tokens + cost + latency stamped.",
       "queue": "ai",
       "consumers": [
@@ -63,7 +63,7 @@
     },
     {
       "name": "RunFailed",
-      "class": "Academorix\\Ai\\Events\\RunFailed",
+      "class": "Stackra\\Ai\\Events\\RunFailed",
       "trigger": "AiRun.status flipped to 'failed'. Fail-closed: no partial responses reach user.",
       "queue": "notifications-critical",
       "consumers": [
@@ -82,7 +82,7 @@
     },
     {
       "name": "ToolCalled",
-      "class": "Academorix\\Ai\\Events\\ToolCalled",
+      "class": "Stackra\\Ai\\Events\\ToolCalled",
       "trigger": "AiToolCall created for a tool the run invoked. RBAC re-checked BEFORE this event fires.",
       "queue": "ai",
       "consumers": ["audit::WriteToAuditLog", "monitoring::TrackToolLatency"],
@@ -96,7 +96,7 @@
     },
     {
       "name": "ToolFailed",
-      "class": "Academorix\\Ai\\Events\\ToolFailed",
+      "class": "Stackra\\Ai\\Events\\ToolFailed",
       "trigger": "AiToolCall.status flipped to 'failed' or 'refused'. Refusal signals a RBAC/sensitivity gate blocked the tool from executing.",
       "queue": "notifications-critical",
       "consumers": ["audit::WriteToAuditLog (retention: 7 years)", "activity::WriteToActivityLog"],
@@ -111,7 +111,7 @@
     },
     {
       "name": "EmbeddingIndexed",
-      "class": "Academorix\\Ai\\Events\\EmbeddingIndexed",
+      "class": "Stackra\\Ai\\Events\\EmbeddingIndexed",
       "trigger": "AiEmbedding created or updated. Fires for background SearchIndexer persona on new drills / coach notes / files.",
       "queue": "ai-background",
       "consumers": ["audit::WriteToAuditLog (verbose channel)", "search::UpdateRagIndex"],
@@ -125,7 +125,7 @@
     },
     {
       "name": "SensitiveDataBlocked",
-      "class": "Academorix\\Ai\\Events\\SensitiveDataBlocked",
+      "class": "Stackra\\Ai\\Events\\SensitiveDataBlocked",
       "trigger": "P1 event. SensitiveDataGate refused a prompt because it would have leaked medical / safeguarding / financial / PII to an LLM without explicit consent. Fail-closed.",
       "queue": "notifications-critical",
       "consumers": [
@@ -147,7 +147,7 @@
     },
     {
       "name": "TokenPoolExhausted",
-      "class": "Academorix\\Ai\\Events\\TokenPoolExhausted",
+      "class": "Stackra\\Ai\\Events\\TokenPoolExhausted",
       "trigger": "P1 event. Tenant's monthly AI token pool crossed 0 via entitlements gate. Further AI calls refused with 429 until pool refills next cycle OR admin upgrades.",
       "queue": "notifications-critical",
       "consumers": [

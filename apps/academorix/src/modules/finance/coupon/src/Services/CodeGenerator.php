@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Services;
+namespace Stackra\Coupon\Services;
 
-use Academorix\Coupon\Contracts\Data\CouponInterface;
-use Academorix\Coupon\Contracts\Repositories\CouponRepositoryInterface;
-use Academorix\Coupon\Contracts\Services\CodeGeneratorInterface;
+use Stackra\Coupon\Contracts\Data\CouponInterface;
+use Stackra\Coupon\Contracts\Repositories\CouponRepositoryInterface;
+use Stackra\Coupon\Contracts\Services\CodeGeneratorInterface;
 use Illuminate\Container\Attributes\Scoped;
 use RuntimeException;
 

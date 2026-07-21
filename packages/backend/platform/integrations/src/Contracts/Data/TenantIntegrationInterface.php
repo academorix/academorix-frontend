@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Contracts\Data;
+namespace Stackra\Integrations\Contracts\Data;
 
-use Academorix\Integrations\Models\TenantIntegration;
+use Stackra\Integrations\Models\TenantIntegration;
 use Illuminate\Container\Attributes\Bind;
 
 /**
  * Table shape for the `tenant_integrations` table.
  *
  * One row per (Tenant × integration kind × provider). Config blob is
- * encrypted at rest via the {@see \Academorix\Integrations\Casts\IntegrationConfig}
+ * encrypted at rest via the {@see \Stackra\Integrations\Casts\IntegrationConfig}
  * cast. Partial-unique on `(tenant_id, kind, is_active) WHERE
  * is_active = TRUE` — at most one ACTIVE integration per kind per
  * tenant.

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Organization\Repositories;
+namespace Stackra\Organization\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Organization\Contracts\Data\OrganizationInterface;
-use Academorix\Organization\Contracts\Repositories\OrganizationRepositoryInterface;
-use Academorix\Organization\Models\Organization;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Organization\Contracts\Data\OrganizationInterface;
+use Stackra\Organization\Contracts\Repositories\OrganizationRepositoryInterface;
+use Stackra\Organization\Models\Organization;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Organization\Models\Organization}.
+ * Attribute-first Eloquent repository for {@see Stackra\Organization\Models\Organization}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(OrganizationInterface::class)]` which resolves to
  * `Organization` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Organization\Models\Organization>
+ * @extends Repository<\Stackra\Organization\Models\Organization>
  *
  * @category Organization
  *

@@ -1,4 +1,4 @@
-# academorix/requests
+# stackra/requests
 
 Server-side Laravel package for the `requests` module. Auto-generated from the
 blueprint at `modules/access/blueprints/requests/`.
@@ -44,6 +44,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-access/requests-sdk` under `sdk/access-requests-sdk/`. Consumers
+`stackra-access/requests-sdk` under `sdk/access-requests-sdk/`. Consumers
 cross the service boundary through the SDK; this package is the SERVER-side
 owner of the domain.

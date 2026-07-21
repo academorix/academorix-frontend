@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Observers;
+namespace Stackra\Newsletter\Observers;
 
-use Academorix\Newsletter\Contracts\Data\NewsletterCampaignInterface;
-use Academorix\Newsletter\Enums\NewsletterCampaignStatus;
-use Academorix\Newsletter\Events\NewsletterCampaignCompleted;
-use Academorix\Newsletter\Events\NewsletterCampaignFailed;
-use Academorix\Newsletter\Events\NewsletterCampaignScheduled;
-use Academorix\Newsletter\Events\NewsletterCampaignStarted;
-use Academorix\Newsletter\Models\NewsletterCampaign;
+use Stackra\Newsletter\Contracts\Data\NewsletterCampaignInterface;
+use Stackra\Newsletter\Enums\NewsletterCampaignStatus;
+use Stackra\Newsletter\Events\NewsletterCampaignCompleted;
+use Stackra\Newsletter\Events\NewsletterCampaignFailed;
+use Stackra\Newsletter\Events\NewsletterCampaignScheduled;
+use Stackra\Newsletter\Events\NewsletterCampaignStarted;
+use Stackra\Newsletter\Models\NewsletterCampaign;
 
 /**
  * Observer for the {@see NewsletterCampaign} model.

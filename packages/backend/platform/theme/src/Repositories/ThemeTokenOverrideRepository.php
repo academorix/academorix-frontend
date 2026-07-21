@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Repositories;
+namespace Stackra\Theme\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Theme\Contracts\Data\ThemeTokenOverrideInterface;
-use Academorix\Theme\Contracts\Repositories\ThemeTokenOverrideRepositoryInterface;
-use Academorix\Theme\Models\ThemeTokenOverride;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Theme\Contracts\Data\ThemeTokenOverrideInterface;
+use Stackra\Theme\Contracts\Repositories\ThemeTokenOverrideRepositoryInterface;
+use Stackra\Theme\Models\ThemeTokenOverride;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Theme\Models\ThemeTokenOverride}.
+ * Attribute-first Eloquent repository for {@see Stackra\Theme\Models\ThemeTokenOverride}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ThemeTokenOverrideInterface::class)]` which resolves to
  * `ThemeTokenOverride` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Theme\Models\ThemeTokenOverride>
+ * @extends Repository<\Stackra\Theme\Models\ThemeTokenOverride>
  *
  * @category Theme
  *

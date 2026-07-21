@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Development\Concerns;
+namespace Stackra\Development\Concerns;
 
 /**
  * Trait — HasPathwayProgression.

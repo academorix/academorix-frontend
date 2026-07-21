@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/analytics/data/provider-capability-matrix",
+  "id": "stackra://modules/analytics/data/provider-capability-matrix",
   "$version": 1,
   "title": "analytics — provider capability matrix",
   "description": "Per-provider capability matrix. Read by AnalyticsProviderDriverRegistry at boot + used by the ProviderPayloadTransformer + used by SDUI to gate UI (disable session-recording toggle for non-PostHog providers, etc.).",
@@ -79,7 +79,7 @@
       "region_options": ["us", "eu"],
       "requires_consent_categories": ["analytics"],
       "requires_entitlements": ["analytics_advanced_providers"],
-      "note": "Segment fans out to N destinations configured in Segment console. Academorix sees Segment as one provider; per-destination visibility lives in Segment.",
+      "note": "Segment fans out to N destinations configured in Segment console. Stackra sees Segment as one provider; per-destination visibility lives in Segment.",
       "circuit_breaker_defaults": { "threshold": 5, "failure_rate": 0.2, "window_seconds": 60 },
       "retry_defaults": { "max_attempts": 5, "backoff_ms": [1000, 5000, 30000, 300000, 3600000] }
     },

@@ -56,13 +56,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Enums\LayerType;
-use Academorix\Architecture\Support\SourceFile;
-use Academorix\Architecture\Support\UseStatement;
-use Academorix\Architecture\Violations\Severity;
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Enums\LayerType;
+use Stackra\Architecture\Support\SourceFile;
+use Stackra\Architecture\Support\UseStatement;
+use Stackra\Architecture\Violations\Severity;
+use Stackra\Architecture\Violations\Violation;
 
 /**
  * Ban query-builder usage inside Service / Action classes.

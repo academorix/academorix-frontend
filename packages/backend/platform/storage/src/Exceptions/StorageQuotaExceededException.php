@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Exceptions;
+namespace Stackra\Storage\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Raised when a tenant's byte or file quota would be crossed by

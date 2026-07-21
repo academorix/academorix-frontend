@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Crud\Repositories;
+namespace Stackra\Crud\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -354,7 +354,7 @@ abstract class BaseRepository implements RepositoryInterface
      * scoping criteria, and expect subsequent reads to honour it without
      * touching global state.
      *
-     * @var array<int, \Academorix\Crud\Contracts\CriteriaInterface>
+     * @var array<int, \Stackra\Crud\Contracts\CriteriaInterface>
      */
     protected array $criteria = [];
 
@@ -371,7 +371,7 @@ abstract class BaseRepository implements RepositoryInterface
     protected ?\Closure $scopeQuery = null;
 
     /** {@inheritDoc} */
-    public function pushCriteria(\Academorix\Crud\Contracts\CriteriaInterface $criteria): static
+    public function pushCriteria(\Stackra\Crud\Contracts\CriteriaInterface $criteria): static
     {
         $this->criteria[] = $criteria;
 
@@ -383,7 +383,7 @@ abstract class BaseRepository implements RepositoryInterface
     {
         $this->criteria = \array_values(\array_filter(
             $this->criteria,
-            static fn (\Academorix\Crud\Contracts\CriteriaInterface $c): bool => ! ($c instanceof $criteriaClass),
+            static fn (\Stackra\Crud\Contracts\CriteriaInterface $c): bool => ! ($c instanceof $criteriaClass),
         ));
 
         return $this;
@@ -408,7 +408,7 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * {@inheritDoc}
      *
-     * @return \Illuminate\Support\Collection<int, \Academorix\Crud\Contracts\CriteriaInterface>
+     * @return \Illuminate\Support\Collection<int, \Stackra\Crud\Contracts\CriteriaInterface>
      */
     public function getCriteria(): \Illuminate\Support\Collection
     {

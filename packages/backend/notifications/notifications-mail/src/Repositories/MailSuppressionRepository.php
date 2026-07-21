@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsMail\Repositories;
+namespace Stackra\NotificationsMail\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\NotificationsMail\Contracts\Data\MailSuppressionInterface;
-use Academorix\NotificationsMail\Contracts\Repositories\MailSuppressionRepositoryInterface;
-use Academorix\NotificationsMail\Models\MailSuppression;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\NotificationsMail\Contracts\Data\MailSuppressionInterface;
+use Stackra\NotificationsMail\Contracts\Repositories\MailSuppressionRepositoryInterface;
+use Stackra\NotificationsMail\Models\MailSuppression;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\NotificationsMail\Models\MailSuppression}.
+ * Attribute-first Eloquent repository for {@see Stackra\NotificationsMail\Models\MailSuppression}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(MailSuppressionInterface::class)]` which resolves to
  * `MailSuppression` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\NotificationsMail\Models\MailSuppression>
+ * @extends Repository<\Stackra\NotificationsMail\Models\MailSuppression>
  *
  * @category NotificationsMail
  *

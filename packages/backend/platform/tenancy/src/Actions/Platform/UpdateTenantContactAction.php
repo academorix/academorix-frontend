@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Actions\Platform;
+namespace Stackra\Tenancy\Actions\Platform;
 
-use Academorix\Tenancy\Contracts\Repositories\TenantContactRepositoryInterface;
-use Academorix\Tenancy\Data\TenantContactData;
-use Academorix\Tenancy\Data\Requests\UpdateTenantContactRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\Tenancy\Contracts\Repositories\TenantContactRepositoryInterface;
+use Stackra\Tenancy\Data\TenantContactData;
+use Stackra\Tenancy\Data\Requests\UpdateTenantContactRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Patch;
 
 /**
  * `PATCH /api/v1/tenant-contacts/{id}` — update action (platform-admin audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Patch(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Tenancy

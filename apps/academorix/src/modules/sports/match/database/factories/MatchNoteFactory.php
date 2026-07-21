@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Database\Factories;
+namespace Stackra\Match\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Match\Contracts\Data\MatchNoteInterface;
-use Academorix\Match\Models\MatchNote;
+use Stackra\Match\Contracts\Data\MatchNoteInterface;
+use Stackra\Match\Models\MatchNote;
 
 /**
- * Factory for {@see \Academorix\Match\Models\MatchNote}.
+ * Factory for {@see \Stackra\Match\Models\MatchNote}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Match\Models\MatchNote>
+ * @extends Factory<\Stackra\Match\Models\MatchNote>
  *
  * @category Match
  *

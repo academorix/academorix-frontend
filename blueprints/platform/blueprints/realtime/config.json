@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/realtime/config",
+  "id": "stackra://modules/realtime/config",
   "$version": 1,
   "title": "realtime — config keys",
   "description": "config/<module>.php shape + defaults.",

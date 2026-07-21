@@ -12,11 +12,11 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Enum\Attributes;
+namespace Stackra\Enum\Attributes;
 
 use Attribute;
-use Academorix\Enum\Meta\Property;
-use Academorix\Support\Arr;
+use Stackra\Enum\Meta\Property;
+use Stackra\Support\Arr;
 
 /**
  * Meta Attribute.
@@ -26,9 +26,9 @@ use Academorix\Support\Arr;
  *
  * ## Usage:
  * ```php
- * use Academorix\Enum\Attributes\Description;
- * use Academorix\Enum\Attributes\Name;
- * use Academorix\Enum\Meta\Meta;
+ * use Stackra\Enum\Attributes\Description;
+ * use Stackra\Enum\Attributes\Name;
+ * use Stackra\Enum\Meta\Meta;
  *
  * #[Meta([Description::class, Name::class])]
  * enum Status: string
@@ -41,7 +41,7 @@ use Academorix\Support\Arr;
  * }
  * ```
  *
- * @author  Academorix Development Team
+ * @author  Stackra Development Team
  *
  * @since   1.0.0
  */

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/private-sessions/notifications",
+  "id": "stackra://modules/private-sessions/notifications",
   "$version": 1,
   "title": "private-sessions — user-facing notifications",
   "description": "Laravel notifications (mail / database / broadcast / vonage / slack).",

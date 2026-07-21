@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/monitoring/hooks",
+  "id": "stackra://modules/monitoring/hooks",
   "$version": 1,
   "title": "monitoring — TenancyHook + lifecycle hooks",
   "description": "Cross-module hook implementations. TenancyHooks are the tenancy module's contract for reacting to tenant-lifecycle events (provision / suspend / erase). Monitoring registers three hooks: tenant erasure cascade, tenant-suspend provider deactivation, tenant-resume re-activation. No bootstrapper — monitoring does not need per-request tenant hydration.",
-  "namespace": "Academorix\\Observability\\Monitoring\\Hooks",
+  "namespace": "Stackra\\Observability\\Monitoring\\Hooks",
   "hooks": [
     {
       "name": "PurgeMonitoringDataForErasedTenant",
-      "class": "Academorix\\Observability\\Monitoring\\Hooks\\PurgeMonitoringDataForErasedTenant",
+      "class": "Stackra\\Observability\\Monitoring\\Hooks\\PurgeMonitoringDataForErasedTenant",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErased",
       "purpose": "Cascade delete via FK CASCADE across the six monitoring tables. This hook writes the compliance audit trail entry + emits count metrics per entity family (health_checks / health_check_runs / monitoring_alert_policies / monitoring_alerts / monitoring_incidents / monitoring_provider_configs purged). No cross-provider deletion requests — monitoring providers store system-health events, not user data; the tenant's own identifier is the only correlation surface and the tenant is being erased.",
@@ -15,7 +15,7 @@
     },
     {
       "name": "SuspendMonitoringProvidersOnTenantSuspended",
-      "class": "Academorix\\Observability\\Monitoring\\Hooks\\SuspendMonitoringProvidersOnTenantSuspended",
+      "class": "Stackra\\Observability\\Monitoring\\Hooks\\SuspendMonitoringProvidersOnTenantSuspended",
       "kind": "cascade",
       "listens_to": "tenancy::TenantSuspended",
       "purpose": "Marks every monitoring_provider_config for the suspended tenant as is_active=false + disables every health_check (is_enabled=false + cancels pending RunHealthCheckJob). Does NOT soft-delete — restoration is one flip away via ResumeMonitoringProvidersOnTenantResumed. Fires MonitoringProviderDeactivated (reason='tenant_suspended') per config + HealthCheckDisabled (reason='tenant_suspended') per check.",
@@ -23,7 +23,7 @@
     },
     {
       "name": "ResumeMonitoringProvidersOnTenantResumed",
-      "class": "Academorix\\Observability\\Monitoring\\Hooks\\ResumeMonitoringProvidersOnTenantResumed",
+      "class": "Stackra\\Observability\\Monitoring\\Hooks\\ResumeMonitoringProvidersOnTenantResumed",
       "kind": "cascade",
       "listens_to": "tenancy::TenantResumed",
       "purpose": "Reverses SuspendMonitoringProvidersOnTenantSuspended. Only re-activates providers + checks that were disabled BY the suspension cascade (checks the audit trail for reason='tenant_suspended'). Providers / checks the tenant admin manually deactivated stay off. Restarts RunHealthCheckJob scheduling for re-enabled health checks."

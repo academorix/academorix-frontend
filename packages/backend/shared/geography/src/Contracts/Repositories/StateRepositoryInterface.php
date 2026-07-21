@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Contracts\Repositories;
+namespace Stackra\Geography\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Geography\Models\State;
-use Academorix\Geography\Repositories\EloquentStateRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Geography\Models\State;
+use Stackra\Geography\Repositories\EloquentStateRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 
@@ -47,7 +47,7 @@ interface StateRepositoryInterface extends RepositoryInterface
      * public `list` action; throws when the request has no
      * `filter[country_id]=`.
      *
-     * @throws \Academorix\Geography\Exceptions\GeographyStatesIndexUnscopedException
+     * @throws \Stackra\Geography\Exceptions\GeographyStatesIndexUnscopedException
      */
     public function refuseUnscopedIndex(): void;
 }

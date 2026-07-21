@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Notifications\Sms\Contracts\Data\SmsOptOutInterface;
+use Stackra\Notifications\Sms\Contracts\Data\SmsOptOutInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

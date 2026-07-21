@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/grants/data-classes",
+  "id": "stackra://modules/grants/data-classes",
   "$version": 1,
   "title": "grants — field-level data classification",
   "description": "Every column on AccessGrant classified by sensitivity tier. Drives DSAR export scope, right-to-erasure behaviour, encryption-at-rest policy. Field paths: `AccessGrant.field`.",

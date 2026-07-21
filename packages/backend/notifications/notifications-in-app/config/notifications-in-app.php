@@ -4,7 +4,7 @@
  * @file modules/notifications/notifications-in-app/config/notifications-in-app.php
  *
  * @description
- * Runtime knobs for the `academorix/notifications-in-app` module.
+ * Runtime knobs for the `stackra/notifications-in-app` module.
  * Merged under the `notifications-in-app.*` key by the base
  * ServiceProvider's LoadsResources concern. Downstream code reads via
  * `config('notifications-in-app.*')` (never `env()` outside this file

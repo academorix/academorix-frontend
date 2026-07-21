@@ -12,12 +12,12 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Foundation\Middlewares\Response;
+namespace Stackra\Foundation\Middlewares\Response;
 
 use Closure;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Http\Request;
-use Academorix\Routing\Attributes\AsMiddleware;
+use Stackra\Routing\Attributes\AsMiddleware;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -37,7 +37,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * Set in `.env`:
  * ```env
- * APP_POWERED_BY="Academorix Framework"
+ * APP_POWERED_BY="Stackra Framework"
  * APP_REMOVE_PHP_POWERED_BY=true
  * ```
  *
@@ -47,7 +47,7 @@ use Symfony\Component\HttpFoundation\Response;
  * ```php
  * // In app/Http/Kernel.php
  * protected $middleware = [
- *     \Academorix\Foundation\Middlewares\PoweredByMiddleware::class,
+ *     \Stackra\Foundation\Middlewares\PoweredByMiddleware::class,
  * ];
  * ```
  *
@@ -55,7 +55,7 @@ use Symfony\Component\HttpFoundation\Response;
  * ```php
  * // In app/Http/Kernel.php
  * protected $middlewareAliases = [
- *     'powered' => \Academorix\Foundation\Middlewares\PoweredByMiddleware::class,
+ *     'powered' => \Stackra\Foundation\Middlewares\PoweredByMiddleware::class,
  * ];
  *
  * // In routes
@@ -66,7 +66,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * ### Example Response Headers:
  * ```
- * X-Powered-By: Academorix Framework
+ * X-Powered-By: Stackra Framework
  * ```
  *
  * ## Security Note:
@@ -90,7 +90,7 @@ class PoweredByMiddleware
      * @param bool   $removePhpPoweredBy Whether to remove PHP's default X-Powered-By header
      */
     public function __construct(
-        #[Config('app.powered_by', 'Academorix Framework')]
+        #[Config('app.powered_by', 'Stackra Framework')]
         private readonly string $poweredBy,
         #[Config('app.remove_php_powered_by', false)]
         private readonly bool $removePhpPoweredBy,

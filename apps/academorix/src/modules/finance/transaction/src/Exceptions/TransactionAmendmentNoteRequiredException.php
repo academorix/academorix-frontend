@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transaction\Exceptions;
+namespace Stackra\Transaction\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Manual reversal via POST /transactions/{id}/reverse requires a written note ≥ 10 chars (configurable via transaction.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TransactionAmendmentNoteRequiredException extends AcademorixException
+final class TransactionAmendmentNoteRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

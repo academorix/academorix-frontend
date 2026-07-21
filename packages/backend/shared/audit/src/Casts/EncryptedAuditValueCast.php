@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Casts;
+namespace Stackra\Audit\Casts;
 
-use Academorix\Audit\Contracts\Services\KmsCipherInterface;
+use Stackra\Audit\Contracts\Services\KmsCipherInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;

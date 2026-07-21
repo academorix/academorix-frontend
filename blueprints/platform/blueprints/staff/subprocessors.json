@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/staff/subprocessors",
+  "id": "stackra://modules/staff/subprocessors",
   "$version": 1,
   "title": "staff — subprocessors",
-  "description": "The Staff module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. The Notifications module dispatches staff lifecycle notifications via its own subprocessors (mail, SMS, push); those are declared in notifications::subprocessors.json. The Finance module (Wave 4) will engage payroll processors that consume compensation_amount_cents; those live in finance::subprocessors.json. This file lists ZERO active subprocessors to be explicit about the module's boundary — staff state is fully first-party.",
+  "description": "The Staff module itself engages ZERO third-party subprocessors — every state transition happens within the Stackra platform. The Notifications module dispatches staff lifecycle notifications via its own subprocessors (mail, SMS, push); those are declared in notifications::subprocessors.json. The Finance module (Wave 4) will engage payroll processors that consume compensation_amount_cents; those live in finance::subprocessors.json. This file lists ZERO active subprocessors to be explicit about the module's boundary — staff state is fully first-party.",
   "subprocessors": [],
   "downstream_subprocessors_referenced": [
     {

@@ -1,47 +1,47 @@
 {
-  "id": "academorix://modules/age-group/listeners",
+  "id": "stackra://modules/age-group/listeners",
   "$version": 1,
   "title": "age-group — subscribed events",
   "listeners": [
     {
       "event": "tenancy::TenantProvisioned",
-      "listener": "Academorix\\Sports\\AgeGroup\\Listeners\\SeedDefaultAgeGroupsOnTenantProvisioned",
+      "listener": "Stackra\\Sports\\AgeGroup\\Listeners\\SeedDefaultAgeGroupsOnTenantProvisioned",
       "queue": "notifications",
       "purpose": "Fires when a new Tenant is created. Dispatches SeedDefaultAgeGroupsForTenantJob (or invokes AgeGroupCatalogSeeder synchronously when `age_group.provisioning.async=false`). Idempotent — skips when the tenant already has a seeded catalog. Silent (does NOT fire per-row AgeGroupCreatedNotification); the seeded catalog is a system-provisioned invariant + would just noise up the inbox during onboarding."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Sports\\AgeGroup\\Listeners\\PreventAgeGroupOrphansOnTenantErased",
+      "listener": "Stackra\\Sports\\AgeGroup\\Listeners\\PreventAgeGroupOrphansOnTenantErased",
       "queue": null,
       "purpose": "Fires BEFORE tenancy's FK cascade drops the tenant. Verifies that every AgeGroup on this tenant has already lost its inbound references (Team, EventDivision, TeamRegistration have been erased first). When any inbound reference still exists, logs a telemetry counter + surfaces a diagnostic in the tenancy erasure report. Does NOT rehome AgeGroups to another tenant (cross-tenant age groups are forbidden per hierarchy.md §13). The actual DELETE fires afterward via the tenant_id FK CASCADE."
     },
     {
       "event": "organization::OrganizationCreated",
-      "listener": "Academorix\\Sports\\AgeGroup\\Listeners\\InvalidateCatalogCacheOnOrganizationCreated",
+      "listener": "Stackra\\Sports\\AgeGroup\\Listeners\\InvalidateCatalogCacheOnOrganizationCreated",
       "queue": null,
       "purpose": "Fires when a new Organization is created. Invalidates `age:catalog:{tenant_id}:{organization_id}:*` cache keys so the picker widget picks up the new organization scope for age-group lookups."
     },
     {
       "event": "entitlements::EntitlementDowngrade",
-      "listener": "Academorix\\Sports\\AgeGroup\\Listeners\\FlagAgeGroupSlotDriftOnDowngrade",
+      "listener": "Stackra\\Sports\\AgeGroup\\Listeners\\FlagAgeGroupSlotDriftOnDowngrade",
       "queue": "low",
-      "purpose": "Fires when a tenant downgrades their plan + the new tier has fewer `age_group_slot` slots than the current custom (is_seeded=false) count. Does NOT auto-archive — surfaces the drift in the tenant admin UI + logs a `academorix.age_group.slot_drift.total` counter. The tenant admin must manually archive extra customs."
+      "purpose": "Fires when a tenant downgrades their plan + the new tier has fewer `age_group_slot` slots than the current custom (is_seeded=false) count. Does NOT auto-archive — surfaces the drift in the tenant admin UI + logs a `stackra.age_group.slot_drift.total` counter. The tenant admin must manually archive extra customs."
     },
     {
       "event": "entitlements::EntitlementDowngrade",
-      "listener": "Academorix\\Sports\\AgeGroup\\Listeners\\FlagSportKeyDriftOnDowngrade",
+      "listener": "Stackra\\Sports\\AgeGroup\\Listeners\\FlagSportKeyDriftOnDowngrade",
       "queue": "low",
       "purpose": "Same as FlagAgeGroupSlotDriftOnDowngrade but for the `age_group_sport_specific` boolean. Fires when a tenant downgrades from Enterprise + still has AgeGroups with non-null sport_key. Surfaces the drift; does NOT auto-clear sport_key values (that would silently reshape resolution answers)."
     },
     {
       "event": "audit::AuditFlushed",
-      "listener": "Academorix\\Sports\\AgeGroup\\Listeners\\CacheReconciliationLastRun",
+      "listener": "Stackra\\Sports\\AgeGroup\\Listeners\\CacheReconciliationLastRun",
       "queue": null,
       "purpose": "Fires when ReconcileAgeGroupDefaultInvariantJob completes + writes its report. Caches the timestamp in `age:reconciler_last_run` so the health probe + ops dashboard can read the last-successful-run marker without querying `audit_events`."
     },
     {
       "event": "teams::TeamProvisioning",
-      "listener": "Academorix\\Sports\\AgeGroup\\Listeners\\WarmAgeGroupCatalogCacheOnTeamProvisioning",
+      "listener": "Stackra\\Sports\\AgeGroup\\Listeners\\WarmAgeGroupCatalogCacheOnTeamProvisioning",
       "queue": null,
       "purpose": "Fires when Team (Wave 2b) is about to create its first Team row + reference an age_group. Ensures the tenant's age-group catalog cache is warm — the Team observer will read it synchronously to validate the FK. Cheap; runs before the transaction commits."
     }

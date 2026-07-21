@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/offline-sync/config",
+  "id": "stackra://modules/offline-sync/config",
   "$version": 1,
   "title": "offline-sync — config keys",
   "description": "config/<module>.php shape + defaults.",

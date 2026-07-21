@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Console;
+namespace Stackra\Geography\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Geography\Contracts\Repositories\CityRepositoryInterface;
-use Academorix\Geography\Contracts\Repositories\CountryRepositoryInterface;
-use Academorix\Geography\Contracts\Repositories\CurrencyRepositoryInterface;
-use Academorix\Geography\Contracts\Repositories\LanguageRepositoryInterface;
-use Academorix\Geography\Contracts\Repositories\StateRepositoryInterface;
-use Academorix\Geography\Contracts\Repositories\TimezoneRepositoryInterface;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Geography\Contracts\Repositories\CityRepositoryInterface;
+use Stackra\Geography\Contracts\Repositories\CountryRepositoryInterface;
+use Stackra\Geography\Contracts\Repositories\CurrencyRepositoryInterface;
+use Stackra\Geography\Contracts\Repositories\LanguageRepositoryInterface;
+use Stackra\Geography\Contracts\Repositories\StateRepositoryInterface;
+use Stackra\Geography\Contracts\Repositories\TimezoneRepositoryInterface;
 
 /**
  * `php artisan geography:describe` — print catalog stats.

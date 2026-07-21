@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Database\Factories;
+namespace Stackra\Payment\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Payment\Contracts\Data\PaymentInterface;
-use Academorix\Payment\Models\Payment;
+use Stackra\Payment\Contracts\Data\PaymentInterface;
+use Stackra\Payment\Models\Payment;
 
 /**
- * Factory for {@see \Academorix\Payment\Models\Payment}.
+ * Factory for {@see \Stackra\Payment\Models\Payment}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Payment\Models\Payment>
+ * @extends Factory<\Stackra\Payment\Models\Payment>
  *
  * @category Payment
  *

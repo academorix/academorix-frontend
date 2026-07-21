@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/localization/events",
+  "id": "stackra://modules/localization/events",
   "$version": 1,
   "title": "localization \u2014 published events",
-  "namespace": "Academorix\\Localization\\Events",
+  "namespace": "Stackra\\Localization\\Events",
   "dispatchMode": "afterCommit",
   "events": [
     {
       "name": "LocaleResolved",
-      "class": "Academorix\\Localization\\Events\\LocaleResolved",
+      "class": "Stackra\\Localization\\Events\\LocaleResolved",
       "trigger": "ResolveLocale middleware finished. Every request fires exactly once.",
       "queue": null,
       "consumers": ["telemetry::AddLocaleToBaggage"],
@@ -21,7 +21,7 @@
     },
     {
       "name": "LocaleChanged",
-      "class": "Academorix\\Localization\\Events\\LocaleChanged",
+      "class": "Stackra\\Localization\\Events\\LocaleChanged",
       "trigger": "User's profile.preferred_locale was updated. Not fired on transient overrides.",
       "queue": "notifications",
       "consumers": ["activity::WriteToActivityLog"],
@@ -34,7 +34,7 @@
     },
     {
       "name": "TranslationCacheHit",
-      "class": "Academorix\\Localization\\Events\\TranslationCacheHit",
+      "class": "Stackra\\Localization\\Events\\TranslationCacheHit",
       "trigger": "get() resolved from DB Translation. Sampled to config('localization.telemetry.cache_hit_sample_ratio') to avoid volume.",
       "queue": null,
       "payload": {
@@ -47,7 +47,7 @@
     },
     {
       "name": "TranslationCacheMiss",
-      "class": "Academorix\\Localization\\Events\\TranslationCacheMiss",
+      "class": "Stackra\\Localization\\Events\\TranslationCacheMiss",
       "trigger": "get() fell through all cache tiers. Precedes possible MachineTranslationRequested.",
       "queue": null,
       "consumers": ["localization::MaybeDispatchAutoTranslate"],
@@ -61,7 +61,7 @@
     },
     {
       "name": "MachineTranslationRequested",
-      "class": "Academorix\\Localization\\Events\\MachineTranslationRequested",
+      "class": "Stackra\\Localization\\Events\\MachineTranslationRequested",
       "trigger": "TranslateJob started calling the driver.",
       "queue": "notifications",
       "payload": {
@@ -75,7 +75,7 @@
     },
     {
       "name": "MachineTranslationCompleted",
-      "class": "Academorix\\Localization\\Events\\MachineTranslationCompleted",
+      "class": "Stackra\\Localization\\Events\\MachineTranslationCompleted",
       "trigger": "Driver returned + Translation row upserted.",
       "queue": "notifications",
       "consumers": ["observability::MetricsCollector", "activity::WriteToActivityLog"],
@@ -92,7 +92,7 @@
     },
     {
       "name": "MachineTranslationFailed",
-      "class": "Academorix\\Localization\\Events\\MachineTranslationFailed",
+      "class": "Stackra\\Localization\\Events\\MachineTranslationFailed",
       "trigger": "Driver refused / errored after retries exhausted.",
       "queue": "notifications-critical",
       "payload": {
@@ -107,7 +107,7 @@
     },
     {
       "name": "TranslationOverridden",
-      "class": "Academorix\\Localization\\Events\\TranslationOverridden",
+      "class": "Stackra\\Localization\\Events\\TranslationOverridden",
       "trigger": "Tenant admin manually edited a translation.",
       "queue": "notifications",
       "consumers": ["activity::WriteToActivityLog"],
@@ -122,7 +122,7 @@
     },
     {
       "name": "TranslationJobStarted",
-      "class": "Academorix\\Localization\\Events\\TranslationJobStarted",
+      "class": "Stackra\\Localization\\Events\\TranslationJobStarted",
       "queue": "notifications",
       "payload": {
         "job_id": "ULID",
@@ -134,7 +134,7 @@
     },
     {
       "name": "TranslationJobCompleted",
-      "class": "Academorix\\Localization\\Events\\TranslationJobCompleted",
+      "class": "Stackra\\Localization\\Events\\TranslationJobCompleted",
       "queue": "notifications",
       "consumers": ["notifications::DispatchTranslationJobCompletedNotification"],
       "payload": {
@@ -147,7 +147,7 @@
     },
     {
       "name": "LanguageEnabledForTenant",
-      "class": "Academorix\\Localization\\Events\\LanguageEnabledForTenant",
+      "class": "Stackra\\Localization\\Events\\LanguageEnabledForTenant",
       "queue": "notifications",
       "consumers": ["activity::WriteToActivityLog"],
       "payload": {
@@ -159,13 +159,13 @@
     },
     {
       "name": "LanguageDisabledForTenant",
-      "class": "Academorix\\Localization\\Events\\LanguageDisabledForTenant",
+      "class": "Stackra\\Localization\\Events\\LanguageDisabledForTenant",
       "queue": "notifications",
       "payload": { "tenant_id": "ULID", "language_id": "ULID", "locale_code": "string" }
     },
     {
       "name": "TranslationWritten",
-      "class": "Academorix\\Localization\\Events\\TranslationWritten",
+      "class": "Stackra\\Localization\\Events\\TranslationWritten",
       "trigger": "`HasTranslations::setTranslation()` wrote a new (locale, field) tuple into a model's `translations` JSONB column. Fires on both first-time writes AND updates. Distinct from `TranslationOverridden` (which is for platform-level UI-string overrides).",
       "queue": "notifications",
       "consumers": [

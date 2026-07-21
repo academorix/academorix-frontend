@@ -7,14 +7,14 @@
  * Unit coverage for every HTTP-boundary exception + its named
  * factories:
  *
- *   - {@see \Academorix\Exceptions\Http\ValidationException}
- *   - {@see \Academorix\Exceptions\Http\ConflictException}
- *   - {@see \Academorix\Exceptions\Http\EntityNotFoundException}
- *   - {@see \Academorix\Exceptions\Http\TooManyRequestsException}
- *   - {@see \Academorix\Exceptions\Http\PaymentRequiredException}
- *   - {@see \Academorix\Exceptions\Http\MethodNotAllowedException}
- *   - {@see \Academorix\Exceptions\Http\UnsupportedMediaTypeException}
- *   - {@see \Academorix\Exceptions\Http\PayloadTooLargeException}
+ *   - {@see \Stackra\Exceptions\Http\ValidationException}
+ *   - {@see \Stackra\Exceptions\Http\ConflictException}
+ *   - {@see \Stackra\Exceptions\Http\EntityNotFoundException}
+ *   - {@see \Stackra\Exceptions\Http\TooManyRequestsException}
+ *   - {@see \Stackra\Exceptions\Http\PaymentRequiredException}
+ *   - {@see \Stackra\Exceptions\Http\MethodNotAllowedException}
+ *   - {@see \Stackra\Exceptions\Http\UnsupportedMediaTypeException}
+ *   - {@see \Stackra\Exceptions\Http\PayloadTooLargeException}
  *
  * ## What these tests protect
  *
@@ -43,17 +43,17 @@
 
 declare(strict_types=1);
 
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
-use Academorix\Exceptions\Http\ConflictException;
-use Academorix\Exceptions\Http\EntityNotFoundException;
-use Academorix\Exceptions\Http\MethodNotAllowedException;
-use Academorix\Exceptions\Http\PayloadTooLargeException;
-use Academorix\Exceptions\Http\PaymentRequiredException;
-use Academorix\Exceptions\Http\TooManyRequestsException;
-use Academorix\Exceptions\Http\UnsupportedMediaTypeException;
-use Academorix\Exceptions\Http\ValidationException;
-use Academorix\Foundation\Support\CorrelationId;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\Http\ConflictException;
+use Stackra\Exceptions\Http\EntityNotFoundException;
+use Stackra\Exceptions\Http\MethodNotAllowedException;
+use Stackra\Exceptions\Http\PayloadTooLargeException;
+use Stackra\Exceptions\Http\PaymentRequiredException;
+use Stackra\Exceptions\Http\TooManyRequestsException;
+use Stackra\Exceptions\Http\UnsupportedMediaTypeException;
+use Stackra\Exceptions\Http\ValidationException;
+use Stackra\Foundation\Support\CorrelationId;
 
 afterEach(function (): void {
     CorrelationId::forget();

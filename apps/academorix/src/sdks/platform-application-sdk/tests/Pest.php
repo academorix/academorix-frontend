@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file apps/academorix/src/sdks/platform-application-sdk/tests/Pest.php
+ * @file apps/stackra/src/sdks/platform-application-sdk/tests/Pest.php
  *
  * @description
  * Pest bootstrap for the platform-application SDK. Extends Orchestra
@@ -13,6 +13,6 @@
 
 declare(strict_types=1);
 
-use Academorix\PlatformApplicationSdk\Tests\TestCase;
+use Stackra\PlatformApplicationSdk\Tests\TestCase;
 
 uses(TestCase::class)->in(__DIR__);

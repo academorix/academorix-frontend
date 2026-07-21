@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/localization/subprocessors",
+  "id": "stackra://modules/localization/subprocessors",
   "$version": 1,
   "title": "localization \u2014 subprocessors",
   "description": "Machine-translation providers process source strings + return translated strings. Only engaged when tenant_locale.auto_translate=true. See compliance.json for GDPR Art. 28 obligations.",

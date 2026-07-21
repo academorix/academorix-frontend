@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/analytics/entitlements",
+  "id": "stackra://modules/analytics/entitlements",
   "$version": 1,
   "title": "analytics — entitlements",
   "description": "Nine entitlements gating analytics capture + delivery + advanced features. Plan-tier scaled: Small (baseline), Medium (advanced providers + batch config), Enterprise (identity merge + sampling config + extended retention + session recording).",

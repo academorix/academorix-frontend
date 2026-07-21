@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/region/webhooks",
+  "id": "stackra://modules/region/webhooks",
   "$version": 1,
   "title": "region — outbound webhooks",
   "description": "Tenant admins can subscribe to region-lifecycle events via the webhook module (shared/webhooks, Wave 4). This blueprint declares the event types this module publishes. Payload shapes mirror the corresponding entries in `events.json` — the webhook module wraps them in the standard envelope. `tax_config.registration_number` is REDACTED in every outbound webhook payload — consumers who need it must re-fetch via the tenant-facing API.",

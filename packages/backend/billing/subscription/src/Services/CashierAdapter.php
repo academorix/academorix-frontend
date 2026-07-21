@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Services;
+namespace Stackra\Subscription\Services;
 
-use Academorix\Subscription\Contracts\Services\CashierAdapterInterface;
+use Stackra\Subscription\Contracts\Services\CashierAdapterInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Subscription\Contracts\Repositories\PlanRepositoryInterface;
+use Stackra\Subscription\Contracts\Repositories\PlanRepositoryInterface;
 
 /**
  * Concrete service — CashierAdapter.

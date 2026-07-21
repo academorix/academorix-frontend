@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "auth",
   "alias": "auth",
-  "namespace": "Academorix\\Auth",
+  "namespace": "Stackra\\Auth",
   "description": "The protocol layer that operates on the Identity substrate. Owns every authentication endpoint — login (Sanctum-backed), refresh (with rotation + reuse detection), logout, MFA challenge dispatch, password reset flow (forgot + reset), email verification confirmation, cross-app SSO grant issuance + exchange. Signs every inter-service JWT (HS256 with per-Application `app` claim binding + key rotation via `kid`) and publishes the JWKS endpoint with aggressive Cache-Control. Ships the CompliantAgePolicy service that resolves the effective age floor from the compliance chain (COPPA / GDPR per-country / framework default / tenant override — floor can only tighten). Ships the ScopeSuffixResolver service that the base repository (in framework/crud) consults to apply the `.own` / `.tenant` / `.branch` / `.team` / `.child` / `.any` filter suffixes per caller permission. Owns the RegistrationPolicyInterface contract + default GenericRegistrationPolicy implementation; domain modules (e.g. sports/athletes in Wave 7) bind their own implementations via #[Bind]. Refresh-token rotation with reuse detection (already-consumed refresh → invalidate all tokens for the User = breach signal). Sanctum PAT abilities cache the compact permission array at issue-time from RBAC. Session revocation on credential mutation (PasswordChanged listener revokes every active PAT for every User row referencing the Identity — cross-Application, one-action lockdown). This module NEVER stores credentials — it delegates every hash / verify / recovery-code operation to the `identity` substrate.",
   "keywords": [
     "auth",
@@ -29,7 +29,7 @@
     "registration-policy"
   ],
   "priority": 25,
-  "providers": ["Academorix\\Auth\\Providers\\AuthServiceProvider"],
+  "providers": ["Stackra\\Auth\\Providers\\AuthServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

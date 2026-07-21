@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Services;
+namespace Stackra\Search\Services;
 
-use Academorix\Search\Attributes\Searchable;
-use Academorix\Search\Contracts\Services\EngineRegistryInterface;
+use Stackra\Search\Attributes\Searchable;
+use Stackra\Search\Contracts\Services\EngineRegistryInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

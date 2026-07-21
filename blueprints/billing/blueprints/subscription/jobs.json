@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/subscription/jobs",
+  "id": "stackra://modules/subscription/jobs",
   "$version": 1,
   "title": "subscription \u2014 background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Subscription\\Jobs\\SyncFromCashierWebhookJob",
+      "class": "Stackra\\Subscription\\Jobs\\SyncFromCashierWebhookJob",
       "queue": "notifications-critical",
       "purpose": "Consume a Cashier webhook event + translate to our Subscription state + create SubscriptionEvent.",
       "steps": [
@@ -22,7 +22,7 @@
       "backoff": [30, 300, 1800, 3600, 21600]
     },
     {
-      "class": "Academorix\\Subscription\\Jobs\\AdvanceDunningStageJob",
+      "class": "Stackra\\Subscription\\Jobs\\AdvanceDunningStageJob",
       "queue": "notifications",
       "purpose": "Progress past_due subscriptions through our extended grace stages (at_risk \u2192 grace \u2192 suspended).",
       "steps": [
@@ -37,7 +37,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Subscription\\Jobs\\ExpireTrialsJob",
+      "class": "Stackra\\Subscription\\Jobs\\ExpireTrialsJob",
       "queue": "notifications",
       "purpose": "Send TrialEnding warnings + transition expired trials.",
       "steps": [
@@ -50,7 +50,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Subscription\\Jobs\\ReconcileSubscriptionStateJob",
+      "class": "Stackra\\Subscription\\Jobs\\ReconcileSubscriptionStateJob",
       "queue": "notifications",
       "purpose": "Hourly reconciliation: sample-check our Subscription state against Cashier's provider-side state. Detects drift from missed webhooks.",
       "steps": [
@@ -65,7 +65,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Subscription\\Jobs\\ReportMeteredUsageJob",
+      "class": "Stackra\\Subscription\\Jobs\\ReportMeteredUsageJob",
       "queue": "notifications-critical",
       "purpose": "Report usage-based entitlement consumption to provider at period end. Called by entitlements module.",
       "steps": [
@@ -82,7 +82,7 @@
       "backoff": [60, 300, 1800, 3600, 21600]
     },
     {
-      "class": "Academorix\\Subscription\\Jobs\\CancelPastDueSubscriptionJob",
+      "class": "Stackra\\Subscription\\Jobs\\CancelPastDueSubscriptionJob",
       "queue": "notifications",
       "purpose": "Terminal step of dunning: cancel + suspend tenant after all grace exhausted.",
       "shouldQueue": true,

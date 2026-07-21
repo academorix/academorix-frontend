@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Repositories;
+namespace Stackra\FeatureFlags\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureOverrideRepositoryInterface;
-use Academorix\FeatureFlags\Models\FeatureOverride;
-use Academorix\FeatureFlags\Support\ScopePath;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureOverrideRepositoryInterface;
+use Stackra\FeatureFlags\Models\FeatureOverride;
+use Stackra\FeatureFlags\Support\ScopePath;
 use Illuminate\Support\Carbon;
 
 /**

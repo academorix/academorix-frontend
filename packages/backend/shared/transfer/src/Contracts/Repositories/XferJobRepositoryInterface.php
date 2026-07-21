@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Contracts\Repositories;
+namespace Stackra\Transfer\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Transfer\Models\XferJob;
-use Academorix\Transfer\Repositories\EloquentXferJobRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Transfer\Models\XferJob;
+use Stackra\Transfer\Repositories\EloquentXferJobRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

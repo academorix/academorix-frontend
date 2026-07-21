@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/mfa/broadcasts",
+  "id": "stackra://modules/mfa/broadcasts",
   "$version": 1,
   "title": "mfa — broadcast channels",
   "description": "MFA publishes NO broadcast channels. Real-time notification of MFA state changes to open browser sessions is not a use case in Wave 1a — a stolen session that had MFA disabled server-side simply fails on the next request (401), no push required. A future WebAuthn conditional-UI or mobile-push-based MFA flow would introduce a private channel here.",

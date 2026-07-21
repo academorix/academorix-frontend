@@ -55,7 +55,7 @@
 
 - `HmacSha256Signer` — signs outbound payloads:
   `HMAC-SHA256(secret, timestamp + '.' + body)`, emits
-  `X-Academorix-Signature-256: t=<timestamp>,v1=<signature>` header per the
+  `X-Stackra-Signature-256: t=<timestamp>,v1=<signature>` header per the
   Stripe convention.
 - `VerifyInboundWebhook` — validates the shape of an incoming
   `X-Webhook-Signature` header + delegates to a per-namespace signer registered

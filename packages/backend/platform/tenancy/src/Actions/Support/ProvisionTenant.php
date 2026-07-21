@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Actions\Support;
+namespace Stackra\Tenancy\Actions\Support;
 
-use Academorix\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
-use Academorix\Tenancy\Data\Requests\CreateTenantRequestData;
-use Academorix\Tenancy\Enums\TenantStatus;
-use Academorix\Tenancy\Events\TenantProvisioned;
-use Academorix\Tenancy\Events\TenantProvisioning;
-use Academorix\Tenancy\Exceptions\SlugTakenException;
-use Academorix\Tenancy\Models\Tenant;
+use Stackra\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
+use Stackra\Tenancy\Data\Requests\CreateTenantRequestData;
+use Stackra\Tenancy\Enums\TenantStatus;
+use Stackra\Tenancy\Events\TenantProvisioned;
+use Stackra\Tenancy\Events\TenantProvisioning;
+use Stackra\Tenancy\Exceptions\SlugTakenException;
+use Stackra\Tenancy\Models\Tenant;
 use Illuminate\Support\Facades\DB;
 
 /**

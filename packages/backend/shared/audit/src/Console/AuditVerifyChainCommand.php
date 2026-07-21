@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Console;
+namespace Stackra\Audit\Console;
 
-use Academorix\Audit\Jobs\VerifyAuditChainJob;
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Audit\Jobs\VerifyAuditChainJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan audit:verify-chain` — dispatch
@@ -23,8 +23,8 @@ use Academorix\Console\Commands\BaseCommand;
  * ```
  *
  * The command dispatches to the queue and exits immediately —
- * results arrive via {@see \Academorix\Audit\Events\AuditChainVerified}
- * and {@see \Academorix\Audit\Events\AuditChainBroken}.
+ * results arrive via {@see \Stackra\Audit\Events\AuditChainVerified}
+ * and {@see \Stackra\Audit\Events\AuditChainBroken}.
  *
  * @category Audit
  *

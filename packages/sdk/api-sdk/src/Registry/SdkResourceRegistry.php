@@ -5,9 +5,9 @@
  *
  * @description
  * Holds the sorted, name-keyed chain of every discovered
- * {@see \Academorix\ApiSdk\Contracts\SdkResource}. Populated
+ * {@see \Stackra\ApiSdk\Contracts\SdkResource}. Populated
  * once at boot by the discovery pass in `ApiSdkServiceProvider`
- * and consumed by {@see \Academorix\ApiSdk\Client\ApiClient} on
+ * and consumed by {@see \Stackra\ApiSdk\Client\ApiClient} on
  * every `$api->{$name}()` call.
  *
  * ## Octane safety
@@ -21,10 +21,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Registry;
+namespace Stackra\ApiSdk\Registry;
 
-use Academorix\ApiSdk\Contracts\SdkResource;
-use Academorix\ApiSdk\Exceptions\ResourceNotFoundException;
+use Stackra\ApiSdk\Contracts\SdkResource;
+use Stackra\ApiSdk\Exceptions\ResourceNotFoundException;
 
 /**
  * Name-keyed registry of discovered SDK resources.

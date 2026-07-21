@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/competition/events",
+  "id": "stackra://modules/competition/events",
   "$version": 1,
   "title": "competition — published events",
-  "namespace": "Academorix\\Sports\\Competition\\Events",
+  "namespace": "Stackra\\Sports\\Competition\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event is `ShouldDispatchAfterCommit`. Fixture + standings recompute events are HIGH-VOLUME on match day; RecomputeStandingsJob is debounced 5s.",
   "events": [

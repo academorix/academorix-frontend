@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Contracts\Services;
+namespace Stackra\Localization\Contracts\Services;
 
-use Academorix\Localization\Services\ConfigSourceRedactor;
+use Stackra\Localization\Services\ConfigSourceRedactor;
 use Illuminate\Container\Attributes\Bind;
 
 /**

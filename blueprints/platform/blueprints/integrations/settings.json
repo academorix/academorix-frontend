@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/integrations/settings",
+  "id": "stackra://modules/integrations/settings",
   "$version": 1,
   "title": "integrations — tenant-editable settings",
   "description": "Settings this module registers against the settings substrate.",

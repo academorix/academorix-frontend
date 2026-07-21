@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Membership\Contracts\Services;
+namespace Stackra\Membership\Contracts\Services;
 
-use Academorix\Membership\Services\PassConsumer;
+use Stackra\Membership\Services\PassConsumer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

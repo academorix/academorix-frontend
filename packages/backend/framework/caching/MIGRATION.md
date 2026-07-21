@@ -1,4 +1,4 @@
-# Migration guide — cache primitives → `academorix/caching`
+# Migration guide — cache primitives → `stackra/caching`
 
 Per **ADR 0004**, every cache primitive that used to live inside
 `packages/framework/database/src/Cache/` has moved into the new
@@ -35,11 +35,11 @@ cache-tag composition or driver-capability logic.
 ### 1. Update every `use` statement
 
 ```diff
-- use Academorix\Database\Cache\CacheTagBuilder;
-+ use Academorix\Caching\Support\CacheTagBuilder;
+- use Stackra\Database\Cache\CacheTagBuilder;
++ use Stackra\Caching\Support\CacheTagBuilder;
 
-- use Academorix\Database\Cache\TaggableCacheGuard;
-+ use Academorix\Caching\Support\TaggableCacheGuard;
+- use Stackra\Database\Cache\TaggableCacheGuard;
++ use Stackra\Caching\Support\TaggableCacheGuard;
 ```
 
 ### 2. `CacheTagBuilder->for($table, $tenantId)` → `->for($table, $context)`
@@ -59,17 +59,17 @@ override just pass no second arg.
 
 ### 3. Update `composer.json`
 
-Domain packages that used to require `academorix/database` for cache primitives
+Domain packages that used to require `stackra/database` for cache primitives
 now require both:
 
 ```diff
 "require": {
-    "academorix/database": "@dev",
-+   "academorix/caching": "@dev"
+    "stackra/database": "@dev",
++   "stackra/caching": "@dev"
 }
 ```
 
-Apps that already require `academorix/tenancy` (framework) get the caching
+Apps that already require `stackra/tenancy` (framework) get the caching
 package transitively.
 
 ### 4. Refactor manual `Cache::tags(...)->remember(...)` calls
@@ -91,9 +91,9 @@ Or the attribute path when the whole method should cache:
 
 ## Rollout order
 
-1. Add `academorix/caching` to every app that requires `academorix/database`
+1. Add `stackra/caching` to every app that requires `stackra/database`
    today.
-2. Ship the deprecated `Academorix\Database\Cache\*` classes as thin aliases
+2. Ship the deprecated `Stackra\Database\Cache\*` classes as thin aliases
    that extend the new location — allow one release cycle for consumers to
    migrate their imports.
 3. In the next major, delete the aliases.

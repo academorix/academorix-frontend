@@ -2,14 +2,14 @@
 
 /**
  * @file Console.php
- * @module Academorix\Cli\Support
+ * @module Stackra\Cli\Support
  * @description Static I/O helpers around Symfony Console. Every command
  *   pulls arguments and options through here to normalise nullability.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Support;
+namespace Stackra\Cli\Support;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

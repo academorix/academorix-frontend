@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Database\Factories;
+namespace Stackra\Localization\Database\Factories;
 
-use Academorix\Localization\Contracts\Data\PlatformLanguageInterface;
-use Academorix\Localization\Models\PlatformLanguage;
+use Stackra\Localization\Contracts\Data\PlatformLanguageInterface;
+use Stackra\Localization\Models\PlatformLanguage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

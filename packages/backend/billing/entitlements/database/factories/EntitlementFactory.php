@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Database\Factories;
+namespace Stackra\Entitlements\Database\Factories;
 
-use Academorix\Entitlements\Contracts\Data\EntitlementInterface;
-use Academorix\Entitlements\Enums\EntitlementKind;
-use Academorix\Entitlements\Enums\EntitlementPeriod;
-use Academorix\Entitlements\Enums\EntitlementSource;
-use Academorix\Entitlements\Models\Entitlement;
+use Stackra\Entitlements\Contracts\Data\EntitlementInterface;
+use Stackra\Entitlements\Enums\EntitlementKind;
+use Stackra\Entitlements\Enums\EntitlementPeriod;
+use Stackra\Entitlements\Enums\EntitlementSource;
+use Stackra\Entitlements\Models\Entitlement;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

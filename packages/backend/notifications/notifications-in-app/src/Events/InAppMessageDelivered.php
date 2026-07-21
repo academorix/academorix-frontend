@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Events;
+namespace Stackra\Notifications\InApp\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Foundation\Events\Dispatchable;
 
 /**
@@ -12,7 +12,7 @@ use Illuminate\Foundation\Events\Dispatchable;
  * has enqueued the Reverb broadcast.
  *
  * Fires from
- * {@see \Academorix\Notifications\InApp\Channels\InAppChannel::deliver()}
+ * {@see \Stackra\Notifications\InApp\Channels\InAppChannel::deliver()}
  * exactly once per delivery. Distinct from the parent notifications
  * module's `NotificationDispatched` — that fires for every channel,
  * this one is transport-specific.

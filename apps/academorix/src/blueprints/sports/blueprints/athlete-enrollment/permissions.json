@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/athlete-enrollment/permissions",
+  "id": "stackra://modules/athlete-enrollment/permissions",
   "$version": 1,
   "title": "athlete-enrollment — permissions",
-  "seeder": "Academorix\\Sports\\AthleteEnrollment\\Database\\Seeders\\AthleteEnrollmentPermissionSeeder",
+  "seeder": "Stackra\\Sports\\AthleteEnrollment\\Database\\Seeders\\AthleteEnrollmentPermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — enrollment CRUD by admin / hr / branch_manager / coach / reception, self-service via .own scope for guardians + adult athletes. Platform plane (platform_admin) — cross-tenant read + atomicity-audit.",
   "permissions": [

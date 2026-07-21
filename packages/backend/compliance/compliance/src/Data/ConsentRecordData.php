@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Data;
+namespace Stackra\Compliance\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Server-side output DTO for {@see \Academorix\Compliance\Models\ConsentRecord}.
+ * Server-side output DTO for {@see \Stackra\Compliance\Models\ConsentRecord}.
  *
  * Consumed by controllers + services on the SERVER side. This is
  * distinct from the wire SDK's DTO (which sits under
- * `Academorix\ComplianceComplianceSdk\Data`) — the wire DTO travels across the HTTP
+ * `Stackra\ComplianceComplianceSdk\Data`) — the wire DTO travels across the HTTP
  * boundary; this one stays in-process.
  *
  * @category Compliance

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceProvider\Bootstrappers;
+namespace Stackra\ServiceProvider\Bootstrappers;
 
-use Academorix\ServiceProvider\Attributes\AsBootstrapper;
-use Academorix\ServiceProvider\Contracts\BootstrapperInterface;
-use Academorix\ServiceProvider\Support\BootstrapperRunner;
+use Stackra\ServiceProvider\Attributes\AsBootstrapper;
+use Stackra\ServiceProvider\Contracts\BootstrapperInterface;
+use Stackra\ServiceProvider\Support\BootstrapperRunner;
 
 /**
  * Base class for every app-boot bootstrapper in the monorepo.

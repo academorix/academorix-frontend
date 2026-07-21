@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Repositories;
+namespace Stackra\Approvals\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Approvals\Contracts\Data\ApprovalTemplateInterface;
-use Academorix\Approvals\Contracts\Repositories\ApprovalTemplateRepositoryInterface;
-use Academorix\Approvals\Models\ApprovalTemplate;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Approvals\Contracts\Data\ApprovalTemplateInterface;
+use Stackra\Approvals\Contracts\Repositories\ApprovalTemplateRepositoryInterface;
+use Stackra\Approvals\Models\ApprovalTemplate;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Approvals\Models\ApprovalTemplate}.
+ * Attribute-first Eloquent repository for {@see Stackra\Approvals\Models\ApprovalTemplate}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ApprovalTemplateInterface::class)]` which resolves to
  * `ApprovalTemplate` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Approvals\Models\ApprovalTemplate>
+ * @extends Repository<\Stackra\Approvals\Models\ApprovalTemplate>
  *
  * @category Approvals
  *

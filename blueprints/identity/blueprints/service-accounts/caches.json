@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/service-accounts/caches",
+  "id": "stackra://modules/service-accounts/caches",
   "$version": 1,
   "title": "service-accounts \u2014 cache keys + tags",
   "driver": "redis",
@@ -64,7 +64,7 @@
     },
     {
       "pattern": "svc:active_count:total",
-      "description": "Denormalised gauge feeding the `academorix.service_account.active_count` metric. Refreshed by a scheduled task every 60s.",
+      "description": "Denormalised gauge feeding the `stackra.service_account.active_count` metric. Refreshed by a scheduled task every 60s.",
       "ttlSeconds": 90,
       "tags": ["service-account"]
     },

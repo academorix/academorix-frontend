@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "match",
   "alias": "match",
-  "namespace": "Academorix\\Sports\\Match",
+  "namespace": "Stackra\\Sports\\Match",
   "description": "Full competitive-match lifecycle inside the Sports domain. Answers 'who played whom, when, where, with which lineup, and what was the result?'. Ships the four-stage state machine (SCHEDULED -> LINEUP_SET -> IN_PROGRESS -> COMPLETED; plus POSTPONED / CANCELLED / ABANDONED off-happy-paths) that drives squad selection, formation-slotted lineup, publish gates with parent-facing notifications, in-progress scoring, W/D/L result recording via the sport registry's scoring strategy (mechanism #4), man-of-match awards, in-match events (goals / cards / substitutions / apparatus scores / lane times), coach recap notes with visibility tiers, opponent-logo cache keyed by normalized name for reuse across matches, and multi-team support for galas + festivals + swim meets where a single match aggregates N participants instead of a home/away pair. Sport-agnostic by construction — every score/time/distance/apparatus dimension flows through the sport registry's scoring strategy so football, swimming, gymnastics, and combat sports share one match model with different scoring outputs. Depends on `sports::registry` for the scoring strategy resolver, `sports::season` for temporal scoping, `sports::athlete` + `sports::athlete-enrollment` for squad eligibility (only enrolled athletes appear in the squad picker), `sports::attendance` (Wave 3+ for post-match auto-attendance from the lineup), `sports::formations` for formation-slot codes, `sports::event` for the invitation + publish + notify surface, `platform::facility` + `platform::branch` for the venue. Owns seven tables: `matches` (canonical fixture row), `match_participants` (polymorphic entries for multi-team meets), `match_squad_entries` (athlete-to-match roster with role + shirt + formation slot), `match_results` (per-participant final score / time / distance / apparatus + outcome), `match_events` (in-match timeline: goals, cards, substitutions, apparatus scores), `match_notes` (coach recap with visibility tiers), `opponent_logos` (cache keyed by normalized opponent name for cross-match reuse + admin search). Every row is tenant-scoped; NO row carries application_id, region_id, organization_id, or scope_node_id — cascaded through the tenant. `MATCH_RESULT_PUBLISHED`, `LINEUP_PUBLISHED`, `MATCH_POSTPONED`, `MATCH_ABANDONED`, `MOTM_AWARDED` events feed downstream reporting (competition standings recompute, parent + public site notifications, attendance auto-materialisation, badge / achievement grants).",
   "keywords": [
     "match",
@@ -44,7 +44,7 @@
     "wave-2b"
   ],
   "priority": 42,
-  "providers": ["Academorix\\Sports\\Match\\Providers\\MatchServiceProvider"],
+  "providers": ["Stackra\\Sports\\Match\\Providers\\MatchServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Exceptions;
+namespace Stackra\Approvals\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Caller matches requester_id AND template group.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SelfApprovalRefusedException extends AcademorixException
+final class SelfApprovalRefusedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,8 +6,8 @@
  * @description
  * Walks the `olvlvl/composer-attribute-collector` manifest for
  * every class carrying at least one
- * {@see \Academorix\Scheduling\Attributes\Schedule} or
- * {@see \Academorix\Scheduling\Attributes\Cron} attribute, and
+ * {@see \Stackra\Scheduling\Attributes\Schedule} or
+ * {@see \Stackra\Scheduling\Attributes\Cron} attribute, and
  * turns each into an immutable {@see ScheduledTask} value object.
  *
  * ## What discovery does
@@ -45,18 +45,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scheduling\Support;
+namespace Stackra\Scheduling\Support;
 
-use Academorix\Scheduling\Attributes\Cron;
-use Academorix\Scheduling\Attributes\Environments;
-use Academorix\Scheduling\Attributes\OnOneServer;
-use Academorix\Scheduling\Attributes\RunInBackground;
-use Academorix\Scheduling\Attributes\RunInMaintenanceMode;
-use Academorix\Scheduling\Attributes\Schedule;
-use Academorix\Scheduling\Attributes\ScheduleName;
-use Academorix\Scheduling\Attributes\ScheduleWhen;
-use Academorix\Scheduling\Attributes\Timezone;
-use Academorix\Scheduling\Attributes\WithoutOverlapping;
+use Stackra\Scheduling\Attributes\Cron;
+use Stackra\Scheduling\Attributes\Environments;
+use Stackra\Scheduling\Attributes\OnOneServer;
+use Stackra\Scheduling\Attributes\RunInBackground;
+use Stackra\Scheduling\Attributes\RunInMaintenanceMode;
+use Stackra\Scheduling\Attributes\Schedule;
+use Stackra\Scheduling\Attributes\ScheduleName;
+use Stackra\Scheduling\Attributes\ScheduleWhen;
+use Stackra\Scheduling\Attributes\Timezone;
+use Stackra\Scheduling\Attributes\WithoutOverlapping;
 use Illuminate\Console\Command;
 use Illuminate\Container\Attributes\Singleton;
 use olvlvl\ComposerAttributeCollector\Attributes;

@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Database\Seeders;
+namespace Stackra\Coupon\Database\Seeders;
 
-use Academorix\Coupon\Enums\CouponPermission;
-use Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
-use Academorix\ServiceProvider\Attributes\AsSeeder;
+use Stackra\Coupon\Enums\CouponPermission;
+use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;
 
 /**

@@ -22,7 +22,7 @@
  *   - Middleware: `#[AsMiddleware(alias: '...', priority: ...)]`.
  *   - Console commands: `#[AsCommand]` extending `BaseCommand`.
  *   - Seeder: `#[AsSeeder(priority: 46)]` — composes
- *     {@see \Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
+ *     {@see \Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
  *   - Events: `implements ShouldDispatchAfterCommit` for domain events.
  *   - Observers: `#[ObservedBy]` on each subclass model.
  *   - Policies: `#[UsePolicy]` on each subclass model.
@@ -33,20 +33,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Providers;
+namespace Stackra\Geography\Providers;
 
-use Academorix\Geography\Models\City;
-use Academorix\Geography\Models\Country;
-use Academorix\Geography\Models\Currency;
-use Academorix\Geography\Models\Language;
-use Academorix\Geography\Models\State;
-use Academorix\Geography\Models\Timezone;
-use Academorix\Geography\RateLimiters\GeolocateRateLimiter;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Attributes\OnBoot;
-use Academorix\ServiceProvider\Attributes\OnRegister;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\Geography\Models\City;
+use Stackra\Geography\Models\Country;
+use Stackra\Geography\Models\Currency;
+use Stackra\Geography\Models\Language;
+use Stackra\Geography\Models\State;
+use Stackra\Geography\Models\Timezone;
+use Stackra\Geography\RateLimiters\GeolocateRateLimiter;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\OnBoot;
+use Stackra\ServiceProvider\Attributes\OnRegister;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * Geography module service provider.

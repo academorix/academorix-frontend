@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/entitlements/config",
+  "id": "stackra://modules/entitlements/config",
   "$version": 1,
   "title": "entitlements \u2014 developer configuration",
   "configFile": "config/entitlements.php",

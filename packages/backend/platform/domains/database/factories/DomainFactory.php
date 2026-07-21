@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Database\Factories;
+namespace Stackra\Domains\Database\Factories;
 
-use Academorix\Domains\Contracts\Data\DomainInterface;
-use Academorix\Domains\Enums\DomainKind;
-use Academorix\Domains\Enums\DomainVerificationMethod;
-use Academorix\Domains\Enums\SslStatus;
-use Academorix\Domains\Models\Domain;
+use Stackra\Domains\Contracts\Data\DomainInterface;
+use Stackra\Domains\Enums\DomainKind;
+use Stackra\Domains\Enums\DomainVerificationMethod;
+use Stackra\Domains\Enums\SslStatus;
+use Stackra\Domains\Models\Domain;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -39,7 +39,7 @@ final class DomainFactory extends Factory
             DomainInterface::ATTR_ID                  => 'dom_' . Str::ulid()->toBase32(),
             DomainInterface::ATTR_APPLICATION_ID      => 'app_' . Str::ulid()->toBase32(),
             DomainInterface::ATTR_TENANT_ID           => 'ten_' . Str::ulid()->toBase32(),
-            DomainInterface::ATTR_HOST                => $slug . '.academorix.app',
+            DomainInterface::ATTR_HOST                => $slug . '.stackra.app',
             DomainInterface::ATTR_KIND                => DomainKind::Subdomain->value,
             DomainInterface::ATTR_IS_PRIMARY          => true,
             DomainInterface::ATTR_VERIFICATION_TOKEN  => \bin2hex(\random_bytes(16)),

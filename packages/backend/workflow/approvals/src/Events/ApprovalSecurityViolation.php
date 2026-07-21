@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Events;
+namespace Stackra\Approvals\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -14,10 +14,10 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * ## Consumers
  *
- * - notifications::NotifySecurityOfViolation (to Academorix security team)
+ * - notifications::NotifySecurityOfViolation (to Stackra security team)
  * - activity::WriteToActivityLog
  * - audit::WriteAuditRecord (P0)
- * - observability::MetricsCollector (feeds academorix.approvals.security.violations counter → alerts)
+ * - observability::MetricsCollector (feeds stackra.approvals.security.violations counter → alerts)
  *
  * @category Approvals
  *

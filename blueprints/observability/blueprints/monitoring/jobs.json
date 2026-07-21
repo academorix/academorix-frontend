@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/monitoring/jobs",
+  "id": "stackra://modules/monitoring/jobs",
   "$version": 1,
   "title": "monitoring — background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Observability\\Monitoring\\Jobs\\RunHealthCheckJob",
+      "class": "Stackra\\Observability\\Monitoring\\Jobs\\RunHealthCheckJob",
       "queue": "monitoring",
       "purpose": "Per health check per interval. Dispatched by the HealthCheckObserver.created path + rescheduled by itself for the next interval. Executes the check via the appropriate HealthCheckExecutor strategy (db_ping / redis_ping / http_endpoint / …) + persists a health_check_runs row.",
       "steps": [
@@ -26,7 +26,7 @@
       "note": "tries=1 because the retry semantics for health checks are handled by the next scheduled run — a transient timeout is captured as a status='timeout' run, not retried."
     },
     {
-      "class": "Academorix\\Observability\\Monitoring\\Jobs\\EvaluateAlertPoliciesJob",
+      "class": "Stackra\\Observability\\Monitoring\\Jobs\\EvaluateAlertPoliciesJob",
       "queue": "monitoring",
       "purpose": "Every 30s sweep. Scans monitoring_alert_policies for each tenant + evaluates thresholds against the trailing window_seconds of health_check_runs (for health_check_status signals) OR pulled metrics (for error_rate / latency_p95 / queue_depth / worker_health / custom_metric signals).",
       "steps": [
@@ -45,7 +45,7 @@
       "backoff": [10, 30, 90]
     },
     {
-      "class": "Academorix\\Observability\\Monitoring\\Jobs\\FireAlertJob",
+      "class": "Stackra\\Observability\\Monitoring\\Jobs\\FireAlertJob",
       "queue": "monitoring-critical",
       "purpose": "Fired by EvaluateAlertPoliciesJob when a threshold breach is confirmed. Inserts the monitoring_alerts row + fires MonitoringAlertFired.",
       "steps": [
@@ -61,7 +61,7 @@
       "backoff": [10, 30, 90, 300, 900]
     },
     {
-      "class": "Academorix\\Observability\\Monitoring\\Jobs\\GroupAlertsIntoIncidentJob",
+      "class": "Stackra\\Observability\\Monitoring\\Jobs\\GroupAlertsIntoIncidentJob",
       "queue": "monitoring",
       "purpose": "Fired on MonitoringAlertFired. Attaches the alert to an existing incident OR opens a new one.",
       "steps": [
@@ -78,7 +78,7 @@
       "backoff": [5, 15, 60, 300, 900]
     },
     {
-      "class": "Academorix\\Observability\\Monitoring\\Jobs\\EscalateIncidentJob",
+      "class": "Stackra\\Observability\\Monitoring\\Jobs\\EscalateIncidentJob",
       "queue": "monitoring-critical",
       "purpose": "Delayed job. Fires when the incident's SLA elapses without acknowledgment. Pages the escalation contacts per oncall_page_config.escalation_policy.",
       "steps": [
@@ -94,7 +94,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Observability\\Monitoring\\Jobs\\AutoResolveIncidentJob",
+      "class": "Stackra\\Observability\\Monitoring\\Jobs\\AutoResolveIncidentJob",
       "queue": "monitoring",
       "purpose": "Nightly. Sweeps monitoring_incidents where status IN ('open', 'acknowledged') AND every attached alert has status IN ('resolved', 'suppressed', 'expired'). Auto-transitions the incident to 'resolved'.",
       "steps": [
@@ -108,7 +108,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Observability\\Monitoring\\Jobs\\NotifyProvidersJob",
+      "class": "Stackra\\Observability\\Monitoring\\Jobs\\NotifyProvidersJob",
       "queue": "monitoring",
       "purpose": "Fan-out job. Loads the policy's notify_provider_configs (or the incident's oncall_page_config), evaluates severity routing via MonitoringPagingCoordinator, dispatches one HTTP call per eligible provider.",
       "steps": [
@@ -128,7 +128,7 @@
       "note": "tries=1 because retry semantics are OWNED by this module via RetryFailedNotificationsJob + backoff schedule. Do NOT enable Laravel-level retry — it would bypass the circuit-breaker gate."
     },
     {
-      "class": "Academorix\\Observability\\Monitoring\\Jobs\\RetryFailedNotificationsJob",
+      "class": "Stackra\\Observability\\Monitoring\\Jobs\\RetryFailedNotificationsJob",
       "queue": "monitoring",
       "purpose": "Every 5 min sweep. Picks up failed provider notifications (transient failures) + re-dispatches via NotifyProvidersJob with attempt_number+1.",
       "steps": [
@@ -143,13 +143,13 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Observability\\Monitoring\\Jobs\\PurgeExpiredHealthCheckRunsJob",
+      "class": "Stackra\\Observability\\Monitoring\\Jobs\\PurgeExpiredHealthCheckRunsJob",
       "queue": "monitoring",
       "purpose": "Nightly. Applies the health_check_runs retention window: 7-day hot / 30-day cold default; 30-day hot / 90-day cold for Enterprise tenants with monitoring_extended_retention.",
       "steps": [
         "For each tenant: determine retention window from monitoring_extended_retention entitlement",
         "DELETE FROM health_check_runs WHERE tenant_id = ? AND created_at < now() - (?::int * interval '1 day') LIMIT 10000",
-        "Emit metric academorix.monitoring.retention.health_check_runs_purged_total"
+        "Emit metric stackra.monitoring.retention.health_check_runs_purged_total"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -158,7 +158,7 @@
       "tries": 1
     },
     {
-      "class": "Academorix\\Observability\\Monitoring\\Jobs\\PurgeResolvedIncidentsJob",
+      "class": "Stackra\\Observability\\Monitoring\\Jobs\\PurgeResolvedIncidentsJob",
       "queue": "monitoring",
       "purpose": "Weekly. Applies the monitoring_alerts + monitoring_incidents retention window: 30-day hot / 90-day cold default; 90-day hot / 1-year cold for Enterprise; indefinite retention on incidents for Enterprise with monitoring_extended_retention.",
       "steps": [
@@ -166,7 +166,7 @@
         "DELETE FROM monitoring_alerts WHERE tenant_id = ? AND status IN ('resolved', 'expired', 'suppressed') AND created_at < now() - (?::int * interval '1 day') LIMIT 10000",
         "DELETE FROM monitoring_incidents WHERE tenant_id = ? AND status = 'resolved' AND resolved_at < now() - (?::int * interval '1 day') AND NOT (?::boolean AND severity = 'p1') LIMIT 5000",
         "Note: P1 incidents on Enterprise-with-extended-retention tenants are NEVER auto-purged (postmortem archive)",
-        "Emit metrics academorix.monitoring.retention.alerts_purged_total + academorix.monitoring.retention.incidents_purged_total"
+        "Emit metrics stackra.monitoring.retention.alerts_purged_total + stackra.monitoring.retention.incidents_purged_total"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,

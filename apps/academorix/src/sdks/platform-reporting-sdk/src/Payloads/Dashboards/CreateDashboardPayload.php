@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformReportingSdk\Payloads\Dashboards;
+namespace Stackra\PlatformReportingSdk\Payloads\Dashboards;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\StringType;

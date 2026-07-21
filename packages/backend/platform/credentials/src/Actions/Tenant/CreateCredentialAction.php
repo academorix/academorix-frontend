@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Credentials\Actions\Tenant;
+namespace Stackra\Credentials\Actions\Tenant;
 
-use Academorix\Credentials\Contracts\Repositories\CredentialRepositoryInterface;
-use Academorix\Credentials\Data\CredentialData;
-use Academorix\Credentials\Data\Requests\CreateCredentialRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Credentials\Contracts\Repositories\CredentialRepositoryInterface;
+use Stackra\Credentials\Data\CredentialData;
+use Stackra\Credentials\Data\Requests\CreateCredentialRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/credentials` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Credentials

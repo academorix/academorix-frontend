@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Tests;
+namespace Stackra\Tax\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/tax.
+ * Base test case for stackra/tax.
  *
  * @category Tax
  *

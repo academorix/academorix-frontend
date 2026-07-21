@@ -1,6 +1,6 @@
 # Horizon Tests
 
-Test suite for the Academorix Telemetry Horizon package.
+Test suite for the Stackra Telemetry Horizon package.
 
 ## Running Tests
 
@@ -25,9 +25,9 @@ All tests should extend the `TestCase` class which provides:
 Example:
 
 ```php
-namespace Academorix\Horizon\Tests\Unit;
+namespace Stackra\Horizon\Tests\Unit;
 
-use Academorixlemetry\Horizon\Tests\TestCase;
+use Stackralemetry\Horizon\Tests\TestCase;
 
 class MetricTest extends TestCase
 {

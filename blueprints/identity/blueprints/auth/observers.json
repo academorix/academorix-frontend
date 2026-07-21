@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/auth/observers",
+  "id": "stackra://modules/auth/observers",
   "$version": 1,
   "title": "auth \u2014 Eloquent observers",
   "observers": [
     {
       "model": "RefreshToken",
-      "observer": "Academorix\\Auth\\Observers\\RefreshTokenObserver",
+      "observer": "Stackra\\Auth\\Observers\\RefreshTokenObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `atr_`",
         "creating \u2192 assign family_id (either explicit from a rotation OR fresh UUID for a first-in-chain refresh)",
@@ -25,7 +25,7 @@
     },
     {
       "model": "PersonalAccessToken (sanctum)",
-      "observer": "Academorix\\Auth\\Observers\\PersonalAccessTokenObserver",
+      "observer": "Stackra\\Auth\\Observers\\PersonalAccessTokenObserver",
       "handles": [
         "creating \u2192 refuse when the abilities compact array is missing the `_app` pseudo-ability (auth.enforce_session_scope depends on it)",
         "creating \u2192 refuse when the abilities array is empty (a session with zero permissions is a bug \u2014 at minimum the `authenticated` ability is present)",

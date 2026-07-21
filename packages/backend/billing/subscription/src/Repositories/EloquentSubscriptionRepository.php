@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Repositories;
+namespace Stackra\Subscription\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Subscription\Contracts\Data\SubscriptionInterface;
-use Academorix\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
-use Academorix\Subscription\Enums\SubscriptionState;
-use Academorix\Subscription\Models\Subscription;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Subscription\Contracts\Data\SubscriptionInterface;
+use Stackra\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
+use Stackra\Subscription\Enums\SubscriptionState;
+use Stackra\Subscription\Models\Subscription;
 use DateTimeInterface;
 use Illuminate\Support\Collection;
 

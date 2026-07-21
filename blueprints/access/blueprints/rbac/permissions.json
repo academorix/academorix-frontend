@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/rbac/permissions",
+  "id": "stackra://modules/rbac/permissions",
   "$version": 1,
   "title": "rbac \u2014 permissions",
-  "seeder": "Academorix\\Rbac\\Database\\Seeders\\RbacPermissionSeeder",
+  "seeder": "Stackra\\Rbac\\Database\\Seeders\\RbacPermissionSeeder",
   "isSystem": true,
   "description": "The RBAC module's OWN permission surface (permissions ABOUT roles + permissions). Split by guard. Tenant-plane permissions (guard: sanctum) gate the tenant CRUD surface \u2014 owner + admin can manage custom roles + their permissions. Platform-plane permissions (guard: platform_admin) gate the system role catalogue + role_definitions metadata layer. NEVER cross the guard boundary.",
   "permissions": [

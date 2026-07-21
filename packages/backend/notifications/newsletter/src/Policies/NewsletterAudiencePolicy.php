@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Policies;
+namespace Stackra\Newsletter\Policies;
 
-use Academorix\Newsletter\Contracts\Data\NewsletterAudienceInterface;
-use Academorix\Newsletter\Enums\NewsletterPermission;
-use Academorix\Newsletter\Models\NewsletterAudience;
+use Stackra\Newsletter\Contracts\Data\NewsletterAudienceInterface;
+use Stackra\Newsletter\Enums\NewsletterPermission;
+use Stackra\Newsletter\Models\NewsletterAudience;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

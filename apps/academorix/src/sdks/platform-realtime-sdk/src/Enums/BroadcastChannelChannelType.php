@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformRealtimeSdk\Enums;
+namespace Stackra\PlatformRealtimeSdk\Enums;
 
 /**
  * Wire-visible backed enum for `broadcast-channel.channel_type`.

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Events;
+namespace Stackra\Audit\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -14,7 +14,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * ## Consumers
  *
- * - monitoring::EmitPurgeMetricsListener — increments `academorix.audit.purge.total` + `academorix.audit.rows_purged.total` counters
+ * - monitoring::EmitPurgeMetricsListener — increments `stackra.audit.purge.total` + `stackra.audit.rows_purged.total` counters
  * - audit::WritePurgeMetaAuditListener — writes a summary audit row via the vendor Auditable trait so the trail records itself being purged (config.audit.compliance.write_purge_meta_audit=true by default)
  *
  * @category Audit

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invoice\Tests;
+namespace Stackra\Invoice\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/invoice.
+ * Base test case for stackra/invoice.
  *
  * @category Invoice
  *

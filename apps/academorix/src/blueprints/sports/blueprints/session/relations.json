@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/session/relations",
+  "id": "stackra://modules/session/relations",
   "$version": 1,
   "title": "session — model relationships",
   "description": "Session sits below Tenant + Branch. Composes resource_booking (facility module). Optional FKs to Team, Season, Event, Coach, Staff. Inbound from SessionAttendance (owned). NEVER carries application_id / organization_id / region_id / scope_node_id.",

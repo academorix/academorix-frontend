@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/sports-registry/broadcasts",
+  "id": "stackra://modules/sports-registry/broadcasts",
   "$version": 1,
   "title": "sports-registry — realtime broadcasts",
   "description": "The sports-registry module does NOT broadcast on realtime channels directly. Sport / Discipline / Position mutations fire domain events (see `events.json`) which downstream modules (notifications, activity, teams) may republish over their own broadcast channels — but this module ships zero channels of its own. Broadcast surfaces belong to the domain that owns the read side (team-picker UI, catalog admin UI), not the write side.",

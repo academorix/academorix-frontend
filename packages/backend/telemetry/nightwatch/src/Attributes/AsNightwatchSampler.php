@@ -13,11 +13,11 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  *
- * @see \Academorix\Nightwatch\Contracts\NightwatchSampler
- * @see \Academorix\Nightwatch\Compiler\NightwatchCompiler
+ * @see \Stackra\Nightwatch\Contracts\NightwatchSampler
+ * @see \Stackra\Nightwatch\Compiler\NightwatchCompiler
  */
 
-namespace Academorix\Nightwatch\Attributes;
+namespace Stackra\Nightwatch\Attributes;
 
 use Attribute;
 
@@ -52,7 +52,7 @@ use Attribute;
  * }
  * ```
  *
- * @see \Academorix\Nightwatch\Contracts\NightwatchSampler
+ * @see \Stackra\Nightwatch\Contracts\NightwatchSampler
  */
 #[Attribute(Attribute::TARGET_CLASS)]
 final readonly class AsNightwatchSampler

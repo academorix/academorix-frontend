@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/webhook/traits",
+  "id": "stackra://modules/webhook/traits",
   "$version": 1,
   "title": "webhook \u2014 trait composition per model",
   "description": "Two entities: WebhookSubscription + WebhookDelivery. Both compose foundation's canonical stack. WebhookSubscription opts into HasVersions (via foundation) so admin edits to url/destination_config/events produce rollback-capable snapshots \u2014 useful when someone breaks a critical integration.",
@@ -13,35 +13,35 @@
     ],
     "foundation": [
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag",
+        "trait": "Stackra\\Foundation\\Concerns\\HasSystemFlag",
         "reason": "Some subscriptions are platform-seeded (e.g. audit-log receiver for compliance). is_system=true blocks tenant-side edits."
       },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasAuditable",
+        "trait": "Stackra\\Foundation\\Concerns\\HasAuditable",
         "reason": "Subscription creation/edit + secret rotation + state transitions audit-logged for compliance evidence."
       },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasVersions",
+        "trait": "Stackra\\Foundation\\Concerns\\HasVersions",
         "reason": "WebhookSubscription only \u2014 rollback for admin edits that break integrations. Delivery rows are append-only, never versioned."
       },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\Filterable",
+        "trait": "Stackra\\Foundation\\Concerns\\Filterable",
         "reason": "Admin listings filter by state, destination, event_name, tenant."
       },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\Searchable",
+        "trait": "Stackra\\Foundation\\Concerns\\Searchable",
         "reason": "Admin search by subscription name / URL."
       }
     ],
     "tenants": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
         "reason": "Subscriptions + deliveries are per-tenant. Auto-scoped queries."
       },
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToApplication",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToApplication",
         "reason": "WebhookSubscription only \u2014 per-app scoping when the subscription is app-specific."
       }
     ]

@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Actions\Tenant;
+namespace Stackra\Storage\Actions\Tenant;
 
-use Academorix\Storage\Contracts\Repositories\FileRepositoryInterface;
-use Academorix\Storage\Data\FileData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Storage\Contracts\Repositories\FileRepositoryInterface;
+use Stackra\Storage\Data\FileData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 
 /**
  * `GET /api/v1/files/{file}` — show action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Storage

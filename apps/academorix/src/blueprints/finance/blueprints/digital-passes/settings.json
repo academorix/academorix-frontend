@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/digital-passes/settings",
+  "id": "stackra://modules/digital-passes/settings",
   "$version": 1,
   "title": "digital-passes — tenant-editable settings",
   "description": "Settings this module registers against the settings substrate.",

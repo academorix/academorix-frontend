@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Support;
+namespace Stackra\FeatureFlags\Support;
 
-use Academorix\Scope\Contracts\ScopeContextInterface;
-use Academorix\Scope\Models\ScopeDefinition;
-use Academorix\Scope\Models\ScopeNode;
+use Stackra\Scope\Contracts\ScopeContextInterface;
+use Stackra\Scope\Models\ScopeDefinition;
+use Stackra\Scope\Models\ScopeNode;
 
 /**
  * Snapshot of the caller's active `(scope_level, scope_value)` chain.
@@ -18,7 +18,7 @@ use Academorix\Scope\Models\ScopeNode;
  * {@see fromScopeContext()} — every downstream layer reads the
  * same frozen snapshot without re-querying the scope framework.
  *
- * Local to this package because `academorix/scope` does not ship
+ * Local to this package because `stackra/scope` does not ship
  * a first-class `ScopePath` VO today. See
  * `docs/scope-integration.md`.
  *

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformIntegrationsSdk\Resources;
+namespace Stackra\PlatformIntegrationsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\PlatformIntegrationsSdk\Data\AppData;
-use Academorix\PlatformIntegrationsSdk\Requests\Apps\CreateAppRequest;
-use Academorix\PlatformIntegrationsSdk\Requests\Apps\ListAppsAdminRequest;
-use Academorix\PlatformIntegrationsSdk\Requests\Apps\ListAppsRequest;
-use Academorix\PlatformIntegrationsSdk\Requests\Apps\ShowAppAdminRequest;
-use Academorix\PlatformIntegrationsSdk\Requests\Apps\ShowAppRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\PlatformIntegrationsSdk\Data\AppData;
+use Stackra\PlatformIntegrationsSdk\Requests\Apps\CreateAppRequest;
+use Stackra\PlatformIntegrationsSdk\Requests\Apps\ListAppsAdminRequest;
+use Stackra\PlatformIntegrationsSdk\Requests\Apps\ListAppsRequest;
+use Stackra\PlatformIntegrationsSdk\Requests\Apps\ShowAppAdminRequest;
+use Stackra\PlatformIntegrationsSdk\Requests\Apps\ShowAppRequest;
 use Saloon\Http\Response;
 
 /**
@@ -58,7 +58,7 @@ final readonly class AppsResource
      *
      * @return AppData
      */
-    public function create(\Academorix\PlatformIntegrationsSdk\Payloads\Apps\CreateAppPayload $payload, ?string $idempotencyKey = null): AppData
+    public function create(\Stackra\PlatformIntegrationsSdk\Payloads\Apps\CreateAppPayload $payload, ?string $idempotencyKey = null): AppData
     {
         return $this->connector->send(new CreateAppRequest($payload, $idempotencyKey))->dto();
     }

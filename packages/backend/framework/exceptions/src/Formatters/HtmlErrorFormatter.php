@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Formatters;
+namespace Stackra\Exceptions\Formatters;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Contracts\ErrorFormatterInterface;
-use Academorix\Exceptions\Support\ExceptionMapper;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Contracts\ErrorFormatterInterface;
+use Stackra\Exceptions\Support\ExceptionMapper;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;

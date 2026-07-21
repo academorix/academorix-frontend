@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Actions\Tenant;
+namespace Stackra\AgeGroup\Actions\Tenant;
 
-use Academorix\AgeGroup\Contracts\Repositories\AgeGroupRepositoryInterface;
-use Academorix\AgeGroup\Data\AgeGroupData;
-use Academorix\AgeGroup\Data\Requests\CreateAgeGroupRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\AgeGroup\Contracts\Repositories\AgeGroupRepositoryInterface;
+use Stackra\AgeGroup\Data\AgeGroupData;
+use Stackra\AgeGroup\Data\Requests\CreateAgeGroupRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/age-groups` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category AgeGroup

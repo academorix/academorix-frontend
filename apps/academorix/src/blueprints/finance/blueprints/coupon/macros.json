@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/coupon/macros",
+  "id": "stackra://modules/coupon/macros",
   "$version": 1,
   "title": "coupon — published macros",
   "description": "No published macros. The coupon module operates purely through service classes (CouponRedeemer / CouponValidator / CouponIssuer / CodeGenerator / ClawbackHandler) invoked from other modules' actions. There is no per-request coupon context that would justify a Request macro — a coupon is applied at explicit call sites, not implicitly from the request.",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tenancy/analytics",
+  "id": "stackra://modules/tenancy/analytics",
   "$version": 1,
   "title": "tenants — product analytics events",
   "description": "Product analytics events (Segment / Mixpanel / PostHog). Distinct from `events.json` (server-side pub/sub) and `metrics.json` (ops telemetry). Every event carries a `consent_tier` that gates it against the caller's consent state. `essential` events fire without opt-in; every other tier is gated by `Consent.hasConsent(user, tier)`. Fields on each event must be stable — additions are safe; renames + removals require a schema bump.",

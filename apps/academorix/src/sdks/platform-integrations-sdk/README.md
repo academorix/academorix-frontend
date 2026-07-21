@@ -1,7 +1,7 @@
-# academorix-platform/integrations-sdk
+# stackra-platform/integrations-sdk
 
 Wire-visible SDK surface for the `integrations` module of the Platform service.
-Auto-discovered by `academorix/platform-sdk` (the service umbrella) via
+Auto-discovered by `stackra/platform-sdk` (the service umbrella) via
 `#[AsSdkResource(name: 'integrations', service: 'platform')]`.
 
 ## Aggregates
@@ -9,7 +9,7 @@ Auto-discovered by `academorix/platform-sdk` (the service umbrella) via
 - **app-installations** — Per-(tenant, app) install grant
 - **app-webhook-subscriptions** — Per-install webhook subscription
 - **apps** — Marketplace app definition (Lane 2 per ADR 0025)
-- **integration-providers** — Allowlist catalog of every provider Academorix
+- **integration-providers** — Allowlist catalog of every provider Stackra
   supports (stripe / paddle / pipedrive / hubspot / twilio / zoom / apple_w
 - **tenant-integrations** — External identity / directory / HRIS / LMS
   integration configured for a Tenant
@@ -30,7 +30,7 @@ src/
 Consumed only over HTTP via the umbrella client:
 
 ```php
-app(\Academorix\PlatformSdk\Client\PlatformSdk::class)
+app(\Stackra\PlatformSdk\Client\PlatformSdk::class)
     ->integrations()
     ->appInstallations()
     ->list();

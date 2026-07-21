@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tasks\Contracts\Data;
+namespace Stackra\Tasks\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Tasks\Models\TaskComment;
+use Stackra\Tasks\Models\TaskComment;
 
 /**
  * Table shape for the `task_comments` table.

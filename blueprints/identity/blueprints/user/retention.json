@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/user/retention",
+  "id": "stackra://modules/user/retention",
   "$version": 1,
   "title": "user \u2014 retention windows",
   "description": "User + Profile follow a two-stage lifecycle: soft-delete moves the row into a hold window; hard-delete purges after the window expires. TenantMember follows the parent User. The compliance floor for the hold window is set by GDPR Art. 5(1)(e) storage limitation \u2014 default 30 days, tenant may extend up to 90 days.",

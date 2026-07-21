@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/integrations/permissions",
+  "id": "stackra://modules/integrations/permissions",
   "$version": 1,
   "title": "integrations — permissions",
   "description": "Permission strings the module seeds + the guard they target.",

@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/service-provider",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/service-provider",
   "tier": "framework",
   "surfaces": ["core"],
   "kind": "framework-plumbing",
@@ -13,12 +13,12 @@
     "olvlvl-cached discovery — zero per-request reflection",
     "Lifecycle hooks (register / boot / health-check)"
   ],
-  "when_to_use": "Every Academorix package's ServiceProvider extends this base to inherit declarative resource loading.",
+  "when_to_use": "Every Stackra package's ServiceProvider extends this base to inherit declarative resource loading.",
   "when_not_to_use": "For a plain Illuminate\\Support\\ServiceProvider without discovery, extend Laravel's base directly.",
   "peer_deps": [
-    "academorix/console",
-    "academorix/enum",
-    "academorix/foundation",
+    "stackra/console",
+    "stackra/enum",
+    "stackra/foundation",
     "olvlvl/composer-attribute-collector"
   ],
   "backend_pair": null,

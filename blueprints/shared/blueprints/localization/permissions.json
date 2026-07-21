@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/localization/permissions",
+  "id": "stackra://modules/localization/permissions",
   "$version": 1,
   "title": "localization \u2014 permissions",
-  "seeder": "Academorix\\Localization\\Database\\Seeders\\LocalizationPermissionSeeder",
+  "seeder": "Stackra\\Localization\\Database\\Seeders\\LocalizationPermissionSeeder",
   "isSystem": true,
   "permissions": [
     { "name": "languages.viewAny", "guard": "sanctum", "seededOn": ["member", "admin", "owner"] },

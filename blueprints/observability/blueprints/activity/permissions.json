@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/activity/permissions",
+  "id": "stackra://modules/activity/permissions",
   "$version": 1,
   "title": "activity — permissions",
-  "description": "Permission strings this module publishes. Split by guard: `sanctum` for tenant admins + tenant users reading the feed; `platform_admin` for Academorix ops with cross-tenant read authority. Seeded by ActivityPermissionSeeder with is_system=true.",
-  "seeder": "Academorix\\Observability\\Activity\\Database\\Seeders\\ActivityPermissionSeeder",
+  "description": "Permission strings this module publishes. Split by guard: `sanctum` for tenant admins + tenant users reading the feed; `platform_admin` for Stackra ops with cross-tenant read authority. Seeded by ActivityPermissionSeeder with is_system=true.",
+  "seeder": "Stackra\\Observability\\Activity\\Database\\Seeders\\ActivityPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

@@ -2,8 +2,8 @@
   "$version": 1,
   "name": "gateway",
   "alias": "gateway",
-  "namespace": "Academorix\\Finance\\Gateway",
-  "description": "Multi-provider payment-gateway abstraction. Every tenant configures their own provider (Stripe / Paddle / Checkout.com / Square / Razorpay / Custom) with encrypted credentials, and every finance action resolves the tenant's active gateway through PaymentGatewayInterface. Uses Laravel Cashier where possible (Stripe + Paddle) plus custom adapters for the rest. Handles Stripe Connect (charge splits: tenant Connect account receives charge minus platform fee; Academorix platform account receives the fee) plus direct-mode (tenant's own account, no Connect). Every provider webhook lands via gateway_webhook_events with idempotency + retry. Ships three tables: payment_gateway_configs (per-tenant encrypted credentials + provider + mode + connect_account_id + webhook_secret_encrypted + supported_currencies_json), payment_methods (tokenized cards on file at owner_type = guardian OR tenant, provider_token + card_brand + card_last4 + is_default), gateway_webhook_events (per-tenant per-provider webhook ledger — provider_event_id unique, payload_json, processed_at, processing_error, retry_count). Consent-gated (payment-method vault). Adapter registry via #[Bind]. See DL-4 + DL-5 in tasks.md for the multi-gateway + Stripe Connect decisions.",
+  "namespace": "Stackra\\Finance\\Gateway",
+  "description": "Multi-provider payment-gateway abstraction. Every tenant configures their own provider (Stripe / Paddle / Checkout.com / Square / Razorpay / Custom) with encrypted credentials, and every finance action resolves the tenant's active gateway through PaymentGatewayInterface. Uses Laravel Cashier where possible (Stripe + Paddle) plus custom adapters for the rest. Handles Stripe Connect (charge splits: tenant Connect account receives charge minus platform fee; Stackra platform account receives the fee) plus direct-mode (tenant's own account, no Connect). Every provider webhook lands via gateway_webhook_events with idempotency + retry. Ships three tables: payment_gateway_configs (per-tenant encrypted credentials + provider + mode + connect_account_id + webhook_secret_encrypted + supported_currencies_json), payment_methods (tokenized cards on file at owner_type = guardian OR tenant, provider_token + card_brand + card_last4 + is_default), gateway_webhook_events (per-tenant per-provider webhook ledger — provider_event_id unique, payload_json, processed_at, processing_error, retry_count). Consent-gated (payment-method vault). Adapter registry via #[Bind]. See DL-4 + DL-5 in tasks.md for the multi-gateway + Stripe Connect decisions.",
   "keywords": [
     "gateway",
     "payment-gateway",
@@ -23,7 +23,7 @@
     "finance"
   ],
   "priority": 48,
-  "providers": ["Academorix\\Finance\\Gateway\\Providers\\GatewayServiceProvider"],
+  "providers": ["Stackra\\Finance\\Gateway\\Providers\\GatewayServiceProvider"],
   "dependencies": ["foundation", "tenancy", "application", "notifications"],
   "extendedBy": [],
   "contributes": {

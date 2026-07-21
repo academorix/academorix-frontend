@@ -1,7 +1,7 @@
 # Backend Package Tiers
 
 Four-tier taxonomy that classifies every backend package. Consumed by
-`catalog.json` (`tier` field) and the `academorix new` CLI when it filters
+`catalog.json` (`tier` field) and the `stackra new` CLI when it filters
 packages by capability.
 
 **Rationale:** the physical directory layout under `packages/backend/**` is
@@ -19,11 +19,11 @@ for tooling (unlikely), revisit with a full path-repository sweep.
 
 ## Tier 1 — Foundation (2 packages)
 
-Every Academorix app boots against these. Zero business logic. Zero SaaS-shape
+Every Stackra app boots against these. Zero business logic. Zero SaaS-shape
 opinion. Zero domain flavour. Both are runtime kernels.
 
-- `packages/backend/foundation/` — `academorix/foundation`
-- `packages/backend/shared/foundation/` — `academorix-shared/foundation`
+- `packages/backend/foundation/` — `stackra/foundation`
+- `packages/backend/shared/foundation/` — `stackra-shared/foundation`
 
 ---
 
@@ -74,18 +74,18 @@ observability, and the plumbing around them. Vertical-agnostic.
 
 `compliance/architecture` is Tier 2 — see above.
 
-### `apps/academorix/src/modules/finance/*` (14 packages, skipping domain-shape)
+### `apps/stackra/src/modules/finance/*` (14 packages, skipping domain-shape)
 
-**Moved out of Stackra base.** Every finance module is now under the Academorix
+**Moved out of Stackra base.** Every finance module is now under the Stackra
 app tree. Reason: the whole payments surface (chargeback → wallet) is
-`parent-pays-academy`, which is Academorix product domain, not Stackra framework
+`parent-pays-academy`, which is Stackra product domain, not Stackra framework
 primitives.
 
 **In-scope:** `chargeback`, `coupon`, `dunning`, `expenses`, `gateway`,
 `invoice`, `marketplace-fee`, `order`, `payment`, `payout`, `refund`, `tax`,
 `transaction`, `wallet`
 
-**Also under `apps/academorix/src/modules/finance/`:** `membership`,
+**Also under `apps/stackra/src/modules/finance/`:** `membership`,
 `digital-passes` — these are sport/product-specific (Tier 4 shape below).
 
 ### `packages/backend/notifications/*` (8 packages)
@@ -107,10 +107,10 @@ primitives.
 
 `auth`, `identity`, `mfa`, `people`, `platform-user`, `service-accounts`, `user`
 
-### `apps/academorix/src/modules/growth/*` (5 packages)
+### `apps/stackra/src/modules/growth/*` (5 packages)
 
 **Moved out of Stackra base.** Marketing / attribution / referral surface is
-Academorix product domain.
+Stackra product domain.
 
 `analytics`, `attribution`, `leads`, `marketing`, `referrals`
 
@@ -139,12 +139,12 @@ remain authoritative for their domain.
 
 ### Sports vertical (21 packages)
 
-`apps/academorix/src/modules/sports/*` (moved out of `packages/backend/` — pure
-Academorix domain).
+`apps/stackra/src/modules/sports/*` (moved out of `packages/backend/` — pure
+Stackra domain).
 
 ### Products (1 package)
 
-`apps/academorix/src/modules/products/*` (moved out of `packages/backend/` —
+`apps/stackra/src/modules/products/*` (moved out of `packages/backend/` —
 `geofencing` currently, product-specific).
 
 ### Workflow (2 packages)
@@ -161,8 +161,8 @@ Academorix domain).
 
 ### Domain-shape finance (2 packages)
 
-- `apps/academorix/src/modules/finance/membership`
-- `apps/academorix/src/modules/finance/digital-passes`
+- `apps/stackra/src/modules/finance/membership`
+- `apps/stackra/src/modules/finance/digital-passes`
 
 ---
 
@@ -259,7 +259,7 @@ python3 scripts/add-catalog-schema.py --dry-run --quiet
 
 The 14 `finance/*`, 5 `growth/*`, 21 `sports/*`, and 1 `products/*` packages
 that used to live under `packages/backend/` moved to
-`apps/academorix/src/modules/` (commit `6eb4096df` — 2026-07-XX). They are
+`apps/stackra/src/modules/` (commit `6eb4096df` — 2026-07-XX). They are
 Tier 4 (domain/vertical) and correctly SKIPPED per this taxonomy — no
 `catalog.json` is authored for them regardless of location. If the vertical
 packages ever come back into the SaaS-primitive slot, this doc plus their
@@ -273,4 +273,4 @@ packages ever come back into the SaaS-primitive slot, this doc plus their
 - Tier field: this document
 - Field shape: `.kiro/specs/utils-work/catalog-tasks.md`
 - Schema:
-  `https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json`
+  `https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json`

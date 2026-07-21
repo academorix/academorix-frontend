@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Data;
+namespace Stackra\Subscription\Data;
 
-use Academorix\Subscription\Contracts\Data\SubscriptionEventInterface;
-use Academorix\Subscription\Enums\SubscriptionEventActor;
-use Academorix\Subscription\Enums\SubscriptionEventKind;
-use Academorix\Subscription\Models\SubscriptionEvent;
+use Stackra\Subscription\Contracts\Data\SubscriptionEventInterface;
+use Stackra\Subscription\Enums\SubscriptionEventActor;
+use Stackra\Subscription\Enums\SubscriptionEventKind;
+use Stackra\Subscription\Models\SubscriptionEvent;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
@@ -21,7 +21,7 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
  * response — it may reference the provider's customer email,
  * billing address, and tax IDs. Platform-admin actions surface the
  * blob via a different code path (see
- * {@see \Academorix\Subscription\Actions\Platform\ShowSubscription}).
+ * {@see \Stackra\Subscription\Actions\Platform\ShowSubscription}).
  *
  * @category Subscription
  *

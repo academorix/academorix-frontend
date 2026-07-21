@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Services;
+namespace Stackra\Compliance\Services;
 
-use Academorix\Compliance\Contracts\Data\SubprocessorInterface;
-use Academorix\Compliance\Contracts\Services\SubprocessorFeedRendererInterface;
-use Academorix\Compliance\Contracts\Services\SubprocessorRegistryInterface;
-use Academorix\Compliance\Enums\SubprocessorRole;
-use Academorix\Compliance\Models\Subprocessor;
+use Stackra\Compliance\Contracts\Data\SubprocessorInterface;
+use Stackra\Compliance\Contracts\Services\SubprocessorFeedRendererInterface;
+use Stackra\Compliance\Contracts\Services\SubprocessorRegistryInterface;
+use Stackra\Compliance\Enums\SubprocessorRole;
+use Stackra\Compliance\Models\Subprocessor;
 use Illuminate\Container\Attributes\Scoped;
 
 /**

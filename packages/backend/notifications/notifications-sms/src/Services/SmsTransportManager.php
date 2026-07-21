@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Services;
+namespace Stackra\Notifications\Sms\Services;
 
-use Academorix\Notifications\Sms\Contracts\Services\SmsOptOutRegistryInterface;
-use Academorix\Notifications\Sms\Contracts\Services\SmsTransportInterface;
-use Academorix\Notifications\Sms\Contracts\Services\SmsTransportManagerInterface;
-use Academorix\Notifications\Sms\Exceptions\SmsProviderDisabledException;
+use Stackra\Notifications\Sms\Contracts\Services\SmsOptOutRegistryInterface;
+use Stackra\Notifications\Sms\Contracts\Services\SmsTransportInterface;
+use Stackra\Notifications\Sms\Contracts\Services\SmsTransportManagerInterface;
+use Stackra\Notifications\Sms\Exceptions\SmsProviderDisabledException;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Contracts\Container\Container;
 

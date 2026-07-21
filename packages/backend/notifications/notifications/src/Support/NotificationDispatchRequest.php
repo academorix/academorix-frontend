@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Support;
+namespace Stackra\Notifications\Support;
 
 /**
  * Readonly VO describing a single dispatch request.

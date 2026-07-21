@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/progress/schemas/coach-note",
+  "id": "stackra://modules/progress/schemas/coach-note",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "CoachNote",

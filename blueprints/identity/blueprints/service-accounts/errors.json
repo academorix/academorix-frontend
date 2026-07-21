@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/service-accounts/errors",
+  "id": "stackra://modules/service-accounts/errors",
   "$version": 1,
   "title": "service-accounts \u2014 error codes",
   "namespace": "service-accounts",

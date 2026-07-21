@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/subscription/webhooks",
+  "id": "stackra://modules/subscription/webhooks",
   "$version": 1,
   "title": "subscription \u2014 webhook contracts",
   "description": "Inbound Cashier webhooks. Registered with the webhook module which handles signature verification, replay protection, and dispatch. Our IngestCashierWebhookListener translates events into SubscriptionEvent + fires our own domain events.",

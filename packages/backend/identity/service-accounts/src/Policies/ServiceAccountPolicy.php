@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Policies;
+namespace Stackra\ServiceAccounts\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\ServiceAccounts\Models\ServiceAccount;
+use Stackra\User\Models\User;
+use Stackra\ServiceAccounts\Models\ServiceAccount;
 
 /**
- * Authorization policy for {@see \Academorix\ServiceAccounts\Models\ServiceAccount}.
+ * Authorization policy for {@see \Stackra\ServiceAccounts\Models\ServiceAccount}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

@@ -26,18 +26,18 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  *
- * @see \Academorix\Settings\Attributes\AsSetting
- * @see \Academorix\Settings\Attributes\SettingField
- * @see \Academorix\Settings\Attributes\SettingGroup
+ * @see \Stackra\Settings\Attributes\AsSetting
+ * @see \Stackra\Settings\Attributes\SettingField
+ * @see \Stackra\Settings\Attributes\SettingGroup
  */
 
-namespace Academorix\Settings\Settings;
+namespace Stackra\Settings\Settings;
 
 use Spatie\LaravelSettings\Settings;
-use Academorix\Settings\Attributes\AsSetting;
-use Academorix\Settings\Attributes\SettingField;
-use Academorix\Settings\Attributes\SettingGroup;
-use Academorix\Settings\Enums\ControlType;
+use Stackra\Settings\Attributes\AsSetting;
+use Stackra\Settings\Attributes\SettingField;
+use Stackra\Settings\Attributes\SettingGroup;
+use Stackra\Settings\Enums\ControlType;
 
 /**
  * Authentication and Security Settings.

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Actions\Platform\Countries;
+namespace Stackra\Geography\Actions\Platform\Countries;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Geography\Contracts\Data\CountryInterface;
-use Academorix\Geography\Contracts\Repositories\CountryRepositoryInterface;
-use Academorix\Geography\Data\Requests\CreateCountryRequestData;
-use Academorix\Geography\Data\Resources\CountryResourceData;
-use Academorix\Geography\Enums\GeographyPermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Geography\Contracts\Data\CountryInterface;
+use Stackra\Geography\Contracts\Repositories\CountryRepositoryInterface;
+use Stackra\Geography\Data\Requests\CreateCountryRequestData;
+use Stackra\Geography\Data\Resources\CountryResourceData;
+use Stackra\Geography\Enums\GeographyPermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `POST /api/v1/platform/geography/countries` — platform admin

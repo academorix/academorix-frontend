@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Contracts\Services;
+namespace Stackra\Notifications\Contracts\Services;
 
-use Academorix\Notifications\Services\DefaultNotificationPreferenceResolver;
-use Academorix\Notifications\Support\NotificationPreferenceDecision;
+use Stackra\Notifications\Services\DefaultNotificationPreferenceResolver;
+use Stackra\Notifications\Support\NotificationPreferenceDecision;
 use Illuminate\Container\Attributes\Bind;
 
 /**

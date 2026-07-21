@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Contracts\Services;
+namespace Stackra\Newsletter\Contracts\Services;
 
-use Academorix\Newsletter\Models\NewsletterAudience;
-use Academorix\Newsletter\Services\DefaultAudienceEvaluator;
+use Stackra\Newsletter\Models\NewsletterAudience;
+use Stackra\Newsletter\Services\DefaultAudienceEvaluator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

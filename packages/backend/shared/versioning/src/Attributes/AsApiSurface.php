@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Attributes;
+namespace Stackra\Versioning\Attributes;
 
 use Attribute;
 
@@ -10,9 +10,9 @@ use Attribute;
  * Mark a controller or GraphQL resolver as a versioned API surface.
  *
  * Hydrated at boot by the framework's generic
- * {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ * {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  * via the `#[HydratesFrom]` declaration on
- * {@see \Academorix\Versioning\Contracts\Services\ApiVersionRegistryInterface::registerSurface()}.
+ * {@see \Stackra\Versioning\Contracts\Services\ApiVersionRegistryInterface::registerSurface()}.
  * Used by build-time checks to guarantee every declared version has a
  * resolver / handler present. Also feeds the `versioning:list` admin
  * surface with the list of surfaces impacted by a given version.

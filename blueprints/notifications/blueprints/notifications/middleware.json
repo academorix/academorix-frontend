@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/middleware",
+  "id": "stackra://modules/notifications/middleware",
   "$version": 1,
   "title": "notifications core \u2014 HTTP middleware",
   "description": "Two rate limiters on top of foundation's canonical middleware pipeline. Placed AFTER `throttle:foundation-base` (which handles baseline 60/min authed) so per-surface limits stack additively \u2014 a user can hit their base budget AND the mark-seen budget in the same minute without either bleeding into the other.",

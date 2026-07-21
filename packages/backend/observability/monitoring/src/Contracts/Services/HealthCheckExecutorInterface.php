@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Contracts\Services;
+namespace Stackra\Monitoring\Contracts\Services;
 
-use Academorix\Monitoring\Services\HealthCheckExecutor;
+use Stackra\Monitoring\Services\HealthCheckExecutor;
 use Illuminate\Container\Attributes\Bind;
 
 /**

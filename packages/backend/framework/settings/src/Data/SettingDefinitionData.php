@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Settings\Data;
+namespace Stackra\Settings\Data;
 
 /**
  * Full DTO for one `#[AsSetting]`-decorated group.
@@ -10,7 +10,7 @@ namespace Academorix\Settings\Data;
  * Captures the group-level metadata from `#[AsSetting]`, the
  * Spatie Settings class FQCN, the resolved field metadata array,
  * and the resolved visual-group metadata array. Stored in the
- * {@see \Academorix\Settings\Registry\SettingsRegistry} at boot.
+ * {@see \Stackra\Settings\Registry\SettingsRegistry} at boot.
  *
  * @category Settings
  *

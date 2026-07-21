@@ -1,88 +1,88 @@
 {
-  "id": "academorix://modules/coupon/listeners",
+  "id": "stackra://modules/coupon/listeners",
   "$version": 1,
   "title": "coupon — subscribed events",
   "listeners": [
     {
       "event": "coupon::CouponRedeemed",
-      "listener": "Academorix\\Finance\\Coupon\\Listeners\\CaptureCouponRedeemedAsMarketingConversion",
+      "listener": "Stackra\\Finance\\Coupon\\Listeners\\CaptureCouponRedeemedAsMarketingConversion",
       "queue": "marketing",
       "priority": 60,
       "purpose": "Fires a marketing::MarketingEvent for ad-network conversion attribution. Only when coupon.issuance_source IN ('referral', 'marketing_campaign'). Manual + import + api coupons skip. Reads discount_snapshot + issuance_context and forwards to the marketing module's MarketingEventCapturer with the source_amount_cents as the conversion value."
     },
     {
       "event": "coupon::CouponClawbackCompleted",
-      "listener": "Academorix\\Finance\\Coupon\\Listeners\\ReverseCouponRedemptionMarketingEvent",
+      "listener": "Stackra\\Finance\\Coupon\\Listeners\\ReverseCouponRedemptionMarketingEvent",
       "queue": "marketing",
       "priority": 60,
       "purpose": "Fires the reversal marketing event when the original CouponRedeemed had fired a marketing event. Protects downstream ROAS + fraud-model training data by informing the ad network the conversion was reversed."
     },
     {
       "event": "coupon::CouponRedemptionReversed",
-      "listener": "Academorix\\Finance\\Coupon\\Listeners\\ReverseCouponRedemptionMarketingEventOnAdminReverse",
+      "listener": "Stackra\\Finance\\Coupon\\Listeners\\ReverseCouponRedemptionMarketingEventOnAdminReverse",
       "queue": "marketing",
       "priority": 60,
       "purpose": "Same shape as CouponClawbackCompleted listener but for the admin-initiated manual reverse path (not a refund cascade). Fires the reversal marketing event."
     },
     {
       "event": "coupon::CouponRedeemed",
-      "listener": "Academorix\\Finance\\Coupon\\Listeners\\NotifyFinanceOfDiscountApplied",
+      "listener": "Stackra\\Finance\\Coupon\\Listeners\\NotifyFinanceOfDiscountApplied",
       "queue": "coupons-critical",
       "priority": 30,
       "purpose": "Wave 4 bridge. Notifies finance::invoice module that a coupon reduced revenue on a specific invoice line. Powers the revenue-recognition adjustment on the invoice."
     },
     {
       "event": "coupon::CouponClawbackCompleted",
-      "listener": "Academorix\\Finance\\Coupon\\Listeners\\NotifyFinanceOfDiscountReversed",
+      "listener": "Stackra\\Finance\\Coupon\\Listeners\\NotifyFinanceOfDiscountReversed",
       "queue": "coupons-critical",
       "priority": 30,
       "purpose": "Wave 4 bridge. Notifies finance::invoice module to un-adjust the revenue-recognition when a redemption is clawed back."
     },
     {
       "event": "coupon::CouponRedeemed",
-      "listener": "Academorix\\Finance\\Coupon\\Listeners\\ProgressReferralOnCouponRedeemed",
+      "listener": "Stackra\\Finance\\Coupon\\Listeners\\ProgressReferralOnCouponRedeemed",
       "queue": "referrals",
       "priority": 40,
       "purpose": "Wave 5 bridge. When the redeemed coupon.issuance_source='referral': notify growth::referrals module that the referred user consumed the reward — this may progress the referral state (rewarded terminal state when reward materialization is via coupon usage rather than direct credit)."
     },
     {
       "event": "finance::RefundIssued",
-      "listener": "Academorix\\Finance\\Coupon\\Listeners\\ProcessCouponClawbackOnInvoiceRefunded",
+      "listener": "Stackra\\Finance\\Coupon\\Listeners\\ProcessCouponClawbackOnInvoiceRefunded",
       "queue": "coupons-critical",
       "priority": 40,
       "purpose": "Wave 4 bridge. Dispatches ProcessCouponClawbackJob to reverse any CouponRedemption tied (via applied_to_type='invoice' + applied_to_id=refund.invoice_id) to the refunded invoice."
     },
     {
       "event": "finance::ChargebackFiled",
-      "listener": "Academorix\\Finance\\Coupon\\Listeners\\ProcessCouponClawbackOnChargeback",
+      "listener": "Stackra\\Finance\\Coupon\\Listeners\\ProcessCouponClawbackOnChargeback",
       "queue": "coupons-critical",
       "priority": 40,
       "purpose": "Higher-severity clawback path. Same shape as refund cascade but flags the redemption as chargeback-triggered (records the fraud signal on the customer profile for referrals module cross-reference)."
     },
     {
       "event": "referrals::ReferralVested",
-      "listener": "Academorix\\Finance\\Coupon\\Listeners\\IssueCouponOnReferralRewardVested",
+      "listener": "Stackra\\Finance\\Coupon\\Listeners\\IssueCouponOnReferralRewardVested",
       "queue": "coupons",
       "priority": 40,
       "purpose": "Wave 5 bridge. When a ReferralReward.status transitions to vested AND its reward_type IN ('percent_discount', 'fixed_amount'): call CouponIssuer::issueForReferral() to produce a redeemable code with issuance_source='referral'."
     },
     {
       "event": "membership::PlanArchived",
-      "listener": "Academorix\\Finance\\Coupon\\Listeners\\CascadeCouponsOnMembershipPlanArchived",
+      "listener": "Stackra\\Finance\\Coupon\\Listeners\\CascadeCouponsOnMembershipPlanArchived",
       "queue": "coupons",
       "priority": 50,
       "purpose": "Wave 4 bridge. When a MembershipPlan is archived: remove the archived plan from every Coupon.applicable_plan_ids. If the array becomes empty, transition the coupon to is_active=false with reason='applicable_plan_archived'."
     },
     {
       "event": "user::UserErased",
-      "listener": "Academorix\\Finance\\Coupon\\Listeners\\RedactCouponRedemptionsOnUserErasure",
+      "listener": "Stackra\\Finance\\Coupon\\Listeners\\RedactCouponRedemptionsOnUserErasure",
       "queue": "coupons",
       "priority": 50,
       "purpose": "GDPR minimisation. When a user is erased as the customer on any CouponRedemption: schedule 90-day-post-erasure redaction of customer_id + customer_type. Retention window unchanged."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Finance\\Coupon\\Listeners\\PurgeCouponDataForErasedTenant",
+      "listener": "Stackra\\Finance\\Coupon\\Listeners\\PurgeCouponDataForErasedTenant",
       "queue": "coupons",
       "purpose": "Cascade delete via FK; writes compliance audit trail entry + emits count metrics. Invoice-linked redemptions migrate to compliance_archive.coupon_redemptions first."
     }

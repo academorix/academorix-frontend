@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\People\Database\Factories;
+namespace Stackra\People\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\People\Contracts\Data\PersonIdentityInterface;
-use Academorix\People\Models\PersonIdentity;
+use Stackra\People\Contracts\Data\PersonIdentityInterface;
+use Stackra\People\Models\PersonIdentity;
 
 /**
- * Factory for {@see \Academorix\People\Models\PersonIdentity}.
+ * Factory for {@see \Stackra\People\Models\PersonIdentity}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\People\Models\PersonIdentity>
+ * @extends Factory<\Stackra\People\Models\PersonIdentity>
  *
  * @category People
  *
@@ -39,7 +39,7 @@ final class PersonIdentityFactory extends Factory
     public function definition(): array
     {
         return [
-            PersonIdentityInterface::ATTR_ACADEMORIX_ID => fake()->sentence(3),
+            PersonIdentityInterface::ATTR_STACKRA_ID => fake()->sentence(3),
             PersonIdentityInterface::ATTR_LEGAL_NAME => fake()->sentence(3),
             PersonIdentityInterface::ATTR_DATE_OF_BIRTH => fake()->sentence(3),
             PersonIdentityInterface::ATTR_NATIONALITY => null,

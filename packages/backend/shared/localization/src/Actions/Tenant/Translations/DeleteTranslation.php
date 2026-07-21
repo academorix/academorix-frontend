@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Actions\Tenant\Translations;
+namespace Stackra\Localization\Actions\Tenant\Translations;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Localization\Enums\LocalizationPermission;
-use Academorix\Localization\Models\Translation;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Delete;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Localization\Enums\LocalizationPermission;
+use Stackra\Localization\Models\Translation;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Delete;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\JsonResponse;
 
 /**

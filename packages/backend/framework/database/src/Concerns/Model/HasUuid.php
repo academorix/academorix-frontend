@@ -14,7 +14,7 @@ declare(strict_types=1);
  *
  * ## Usage:
  * ```php
- * use Academorix\Database\Concerns\Model\HasUuid;
+ * use Stackra\Database\Concerns\Model\HasUuid;
  *
  * // Separate UUID column alongside auto-increment ID:
  * class Post extends Model
@@ -44,7 +44,7 @@ declare(strict_types=1);
  * @see \Illuminate\Support\Str::uuid()
  */
 
-namespace Academorix\Database\Concerns\Model;
+namespace Stackra\Database\Concerns\Model;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -67,9 +67,9 @@ trait HasUuid
     {
         // Read attribute configuration (if present)
         $config = null;
-        $forClass = \Academorix\Database\Support\AttributeReader::forClass(static::class);
+        $forClass = \Stackra\Database\Support\AttributeReader::forClass(static::class);
         foreach ($forClass->classAttributes as $attr) {
-            if ($attr instanceof \Academorix\Database\Attributes\UuidColumn) {
+            if ($attr instanceof \Stackra\Database\Attributes\UuidColumn) {
                 $config = $attr;
                 break;
             }
@@ -100,9 +100,9 @@ trait HasUuid
      */
     public function uuidColumn(): string
     {
-        $forClass = \Academorix\Database\Support\AttributeReader::forClass(static::class);
+        $forClass = \Stackra\Database\Support\AttributeReader::forClass(static::class);
         foreach ($forClass->classAttributes as $attr) {
-            if ($attr instanceof \Academorix\Database\Attributes\UuidColumn) {
+            if ($attr instanceof \Stackra\Database\Attributes\UuidColumn) {
                 return $attr->column;
             }
         }
@@ -121,9 +121,9 @@ trait HasUuid
      */
     public function uuidAsKey(): bool
     {
-        $forClass = \Academorix\Database\Support\AttributeReader::forClass(static::class);
+        $forClass = \Stackra\Database\Support\AttributeReader::forClass(static::class);
         foreach ($forClass->classAttributes as $attr) {
-            if ($attr instanceof \Academorix\Database\Attributes\UuidColumn) {
+            if ($attr instanceof \Stackra\Database\Attributes\UuidColumn) {
                 return $attr->asKey;
             }
         }

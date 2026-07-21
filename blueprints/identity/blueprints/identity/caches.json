@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/identity/caches",
+  "id": "stackra://modules/identity/caches",
   "$version": 1,
   "title": "identity \u2014 cache keys + tags",
   "driver": "redis",
@@ -59,7 +59,7 @@
     },
     {
       "pattern": "idn:active_lockouts:count",
-      "description": "Denormalised gauge feeding the `academorix.identity.active_lockouts` metric. Refreshed by a scheduled task every 60s.",
+      "description": "Denormalised gauge feeding the `stackra.identity.active_lockouts` metric. Refreshed by a scheduled task every 60s.",
       "ttlSeconds": 90,
       "tags": ["identity"]
     }

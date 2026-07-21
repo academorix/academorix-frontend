@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Repositories;
+namespace Stackra\Facility\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Facility\Contracts\Data\ResourceBookingInterface;
-use Academorix\Facility\Contracts\Repositories\ResourceBookingRepositoryInterface;
-use Academorix\Facility\Models\ResourceBooking;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Facility\Contracts\Data\ResourceBookingInterface;
+use Stackra\Facility\Contracts\Repositories\ResourceBookingRepositoryInterface;
+use Stackra\Facility\Models\ResourceBooking;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Facility\Models\ResourceBooking}.
+ * Attribute-first Eloquent repository for {@see Stackra\Facility\Models\ResourceBooking}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ResourceBookingInterface::class)]` which resolves to
  * `ResourceBooking` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Facility\Models\ResourceBooking>
+ * @extends Repository<\Stackra\Facility\Models\ResourceBooking>
  *
  * @category Facility
  *

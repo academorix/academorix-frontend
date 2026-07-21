@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Contracts\Services;
+namespace Stackra\Subscription\Contracts\Services;
 
-use Academorix\Subscription\Models\Plan;
-use Academorix\Subscription\Models\Subscription;
-use Academorix\Subscription\Services\DefaultBillingService;
+use Stackra\Subscription\Models\Plan;
+use Stackra\Subscription\Models\Subscription;
+use Stackra\Subscription\Services\DefaultBillingService;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Exceptions;
+namespace Stackra\Coupon\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `COUPON_DUPLICATE_ACTIVE_CODE` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CouponDuplicateActiveCodeException extends AcademorixException
+final class CouponDuplicateActiveCodeException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

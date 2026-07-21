@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/referrals/data-classes",
+  "id": "stackra://modules/referrals/data-classes",
   "$version": 1,
   "title": "referrals — field classification",
   "description": "Referrals data is a mix of commercial reference data (public within tenant admins — program config), operational identifiers (referrer/referred user IDs, code strings), financial records (reward amounts, currency, payment status), fraud evidence (hashed device fingerprints, IP hashes, disposable-email flags), and marketing-adjacent identifiers (click IDs, UTM parameters in the attribution snapshot). No health / medical / minor-specific data on any row — those attach through the User side.",

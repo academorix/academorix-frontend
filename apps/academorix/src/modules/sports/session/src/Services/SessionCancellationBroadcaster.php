@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Session\Services;
+namespace Stackra\Session\Services;
 
-use Academorix\Session\Contracts\Services\SessionCancellationBroadcasterInterface;
+use Stackra\Session\Contracts\Services\SessionCancellationBroadcasterInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Session\Contracts\Repositories\SessionAttendanceRepositoryInterface;
+use Stackra\Session\Contracts\Repositories\SessionAttendanceRepositoryInterface;
 
 /**
  * Concrete service — SessionCancellationBroadcaster.

@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/localization/traits",
+  "id": "stackra://modules/localization/traits",
   "$version": 1,
   "title": "localization \u2014 trait composition",
   "description": "Two owned traits. HasTranslations for Eloquent models with translated columns \u2014 pairs with #[Translatable] property attributes to declare which columns are localised. IsLocaleAware for lightweight consumers that need the current locale + fallback chain without model bindings.",
   "owned": [
     {
-      "trait": "Academorix\\Localization\\Concerns\\HasTranslations",
+      "trait": "Stackra\\Localization\\Concerns\\HasTranslations",
       "description": "Mixed into Eloquent models with translated columns. Adds ->translate($locale) scope + magic accessors that return the active-locale value for #[Translatable] properties. Storage strategy: JSONB column `translations` on the model with shape `{ locale: { field: value } }` so the model row remains one physical row.",
       "public": true,
       "usedBy": [
@@ -24,7 +24,7 @@
       "conflicts_with": []
     },
     {
-      "trait": "Academorix\\Localization\\Concerns\\IsLocaleAware",
+      "trait": "Stackra\\Localization\\Concerns\\IsLocaleAware",
       "description": "Lightweight trait. Adds `locale()` accessor pulling from LocaleResolver + `resolveFallbackChain()` for constructors that need the full chain (used by view composers + notification classes).",
       "public": true,
       "usedBy": [],
@@ -41,15 +41,15 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasSystemFlag" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
-    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
-    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
+    "tenants": [{ "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "activity": [{ "trait": "Stackra\\Activity\\Concerns\\HasActivityLog" }]
   },
   "composition": {
     "platform_language": {

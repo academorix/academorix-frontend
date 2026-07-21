@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/athlete-guardian/macros",
+  "id": "stackra://modules/athlete-guardian/macros",
   "$version": 1,
   "title": "athlete-guardian — published macros",
   "description": "No request-level macros. Guardian context is always athlete-scoped — the /me/guardianships surface reads Request::activeAthleteId() (from athlete module) + narrows to guardian.athlete_id.",

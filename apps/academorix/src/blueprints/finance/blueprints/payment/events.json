@@ -1,19 +1,19 @@
 {
-  "id": "academorix://modules/payment/events",
+  "id": "stackra://modules/payment/events",
   "$version": 1,
   "title": "payment — published events",
-  "namespace": "Academorix\\Finance\\Payment\\Events",
+  "namespace": "Stackra\\Finance\\Payment\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. `PaymentCaptured` is the primary success signal — it fans out to the TransactionRecorder + Invoice.mark_paid + growth::marketing capture. `PaymentDisputeOpened` is a P1 for high-value disputes (>$500 configurable threshold). `PaymentProviderCircuitBreakerOpened` pages ops when a provider is unreachable. `PaymentWebhookReceived` is a low-signal audit trail event for every inbound webhook regardless of validity.",
   "events": [
     {
       "name": "PaymentIntentCreated",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentIntentCreated",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentIntentCreated",
       "trigger": "PaymentIntentObserver.created after the payment_intents row commits. status='initialized'. Fires once per intent.",
       "queue": "payment",
       "consumers": [
         "audit::WriteToAuditLog (retention: 7 years — financial audit)",
-        "monitoring::MetricsCollector (increments academorix.payment.intents.created_total)"
+        "monitoring::MetricsCollector (increments stackra.payment.intents.created_total)"
       ],
       "payload": {
         "payment_intent_id": "ULID (pit_*)",
@@ -29,7 +29,7 @@
     },
     {
       "name": "PaymentIntentRequiresAction",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentIntentRequiresAction",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentIntentRequiresAction",
       "trigger": "Status transitioned to 'requires_action'. Customer must complete a step-up flow (typically 3DS2 challenge). next_action_type + next_action_url populated.",
       "queue": "payment",
       "consumers": [
@@ -49,7 +49,7 @@
     },
     {
       "name": "PaymentIntentProcessing",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentIntentProcessing",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentIntentProcessing",
       "trigger": "Status transitioned to 'processing'. Provider accepted the confirmation and is processing async. Terminal within a short window (seconds to minutes).",
       "queue": "payment",
       "consumers": ["monitoring::MetricsCollector"],
@@ -61,12 +61,12 @@
     },
     {
       "name": "PaymentIntentSucceeded",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentIntentSucceeded",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentIntentSucceeded",
       "trigger": "Status transitioned to 'succeeded'. Money captured. A Payment row was atomically created in the same DB transaction — this event fires after that transaction commits. Precedes PaymentCaptured (which fires from the Payment side).",
       "queue": "payment",
       "consumers": [
         "audit::WriteToAuditLog (retention: 7 years)",
-        "monitoring::MetricsCollector (increments academorix.payment.intents.succeeded_total)"
+        "monitoring::MetricsCollector (increments stackra.payment.intents.succeeded_total)"
       ],
       "payload": {
         "payment_intent_id": "ULID",
@@ -79,7 +79,7 @@
     },
     {
       "name": "PaymentIntentFailed",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentIntentFailed",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentIntentFailed",
       "trigger": "Status transitioned to 'failed'. Provider rejected the confirmation. Terminal. last_error_code + last_error_type populated.",
       "queue": "payment",
       "consumers": [
@@ -99,7 +99,7 @@
     },
     {
       "name": "PaymentIntentCancelled",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentIntentCancelled",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentIntentCancelled",
       "trigger": "Status transitioned to 'cancelled'. Customer or system cancelled. cancellation_reason populated.",
       "queue": "payment",
       "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
@@ -112,7 +112,7 @@
     },
     {
       "name": "PaymentIntentExpired",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentIntentExpired",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentIntentExpired",
       "trigger": "ExpireStalePaymentIntentsJob nightly sweep marked an intent 'cancelled' with cancellation_reason='expired' (>24h in non-terminal status). Signals abandoned checkouts.",
       "queue": "payment",
       "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
@@ -125,7 +125,7 @@
     },
     {
       "name": "PaymentCaptured",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentCaptured",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentCaptured",
       "trigger": "PRIMARY SUCCESS SIGNAL. PaymentObserver.created after the payments row commits. Fires the three atomic side effects: TransactionRecorder.record + Invoice.mark_paid + growth::marketing::CaptureMembershipPurchasedMarketingEvent (when invoice.membership_id is set).",
       "queue": "payment",
       "consumers": [
@@ -134,7 +134,7 @@
         "invoice::MarkInvoicePaidOnPaymentCaptured (state update: paid or partially_paid — same DB txn)",
         "growth::marketing::CaptureMembershipPurchasedMarketingEvent (attribution — via #[AsDomainEventMapper] when invoice.membership_id is set)",
         "notifications::DispatchPaymentSucceededNotification (customer + admin — receipt)",
-        "monitoring::MetricsCollector (increments academorix.payment.captured_total)"
+        "monitoring::MetricsCollector (increments stackra.payment.captured_total)"
       ],
       "payload": {
         "payment_id": "ULID (pay_*)",
@@ -153,7 +153,7 @@
     },
     {
       "name": "PaymentPartiallyCaptured",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentPartiallyCaptured",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentPartiallyCaptured",
       "trigger": "Manual capture flow: capture_method='manual' with partial amount. amount_cents < intent.amount_cents. The invoice becomes 'partially_paid' rather than 'paid'.",
       "queue": "payment",
       "consumers": [
@@ -172,7 +172,7 @@
     },
     {
       "name": "PaymentCaptureFailed",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentCaptureFailed",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentCaptureFailed",
       "trigger": "Manual capture attempt failed. Authorization hold may have expired or provider rejected. The intent stays in requires_capture state until retry-limit exhausted or manually cancelled.",
       "queue": "payment",
       "consumers": [
@@ -192,7 +192,7 @@
     },
     {
       "name": "PaymentMethodAttached",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentMethodAttached",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentMethodAttached",
       "trigger": "PaymentMethodObserver.created — customer saved a payment method (SetupIntent flow or first payment with save=true).",
       "queue": "payment",
       "consumers": [
@@ -214,7 +214,7 @@
     },
     {
       "name": "PaymentMethodDetached",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentMethodDetached",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentMethodDetached",
       "trigger": "PaymentMethodObserver.deleted (soft-delete) OR is_active transitioned false. Provider-side detach dispatched (Stripe DetachPaymentMethod, Adyen storedPaymentMethod delete).",
       "queue": "payment",
       "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
@@ -230,7 +230,7 @@
     },
     {
       "name": "PaymentMethodExpired",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentMethodExpired",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentMethodExpired",
       "trigger": "SyncPaymentMethodExpiryJob detected the card's exp_month + exp_year has passed. is_active flipped false with deactivated_reason='card_expired'.",
       "queue": "payment",
       "consumers": [
@@ -248,7 +248,7 @@
     },
     {
       "name": "PaymentMethodVerified",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentMethodVerified",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentMethodVerified",
       "trigger": "Bank_debit method (typically ACH) completed micro-deposit verification. verified_at populated. The method can now dispatch payments.",
       "queue": "payment",
       "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
@@ -260,7 +260,7 @@
     },
     {
       "name": "PaymentMethodDuplicateDetected",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentMethodDuplicateDetected",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentMethodDuplicateDetected",
       "trigger": "PaymentMethodObserver detected a duplicate via fingerprint_hash. Existing method re-activated (if soft-deleted or is_active=false); new insert refused.",
       "queue": "payment",
       "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
@@ -276,7 +276,7 @@
     },
     {
       "name": "PaymentDisputeOpened",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentDisputeOpened",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentDisputeOpened",
       "trigger": "Provider webhook reported a new dispute. PaymentDisputeObserver.created. Fires CollectDisputeEvidenceJob + P1 notification for high-value disputes (> $500 configurable).",
       "queue": "payment-critical",
       "consumers": [
@@ -299,7 +299,7 @@
     },
     {
       "name": "PaymentDisputeEvidenceSubmitted",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentDisputeEvidenceSubmitted",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentDisputeEvidenceSubmitted",
       "trigger": "SubmitDisputeEvidenceJob completed. evidence_submitted_at populated.",
       "queue": "payment",
       "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
@@ -311,7 +311,7 @@
     },
     {
       "name": "PaymentDisputeClosed",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentDisputeClosed",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentDisputeClosed",
       "trigger": "PaymentDisputeObserver detected status transitioned to a terminal state (won / lost / charge_refunded / warning_closed). closed_at populated.",
       "queue": "payment",
       "consumers": ["audit::WriteToAuditLog (retention: 7 years)", "monitoring::MetricsCollector"],
@@ -324,7 +324,7 @@
     },
     {
       "name": "PaymentDisputeWon",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentDisputeWon",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentDisputeWon",
       "trigger": "Dispute outcome = 'won'. Merchant prevailed; funds returned. Fires from PaymentDisputeObserver when status transitions to 'won'.",
       "queue": "payment",
       "consumers": [
@@ -342,7 +342,7 @@
     },
     {
       "name": "PaymentDisputeLost",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentDisputeLost",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentDisputeLost",
       "trigger": "Dispute outcome = 'lost'. Merchant lost; funds permanently reversed. Triggers EscalateDisputeToChargebackJob → creates Chargeback row via chargeback module.",
       "queue": "payment",
       "consumers": [
@@ -362,7 +362,7 @@
     },
     {
       "name": "PaymentDisputeEscalatedToChargeback",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentDisputeEscalatedToChargeback",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentDisputeEscalatedToChargeback",
       "trigger": "EscalateDisputeToChargebackJob created a Chargeback row via chargeback module. dispute.chargeback_id populated.",
       "queue": "payment",
       "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
@@ -375,7 +375,7 @@
     },
     {
       "name": "PaymentProviderConfigured",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentProviderConfigured",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentProviderConfigured",
       "trigger": "Admin configured a new provider config via POST /payment-providers.",
       "queue": "payment",
       "consumers": [
@@ -392,7 +392,7 @@
     },
     {
       "name": "PaymentProviderDeactivated",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentProviderDeactivated",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentProviderDeactivated",
       "trigger": "Provider config soft-deleted or is_active flipped false.",
       "queue": "payment",
       "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
@@ -407,13 +407,13 @@
     },
     {
       "name": "PaymentProviderCircuitBreakerOpened",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentProviderCircuitBreakerOpened",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentProviderCircuitBreakerOpened",
       "trigger": "CRITICAL. N consecutive failures against a provider triggered the circuit breaker. Every fire is a P1 signal — captures against this provider are paused until the breaker resets.",
       "queue": "payment-critical",
       "consumers": [
         "audit::WriteToAuditLog",
         "notifications::DispatchPaymentProviderCircuitBreakerOpenedNotification (cannot-opt-out — pages ops + notifies tenant owner)",
-        "monitoring::MetricsCollector (increments academorix.payment.circuit_breakers.opened_total)"
+        "monitoring::MetricsCollector (increments stackra.payment.circuit_breakers.opened_total)"
       ],
       "payload": {
         "tenant_id": "ULID",
@@ -426,7 +426,7 @@
     },
     {
       "name": "PaymentWebhookReceived",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentWebhookReceived",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentWebhookReceived",
       "trigger": "Every inbound provider webhook (verified or unverified). Low-signal audit trail event — feeds security incident investigations.",
       "queue": "payment",
       "consumers": [
@@ -444,7 +444,7 @@
     },
     {
       "name": "PaymentReconcileCompleted",
-      "class": "Academorix\\Finance\\Payment\\Events\\PaymentReconcileCompleted",
+      "class": "Stackra\\Finance\\Payment\\Events\\PaymentReconcileCompleted",
       "trigger": "ReconcilePaymentIntentsJob completed a reconciliation run. Payload carries drift counts.",
       "queue": "payment",
       "consumers": [

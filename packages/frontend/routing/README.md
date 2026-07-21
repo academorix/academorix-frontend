@@ -36,12 +36,12 @@ import { organization, article } from "@stackra/routing/seo";
   imports: [
     RoutingModule.forRoot({
       basename: "/",
-      rootDomain: "academorix.app",
+      rootDomain: "stackra.app",
       seo: {
-        baseUrl: "https://academorix.app",
+        baseUrl: "https://stackra.app",
         defaults: {
           jsonLd: [
-            organization({ name: "Academorix", url: "https://academorix.app" }),
+            organization({ name: "Stackra", url: "https://stackra.app" }),
           ],
         },
       },

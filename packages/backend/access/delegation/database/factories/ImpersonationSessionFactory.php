@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Delegation\Database\Factories;
+namespace Stackra\Delegation\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Delegation\Contracts\Data\ImpersonationSessionInterface;
-use Academorix\Delegation\Models\ImpersonationSession;
+use Stackra\Delegation\Contracts\Data\ImpersonationSessionInterface;
+use Stackra\Delegation\Models\ImpersonationSession;
 
 /**
- * Factory for {@see \Academorix\Delegation\Models\ImpersonationSession}.
+ * Factory for {@see \Stackra\Delegation\Models\ImpersonationSession}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Delegation\Models\ImpersonationSession>
+ * @extends Factory<\Stackra\Delegation\Models\ImpersonationSession>
  *
  * @category Delegation
  *

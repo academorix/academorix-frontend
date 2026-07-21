@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Staff\Repositories;
+namespace Stackra\Staff\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Staff\Contracts\Data\StaffInterface;
-use Academorix\Staff\Contracts\Repositories\StaffRepositoryInterface;
-use Academorix\Staff\Models\Staff;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Staff\Contracts\Data\StaffInterface;
+use Stackra\Staff\Contracts\Repositories\StaffRepositoryInterface;
+use Stackra\Staff\Models\Staff;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Staff\Models\Staff}.
+ * Attribute-first Eloquent repository for {@see Stackra\Staff\Models\Staff}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(StaffInterface::class)]` which resolves to
  * `Staff` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Staff\Models\Staff>
+ * @extends Repository<\Stackra\Staff\Models\Staff>
  *
  * @category Staff
  *

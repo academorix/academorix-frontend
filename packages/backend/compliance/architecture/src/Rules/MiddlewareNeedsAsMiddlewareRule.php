@@ -5,7 +5,7 @@
  *
  * @description
  * Source rule: every Middleware class must carry
- * `#[AsMiddleware]` so Academorix's Routing discovery layer
+ * `#[AsMiddleware]` so Stackra's Routing discovery layer
  * picks it up. Without the attribute, the middleware is defined
  * but never registered — requests bypass it silently, which is
  * catastrophic for auth / rate-limit / audit middleware.
@@ -34,7 +34,7 @@
  *
  *   - `severity`              — `error` by default.
  *   - `required_attribute`    — FQCN of the routing attribute
- *                               (`Academorix\Routing\Attributes\AsMiddleware`).
+ *                               (`Stackra\Routing\Attributes\AsMiddleware`).
  *   - `middleware_namespaces` — list of namespace prefixes
  *                               (with trailing backslash) whose
  *                               children are middleware.
@@ -42,11 +42,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Support\SourceFile;
-use Academorix\Architecture\Violations\Severity;
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Support\SourceFile;
+use Stackra\Architecture\Violations\Severity;
+use Stackra\Architecture\Violations\Violation;
 
 /**
  * Require #[AsMiddleware] on Middleware classes.

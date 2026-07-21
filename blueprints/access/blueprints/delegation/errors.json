@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/delegation/errors",
+  "id": "stackra://modules/delegation/errors",
   "$version": 1,
   "title": "delegation — error codes",
   "namespace": "delegation",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/reception/retention",
+  "id": "stackra://modules/reception/retention",
   "$version": 1,
   "title": "reception — data retention windows",
   "description": "Visitor logs are OPERATIONAL DATA — retained per K-12 policy (2 years for education venues). Front-desk shifts retained per financial audit window (7yr).",

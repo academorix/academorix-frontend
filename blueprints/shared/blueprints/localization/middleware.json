@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/localization/middleware",
+  "id": "stackra://modules/localization/middleware",
   "$version": 1,
   "title": "localization \u2014 HTTP middleware",
   "middleware": [
     {
       "alias": "locale.resolve",
-      "class": "Academorix\\Localization\\Http\\Middleware\\ResolveLocale",
+      "class": "Stackra\\Localization\\Http\\Middleware\\ResolveLocale",
       "priority": 12,
       "description": "Resolves the active locale from the 7-step precedence chain (query, X-Locale header, user preference, tenant default, Accept-Language, subdomain, app default). Calls App::setLocale($code) + stores on RequestContext. Fires LocaleResolved event.",
       "auto_applied": true,
@@ -13,14 +13,14 @@
     },
     {
       "alias": "locale.persist",
-      "class": "Academorix\\Localization\\Http\\Middleware\\PersistLocalePreference",
+      "class": "Stackra\\Localization\\Http\\Middleware\\PersistLocalePreference",
       "priority": 55,
       "description": "When the resolved locale differs from user.profile.preferred_locale AND the caller submitted an explicit ?locale=xx or X-Locale header, persist the choice to the user profile. Off for stateless API tokens (auth:sanctum with no user).",
       "auto_applied": false
     },
     {
       "alias": "locale.require",
-      "class": "Academorix\\Localization\\Http\\Middleware\\RequireLocale",
+      "class": "Stackra\\Localization\\Http\\Middleware\\RequireLocale",
       "priority": 56,
       "description": "Refuses the request unless the resolved locale is in the tenant's enabled locales list. Used on translation-management endpoints so users can't manage locales they haven't enabled.",
       "auto_applied": false

@@ -12,14 +12,14 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Sentry\Services;
+namespace Stackra\Sentry\Services;
 
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Support\Facades\Auth;
-use Academorix\Attributes\Attributes\Parameters\Config;
-use Academorix\Foundation\Enums\ContainerToken;
-use Academorix\Support\Arr;
-use Academorix\Support\Reflection;
+use Stackra\Attributes\Attributes\Parameters\Config;
+use Stackra\Foundation\Enums\ContainerToken;
+use Stackra\Support\Arr;
+use Stackra\Support\Reflection;
 
 use function Sentry\addBreadcrumb;
 

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Models;
+namespace Stackra\Versioning\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Database\Concerns\HasSystemFlag;
-use Academorix\Versioning\Contracts\Data\ApiVersionInterface;
-use Academorix\Versioning\Database\Factories\ApiVersionFactory;
-use Academorix\Versioning\Enums\ApiVersionStatus;
-use Academorix\Versioning\Enums\VersionScheme;
-use Academorix\Versioning\Observers\ApiVersionObserver;
-use Academorix\Versioning\Policies\ApiVersionPolicy;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Database\Concerns\HasSystemFlag;
+use Stackra\Versioning\Contracts\Data\ApiVersionInterface;
+use Stackra\Versioning\Database\Factories\ApiVersionFactory;
+use Stackra\Versioning\Enums\ApiVersionStatus;
+use Stackra\Versioning\Enums\VersionScheme;
+use Stackra\Versioning\Observers\ApiVersionObserver;
+use Stackra\Versioning\Policies\ApiVersionPolicy;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -93,7 +93,7 @@ final class ApiVersion extends Model implements ApiVersionInterface, AuditableCo
     {
         return $this->hasMany(
             DeprecationNotice::class,
-            \Academorix\Versioning\Contracts\Data\DeprecationNoticeInterface::ATTR_API_VERSION_ID,
+            \Stackra\Versioning\Contracts\Data\DeprecationNoticeInterface::ATTR_API_VERSION_ID,
         );
     }
 

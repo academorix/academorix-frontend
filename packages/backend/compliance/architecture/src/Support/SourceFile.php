@@ -16,7 +16,7 @@
  *   - Every fully-qualified reference outside `use` statements
  *
  * Constructed by {@see SourceFileParser::parse()}. Consumed by
- * {@see \Academorix\Architecture\Support\LayerResolver} and by
+ * {@see \Stackra\Architecture\Support\LayerResolver} and by
  * every rule.
  *
  * ## Why a value object (not a struct-like array)
@@ -30,7 +30,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Support;
+namespace Stackra\Architecture\Support;
 
 /**
  * Parsed metadata about a single PHP file.
@@ -184,7 +184,7 @@ final class SourceFile
      * insensitive because PHP attributes are class-names.
      *
      * Accepts EITHER the full FQCN
-     * (`Academorix\Architecture\Attributes\Repository`) or the
+     * (`Stackra\Architecture\Attributes\Repository`) or the
      * short form (`Repository`) — the parser normalises both to
      * short names, and this method compares by short name after
      * stripping any leading backslash.

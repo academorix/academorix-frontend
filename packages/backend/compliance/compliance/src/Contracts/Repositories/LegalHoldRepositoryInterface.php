@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Contracts\Repositories;
+namespace Stackra\Compliance\Contracts\Repositories;
 
-use Academorix\Compliance\Models\LegalHold;
-use Academorix\Compliance\Repositories\EloquentLegalHoldRepository;
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Compliance\Models\LegalHold;
+use Stackra\Compliance\Repositories\EloquentLegalHoldRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
 use DateTimeInterface;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;

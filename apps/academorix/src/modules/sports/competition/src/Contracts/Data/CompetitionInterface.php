@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Competition\Contracts\Data;
+namespace Stackra\Competition\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Competition\Models\Competition;
+use Stackra\Competition\Models\Competition;
 
 /**
  * Table shape for the `competitions` table.

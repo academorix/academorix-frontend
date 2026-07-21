@@ -1,47 +1,47 @@
 {
-  "id": "academorix://modules/foundation/commands",
+  "id": "stackra://modules/foundation/commands",
   "$version": 1,
   "title": "foundation — artisan commands",
   "description": "Seven infrastructure commands. Audience is `ops` (deploy + on-call runbooks) or `dev` (local development). Every command follows Laravel's `signature` convention with named args + options.",
   "commands": [
     {
-      "class": "Academorix\\Foundation\\Console\\Commands\\ModuleListCommand",
+      "class": "Stackra\\Foundation\\Console\\Commands\\ModuleListCommand",
       "signature": "module:list {--format=table : table|json|dot} {--filter= : substring match on module name}",
       "audience": "ops",
       "description": "Lists every module discovered by ModuleRegistry, in dependency order. --format=dot outputs Graphviz DOT for visualizing the dependency graph; --format=json for programmatic consumption in CI."
     },
     {
-      "class": "Academorix\\Foundation\\Console\\Commands\\ModuleSyncCommand",
+      "class": "Stackra\\Foundation\\Console\\Commands\\ModuleSyncCommand",
       "signature": "module:sync {--dry-run : Show what would change without writing}",
       "audience": "ops",
       "description": "Re-runs the module discovery pass + syncs config-backed catalogues (BusinessType, NotificationCategory, etc.) into `config/*.php`. Called on deploy + after any `data/*.json` fixture change."
     },
     {
-      "class": "Academorix\\Foundation\\Console\\Commands\\ModuleDiagnoseCommand",
+      "class": "Stackra\\Foundation\\Console\\Commands\\ModuleDiagnoseCommand",
       "signature": "module:diagnose {module? : Specific module, or empty for all}",
       "audience": "ops",
       "description": "Validates a module's blueprint: schemas parse, relations resolve, trait composition matches the trait-order contract, health probes register. Fails with detailed output if any check trips. Used by CI + on-demand during migrations."
     },
     {
-      "class": "Academorix\\Foundation\\Console\\Commands\\HealthCheckCommand",
+      "class": "Stackra\\Foundation\\Console\\Commands\\HealthCheckCommand",
       "signature": "health:check {probe? : Specific probe, or empty for all} {--json}",
       "audience": "ops",
       "description": "Walks the health probe registry synchronously + prints results. --json for machine-readable output. Used during incident response to diagnose stuck services from a shell."
     },
     {
-      "class": "Academorix\\Foundation\\Console\\Commands\\CacheTagsCommand",
+      "class": "Stackra\\Foundation\\Console\\Commands\\CacheTagsCommand",
       "signature": "cache:tags {--flush= : Flush cache entries matching these tag names (comma-separated)}",
       "audience": "ops",
       "description": "Lists cache tag namespaces per module (from every caches.json) + supports flushing by tag. Handy during incidents to invalidate a subset of cache without a full `cache:clear`."
     },
     {
-      "class": "Academorix\\Foundation\\Console\\Commands\\SearchReindexCommand",
+      "class": "Stackra\\Foundation\\Console\\Commands\\SearchReindexCommand",
       "signature": "search:reindex {model? : FQCN or table name; empty = all} {--chunk=500} {--async}",
       "audience": "ops",
       "description": "Rebuilds a Searchable model's index. --async dispatches IndexSearchableJob per chunk; without --async runs synchronously (useful during dev). Wired to schedule.json + POST /api/v1/platform/search/reindex."
     },
     {
-      "class": "Academorix\\Foundation\\Console\\Commands\\SearchFlushCommand",
+      "class": "Stackra\\Foundation\\Console\\Commands\\SearchFlushCommand",
       "signature": "search:flush {model : FQCN or table name} {--yes : Skip confirmation}",
       "audience": "ops",
       "description": "Drops a model's search index. Rare — usually only during index-schema migrations. Prompts for confirmation unless --yes."

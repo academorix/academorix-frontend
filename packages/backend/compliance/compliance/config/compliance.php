@@ -4,7 +4,7 @@
  * @file modules/compliance/compliance/config/compliance.php
  *
  * @description
- * Runtime knobs for the `academorix/compliance` module. Every knob is
+ * Runtime knobs for the `stackra/compliance` module. Every knob is
  * env-overridable so per-environment tuning stays out of code.
  */
 

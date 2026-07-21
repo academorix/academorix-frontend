@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Exceptions;
+namespace Stackra\Tenancy\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Raised when a mutation targets a row with `is_system = true`.
  *
- * System tenants (e.g. Academorix's own demo/support tenant) refuse
+ * System tenants (e.g. Stackra's own demo/support tenant) refuse
  * update / delete regardless of the caller's permissions. Guarded by
  * `TenantObserver` + `TenantPolicy` together.
  *

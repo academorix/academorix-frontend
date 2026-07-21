@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Event;
-use Academorix\Support\Arr;
-use Academorix\Support\Collection;
-use Academorix\Support\Reflection;
-use Academorix\Support\Str;
+use Stackra\Support\Arr;
+use Stackra\Support\Collection;
+use Stackra\Support\Reflection;
+use Stackra\Support\Str;
 
 /*
  * trace_log writes a trace message to a log file.
@@ -1284,7 +1284,7 @@ if (! function_exists('title_case')) {
  *
  * @return ($value is \empty ? TDefault : mixed)
  */
-if (! function_exists('Academorix\Support\enum_value')) {
+if (! function_exists('Stackra\Support\enum_value')) {
     function enum_value($value, $default = null)
     {
         return transform($value, fn (string|object $value) => match (true) {

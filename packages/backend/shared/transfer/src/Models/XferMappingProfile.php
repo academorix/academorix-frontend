@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Models;
+namespace Stackra\Transfer\Models;
 
-use Academorix\Activity\Concerns\HasActivityLog;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
-use Academorix\Transfer\Contracts\Data\XferMappingProfileInterface;
-use Academorix\Transfer\Database\Factories\XferMappingProfileFactory;
-use Academorix\Transfer\Policies\XferMappingProfilePolicy;
+use Stackra\Activity\Concerns\HasActivityLog;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Transfer\Contracts\Data\XferMappingProfileInterface;
+use Stackra\Transfer\Database\Factories\XferMappingProfileFactory;
+use Stackra\Transfer\Policies\XferMappingProfilePolicy;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;

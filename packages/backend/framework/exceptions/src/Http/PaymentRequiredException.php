@@ -25,20 +25,20 @@
  *   exceptions::http.payment_required_upgrade               ({@see planUpgradeRequired()})
  *   exceptions::http.payment_required_insufficient_balance  ({@see insufficientBalance()})
  *
- * @see \Academorix\Exceptions\AcademorixException  Base class.
- * @see \Academorix\Exceptions\Auth\FeatureDisabledException  Sibling class for feature-flag denials.
+ * @see \Stackra\Exceptions\StackraException  Base class.
+ * @see \Stackra\Exceptions\Auth\FeatureDisabledException  Sibling class for feature-flag denials.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Http;
+namespace Stackra\Exceptions\Http;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class PaymentRequiredException extends AcademorixException
+class PaymentRequiredException extends StackraException
 {
     /**
      * Machine-readable code exposed on the wire — clients that

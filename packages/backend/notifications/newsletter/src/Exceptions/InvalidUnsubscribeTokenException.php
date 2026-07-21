@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Exceptions;
+namespace Stackra\Newsletter\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a confirmation or unsubscribe token is invalid,
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvalidUnsubscribeTokenException extends AcademorixException
+final class InvalidUnsubscribeTokenException extends StackraException
 {
     public const CODE = 'newsletter.token_invalid';
 

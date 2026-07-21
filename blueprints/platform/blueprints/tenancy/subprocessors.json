@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/tenancy/subprocessors",
+  "id": "stackra://modules/tenancy/subprocessors",
   "$version": 1,
   "title": "tenants — third-party subprocessors",
   "description": "Third-party services this module uses. Aggregated at repo root by `tenancy:snapshot-subprocessors` into a public subprocessor registry (GDPR Art. 28 requirement — every enterprise DPA lists our subprocessors). Every entry names the purpose, region, DPA link, and data classes touched. Removing a subprocessor requires 30d advance notice to tenants per most DPA templates.",
-  "publicRegistryUrl": "https://academorix.app/subprocessors",
+  "publicRegistryUrl": "https://stackra.app/subprocessors",
   "subprocessors": [
     {
       "name": "AWS Route53",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/auth/schedule",
+  "id": "stackra://modules/auth/schedule",
   "$version": 1,
   "title": "auth \u2014 scheduled tasks",
   "entries": [
@@ -57,21 +57,21 @@
       "command": "metrics:emit auth.active_sessions",
       "cron": "* * * * *",
       "timezone": "UTC",
-      "purpose": "Every minute: emit the `academorix.auth.active_sessions` gauge."
+      "purpose": "Every minute: emit the `stackra.auth.active_sessions` gauge."
     },
     {
       "name": "auth-active-refresh-tokens-gauge",
       "command": "metrics:emit auth.active_refresh_tokens",
       "cron": "*/5 * * * *",
       "timezone": "UTC",
-      "purpose": "Every 5 minutes: emit the `academorix.auth.active_refresh_tokens` gauge."
+      "purpose": "Every 5 minutes: emit the `stackra.auth.active_refresh_tokens` gauge."
     },
     {
       "name": "auth-deny-list-size-gauge",
       "command": "metrics:emit auth.jwt_deny_list_size",
       "cron": "*/5 * * * *",
       "timezone": "UTC",
-      "purpose": "Every 5 minutes: emit the `academorix.auth.jwt_deny_list_size` gauge."
+      "purpose": "Every 5 minutes: emit the `stackra.auth.jwt_deny_list_size` gauge."
     },
     {
       "name": "auth-impersonation-active-gauge",

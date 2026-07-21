@@ -40,7 +40,7 @@
               "children": [
                 {
                   "kind": "Image",
-                  "props": { "src": "/brand/mark.svg", "alt": "Academorix", "className": "size-10" }
+                  "props": { "src": "/brand/mark.svg", "alt": "Stackra", "className": "size-10" }
                 },
                 {
                   "kind": "Text",
@@ -103,7 +103,7 @@
                       {
                         "kind": "Text",
                         "props": { "className": "text-xs text-muted truncate" },
-                        "bindings": { "children": { "$expr": "row.slug + '.academorix.app'" } }
+                        "bindings": { "children": { "$expr": "row.slug + '.stackra.app'" } }
                       }
                     ]
                   },

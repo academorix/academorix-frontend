@@ -2,8 +2,8 @@
   "$version": 1,
   "name": "application",
   "alias": "application",
-  "namespace": "Academorix\\Application",
-  "description": "Global cross-tenant registry of Academorix products (Sports, Marketplace, Ticketing, Venue, Education) plus the BusinessType catalogue (academy, gym, school, federation, club, ...). Both entities are tenant-agnostic (tenant_id=null always) and are consumed by every tenant-scoped module through the BelongsToApplication trait (owned here) + the applicable() migration macro. Extracted from tenants at v0.3 to give Application its own lifecycle — a product-catalogue mutation should never require a tenancy service redeploy.",
+  "namespace": "Stackra\\Application",
+  "description": "Global cross-tenant registry of Stackra products (Sports, Marketplace, Ticketing, Venue, Education) plus the BusinessType catalogue (academy, gym, school, federation, club, ...). Both entities are tenant-agnostic (tenant_id=null always) and are consumed by every tenant-scoped module through the BelongsToApplication trait (owned here) + the applicable() migration macro. Extracted from tenants at v0.3 to give Application its own lifecycle — a product-catalogue mutation should never require a tenancy service redeploy.",
   "keywords": [
     "application",
     "product-catalogue",
@@ -12,7 +12,7 @@
     "platform-registry"
   ],
   "priority": 8,
-  "providers": ["Academorix\\Application\\Providers\\ApplicationServiceProvider"],
+  "providers": ["Stackra\\Application\\Providers\\ApplicationServiceProvider"],
   "files": [],
   "dependencies": ["foundation"],
   "extendedBy": ["tenancy"],
@@ -61,7 +61,7 @@
       "routes": ["GET /api/v1/applications", "GET /api/v1/applications/{slug}"]
     },
     "platform-admin": {
-      "description": "Academorix staff surface. Full CRUD over Application + BusinessType. URL-prefixed with `/platform/` to disambiguate from the central-host public read endpoints on the same aggregates — auth middleware (`auth:platform_admin`) enforces the audience separately.",
+      "description": "Stackra staff surface. Full CRUD over Application + BusinessType. URL-prefixed with `/platform/` to disambiguate from the central-host public read endpoints on the same aggregates — auth middleware (`auth:platform_admin`) enforces the audience separately.",
       "routes": ["* /api/v1/platform/applications*", "* /api/v1/platform/business-types*"]
     }
   }

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/organization/errors",
+  "id": "stackra://modules/organization/errors",
   "$version": 1,
   "title": "organization — error codes",
   "namespace": "organization",

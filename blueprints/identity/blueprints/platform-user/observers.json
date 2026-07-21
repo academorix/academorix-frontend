@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/platform-user/observers",
+  "id": "stackra://modules/platform-user/observers",
   "$version": 1,
   "title": "platform-user \u2014 Eloquent observers",
   "description": "Two observers. `PlatformUserObserver` gates status transitions via a hand-rolled state machine, fires the lifecycle events, invalidates the on-call resolver cache, and enforces the MFA-on-hire gate. `PlatformProfileObserver` handles media pruning (avatar removal when avatar_url is nulled or replaced) + fires PlatformProfileUpdated with the exact set of changed fields.",
   "observers": [
     {
       "model": "PlatformUser",
-      "observer": "Academorix\\PlatformUser\\Observers\\PlatformUserObserver",
+      "observer": "Stackra\\PlatformUser\\Observers\\PlatformUserObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `plu_`",
         "creating \u2192 refuse when the referenced Identity has NULL mfa_secret_encrypted AND config('platform-user.mfa.require_on_hire')=true (default). Throws `IDENTITY_MFA_REQUIRED`. This is the enrolment gate for the platform_admin guard \u2014 tenant Users can login without MFA, platform staff cannot.",
@@ -32,7 +32,7 @@
     },
     {
       "model": "PlatformProfile",
-      "observer": "Academorix\\PlatformUser\\Observers\\PlatformProfileObserver",
+      "observer": "Stackra\\PlatformUser\\Observers\\PlatformProfileObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `plp_`",
         "creating \u2192 stamp created_by from the request-context actor",

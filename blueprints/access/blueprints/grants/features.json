@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/grants/features",
+  "id": "stackra://modules/grants/features",
   "$version": 1,
   "title": "grants — feature keys",
   "description": "Business features this module publishes for tenant-facing UX. Resolved by the tenant client from GET /api/auth/me → data.features. Distinct from entitlements (quota + gate) — features control whether the UI SHOWS a capability. Downstream consumer modules (finance, sports, teams, documents) also gate their share-access buttons behind `grants.share_access`.",

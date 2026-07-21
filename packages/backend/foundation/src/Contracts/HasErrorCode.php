@@ -5,7 +5,7 @@
  *
  * @description
  * Contract for anything that exposes a stable, machine-readable error
- * code. Exceptions in `academorix/exceptions`, API error payloads, and
+ * code. Exceptions in `stackra/exceptions`, API error payloads, and
  * domain result objects all implement this so clients can branch on
  * `error.code` without pattern-matching on human messages.
  *
@@ -16,13 +16,13 @@
  *   ai.provider.quota_exceeded
  *
  * The prefix matches the package name that owns the code. See
- * {@see \Academorix\Exceptions\AcademorixException::$errorCode} for the
+ * {@see \Stackra\Exceptions\StackraException::$errorCode} for the
  * base implementation.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Contracts;
+namespace Stackra\Foundation\Contracts;
 
 interface HasErrorCode
 {

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/storage/retention",
+  "id": "stackra://modules/storage/retention",
   "$version": 1,
   "title": "storage \u2014 retention windows",
   "description": "Retention policy per entity + per file kind. PurgeExpiredFilesJob runs nightly + walks archived files past their kind's window. Tenant erasure cascades independent of retention (immediate hard-delete via the CascadeStorageErasure listener).",

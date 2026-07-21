@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Exceptions;
+namespace Stackra\Chargeback\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Chargeback terms (network / reason_code / amount / currency / fee / payment_id / invoice_id / provider) cannot be edited once evidence submission starts.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ChargebackTermsLockedException extends AcademorixException
+final class ChargebackTermsLockedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

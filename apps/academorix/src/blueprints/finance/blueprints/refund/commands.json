@@ -1,61 +1,61 @@
 {
-  "id": "academorix://modules/refund/commands",
+  "id": "stackra://modules/refund/commands",
   "$version": 1,
   "title": "refund — Artisan commands",
   "commands": [
     {
       "signature": "refund:list {--tenant=} {--payment=} {--invoice=} {--status=} {--reason=} {--requires-approval} {--refunded-to=} {--from=} {--to=} {--include-deleted}",
-      "class": "Academorix\\Finance\\Refund\\Console\\Commands\\ListRefundsCommand",
+      "class": "Stackra\\Finance\\Refund\\Console\\Commands\\ListRefundsCommand",
       "purpose": "Cross-tenant or tenant-scoped refund view. --status filters by state (awaiting_approval / approved / processing / succeeded / failed / cancelled / rejected / provider_error). --reason filters by refund reason. --requires-approval shows refunds still pending approver review. --from/--to filter by initiated_at range. --include-deleted shows soft-deleted rows; default hides them. Confidential financial fields (amount_cents) print only when the caller has refunds.view-financials permission."
     },
     {
       "signature": "refund:describe {refund}",
-      "class": "Academorix\\Finance\\Refund\\Console\\Commands\\DescribeRefundCommand",
+      "class": "Stackra\\Finance\\Refund\\Console\\Commands\\DescribeRefundCommand",
       "purpose": "Verbose read of one refund: base fields + parent payment + parent invoice + credit_note_id + transaction_id + refund_lines + approval trail + provider dispatch history + downstream clawback status (referral + coupon) + audit trail summary. Confidential financial fields print only when the caller has refunds.view-financials permission."
     },
     {
       "signature": "refund:request {payment} {--amount-cents=} {--refund-type=full} {--reason=customer_requested} {--reason-note=} {--refunded-to=original_payment_method} {--actor=} {--dry-run}",
-      "class": "Academorix\\Finance\\Refund\\Console\\Commands\\RequestRefundCommand",
+      "class": "Stackra\\Finance\\Refund\\Console\\Commands\\RequestRefundCommand",
       "purpose": "Scriptable refund request (test harness + admin bulk-refund tooling). Defaults to full-refund of the payment's remaining refundable amount. --refund-type=partial requires additional --refund-lines JSON payload. --refund-type=prorated requires --membership-id + --cancellation-date. --actor is the initiating user_id (required — records initiated_by_user_id). --dry-run validates input against every observer rule + entitlement + policy without persisting."
     },
     {
       "signature": "refund:approve {refund} {--actor=} {--notes=}",
-      "class": "Academorix\\Finance\\Refund\\Console\\Commands\\ApproveRefundCommand",
+      "class": "Stackra\\Finance\\Refund\\Console\\Commands\\ApproveRefundCommand",
       "purpose": "Admin CLI approval. --actor is the approver user_id (required — records approved_by_user_id). Refuses when refund.initiated_by_user_id === --actor (segregation of duties per SOX §404). --notes appends to metadata.approval_notes for audit. Transitions status awaiting_approval -> approved + dispatches InitiateProviderRefundJob."
     },
     {
       "signature": "refund:reject {refund} {--actor=} {--reason=} {--notes=}",
-      "class": "Academorix\\Finance\\Refund\\Console\\Commands\\RejectRefundCommand",
+      "class": "Stackra\\Finance\\Refund\\Console\\Commands\\RejectRefundCommand",
       "purpose": "Admin CLI rejection. --actor is the rejector user_id (required — records rejected_by_user_id). --reason is the 256-char rejection_reason (required — customer-visible). Transitions status awaiting_approval -> rejected + fires RefundRejected + dispatches RefundRejectedNotification."
     },
     {
       "signature": "refund:cancel {refund} {--actor=} {--cancel-reason=}",
-      "class": "Academorix\\Finance\\Refund\\Console\\Commands\\CancelRefundCommand",
+      "class": "Stackra\\Finance\\Refund\\Console\\Commands\\CancelRefundCommand",
       "purpose": "Cancel a pending refund (before provider dispatch). Only allowed when status IN ('awaiting_approval', 'approved'). Refuses when status IN ('processing', 'succeeded', 'failed', 'rejected', 'cancelled') — the state machine is one-way past 'processing'. Customer can cancel own request; admin can cancel any."
     },
     {
       "signature": "refund:reconcile {--provider=} {--tenant=}",
-      "class": "Academorix\\Finance\\Refund\\Console\\Commands\\ReconcileRefundsCommand",
+      "class": "Stackra\\Finance\\Refund\\Console\\Commands\\ReconcileRefundsCommand",
       "purpose": "Dispatches ReconcileRefundsJob for one or all providers. --provider=stripe|paddle|adyen|square|paypal|custom_webhook narrows to a specific provider. --tenant narrows to a specific tenant. Prints a summary of reconciled state changes + drift detected. Used when a provider outage recovers + we need to sweep stuck refunds."
     },
     {
       "signature": "refund:audit-pending-approvals {--tenant=} {--older-than-hours=24}",
-      "class": "Academorix\\Finance\\Refund\\Console\\Commands\\AuditPendingApprovalsCommand",
+      "class": "Stackra\\Finance\\Refund\\Console\\Commands\\AuditPendingApprovalsCommand",
       "purpose": "Reports refunds stuck in awaiting_approval > N hours (default 24). Actionable for ops — refunds sitting > SLA-permitted approval windows risk consumer-protection-law violations. Prints refund_id + initiated_at + hours_pending + assigned_approvers (from metadata.approval_notification)."
     },
     {
       "signature": "refund:report {tenant} {--period-start=} {--period-end=} {--format=csv} {--to-s3}",
-      "class": "Academorix\\Finance\\Refund\\Console\\Commands\\ReportRefundsCommand",
+      "class": "Stackra\\Finance\\Refund\\Console\\Commands\\ReportRefundsCommand",
       "purpose": "Ad-hoc CLI equivalent of GET /reports/refund-volume. --period-start/--period-end default to last 30 days. --format=csv|json|table. Writes to stdout (redirect to a file) OR to S3 when --to-s3 is set. Rollup: total refunds initiated + total refunds succeeded + total refunded_cents + reason distribution + provider distribution + top invoices refunded + median approval-to-success duration. Redacted when caller lacks refunds.view-financials permission."
     },
     {
       "signature": "refund:force-fail {refund} {--actor=} {--failure-reason=}",
-      "class": "Academorix\\Finance\\Refund\\Console\\Commands\\ForceFailRefundCommand",
+      "class": "Stackra\\Finance\\Refund\\Console\\Commands\\ForceFailRefundCommand",
       "purpose": "Admin escape hatch — mark a stuck provider_error refund as failed after manual provider-side investigation. Only allowed when status='provider_error'. --actor records the admin user_id who force-failed. --failure-reason is the 256-char explanation (audit trail). Fires RefundFailed + dispatches RefundFailedNotification. Original payment untouched — customer must be reached out to via manual finance path."
     },
     {
       "signature": "refund:generate-credit-note {refund}",
-      "class": "Academorix\\Finance\\Refund\\Console\\Commands\\GenerateCreditNoteCommand",
+      "class": "Stackra\\Finance\\Refund\\Console\\Commands\\GenerateCreditNoteCommand",
       "purpose": "Retry credit note creation on error. Only usable when refund.status='succeeded' + refund.credit_note_id IS NULL (finalization chain step 2 failed but the refund status commit succeeded — rare, but the escape hatch matters). Re-runs CreditNoteIssuer::createFromRefund + persists credit_note_id. Also re-runs TransactionRecorder + InvoiceStateUpdater if needed. Idempotent."
     }
   ]

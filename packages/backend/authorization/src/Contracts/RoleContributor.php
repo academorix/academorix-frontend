@@ -8,8 +8,8 @@
  *   service provider (list of `class-string<RoleEnum>`), and
  *   each role case carries a `#[RoleMeta]` attribute in place of
  *   the old associative-array shape. See
- *   {@see \Academorix\Authorization\Contracts\RoleEnum} and
- *   {@see \Academorix\Authorization\Concerns\HasRoleMetadata}.
+ *   {@see \Stackra\Authorization\Contracts\RoleEnum} and
+ *   {@see \Stackra\Authorization\Concerns\HasRoleMetadata}.
  *   This interface remains ONLY so the partially-ported
  *   `packages/access` module keeps compiling during the
  *   migration. Do NOT add new implementations.
@@ -56,7 +56,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Authorization\Contracts;
+namespace Stackra\Authorization\Contracts;
 
 interface RoleContributor
 {
@@ -82,8 +82,8 @@ interface RoleContributor
      *
      * @return list<array{
      *     name: string,
-     *     guard: \Academorix\Authorization\Enums\Guard,
-     *     permissions: list<\Academorix\Authorization\Contracts\PermissionEnum|string>,
+     *     guard: \Stackra\Authorization\Enums\Guard,
+     *     permissions: list<\Stackra\Authorization\Contracts\PermissionEnum|string>,
      *     description?: string,
      *     system?: bool,
      * }>

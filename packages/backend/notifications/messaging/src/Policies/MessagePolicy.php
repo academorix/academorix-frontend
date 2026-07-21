@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Messaging\Policies;
+namespace Stackra\Messaging\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Messaging\Models\Message;
+use Stackra\User\Models\User;
+use Stackra\Messaging\Models\Message;
 
 /**
- * Authorization policy for {@see \Academorix\Messaging\Models\Message}.
+ * Authorization policy for {@see \Stackra\Messaging\Models\Message}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

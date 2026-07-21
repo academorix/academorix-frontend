@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/activity/caches",
+  "id": "stackra://modules/activity/caches",
   "$version": 1,
   "title": "activity — cache keys",
   "description": "Cache keys this module owns. Retention-policy resolution is cached per-tenant to avoid hitting the DB on every purge job iteration; log-name catalog cached at boot; batch tracking cached per-request; feed cursor cached to detect duplicate broadcast attempts.",

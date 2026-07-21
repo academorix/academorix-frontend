@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Services;
+namespace Stackra\Domains\Services;
 
-use Academorix\Domains\Contracts\Services\CertificateProvisionerInterface;
+use Stackra\Domains\Contracts\Services\CertificateProvisionerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Domains\Contracts\Repositories\DomainRecordRepositoryInterface;
+use Stackra\Domains\Contracts\Repositories\DomainRecordRepositoryInterface;
 
 /**
  * Concrete service — CertificateProvisioner.

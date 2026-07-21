@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/facility/hooks",
+  "id": "stackra://modules/facility/hooks",
   "$version": 1,
   "title": "facility — TenancyHook + lifecycle hooks",
   "description": "Cross-module hook implementations. TenancyHooks are the tenancy module's contract for reacting to tenant-lifecycle events (provision / suspend / erase). Facility does not register a bootstrapper (nothing to hydrate at tenant-boot), but registers three cascade hooks: branch-archived prevention, facility-retired cascade, membership-terminated cascade (Wave 4 placeholder).",
-  "namespace": "Academorix\\Facility\\Hooks",
+  "namespace": "Stackra\\Facility\\Hooks",
   "hooks": [
     {
       "name": "PreventFacilityOrphansOnBranchArchived",
-      "class": "Academorix\\Facility\\Hooks\\PreventFacilityOrphansOnBranchArchived",
+      "class": "Stackra\\Facility\\Hooks\\PreventFacilityOrphansOnBranchArchived",
       "kind": "cascade_prevention",
       "listens_to": "branch::BranchArchived",
       "purpose": "Refuse the archive when any facility referencing the branch still has status='active'. Distinct from the FK CASCADE — we deliberately BLOCK because facility retirement is an ops decision, not a side-effect.",
@@ -15,7 +15,7 @@
     },
     {
       "name": "CancelFutureBookingsOnFacilityRetired",
-      "class": "Academorix\\Facility\\Hooks\\CancelFutureBookingsOnFacilityRetired",
+      "class": "Stackra\\Facility\\Hooks\\CancelFutureBookingsOnFacilityRetired",
       "kind": "cascade",
       "listens_to": "facility::FacilityRetired",
       "purpose": "Cascades: cancels every future booking against the retired facility. Fires BookingCancelled per booking with cascade_trigger='facility_retired'. Runs at priority 50 (before notification listeners) so the notification fan-out sees the cancelled state.",
@@ -23,7 +23,7 @@
     },
     {
       "name": "CascadePassesOnMembershipTerminated",
-      "class": "Academorix\\Facility\\Hooks\\CascadePassesOnMembershipTerminated",
+      "class": "Stackra\\Facility\\Hooks\\CascadePassesOnMembershipTerminated",
       "kind": "cascade",
       "listens_to": "finance::MembershipTerminated",
       "purpose": "Wave 4 bridge. Revokes every Pass tied to the terminated Membership. Wave 2 ships the class as a placeholder — event doesn't exist yet.",
@@ -31,7 +31,7 @@
     },
     {
       "name": "PurgeFacilityDataForErasedTenant",
-      "class": "Academorix\\Facility\\Hooks\\PurgeFacilityDataForErasedTenant",
+      "class": "Stackra\\Facility\\Hooks\\PurgeFacilityDataForErasedTenant",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErased",
       "purpose": "Cascade delete via FK; writes compliance audit trail entry + emits count metrics per entity family (facilities / resource_bookings / day_passes / passes purged). Audit rows outlive the source rows per financial retention.",

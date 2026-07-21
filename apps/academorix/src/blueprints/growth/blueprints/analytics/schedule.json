@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/analytics/schedule",
+  "id": "stackra://modules/analytics/schedule",
   "$version": 1,
   "title": "analytics — scheduled tasks",
   "description": "Four entries: retry-failed-deliveries every 30s, reconcile-identities nightly, purge-expired-data weekly, sampling-reconcile nightly.",

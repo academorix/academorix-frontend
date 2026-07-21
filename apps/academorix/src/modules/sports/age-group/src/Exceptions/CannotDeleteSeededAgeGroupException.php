@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Exceptions;
+namespace Stackra\AgeGroup\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The AgeGroup is is_seeded=true (part of the platform's default catalog).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CannotDeleteSeededAgeGroupException extends AcademorixException
+final class CannotDeleteSeededAgeGroupException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

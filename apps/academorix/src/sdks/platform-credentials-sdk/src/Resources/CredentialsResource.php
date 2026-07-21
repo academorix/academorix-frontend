@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformCredentialsSdk\Resources;
+namespace Stackra\PlatformCredentialsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\PlatformCredentialsSdk\Data\CredentialData;
-use Academorix\PlatformCredentialsSdk\Requests\Credentials\CreateCredentialRequest;
-use Academorix\PlatformCredentialsSdk\Requests\Credentials\ListCredentialsAdminRequest;
-use Academorix\PlatformCredentialsSdk\Requests\Credentials\ListCredentialsRequest;
-use Academorix\PlatformCredentialsSdk\Requests\Credentials\ShowCredentialRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\PlatformCredentialsSdk\Data\CredentialData;
+use Stackra\PlatformCredentialsSdk\Requests\Credentials\CreateCredentialRequest;
+use Stackra\PlatformCredentialsSdk\Requests\Credentials\ListCredentialsAdminRequest;
+use Stackra\PlatformCredentialsSdk\Requests\Credentials\ListCredentialsRequest;
+use Stackra\PlatformCredentialsSdk\Requests\Credentials\ShowCredentialRequest;
 use Saloon\Http\Response;
 
 /**
@@ -57,7 +57,7 @@ final readonly class CredentialsResource
      *
      * @return CredentialData
      */
-    public function create(\Academorix\PlatformCredentialsSdk\Payloads\Credentials\CreateCredentialPayload $payload, ?string $idempotencyKey = null): CredentialData
+    public function create(\Stackra\PlatformCredentialsSdk\Payloads\Credentials\CreateCredentialPayload $payload, ?string $idempotencyKey = null): CredentialData
     {
         return $this->connector->send(new CreateCredentialRequest($payload, $idempotencyKey))->dto();
     }

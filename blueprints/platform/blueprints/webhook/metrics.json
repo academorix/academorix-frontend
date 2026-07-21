@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/webhook/metrics",
+  "id": "stackra://modules/webhook/metrics",
   "$version": 1,
   "title": "webhook \u2014 OpenTelemetry metrics",
   "instrumentation": "open-telemetry/sdk",
-  "namespace": "academorix.webhook",
+  "namespace": "stackra.webhook",
   "labelConventions": {
     "always": ["tenant_id"],
     "commonlyAvailable": [
@@ -17,14 +17,14 @@
   },
   "metrics": [
     {
-      "name": "academorix.webhook.deliveries.total",
+      "name": "stackra.webhook.deliveries.total",
       "kind": "counter",
       "unit": "deliveries",
       "labels": ["tenant_id", "destination", "event_name", "state"],
       "description": "Every WebhookDelivery row created. state at terminal transition."
     },
     {
-      "name": "academorix.webhook.deliveries.duration_ms",
+      "name": "stackra.webhook.deliveries.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 200, 500, 2000, 10000, 60000],
@@ -32,42 +32,42 @@
       "description": "outcome: delivered / failedRetryable / failedPermanent. End-to-end HTTP round-trip."
     },
     {
-      "name": "academorix.webhook.deliveries.retries_total",
+      "name": "stackra.webhook.deliveries.retries_total",
       "kind": "counter",
       "unit": "retries",
       "labels": ["tenant_id", "destination", "event_name"],
       "description": "Retry attempts beyond the first. Correlates with receiver health."
     },
     {
-      "name": "academorix.webhook.deliveries.response_status",
+      "name": "stackra.webhook.deliveries.response_status",
       "kind": "counter",
       "unit": "responses",
       "labels": ["tenant_id", "destination", "status_class"],
       "description": "status_class: 2xx / 3xx / 4xx / 5xx / network_error."
     },
     {
-      "name": "academorix.webhook.subscriptions.active_gauge",
+      "name": "stackra.webhook.subscriptions.active_gauge",
       "kind": "gauge",
       "unit": "subscriptions",
       "labels": ["tenant_id", "destination"],
       "description": "Count of active subscriptions per tenant + destination. Sampled every 30s."
     },
     {
-      "name": "academorix.webhook.subscriptions.disabled_total",
+      "name": "stackra.webhook.subscriptions.disabled_total",
       "kind": "counter",
       "unit": "disables",
       "labels": ["tenant_id", "reason"],
       "description": "reason: gone_410 / failure_threshold / manual / api_version_sunset / tenant_suspended."
     },
     {
-      "name": "academorix.webhook.subscriptions.rate_limit_deferred_total",
+      "name": "stackra.webhook.subscriptions.rate_limit_deferred_total",
       "kind": "counter",
       "unit": "deferrals",
       "labels": ["tenant_id"],
       "description": "Deliveries deferred because per-subscription rate limit reached."
     },
     {
-      "name": "academorix.webhook.dispatch.batch_size",
+      "name": "stackra.webhook.dispatch.batch_size",
       "kind": "histogram",
       "unit": "subscriptions",
       "buckets": [1, 5, 10, 50, 100, 500, 1000],
@@ -75,35 +75,35 @@
       "description": "Bus::batch size when fanning out an event. Tracks fan-out intensity."
     },
     {
-      "name": "academorix.webhook.signing.rotations_total",
+      "name": "stackra.webhook.signing.rotations_total",
       "kind": "counter",
       "unit": "rotations",
       "labels": ["tenant_id"],
       "description": "Secret rotations. Sudden spikes indicate compromise remediation."
     },
     {
-      "name": "academorix.webhook.signing.rotation_grace_hits_total",
+      "name": "stackra.webhook.signing.rotation_grace_hits_total",
       "kind": "counter",
       "unit": "hits",
       "labels": ["tenant_id"],
       "description": "Deliveries that used the previous secret (X-Webhook-Signature-Previous). Non-zero during rotation grace \u2014 zero after grace expires."
     },
     {
-      "name": "academorix.webhook.inbound.received_total",
+      "name": "stackra.webhook.inbound.received_total",
       "kind": "counter",
       "unit": "receipts",
       "labels": ["namespace", "provider"],
       "description": "Inbound webhook receipts by namespace + provider."
     },
     {
-      "name": "academorix.webhook.inbound.signature_invalid_total",
+      "name": "stackra.webhook.inbound.signature_invalid_total",
       "kind": "counter",
       "unit": "rejections",
       "labels": ["namespace", "provider"],
       "description": "Inbound webhooks rejected by verify.webhook. Anomalously high = potential replay / brute-force attempt."
     },
     {
-      "name": "academorix.webhook.probe.duration_ms",
+      "name": "stackra.webhook.probe.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 200, 500, 2000],
@@ -111,14 +111,14 @@
       "description": "Probe HTTP round-trip."
     },
     {
-      "name": "academorix.webhook.probe.failures_total",
+      "name": "stackra.webhook.probe.failures_total",
       "kind": "counter",
       "unit": "failures",
       "labels": ["tenant_id", "destination"],
       "description": "Consecutive probe failures per subscription. Feeds WebhookProbeFailed event."
     },
     {
-      "name": "academorix.webhook.deliveries.pruned_total",
+      "name": "stackra.webhook.deliveries.pruned_total",
       "kind": "counter",
       "unit": "rows",
       "labels": ["tenant_id"],

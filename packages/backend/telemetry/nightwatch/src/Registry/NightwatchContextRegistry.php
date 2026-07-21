@@ -14,13 +14,13 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Nightwatch\Registry;
+namespace Stackra\Nightwatch\Registry;
 
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Container\Attributes\Tag;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Context;
-use Academorix\Nightwatch\Contracts\NightwatchContext;
+use Stackra\Nightwatch\Contracts\NightwatchContext;
 use Throwable;
 
 /**

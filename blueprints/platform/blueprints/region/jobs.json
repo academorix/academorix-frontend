@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/region/jobs",
+  "id": "stackra://modules/region/jobs",
   "$version": 1,
   "title": "region — background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Region\\Jobs\\SeedDefaultRegionForTenantJob",
+      "class": "Stackra\\Region\\Jobs\\SeedDefaultRegionForTenantJob",
       "queue": "notifications",
       "purpose": "Dispatched on tenancy::TenantProvisioned. Creates the tenant's default Region using the tenant's registered country_code (from tenant.registration_country or the primary billing contact's country). Idempotent — a second dispatch for the same tenant no-ops.",
       "steps": [
@@ -24,7 +24,7 @@
       "note": "Runs on the notifications queue because it's part of the tenant-onboarding path — its latency is user-visible."
     },
     {
-      "class": "Academorix\\Region\\Jobs\\ReconcileDefaultRegionInvariantJob",
+      "class": "Stackra\\Region\\Jobs\\ReconcileDefaultRegionInvariantJob",
       "queue": "low",
       "purpose": "Daily nightly at 03:15 UTC. Verifies the invariant `every tenant has exactly one Region row with is_default=true`. Alerts on drift; when configured, auto-heals by re-seeding a default (via SeedDefaultRegionForTenantJob) OR promoting the oldest active Region to default.",
       "steps": [
@@ -43,7 +43,7 @@
       "note": "Off by default in staging; on in production. Auto-heal is off by default even in production — surface + acknowledge before healing."
     },
     {
-      "class": "Academorix\\Region\\Jobs\\PurgeArchivedRegionsJob",
+      "class": "Stackra\\Region\\Jobs\\PurgeArchivedRegionsJob",
       "queue": "low",
       "purpose": "Daily at 04:15 UTC. Hard-deletes soft-deleted (archived) Region rows past `region.retention.archived_regions_retention_days` (default 730 days — 2 years for financial retention) IF no inbound FK row still references them.",
       "steps": [

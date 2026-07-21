@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Observers;
+namespace Stackra\Versioning\Observers;
 
-use Academorix\Versioning\Contracts\Data\ApiVersionInterface;
-use Academorix\Versioning\Enums\ApiVersionStatus;
-use Academorix\Versioning\Events\ApiVersionDeprecated;
-use Academorix\Versioning\Events\ApiVersionReleased;
-use Academorix\Versioning\Events\ApiVersionSunset;
-use Academorix\Versioning\Models\ApiVersion;
+use Stackra\Versioning\Contracts\Data\ApiVersionInterface;
+use Stackra\Versioning\Enums\ApiVersionStatus;
+use Stackra\Versioning\Events\ApiVersionDeprecated;
+use Stackra\Versioning\Events\ApiVersionReleased;
+use Stackra\Versioning\Events\ApiVersionSunset;
+use Stackra\Versioning\Models\ApiVersion;
 
 /**
  * Lifecycle side effects on {@see ApiVersion}.

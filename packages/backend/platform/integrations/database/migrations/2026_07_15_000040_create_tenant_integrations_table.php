@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Integrations\Contracts\Data\TenantIntegrationInterface;
+use Stackra\Integrations\Contracts\Data\TenantIntegrationInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

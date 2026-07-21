@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Region\Contracts\Services;
+namespace Stackra\Region\Contracts\Services;
 
-use Academorix\Region\Services\RegionProvisioner;
+use Stackra\Region\Services\RegionProvisioner;
 use Illuminate\Container\Attributes\Bind;
 
 /**

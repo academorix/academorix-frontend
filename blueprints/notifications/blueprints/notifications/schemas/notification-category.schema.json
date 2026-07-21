@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/schemas/notification-category",
+  "id": "stackra://modules/notifications/schemas/notification-category",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "NotificationCategory",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "cat_",
     "incrementing": false,
-    "model": "Academorix\\Notifications\\Models\\NotificationCategory",
-    "interface": "Academorix\\Notifications\\Contracts\\Data\\NotificationCategoryInterface",
-    "implements": ["Academorix\\Notifications\\Contracts\\Data\\NotificationCategoryInterface"],
+    "model": "Stackra\\Notifications\\Models\\NotificationCategory",
+    "interface": "Stackra\\Notifications\\Contracts\\Data\\NotificationCategoryInterface",
+    "implements": ["Stackra\\Notifications\\Contracts\\Data\\NotificationCategoryInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -192,7 +192,7 @@
     "updated_at"
   ],
   "x-translatable": {
-    "trait": "Academorix\\Localization\\Concerns\\HasTranslations",
+    "trait": "Stackra\\Localization\\Concerns\\HasTranslations",
     "column": "translations",
     "fields": ["display_name", "description"],
     "underlying_package": "spatie/laravel-translatable ^6.0",

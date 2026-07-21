@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transfer/relations",
+  "id": "stackra://modules/transfer/relations",
   "$version": 1,
   "title": "transfer \u2014 model relationships",
   "description": "Four owned models with a hub-and-spoke shape: XferJob is the aggregate root; XferShard, XferArtifact, XferMappingProfile hang off it. Every model belongs to a tenant. No other module holds an FK to transfer tables \u2014 inbound integration happens via #[Importable] / #[Exportable] attribute-driven registration + HasActivityLog / HasAudit dual-write on transitions.",
@@ -80,7 +80,7 @@
       "to": "*",
       "morphName": "causer",
       "columns": ["causer_type", "causer_id"],
-      "description": "Polymorphic initiator. Typically `Academorix\\User\\Models\\User`, may be `Academorix\\Auth\\Models\\ServiceAccount` for API-driven jobs."
+      "description": "Polymorphic initiator. Typically `Stackra\\User\\Models\\User`, may be `Stackra\\Auth\\Models\\ServiceAccount` for API-driven jobs."
     },
     {
       "from": "XferJob",

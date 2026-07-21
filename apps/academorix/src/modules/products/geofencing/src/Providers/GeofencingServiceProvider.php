@@ -14,7 +14,7 @@
  *     `#[RequirePermission]`.
  *   - Console commands: `#[AsCommand]` extending `BaseCommand`.
  *   - Seeder: `#[AsSeeder(priority: 70)]` — composes
- *     {@see \Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
+ *     {@see \Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
  *   - Events: `#[AsEvent]` on every class.
  *   - Observer: `#[ObservedBy]` on the model.
  *   - Policy: `#[UsePolicy]` on the model.
@@ -28,11 +28,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Providers;
+namespace Stackra\Geofencing\Providers;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * Geofencing module service provider.

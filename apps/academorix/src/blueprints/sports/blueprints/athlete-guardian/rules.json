@@ -1,48 +1,48 @@
 {
-  "id": "academorix://modules/athlete-guardian/rules",
+  "id": "stackra://modules/athlete-guardian/rules",
   "$version": 1,
   "title": "athlete-guardian — validation rules",
   "description": "Custom Laravel validation rules published by AthleteGuardianServiceProvider::boot(). Used by both observer + FormRequest data classes.",
-  "namespace": "Academorix\\Sports\\AthleteGuardian\\Rules",
+  "namespace": "Stackra\\Sports\\AthleteGuardian\\Rules",
   "rules": [
     {
       "name": "valid_guardian_relationship",
-      "class": "Academorix\\Sports\\AthleteGuardian\\Rules\\ValidGuardianRelationship",
+      "class": "Stackra\\Sports\\AthleteGuardian\\Rules\\ValidGuardianRelationship",
       "signature": "valid_guardian_relationship",
       "description": "Enforces the relationship enum. Refuses any value outside: mother / father / step_mother / step_father / grandmother / grandfather / aunt / uncle / sibling / legal_guardian / foster_parent / other.",
       "default_message": "The :attribute must be a valid guardian relationship."
     },
     {
       "name": "valid_guardian_role_flags",
-      "class": "Academorix\\Sports\\AthleteGuardian\\Rules\\ValidGuardianRoleFlags",
+      "class": "Stackra\\Sports\\AthleteGuardian\\Rules\\ValidGuardianRoleFlags",
       "signature": "valid_guardian_role_flags",
       "description": "Cross-field validation: refuses can_authorise_medical_care=true when has_legal_custody=false. Medical authorisation requires legal custody.",
       "default_message": "Medical care authorisation requires legal custody."
     },
     {
       "name": "one_primary_guardian_per_athlete",
-      "class": "Academorix\\Sports\\AthleteGuardian\\Rules\\OnePrimaryGuardianPerAthlete",
+      "class": "Stackra\\Sports\\AthleteGuardian\\Rules\\OnePrimaryGuardianPerAthlete",
       "signature": "one_primary_guardian_per_athlete",
       "description": "Enforces the partial unique index (tenant_id, athlete_id, is_primary=true, deleted_at IS NULL). Exactly one primary per athlete when any guardian exists.",
       "default_message": "This athlete already has an active primary guardian. Demote the existing primary first, or use /set-primary for the atomic swap."
     },
     {
       "name": "guardian_user_active",
-      "class": "Academorix\\Sports\\AthleteGuardian\\Rules\\GuardianUserActive",
+      "class": "Stackra\\Sports\\AthleteGuardian\\Rules\\GuardianUserActive",
       "signature": "guardian_user_active",
       "description": "Refuses when the referenced User is soft-deleted or not active in this tenant.",
       "default_message": "The referenced user is not active in this tenant."
     },
     {
       "name": "guardian_athlete_active",
-      "class": "Academorix\\Sports\\AthleteGuardian\\Rules\\GuardianAthleteActive",
+      "class": "Stackra\\Sports\\AthleteGuardian\\Rules\\GuardianAthleteActive",
       "signature": "guardian_athlete_active",
       "description": "Refuses when the referenced Athlete is withdrawn or archived. Cannot add guardian to a non-active athlete.",
       "default_message": "The athlete is withdrawn or archived; guardianship cannot be established."
     },
     {
       "name": "no_duplicate_guardian_per_athlete_user",
-      "class": "Academorix\\Sports\\AthleteGuardian\\Rules\\NoDuplicateGuardianPerAthleteUser",
+      "class": "Stackra\\Sports\\AthleteGuardian\\Rules\\NoDuplicateGuardianPerAthleteUser",
       "signature": "no_duplicate_guardian_per_athlete_user",
       "description": "Enforces the partial unique index (tenant_id, athlete_id, user_id, deleted_at IS NULL). One live row per (athlete, guardian_user).",
       "default_message": "This user is already a guardian for this athlete."

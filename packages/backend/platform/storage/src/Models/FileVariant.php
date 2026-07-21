@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Models;
+namespace Stackra\Storage\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Storage\Contracts\Data\FileVariantInterface;
-use Academorix\Storage\Database\Factories\FileVariantFactory;
-use Academorix\Storage\Observers\FileVariantObserver;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Storage\Contracts\Data\FileVariantInterface;
+use Stackra\Storage\Database\Factories\FileVariantFactory;
+use Stackra\Storage\Observers\FileVariantObserver;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

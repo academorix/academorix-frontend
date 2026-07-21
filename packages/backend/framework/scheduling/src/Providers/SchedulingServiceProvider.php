@@ -6,7 +6,7 @@ declare(strict_types=1);
  * @file packages/scheduling/src/Providers/SchedulingServiceProvider.php
  *
  * @description
- * Package entry point for `academorix/scheduling`. Wires the
+ * Package entry point for `stackra/scheduling`. Wires the
  * discovery + registrar into the host application, and defers
  * every actual `Schedule::job()` / `Schedule::command()` call
  * until Laravel's own scheduler binding is being resolved.
@@ -16,8 +16,8 @@ declare(strict_types=1);
  * The two collaborator services in this package carry
  * `#[Singleton]` on their class body:
  *
- *   - {@see \Academorix\Scheduling\Support\ScheduleDiscovery}
- *   - {@see \Academorix\Scheduling\Support\ScheduleRegistrar}
+ *   - {@see \Stackra\Scheduling\Support\ScheduleDiscovery}
+ *   - {@see \Stackra\Scheduling\Support\ScheduleRegistrar}
  *
  * The registrar's constructor also carries three `#[Config]`
  * parameters — `scheduling.discovery.cache_path`,
@@ -36,7 +36,7 @@ declare(strict_types=1);
  *      for the first time (typically at
  *      `php artisan schedule:run` startup) the hook fires and
  *      the registrar iterates every
- *      {@see \Academorix\Scheduling\Support\ScheduledTask} the
+ *      {@see \Stackra\Scheduling\Support\ScheduledTask} the
  *      discovery layer emits.
  *
  * ## What it deliberately does NOT do
@@ -51,14 +51,14 @@ declare(strict_types=1);
  *     the boot cost isolated to the scheduler process.
  */
 
-namespace Academorix\Scheduling\Providers;
+namespace Stackra\Scheduling\Providers;
 
-use Academorix\Scheduling\Support\ScheduleRegistrar;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\OnBoot;
-use Academorix\ServiceProvider\Attributes\OnRegister;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\Scheduling\Support\ScheduleRegistrar;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\OnBoot;
+use Stackra\ServiceProvider\Attributes\OnRegister;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
 
 /**

@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/tenancy/observers",
+  "id": "stackra://modules/tenancy/observers",
   "$version": 1,
   "title": "tenants — Eloquent observers",
   "description": "Eloquent observers this module registers. Each observer's `hooks[]` lists the Eloquent events it acts on plus a description of the side effect. Registered by `TenancyServiceProvider::boot()` via `Model::observe(Observer::class)`.",
   "observers": [
     {
-      "class": "Academorix\\Tenancy\\Observers\\TenantObserver",
-      "target": "Academorix\\Tenancy\\Models\\Tenant",
+      "class": "Stackra\\Tenancy\\Observers\\TenantObserver",
+      "target": "Stackra\\Tenancy\\Models\\Tenant",
       "hooks": [
         {
           "event": "creating",
@@ -27,8 +27,8 @@
       ]
     },
     {
-      "class": "Academorix\\Tenancy\\Observers\\DomainObserver",
-      "target": "Academorix\\Tenancy\\Models\\Domain",
+      "class": "Stackra\\Tenancy\\Observers\\DomainObserver",
+      "target": "Stackra\\Tenancy\\Models\\Domain",
       "hooks": [
         {
           "event": "creating",
@@ -49,8 +49,8 @@
       ]
     },
     {
-      "class": "Academorix\\Tenancy\\Observers\\BrandingObserver",
-      "target": "Academorix\\Tenancy\\Models\\Branding",
+      "class": "Stackra\\Tenancy\\Observers\\BrandingObserver",
+      "target": "Stackra\\Tenancy\\Models\\Branding",
       "hooks": [
         {
           "event": "creating",
@@ -71,8 +71,8 @@
       ]
     },
     {
-      "class": "Academorix\\Tenancy\\Observers\\TenantContactObserver",
-      "target": "Academorix\\Tenancy\\Models\\TenantContact",
+      "class": "Stackra\\Tenancy\\Observers\\TenantContactObserver",
+      "target": "Stackra\\Tenancy\\Models\\TenantContact",
       "hooks": [
         {
           "event": "creating",
@@ -89,8 +89,8 @@
       ]
     },
     {
-      "class": "Academorix\\Tenancy\\Observers\\TenantIntegrationObserver",
-      "target": "Academorix\\Tenancy\\Models\\TenantIntegration",
+      "class": "Stackra\\Tenancy\\Observers\\TenantIntegrationObserver",
+      "target": "Stackra\\Tenancy\\Models\\TenantIntegration",
       "hooks": [
         {
           "event": "saving",

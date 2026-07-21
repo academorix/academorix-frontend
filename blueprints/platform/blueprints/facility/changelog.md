@@ -16,7 +16,7 @@
 - Booking state machine: pending → confirmed → completed / cancelled / no_show.
   Auto-confirm default in Wave 2.
 - Overlap detection under SERIALIZABLE isolation + weekly reconciler audit.
-  `academorix.facility.overlaps.detected` counter must stay at 0.
+  `stackra.facility.overlaps.detected` counter must stay at 0.
 - Cascade paths: FacilityRetired → future bookings cancelled;
   FacilityBlackoutAdded → in-window bookings cancelled; RegionPaused →
   facilities transitioned to maintenance; TenantErased → FK CASCADE.

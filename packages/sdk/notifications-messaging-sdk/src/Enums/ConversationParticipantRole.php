@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsMessagingSdk\Enums;
+namespace Stackra\NotificationsMessagingSdk\Enums;
 
 /**
  * Wire-visible backed enum for `conversation-participant.role`.

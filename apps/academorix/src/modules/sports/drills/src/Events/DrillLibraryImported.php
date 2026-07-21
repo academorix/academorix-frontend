@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Drills\Events;
+namespace Stackra\Drills\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -26,7 +26,7 @@ final readonly class DrillLibraryImported implements ShouldDispatchAfterCommit
     /**
      * @param  string  $importId  ULID
      * @param  string  $tenantId  ULID
-     * @param  string  $source  'academorix_public'|'partner_academy'|'csv_upload'
+     * @param  string  $source  'stackra_public'|'partner_academy'|'csv_upload'
      * @param  int  $count  int
      */
     public function __construct(

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SharedAttributesSdk\Resources;
+namespace Stackra\SharedAttributesSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SharedAttributesSdk\Data\AttributeGroupData;
-use Academorix\SharedAttributesSdk\Requests\AttributeGroups\CreateAttributeGroupRequest;
-use Academorix\SharedAttributesSdk\Requests\AttributeGroups\ListAttributeGroupsRequest;
-use Academorix\SharedAttributesSdk\Requests\AttributeGroups\UpdateAttributeGroupRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SharedAttributesSdk\Data\AttributeGroupData;
+use Stackra\SharedAttributesSdk\Requests\AttributeGroups\CreateAttributeGroupRequest;
+use Stackra\SharedAttributesSdk\Requests\AttributeGroups\ListAttributeGroupsRequest;
+use Stackra\SharedAttributesSdk\Requests\AttributeGroups\UpdateAttributeGroupRequest;
 use Saloon\Http\Response;
 
 /**
@@ -56,7 +56,7 @@ final readonly class AttributeGroupsResource
      *
      * @return AttributeGroupData
      */
-    public function create(\Academorix\SharedAttributesSdk\Payloads\AttributeGroups\CreateAttributeGroupPayload $payload, ?string $idempotencyKey = null): AttributeGroupData
+    public function create(\Stackra\SharedAttributesSdk\Payloads\AttributeGroups\CreateAttributeGroupPayload $payload, ?string $idempotencyKey = null): AttributeGroupData
     {
         return $this->connector->send(new CreateAttributeGroupRequest($payload, $idempotencyKey))->dto();
     }
@@ -71,7 +71,7 @@ final readonly class AttributeGroupsResource
      *
      * @return AttributeGroupData
      */
-    public function update(string $group, \Academorix\SharedAttributesSdk\Payloads\AttributeGroups\UpdateAttributeGroupPayload $payload, ?string $idempotencyKey = null): AttributeGroupData
+    public function update(string $group, \Stackra\SharedAttributesSdk\Payloads\AttributeGroups\UpdateAttributeGroupPayload $payload, ?string $idempotencyKey = null): AttributeGroupData
     {
         return $this->connector->send(new UpdateAttributeGroupRequest($group, $payload, $idempotencyKey))->dto();
     }

@@ -1,46 +1,46 @@
 {
-  "id": "academorix://modules/theme/commands",
+  "id": "stackra://modules/theme/commands",
   "$version": 1,
   "title": "theme — Artisan commands",
   "commands": [
     {
       "signature": "theme:list {--tenant=} {--mode=} {--active}",
-      "class": "Academorix\\Platform\\Theme\\Console\\Commands\\ListThemesCommand",
+      "class": "Stackra\\Platform\\Theme\\Console\\Commands\\ListThemesCommand",
       "purpose": "Print themes for a tenant (or every tenant with --tenant=*). Filter --mode=light|dark, --active for is_active=true only. Table columns: id, mode, name, selected_preset_slug, is_active, activated_at."
     },
     {
       "signature": "theme:describe {theme}",
-      "class": "Academorix\\Platform\\Theme\\Console\\Commands\\DescribeThemeCommand",
+      "class": "Stackra\\Platform\\Theme\\Console\\Commands\\DescribeThemeCommand",
       "purpose": "Print the full theme row + resolved tokens_snapshot + contrast audit findings for one theme. Useful for support incident reproduction."
     },
     {
       "signature": "theme:activate {theme} {--force}",
-      "class": "Academorix\\Platform\\Theme\\Console\\Commands\\ActivateThemeCommand",
+      "class": "Stackra\\Platform\\Theme\\Console\\Commands\\ActivateThemeCommand",
       "purpose": "Activate a theme from CLI. Skips the HTTP surface — useful for scripted deployments (e.g. rollback to a prior theme in an incident). --force skips the contrast auditor's warning stage."
     },
     {
       "signature": "theme:preview {theme} {--out=} {--format=json}",
-      "class": "Academorix\\Platform\\Theme\\Console\\Commands\\PreviewThemeCommand",
+      "class": "Stackra\\Platform\\Theme\\Console\\Commands\\PreviewThemeCommand",
       "purpose": "Dry-run resolve + render. Output the resolved token map + compiled CSS + contrast findings to --out (path or stdout). --format=json|css toggles between raw token map JSON and the compiled CSS."
     },
     {
       "signature": "theme-preset:list {--tenant=} {--mode=} {--category=} {--platform-only}",
-      "class": "Academorix\\Platform\\Theme\\Console\\Commands\\ListPresetsCommand",
+      "class": "Stackra\\Platform\\Theme\\Console\\Commands\\ListPresetsCommand",
       "purpose": "Print presets. --platform-only shows platform-provided (tenant_id NULL). --tenant scopes to a tenant's custom presets. --category filters."
     },
     {
       "signature": "theme-preset:create {slug} {--tenant=} {--mode=light} {--category=tenant_custom} {--source=} {--force}",
-      "class": "Academorix\\Platform\\Theme\\Console\\Commands\\CreatePresetCommand",
+      "class": "Stackra\\Platform\\Theme\\Console\\Commands\\CreatePresetCommand",
       "purpose": "Create a preset from CLI. --source=<preset-slug> clones an existing preset's tokens as the starting point. --tenant unset writes a platform preset (requires --allow-platform + guard is platform_admin at invocation)."
     },
     {
       "signature": "theme-preset:duplicate {preset} {--tenant=} {--slug=} {--name=}",
-      "class": "Academorix\\Platform\\Theme\\Console\\Commands\\DuplicatePresetCommand",
+      "class": "Stackra\\Platform\\Theme\\Console\\Commands\\DuplicatePresetCommand",
       "purpose": "Clone an existing preset (platform or tenant custom) into a new tenant custom preset. --slug + --name required; --tenant defaults to the caller's tenant."
     },
     {
       "signature": "theme-token-override:report {--tenant=} {--audit}",
-      "class": "Academorix\\Platform\\Theme\\Console\\Commands\\ReportTokenOverridesCommand",
+      "class": "Stackra\\Platform\\Theme\\Console\\Commands\\ReportTokenOverridesCommand",
       "purpose": "Per-tenant override count for accessibility + budget audit. --audit adds a contrast-ratio + vocabulary-drift check across every override. Table columns: tenant_id, theme_id, override_count, budget_remaining, contrast_findings_count."
     }
   ]

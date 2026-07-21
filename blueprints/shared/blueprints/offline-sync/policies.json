@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/offline-sync/policies",
+  "id": "stackra://modules/offline-sync/policies",
   "$version": 1,
   "title": "offline-sync — authorization policies",
   "policies": [
     {
       "model": "SyncDevice",
-      "class": "Academorix\\Shared\\OfflineSync\\Policies\\SyncDevicePolicy",
+      "class": "Stackra\\Shared\\OfflineSync\\Policies\\SyncDevicePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -23,7 +23,7 @@
     },
     {
       "model": "SyncBatch",
-      "class": "Academorix\\Shared\\OfflineSync\\Policies\\SyncBatchPolicy",
+      "class": "Stackra\\Shared\\OfflineSync\\Policies\\SyncBatchPolicy",
       "abilities": [
         {
           "action": "submit",

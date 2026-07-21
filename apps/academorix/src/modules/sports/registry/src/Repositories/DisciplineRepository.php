@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Repositories;
+namespace Stackra\Registry\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Registry\Contracts\Data\DisciplineInterface;
-use Academorix\Registry\Contracts\Repositories\DisciplineRepositoryInterface;
-use Academorix\Registry\Models\Discipline;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Registry\Contracts\Data\DisciplineInterface;
+use Stackra\Registry\Contracts\Repositories\DisciplineRepositoryInterface;
+use Stackra\Registry\Models\Discipline;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Registry\Models\Discipline}.
+ * Attribute-first Eloquent repository for {@see Stackra\Registry\Models\Discipline}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(DisciplineInterface::class)]` which resolves to
  * `Discipline` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Registry\Models\Discipline>
+ * @extends Repository<\Stackra\Registry\Models\Discipline>
  *
  * @category Registry
  *

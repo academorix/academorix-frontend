@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Enums;
+namespace Stackra\Invitations\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
- * Lifecycle state of an {@see \Academorix\Invitations\Models\Invitation}.
+ * Lifecycle state of an {@see \Stackra\Invitations\Models\Invitation}.
  *
  * ## Cases
  *
@@ -102,7 +102,7 @@ enum InvitationStatus: string
     /**
      * Whether the state is terminal — no further transitions allowed.
      *
-     * Bounces are considered non-terminal here — {@see \Academorix\Invitations\Models\Invitation}
+     * Bounces are considered non-terminal here — {@see \Stackra\Invitations\Models\Invitation}
      * tracks the hard/soft distinction via `bounce_kind` and only hard
      * bounces + complaints stop retry.
      */

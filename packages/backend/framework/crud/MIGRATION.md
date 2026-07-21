@@ -1,9 +1,9 @@
-# Migration notes — academorix/crud
+# Migration notes — stackra/crud
 
-Origin package split from `academorix/crud` per the "Model = what the data IS,
+Origin package split from `stackra/crud` per the "Model = what the data IS,
 Repository = how the data is QUERIED" rule documented in
-`old/crud/ARCHITECTURE.md`. The `academorix/crud`'s data-shape half is now
-`academorix/database`; this package receives the query surface.
+`old/crud/ARCHITECTURE.md`. The `stackra/crud`'s data-shape half is now
+`stackra/database`; this package receives the query surface.
 
 ## Source → destination map
 
@@ -64,22 +64,22 @@ Repository = how the data is QUERIED" rule documented in
 
 | Old namespace                                                                                                             | New namespace                                                      |
 | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `Academorix\Crud\{Attributes,Concerns,Contracts,Criteria,Enums,Events,Providers,Registries,Repositories,Scopes,Services}` | `Academorix\Crud\{same}`                                           |
-| `Academorix\Crud\Attributes\{data attrs}` (12 attributes)                                                                 | `Academorix\Database\Attributes\{name}`                            |
-| `Academorix\Crud\Concerns\Model\{name}`                                                                                   | `Academorix\Database\Concerns\Model\{name}`                        |
-| `Academorix\Crud\Schema\{name}`                                                                                           | `Academorix\Database\Schema\{name}`                                |
-| `Academorix\Foundation\Contracts\RepositoryInterface`                                                                     | `Academorix\Crud\Contracts\RepositoryInterface`                    |
-| `Academorix\Foundation\Contracts\ServiceInterface`                                                                        | `Academorix\Crud\Contracts\ServiceInterface`                       |
-| `Academorix\Foundation\Repositories\BaseRepository`                                                                       | `Academorix\Crud\Repositories\BaseRepository`                      |
-| `Academorix\Foundation\Repositories\AbstractEloquentRepository`                                                           | `Academorix\Crud\Repositories\AbstractEloquentRepository`          |
-| `Academorix\Foundation\Services\BaseService`                                                                              | `Academorix\Crud\Services\BaseService`                             |
-| `Academorix\Foundation\Controllers\CrudController`                                                                        | `Academorix\Crud\Controllers\CrudController`                       |
-| `Academorix\Foundation\Cache\*`                                                                                           | `Academorix\Database\Cache\*`                                      |
-| `Academorix\Enum\{Enum, Attributes\Description, Attributes\Label}`                                                        | `Academorix\Enum\{Enum, Attributes\Description, Attributes\Label}` |
+| `Stackra\Crud\{Attributes,Concerns,Contracts,Criteria,Enums,Events,Providers,Registries,Repositories,Scopes,Services}` | `Stackra\Crud\{same}`                                           |
+| `Stackra\Crud\Attributes\{data attrs}` (12 attributes)                                                                 | `Stackra\Database\Attributes\{name}`                            |
+| `Stackra\Crud\Concerns\Model\{name}`                                                                                   | `Stackra\Database\Concerns\Model\{name}`                        |
+| `Stackra\Crud\Schema\{name}`                                                                                           | `Stackra\Database\Schema\{name}`                                |
+| `Stackra\Foundation\Contracts\RepositoryInterface`                                                                     | `Stackra\Crud\Contracts\RepositoryInterface`                    |
+| `Stackra\Foundation\Contracts\ServiceInterface`                                                                        | `Stackra\Crud\Contracts\ServiceInterface`                       |
+| `Stackra\Foundation\Repositories\BaseRepository`                                                                       | `Stackra\Crud\Repositories\BaseRepository`                      |
+| `Stackra\Foundation\Repositories\AbstractEloquentRepository`                                                           | `Stackra\Crud\Repositories\AbstractEloquentRepository`          |
+| `Stackra\Foundation\Services\BaseService`                                                                              | `Stackra\Crud\Services\BaseService`                             |
+| `Stackra\Foundation\Controllers\CrudController`                                                                        | `Stackra\Crud\Controllers\CrudController`                       |
+| `Stackra\Foundation\Cache\*`                                                                                           | `Stackra\Database\Cache\*`                                      |
+| `Stackra\Enum\{Enum, Attributes\Description, Attributes\Label}`                                                        | `Stackra\Enum\{Enum, Attributes\Description, Attributes\Label}` |
 
 ## Discovery mechanism change
 
-- **Old**: `academorix/discovery` / `pixielity/laravel-discovery` runtime facade
+- **Old**: `stackra/discovery` / `pixielity/laravel-discovery` runtime facade
   — cached class map exposed via `Discovery::attribute(X::class)->get()` and
   `Discovery::forClass($class)`.
 - **New**: `olvlvl/composer-attribute-collector`. `vendor/attributes.php` is
@@ -89,42 +89,42 @@ Repository = how the data is QUERIED" rule documented in
 
 ## Duplicate contracts
 
-Both the old `academorix/crud` and the old Foundation module shipped their own
+Both the old `stackra/crud` and the old Foundation module shipped their own
 `RepositoryInterface` / `ServiceInterface`. The two contracts have DIFFERENT
 method signatures (see the `Services/BaseService.php` "Two repository-contract
 families" docblock for the split rationale):
 
-- **Nested / rich** contract shipped by `academorix/crud` —
+- **Nested / rich** contract shipped by `stackra/crud` —
   `update(int|string $id, array $attrs)`, `findByAttribute`, `restore`, etc.
 - **Flat** contract shipped by Foundation — `update(Model $m, array $attrs)`,
   spatie/laravel-query-builder integration.
 
 The port keeps the CRUD (nested / rich) contract as the CANONICAL one under
-`Academorix\Crud\Contracts\{Repository,Service}Interface`. `BaseRepository` and
+`Stackra\Crud\Contracts\{Repository,Service}Interface`. `BaseRepository` and
 `BaseService` (from the Foundation side) continue to expect the flat shape — the
-type hints in those classes reference the same `Academorix\Crud\Contracts\*`
+type hints in those classes reference the same `Stackra\Crud\Contracts\*`
 files, which is intentional: the flat + nested shapes have been aligned under
 one contract during the port. Consumers previously depending on
-`Academorix\Foundation\Contracts\*` should switch to
-`Academorix\Crud\Contracts\*` directly.
+`Stackra\Foundation\Contracts\*` should switch to
+`Stackra\Crud\Contracts\*` directly.
 
 ## TODOs
 
 - **`Repositories/Repository.php`** — the `use RoutesToIndex;` line and its
-  `use Academorix\Indexer\Concerns\RoutesToIndex;` import are commented out. The
-  `academorix/indexer` package has not been ported. When an equivalent
-  `academorix/indexer` ships, uncomment both lines; the file is otherwise
+  `use Stackra\Indexer\Concerns\RoutesToIndex;` import are commented out. The
+  `stackra/indexer` package has not been ported. When an equivalent
+  `stackra/indexer` ships, uncomment both lines; the file is otherwise
   intact.
 
 - **Docblock cleanup** — some `#[Use*]` attribute docblocks reference
-  `Academorix\Users\*` example FQCNs (renamed mechanically from
-  `Academorix\Users\*`). Those are documentation strings only — the referenced
+  `Stackra\Users\*` example FQCNs (renamed mechanically from
+  `Stackra\Users\*`). Those are documentation strings only — the referenced
   classes are illustrative, they are not expected to exist.
 
 - **`Events/{EntityCreated,EntityUpdated,EntityDeleted}.php`** — the class-level
   `#[AsEvent(...)]` marker and its import
-  (`use Academorix\Event\Attributes\AsEvent;`) have been stripped because the
-  `academorix/event` marker attribute has no equivalent in `academorix/events`
+  (`use Stackra\Event\Attributes\AsEvent;`) have been stripped because the
+  `stackra/event` marker attribute has no equivalent in `stackra/events`
   yet. The events themselves dispatch via Laravel's dispatcher as usual — no
   functional change; only the (now-unused) discovery marker is missing.
 

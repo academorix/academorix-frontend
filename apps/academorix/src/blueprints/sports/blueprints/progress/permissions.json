@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/progress/permissions",
+  "id": "stackra://modules/progress/permissions",
   "$version": 1,
   "title": "progress — permissions",
-  "seeder": "Academorix\\Sports\\Progress\\Database\\Seeders\\ProgressPermissionSeeder",
+  "seeder": "Stackra\\Sports\\Progress\\Database\\Seeders\\ProgressPermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — coaches author, head coaches + admins moderate, guardians view. Platform plane (platform_admin) — support tooling only, PII-masked.",
   "permissions": [

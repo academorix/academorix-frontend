@@ -4,7 +4,7 @@
  * @file database/factories/ScopeNodeFactory.php
  *
  * @description
- * Factory for {@see \Academorix\Scope\Models\ScopeNode}. Produces
+ * Factory for {@see \Stackra\Scope\Models\ScopeNode}. Produces
  * root nodes by default (no parent, depth 0, materialised_path is
  * the node's own id wrapped in slashes). Deeper nodes chain via
  * the `->childOf($parentNode)` state which correctly rebuilds the
@@ -21,10 +21,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Database\Factories;
+namespace Stackra\Scope\Database\Factories;
 
-use Academorix\Scope\Contracts\Data\ScopeNodeInterface;
-use Academorix\Scope\Models\ScopeNode;
+use Stackra\Scope\Contracts\Data\ScopeNodeInterface;
+use Stackra\Scope\Models\ScopeNode;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

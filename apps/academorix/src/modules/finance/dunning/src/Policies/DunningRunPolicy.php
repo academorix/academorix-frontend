@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Dunning\Policies;
+namespace Stackra\Dunning\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Dunning\Models\DunningRun;
+use Stackra\User\Models\User;
+use Stackra\Dunning\Models\DunningRun;
 
 /**
- * Authorization policy for {@see \Academorix\Dunning\Models\DunningRun}.
+ * Authorization policy for {@see \Stackra\Dunning\Models\DunningRun}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

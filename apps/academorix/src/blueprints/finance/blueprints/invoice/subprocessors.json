@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/invoice/subprocessors",
+  "id": "stackra://modules/invoice/subprocessors",
   "$version": 1,
   "title": "invoice — subprocessors",
-  "description": "The Invoice module engages TWO categories of third-party subprocessors: (1) PDF storage + delivery (AWS S3 for hot storage, S3 Glacier for cold archive), and (2) Enterprise-only collections agency integrations (per-tenant configurable — this file lists the platform-supported agencies). GDPR Art. 28 DPA references for each. The tenant admin acknowledges the DPA before configuring a collections agency; PDF storage is transparent (Academorix's infrastructure vendor, not an active engagement per tenant).",
+  "description": "The Invoice module engages TWO categories of third-party subprocessors: (1) PDF storage + delivery (AWS S3 for hot storage, S3 Glacier for cold archive), and (2) Enterprise-only collections agency integrations (per-tenant configurable — this file lists the platform-supported agencies). GDPR Art. 28 DPA references for each. The tenant admin acknowledges the DPA before configuring a collections agency; PDF storage is transparent (Stackra's infrastructure vendor, not an active engagement per tenant).",
   "subprocessors": [
     {
       "slug": "aws_s3",
@@ -27,7 +27,7 @@
         "PCI-DSS",
         "HIPAA-BAA (opt-in)"
       ],
-      "activation_gate": "platform-level (Academorix's infrastructure)"
+      "activation_gate": "platform-level (Stackra's infrastructure)"
     },
     {
       "slug": "aws_s3_glacier",
@@ -119,7 +119,7 @@
     }
   ],
   "notes": [
-    "This file exists deliberately with 2 categories of active subprocessors. AWS S3 + KMS are platform-level (Academorix's infrastructure — not a per-tenant engagement). Collections agencies are per-tenant + Enterprise-only.",
+    "This file exists deliberately with 2 categories of active subprocessors. AWS S3 + KMS are platform-level (Stackra's infrastructure — not a per-tenant engagement). Collections agencies are per-tenant + Enterprise-only.",
     "The tenant-facing subprocessor list (compliance/subprocessors surface) reads from this file + shows only the active subset per tenant (based on which collections agency the tenant has configured, if any).",
     "Adding a new collections agency = adding a new entry to a data catalogue (data/collections-agency-catalog.json — TBD) + updating the notifications module's integration + updating compliance.json Art. 28 evidence.",
     "PDF storage on S3 is protected by SSE-KMS encryption at rest — even AWS staff cannot decrypt without the tenant-specific KMS keys. Encryption keys are rotated per compliance/encryption cadence (default 90 days).",

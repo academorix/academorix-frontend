@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/expenses/retention",
+  "id": "stackra://modules/expenses/retention",
   "$version": 1,
   "title": "expenses — data retention windows",
   "description": "Financial audit horizon: 7 years post-close for all money-out records (tax + regulatory). Receipts + invoices retained at rest per the same window.",

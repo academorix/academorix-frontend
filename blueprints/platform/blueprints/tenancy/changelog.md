@@ -9,7 +9,7 @@ edited in place — new entries at the top, historical entries never mutate.
 - **rename** — folder renamed `modules/Tenancy/` → `modules/tenancy/`;
   `README.md` → `readme.md`; every subdirectory lowercase. Enforces the
   tenant-wide kebab-case-lowercase rule.
-- **drop** — `Academorix\Tenancy\Providers\TenancyRouteServiceProvider` removed
+- **drop** — `Stackra\Tenancy\Providers\TenancyRouteServiceProvider` removed
   from `module.json.providers[]`. Routes now mount centrally from `routes.json`
   through a `ModuleRouteLoader` in `foundation` (loader itself is TBD, tracked
   in `.kiro/specs/module-blueprints/PLAN.md` §8 Q1).
@@ -54,7 +54,7 @@ edited in place — new entries at the top, historical entries never mutate.
 
 - **drop** — `stancl/tenants` composer dependency removed. Was pulled in purely
   for its `Domain` model contract + tenants identification. We now ship our own
-  `TenantResolver` + `HostResolver` + `Academorix\Tenancy\Contracts\Domain`. Was
+  `TenantResolver` + `HostResolver` + `Stackra\Tenancy\Contracts\Domain`. Was
   overkill for our single-DB, row-level `tenant_id` architecture and added ~40
   unused classes.
 - **drop: contracts** — `schemas/tenant.schema.json` no longer implements

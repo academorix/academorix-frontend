@@ -6,7 +6,7 @@
  * @description
  * Server-side marker declaring "this Data class is the wire-visible
  * response shape for endpoint X". Read by the SDK generator
- * ({@see \Academorix\SdkGenerator\Discovery\SdkAttributeScanner})
+ * ({@see \Stackra\SdkGenerator\Discovery\SdkAttributeScanner})
  * during `php artisan sdk:generate <service>` to emit the matching
  * SDK `Data/<Entity>Data.php` file in the target sub-package.
  *
@@ -34,7 +34,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Attributes;
+namespace Stackra\ApiSdk\Attributes;
 
 use Attribute;
 
@@ -52,7 +52,7 @@ use Attribute;
  * ```php
  * // On the SERVER side (e.g. apps/platform-service/src/modules/workspaces/):
  *
- * use Academorix\ApiSdk\Attributes\SdkResponse;
+ * use Stackra\ApiSdk\Attributes\SdkResponse;
  * use Spatie\LaravelData\Data;
  *
  * #[SdkResponse(service: 'platform', resource: 'workspaces')]

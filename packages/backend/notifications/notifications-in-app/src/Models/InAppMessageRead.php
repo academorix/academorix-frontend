@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Models;
+namespace Stackra\Notifications\InApp\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Notifications\InApp\Contracts\Data\InAppMessageInterface;
-use Academorix\Notifications\InApp\Contracts\Data\InAppMessageReadInterface;
-use Academorix\Notifications\InApp\Database\Factories\InAppMessageReadFactory;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Notifications\InApp\Contracts\Data\InAppMessageInterface;
+use Stackra\Notifications\InApp\Contracts\Data\InAppMessageReadInterface;
+use Stackra\Notifications\InApp\Database\Factories\InAppMessageReadFactory;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;

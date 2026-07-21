@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transfer/errors",
+  "id": "stackra://modules/transfer/errors",
   "$version": 1,
   "title": "transfer \u2014 error codes",
   "namespace": "transfer",

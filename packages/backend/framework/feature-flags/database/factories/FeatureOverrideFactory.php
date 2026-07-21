@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Database\Factories;
+namespace Stackra\FeatureFlags\Database\Factories;
 
-use Academorix\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
-use Academorix\FeatureFlags\Enums\OverrideDecision;
-use Academorix\FeatureFlags\Models\FeatureOverride;
+use Stackra\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
+use Stackra\FeatureFlags\Enums\OverrideDecision;
+use Stackra\FeatureFlags\Models\FeatureOverride;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

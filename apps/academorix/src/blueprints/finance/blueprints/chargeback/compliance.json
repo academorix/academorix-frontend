@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/chargeback/compliance",
+  "id": "stackra://modules/chargeback/compliance",
   "$version": 1,
   "title": "chargeback — compliance evidence",
   "description": "Chargeback module is financial-record-critical (every chargeback is a bank-forced revenue reversal — SOX + tax audit relevant + card network audit relevant) + PII-adjacent (customer_id + submitted_by_user_id captured on every submission + evidence bundles may contain IP address / device fingerprint hash / service attendance records) + advertising-adjacent (feeds negative-value marketing events + fraud model retraining) + card-network-audit-critical (chargeback rate above 0.9% Visa / 1.5% Mastercard triggers merchant-account risk programs). GDPR (Art. 5, 6, 17), CFPB Fair Credit Billing Act, PSD2 (EU), US tax law (7y financial record), SOX 404 (internal controls), SOC 2 CC6.3, PCI-DSS Req 3.4 + 10.5.3 (no PAN storage + audit trail retention), Card Network Rules (VDMP / MDMP / equivalent enforcement).",
@@ -110,12 +110,12 @@
         {
           "criterion": "CC7.2",
           "principle": "system monitoring",
-          "evidence": "academorix.chargeback.atomicity.failures_total = 0 target. academorix.chargeback.finalization_failures_total = 0 target. Every ChargebackLost fires the 5-step finalization chain + records metrics; failures dispatch a warn + alert."
+          "evidence": "stackra.chargeback.atomicity.failures_total = 0 target. stackra.chargeback.finalization_failures_total = 0 target. Every ChargebackLost fires the 5-step finalization chain + records metrics; failures dispatch a warn + alert."
         },
         {
           "criterion": "CC7.4",
           "principle": "incident detection + response",
-          "evidence": "academorix.chargeback.rate_threshold_exceeded_total counter — P1 signal on VDMP/MDMP threshold breach. MonitorChargebackRateJob nightly. Platform-plane rate-threshold-alerts endpoint for cross-tenant risk monitoring by Academorix ops."
+          "evidence": "stackra.chargeback.rate_threshold_exceeded_total counter — P1 signal on VDMP/MDMP threshold breach. MonitorChargebackRateJob nightly. Platform-plane rate-threshold-alerts endpoint for cross-tenant risk monitoring by Stackra ops."
         },
         {
           "criterion": "CC9.1",
@@ -166,7 +166,7 @@
           "regime": "Visa VDMP (Visa Dispute Monitoring Program)",
           "threshold_percent": 0.009,
           "principle": "chargeback rate above 0.9% triggers merchant risk program",
-          "evidence": "MonitorChargebackRateJob computes rolling 60-day rate per network + fires ChargebackRateThresholdExceeded when rate >= 0.9%. Dispatches P1 admin notification + Academorix platform ops alert. Sustained breaches lead to merchant-account termination — early warning at 75% of threshold gives ops runway to intervene."
+          "evidence": "MonitorChargebackRateJob computes rolling 60-day rate per network + fires ChargebackRateThresholdExceeded when rate >= 0.9%. Dispatches P1 admin notification + Stackra platform ops alert. Sustained breaches lead to merchant-account termination — early warning at 75% of threshold gives ops runway to intervene."
         },
         {
           "regime": "Mastercard MDMP (Mastercard Dispute Monitoring Program)",

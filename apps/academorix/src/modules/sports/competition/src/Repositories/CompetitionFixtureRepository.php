@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Competition\Repositories;
+namespace Stackra\Competition\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Competition\Contracts\Data\CompetitionFixtureInterface;
-use Academorix\Competition\Contracts\Repositories\CompetitionFixtureRepositoryInterface;
-use Academorix\Competition\Models\CompetitionFixture;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Competition\Contracts\Data\CompetitionFixtureInterface;
+use Stackra\Competition\Contracts\Repositories\CompetitionFixtureRepositoryInterface;
+use Stackra\Competition\Models\CompetitionFixture;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Competition\Models\CompetitionFixture}.
+ * Attribute-first Eloquent repository for {@see Stackra\Competition\Models\CompetitionFixture}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(CompetitionFixtureInterface::class)]` which resolves to
  * `CompetitionFixture` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Competition\Models\CompetitionFixture>
+ * @extends Repository<\Stackra\Competition\Models\CompetitionFixture>
  *
  * @category Competition
  *

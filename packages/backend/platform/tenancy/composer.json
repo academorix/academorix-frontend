@@ -1,10 +1,10 @@
 {
-  "name": "academorix/tenancy",
+  "name": "stackra/tenancy",
   "type": "library",
-  "description": "Tenancy domain module — owns the `Tenant` aggregate (customer of an Academorix Application) and its named `TenantContact` roster (billing / legal / DPO / technical / support / owner). Every downstream module scopes rows to a Tenant via the `BelongsToTenant` / `BelongsToTenantOptional` traits + `tenantable()` blueprint macro published here. Ships the `resolve.tenant` / `tenant.user` / `platform.domain` middleware, two Octane-safe tenancy hooks (log-context, cache-prefix), and the tenant lifecycle events every subscriber (billing, webhook, notifications, compliance) listens for.",
+  "description": "Tenancy domain module — owns the `Tenant` aggregate (customer of an Stackra Application) and its named `TenantContact` roster (billing / legal / DPO / technical / support / owner). Every downstream module scopes rows to a Tenant via the `BelongsToTenant` / `BelongsToTenantOptional` traits + `tenantable()` blueprint macro published here. Ships the `resolve.tenant` / `tenant.user` / `platform.domain` middleware, two Octane-safe tenancy hooks (log-context, cache-prefix), and the tenant lifecycle events every subscriber (billing, webhook, notifications, compliance) listens for.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "laravel",
     "tenancy",
     "multi-tenant",
@@ -13,19 +13,19 @@
   ],
   "require": {
     "php": "^8.3",
-    "academorix/application": "@dev",
-    "academorix/authorization": "@dev",
-    "academorix/console": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/database": "@dev",
-    "academorix/enum": "@dev",
-    "academorix/events": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
-    "academorix/retention": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
+    "stackra/application": "@dev",
+    "stackra/authorization": "@dev",
+    "stackra/console": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/database": "@dev",
+    "stackra/enum": "@dev",
+    "stackra/events": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/retention": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
     "illuminate/auth": "^13.0",
     "illuminate/contracts": "^13.0",
     "illuminate/database": "^13.0",
@@ -47,20 +47,20 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Tenancy\\": "src/",
-      "Academorix\\Tenancy\\Database\\Factories\\": "database/factories/",
-      "Academorix\\Tenancy\\Database\\Seeders\\": "database/seeders/"
+      "Stackra\\Tenancy\\": "src/",
+      "Stackra\\Tenancy\\Database\\Factories\\": "database/factories/",
+      "Stackra\\Tenancy\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Tenancy\\Tests\\": "tests/"
+      "Stackra\\Tenancy\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Tenancy\\Providers\\TenancyServiceProvider"
+        "Stackra\\Tenancy\\Providers\\TenancyServiceProvider"
       ],
       "aliases": {}
     }

@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Services;
+namespace Stackra\Geofencing\Services;
 
-use Academorix\Geofencing\Contracts\Data\GeofenceCheckInterface;
-use Academorix\Geofencing\Contracts\Geofenceable;
-use Academorix\Geofencing\Contracts\Repositories\GeofenceCheckRepositoryInterface;
-use Academorix\Geofencing\Contracts\Services\GeofenceServiceInterface;
-use Academorix\Geofencing\Contracts\Services\PolygonEvaluatorInterface;
-use Academorix\Geofencing\Data\EvaluateGeofenceData;
-use Academorix\Geofencing\Data\GeofenceCheckResultData;
-use Academorix\Geofencing\Enums\GeofenceMode;
-use Academorix\Geofencing\Enums\GeofenceResult;
-use Academorix\Geofencing\Events\GeofenceEvaluated;
-use Academorix\Geofencing\Exceptions\FenceableNoGeometryException;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Geofencing\Contracts\Data\GeofenceCheckInterface;
+use Stackra\Geofencing\Contracts\Geofenceable;
+use Stackra\Geofencing\Contracts\Repositories\GeofenceCheckRepositoryInterface;
+use Stackra\Geofencing\Contracts\Services\GeofenceServiceInterface;
+use Stackra\Geofencing\Contracts\Services\PolygonEvaluatorInterface;
+use Stackra\Geofencing\Data\EvaluateGeofenceData;
+use Stackra\Geofencing\Data\GeofenceCheckResultData;
+use Stackra\Geofencing\Enums\GeofenceMode;
+use Stackra\Geofencing\Enums\GeofenceResult;
+use Stackra\Geofencing\Events\GeofenceEvaluated;
+use Stackra\Geofencing\Exceptions\FenceableNoGeometryException;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\Scoped;
 use Throwable;

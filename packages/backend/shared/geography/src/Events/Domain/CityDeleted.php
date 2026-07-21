@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Events\Domain;
+namespace Stackra\Geography\Events\Domain;
 
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 /**
  * Fired after a city row is deleted.
  *

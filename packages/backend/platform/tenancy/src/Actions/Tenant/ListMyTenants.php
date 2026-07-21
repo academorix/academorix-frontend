@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Actions\Tenant;
+namespace Stackra\Tenancy\Actions\Tenant;
 
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
-use Academorix\Tenancy\Data\MyTenantEntryData;
-use Academorix\Tenancy\Models\Tenant;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
+use Stackra\Tenancy\Data\MyTenantEntryData;
+use Stackra\Tenancy\Models\Tenant;
 use Illuminate\Http\Request;
 use Spatie\LaravelData\DataCollection;
 

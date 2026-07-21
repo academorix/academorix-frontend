@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Staff\Exceptions;
+namespace Stackra\Staff\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * started_at can only be edited during the pre_hire window; after activation it's the audit-of-record.

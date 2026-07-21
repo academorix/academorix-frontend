@@ -1,6 +1,6 @@
-# academorix/search
+# stackra/search
 
-Enterprise search engine for the Academorix platform. A thin, opinionated
+Enterprise search engine for the Stackra platform. A thin, opinionated
 wrapper around `laravel/scout` with attribute-driven registration, pluggable
 engine adapters (Meilisearch, Postgres FTS, pgvector, Elasticsearch stub), a
 unified query API, zero-downtime reindex via alias swap, per-tenant + per-

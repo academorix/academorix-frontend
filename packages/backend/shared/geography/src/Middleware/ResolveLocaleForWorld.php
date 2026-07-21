@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Middleware;
+namespace Stackra\Geography\Middleware;
 
-use Academorix\Routing\Attributes\AsMiddleware;
+use Stackra\Routing\Attributes\AsMiddleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Middleware alias `world.locale` — resolve the active locale used
- * by {@see \Academorix\Geography\Concerns\HasWorldLocalizedName}.
+ * by {@see \Stackra\Geography\Concerns\HasWorldLocalizedName}.
  *
  * Resolution order:
  *
@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Sets the resolved locale via `app()->setLocale(...)` so downstream
  * translation calls (via `Lang::has` / `__()`) see the caller's
  * intent. Runs AFTER localization::locale.resolve when both modules
- * are present (deferred to Academorix locale by default via
+ * are present (deferred to Stackra locale by default via
  * priority).
  *
  * @category Geography

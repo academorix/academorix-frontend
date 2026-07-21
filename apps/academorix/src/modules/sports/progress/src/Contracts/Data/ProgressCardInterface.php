@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Progress\Contracts\Data;
+namespace Stackra\Progress\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Progress\Models\ProgressCard;
+use Stackra\Progress\Models\ProgressCard;
 
 /**
  * Table shape for the `progress_cards` table.

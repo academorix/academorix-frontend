@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Actions\Tenant;
+namespace Stackra\Newsletter\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterRepositoryInterface;
-use Academorix\Newsletter\Data\NewsletterData;
-use Academorix\Newsletter\Enums\NewsletterPermission;
-use Academorix\Newsletter\Exceptions\NewsletterNotFoundException;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterRepositoryInterface;
+use Stackra\Newsletter\Data\NewsletterData;
+use Stackra\Newsletter\Enums\NewsletterPermission;
+use Stackra\Newsletter\Exceptions\NewsletterNotFoundException;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `GET /api/v1/newsletters/{newsletter}` — show a single newsletter.

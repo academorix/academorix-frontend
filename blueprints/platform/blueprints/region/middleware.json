@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/region/middleware",
+  "id": "stackra://modules/region/middleware",
   "$version": 1,
   "title": "region — HTTP middleware",
   "middleware": [
     {
       "alias": "region.resolve_active",
-      "class": "Academorix\\Region\\Http\\Middleware\\ResolveActiveRegion",
+      "class": "Stackra\\Region\\Http\\Middleware\\ResolveActiveRegion",
       "priority": 30,
       "description": "Resolves the caller's active Region for THIS request. Reads (in order): (1) `X-Region-Id` header when the caller's active tenant has a Region on that slug or ULID AND the Region's status is 'active' (paused / archived rejected on booking-adjacent routes; permitted on read-only routes with a warning header); (2) DefaultRegionResolver → the tenant's Region where is_default=true. Sets `Request::activeRegion()` + writes to the `RequestContext.region_id` slot that downstream middleware (subscription pricing, finance tax calc) reads. Runs AFTER `tenant.resolve` (needs tenant_id) but BEFORE any domain policy check that consults `activeRegion()`.",
       "auto_applied": true,

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/webhook/data-classes",
+  "id": "stackra://modules/webhook/data-classes",
   "$version": 1,
   "title": "webhook \u2014 field classification",
   "description": "Two entities. Signing secrets are RESTRICTED (encrypted at rest via KMS; never returned by API except once at create/rotate). Payloads are CONFIDENTIAL (may contain PII from source events). Everything else is public or internal.",

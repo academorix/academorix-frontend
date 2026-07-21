@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsSeasonSdk\Payloads\Seasons;
+namespace Stackra\SportsSeasonSdk\Payloads\Seasons;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\Max;

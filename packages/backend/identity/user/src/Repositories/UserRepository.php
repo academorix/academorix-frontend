@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\User\Repositories;
+namespace Stackra\User\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\User\Contracts\Data\UserInterface;
-use Academorix\User\Contracts\Repositories\UserRepositoryInterface;
-use Academorix\User\Models\User;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\User\Contracts\Data\UserInterface;
+use Stackra\User\Contracts\Repositories\UserRepositoryInterface;
+use Stackra\User\Models\User;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\User\Models\User}.
+ * Attribute-first Eloquent repository for {@see Stackra\User\Models\User}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(UserInterface::class)]` which resolves to
  * `User` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\User\Models\User>
+ * @extends Repository<\Stackra\User\Models\User>
  *
  * @category User
  *

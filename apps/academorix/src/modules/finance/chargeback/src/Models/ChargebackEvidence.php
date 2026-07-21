@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Models;
+namespace Stackra\Chargeback\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Chargeback\Contracts\Data\ChargebackEvidenceInterface;
-use Academorix\Chargeback\Database\Factories\ChargebackEvidenceFactory;
-use Academorix\Chargeback\Policies\ChargebackEvidencePolicy;
-use Academorix\Foundation\Concerns\EncryptsSensitiveFields;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Chargeback\Contracts\Data\ChargebackEvidenceInterface;
+use Stackra\Chargeback\Database\Factories\ChargebackEvidenceFactory;
+use Stackra\Chargeback\Policies\ChargebackEvidencePolicy;
+use Stackra\Foundation\Concerns\EncryptsSensitiveFields;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

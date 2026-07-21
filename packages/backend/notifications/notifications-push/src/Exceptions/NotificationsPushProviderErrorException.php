@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsPush\Exceptions;
+namespace Stackra\NotificationsPush\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Provider returned 5xx or network error.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsPushProviderErrorException extends AcademorixException
+final class NotificationsPushProviderErrorException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

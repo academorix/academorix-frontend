@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Services;
+namespace Stackra\Attribution\Services;
 
-use Academorix\Attribution\Contracts\Services\UtmExtractorInterface;
-use Academorix\Attribution\Data\UtmParametersData;
+use Stackra\Attribution\Contracts\Services\UtmExtractorInterface;
+use Stackra\Attribution\Data\UtmParametersData;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

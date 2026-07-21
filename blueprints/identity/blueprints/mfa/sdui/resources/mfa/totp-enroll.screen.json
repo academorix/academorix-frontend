@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/mfa/sdui/resources/mfa/totp-enroll",
+  "id": "stackra://modules/mfa/sdui/resources/mfa/totp-enroll",
   "$version": 1,
   "kind": "screen",
   "route": "/me/mfa/totp/enroll",
@@ -74,7 +74,7 @@
               "auto_complete": "one-time-code",
               "pattern": "^[0-9]{6}$",
               "validation_rule": "valid_totp_code",
-              "helptext": "Open your authenticator app and type the code shown next to Academorix."
+              "helptext": "Open your authenticator app and type the code shown next to Stackra."
             }
           ],
           "hidden_fields": [
@@ -106,7 +106,7 @@
         "content": {
           "widget": "recovery-codes-reveal",
           "data": "{{step_2.response.recovery_codes}}",
-          "instructions": "You'll need these if you lose your authenticator app. Save them somewhere safe now — Academorix cannot show them to you again.",
+          "instructions": "You'll need these if you lose your authenticator app. Save them somewhere safe now — Stackra cannot show them to you again.",
           "actions": [
             { "label": "Copy all", "kind": "copy-to-clipboard" },
             { "label": "Download as text", "kind": "download-txt" }
@@ -118,7 +118,7 @@
           "route": "/me/mfa",
           "confirm": {
             "title": "You won't see these codes again",
-            "body": "Have you saved them somewhere safe? Academorix can regenerate a new set but cannot show these specific codes again."
+            "body": "Have you saved them somewhere safe? Stackra can regenerate a new set but cannot show these specific codes again."
           }
         }
       }

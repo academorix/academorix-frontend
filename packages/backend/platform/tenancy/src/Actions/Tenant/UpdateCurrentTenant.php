@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Actions\Tenant;
+namespace Stackra\Tenancy\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Patch;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
-use Academorix\Tenancy\Data\Requests\UpdateOwnTenantRequestData;
-use Academorix\Tenancy\Data\TenantData;
-use Academorix\Tenancy\Enums\TenancyPermission;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Patch;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Tenancy\Data\Requests\UpdateOwnTenantRequestData;
+use Stackra\Tenancy\Data\TenantData;
+use Stackra\Tenancy\Enums\TenancyPermission;
 
 /**
  * `PATCH /api/current-tenant` — tenant admin edits their own tenant.

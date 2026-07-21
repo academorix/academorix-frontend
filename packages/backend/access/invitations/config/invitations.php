@@ -4,7 +4,7 @@
  * @file modules/access/invitations/config/invitations.php
  *
  * @description
- * Runtime knobs for the `academorix/invitations` module. Every knob
+ * Runtime knobs for the `stackra/invitations` module. Every knob
  * is env-overridable so per-environment tuning stays out of code.
  */
 

@@ -1,10 +1,10 @@
 {
-  "name": "academorix/attributes",
+  "name": "stackra/attributes",
   "type": "library",
-  "description": "Academorix Attributes module — server-side Laravel package emitted from the module blueprint at `modules/shared/blueprints/attributes/`. Complements the wire SDK at `academorix-shared/attributes-sdk`.",
+  "description": "Stackra Attributes module — server-side Laravel package emitted from the module blueprint at `modules/shared/blueprints/attributes/`. Complements the wire SDK at `stackra-shared/attributes-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "shared",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-shared/attributes-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-shared/attributes-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Attributes\\": "src/"
+      "Stackra\\Attributes\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Attributes\\Tests\\": "tests/"
+      "Stackra\\Attributes\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Attributes\\Providers\\AttributesServiceProvider"
+        "Stackra\\Attributes\\Providers\\AttributesServiceProvider"
       ],
       "aliases": {}
     }

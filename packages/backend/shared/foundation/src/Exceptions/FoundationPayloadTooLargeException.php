@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Exceptions;
+namespace Stackra\Foundation\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `FOUNDATION_PAYLOAD_TOO_LARGE` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class FoundationPayloadTooLargeException extends AcademorixException
+final class FoundationPayloadTooLargeException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

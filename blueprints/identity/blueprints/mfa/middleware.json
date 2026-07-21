@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/mfa/middleware",
+  "id": "stackra://modules/mfa/middleware",
   "$version": 1,
   "title": "mfa — HTTP middleware",
   "description": "Two middleware. Both operate on the caller's authenticated session (post-Sanctum-resolution) and inspect the Identity's MFA posture + the session's step-up state. Neither is auto-applied globally — they mount on specific routes / actions via the #[UsesMiddleware] attribute on the action class OR via the `mfa.*` alias in route definitions.",
   "middleware": [
     {
       "alias": "mfa.require_challenge_complete",
-      "class": "Academorix\\Mfa\\Http\\Middleware\\RequireChallengeComplete",
+      "class": "Stackra\\Mfa\\Http\\Middleware\\RequireChallengeComplete",
       "priority": 40,
       "description": "Enforces that the caller has completed an MFA challenge IN THE CURRENT SESSION when their resolved Identity is one that has MFA enrolled AND holds a role in `config('mfa.required_for_roles')`. Rejects with 403 `MFA_CHALLENGE_REQUIRED` when the session's `mfa_challenge_completed_at` is missing OR older than the session's TTL. The rejection payload includes the initiation URL for a step-up challenge (POST /api/v1/auth/mfa/challenge/initiate) so the SPA can transparently prompt for the second factor. This closes the 'session cookie with expired MFA state' gap.",
       "auto_applied": false,
@@ -24,7 +24,7 @@
     },
     {
       "alias": "mfa.require_recent_challenge",
-      "class": "Academorix\\Mfa\\Http\\Middleware\\RequireRecentChallenge",
+      "class": "Stackra\\Mfa\\Http\\Middleware\\RequireRecentChallenge",
       "priority": 42,
       "description": "Enforces that the caller completed an MFA challenge WITHIN THE LAST `config('mfa.step_up.sensitive_action_ttl_minutes')` (default 5). Used for sensitive-write actions (password change, MFA disable, recovery-code regen, credential delete). Rejects with 403 `MFA_CHALLENGE_TOO_STALE` and includes a step-up-challenge URL. The middleware runs AFTER `mfa.require_challenge_complete` (which handles the session-level enforcement) — same-session recentness is a tighter check.",
       "auto_applied": false,

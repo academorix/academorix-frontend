@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/athlete/middleware",
+  "id": "stackra://modules/athlete/middleware",
   "$version": 1,
   "title": "athlete — HTTP middleware",
   "middleware": [
     {
       "alias": "athlete.enforce_active",
-      "class": "Academorix\\Sports\\Athlete\\Http\\Middleware\\EnforceAthleteActive",
+      "class": "Stackra\\Sports\\Athlete\\Http\\Middleware\\EnforceAthleteActive",
       "priority": 44,
       "description": "Refuses actions that require an active-status Athlete row. Applied to routes that touch an Athlete whose status must be `active` (creating an enrollment against an archived athlete is refused). Resolves the target Athlete from the route parameter (`{athlete}`) and returns 422 `ATHLETE_NOT_ACTIVE` when status != 'active'. Distinct from the observer refusal — the middleware fails fast at the route boundary so the caller doesn't burn a request through the full pipeline for a known-bad state.",
       "auto_applied": false,
@@ -16,7 +16,7 @@
     },
     {
       "alias": "athlete.enforce_medical_permission",
-      "class": "Academorix\\Sports\\Athlete\\Http\\Middleware\\EnforceMedicalPermission",
+      "class": "Stackra\\Sports\\Athlete\\Http\\Middleware\\EnforceMedicalPermission",
       "priority": 42,
       "description": "Field-level permission enforcer for the medical sub-resource. Refuses the whole `/athletes/{athlete}/medical` endpoint (GET + PATCH) when: (a) the tenant lacks the `athlete_medical_tracking` entitlement, OR (b) the caller lacks `athletes.view.medical` (for GET) / `athletes.manage.medical` (for PATCH). This is separate from the field-level redaction that applies on the parent `/athletes/{athlete}` GET — the sub-resource is entirely permission-gated so the middleware can 402 / 403 the request before any DB fetch.",
       "auto_applied": false,
@@ -24,7 +24,7 @@
     },
     {
       "alias": "athlete.enforce_emergency_contact_permission",
-      "class": "Academorix\\Sports\\Athlete\\Http\\Middleware\\EnforceEmergencyContactPermission",
+      "class": "Stackra\\Sports\\Athlete\\Http\\Middleware\\EnforceEmergencyContactPermission",
       "priority": 42,
       "description": "Same shape as athlete.enforce_medical_permission but for the emergency-contact sub-resource. Refuses when caller lacks `athletes.view.emergency_contact` (GET) / `athletes.manage.emergency_contact` (PATCH). Adult athletes can view/manage their own via `.own`.",
       "auto_applied": false,

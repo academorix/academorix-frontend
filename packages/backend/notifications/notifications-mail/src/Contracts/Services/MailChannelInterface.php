@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Contracts\Services;
+namespace Stackra\Notifications\Mail\Contracts\Services;
 
-use Academorix\Notifications\Mail\Channels\MailChannel;
-use Academorix\Notifications\Models\Notification;
+use Stackra\Notifications\Mail\Channels\MailChannel;
+use Stackra\Notifications\Models\Notification;
 use Illuminate\Container\Attributes\Bind;
 
 /**
  * Contract for the mail notification channel driver.
  *
  * The driver knows how to translate one persisted
- * {@see \Academorix\Notifications\Models\Notification} into an
+ * {@see \Stackra\Notifications\Models\Notification} into an
  * outbound email:
  *
  *   1. Resolve the template (React Email pre-rendered HTML) and
  *      interpolate variables through Laravel Blade.
  *   2. Check the recipient against
- *      {@see \Academorix\Notifications\Mail\Contracts\Repositories\MailSuppressionRepositoryInterface}
+ *      {@see \Stackra\Notifications\Mail\Contracts\Repositories\MailSuppressionRepositoryInterface}
  *      — a suppressed address short-circuits to
  *      `NotificationDelivery.state = permanently_failed`.
  *   3. Inject the CAN-SPAM footer + RFC 8058 `List-Unsubscribe`
@@ -29,7 +29,7 @@ use Illuminate\Container\Attributes\Bind;
  *
  * The parent notifications module fires `NotificationDispatched`;
  * this module's listener dispatches
- * {@see \Academorix\Notifications\Mail\Jobs\SendMailJob} which
+ * {@see \Stackra\Notifications\Mail\Jobs\SendMailJob} which
  * resolves this contract to do the work.
  *
  * `#[Bind(MailChannel::class)]` — Pattern A per
@@ -51,7 +51,7 @@ interface MailChannelInterface
      * `Mail::mailer(...)->send(...)`. A suppressed recipient
      * short-circuits to a `permanently_failed` delivery without
      * touching the transport. A provider 5xx surfaces as a retryable
-     * failure that {@see \Academorix\Notifications\Mail\Jobs\SendMailJob}
+     * failure that {@see \Stackra\Notifications\Mail\Jobs\SendMailJob}
      * schedules with the configured backoff.
      *
      * @param  Notification  $notification  The persisted notification

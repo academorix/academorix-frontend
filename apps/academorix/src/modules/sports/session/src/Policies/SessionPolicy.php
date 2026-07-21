@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Session\Policies;
+namespace Stackra\Session\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Session\Models\Session;
+use Stackra\User\Models\User;
+use Stackra\Session\Models\Session;
 
 /**
- * Authorization policy for {@see \Academorix\Session\Models\Session}.
+ * Authorization policy for {@see \Stackra\Session\Models\Session}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

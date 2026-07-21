@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Realtime\Repositories;
+namespace Stackra\Realtime\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Realtime\Contracts\Data\BroadcastSubscriptionInterface;
-use Academorix\Realtime\Contracts\Repositories\BroadcastSubscriptionRepositoryInterface;
-use Academorix\Realtime\Models\BroadcastSubscription;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Realtime\Contracts\Data\BroadcastSubscriptionInterface;
+use Stackra\Realtime\Contracts\Repositories\BroadcastSubscriptionRepositoryInterface;
+use Stackra\Realtime\Models\BroadcastSubscription;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Realtime\Models\BroadcastSubscription}.
+ * Attribute-first Eloquent repository for {@see Stackra\Realtime\Models\BroadcastSubscription}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(BroadcastSubscriptionInterface::class)]` which resolves to
  * `BroadcastSubscription` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Realtime\Models\BroadcastSubscription>
+ * @extends Repository<\Stackra\Realtime\Models\BroadcastSubscription>
  *
  * @category Realtime
  *

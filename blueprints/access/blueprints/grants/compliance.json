@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/grants/compliance",
+  "id": "stackra://modules/grants/compliance",
   "$version": 1,
   "title": "grants — regulatory compliance",
   "description": "Compliance controls this module produces evidence for. Grants are the primary access-provisioning mechanism outside RBAC — every issue, patch, revoke is audit-worthy. Deny grants are inviolable blocks that are SOC 2 CC6.3 evidence for tenant-authorised access controls.",

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Exceptions;
+namespace Stackra\Geofencing\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Health probe caught missing extension.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GeofencePostgisUnavailableException extends AcademorixException
+final class GeofencePostgisUnavailableException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Reporting\Contracts\Services;
+namespace Stackra\Reporting\Contracts\Services;
 
-use Academorix\Reporting\Services\ReportRunner;
+use Stackra\Reporting\Services\ReportRunner;
 use Illuminate\Container\Attributes\Bind;
 
 /**

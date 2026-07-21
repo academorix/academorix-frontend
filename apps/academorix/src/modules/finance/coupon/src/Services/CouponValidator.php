@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Services;
+namespace Stackra\Coupon\Services;
 
-use Academorix\Coupon\Contracts\Data\CouponInterface;
-use Academorix\Coupon\Contracts\Data\CouponRedemptionInterface;
-use Academorix\Coupon\Contracts\Repositories\CouponRedemptionRepositoryInterface;
-use Academorix\Coupon\Contracts\Repositories\CouponRepositoryInterface;
-use Academorix\Coupon\Contracts\Services\CouponValidatorInterface;
-use Academorix\Coupon\Data\CouponVerdictData;
+use Stackra\Coupon\Contracts\Data\CouponInterface;
+use Stackra\Coupon\Contracts\Data\CouponRedemptionInterface;
+use Stackra\Coupon\Contracts\Repositories\CouponRedemptionRepositoryInterface;
+use Stackra\Coupon\Contracts\Repositories\CouponRepositoryInterface;
+use Stackra\Coupon\Contracts\Services\CouponValidatorInterface;
+use Stackra\Coupon\Data\CouponVerdictData;
 use Illuminate\Container\Attributes\Scoped;
 
 /**
  * Reference implementation of
- * {@see \Academorix\Coupon\Contracts\Services\CouponValidatorInterface}.
+ * {@see \Stackra\Coupon\Contracts\Services\CouponValidatorInterface}.
  *
  * Fail-closed: every branch returns a verdict; nothing bubbles.
  * The order of checks is optimised for cheap-first: existence /

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/versioning/traits",
+  "id": "stackra://modules/versioning/traits",
   "$version": 1,
   "title": "versioning \u2014 trait composition per model",
   "description": "Versioning owns 2 entities: ApiVersion + DeprecationNotice. Both compose foundation's canonical trait stack. Note that ApiVersion opts into HasVersions itself \u2014 the ApiVersion row is a versioned model, so lifecycle metadata edits (name / description / migration_target_slug rewrites) produce rollback-capable snapshots. Meta.",
@@ -13,30 +13,30 @@
     ],
     "foundation": [
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag",
+        "trait": "Stackra\\Foundation\\Concerns\\HasSystemFlag",
         "reason": "ApiVersion + DeprecationNotice are platform-managed. is_system=true prevents tenant-side edits."
       },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasAuditable",
+        "trait": "Stackra\\Foundation\\Concerns\\HasAuditable",
         "reason": "Version lifecycle transitions (release/deprecate/sunset) audit-logged for regulatory evidence + tenant DPO reports."
       },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasVersions",
+        "trait": "Stackra\\Foundation\\Concerns\\HasVersions",
         "reason": "ApiVersion.description + migration_target_slug + notice fields may be edited over time. Row-level snapshots via mpociot/versionable let ops roll back a bad description edit or restore a corrected migration URL."
       },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\Sortable",
+        "trait": "Stackra\\Foundation\\Concerns\\Sortable",
         "reason": "ApiVersion display order in tenant catalog + admin UI. Newer versions first by default."
       },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\Sluggable",
+        "trait": "Stackra\\Foundation\\Concerns\\Sluggable",
         "reason": "ApiVersion.slug is the primary lookup key (v1, v2, 2024-10-15). Reserved slugs enforced globally."
       },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\Searchable",
+        "trait": "Stackra\\Foundation\\Concerns\\Searchable",
         "reason": "Admin search across version names + notice text."
       }
     ]

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Services;
+namespace Stackra\Storage\Services;
 
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Contracts\Data\SignedUrlAuditInterface;
-use Academorix\Storage\Contracts\Services\SignedUrlIssuerInterface;
-use Academorix\Storage\Enums\SignedUrlPurpose;
-use Academorix\Storage\Events\SignedUrlIssued;
-use Academorix\Storage\Events\SignedUrlRevoked;
-use Academorix\Storage\Models\File;
-use Academorix\Storage\Models\SignedUrlAudit;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Contracts\Data\SignedUrlAuditInterface;
+use Stackra\Storage\Contracts\Services\SignedUrlIssuerInterface;
+use Stackra\Storage\Enums\SignedUrlPurpose;
+use Stackra\Storage\Events\SignedUrlIssued;
+use Stackra\Storage\Events\SignedUrlRevoked;
+use Stackra\Storage\Models\File;
+use Stackra\Storage\Models\SignedUrlAudit;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;

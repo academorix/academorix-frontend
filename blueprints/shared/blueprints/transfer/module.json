@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "transfer",
   "alias": "transfer",
-  "namespace": "Academorix\\Transfer",
+  "namespace": "Stackra\\Transfer",
   "description": "Enterprise-grade unified import/export engine. Thin wrapper around `maatwebsite/excel` with our conventions: attribute-driven registration (#[Importable] / #[Exportable] / #[SampleData] / #[ImportField] / #[ExportField] / #[TransferField] / #[ImportableWorkbook] / #[ExportableWorkbook]), queue-by-default execution riding Laravel Excel's chain + WithChunkReading, an `xfer_jobs` domain record persisted independently of the queue lifetime (the operation, not the queue job), four import modes (append / upsert / replace / delete), sharded imports for very large files, downloadable errors artifact for partial success, signed download URLs, tenant + branch scoping via BelongsToTenant, per-user notifications on finish (mail / broadcast / database / push) resolved at dispatch, mapping profiles for header remap at upload time, and a preview + dry-run pipeline. Distinct from `activity` (product feed) and `audit` (compliance evidence) — transfer runs the data-movement operations both of those modules observe. Foundation's earlier `Importable` / `Exportable` traits + `ImportContractRegistry` / `ExportContractRegistry` bindings + `ProcessImportBatchJob` / `GenerateExportJob` moved here as of this module's inception; foundation retains no import/export mentions.",
   "keywords": [
     "transfer",
@@ -22,7 +22,7 @@
     "upsert"
   ],
   "priority": 23,
-  "providers": ["Academorix\\Transfer\\Providers\\TransferServiceProvider"],
+  "providers": ["Stackra\\Transfer\\Providers\\TransferServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "audit", "activity", "notifications", "settings"],
   "extendedBy": [],

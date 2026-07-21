@@ -12,12 +12,12 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Foundation\Middlewares\Request;
+namespace Stackra\Foundation\Middlewares\Request;
 
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Academorix\Routing\Attributes\AsMiddleware;
+use Stackra\Routing\Attributes\AsMiddleware;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

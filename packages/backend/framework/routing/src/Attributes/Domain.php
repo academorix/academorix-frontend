@@ -11,7 +11,7 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use Spatie\RouteAttributes\Attributes\Domain as SpatieDomain;
@@ -29,8 +29,8 @@ use Spatie\RouteAttributes\Attributes\Domain as SpatieDomain;
  *
  * ## Usage:
  * ```php
- * use Academorix\Routing\Attributes\Domain;
- * use Academorix\Routing\Attributes\Get;
+ * use Stackra\Routing\Attributes\Domain;
+ * use Stackra\Routing\Attributes\Get;
  *
  * // Fixed domain
  * #[Domain('admin.example.com')]

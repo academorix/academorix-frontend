@@ -18,7 +18,7 @@
  *     `#[RequirePermission]`.
  *   - Console commands: `#[AsCommand]` extending `BaseCommand`.
  *   - Seeder: `#[AsSeeder(priority: 42)]` — composes
- *     {@see \Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
+ *     {@see \Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
  *   - Events: `#[AsEvent]` on every class.
  *   - Observers: `#[ObservedBy]` on the models.
  *   - Policies: `#[UsePolicy]` on the models.
@@ -28,20 +28,20 @@
  *     `#[Overrides(<Interface>::class)]` on their concrete.
  *   - Retention: `#[AsRetentionPolicy]` on File.
  *   - Attribute registry: `#[HydratesFrom(FileKind::class)]` on
- *     {@see \Academorix\Storage\Contracts\Services\FileKindRegistryInterface::register()}
+ *     {@see \Stackra\Storage\Contracts\Services\FileKindRegistryInterface::register()}
  *     — the framework's
- *     {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ *     {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  *     scans every class carrying `#[FileKind]` and calls
  *     `register()` on each hit.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Providers;
+namespace Stackra\Storage\Providers;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * Storage module service provider.

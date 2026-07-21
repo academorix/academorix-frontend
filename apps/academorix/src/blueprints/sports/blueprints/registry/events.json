@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/sports-registry/events",
+  "id": "stackra://modules/sports-registry/events",
   "$version": 1,
   "title": "sports-registry — published events",
-  "namespace": "Academorix\\Sports\\Registry\\Events",
+  "namespace": "Stackra\\Sports\\Registry\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Lifecycle events for the three entities (Sport / Discipline / Position) fan out to audit + activity + downstream cache invalidation. Tenant-custom-specific events are separate signals (analytics filter on `TenantCustom*` to graph adoption). The `SportCatalogSeeded` + `SportCatalogUpdated` events mark platform-level catalog milestones. `SportPrefixResolutionFailed` is the audit-critical signal that a downstream row is referencing a sport_key that doesn't resolve — feeds the reconciler + ops dashboard.",
   "events": [
     {
       "name": "SportCreated",
-      "class": "Academorix\\Sports\\Registry\\Events\\SportCreated",
+      "class": "Stackra\\Sports\\Registry\\Events\\SportCreated",
       "trigger": "Sport row created (either via platform seeder or via tenant custom POST). Fires exactly once per row. Consumers filter on `is_platform_seeded` + `tenant_id` to distinguish the two shapes.",
       "queue": "notifications",
       "consumers": [
@@ -33,7 +33,7 @@
     },
     {
       "name": "SportUpdated",
-      "class": "Academorix\\Sports\\Registry\\Events\\SportUpdated",
+      "class": "Stackra\\Sports\\Registry\\Events\\SportUpdated",
       "trigger": "Any Sport field mutated (except is_active flip, which fires SportDeactivated / SportCreated depending on direction). Fires for renames, description edits, color / icon changes, sort_order, gender_typical, age_range_min/max, governing_body edits.",
       "queue": "notifications",
       "consumers": [
@@ -50,7 +50,7 @@
     },
     {
       "name": "SportDeactivated",
-      "class": "Academorix\\Sports\\Registry\\Events\\SportDeactivated",
+      "class": "Stackra\\Sports\\Registry\\Events\\SportDeactivated",
       "trigger": "Sport is_active flipped from true → false. Historical downstream references continue to resolve; the tenant picker hides the row.",
       "queue": "notifications",
       "consumers": [
@@ -68,7 +68,7 @@
     },
     {
       "name": "DisciplineCreated",
-      "class": "Academorix\\Sports\\Registry\\Events\\DisciplineCreated",
+      "class": "Stackra\\Sports\\Registry\\Events\\DisciplineCreated",
       "trigger": "Discipline row created. Fires once per row.",
       "queue": "notifications",
       "consumers": [
@@ -94,7 +94,7 @@
     },
     {
       "name": "DisciplineUpdated",
-      "class": "Academorix\\Sports\\Registry\\Events\\DisciplineUpdated",
+      "class": "Stackra\\Sports\\Registry\\Events\\DisciplineUpdated",
       "trigger": "Any Discipline field mutated (except is_active).",
       "queue": "notifications",
       "consumers": [
@@ -112,7 +112,7 @@
     },
     {
       "name": "DisciplineDeactivated",
-      "class": "Academorix\\Sports\\Registry\\Events\\DisciplineDeactivated",
+      "class": "Stackra\\Sports\\Registry\\Events\\DisciplineDeactivated",
       "trigger": "Discipline is_active flipped from true → false.",
       "queue": "notifications",
       "consumers": [
@@ -131,7 +131,7 @@
     },
     {
       "name": "PositionCreated",
-      "class": "Academorix\\Sports\\Registry\\Events\\PositionCreated",
+      "class": "Stackra\\Sports\\Registry\\Events\\PositionCreated",
       "trigger": "Position row created.",
       "queue": "notifications",
       "consumers": [
@@ -157,7 +157,7 @@
     },
     {
       "name": "PositionUpdated",
-      "class": "Academorix\\Sports\\Registry\\Events\\PositionUpdated",
+      "class": "Stackra\\Sports\\Registry\\Events\\PositionUpdated",
       "trigger": "Any Position field mutated (except is_active).",
       "queue": "notifications",
       "consumers": [
@@ -175,7 +175,7 @@
     },
     {
       "name": "PositionDeactivated",
-      "class": "Academorix\\Sports\\Registry\\Events\\PositionDeactivated",
+      "class": "Stackra\\Sports\\Registry\\Events\\PositionDeactivated",
       "trigger": "Position is_active flipped from true → false.",
       "queue": "notifications",
       "consumers": [
@@ -194,7 +194,7 @@
     },
     {
       "name": "TenantCustomSportCreated",
-      "class": "Academorix\\Sports\\Registry\\Events\\TenantCustomSportCreated",
+      "class": "Stackra\\Sports\\Registry\\Events\\TenantCustomSportCreated",
       "trigger": "A tenant created a custom Sport (is_platform_seeded=false, tenant_id NOT NULL). Fires in ADDITION to SportCreated so analytics can graph tenant-custom adoption separately from platform seeder activity. Consumed by the sports-registry-adoption dashboard.",
       "queue": "notifications",
       "consumers": [
@@ -212,7 +212,7 @@
     },
     {
       "name": "TenantCustomDisciplineCreated",
-      "class": "Academorix\\Sports\\Registry\\Events\\TenantCustomDisciplineCreated",
+      "class": "Stackra\\Sports\\Registry\\Events\\TenantCustomDisciplineCreated",
       "trigger": "A tenant created a custom Discipline.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -227,7 +227,7 @@
     },
     {
       "name": "TenantCustomPositionCreated",
-      "class": "Academorix\\Sports\\Registry\\Events\\TenantCustomPositionCreated",
+      "class": "Stackra\\Sports\\Registry\\Events\\TenantCustomPositionCreated",
       "trigger": "A tenant created a custom Position.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -242,7 +242,7 @@
     },
     {
       "name": "SportCatalogSeeded",
-      "class": "Academorix\\Sports\\Registry\\Events\\SportCatalogSeeded",
+      "class": "Stackra\\Sports\\Registry\\Events\\SportCatalogSeeded",
       "trigger": "SeedPlatformSportsCatalogJob completed successfully. Fires exactly once at platform first-boot when the catalog is empty; also fires on explicit reseed via `sports:registry:reseed-platform-catalog --force`.",
       "queue": "notifications",
       "consumers": [
@@ -261,7 +261,7 @@
     },
     {
       "name": "SportCatalogUpdated",
-      "class": "Academorix\\Sports\\Registry\\Events\\SportCatalogUpdated",
+      "class": "Stackra\\Sports\\Registry\\Events\\SportCatalogUpdated",
       "trigger": "Platform admin updated the shipped catalog via a JSON edit + explicit reseed. Distinct from SportUpdated — this signals a PLATFORM-level catalog change affecting every tenant. Fires alongside the per-row SportUpdated / DisciplineUpdated / PositionUpdated events. Consumers may downstream-notify tenant admins that the platform catalog changed (e.g. new sports available).",
       "queue": "notifications",
       "consumers": [
@@ -282,7 +282,7 @@
     },
     {
       "name": "SportPrefixResolutionFailed",
-      "class": "Academorix\\Sports\\Registry\\Events\\SportPrefixResolutionFailed",
+      "class": "Stackra\\Sports\\Registry\\Events\\SportPrefixResolutionFailed",
       "trigger": "SportKeyResolver::resolve(...) failed to resolve a downstream sport_key / discipline_key / position_key reference. Audit-CRITICAL — this signals a dangling reference in a Wave 3 domain row. Fires per resolution failure (not batched) so the reconciler + ops dashboard get per-row detail.",
       "queue": "notifications-critical",
       "consumers": [

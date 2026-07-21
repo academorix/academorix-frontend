@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Console;
+namespace Stackra\Newsletter\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterRepositoryInterface;
-use Academorix\Newsletter\Contracts\Services\ReputationMonitorInterface;
-use Academorix\Newsletter\Jobs\GenerateReputationReportJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterRepositoryInterface;
+use Stackra\Newsletter\Contracts\Services\ReputationMonitorInterface;
+use Stackra\Newsletter\Jobs\GenerateReputationReportJob;
 
 /**
  * `php artisan newsletter:reputation-report` — print a reputation

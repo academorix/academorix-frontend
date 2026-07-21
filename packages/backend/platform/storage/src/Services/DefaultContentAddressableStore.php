@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Services;
+namespace Stackra\Storage\Services;
 
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Contracts\Services\ContentAddressableStoreInterface;
-use Academorix\Storage\Models\File;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Contracts\Services\ContentAddressableStoreInterface;
+use Stackra\Storage\Models\File;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Support\Facades\Storage;
 

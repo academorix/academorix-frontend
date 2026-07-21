@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/offline-sync/commands",
+  "id": "stackra://modules/offline-sync/commands",
   "$version": 1,
   "title": "offline-sync — Artisan commands",
   "description": "Console commands this module ships.",

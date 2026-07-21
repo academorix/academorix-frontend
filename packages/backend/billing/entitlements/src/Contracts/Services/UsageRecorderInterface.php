@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Contracts\Services;
+namespace Stackra\Entitlements\Contracts\Services;
 
-use Academorix\Entitlements\Models\Entitlement;
-use Academorix\Entitlements\Models\EntitlementUsage;
-use Academorix\Entitlements\Services\DefaultUsageRecorder;
+use Stackra\Entitlements\Models\Entitlement;
+use Stackra\Entitlements\Models\EntitlementUsage;
+use Stackra\Entitlements\Services\DefaultUsageRecorder;
 use Illuminate\Container\Attributes\Bind;
 
 /**

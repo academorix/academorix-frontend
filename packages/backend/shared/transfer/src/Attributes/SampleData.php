@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Attributes;
+namespace Stackra\Transfer\Attributes;
 
 use Attribute;
 
@@ -10,9 +10,9 @@ use Attribute;
  * Marks an Eloquent model as sample-data-generatable via the transfer engine.
  *
  * Discovered at boot by the framework's generic hydration pump
- * ({@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper})
+ * ({@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper})
  * via the `#[HydratesFrom(SampleData::class)]` declaration on
- * {@see \Academorix\Transfer\Contracts\Services\EntityRegistryInterface::register()}.
+ * {@see \Stackra\Transfer\Contracts\Services\EntityRegistryInterface::register()}.
  *
  * ## Example
  *

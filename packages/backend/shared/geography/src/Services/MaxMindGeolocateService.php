@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Services;
+namespace Stackra\Geography\Services;
 
-use Academorix\Geography\Contracts\Repositories\CountryRepositoryInterface;
-use Academorix\Geography\Contracts\Services\GeolocateServiceInterface;
-use Academorix\Geography\Data\GeolocationData;
-use Academorix\Geography\Enums\GeolocationSource;
-use Academorix\Geography\Events\GeolocationFailed;
-use Academorix\Geography\Events\GeolocationResolved;
-use Academorix\Geography\Events\MaxMindDatabaseRefreshed;
-use Academorix\Geography\Exceptions\GeographyGeolocateInvalidIpException;
-use Academorix\Geography\Exceptions\GeographyGeolocatePrivateIpException;
-use Academorix\Geography\Exceptions\GeographyMaxMindMissingException;
+use Stackra\Geography\Contracts\Repositories\CountryRepositoryInterface;
+use Stackra\Geography\Contracts\Services\GeolocateServiceInterface;
+use Stackra\Geography\Data\GeolocationData;
+use Stackra\Geography\Enums\GeolocationSource;
+use Stackra\Geography\Events\GeolocationFailed;
+use Stackra\Geography\Events\GeolocationResolved;
+use Stackra\Geography\Events\MaxMindDatabaseRefreshed;
+use Stackra\Geography\Exceptions\GeographyGeolocateInvalidIpException;
+use Stackra\Geography\Exceptions\GeographyGeolocatePrivateIpException;
+use Stackra\Geography\Exceptions\GeographyMaxMindMissingException;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Container\Attributes\Cache;

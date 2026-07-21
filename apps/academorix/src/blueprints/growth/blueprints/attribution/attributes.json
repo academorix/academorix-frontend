@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/attribution/attributes",
+  "id": "stackra://modules/attribution/attributes",
   "$version": 1,
   "title": "attribution — PHP attribute contracts",
   "description": "Two class-level attributes for listener discovery. `#[AsAttributionListener]` subscribes to attribution-profile lifecycle events (create / identify / convert / churn / restore / merge / reset). `#[AsTouchpointListener]` subscribes specifically to the high-volume touchpoint-captured event — separated because downstream consumers may want touchpoints WITHOUT profile events (e.g. referrals module cares about touchpoints only). Discovery loader picks up each class at boot + wires the declared events.",
-  "namespace": "Academorix\\Growth\\Attribution\\Attributes",
+  "namespace": "Stackra\\Growth\\Attribution\\Attributes",
   "attributes": [
     {
       "name": "AsAttributionListener",
-      "class": "Academorix\\Growth\\Attribution\\Attributes\\AsAttributionListener",
+      "class": "Stackra\\Growth\\Attribution\\Attributes\\AsAttributionListener",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a service as a subscriber to attribution-profile lifecycle events (AttributionCreated / AttributionUpdated / AttributionFirstTouchRecorded / AttributionLastTouchUpdated / AttributionSubjectIdentified / AttributionConverted / AttributionChurned / AttributionRestored / AttributionSessionRefreshed / AttributionMerged / AttributionResetRequested / AttributionResetConfirmed / AttributionDeleted / AttributionConsentSnapshotUpdated / AttributionCampaignRollupComputed / AttributionTouchpointCountReconciled). Does NOT include AttributionTouchpointCaptured or AttributionSuppressedByConsent — those have their own attribute so high-volume consumers can opt in independently.",
@@ -16,7 +16,7 @@
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Array of event short names (`AttributionCreated`, `AttributionConverted`, `AttributionMerged`, …). Empty = subscribe to every `Academorix\\Growth\\Attribution\\Events\\Attribution*` event EXCEPT the two high-volume ones (touchpoint + suppressed-by-consent). Names resolve against events.json at boot; typos abort boot with a discovery error."
+          "description": "Array of event short names (`AttributionCreated`, `AttributionConverted`, `AttributionMerged`, …). Empty = subscribe to every `Stackra\\Growth\\Attribution\\Events\\Attribution*` event EXCEPT the two high-volume ones (touchpoint + suppressed-by-consent). Names resolve against events.json at boot; typos abort boot with a discovery error."
         },
         {
           "name": "queue",
@@ -35,7 +35,7 @@
     },
     {
       "name": "AsTouchpointListener",
-      "class": "Academorix\\Growth\\Attribution\\Attributes\\AsTouchpointListener",
+      "class": "Stackra\\Growth\\Attribution\\Attributes\\AsTouchpointListener",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a service as a subscriber to the high-volume touchpoint events (AttributionTouchpointCaptured + AttributionSuppressedByConsent). Separated from AsAttributionListener because these fire on EVERY attribution-bearing request — most consumers should NOT subscribe to them. Only consumers that specifically care about touchpoint-level fanout (referrals matching referral links, analytics real-time-funnel dashboards) should use this attribute.",

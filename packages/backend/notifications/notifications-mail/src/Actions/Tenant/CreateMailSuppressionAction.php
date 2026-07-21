@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsMail\Actions\Tenant;
+namespace Stackra\NotificationsMail\Actions\Tenant;
 
-use Academorix\NotificationsMail\Contracts\Repositories\MailSuppressionRepositoryInterface;
-use Academorix\NotificationsMail\Data\MailSuppressionData;
-use Academorix\NotificationsMail\Data\Requests\CreateMailSuppressionRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\NotificationsMail\Contracts\Repositories\MailSuppressionRepositoryInterface;
+use Stackra\NotificationsMail\Data\MailSuppressionData;
+use Stackra\NotificationsMail\Data\Requests\CreateMailSuppressionRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/tenant/mail-suppressions` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category NotificationsMail

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Actions\Languages;
+namespace Stackra\Geography\Actions\Languages;
 
-use Academorix\Geography\Contracts\Repositories\LanguageRepositoryInterface;
-use Academorix\Geography\Data\Resources\LanguageResourceData;
-use Academorix\Geography\Models\Language;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Geography\Contracts\Repositories\LanguageRepositoryInterface;
+use Stackra\Geography\Data\Resources\LanguageResourceData;
+use Stackra\Geography\Models\Language;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 use Spatie\LaravelData\DataCollection;
 
 /**

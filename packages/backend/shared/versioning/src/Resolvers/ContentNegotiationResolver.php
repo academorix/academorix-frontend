@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Resolvers;
+namespace Stackra\Versioning\Resolvers;
 
-use Academorix\Versioning\Contracts\Services\VersionResolverInterface;
+use Stackra\Versioning\Contracts\Services\VersionResolverInterface;
 use Illuminate\Http\Request;
 
 /**
  * Content-negotiation resolver — extracts the version slug from the
  * `Accept` header using the configured MIME pattern (default:
- * `application/vnd.academorix.{version}+json`).
+ * `application/vnd.stackra.{version}+json`).
  *
  * Returns `null` when the Accept header is missing, empty, or does
  * not match the pattern.
@@ -33,7 +33,7 @@ final class ContentNegotiationResolver implements VersionResolverInterface
 
         $pattern = (string) \config(
             'versioning.resolvers.header.accept_pattern',
-            'application/vnd.academorix.{version}+json',
+            'application/vnd.stackra.{version}+json',
         );
 
         // Build a regex from the pattern. `{version}` is the capture.

@@ -2,15 +2,15 @@
 
 /**
  * @file CatalogQuery.php
- * @module Academorix\Cli\Catalog
+ * @module Stackra\Cli\Catalog
  * @description Higher-level lookups on top of {@see CatalogReader}. Owns
  *   the 25 curated capability groups and the 5 business-type default
- *   sets used by `academorix new` during interactive setup.
+ *   sets used by `stackra new` during interactive setup.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Catalog;
+namespace Stackra\Cli\Catalog;
 
 /**
  * Semantic queries over the raw catalogue.
@@ -19,7 +19,7 @@ final class CatalogQuery
 {
     /**
      * Twenty-five curated capability groups. Each `key => label` pair
-     * is presented in the `academorix new` capability multiselect.
+     * is presented in the `stackra new` capability multiselect.
      *
      * @var array<string, string>
      */
@@ -52,7 +52,7 @@ final class CatalogQuery
     ];
 
     /**
-     * Five business-type default sets. `academorix new --preset=<type>`
+     * Five business-type default sets. `stackra new --preset=<type>`
      * preselects these capabilities in the multiselect.
      *
      * @var array<string, array<int, string>>

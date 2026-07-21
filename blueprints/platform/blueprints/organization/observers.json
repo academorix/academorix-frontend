@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/organization/observers",
+  "id": "stackra://modules/organization/observers",
   "$version": 1,
   "title": "organization — Eloquent observers",
   "observers": [
     {
       "model": "Organization",
-      "observer": "Academorix\\Organization\\Observers\\OrganizationObserver",
+      "observer": "Stackra\\Organization\\Observers\\OrganizationObserver",
       "handles": [
         "creating → populate ULID prefix `org_`",
         "creating → refuse when slug fails valid_role_name-style regex config('organization.validation.require_slug_pattern')",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/identity/entitlements",
+  "id": "stackra://modules/identity/entitlements",
   "$version": 1,
   "title": "identity \u2014 declared entitlements",
   "description": "Five entitlement keys. TOTP + recovery codes are baseline (every tier). WebAuthn, password breach check, and password history are medium+ tier features. Entitlements are enforced by `identity/auth` (which owns the endpoints) but declared here because they are properties of the credential substrate.",
@@ -10,7 +10,7 @@
       "key": "mfa_totp",
       "kind": "boolean",
       "defaultsByPlan": { "free": 1, "team": 1, "business": 1, "enterprise": 1 },
-      "description": "TOTP (RFC 6238) MFA enrolment. Baseline across every plan tier \u2014 this is the industry-standard second factor and the security floor Academorix enforces."
+      "description": "TOTP (RFC 6238) MFA enrolment. Baseline across every plan tier \u2014 this is the industry-standard second factor and the security floor Stackra enforces."
     },
     {
       "key": "mfa_webauthn",

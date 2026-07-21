@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/invoice/broadcasts",
+  "id": "stackra://modules/invoice/broadcasts",
   "$version": 1,
   "title": "invoice — realtime broadcast channels",
   "description": "Four broadcast channel families for live UI updates. Tenant-wide channel powers the admin invoice dashboard; customer channel powers the customer-facing 'my invoices' view; per-invoice line channel supports collaborative draft-invoice editing; per-invoice credit-note channel updates the credit-note list when new credits are issued. Reverb (Laravel Reverb) is the default transport; notifications module handles fanout.",
   "channels": [
     {
       "name": "tenant.{tenantId}.invoices",
-      "class": "Academorix\\Finance\\Invoice\\Broadcasts\\TenantInvoicesChannel",
+      "class": "Stackra\\Finance\\Invoice\\Broadcasts\\TenantInvoicesChannel",
       "description": "Tenant-wide invoice activity stream. Sink for the admin invoice dashboard showing new invoices + status transitions + collection-status changes.",
       "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner OR support)",
       "events": [
@@ -29,7 +29,7 @@
     },
     {
       "name": "customer.{customerType}.{customerId}.invoices",
-      "class": "Academorix\\Finance\\Invoice\\Broadcasts\\CustomerInvoicesChannel",
+      "class": "Stackra\\Finance\\Invoice\\Broadcasts\\CustomerInvoicesChannel",
       "description": "Customer-scoped invoice activity. Powers the customer's own 'my invoices' view — new invoice notifications, payment confirmations, refunds visible in real time.",
       "authorization": "sanctum::authed AND (auth.user.id == customerId OR auth.user is guardian_of(customerId))",
       "events": [
@@ -46,7 +46,7 @@
     },
     {
       "name": "invoice.{invoiceId}.lines",
-      "class": "Academorix\\Finance\\Invoice\\Broadcasts\\InvoiceLinesChannel",
+      "class": "Stackra\\Finance\\Invoice\\Broadcasts\\InvoiceLinesChannel",
       "description": "Per-invoice line activity. Powers collaborative draft-invoice editing (two admins adding lines at the same time see each other's updates in real time). Only active while parent invoice.status='draft'.",
       "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner) AND invoice.status='draft'",
       "events": ["InvoiceLineAdded", "InvoiceLineUpdated", "InvoiceLineRemoved"],
@@ -55,7 +55,7 @@
     },
     {
       "name": "invoice.{invoiceId}.credit-notes",
-      "class": "Academorix\\Finance\\Invoice\\Broadcasts\\InvoiceCreditNotesChannel",
+      "class": "Stackra\\Finance\\Invoice\\Broadcasts\\InvoiceCreditNotesChannel",
       "description": "Per-invoice credit-note activity. Powers the credit-note list within an invoice detail view.",
       "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner OR support OR (customer AND invoice.customer_id == auth.user.id))",
       "events": ["CreditNoteCreated", "CreditNoteIssued", "CreditNoteApplied", "CreditNoteVoided"],

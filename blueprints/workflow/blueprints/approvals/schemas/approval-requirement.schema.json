@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/schemas/approval-requirement",
+  "id": "stackra://modules/workflow/approvals/schemas/approval-requirement",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ApprovalRequirement",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "apr_",
     "incrementing": false,
-    "model": "Academorix\\Approval\\Models\\ApprovalRequirement",
-    "interface": "Academorix\\Approval\\Contracts\\Data\\ApprovalRequirementInterface",
-    "implements": ["Academorix\\Approval\\Contracts\\Data\\ApprovalRequirementInterface"],
+    "model": "Stackra\\Approval\\Models\\ApprovalRequirement",
+    "interface": "Stackra\\Approval\\Contracts\\Data\\ApprovalRequirementInterface",
+    "implements": ["Stackra\\Approval\\Contracts\\Data\\ApprovalRequirementInterface"],
     "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "Filterable"],
     "casts": {
       "sort_order": "integer",

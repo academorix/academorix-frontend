@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Services;
+namespace Stackra\Notifications\Push\Services;
 
-use Academorix\Notifications\Push\Contracts\Services\PushSubscriptionRegistryInterface;
-use Academorix\Notifications\Push\Contracts\Services\PushTransportInterface;
-use Academorix\Notifications\Push\Contracts\Services\PushTransportManagerInterface;
-use Academorix\Notifications\Push\Exceptions\PushProviderDisabledException;
+use Stackra\Notifications\Push\Contracts\Services\PushSubscriptionRegistryInterface;
+use Stackra\Notifications\Push\Contracts\Services\PushTransportInterface;
+use Stackra\Notifications\Push\Contracts\Services\PushTransportManagerInterface;
+use Stackra\Notifications\Push\Exceptions\PushProviderDisabledException;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Contracts\Container\Container;
 

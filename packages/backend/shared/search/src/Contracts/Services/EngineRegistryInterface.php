@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Contracts\Services;
+namespace Stackra\Search\Contracts\Services;
 
-use Academorix\Search\Attributes\Searchable;
-use Academorix\Search\Services\EngineRegistry;
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Search\Attributes\Searchable;
+use Stackra\Search\Services\EngineRegistry;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
 use Illuminate\Container\Attributes\Bind;
 
 /**

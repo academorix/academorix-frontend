@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/staff/events",
+  "id": "stackra://modules/staff/events",
   "$version": 1,
   "title": "staff — published events",
-  "namespace": "Academorix\\Staff\\Events",
+  "namespace": "Stackra\\Staff\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Staff lifecycle events (hire / offboard / branch-change / manager-promotion) fan out to notifications + activity + audit. CompensationChanged is a PRIVATE-TIER event — it dispatches to a dedicated `compensation-audit` queue and the payload is NEVER logged in the ActivityLog (only in the separate staff_compensation_history audit table). CoachCertificationExpired is a scheduled-job event that fires on the day a certification lapses — consumers include the notification module (30/14/7-day pre-expiry reminders + the day-of expiry notice).",
   "events": [
     {
       "name": "StaffHired",
-      "class": "Academorix\\Staff\\Events\\StaffHired",
+      "class": "Stackra\\Staff\\Events\\StaffHired",
       "trigger": "StaffObserver.updating detected employment_status transition `pre_hire → active`. Also fires when a Staff is created directly at `active` status (the same-tenant admin-driven hire path). Fires exactly once per Staff row.",
       "queue": "notifications",
       "consumers": [
@@ -33,7 +33,7 @@
     },
     {
       "name": "StaffUpdated",
-      "class": "Academorix\\Staff\\Events\\StaffUpdated",
+      "class": "Stackra\\Staff\\Events\\StaffUpdated",
       "trigger": "Any Staff scalar field mutated except employment_status (dedicated transition events), position (StaffPositionChanged), department (StaffDepartmentChanged), branch_id (StaffBranchChanged), is_branch_manager (StaffPromotedToBranchManager / StaffDemotedFromBranchManager), and compensation_* (CompensationChanged). Umbrella event for name-of-record changes, employee_number edits, weekly_hours tweaks, reports_to reassignments, probation_ends_at edits.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -46,7 +46,7 @@
     },
     {
       "name": "StaffPositionChanged",
-      "class": "Academorix\\Staff\\Events\\StaffPositionChanged",
+      "class": "Stackra\\Staff\\Events\\StaffPositionChanged",
       "trigger": "Staff.position mutated. A dedicated event because position changes drive downstream notifications (the branch manager wants to know when their receptionist is promoted to assistant coach).",
       "queue": "notifications",
       "consumers": [
@@ -64,7 +64,7 @@
     },
     {
       "name": "StaffDepartmentChanged",
-      "class": "Academorix\\Staff\\Events\\StaffDepartmentChanged",
+      "class": "Stackra\\Staff\\Events\\StaffDepartmentChanged",
       "trigger": "Staff.department mutated. Feeds the org-chart cache invalidator + activity feed.",
       "queue": "notifications",
       "consumers": [
@@ -82,7 +82,7 @@
     },
     {
       "name": "StaffBranchChanged",
-      "class": "Academorix\\Staff\\Events\\StaffBranchChanged",
+      "class": "Stackra\\Staff\\Events\\StaffBranchChanged",
       "trigger": "Staff.branch_id mutated. RARE — most staff have one home branch for their entire tenure. When it changes, notifies old + new branch managers. Wave 2b marks Staff.branch_id immutable post-create; this event fires only via the Wave 3+ branch-transfer flow.",
       "queue": "notifications-critical",
       "consumers": [
@@ -103,7 +103,7 @@
     },
     {
       "name": "StaffPromotedToBranchManager",
-      "class": "Academorix\\Staff\\Events\\StaffPromotedToBranchManager",
+      "class": "Stackra\\Staff\\Events\\StaffPromotedToBranchManager",
       "trigger": "Staff.is_branch_manager transitioned false → true. Observer refuses when another active manager exists for the same branch AND does NOT auto-demote — the observer requires the caller to explicitly demote the previous manager first (avoids silent org-chart rewrites).",
       "queue": "notifications-critical",
       "consumers": [
@@ -122,7 +122,7 @@
     },
     {
       "name": "StaffDemotedFromBranchManager",
-      "class": "Academorix\\Staff\\Events\\StaffDemotedFromBranchManager",
+      "class": "Stackra\\Staff\\Events\\StaffDemotedFromBranchManager",
       "trigger": "Staff.is_branch_manager transitioned true → false. Distinct from StaffOffboarded — a demotion keeps the Staff row active.",
       "queue": "notifications",
       "consumers": [
@@ -140,7 +140,7 @@
     },
     {
       "name": "StaffPutOnLeave",
-      "class": "Academorix\\Staff\\Events\\StaffPutOnLeave",
+      "class": "Stackra\\Staff\\Events\\StaffPutOnLeave",
       "trigger": "Staff.employment_status transitioned active → on_leave. Non-terminal. Consumers pause the coach's future session assignments + shift assignments.",
       "queue": "notifications",
       "consumers": [
@@ -159,7 +159,7 @@
     },
     {
       "name": "StaffReturnedFromLeave",
-      "class": "Academorix\\Staff\\Events\\StaffReturnedFromLeave",
+      "class": "Stackra\\Staff\\Events\\StaffReturnedFromLeave",
       "trigger": "Staff.employment_status transitioned on_leave → active. Cascades: resume linked Coach if it was paused as a side-effect of the leave.",
       "queue": "notifications",
       "consumers": [
@@ -176,7 +176,7 @@
     },
     {
       "name": "StaffSuspended",
-      "class": "Academorix\\Staff\\Events\\StaffSuspended",
+      "class": "Stackra\\Staff\\Events\\StaffSuspended",
       "trigger": "Staff.employment_status transitioned active/on_leave → suspended. AUDIT-CRITICAL — suspensions are disciplinary and every fire is retained 7 years.",
       "queue": "notifications-critical",
       "consumers": [
@@ -196,7 +196,7 @@
     },
     {
       "name": "StaffReinstated",
-      "class": "Academorix\\Staff\\Events\\StaffReinstated",
+      "class": "Stackra\\Staff\\Events\\StaffReinstated",
       "trigger": "Staff.employment_status transitioned suspended → active. Distinct from StaffReturnedFromLeave.",
       "queue": "notifications-critical",
       "consumers": [
@@ -213,7 +213,7 @@
     },
     {
       "name": "StaffOffboardingStarted",
-      "class": "Academorix\\Staff\\Events\\StaffOffboardingStarted",
+      "class": "Stackra\\Staff\\Events\\StaffOffboardingStarted",
       "trigger": "Staff.employment_status transitioned active/on_leave/suspended → offboarding. Intermediate state — the actual offboard (with cascade to TeamMember + Coach + ShiftAssignment) happens on the offboarding → offboarded transition. This event is the SIGNAL that HR should start the cascade cleanup + reminder dispatch.",
       "queue": "notifications-critical",
       "consumers": [
@@ -232,7 +232,7 @@
     },
     {
       "name": "StaffOffboarded",
-      "class": "Academorix\\Staff\\Events\\StaffOffboarded",
+      "class": "Stackra\\Staff\\Events\\StaffOffboarded",
       "trigger": "Staff.employment_status transitioned offboarding → offboarded. Terminal. The Staff row is soft-deleted; ended_at is set; the ReleaseSlot side-effect fires on the same transaction (releases 1 unit of staff_slot entitlement).",
       "queue": "notifications-critical",
       "consumers": [
@@ -256,7 +256,7 @@
     },
     {
       "name": "StaffReactivated",
-      "class": "Academorix\\Staff\\Events\\StaffReactivated",
+      "class": "Stackra\\Staff\\Events\\StaffReactivated",
       "trigger": "Staff.employment_status transitioned offboarded → active (rehire). RARE — most rehires happen as new Staff rows; the reactivation path preserves the original employment history for tax / seniority calculations. Observer consumes 1 unit of staff_slot entitlement + resets ended_at to null.",
       "queue": "notifications-critical",
       "consumers": [
@@ -275,7 +275,7 @@
     },
     {
       "name": "CompensationChanged",
-      "class": "Academorix\\Staff\\Events\\CompensationChanged",
+      "class": "Stackra\\Staff\\Events\\CompensationChanged",
       "trigger": "Any of Staff.compensation_type / compensation_amount_cents / compensation_currency / pay_frequency mutated. PRIVATE-TIER event — the payload is NEVER routed through the activity feed and the audit row lands in the dedicated `staff_compensation_history` table with 7-year retention. Consumers include the Finance module (Wave 4 payroll re-computation) and the HR audit trail.",
       "queue": "compensation-audit",
       "consumers": [
@@ -305,7 +305,7 @@
     },
     {
       "name": "CoachCreated",
-      "class": "Academorix\\Staff\\Events\\CoachCreated",
+      "class": "Stackra\\Staff\\Events\\CoachCreated",
       "trigger": "CoachRepository committed a new coaches row. Fires when a Staff first assumes a coaching role — either at Staff hire (admin sets up the coach profile alongside the Staff row) OR later (a receptionist promoted to assistant coach gets a Coach row attached).",
       "queue": "notifications",
       "consumers": [
@@ -327,7 +327,7 @@
     },
     {
       "name": "CoachSportChanged",
-      "class": "Academorix\\Staff\\Events\\CoachSportChanged",
+      "class": "Stackra\\Staff\\Events\\CoachSportChanged",
       "trigger": "Coach.sport_key mutated. Rare — a coach's primary sport is typically career-defining. When it happens, notifies the branch manager + invalidates the sport-directory cache.",
       "queue": "notifications",
       "consumers": [
@@ -345,7 +345,7 @@
     },
     {
       "name": "CoachCertificationAdded",
-      "class": "Academorix\\Staff\\Events\\CoachCertificationAdded",
+      "class": "Stackra\\Staff\\Events\\CoachCertificationAdded",
       "trigger": "A new entry was appended to Coach.certifications. Fires per certification added — batch updates emit N events. When coach_certifications_verified entitlement is on (Enterprise), the certification enters pending-verification state and HR gets a review notification.",
       "queue": "notifications",
       "consumers": [
@@ -369,7 +369,7 @@
     },
     {
       "name": "CoachCertificationExpired",
-      "class": "Academorix\\Staff\\Events\\CoachCertificationExpired",
+      "class": "Stackra\\Staff\\Events\\CoachCertificationExpired",
       "trigger": "ExpireCoachCertificationsJob detected a certification past its expires_at. The certification stays in the array but is tagged with `expired_at`. Fires per expired certification.",
       "queue": "notifications-critical",
       "consumers": [
@@ -391,7 +391,7 @@
     },
     {
       "name": "CoachCertificationRemoved",
-      "class": "Academorix\\Staff\\Events\\CoachCertificationRemoved",
+      "class": "Stackra\\Staff\\Events\\CoachCertificationRemoved",
       "trigger": "A certification entry was removed from Coach.certifications. Fires per certification removed.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -410,7 +410,7 @@
     },
     {
       "name": "CoachRatingUpdated",
-      "class": "Academorix\\Staff\\Events\\CoachRatingUpdated",
+      "class": "Stackra\\Staff\\Events\\CoachRatingUpdated",
       "trigger": "AggregateCoachRatingsJob recomputed Coach.rating + rating_count from the last batch of session-rating rows (Wave 3+ scheduling module). AGGREGATED event — fires once per job invocation per Coach, not per individual rating write.",
       "queue": "notifications",
       "consumers": [
@@ -430,7 +430,7 @@
     },
     {
       "name": "CoachStatusChanged",
-      "class": "Academorix\\Staff\\Events\\CoachStatusChanged",
+      "class": "Stackra\\Staff\\Events\\CoachStatusChanged",
       "trigger": "Coach.status transitioned. Values: active / paused / archived. Distinct from Staff.employment_status — a Staff may be active while their Coach is paused (temporary coaching hiatus during a busy admin period).",
       "queue": "notifications-critical",
       "consumers": [
@@ -449,7 +449,7 @@
     },
     {
       "name": "CoachAvailabilityChanged",
-      "class": "Academorix\\Staff\\Events\\CoachAvailabilityChanged",
+      "class": "Stackra\\Staff\\Events\\CoachAvailabilityChanged",
       "trigger": "Coach.availability_pattern mutated. Feeds the scheduling module's shift-suggester cache invalidation.",
       "queue": "notifications",
       "consumers": [

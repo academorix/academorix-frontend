@@ -6,7 +6,7 @@ fileMatchPattern: "modules/growth/**|modules/observability/**|**/analytics.json|
 # Growth and observability lanes
 
 The vocabulary lock-in for every "event fired somewhere" concern in the
-Academorix backend. Five distinct lanes exist. They share primitives (events,
+Stackra backend. Five distinct lanes exist. They share primitives (events,
 providers, MultipleInstanceManager, per-tenant configs, consent gates) but
 answer different questions, serve different audiences, and have different
 failure semantics. Confusing them is the #1 source of subtle bugs in
@@ -160,7 +160,7 @@ The manifest shape:
 
 ```jsonc
 {
-  "id": "academorix://modules/<module>/<lane>",
+  "id": "stackra://modules/<module>/<lane>",
   "$version": 1,
   "lane": "analytics", // or "marketing"
   "consentTiers": ["essential", "functional", "analytics"],

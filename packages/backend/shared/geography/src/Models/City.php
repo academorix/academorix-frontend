@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Models;
+namespace Stackra\Geography\Models;
 
-use Academorix\Geography\Contracts\Data\CityInterface;
-use Academorix\Geography\Database\Factories\CityFactory;
-use Academorix\Geography\Observers\CityObserver;
-use Academorix\Geography\Policies\CityPolicy;
+use Stackra\Geography\Contracts\Data\CityInterface;
+use Stackra\Geography\Database\Factories\CityFactory;
+use Stackra\Geography\Observers\CityObserver;
+use Stackra\Geography\Policies\CityPolicy;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;

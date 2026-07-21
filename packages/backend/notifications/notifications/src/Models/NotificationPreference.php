@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Models;
+namespace Stackra\Notifications\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Notifications\Contracts\Data\NotificationPreferenceInterface;
-use Academorix\Notifications\Database\Factories\NotificationPreferenceFactory;
-use Academorix\Notifications\Enums\DigestMode;
-use Academorix\Notifications\Enums\NotificationChannel;
-use Academorix\Notifications\Observers\NotificationPreferenceObserver;
-use Academorix\Notifications\Policies\NotificationPreferencePolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Notifications\Contracts\Data\NotificationPreferenceInterface;
+use Stackra\Notifications\Database\Factories\NotificationPreferenceFactory;
+use Stackra\Notifications\Enums\DigestMode;
+use Stackra\Notifications\Enums\NotificationChannel;
+use Stackra\Notifications\Observers\NotificationPreferenceObserver;
+use Stackra\Notifications\Policies\NotificationPreferencePolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

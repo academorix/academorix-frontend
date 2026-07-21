@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/monitoring/helpers",
+  "id": "stackra://modules/monitoring/helpers",
   "$version": 1,
   "title": "monitoring — helper functions",
   "description": "Ergonomic helpers for firing alerts, resolving providers, and reading dashboard state. All helpers are thin wrappers around bound services — never business logic. Callers who need the wire-shape of alerts use the FireAlertJob path; helpers here are for imperative flows (support tools, tests, ad-hoc scripts).",
-  "namespace": "Academorix\\Observability\\Monitoring\\Support",
+  "namespace": "Stackra\\Observability\\Monitoring\\Support",
   "helpers": [
     {
       "signature": "fire_monitoring_alert(MonitoringAlertPolicy $policy, float $signal_value, array $signal_context = []): ?MonitoringAlert",

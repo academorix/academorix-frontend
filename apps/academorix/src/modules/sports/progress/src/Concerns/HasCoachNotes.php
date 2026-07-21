@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Progress\Concerns;
+namespace Stackra\Progress\Concerns;
 
 /**
  * Trait — HasCoachNotes.

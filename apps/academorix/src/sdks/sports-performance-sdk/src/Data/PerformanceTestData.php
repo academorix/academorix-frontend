@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsPerformanceSdk\Data;
+namespace Stackra\SportsPerformanceSdk\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
@@ -26,7 +26,7 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
  * ## Example
  *
  * ```php
- * use Academorix\SportsSdk\Client\SportsSdk;
+ * use Stackra\SportsSdk\Client\SportsSdk;
  *
  * $row = app(SportsSdk::class)->performance()->performanceTests()->show($id);
  * ```

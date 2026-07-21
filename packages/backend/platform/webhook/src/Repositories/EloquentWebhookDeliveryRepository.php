@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Repositories;
+namespace Stackra\Webhook\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Webhook\Contracts\Data\WebhookDeliveryInterface;
-use Academorix\Webhook\Contracts\Repositories\WebhookDeliveryRepositoryInterface;
-use Academorix\Webhook\Enums\WebhookDeliveryStatus;
-use Academorix\Webhook\Models\WebhookDelivery;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Webhook\Contracts\Data\WebhookDeliveryInterface;
+use Stackra\Webhook\Contracts\Repositories\WebhookDeliveryRepositoryInterface;
+use Stackra\Webhook\Enums\WebhookDeliveryStatus;
+use Stackra\Webhook\Models\WebhookDelivery;
 use Illuminate\Support\Collection;
 
 /**

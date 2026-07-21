@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "teams",
   "alias": "teams",
-  "namespace": "Academorix\\Teams",
+  "namespace": "Stackra\\Teams",
   "description": "Group of humans practicing / playing / attending under a Branch. Sport-agnostic — a gym runs its classes as Teams, a school runs its cohorts as Teams, an academy runs its squads as Teams. Owns four tables: (1) `teams` — the aggregate (name + branch + optional season + optional age_group + optional sport_key label), (2) `team_members` — polymorphic roster row (member_type + member_id points at Athlete / Coach / Staff / User depending on business shape; polymorphic because the same roster shape serves academies, gyms, and schools), (3) `team_trials` — probationary-period tracking for prospective members trying out for the Team, (4) `event_teams` — Team's participation in an Event (event_id references Wave 3 `events` table; nullable pre-Wave-3). Every Team belongs to Tenant + Organization + Branch — Season + AgeGroup are optional labels populated when the tenant subscribes to the Wave 3 sports domain. Ships: Team model with hasMany members/trials/event-participations; polymorphic HasMember trait; team_slot entitlement (Small=10, Medium=100, Enterprise=null); TeamCapacityExceeded refusal on roster add; TeamMemberActiveInvariant nightly reconciler; PolymorphicTeamMemberResolver runtime helper.",
   "keywords": [
     "team",
@@ -34,7 +34,7 @@
     "wave-2"
   ],
   "priority": 50,
-  "providers": ["Academorix\\Teams\\Providers\\TeamsServiceProvider"],
+  "providers": ["Stackra\\Teams\\Providers\\TeamsServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

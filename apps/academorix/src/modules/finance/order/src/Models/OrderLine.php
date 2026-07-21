@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Order\Models;
+namespace Stackra\Order\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Order\Contracts\Data\OrderLineInterface;
-use Academorix\Order\Database\Factories\OrderLineFactory;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Order\Policies\OrderLinePolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Order\Contracts\Data\OrderLineInterface;
+use Stackra\Order\Database\Factories\OrderLineFactory;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Order\Policies\OrderLinePolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

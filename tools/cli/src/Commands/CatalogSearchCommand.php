@@ -2,14 +2,14 @@
 
 /**
  * @file CatalogSearchCommand.php
- * @module Academorix\Cli\Commands
- * @description `academorix catalog:search <query> [--tier=<t>]` — searches
+ * @module Stackra\Cli\Commands
+ * @description `stackra catalog:search <query> [--tier=<t>]` — searches
  *   the catalogue by capability substring across purpose + capabilities.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Commands;
+namespace Stackra\Cli\Commands;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -60,7 +60,7 @@ final class CatalogSearchCommand extends AbstractCommand
                 sprintf('No catalog entry matched "%s".', $query),
                 [
                     'Try a broader search term.',
-                    'Run `academorix catalog:list` to see every known package.',
+                    'Run `stackra catalog:list` to see every known package.',
                 ],
             );
 

@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Drills\Database\Factories;
+namespace Stackra\Drills\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Drills\Contracts\Data\CurriculumWeekInterface;
-use Academorix\Drills\Models\CurriculumWeek;
+use Stackra\Drills\Contracts\Data\CurriculumWeekInterface;
+use Stackra\Drills\Models\CurriculumWeek;
 
 /**
- * Factory for {@see \Academorix\Drills\Models\CurriculumWeek}.
+ * Factory for {@see \Stackra\Drills\Models\CurriculumWeek}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Drills\Models\CurriculumWeek>
+ * @extends Factory<\Stackra\Drills\Models\CurriculumWeek>
  *
  * @category Drills
  *

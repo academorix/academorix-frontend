@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/geography/permissions",
+  "id": "stackra://modules/geography/permissions",
   "$version": 1,
   "title": "geography \u2014 permissions",
-  "seeder": "Academorix\\Geography\\Database\\Seeders\\GeographyPermissionSeeder",
+  "seeder": "Stackra\\Geography\\Database\\Seeders\\GeographyPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

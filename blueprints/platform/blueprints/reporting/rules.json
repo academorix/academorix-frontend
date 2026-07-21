@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/reporting/rules",
+  "id": "stackra://modules/reporting/rules",
   "$version": 1,
   "title": "reporting — validation rules",
   "description": "Named validation rules this module ships (registered via Validator::extend).",

@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "drills",
   "alias": "drills",
-  "namespace": "Academorix\\Sports\\Drills",
+  "namespace": "Stackra\\Sports\\Drills",
   "description": "Drill library + curriculum per blueprint §14.5. Ships SIX owned entities: `Drill` (coaching drill — objective / age_band / duration / equipment / difficulty / diagram_url / coaching_points; sport-scoped via sport_key; search-indexed), `DrillCategory` (categorization — passing/shooting/defense/conditioning; tenant-authorable), `SessionPlan` (ordered collection of drills for a training session — sport + duration + objective + optional curriculum_week_id linkage), `SessionPlanItem` (drill entry in a plan — drill_id + duration + notes + sort_order), `Curriculum` (multi-week structured plan for a Team+Season — 6-16 weeks; cloneable across seasons), `CurriculumWeek` (weekly slot in a curriculum with linked SessionPlans + learning objectives). Feeds sports/session `training_session.session_plan_id` for structured practice sessions.",
   "keywords": [
     "drills",
@@ -13,7 +13,7 @@
     "wave-3"
   ],
   "priority": 84,
-  "providers": ["Academorix\\Sports\\Drills\\Providers\\DrillsServiceProvider"],
+  "providers": ["Stackra\\Sports\\Drills\\Providers\\DrillsServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

@@ -6,23 +6,23 @@ declare(strict_types=1);
  * @file packages/routing/src/Providers/RoutingServiceProvider.php
  *
  * @description
- * Root service provider for `academorix/routing`. Auto-discovered by
+ * Root service provider for `stackra/routing`. Auto-discovered by
  * Laravel via `composer.json`'s `extra.laravel.providers`.
  *
  * ## Responsibilities
  *
- *   1. Extends {@see \Academorix\ServiceProvider\Providers\ServiceProvider}
+ *   1. Extends {@see \Stackra\ServiceProvider\Providers\ServiceProvider}
  *      so the attribute-driven lifecycle (`#[AsModule]`,
  *      `#[LoadsResources]`, `#[OnBoot]`, `HasBindings`) is available
  *      out of the box.
  *   2. Discovers every class carrying
- *      {@see \Academorix\Routing\Attributes\AsMiddleware} via the
- *      unified {@see \Academorix\Foundation\Contracts\DiscoversAttributes}
+ *      {@see \Stackra\Routing\Attributes\AsMiddleware} via the
+ *      unified {@see \Stackra\Foundation\Contracts\DiscoversAttributes}
  *      contract and registers each with Laravel's router — the
  *      alias, plus any middleware groups the attribute names.
  *
  * ## Why the middleware discovery lives here (not in
- * `academorix/service-provider`)
+ * `stackra/service-provider`)
  *
  * `#[AsMiddleware]` is defined in this package. Its discovery
  * consumer belongs in the same package so consumer packages
@@ -32,23 +32,23 @@ declare(strict_types=1);
  * provider handles the rest.
  *
  * Controller discovery for `#[AsController]` runs elsewhere via
- * {@see \Academorix\Routing\RouteRegistrar} — that lifecycle is
+ * {@see \Stackra\Routing\RouteRegistrar} — that lifecycle is
  * separate because routes register at a specific boot phase that
  * differs from alias registration.
  *
- * @see \Academorix\Routing\Attributes\AsMiddleware  Marker attribute.
- * @see \Academorix\Foundation\Contracts\DiscoversAttributes  Discovery contract.
+ * @see \Stackra\Routing\Attributes\AsMiddleware  Marker attribute.
+ * @see \Stackra\Foundation\Contracts\DiscoversAttributes  Discovery contract.
  */
 
-namespace Academorix\Routing\Providers;
+namespace Stackra\Routing\Providers;
 
-use Academorix\Foundation\Contracts\DiscoversAttributes;
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\OnBoot;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\Foundation\Contracts\DiscoversAttributes;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\OnBoot;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 use Illuminate\Routing\Router;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
 
 /**
  * Routing module service provider.

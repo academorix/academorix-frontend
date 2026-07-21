@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/workflow/approvals/events",
+  "id": "stackra://modules/workflow/approvals/events",
   "$version": 1,
   "title": "approvals — published events",
-  "namespace": "Academorix\\Approval\\Events",
+  "namespace": "Stackra\\Approval\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event is a readonly value object dispatched afterCommit unless the trigger requires synchronous downstream work (execution, security). ApprovalGranted → ApprovalInstanceExecutor listener runs SYNCHRONOUSLY in the same request to preserve the caller's transaction context; every OTHER downstream listener is queued so a slow email dispatch doesn't block state transitions.",
   "events": [
     {
       "name": "ApprovableActionRegistered",
-      "class": "Academorix\\Approval\\Events\\ApprovableActionRegistered",
+      "class": "Stackra\\Approval\\Events\\ApprovableActionRegistered",
       "trigger": "Boot-time discovery pass upserted a new `approvable_actions` row from an #[AsApprovableAction] decorator on an action class. Fires once per new registration per boot. Not fired on unchanged rows.",
       "dispatchMode": "afterCommit",
       "queue": "notifications",
@@ -25,7 +25,7 @@
     },
     {
       "name": "ApprovalTemplateCreated",
-      "class": "Academorix\\Approval\\Events\\ApprovalTemplateCreated",
+      "class": "Stackra\\Approval\\Events\\ApprovalTemplateCreated",
       "trigger": "Tenant admin authored a new template. Version = 1 always.",
       "dispatchMode": "afterCommit",
       "queue": "notifications",
@@ -47,7 +47,7 @@
     },
     {
       "name": "ApprovalTemplateUpdated",
-      "class": "Academorix\\Approval\\Events\\ApprovalTemplateUpdated",
+      "class": "Stackra\\Approval\\Events\\ApprovalTemplateUpdated",
       "trigger": "Tenant admin edited a template's IMMUTABLE-post-instance fields (name, priority, description) — no version bump. Distinct from ApprovalTemplateVersionBumped which fires on when_expression / group changes.",
       "dispatchMode": "afterCommit",
       "queue": "notifications",
@@ -61,7 +61,7 @@
     },
     {
       "name": "ApprovalTemplateVersionBumped",
-      "class": "Academorix\\Approval\\Events\\ApprovalTemplateVersionBumped",
+      "class": "Stackra\\Approval\\Events\\ApprovalTemplateVersionBumped",
       "trigger": "Tenant admin edited a template's semantic-behaviour fields (when_expression, groups[].selector_expression, groups[].quorum, groups[].sort_order, on_timeout, allows_recall) — the template's version column increments AND a new row is written (old row preserved for audit).",
       "dispatchMode": "afterCommit",
       "queue": "notifications",
@@ -85,7 +85,7 @@
     },
     {
       "name": "ApprovalTemplateActivated",
-      "class": "Academorix\\Approval\\Events\\ApprovalTemplateActivated",
+      "class": "Stackra\\Approval\\Events\\ApprovalTemplateActivated",
       "trigger": "Tenant admin flipped is_active=true on an inactive template row. The one-is-active invariant enforced by ApprovalTemplateObserver deactivates any peer row with the same (tenant, application, action_key, name).",
       "dispatchMode": "afterCommit",
       "queue": "notifications",
@@ -102,7 +102,7 @@
     },
     {
       "name": "ApprovalTemplateDeactivated",
-      "class": "Academorix\\Approval\\Events\\ApprovalTemplateDeactivated",
+      "class": "Stackra\\Approval\\Events\\ApprovalTemplateDeactivated",
       "trigger": "Tenant admin flipped is_active=false OR peer activation deactivated this row via the observer. Distinct from soft-delete (still-active-but-hidden vs archived-permanently).",
       "dispatchMode": "afterCommit",
       "queue": "notifications",
@@ -118,7 +118,7 @@
     },
     {
       "name": "ApprovalTemplateGroupsUpdated",
-      "class": "Academorix\\Approval\\Events\\ApprovalTemplateGroupsUpdated",
+      "class": "Stackra\\Approval\\Events\\ApprovalTemplateGroupsUpdated",
       "trigger": "A group was added/edited/removed on a template. Batched — one event per admin edit session (multiple group mutations coalesce to one event with `changed_groups[]`). ALWAYS accompanied by ApprovalTemplateVersionBumped in the same transaction.",
       "dispatchMode": "afterCommit",
       "queue": "notifications",
@@ -134,7 +134,7 @@
     },
     {
       "name": "ApprovalRequested",
-      "class": "Academorix\\Approval\\Events\\ApprovalRequested",
+      "class": "Stackra\\Approval\\Events\\ApprovalRequested",
       "trigger": "The `approve` middleware intercepted a decorated action + resolved a matching template + created an `approval_instances` row with status='pending'. This is the fanout signal for NotifyApproversJob.",
       "dispatchMode": "afterCommit",
       "queue": "notifications",
@@ -142,7 +142,7 @@
         "notifications::NotifyApproversJob (dispatches ApprovalRequestedNotification to each resolved approver)",
         "activity::WriteToActivityLog",
         "audit::WriteAuditRecord",
-        "observability::MetricsCollector (increments academorix.approvals.instances.total)"
+        "observability::MetricsCollector (increments stackra.approvals.instances.total)"
       ],
       "payload": {
         "approval_instance_id": "ULID (`api_...`)",
@@ -162,7 +162,7 @@
     },
     {
       "name": "ApprovalRequirementResolved",
-      "class": "Academorix\\Approval\\Events\\ApprovalRequirementResolved",
+      "class": "Stackra\\Approval\\Events\\ApprovalRequirementResolved",
       "trigger": "Per-requirement fanout of ApprovalRequested. Fires ONCE per requirement at instance-create time after the ApproverSelectorEngine materialised `resolved_approvers`. Consumers use this to build per-approver notification recipients without re-querying.",
       "dispatchMode": "afterCommit",
       "queue": "notifications",
@@ -182,7 +182,7 @@
     },
     {
       "name": "ApprovalDecisionRecorded",
-      "class": "Academorix\\Approval\\Events\\ApprovalDecisionRecorded",
+      "class": "Stackra\\Approval\\Events\\ApprovalDecisionRecorded",
       "trigger": "An approver POSTed approve OR reject and the ApprovalDecisionRecorder wrote a new `approval_decisions` row. Fires BEFORE quorum evaluation runs.",
       "dispatchMode": "afterCommit",
       "queue": "notifications",
@@ -205,7 +205,7 @@
     },
     {
       "name": "ApprovalRequirementSatisfied",
-      "class": "Academorix\\Approval\\Events\\ApprovalRequirementSatisfied",
+      "class": "Stackra\\Approval\\Events\\ApprovalRequirementSatisfied",
       "trigger": "Quorum reached on one requirement (after ApprovalDecisionRecorded's quorum-recompute). Downstream requirements with next sort_order may unblock.",
       "dispatchMode": "afterCommit",
       "queue": "notifications",
@@ -221,7 +221,7 @@
     },
     {
       "name": "ApprovalRequirementFailed",
-      "class": "Academorix\\Approval\\Events\\ApprovalRequirementFailed",
+      "class": "Stackra\\Approval\\Events\\ApprovalRequirementFailed",
       "trigger": "A reject decision was recorded on a requirement whose quorum demands unanimous approval (`quorum_type='all'`) OR the reject-with-quorum-any short-circuits the group. Consequence: the requirement transitions to failed AND the instance transitions to rejected.",
       "dispatchMode": "afterCommit",
       "queue": "notifications",
@@ -242,7 +242,7 @@
     },
     {
       "name": "ApprovalGranted",
-      "class": "Academorix\\Approval\\Events\\ApprovalGranted",
+      "class": "Stackra\\Approval\\Events\\ApprovalGranted",
       "trigger": "Every requirement has status='satisfied'. Instance transitions pending→approved. THIS IS THE ONLY EVENT DISPATCHED SYNCHRONOUSLY — the ApprovalInstanceExecutor listener runs in the same request context to preserve the caller's transaction. Downstream listeners (notifications, activity) queue as normal.",
       "dispatchMode": "synchronous",
       "queue": null,
@@ -268,7 +268,7 @@
     },
     {
       "name": "ApprovalRejected",
-      "class": "Academorix\\Approval\\Events\\ApprovalRejected",
+      "class": "Stackra\\Approval\\Events\\ApprovalRejected",
       "trigger": "At least one requirement failed. Instance transitions pending→rejected. Distinct from ApprovalExpired (past expires_at) and ApprovalCancelled (requester withdraw).",
       "dispatchMode": "afterCommit",
       "queue": "notifications",
@@ -292,7 +292,7 @@
     },
     {
       "name": "ApprovalExecuted",
-      "class": "Academorix\\Approval\\Events\\ApprovalExecuted",
+      "class": "Stackra\\Approval\\Events\\ApprovalExecuted",
       "trigger": "ApprovalInstanceExecutor successfully dispatched the underlying action + captured its return value. Instance transitions approved→executed AND `executed_at` is set. THIS IS THE HANDOFF SIGNAL to downstream cross-module bridges (access/grants materialization, billing charge processing, identity impersonation extension).",
       "dispatchMode": "afterCommit",
       "queue": "notifications",
@@ -317,7 +317,7 @@
     },
     {
       "name": "ApprovalExecutionFailed",
-      "class": "Academorix\\Approval\\Events\\ApprovalExecutionFailed",
+      "class": "Stackra\\Approval\\Events\\ApprovalExecutionFailed",
       "trigger": "ApprovalInstanceExecutor dispatched the underlying action but the action threw. The instance is in a WEDGED state: status='approved' but executed_at IS NULL. Human intervention required — retry via `approvals:remediate-failed-executions`.",
       "dispatchMode": "afterCommit",
       "queue": "notifications-critical",
@@ -340,7 +340,7 @@
     },
     {
       "name": "ApprovalCancelled",
-      "class": "Academorix\\Approval\\Events\\ApprovalCancelled",
+      "class": "Stackra\\Approval\\Events\\ApprovalCancelled",
       "trigger": "Requester POSTed withdraw. Instance transitions pending→cancelled AND every pending requirement transitions to failed.",
       "dispatchMode": "afterCommit",
       "queue": "notifications",
@@ -361,7 +361,7 @@
     },
     {
       "name": "ApprovalExpired",
-      "class": "Academorix\\Approval\\Events\\ApprovalExpired",
+      "class": "Stackra\\Approval\\Events\\ApprovalExpired",
       "trigger": "The ExpireOverdueApprovalsJob sweeper found an instance past expires_at with status='pending'. Final status depends on template.on_timeout: expire → status='expired'; approve → treats as unanimous approve + fires ApprovalGranted; escalate → new approvers added + expires_at extended.",
       "dispatchMode": "afterCommit",
       "queue": "notifications",
@@ -384,7 +384,7 @@
     },
     {
       "name": "ApprovalEscalated",
-      "class": "Academorix\\Approval\\Events\\ApprovalEscalated",
+      "class": "Stackra\\Approval\\Events\\ApprovalEscalated",
       "trigger": "template.on_timeout='escalate' AND the sweeper hit the timeout. New escalation approvers were resolved via template.escalation_selector + appended to the pending requirement's resolved_approvers. expires_at extended by template.expires_after_hours / 2.",
       "dispatchMode": "afterCommit",
       "queue": "notifications",
@@ -404,7 +404,7 @@
     },
     {
       "name": "ApprovalReminderDispatched",
-      "class": "Academorix\\Approval\\Events\\ApprovalReminderDispatched",
+      "class": "Stackra\\Approval\\Events\\ApprovalReminderDispatched",
       "trigger": "DispatchApprovalRemindersJob wrote a new `approval_reminders` row AND dispatched an ApprovalReminderNotification to a specific approver. Fires ONCE per reminder — de-duplicated by the (requirement, approver, reminder_number) composite unique.",
       "dispatchMode": "afterCommit",
       "queue": null,
@@ -421,7 +421,7 @@
     },
     {
       "name": "ApproverSelectorEvaluationFailed",
-      "class": "Academorix\\Approval\\Events\\ApproverSelectorEvaluationFailed",
+      "class": "Stackra\\Approval\\Events\\ApproverSelectorEvaluationFailed",
       "trigger": "ExpressionLanguageAdapter caught a parse error OR runtime error OR timeout evaluating a selector_expression at instance-create time. THE INSTANCE FAILS TO CREATE — the action itself refuses with 500 approval.selector_evaluation_failed. Operators + template author notified so they fix the template.",
       "dispatchMode": "afterCommit",
       "queue": "notifications-critical",
@@ -429,7 +429,7 @@
         "notifications::NotifyTemplateAuthorOfFailure (opt-in — the author of the template gets an email)",
         "activity::WriteToActivityLog",
         "audit::WriteAuditRecord (P1)",
-        "observability::MetricsCollector (feeds academorix.approvals.selector.evaluation_failures counter)"
+        "observability::MetricsCollector (feeds stackra.approvals.selector.evaluation_failures counter)"
       ],
       "payload": {
         "approval_template_id": "ULID",
@@ -444,7 +444,7 @@
     },
     {
       "name": "DelegationSubstitutedApprover",
-      "class": "Academorix\\Approval\\Events\\DelegationSubstitutedApprover",
+      "class": "Stackra\\Approval\\Events\\DelegationSubstitutedApprover",
       "trigger": "During ApproverSelectorEngine::resolve(), an approver in the resolved set was substituted for their delegate because an active `access/delegation::RoleDelegation` covers the role/time-window. Fires PER substitution — a single instance-create with 3 delegated approvers fires 3 events.",
       "dispatchMode": "afterCommit",
       "queue": "notifications",
@@ -464,15 +464,15 @@
     },
     {
       "name": "ApprovalSecurityViolation",
-      "class": "Academorix\\Approval\\Events\\ApprovalSecurityViolation",
+      "class": "Stackra\\Approval\\Events\\ApprovalSecurityViolation",
       "trigger": "One of several P0 security signals: (1) someone POSTed approve/reject with a user_id NOT in the requirement's resolved_approvers (attempted forgery via bypass); (2) an ApprovalDecisionObserver caught a direct-DB write that would violate the resolved_approvers invariant; (3) an action's approvalContext() included regulated_secret / PCI-DSS PAN data (via downstream scanner). Fires ONCE per detected violation — de-dup at the (violation_type, source) level.",
       "dispatchMode": "synchronous",
       "queue": "notifications-critical",
       "consumers": [
-        "notifications::NotifySecurityOfViolation (to Academorix security team)",
+        "notifications::NotifySecurityOfViolation (to Stackra security team)",
         "activity::WriteToActivityLog",
         "audit::WriteAuditRecord (P0)",
-        "observability::MetricsCollector (feeds academorix.approvals.security.violations counter → alerts)"
+        "observability::MetricsCollector (feeds stackra.approvals.security.violations counter → alerts)"
       ],
       "payload": {
         "violation_type": "'forged_decision' | 'direct_db_write' | 'restricted_context_leak' | 'quorum_evaluation_bypass'",

@@ -11,7 +11,7 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use Spatie\RouteAttributes\Attributes\Options as SpatieOptions;
@@ -29,7 +29,7 @@ use Spatie\RouteAttributes\Attributes\Options as SpatieOptions;
  *
  * ## Usage:
  * ```php
- * use Academorix\Routing\Attributes\Options;
+ * use Stackra\Routing\Attributes\Options;
  *
  * class ApiController
  * {

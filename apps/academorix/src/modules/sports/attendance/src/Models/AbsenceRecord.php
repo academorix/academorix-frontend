@@ -4,23 +4,23 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attendance\Models;
+namespace Stackra\Attendance\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Attendance\Contracts\Data\AbsenceRecordInterface;
-use Academorix\Attendance\Database\Factories\AbsenceRecordFactory;
-use Academorix\AthleteEnrollment\Concerns\BelongsToAthleteEnrollment;
-use Academorix\Athlete\Concerns\BelongsToAthlete;
-use Academorix\Attendance\Policies\AbsenceRecordPolicy;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Session\Concerns\BelongsToSession;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Attendance\Contracts\Data\AbsenceRecordInterface;
+use Stackra\Attendance\Database\Factories\AbsenceRecordFactory;
+use Stackra\AthleteEnrollment\Concerns\BelongsToAthleteEnrollment;
+use Stackra\Athlete\Concerns\BelongsToAthlete;
+use Stackra\Attendance\Policies\AbsenceRecordPolicy;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Session\Concerns\BelongsToSession;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;

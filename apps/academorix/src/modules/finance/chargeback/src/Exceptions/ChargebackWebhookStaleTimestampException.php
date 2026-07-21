@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Exceptions;
+namespace Stackra\Chargeback\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Provider webhook timestamp is older than the replay-window.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ChargebackWebhookStaleTimestampException extends AcademorixException
+final class ChargebackWebhookStaleTimestampException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

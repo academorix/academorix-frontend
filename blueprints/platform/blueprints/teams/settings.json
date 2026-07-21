@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/teams/settings",
+  "id": "stackra://modules/teams/settings",
   "$version": 1,
   "title": "teams — settings",
   "description": "Tenant-facing preferences (team defaults + mixed-youth policy + trial defaults) + user-level preferences (team notifications).",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "teams",
-      "class": "Academorix\\Teams\\Settings\\TeamsSettings",
+      "class": "Stackra\\Teams\\Settings\\TeamsSettings",
       "label": "Teams",
       "description": "Tenant-wide defaults for team creation + trial workflow + eligibility policy.",
       "icon": "users",
@@ -183,7 +183,7 @@
     },
     {
       "key": "teams_user",
-      "class": "Academorix\\Teams\\Settings\\TeamsUserSettings",
+      "class": "Stackra\\Teams\\Settings\\TeamsUserSettings",
       "label": "My teams",
       "description": "Per-user team preferences.",
       "icon": "user-circle",

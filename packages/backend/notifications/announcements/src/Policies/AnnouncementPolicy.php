@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Announcements\Policies;
+namespace Stackra\Announcements\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Announcements\Models\Announcement;
+use Stackra\User\Models\User;
+use Stackra\Announcements\Models\Announcement;
 
 /**
- * Authorization policy for {@see \Academorix\Announcements\Models\Announcement}.
+ * Authorization policy for {@see \Stackra\Announcements\Models\Announcement}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

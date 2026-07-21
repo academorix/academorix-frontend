@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Events;
+namespace Stackra\Leads\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -15,7 +15,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * ## Consumers
  *
  * - audit::WriteToAuditLog
- * - monitoring::MetricsCollector (increments academorix.leads.lost_total; feeds loss-reason breakdown dashboard)
+ * - monitoring::MetricsCollector (increments stackra.leads.lost_total; feeds loss-reason breakdown dashboard)
  *
  * @category Leads
  *

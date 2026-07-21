@@ -51,7 +51,7 @@
   CreditNoteApplied (transitions to refund / next_invoice / customer_balance).
 - Reconciliation: nightly ReconcileInvoicePaymentsJob detects drift between
   invoice.amount_paid_cents and transactions.SUM(amount). Drift is a P1 signal.
-- PDF rendering: DomPDF server-side (default template Academorix-branded;
+- PDF rendering: DomPDF server-side (default template Stackra-branded;
   Medium+ tenant-branded; VAT-EU compliant layout available). S3 storage with
   SSE-KMS encryption; hot → Glacier migration at 7y.
 - 23 events published; 10 notification categories; 12 background jobs; 15

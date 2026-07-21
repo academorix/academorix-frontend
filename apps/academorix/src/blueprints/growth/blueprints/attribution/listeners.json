@@ -1,54 +1,54 @@
 {
-  "id": "academorix://modules/attribution/listeners",
+  "id": "stackra://modules/attribution/listeners",
   "$version": 1,
   "title": "attribution — subscribed events",
   "listeners": [
     {
       "event": "attribution::AttributionSubjectIdentified",
-      "listener": "Academorix\\Growth\\Attribution\\Listeners\\MergeAnonymousAttributionsOnSubjectIdentified",
+      "listener": "Stackra\\Growth\\Attribution\\Listeners\\MergeAnonymousAttributionsOnSubjectIdentified",
       "queue": "attribution-critical",
       "priority": 50,
       "purpose": "Dispatches MergeIdentifiedAttributionsJob when an anonymous session transitions to an identified subject. Gated by the tenant's attribution_merge entitlement — non-Enterprise tenants get a no-op (partial-attribution fallback where anonymous + identified live side-by-side). Runs at priority 50 (before marketing / analytics listeners) so those consumers see the canonical merged profile."
     },
     {
       "event": "compliance::ConsentUpdated",
-      "listener": "Academorix\\Growth\\Attribution\\Listeners\\UpdateAttributionConsentSnapshot",
+      "listener": "Stackra\\Growth\\Attribution\\Listeners\\UpdateAttributionConsentSnapshot",
       "queue": "attribution",
       "purpose": "When a subject grants / revokes / adjusts marketing / advertising / personalized_advertising consent, updates the subject's attributions row's consent_at_capture jsonb + fires AttributionConsentSnapshotUpdated. Ensures the current attribution snapshot reflects current consent state."
     },
     {
       "event": "user::UserErased",
-      "listener": "Academorix\\Growth\\Attribution\\Listeners\\RedactAttributionOnUserErasure",
+      "listener": "Stackra\\Growth\\Attribution\\Listeners\\RedactAttributionOnUserErasure",
       "queue": "attribution-critical",
       "purpose": "GDPR Art. 17 individual-subject erasure. For every attributions row with subject_type='user' and subject_id=erased_user_id: redact confidential fields (first/last_touch_* → '[REDACTED]', click_id + device → '{}'), transition lifecycle_state to 'churned', null subject_id. Redact ip_hash + user_agent_hash on every associated touchpoint. Full hard-delete happens 90 days later via the audit-hold reset flow."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Growth\\Attribution\\Listeners\\PurgeAttributionDataForErasedTenant",
+      "listener": "Stackra\\Growth\\Attribution\\Listeners\\PurgeAttributionDataForErasedTenant",
       "queue": "attribution",
       "purpose": "Cascade delete via FK; this listener writes the compliance audit trail entry + emits count metrics (attributions purged, attribution_touchpoints purged). Financial-record retention still applies to the audit rows, which outlive the source rows."
     },
     {
       "event": "finance::SubscriptionActivated",
-      "listener": "Academorix\\Growth\\Attribution\\Listeners\\FireAttributionConvertedOnFirstSubscription",
+      "listener": "Stackra\\Growth\\Attribution\\Listeners\\FireAttributionConvertedOnFirstSubscription",
       "queue": "attribution-critical",
       "purpose": "Wave 5 bridge. When a subject's FIRST subscription activates (finance module fires SubscriptionActivated), transition the attribution profile's lifecycle_state to 'converted' + fire AttributionConverted. The conversion_value_cents is populated from the subscription price. Skipped when the subject already has lifecycle_state='converted' (avoids double-counting)."
     },
     {
       "event": "finance::PaymentSucceeded",
-      "listener": "Academorix\\Growth\\Attribution\\Listeners\\FireAttributionConvertedOnFirstPayment",
+      "listener": "Stackra\\Growth\\Attribution\\Listeners\\FireAttributionConvertedOnFirstPayment",
       "queue": "attribution-critical",
       "purpose": "Wave 5 bridge. Alternative path for one-time-payment tenants (no subscription). When a subject's FIRST successful payment fires, transition lifecycle_state to 'converted' + fire AttributionConverted. Skipped when subscription-based conversion already fired."
     },
     {
       "event": "referrals::ReferralLinkClicked",
-      "listener": "Academorix\\Growth\\Attribution\\Listeners\\CaptureTouchpointForReferralClick",
+      "listener": "Stackra\\Growth\\Attribution\\Listeners\\CaptureTouchpointForReferralClick",
       "queue": "attribution",
       "purpose": "Wave 5 bridge. When the referrals module detects a referral-link click, append a touchpoint with touchpoint_type='referral_link_click' + source='referral' + campaign=<referrer's referral code>. This is how referral clicks get baked into the attribution timeline."
     },
     {
       "event": "notifications::EmailClicked",
-      "listener": "Academorix\\Growth\\Attribution\\Listeners\\CaptureTouchpointForEmailClick",
+      "listener": "Stackra\\Growth\\Attribution\\Listeners\\CaptureTouchpointForEmailClick",
       "queue": "attribution",
       "purpose": "Wave 5 bridge. When notifications module detects an email link click (tracking pixel or link redirect), append a touchpoint with touchpoint_type='email_click'. Distinct from the future email-open pixel (deferred to notifications module)."
     }

@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/foundation/permissions",
+  "id": "stackra://modules/foundation/permissions",
   "$version": 1,
   "title": "foundation — permissions",
   "description": "Platform-admin-only permissions gating foundation's diagnostic surface (module registry, health detail, search index management, config reload). No sanctum-guard permissions — foundation exposes no tenant-facing surface beyond public ping/health, which is unauthenticated. Seeded by `FoundationPermissionSeeder` with `is_system=true`.",
-  "seeder": "Academorix\\Foundation\\Database\\Seeders\\FoundationPermissionSeeder",
+  "seeder": "Stackra\\Foundation\\Database\\Seeders\\FoundationPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

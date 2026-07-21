@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Horizon\Examples;
+namespace Stackra\Horizon\Examples;
 
-use Academorix\Horizon\Attributes\AsMetric;
+use Stackra\Horizon\Attributes\AsMetric;
 
 /**
  * ## OrderMetrics Example

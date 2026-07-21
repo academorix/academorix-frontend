@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Policies;
+namespace Stackra\Storage\Policies;
 
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Enums\StoragePermission;
-use Academorix\Storage\Models\File;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Enums\StoragePermission;
+use Stackra\Storage\Models\File;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**
@@ -64,7 +64,7 @@ final class FilePolicy
 
     /**
      * `rescan` — platform-only, re-dispatches
-     * {@see \Academorix\Storage\Jobs\ScanFileForVirusesJob}.
+     * {@see \Stackra\Storage\Jobs\ScanFileForVirusesJob}.
      */
     public function rescan(Authenticatable $user, File $file): bool
     {

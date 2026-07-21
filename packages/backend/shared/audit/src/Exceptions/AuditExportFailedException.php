@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Exceptions;
+namespace Stackra\Audit\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a DSAR export job cannot produce a bundle.
@@ -18,7 +18,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AuditExportFailedException extends AcademorixException
+final class AuditExportFailedException extends StackraException
 {
     public const CODE = 'audit.export_failed';
 

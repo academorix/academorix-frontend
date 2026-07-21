@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/public-site/data-classes",
+  "id": "stackra://modules/public-site/data-classes",
   "$version": 1,
   "title": "public-site — column classification",
   "description": "Every column across this module's schemas classified by foundation's 5-tier taxonomy (public / internal / confidential / restricted / secret).",

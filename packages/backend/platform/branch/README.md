@@ -1,4 +1,4 @@
-# academorix/branch
+# stackra/branch
 
 Server-side Laravel package for the `branch` module. Auto-generated from the
 blueprint at `modules/platform/blueprints/branch/`.
@@ -44,6 +44,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-platform/branch-sdk` under `sdk/platform-branch-sdk/`. Consumers
+`stackra-platform/branch-sdk` under `sdk/platform-branch-sdk/`. Consumers
 cross the service boundary through the SDK; this package is the SERVER-side
 owner of the domain.

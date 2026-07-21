@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/competition/schemas/competition-team",
+  "id": "stackra://modules/competition/schemas/competition-team",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "CompetitionTeam",

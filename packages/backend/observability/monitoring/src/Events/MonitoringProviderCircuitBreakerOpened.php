@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Events;
+namespace Stackra\Monitoring\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -17,7 +17,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - audit::WriteToAuditLog
  * - notifications::DispatchMonitoringProviderCircuitBreakerOpenedNotification (cannot-opt-out — pages ops + notifies tenant owner + falls back to alternate paging provider)
  * - monitoring::FailoverToAlternateProvider (if this was PagerDuty: fail over to Opsgenie for pending notifications; if Opsgenie: fail over to PagerDuty)
- * - monitoring::MetricsCollector (increments academorix.monitoring.circuit_breakers.opened_total)
+ * - monitoring::MetricsCollector (increments stackra.monitoring.circuit_breakers.opened_total)
  *
  * @category Monitoring
  *

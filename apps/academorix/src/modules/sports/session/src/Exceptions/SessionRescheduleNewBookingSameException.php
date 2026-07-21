@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Session\Exceptions;
+namespace Stackra\Session\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * new_resource_booking_id equals current — no-op.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SessionRescheduleNewBookingSameException extends AcademorixException
+final class SessionRescheduleNewBookingSameException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

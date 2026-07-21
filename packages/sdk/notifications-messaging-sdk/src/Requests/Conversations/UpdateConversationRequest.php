@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsMessagingSdk\Requests\Conversations;
+namespace Stackra\NotificationsMessagingSdk\Requests\Conversations;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\NotificationsMessagingSdk\Data\ConversationData;
-use Academorix\NotificationsMessagingSdk\Payloads\Conversations\UpdateConversationPayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\NotificationsMessagingSdk\Data\ConversationData;
+use Stackra\NotificationsMessagingSdk\Payloads\Conversations\UpdateConversationPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

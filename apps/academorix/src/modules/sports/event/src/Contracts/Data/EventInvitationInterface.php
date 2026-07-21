@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Event\Contracts\Data;
+namespace Stackra\Event\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Event\Models\EventInvitation;
+use Stackra\Event\Models\EventInvitation;
 
 /**
  * Table shape for the `event_invitations` table.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Contracts\Services;
+namespace Stackra\Versioning\Contracts\Services;
 
 use Illuminate\Http\Request;
 

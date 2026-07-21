@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Policies;
+namespace Stackra\Localization\Policies;
 
-use Academorix\Localization\Enums\LocalizationPermission;
-use Academorix\Localization\Models\PlatformLanguage;
+use Stackra\Localization\Enums\LocalizationPermission;
+use Stackra\Localization\Models\PlatformLanguage;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

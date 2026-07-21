@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tasks\Contracts\Data;
+namespace Stackra\Tasks\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Tasks\Models\TaskAssignment;
+use Stackra\Tasks\Models\TaskAssignment;
 
 /**
  * Table shape for the `task_assignments` table.

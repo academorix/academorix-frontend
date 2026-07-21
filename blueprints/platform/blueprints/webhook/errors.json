@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/webhook/errors",
+  "id": "stackra://modules/webhook/errors",
   "$version": 1,
   "title": "webhook \u2014 error codes",
   "namespace": "webhook",

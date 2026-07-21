@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Telemetry\Exceptions;
+namespace Stackra\Telemetry\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `TELEMETRY_OTEL_SDK_NOT_INITIALIZED` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TelemetryOtelSdkNotInitializedException extends AcademorixException
+final class TelemetryOtelSdkNotInitializedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

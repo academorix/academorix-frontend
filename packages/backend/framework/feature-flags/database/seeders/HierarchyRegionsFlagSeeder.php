@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Database\Seeders;
+namespace Stackra\FeatureFlags\Database\Seeders;
 
-use Academorix\FeatureFlags\Contracts\Data\FeatureInterface;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureRepositoryInterface;
-use Academorix\FeatureFlags\Enums\FlagKind;
-use Academorix\ServiceProvider\Attributes\AsSeeder;
+use Stackra\FeatureFlags\Contracts\Data\FeatureInterface;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureRepositoryInterface;
+use Stackra\FeatureFlags\Enums\FlagKind;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;
 
 /**

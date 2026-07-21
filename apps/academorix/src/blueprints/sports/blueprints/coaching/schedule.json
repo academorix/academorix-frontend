@@ -1,46 +1,46 @@
 {
-  "id": "academorix://modules/coaching/schedule",
+  "id": "stackra://modules/coaching/schedule",
   "$version": 1,
   "title": "coaching — scheduled tasks",
   "entries": [
     {
       "name": "coaching-notify-cert-expiring",
-      "command": "queue:dispatch --job=Academorix\\Sports\\Coaching\\Jobs\\NotifyCertificationExpiringJob",
+      "command": "queue:dispatch --job=Stackra\\Sports\\Coaching\\Jobs\\NotifyCertificationExpiringJob",
       "cron": "0 2 * * *",
       "timezone": "UTC",
       "purpose": "Nightly 02:00 UTC: fire CoachCertificationExpiringSoon at configured cadence (90 / 30 / 7 days pre-expiry)."
     },
     {
       "name": "coaching-notify-cert-expired",
-      "command": "queue:dispatch --job=Academorix\\Sports\\Coaching\\Jobs\\NotifyCertificationExpiredJob",
+      "command": "queue:dispatch --job=Stackra\\Sports\\Coaching\\Jobs\\NotifyCertificationExpiredJob",
       "cron": "5 2 * * *",
       "timezone": "UTC",
       "purpose": "Nightly 02:05 UTC: fire CoachCertificationExpired for certs past expires_at."
     },
     {
       "name": "coaching-notify-assignment-ending-soon",
-      "command": "queue:dispatch --job=Academorix\\Sports\\Coaching\\Jobs\\NotifyAssignmentEndingSoonJob",
+      "command": "queue:dispatch --job=Stackra\\Sports\\Coaching\\Jobs\\NotifyAssignmentEndingSoonJob",
       "cron": "10 2 * * *",
       "timezone": "UTC",
       "purpose": "Nightly 02:10 UTC: fire CoachAssignmentEndingSoon for assignments within N days of end_date (default 7)."
     },
     {
       "name": "coaching-notify-availability-conflict",
-      "command": "queue:dispatch --job=Academorix\\Sports\\Coaching\\Jobs\\NotifyCoachAvailabilityConflictJob",
+      "command": "queue:dispatch --job=Stackra\\Sports\\Coaching\\Jobs\\NotifyCoachAvailabilityConflictJob",
       "cron": "15 2 * * *",
       "timezone": "UTC",
       "purpose": "Nightly 02:15 UTC: recheck existing assignments against updated coach availability + rescheduled sessions."
     },
     {
       "name": "coaching-purge-expired-skill-ratings",
-      "command": "queue:dispatch --job=Academorix\\Sports\\Coaching\\Jobs\\PurgeExpiredSkillRatingsJob",
+      "command": "queue:dispatch --job=Stackra\\Sports\\Coaching\\Jobs\\PurgeExpiredSkillRatingsJob",
       "cron": "0 5 * * *",
       "timezone": "UTC",
       "purpose": "Daily 05:00 UTC: soft-delete ratings past expires_at + hard-purge ratings past retention window (2y default / 5y with coaching_extended_retention)."
     },
     {
       "name": "coaching-generate-roster-report",
-      "command": "queue:dispatch --job=Academorix\\Sports\\Coaching\\Jobs\\GenerateCoachRosterReportJob",
+      "command": "queue:dispatch --job=Stackra\\Sports\\Coaching\\Jobs\\GenerateCoachRosterReportJob",
       "cron": "0 6 * * 1",
       "timezone": "UTC",
       "purpose": "Weekly Monday 06:00 UTC: per-branch active coach roster export + notification to branch_manager + admin."

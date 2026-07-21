@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/teams/policies",
+  "id": "stackra://modules/teams/policies",
   "$version": 1,
   "title": "teams — authorization policies",
   "description": "Four policies, one per owned model. Each policy composes the ResolveScope middleware's decision: a caller with scope 'branch:X' can only see/act on teams inside branch X. A caller with scope 'coach:Y' (Wave 3 scope key) can only see/act on teams they coach. Every ability defers to spatie/laravel-permission for the permission check, then layers scope narrowing.",
   "policies": [
     {
       "model": "Team",
-      "class": "Academorix\\Teams\\Policies\\TeamPolicy",
+      "class": "Stackra\\Teams\\Policies\\TeamPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -50,7 +50,7 @@
     },
     {
       "model": "TeamMember",
-      "class": "Academorix\\Teams\\Policies\\TeamMemberPolicy",
+      "class": "Stackra\\Teams\\Policies\\TeamMemberPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -89,7 +89,7 @@
     },
     {
       "model": "TeamTrial",
-      "class": "Academorix\\Teams\\Policies\\TrialPolicy",
+      "class": "Stackra\\Teams\\Policies\\TrialPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -131,7 +131,7 @@
     },
     {
       "model": "EventTeam",
-      "class": "Academorix\\Teams\\Policies\\EventTeamPolicy",
+      "class": "Stackra\\Teams\\Policies\\EventTeamPolicy",
       "abilities": [
         {
           "action": "viewAny",

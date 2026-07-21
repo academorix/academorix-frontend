@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/attributes/schemas/attribute-set",
+  "id": "stackra://modules/attributes/schemas/attribute-set",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "AttributeSet",
@@ -13,7 +13,7 @@
     "keyType": "string",
     "keyPrefix": "asg_",
     "incrementing": false,
-    "model": "Academorix\\Attributes\\Models\\AttributeSet",
+    "model": "Stackra\\Attributes\\Models\\AttributeSet",
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",

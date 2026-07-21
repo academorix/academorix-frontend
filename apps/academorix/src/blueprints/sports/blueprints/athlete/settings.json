@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/athlete/settings",
+  "id": "stackra://modules/athlete/settings",
   "$version": 1,
   "title": "athlete — settings",
   "description": "Tenant-facing preferences (athlete lifecycle defaults, consent workflow toggles, retention preferences) + user-level preferences (guardian display preferences for the /me/athletes surface).",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "athlete",
-      "class": "Academorix\\Sports\\Athlete\\Settings\\AthleteSettings",
+      "class": "Stackra\\Sports\\Athlete\\Settings\\AthleteSettings",
       "label": "Athletes",
       "description": "Tenant-wide athlete lifecycle defaults + feature opt-ins.",
       "icon": "user-group",
@@ -130,7 +130,7 @@
     },
     {
       "key": "athlete_user",
-      "class": "Academorix\\Sports\\Athlete\\Settings\\AthleteUserSettings",
+      "class": "Stackra\\Sports\\Athlete\\Settings\\AthleteUserSettings",
       "label": "My athletes",
       "description": "Per-user preferences for how the /me/athletes surface + notification cadence work.",
       "icon": "user-circle",

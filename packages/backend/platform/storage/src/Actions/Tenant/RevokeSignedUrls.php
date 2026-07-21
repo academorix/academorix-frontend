@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Actions\Tenant;
+namespace Stackra\Storage\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Delete;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Storage\Contracts\Services\SignedUrlIssuerInterface;
-use Academorix\Storage\Enums\StoragePermission;
-use Academorix\Storage\Models\File;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Delete;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Storage\Contracts\Services\SignedUrlIssuerInterface;
+use Stackra\Storage\Enums\StoragePermission;
+use Stackra\Storage\Models\File;
 use Illuminate\Http\JsonResponse;
 
 /**

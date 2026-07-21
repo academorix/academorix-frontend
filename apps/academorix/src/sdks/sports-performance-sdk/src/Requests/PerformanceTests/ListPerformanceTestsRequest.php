@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsPerformanceSdk\Requests\PerformanceTests;
+namespace Stackra\SportsPerformanceSdk\Requests\PerformanceTests;
 
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\ApiSdk\Data\PaginationLinks;
-use Academorix\ApiSdk\Data\PaginationMeta;
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsPerformanceSdk\Data\PerformanceTestData;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\ApiSdk\Data\PaginationLinks;
+use Stackra\ApiSdk\Data\PaginationMeta;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsPerformanceSdk\Data\PerformanceTestData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

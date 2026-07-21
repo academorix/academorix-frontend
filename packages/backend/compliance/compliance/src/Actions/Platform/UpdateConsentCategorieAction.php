@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Actions\Platform;
+namespace Stackra\Compliance\Actions\Platform;
 
-use Academorix\Compliance\Contracts\Repositories\ConsentCategoryRepositoryInterface;
-use Academorix\Compliance\Data\ConsentCategoryData;
-use Academorix\Compliance\Data\Requests\UpdateConsentCategoryRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\Compliance\Contracts\Repositories\ConsentCategoryRepositoryInterface;
+use Stackra\Compliance\Data\ConsentCategoryData;
+use Stackra\Compliance\Data\Requests\UpdateConsentCategoryRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Patch;
 
 /**
  * `PATCH /api/v1/platform/compliance/consent-categories/{category}` — update action (platform-admin audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Patch(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Compliance

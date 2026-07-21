@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Events;
+namespace Stackra\Monitoring\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog (retention: 7 years)
  * - monitoring::MaybeSchedulePostmortem (when severity=p1: fire MonitoringPostmortemRequiredNotification + transition status to 'postmortem' if not already)
- * - monitoring::MetricsCollector (increments academorix.monitoring.incidents.resolved_total)
+ * - monitoring::MetricsCollector (increments stackra.monitoring.incidents.resolved_total)
  *
  * @category Monitoring
  *

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Policies;
+namespace Stackra\Notifications\Sms\Policies;
 
-use Academorix\Notifications\Sms\Contracts\Data\SmsOptOutInterface;
-use Academorix\Notifications\Sms\Enums\NotificationsSmsPermission;
-use Academorix\Notifications\Sms\Enums\SmsOptOutReason;
-use Academorix\Notifications\Sms\Models\SmsOptOut;
+use Stackra\Notifications\Sms\Contracts\Data\SmsOptOutInterface;
+use Stackra\Notifications\Sms\Enums\NotificationsSmsPermission;
+use Stackra\Notifications\Sms\Enums\SmsOptOutReason;
+use Stackra\Notifications\Sms\Models\SmsOptOut;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

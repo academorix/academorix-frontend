@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/grants/metrics",
+  "id": "stackra://modules/grants/metrics",
   "$version": 1,
   "title": "grants — OpenTelemetry metrics",
   "description": "OpenTelemetry / Prometheus metrics this module emits. RED pattern for the overlay resolver (the hot path — every permission check hits this); funnel counters mirror analytics.json event names but at the ops / SLO level (i.e. not gated by user consent).",
   "instrumentation": "open-telemetry/sdk",
-  "namespace": "academorix.grants",
+  "namespace": "stackra.grants",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["tenant_id_bucket", "resource_type", "decision", "source", "outcome"],
@@ -12,60 +12,60 @@
   },
   "metrics": [
     {
-      "name": "academorix.grants.issued.total",
+      "name": "stackra.grants.issued.total",
       "kind": "counter",
       "unit": "grants",
       "labels": ["tenant_id_bucket", "resource_type", "decision", "source"],
       "description": "Increments on GrantIssued."
     },
     {
-      "name": "academorix.grants.updated.total",
+      "name": "stackra.grants.updated.total",
       "kind": "counter",
       "unit": "grants",
       "labels": ["tenant_id_bucket", "resource_type"]
     },
     {
-      "name": "academorix.grants.revoked.total",
+      "name": "stackra.grants.revoked.total",
       "kind": "counter",
       "unit": "grants",
       "labels": ["tenant_id_bucket", "resource_type", "revoke_reason_category", "is_system_revoke"]
     },
     {
-      "name": "academorix.grants.expired.total",
+      "name": "stackra.grants.expired.total",
       "kind": "counter",
       "unit": "grants",
       "labels": ["tenant_id_bucket", "resource_type"]
     },
     {
-      "name": "academorix.grants.denials_issued.total",
+      "name": "stackra.grants.denials_issued.total",
       "kind": "counter",
       "unit": "grants",
       "labels": ["tenant_id_bucket", "resource_type"],
       "description": "Rare + high-signal. Alerts fire on a sudden spike (deny is an operational intervention; a spike suggests an incident)."
     },
     {
-      "name": "academorix.grants.active",
+      "name": "stackra.grants.active",
       "kind": "gauge",
       "unit": "grants",
       "labels": ["tenant_id_bucket", "resource_type", "decision"],
       "description": "Point-in-time count of active (non-terminal) grants. Sampled every 60s. Feeds the grants.max_active entitlement enforcement."
     },
     {
-      "name": "academorix.grants.self_service_grant_attempts.total",
+      "name": "stackra.grants.self_service_grant_attempts.total",
       "kind": "counter",
       "unit": "attempts",
       "labels": ["tenant_id_bucket"],
       "description": "Privilege-escalation attempts. Alerts fire above threshold (default 10/hour per tenant — a stampede signals misconfigured RBAC OR account compromise)."
     },
     {
-      "name": "academorix.grants.cross_tenant_attempts.total",
+      "name": "stackra.grants.cross_tenant_attempts.total",
       "kind": "counter",
       "unit": "attempts",
       "labels": ["tenant_id_bucket"],
       "description": "Tenant-isolation breach attempts. Alerts fire on ANY occurrence (should be zero — non-zero indicates a bug or an attack)."
     },
     {
-      "name": "academorix.grants.overlay_resolve.duration_ms",
+      "name": "stackra.grants.overlay_resolve.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [0.1, 0.5, 1, 2, 5, 10, 25, 50, 100],
@@ -73,21 +73,21 @@
       "description": "GrantOverlayResolver::resolve() latency. P99 target < 5ms with L1 cache hit. cache_tier: l1_process | l2_redis | db. outcome: allow | deny | rbac_fallback."
     },
     {
-      "name": "academorix.grants.overlay_resolve.total",
+      "name": "stackra.grants.overlay_resolve.total",
       "kind": "counter",
       "unit": "checks",
       "labels": ["cache_tier", "outcome"],
       "description": "Every permission check that involves the grants overlay. cache_tier: l1_process (hit) | l2_redis (hit) | db (miss)."
     },
     {
-      "name": "academorix.grants.cache_hit_ratio",
+      "name": "stackra.grants.cache_hit_ratio",
       "kind": "gauge",
       "unit": "ratio",
       "labels": ["cache_tier"],
       "description": "Rolling 5m cache hit ratio. SLO target: >0.95 on L1, >0.98 combined L1+L2."
     },
     {
-      "name": "academorix.grants.warm_cache.duration_ms",
+      "name": "stackra.grants.warm_cache.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [0.5, 2, 10, 50, 200, 1000],
@@ -95,28 +95,28 @@
       "description": "grants.warm_grant_cache middleware duration. outcome: warm | skipped | overflow."
     },
     {
-      "name": "academorix.grants.warm_cache.overflow.total",
+      "name": "stackra.grants.warm_cache.overflow.total",
       "kind": "counter",
       "unit": "requests",
       "labels": ["tenant_id_bucket"],
       "description": "Requests where the caller had more grants than the warm ceiling (default 500). Lazy L2 lookups take over for the excess."
     },
     {
-      "name": "academorix.grants.bulk_provisioning.total",
+      "name": "stackra.grants.bulk_provisioning.total",
       "kind": "counter",
       "unit": "grants",
       "labels": ["tenant_id_bucket", "outcome"],
       "description": "Grants issued via bulk. outcome: created | failed. Sum(created) + sum(failed) = total rows uploaded."
     },
     {
-      "name": "academorix.grants.orphaned_grants_reconciled.total",
+      "name": "stackra.grants.orphaned_grants_reconciled.total",
       "kind": "counter",
       "unit": "grants",
       "labels": ["orphan_kind"],
       "description": "ReconcileOrphanedGrantsJob observed rows. orphan_kind: resource | subject. Alerts fire on a sustained spike — indicates missing cascade-delete elsewhere in the platform."
     },
     {
-      "name": "academorix.grants.notify_expiring.duration_ms",
+      "name": "stackra.grants.notify_expiring.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 200, 1000, 5000, 30000, 300000],
@@ -124,7 +124,7 @@
       "description": "NotifyGrantExpiringJob end-to-end duration."
     },
     {
-      "name": "academorix.grants.reason_length",
+      "name": "stackra.grants.reason_length",
       "kind": "histogram",
       "unit": "chars",
       "buckets": [20, 50, 100, 250, 500, 1000, 2000],

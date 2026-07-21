@@ -15,16 +15,16 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  *
- * @see \Academorix\Sentry\Services\SentryService
+ * @see \Stackra\Sentry\Services\SentryService
  */
 
-namespace Academorix\Sentry\Middleware;
+namespace Stackra\Sentry\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Sentry\Services\SentryService;
-use Academorix\Support\Str;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Sentry\Services\SentryService;
+use Stackra\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

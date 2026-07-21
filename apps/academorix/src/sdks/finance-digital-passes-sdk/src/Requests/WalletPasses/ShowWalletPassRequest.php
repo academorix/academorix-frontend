@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FinanceDigitalPassesSdk\Requests\WalletPasses;
+namespace Stackra\FinanceDigitalPassesSdk\Requests\WalletPasses;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\FinanceDigitalPassesSdk\Data\WalletPassData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\FinanceDigitalPassesSdk\Data\WalletPassData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

@@ -1,9 +1,9 @@
 {
-  "name": "academorix/feature-flags",
+  "name": "stackra/feature-flags",
   "description": "Production-grade multi-tenant feature-flag layer on top of Laravel Pennant. Ships the KillSwitch -> Override -> Rollout -> PlanGate -> class-default resolution chain, one contract (FeatureCheckerInterface), one facade (Feature::), attribute-driven flag discovery, route gating, AI tool visibility gating, boot-payload contribution, an actions-only admin surface, and a Saloon SDK sibling.",
   "type": "library",
   "keywords": [
-    "academorix",
+    "stackra",
     "laravel",
     "feature-flags",
     "pennant",
@@ -17,23 +17,23 @@
   "license": "proprietary",
   "authors": [
     {
-      "name": "Academorix Team",
-      "email": "dev@academorix.com",
-      "homepage": "https://academorix.com"
+      "name": "Stackra Team",
+      "email": "dev@stackra.com",
+      "homepage": "https://stackra.com"
     }
   ],
   "require": {
     "php": "^8.3|^8.4|^8.5",
-    "academorix/authorization": "@dev",
-    "academorix/caching": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/database": "@dev",
-    "academorix/enum": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/scope": "@dev",
-    "academorix/service-provider": "@dev",
+    "stackra/authorization": "@dev",
+    "stackra/caching": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/database": "@dev",
+    "stackra/enum": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/scope": "@dev",
+    "stackra/service-provider": "@dev",
     "illuminate/contracts": "^13.0",
     "illuminate/database": "^13.0",
     "illuminate/http": "^13.0",
@@ -53,14 +53,14 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\FeatureFlags\\": "src/",
-      "Academorix\\FeatureFlags\\Database\\Factories\\": "database/factories/",
-      "Academorix\\FeatureFlags\\Database\\Seeders\\": "database/seeders/"
+      "Stackra\\FeatureFlags\\": "src/",
+      "Stackra\\FeatureFlags\\Database\\Factories\\": "database/factories/",
+      "Stackra\\FeatureFlags\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\FeatureFlags\\Tests\\": "tests/"
+      "Stackra\\FeatureFlags\\Tests\\": "tests/"
     }
   },
   "repositories": [
@@ -138,10 +138,10 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\FeatureFlags\\Providers\\FeatureFlagsServiceProvider"
+        "Stackra\\FeatureFlags\\Providers\\FeatureFlagsServiceProvider"
       ],
       "aliases": {
-        "Feature": "Academorix\\FeatureFlags\\Facades\\Feature"
+        "Feature": "Stackra\\FeatureFlags\\Facades\\Feature"
       }
     },
     "composer-attribute-collector": {

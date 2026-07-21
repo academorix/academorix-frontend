@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Session\Contracts\Data;
+namespace Stackra\Session\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Session\Models\SessionAttendance;
+use Stackra\Session\Models\SessionAttendance;
 
 /**
  * Table shape for the `session_attendances` table.

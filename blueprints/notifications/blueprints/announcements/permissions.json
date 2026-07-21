@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/announcements/permissions",
+  "id": "stackra://modules/announcements/permissions",
   "$version": 1,
   "title": "announcements — permissions",
-  "seeder": "Academorix\\Notifications\\Announcements\\Database\\Seeders\\AnnouncementsPermissionSeeder",
+  "seeder": "Stackra\\Notifications\\Announcements\\Database\\Seeders\\AnnouncementsPermissionSeeder",
   "isSystem": true,
   "description": "Audience scope is enforced dynamically: a coach can publish to own teams; branch_manager to own branch; admin/owner tenant-wide. Recipients see announcements matching their audience membership.",
   "permissions": [

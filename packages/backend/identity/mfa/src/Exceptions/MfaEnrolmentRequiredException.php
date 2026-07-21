@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Exceptions;
+namespace Stackra\Mfa\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Caller holds a role requiring MFA + the grace_days_after_enrollment window has elapsed + no MFA is enrolled.

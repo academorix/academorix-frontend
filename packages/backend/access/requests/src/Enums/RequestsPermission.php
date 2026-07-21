@@ -4,14 +4,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Requests\Enums;
+namespace Stackra\Requests\Enums;
 
-use Academorix\Authorization\Contracts\PermissionEnum;
-use Academorix\Authorization\Enums\Guard;
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Authorization\Contracts\PermissionEnum;
+use Stackra\Authorization\Enums\Guard;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
  * Permissions the Requests module contributes.
@@ -80,10 +80,10 @@ enum RequestsPermission: string implements PermissionEnum
     case AccessRequestsManageAnyTenant = 'access-requests.manage_any_tenant';
 
     /**
-     * `access-requests.manage_any` — Cross-tenant read for Academorix ops (abuse investigation, compliance reporting, support tickets).
+     * `access-requests.manage_any` — Cross-tenant read for Stackra ops (abuse investigation, compliance reporting, support tickets).
      */
-    #[Label('Cross-tenant read for Academorix ops (abuse investigation, compliance reporting,')]
-    #[Description('Cross-tenant read for Academorix ops (abuse investigation, compliance reporting, support tickets). Scoped to a small platform-admin role tier.')]
+    #[Label('Cross-tenant read for Stackra ops (abuse investigation, compliance reporting,')]
+    #[Description('Cross-tenant read for Stackra ops (abuse investigation, compliance reporting, support tickets). Scoped to a small platform-admin role tier.')]
     case AccessRequestsManageAny = 'access-requests.manage_any';
 
     /**

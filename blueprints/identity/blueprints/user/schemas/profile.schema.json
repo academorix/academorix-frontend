@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/user/schemas/profile",
+  "id": "stackra://modules/user/schemas/profile",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Profile",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "prf_",
     "incrementing": false,
-    "model": "Academorix\\User\\Models\\Profile",
-    "interface": "Academorix\\User\\Contracts\\Data\\ProfileInterface",
-    "implements": ["Academorix\\User\\Contracts\\Data\\ProfileInterface"],
+    "model": "Stackra\\User\\Models\\Profile",
+    "interface": "Stackra\\User\\Contracts\\Data\\ProfileInterface",
+    "implements": ["Stackra\\User\\Contracts\\Data\\ProfileInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

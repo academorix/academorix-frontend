@@ -9,7 +9,7 @@
  *
  * ## Why
  *
- * Every URL in Academorix is declared via attributes on the
+ * Every URL in Stackra is declared via attributes on the
  * controller (`#[AsController]` + `#[Get]` / `#[Post]` / etc.).
  * A route file is either legacy code that hasn't been migrated
  * yet OR a shortcut that will drift out of sync with what the
@@ -37,9 +37,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Violations\Violation;
 
 /**
  * Enforce "no route files anywhere".

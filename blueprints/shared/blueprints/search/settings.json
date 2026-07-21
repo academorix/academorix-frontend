@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/search/settings",
+  "id": "stackra://modules/search/settings",
   "$version": 1,
   "title": "search \u2014 settings",
   "description": "Two settings groups: tenant-scoped defaults (`search`) and per-user preferences (`search_user`). Discovered by the settings module at boot via #[AsSetting] on the two classes.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "search",
-      "class": "Academorix\\Search\\Settings\\TenantSearchSettings",
+      "class": "Stackra\\Search\\Settings\\TenantSearchSettings",
       "label": "Search",
       "description": "Tenant-wide defaults for the search engine.",
       "icon": "magnifying-glass",
@@ -131,7 +131,7 @@
     },
     {
       "key": "search_user",
-      "class": "Academorix\\Search\\Settings\\UserSearchSettings",
+      "class": "Stackra\\Search\\Settings\\UserSearchSettings",
       "label": "Search \u2014 my preferences",
       "description": "Per-user override of the tenant defaults.",
       "icon": "user-circle",

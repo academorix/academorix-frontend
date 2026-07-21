@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/rbac/entitlements",
+  "id": "stackra://modules/rbac/entitlements",
   "$version": 1,
   "title": "rbac \u2014 declared entitlements",
   "description": "Five entitlements. Custom-role count is a slot (concurrent limit). Custom permissions is a boolean gate (Enterprise-only, allows tenants to add permission strings beyond the shipped catalogue). Time-bounded assignments is a boolean gate. Bulk role assignment is a boolean gate. RBAC audit trail extension is a boolean gate (Enterprise) that raises retention on rbac_audit_log rows.",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/relations",
+  "id": "stackra://modules/workflow/approvals/relations",
   "$version": 1,
   "title": "approvals — model relationships",
   "description": "Seven owned entities. `ApprovableAction` is a platform-level registry (no tenant scope). `ApprovalTemplate` is tenant-scoped + application-scoped + versioned. `ApprovalTemplateApprover` normalises the approver-group set per template (design.md D-A7 rejected the single-JSON-column shortcut). `ApprovalInstance` is one row per triggered flow; `ApprovalRequirement` is one row per approver-group per instance; `ApprovalDecision` is one row per approver's decision. `ApprovalReminder` audits every reminder-dispatch to avoid duplicate sends. Outbound relations reach tenants, applications, users, and the polymorphic subject (Invoice / AccessGrant / Athlete / etc).",

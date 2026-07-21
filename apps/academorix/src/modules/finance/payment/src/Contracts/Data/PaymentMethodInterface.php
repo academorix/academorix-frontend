@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Contracts\Data;
+namespace Stackra\Payment\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Payment\Models\PaymentMethod;
+use Stackra\Payment\Models\PaymentMethod;
 
 /**
  * Table shape for the `payment_methods` table.

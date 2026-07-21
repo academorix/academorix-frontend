@@ -26,7 +26,7 @@ backend imports them via `require`, not via a service-local module scaffold.
 ## Why "shared" is not a service
 
 Every other tier maps 1:1 to a Laravel service deployment. `shared/` doesn't —
-it's a **package tier**. The modules here compile into `academorix/*` Composer
+it's a **package tier**. The modules here compile into `stackra/*` Composer
 packages that every service `require`s. Concretely:
 
 - `foundation`, `versioning`, `telemetry` → depended on by every service.

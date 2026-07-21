@@ -4,16 +4,16 @@
  * @file packages/authorization/src/Attributes/RoleMeta.php
  *
  * @description
- * Per-case metadata attribute for {@see \Academorix\Authorization\Contracts\RoleEnum}
+ * Per-case metadata attribute for {@see \Stackra\Authorization\Contracts\RoleEnum}
  * implementations. Each `case` in a role enum carries one instance
- * of this attribute; the {@see \Academorix\Authorization\Concerns\HasRoleMetadata}
+ * of this attribute; the {@see \Stackra\Authorization\Concerns\HasRoleMetadata}
  * trait reads the attribute at call time via reflection and
  * projects each named parameter into the corresponding accessor
  * method.
  *
  * ## Why a single per-case attribute (not four)
  *
- * The `academorix/enum` package's `Metable` machinery uses one
+ * The `stackra/enum` package's `Metable` machinery uses one
  * attribute per named property (`#[Name('...')]`, `#[Description('...')]`,
  * ...). That shape scales to arbitrary property sets but is
  * verbose when every case ships the same four values.
@@ -41,21 +41,21 @@
  * `permissions` list is empty, `description` is `null`, `system`
  * is `false`.
  *
- * @see \Academorix\Authorization\Contracts\RoleEnum Consumer interface.
- * @see \Academorix\Authorization\Concerns\HasRoleMetadata Default trait impl.
+ * @see \Stackra\Authorization\Contracts\RoleEnum Consumer interface.
+ * @see \Stackra\Authorization\Concerns\HasRoleMetadata Default trait impl.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Authorization\Attributes;
+namespace Stackra\Authorization\Attributes;
 
-use Academorix\Authorization\Contracts\PermissionEnum;
-use Academorix\Authorization\Enums\Guard;
+use Stackra\Authorization\Contracts\PermissionEnum;
+use Stackra\Authorization\Enums\Guard;
 use Attribute;
 
 /**
  * Per-case metadata for role enums. Attach ONE instance to every
- * case of a {@see \Academorix\Authorization\Contracts\RoleEnum}
+ * case of a {@see \Stackra\Authorization\Contracts\RoleEnum}
  * implementer.
  */
 #[Attribute(Attribute::TARGET_CLASS_CONSTANT)]

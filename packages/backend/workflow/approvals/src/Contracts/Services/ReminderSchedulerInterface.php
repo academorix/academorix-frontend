@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Contracts\Services;
+namespace Stackra\Approvals\Contracts\Services;
 
-use Academorix\Approvals\Services\ReminderScheduler;
+use Stackra\Approvals\Services\ReminderScheduler;
 use Illuminate\Container\Attributes\Bind;
 
 /**

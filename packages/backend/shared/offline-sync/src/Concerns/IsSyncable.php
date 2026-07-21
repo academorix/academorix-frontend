@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\OfflineSync\Concerns;
+namespace Stackra\OfflineSync\Concerns;
 
 /**
  * Trait — IsSyncable.

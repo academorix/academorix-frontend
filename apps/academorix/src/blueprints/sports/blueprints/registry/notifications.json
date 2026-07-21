@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/sports-registry/notifications",
+  "id": "stackra://modules/sports-registry/notifications",
   "$version": 1,
   "title": "sports-registry — notification classes + categories",
-  "namespace": "Academorix\\Sports\\Registry\\Notifications",
+  "namespace": "Stackra\\Sports\\Registry\\Notifications",
   "notifications": [
     "TenantCustomSportCreatedNotification",
     "SportPrefixResolutionFailedNotification",

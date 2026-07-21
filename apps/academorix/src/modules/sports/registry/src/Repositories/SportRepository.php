@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Repositories;
+namespace Stackra\Registry\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Registry\Contracts\Data\SportInterface;
-use Academorix\Registry\Contracts\Repositories\SportRepositoryInterface;
-use Academorix\Registry\Models\Sport;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Registry\Contracts\Data\SportInterface;
+use Stackra\Registry\Contracts\Repositories\SportRepositoryInterface;
+use Stackra\Registry\Models\Sport;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Registry\Models\Sport}.
+ * Attribute-first Eloquent repository for {@see Stackra\Registry\Models\Sport}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(SportInterface::class)]` which resolves to
  * `Sport` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Registry\Models\Sport>
+ * @extends Repository<\Stackra\Registry\Models\Sport>
  *
  * @category Registry
  *

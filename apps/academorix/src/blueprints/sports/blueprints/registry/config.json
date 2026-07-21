@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/sports-registry/config",
+  "id": "stackra://modules/sports-registry/config",
   "$version": 1,
   "title": "sports-registry — developer configuration",
   "configFile": "config/sports_registry.php",

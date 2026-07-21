@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Actions\Platform;
+namespace Stackra\Versioning\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Versioning\Contracts\Data\ApiVersionInterface;
-use Academorix\Versioning\Contracts\Repositories\ApiVersionRepositoryInterface;
-use Academorix\Versioning\Data\ApiVersionData;
-use Academorix\Versioning\Data\Requests\CreateApiVersionRequestData;
-use Academorix\Versioning\Enums\ApiVersionStatus;
-use Academorix\Versioning\Enums\VersioningPermission;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Versioning\Contracts\Data\ApiVersionInterface;
+use Stackra\Versioning\Contracts\Repositories\ApiVersionRepositoryInterface;
+use Stackra\Versioning\Data\ApiVersionData;
+use Stackra\Versioning\Data\Requests\CreateApiVersionRequestData;
+use Stackra\Versioning\Enums\ApiVersionStatus;
+use Stackra\Versioning\Enums\VersioningPermission;
 
 /**
  * `POST /api/v1/platform/versioning/api-versions` — create a new

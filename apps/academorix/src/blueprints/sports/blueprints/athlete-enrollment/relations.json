@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/athlete-enrollment/relations",
+  "id": "stackra://modules/athlete-enrollment/relations",
   "$version": 1,
   "title": "athlete-enrollment — model relationships",
   "description": "One owned entity: AthleteEnrollment. Belongs to 5 aggregates directly (Tenant + Branch + Team + Athlete + Season) + references AgeGroup (snapshot) + TeamMember (atomic conversion) + TeamTrial (trial conversion). All RESTRICT outbound except tenant (CASCADE) + age_group + team_member + source_trial (SET NULL — snapshot/reference semantics). Cascades organization + region through branch. No `application_id` / `organization_id` / `region_id` / `scope_node_id` — forbidden columns.",

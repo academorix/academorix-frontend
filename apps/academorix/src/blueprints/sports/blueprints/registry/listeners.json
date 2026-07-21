@@ -1,53 +1,53 @@
 {
-  "id": "academorix://modules/sports-registry/listeners",
+  "id": "stackra://modules/sports-registry/listeners",
   "$version": 1,
   "title": "sports-registry — subscribed events",
   "listeners": [
     {
       "event": "foundation::ApplicationBooted",
-      "listener": "Academorix\\Sports\\Registry\\Listeners\\SeedPlatformCatalogOnBoot",
+      "listener": "Stackra\\Sports\\Registry\\Listeners\\SeedPlatformCatalogOnBoot",
       "queue": null,
       "purpose": "Fires once at application boot. Checks whether the platform sports catalog is already seeded (SELECT COUNT WHERE tenant_id IS NULL). When empty, dispatches SeedPlatformSportsCatalogJob synchronously to guarantee the catalog is present before any tenant lands. When already seeded, no-ops. Silent — the boot path shouldn't spam notifications with 'catalog exists'."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Sports\\Registry\\Listeners\\PurgeCustomsForErasedTenant",
+      "listener": "Stackra\\Sports\\Registry\\Listeners\\PurgeCustomsForErasedTenant",
       "queue": null,
       "purpose": "Fires BEFORE tenancy's FK cascade drops the tenant. Deletes every custom Sport / Discipline / Position row belonging to the tenant. Silent cascade — no notifications, no reference-count checks (the tenancy erasure already gates on downstream data purge). Platform-seeded rows are unaffected because they carry tenant_id NULL."
     },
     {
       "event": "entitlements::EntitlementDowngrade",
-      "listener": "Academorix\\Sports\\Registry\\Listeners\\FlagCustomsRetainedOnDowngrade",
+      "listener": "Stackra\\Sports\\Registry\\Listeners\\FlagCustomsRetainedOnDowngrade",
       "queue": "low",
-      "purpose": "Fires when a tenant downgrades Enterprise → Medium + still has active custom rows. Does NOT auto-deactivate (silent deactivation would break downstream Wave 3 enrollments referencing the customs' sport_key values). Surfaces the drift in the tenant admin UI + increments `academorix.sports_registry.downgrade_drift.count` counter. Tenant admin must manually migrate downstream references + deactivate the customs."
+      "purpose": "Fires when a tenant downgrades Enterprise → Medium + still has active custom rows. Does NOT auto-deactivate (silent deactivation would break downstream Wave 3 enrollments referencing the customs' sport_key values). Surfaces the drift in the tenant admin UI + increments `stackra.sports_registry.downgrade_drift.count` counter. Tenant admin must manually migrate downstream references + deactivate the customs."
     },
     {
       "event": "sports-registry::SportPrefixResolutionFailed",
-      "listener": "Academorix\\Sports\\Registry\\Listeners\\LogResolutionFailure",
+      "listener": "Stackra\\Sports\\Registry\\Listeners\\LogResolutionFailure",
       "queue": "notifications-critical",
       "purpose": "Fires per unresolved sport_key / discipline_key / position_key. Writes to audit_events + increments the reference-drift counter + throttles notifications to one per (tenant_id, source_table, source_row_id) per hour (throttling prevents notification flood when a whole table has drift). Kept separate from `LogResolutionFailure` in the audit module because this listener also carries the resolver context (was it a read-path or write-path or reconciler-detected failure)."
     },
     {
       "event": "sports-registry::SportCatalogSeeded",
-      "listener": "Academorix\\Sports\\Registry\\Listeners\\WarmCatalogCache",
+      "listener": "Stackra\\Sports\\Registry\\Listeners\\WarmCatalogCache",
       "queue": null,
       "purpose": "Fires once at end of SeedPlatformSportsCatalogJob. Pre-populates the Redis caches (sports:list:platform, sports:full:{id} for each seeded row) so the first tenant read hits warm cache. Cheap; runs synchronously in the same request as the seeder."
     },
     {
       "event": "sports-registry::SportCatalogUpdated",
-      "listener": "Academorix\\Sports\\Registry\\Listeners\\InvalidateTenantCatalogsOnPlatformUpdate",
+      "listener": "Stackra\\Sports\\Registry\\Listeners\\InvalidateTenantCatalogsOnPlatformUpdate",
       "queue": "notifications",
       "purpose": "Fires when the platform catalog changes materially (adds/updates/deactivates). Invalidates every tenant's `sports:list:tenant:*` cache key so their next read picks up the platform update. Notifies tenant admins per the SportCatalogUpdatedNotification opt-in (they get a summary of what changed if they enabled the notification)."
     },
     {
       "event": "teams::TeamCreated",
-      "listener": "Academorix\\Sports\\Registry\\Listeners\\ValidateSportKeyOnTeamCreated",
+      "listener": "Stackra\\Sports\\Registry\\Listeners\\ValidateSportKeyOnTeamCreated",
       "queue": null,
       "purpose": "Fires when a Team (Wave 2b) is created carrying a sport_key. Calls SportKeyResolver::resolve() as a belt-and-braces check (the Team observer should have already validated at write time). On unresolvable sport_key, fires SportPrefixResolutionFailed with resolver_context='write'. Wave 3a listener is a no-op until the teams module ships."
     },
     {
       "event": "athlete-enrollment::AthleteEnrolled",
-      "listener": "Academorix\\Sports\\Registry\\Listeners\\ValidateFullTripleOnEnrollment",
+      "listener": "Stackra\\Sports\\Registry\\Listeners\\ValidateFullTripleOnEnrollment",
       "queue": null,
       "purpose": "Fires when an AthleteEnrollment (Wave 3+) is created. Validates the full (sport_key, discipline_key, position_key) triple via the resolver. Wave 3a no-op — activates when the athlete-enrollment module ships."
     }

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformUser\Exceptions;
+namespace Stackra\PlatformUser\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Another platform_users row already references the same identity_id (UNIQUE constraint violation).

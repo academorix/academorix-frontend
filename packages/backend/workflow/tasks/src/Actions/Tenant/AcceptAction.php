@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tasks\Actions\Tenant;
+namespace Stackra\Tasks\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tasks\Contracts\Data\TaskAssignmentInterface;
-use Academorix\Tasks\Contracts\Repositories\TaskAssignmentRepositoryInterface;
-use Academorix\Tasks\Data\TaskAssignmentData;
-use Academorix\Tasks\Enums\TasksPermission;
-use Academorix\Tasks\Events\TaskAssignmentAccepted;
-use Academorix\Tasks\Exceptions\TaskAssignmentAlreadyResolvedException;
-use Academorix\Tasks\Exceptions\TaskAssignmentNotYoursException;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tasks\Contracts\Data\TaskAssignmentInterface;
+use Stackra\Tasks\Contracts\Repositories\TaskAssignmentRepositoryInterface;
+use Stackra\Tasks\Data\TaskAssignmentData;
+use Stackra\Tasks\Enums\TasksPermission;
+use Stackra\Tasks\Events\TaskAssignmentAccepted;
+use Stackra\Tasks\Exceptions\TaskAssignmentAlreadyResolvedException;
+use Stackra\Tasks\Exceptions\TaskAssignmentNotYoursException;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -65,8 +65,8 @@ final class AcceptAction
      * @param  string  $assignment  Assignment ULID (URL segment).
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  Row absent / tenant-scoped out.
-     * @throws \Academorix\Tasks\Exceptions\TaskAssignmentNotYoursException  Caller is not the assignee.
-     * @throws \Academorix\Tasks\Exceptions\TaskAssignmentAlreadyResolvedException  Assignment is already resolved.
+     * @throws \Stackra\Tasks\Exceptions\TaskAssignmentNotYoursException  Caller is not the assignee.
+     * @throws \Stackra\Tasks\Exceptions\TaskAssignmentAlreadyResolvedException  Assignment is already resolved.
      */
     public function __invoke(string $task, string $assignment): TaskAssignmentData
     {

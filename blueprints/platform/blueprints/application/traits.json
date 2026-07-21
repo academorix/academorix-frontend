@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/application/traits",
+  "id": "stackra://modules/application/traits",
   "$version": 1,
   "title": "application — model traits",
   "description": "Owned traits + consumed traits after the platform v0.3 split. `BelongsToApplication` moved here from tenants because Application is the source of truth for `application_id`.",
   "owned": [
     {
       "trait": "BelongsToApplication",
-      "class": "Academorix\\Application\\Concerns\\BelongsToApplication",
-      "schemaRef": "academorix://modules/application/schemas/application",
+      "class": "Stackra\\Application\\Concerns\\BelongsToApplication",
+      "schemaRef": "stackra://modules/application/schemas/application",
       "description": "Applied to rows at the tenancy boundary — Tenant, Domain, Identity (future), Role, Permission, TenantSubscription, EntitlementLicense, Audit, Activity. Adds `application_id` column contract + auto-fill hook + BelongsTo relation. Does NOT add a global scope — application resolution is host-based and lives in the `resolve.tenant` middleware in the tenancy module.",
       "pairedBlueprint": "applicable",
       "adds": {
@@ -36,7 +36,7 @@
           {
             "name": "application",
             "type": "BelongsTo",
-            "target": "Academorix\\Application\\Models\\Application"
+            "target": "Stackra\\Application\\Models\\Application"
           }
         ]
       },
@@ -49,10 +49,10 @@
   "consumed": [
     { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory", "source": "framework" },
     { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids", "source": "framework" },
-    { "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag", "source": "foundation" },
-    { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata", "source": "foundation" },
-    { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps", "source": "foundation" },
-    { "trait": "Academorix\\Foundation\\Concerns\\HasAuditable", "source": "foundation" }
+    { "trait": "Stackra\\Foundation\\Concerns\\HasSystemFlag", "source": "foundation" },
+    { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata", "source": "foundation" },
+    { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps", "source": "foundation" },
+    { "trait": "Stackra\\Foundation\\Concerns\\HasAuditable", "source": "foundation" }
   ],
   "composition_example": {
     "language": "php",

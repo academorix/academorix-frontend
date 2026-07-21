@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Contracts\Repositories;
+namespace Stackra\Forms\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Forms\Models\FormSubmission}.
+ * Repository contract for {@see Stackra\Forms\Models\FormSubmission}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `FormSubmissionRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Forms\Models\FormSubmission>
+ * @extends RepositoryInterface<\Stackra\Forms\Models\FormSubmission>
  *
  * @category Forms
  *

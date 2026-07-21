@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AdminConsole\Contracts\Data;
+namespace Stackra\AdminConsole\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\AdminConsole\Models\AdminDashboardConfig;
+use Stackra\AdminConsole\Models\AdminDashboardConfig;
 
 /**
  * Table shape for the `admin_dashboard_configs` table.

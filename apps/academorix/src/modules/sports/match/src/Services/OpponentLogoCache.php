@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Services;
+namespace Stackra\Match\Services;
 
-use Academorix\Match\Contracts\Services\OpponentLogoCacheInterface;
+use Stackra\Match\Contracts\Services\OpponentLogoCacheInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Match\Contracts\Repositories\MatchEventRepositoryInterface;
+use Stackra\Match\Contracts\Repositories\MatchEventRepositoryInterface;
 
 /**
  * Concrete service — OpponentLogoCache.

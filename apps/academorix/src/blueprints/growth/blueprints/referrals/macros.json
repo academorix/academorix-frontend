@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/referrals/macros",
+  "id": "stackra://modules/referrals/macros",
   "$version": 1,
   "title": "referrals — published macros",
   "description": "Three request-level macros surface referral context from the RequestContext (set by the referrals.resolve_active_referral middleware for admin write paths + inferred from the signed referral cookie for the public claim path). Registered by ReferralsServiceProvider::boot(). No Blueprint macros — the referrals-owned tables use standard column shapes.",
@@ -10,7 +10,7 @@
       "signature": "Request::activeReferralProgram(): ?ReferralProgram",
       "adds": "A single accessor on the framework Request class that returns the resolved active ReferralProgram model (or null when no program context).",
       "description": "Reads from RequestContext::referralProgram() set by the referrals.enforce_active_program middleware. Lazy-loads the model on first access — subsequent calls in the same request return the cached instance.",
-      "registered_by": "Academorix\\Growth\\Referrals\\Providers\\ReferralsServiceProvider::boot()",
+      "registered_by": "Stackra\\Growth\\Referrals\\Providers\\ReferralsServiceProvider::boot()",
       "example": "public function claim(Request $request, string $code): JsonResponse\n{\n    $program = $request->activeReferralProgram();\n    // $program is the resolved ReferralProgram, already tenant-scoped by the middleware\n}"
     },
     {

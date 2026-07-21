@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Exceptions;
+namespace Stackra\Storage\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Raised when a chunk / finalize request lands on a
- * {@see \Academorix\Storage\Models\ChunkedUpload} whose `expires_at`
+ * {@see \Stackra\Storage\Models\ChunkedUpload} whose `expires_at`
  * has elapsed.
  *
  * @category Storage

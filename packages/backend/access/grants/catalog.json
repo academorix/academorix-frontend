@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/grants",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/grants",
   "tier": "saas",
   "surfaces": ["core"],
   "kind": "feature",
@@ -10,17 +10,17 @@
     "Grantee polymorphism (user, role, service account)",
     "Optional TTL + revocation lifecycle",
     "Attribute-first CRUD, Actions, Policies, Events",
-    "Wire SDK companion at academorix-access/grants-sdk"
+    "Wire SDK companion at stackra-access/grants-sdk"
   ],
   "when_to_use": "A user needs access to a single resource without adding them to a role or minting a new role.",
-  "when_not_to_use": "For role-based bulk permission assignments across resource types, use academorix/rbac.",
+  "when_not_to_use": "For role-based bulk permission assignments across resource types, use stackra/rbac.",
   "peer_deps": [
-    "academorix-access/grants-sdk",
-    "academorix/crud",
-    "academorix/foundation",
-    "academorix/routing",
-    "academorix/service-provider",
-    "academorix/support",
+    "stackra-access/grants-sdk",
+    "stackra/crud",
+    "stackra/foundation",
+    "stackra/routing",
+    "stackra/service-provider",
+    "stackra/support",
     "spatie/laravel-data"
   ],
   "backend_pair": null,

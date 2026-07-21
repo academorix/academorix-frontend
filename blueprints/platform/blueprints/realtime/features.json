@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/realtime/features",
+  "id": "stackra://modules/realtime/features",
   "$version": 1,
   "title": "realtime — feature keys",
   "features": [

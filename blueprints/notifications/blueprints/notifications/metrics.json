@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/notifications/metrics",
+  "id": "stackra://modules/notifications/metrics",
   "$version": 1,
   "title": "notifications core \u2014 OpenTelemetry metrics",
   "description": "Core-owned metrics. Per-channel provider metrics (latency, cost per message, provider error rates) live in the respective channel module's metrics.json. Core measures the funnel + digest queue + preference resolution + template registry health.",
   "instrumentation": "open-telemetry/sdk",
-  "namespace": "academorix.notifications",
+  "namespace": "stackra.notifications",
   "labelConventions": {
     "always": ["tenant_id", "application_id"],
     "commonlyAvailable": ["category_slug", "priority", "channel", "digest_mode"],
@@ -12,14 +12,14 @@
   },
   "metrics": [
     {
-      "name": "academorix.notifications.dispatch.total",
+      "name": "stackra.notifications.dispatch.total",
       "kind": "counter",
       "unit": "notifications",
       "labels": ["tenant_id", "application_id", "category_slug", "priority"],
       "description": "Every Notifications::dispatch() call. The top of the funnel."
     },
     {
-      "name": "academorix.notifications.dispatch.duration_ms",
+      "name": "stackra.notifications.dispatch.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [5, 25, 100, 500, 2500],
@@ -27,21 +27,21 @@
       "description": "Time from dispatch call to SendNotificationJob queued. Cheap synchronous work; should stay < 100ms P95."
     },
     {
-      "name": "academorix.notifications.dispatch.suppressed_total",
+      "name": "stackra.notifications.dispatch.suppressed_total",
       "kind": "counter",
       "unit": "notifications",
       "labels": ["tenant_id", "category_slug", "channel", "reason"],
       "description": "Suppression by preference / quiet-hours / digest-batch / kill-switch. reason: 'preference_opt_out' | 'quiet_hours' | 'digest_batched' | 'kill_switch' | 'tenant_suspended' | 'age_gate_blocked'."
     },
     {
-      "name": "academorix.notifications.deliveries.by_state_total",
+      "name": "stackra.notifications.deliveries.by_state_total",
       "kind": "counter",
       "unit": "deliveries",
       "labels": ["tenant_id", "channel", "state"],
       "description": "state: queued/sending/sent/delivered/opened/clicked/failed. Combined with duration_ms gives the funnel."
     },
     {
-      "name": "academorix.notifications.delivery.duration_ms",
+      "name": "stackra.notifications.delivery.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [100, 500, 2500, 10000, 30000, 120000, 600000],
@@ -49,14 +49,14 @@
       "description": "Time from state=queued to terminal state (delivered / failed). outcome: 'delivered' | 'failed'."
     },
     {
-      "name": "academorix.notifications.delivery.retries_total",
+      "name": "stackra.notifications.delivery.retries_total",
       "kind": "counter",
       "unit": "retries",
       "labels": ["tenant_id", "channel"],
       "description": "Retry attempts per delivery. Correlates with provider health."
     },
     {
-      "name": "academorix.notifications.template.render.duration_ms",
+      "name": "stackra.notifications.template.render.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1, 5, 25, 100, 500],
@@ -64,21 +64,21 @@
       "description": "Blade rendering time of pre-rendered HTML with variables. Should stay < 25ms P99 \u2014 the React Email work happened at build time."
     },
     {
-      "name": "academorix.notifications.template.render.errors_total",
+      "name": "stackra.notifications.template.render.errors_total",
       "kind": "counter",
       "unit": "errors",
       "labels": ["channel", "template_key", "locale"],
       "description": "Render failures (missing variable, invalid Blade syntax, missing template)."
     },
     {
-      "name": "academorix.notifications.digest.queue_depth",
+      "name": "stackra.notifications.digest.queue_depth",
       "kind": "gauge",
       "unit": "digests",
       "labels": ["window"],
       "description": "Number of digests awaiting delivery. Sampled every 30s. Anomalously high indicates ProcessDigestJob stalled."
     },
     {
-      "name": "academorix.notifications.digest.batch_size",
+      "name": "stackra.notifications.digest.batch_size",
       "kind": "histogram",
       "unit": "items",
       "buckets": [1, 5, 10, 25, 100, 500],
@@ -86,39 +86,39 @@
       "description": "Number of notifications in each delivered digest."
     },
     {
-      "name": "academorix.notifications.preferences.cache.hits_total",
+      "name": "stackra.notifications.preferences.cache.hits_total",
       "kind": "counter",
       "unit": "lookups",
       "description": "Preference cache hits \u2014 for hit-ratio derivation."
     },
     {
-      "name": "academorix.notifications.preferences.cache.misses_total",
+      "name": "stackra.notifications.preferences.cache.misses_total",
       "kind": "counter",
       "unit": "lookups",
       "description": "Preference cache misses \u2014 for hit-ratio derivation."
     },
     {
-      "name": "academorix.notifications.preferences.updates_total",
+      "name": "stackra.notifications.preferences.updates_total",
       "kind": "counter",
       "unit": "changes",
       "labels": ["tenant_id", "category_slug", "channel", "source", "enabled"],
       "description": "Preference changes. source: 'user_settings' | 'unsubscribe_link' | 'admin_override' | 'seed'. Enabled: '0'|'1' \u2014 tracks opt-in vs opt-out flow."
     },
     {
-      "name": "academorix.notifications.categories.registered",
+      "name": "stackra.notifications.categories.registered",
       "kind": "gauge",
       "unit": "categories",
       "description": "Count of registered categories. Should equal sum of every module's notifications.json + tenant-override rows. Anomaly = registry bug."
     },
     {
-      "name": "academorix.notifications.templates.published",
+      "name": "stackra.notifications.templates.published",
       "kind": "gauge",
       "unit": "templates",
       "labels": ["channel"],
       "description": "Count of published templates per channel. Growth tracks tenant customization adoption."
     },
     {
-      "name": "academorix.notifications.unsubscribes_total",
+      "name": "stackra.notifications.unsubscribes_total",
       "kind": "counter",
       "unit": "unsubscribes",
       "labels": ["category_slug", "channel", "source"],

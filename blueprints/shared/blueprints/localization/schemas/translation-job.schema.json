@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/localization/schemas/translation-job",
+  "id": "stackra://modules/localization/schemas/translation-job",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "TranslationJob",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "tjb_",
     "incrementing": false,
-    "model": "Academorix\\Localization\\Models\\TranslationJob",
-    "interface": "Academorix\\Localization\\Contracts\\Data\\TranslationJobInterface",
-    "implements": ["Academorix\\Localization\\Contracts\\Data\\TranslationJobInterface"],
+    "model": "Stackra\\Localization\\Models\\TranslationJob",
+    "interface": "Stackra\\Localization\\Contracts\\Data\\TranslationJobInterface",
+    "implements": ["Stackra\\Localization\\Contracts\\Data\\TranslationJobInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

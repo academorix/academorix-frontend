@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Data;
+namespace Stackra\Monitoring\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Server-side output DTO for {@see \Academorix\Monitoring\Models\MonitoringAlert}.
+ * Server-side output DTO for {@see \Stackra\Monitoring\Models\MonitoringAlert}.
  *
  * Consumed by controllers + services on the SERVER side. This is
  * distinct from the wire SDK's DTO (which sits under
- * `Academorix\ObservabilityMonitoringSdk\Data`) — the wire DTO travels across the HTTP
+ * `Stackra\ObservabilityMonitoringSdk\Data`) — the wire DTO travels across the HTTP
  * boundary; this one stays in-process.
  *
  * @category Monitoring

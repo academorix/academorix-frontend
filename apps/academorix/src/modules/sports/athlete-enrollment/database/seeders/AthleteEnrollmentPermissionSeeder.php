@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AthleteEnrollment\Database\Seeders;
+namespace Stackra\AthleteEnrollment\Database\Seeders;
 
-use Academorix\AthleteEnrollment\Enums\AthleteEnrollmentPermission;
-use Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
-use Academorix\ServiceProvider\Attributes\AsSeeder;
+use Stackra\AthleteEnrollment\Enums\AthleteEnrollmentPermission;
+use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;
 
 /**

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Exceptions;
+namespace Stackra\AgeGroup\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to archive or delete an AgeGroup that has active inbound references (Team.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AgeGroupInUseException extends AcademorixException
+final class AgeGroupInUseException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

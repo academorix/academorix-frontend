@@ -4,7 +4,7 @@
  * @file modules/platform/tenancy/lang/en/tenancy.php
  *
  * @description
- * English translations for the `academorix/tenancy` module. Loaded
+ * English translations for the `stackra/tenancy` module. Loaded
  * under the `tenancy::` namespace.
  */
 

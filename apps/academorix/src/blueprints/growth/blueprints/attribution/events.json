@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/attribution/events",
+  "id": "stackra://modules/attribution/events",
   "$version": 1,
   "title": "attribution — published events",
-  "namespace": "Academorix\\Growth\\Attribution\\Events",
+  "namespace": "Stackra\\Growth\\Attribution\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Lifecycle events (identified / converted / churned / merged / reset) fan out to marketing + analytics + notifications. AttributionSuppressedByConsent is the compliance-critical signal — every fire proves the consent gate refused a persistence attempt. AttributionMerged is Enterprise-only (gated by `attribution_merge`). AttributionCampaignRollupComputed is Medium+ (gated by `attribution_rollup`).",
   "events": [
     {
       "name": "AttributionCreated",
-      "class": "Academorix\\Growth\\Attribution\\Events\\AttributionCreated",
+      "class": "Stackra\\Growth\\Attribution\\Events\\AttributionCreated",
       "trigger": "AttributionRepository committed a new attributions row. Fires exactly once per (tenant_id, subject_type, subject_id) tuple. First-touch data is populated in the same transaction.",
       "queue": "attribution",
       "consumers": [
@@ -31,7 +31,7 @@
     },
     {
       "name": "AttributionUpdated",
-      "class": "Academorix\\Growth\\Attribution\\Events\\AttributionUpdated",
+      "class": "Stackra\\Growth\\Attribution\\Events\\AttributionUpdated",
       "trigger": "Umbrella event for scalar-field mutations on the attributions row that are NOT covered by a more specific event (subject_id populate → AttributionSubjectIdentified; lifecycle_state → dedicated events; last_touch_* → AttributionLastTouchUpdated).",
       "queue": "attribution",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -43,7 +43,7 @@
     },
     {
       "name": "AttributionFirstTouchRecorded",
-      "class": "Academorix\\Growth\\Attribution\\Events\\AttributionFirstTouchRecorded",
+      "class": "Stackra\\Growth\\Attribution\\Events\\AttributionFirstTouchRecorded",
       "trigger": "Fires alongside AttributionCreated inside the same afterCommit hook. Distinct event because downstream consumers care specifically about first-touch data for cohort analysis (analytics module) and revenue attribution (finance module Wave 5).",
       "queue": "attribution",
       "consumers": [
@@ -70,7 +70,7 @@
     },
     {
       "name": "AttributionLastTouchUpdated",
-      "class": "Academorix\\Growth\\Attribution\\Events\\AttributionLastTouchUpdated",
+      "class": "Stackra\\Growth\\Attribution\\Events\\AttributionLastTouchUpdated",
       "trigger": "attributions.last_touch_* fields mutated on an existing row. Fires on every attribution-bearing subsequent request (utm_* changed, new click ID, new referrer). Bookend to AttributionFirstTouchRecorded.",
       "queue": "attribution",
       "consumers": ["audit::WriteToAuditLog", "cache::InvalidateAttributionCurrentSnapshot"],
@@ -86,7 +86,7 @@
     },
     {
       "name": "AttributionTouchpointCaptured",
-      "class": "Academorix\\Growth\\Attribution\\Events\\AttributionTouchpointCaptured",
+      "class": "Stackra\\Growth\\Attribution\\Events\\AttributionTouchpointCaptured",
       "trigger": "AttributionTouchpointObserver committed a new attribution_touchpoints row. Fires exactly once per touchpoint. High-volume event — every attribution-bearing HTTP request produces one.",
       "queue": "attribution-high-volume",
       "consumers": [
@@ -113,7 +113,7 @@
     },
     {
       "name": "AttributionSubjectIdentified",
-      "class": "Academorix\\Growth\\Attribution\\Events\\AttributionSubjectIdentified",
+      "class": "Stackra\\Growth\\Attribution\\Events\\AttributionSubjectIdentified",
       "trigger": "attributions.subject_type transitioned 'anonymous_session' → 'user' | 'athlete' | 'lead'. Fires when an anonymous browser signs up or logs in. This is the pivotal cross-device merge trigger.",
       "queue": "attribution-critical",
       "consumers": [
@@ -135,7 +135,7 @@
     },
     {
       "name": "AttributionConverted",
-      "class": "Academorix\\Growth\\Attribution\\Events\\AttributionConverted",
+      "class": "Stackra\\Growth\\Attribution\\Events\\AttributionConverted",
       "trigger": "attributions.lifecycle_state transitioned 'identified' → 'converted'. Dispatched by a downstream listener when the first purchase / subscription / paid conversion fires (finance module Wave 5 owns the conversion definition).",
       "queue": "attribution-critical",
       "consumers": [
@@ -157,7 +157,7 @@
     },
     {
       "name": "AttributionChurned",
-      "class": "Academorix\\Growth\\Attribution\\Events\\AttributionChurned",
+      "class": "Stackra\\Growth\\Attribution\\Events\\AttributionChurned",
       "trigger": "MarkAttributionChurnedJob transitioned lifecycle_state 'anonymous' | 'identified' → 'churned'. Runs nightly. 90-day-inactive threshold.",
       "queue": "attribution",
       "consumers": [
@@ -177,7 +177,7 @@
     },
     {
       "name": "AttributionRestored",
-      "class": "Academorix\\Growth\\Attribution\\Events\\AttributionRestored",
+      "class": "Stackra\\Growth\\Attribution\\Events\\AttributionRestored",
       "trigger": "attributions.lifecycle_state transitioned 'churned' → 'identified' (or 'anonymous' → 'identified' when a churned anonymous re-visits). Fires when a churned subject re-engages via an attribution-bearing request.",
       "queue": "attribution",
       "consumers": [
@@ -196,7 +196,7 @@
     },
     {
       "name": "AttributionSessionRefreshed",
-      "class": "Academorix\\Growth\\Attribution\\Events\\AttributionSessionRefreshed",
+      "class": "Stackra\\Growth\\Attribution\\Events\\AttributionSessionRefreshed",
       "trigger": "attributions.current_session_id changed. Fires when a new browser session begins (session cookie rotated / expired). Distinct from AttributionLastTouchUpdated (session refresh may happen without utm change).",
       "queue": "attribution",
       "consumers": ["cache::InvalidateAttributionSessionCache"],
@@ -210,7 +210,7 @@
     },
     {
       "name": "AttributionCampaignRollupComputed",
-      "class": "Academorix\\Growth\\Attribution\\Events\\AttributionCampaignRollupComputed",
+      "class": "Stackra\\Growth\\Attribution\\Events\\AttributionCampaignRollupComputed",
       "trigger": "CampaignRollupAggregatorJob completed a rollup pass. Fires hourly per tenant with `attribution_rollup` entitlement.",
       "queue": "attribution",
       "consumers": ["cache::InvalidateCampaignRollupCache"],
@@ -226,7 +226,7 @@
     },
     {
       "name": "AttributionMerged",
-      "class": "Academorix\\Growth\\Attribution\\Events\\AttributionMerged",
+      "class": "Stackra\\Growth\\Attribution\\Events\\AttributionMerged",
       "trigger": "MergeIdentifiedAttributionsJob completed a merge: N anonymous profiles merged into 1 identified profile. Enterprise-only (gated by `attribution_merge`).",
       "queue": "attribution-critical",
       "consumers": [
@@ -246,7 +246,7 @@
     },
     {
       "name": "AttributionResetRequested",
-      "class": "Academorix\\Growth\\Attribution\\Events\\AttributionResetRequested",
+      "class": "Stackra\\Growth\\Attribution\\Events\\AttributionResetRequested",
       "trigger": "User (or admin on their behalf) invoked POST /api/v1/attributions/{attribution}/reset. Precedes AttributionResetConfirmed by the 90-day audit hold on touchpoint hard-delete.",
       "queue": "attribution-critical",
       "consumers": [
@@ -268,7 +268,7 @@
     },
     {
       "name": "AttributionResetConfirmed",
-      "class": "Academorix\\Growth\\Attribution\\Events\\AttributionResetConfirmed",
+      "class": "Stackra\\Growth\\Attribution\\Events\\AttributionResetConfirmed",
       "trigger": "Touchpoint purge completed 90 days after AttributionResetRequested. The attributions row's profile fields have been redacted; every associated touchpoint has been hard-deleted.",
       "queue": "attribution-critical",
       "consumers": [
@@ -285,7 +285,7 @@
     },
     {
       "name": "AttributionDeleted",
-      "class": "Academorix\\Growth\\Attribution\\Events\\AttributionDeleted",
+      "class": "Stackra\\Growth\\Attribution\\Events\\AttributionDeleted",
       "trigger": "attributions.deleted_at set (soft-delete) OR row hard-deleted. Distinct from AttributionReset (reset is user-initiated erasure; delete is admin operational).",
       "queue": "attribution",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -299,7 +299,7 @@
     },
     {
       "name": "AttributionConsentSnapshotUpdated",
-      "class": "Academorix\\Growth\\Attribution\\Events\\AttributionConsentSnapshotUpdated",
+      "class": "Stackra\\Growth\\Attribution\\Events\\AttributionConsentSnapshotUpdated",
       "trigger": "attributions.consent_at_capture jsonb mutated. Fires when a subject grants / revokes / adjusts marketing / advertising / personalized_advertising consent categories. Sourced from ConsentUpdated events in the compliance module.",
       "queue": "attribution",
       "consumers": ["audit::WriteToAuditLog", "cache::InvalidateAttributionCurrentSnapshot"],
@@ -313,12 +313,12 @@
     },
     {
       "name": "AttributionTouchpointCountReconciled",
-      "class": "Academorix\\Growth\\Attribution\\Events\\AttributionTouchpointCountReconciled",
+      "class": "Stackra\\Growth\\Attribution\\Events\\AttributionTouchpointCountReconciled",
       "trigger": "ReconcileAttributionCountsJob completed a reconciliation pass. Fires only when a mismatch was found + corrected (touchpoint_count or conversion_touchpoint_count drifted from the actual row count).",
       "queue": "attribution",
       "consumers": [
         "audit::WriteToAuditLog",
-        "observability::MetricsCollector (increments academorix.attribution.count_drift_corrections)"
+        "observability::MetricsCollector (increments stackra.attribution.count_drift_corrections)"
       ],
       "payload": {
         "attribution_id": "ULID",
@@ -332,12 +332,12 @@
     },
     {
       "name": "AttributionSuppressedByConsent",
-      "class": "Academorix\\Growth\\Attribution\\Events\\AttributionSuppressedByConsent",
+      "class": "Stackra\\Growth\\Attribution\\Events\\AttributionSuppressedByConsent",
       "trigger": "AttributionMiddleware attempted to persist an attribution row / touchpoint but ConsentGate::allows('marketing') returned false. Fires per suppressed request. High-volume signal — batched daily by AttributionSuppressedByConsentNotification.",
       "queue": "attribution-high-volume",
       "consumers": [
         "compliance::LogConsentSuppression",
-        "observability::MetricsCollector (increments academorix.attribution.consent_suppressions_total)"
+        "observability::MetricsCollector (increments stackra.attribution.consent_suppressions_total)"
       ],
       "payload": {
         "tenant_id": "ULID",

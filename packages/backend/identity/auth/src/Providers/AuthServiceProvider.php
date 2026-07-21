@@ -18,7 +18,7 @@
  *   - Actions: `#[AsAction]` + verb attribute (ADR 0016 actions-only).
  *   - Console commands: `#[AsCommand]` — auto-discovered by the base provider's `LoadsResources(commands: true)`.
  *   - Seeder: `#[AsSeeder]` on `AuthPermissionSeeder` — projects `AuthPermission` cases into spatie/laravel-permission.
- *   - Events: `#[AsEvent]` (discovered by `academorix/events`).
+ *   - Events: `#[AsEvent]` (discovered by `stackra/events`).
  *   - Policies: `#[UsePolicy]` on the models.
  *   - Observers: `#[ObservedBy]` on the models.
  *   - Middleware: `#[AsMiddleware]` on each middleware class.
@@ -26,14 +26,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Providers;
+namespace Stackra\Auth\Providers;
 
-use Academorix\Auth\Contracts\Services\JwtSignerInterface;
-use Academorix\Auth\Services\JwtSigner;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Attributes\OnBoot;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\Auth\Contracts\Services\JwtSignerInterface;
+use Stackra\Auth\Services\JwtSigner;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\OnBoot;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * Auth module service provider.

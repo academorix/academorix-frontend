@@ -4,7 +4,7 @@
  * @file src/Facades/Scope.php
  *
  * @description
- * Facade over {@see \Academorix\Scope\Services\ScopeManager} — the
+ * Facade over {@see \Stackra\Scope\Services\ScopeManager} — the
  * single manager class that aggregates the three underlying scope
  * services (context, resolution, emulator). Matches the framework
  * facade convention (`Json` → `JsonInterface`,
@@ -15,12 +15,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Facades;
+namespace Stackra\Scope\Facades;
 
-use Academorix\Scope\Data\ResolvedScopeValue;
-use Academorix\Scope\Data\ScopeContextData;
-use Academorix\Scope\Models\ScopeNode;
-use Academorix\Scope\Services\ScopeManager;
+use Stackra\Scope\Data\ResolvedScopeValue;
+use Stackra\Scope\Data\ScopeContextData;
+use Stackra\Scope\Models\ScopeNode;
+use Stackra\Scope\Services\ScopeManager;
 use Illuminate\Support\Facades\Facade;
 
 /**

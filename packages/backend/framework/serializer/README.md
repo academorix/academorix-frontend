@@ -1,10 +1,10 @@
 <div align="center">
 
-<img src="https://github.com/academorix-inc/laravel--laravel/framework/serializer/-/raw/main/.gitlab/banner.svg" alt="Serializer" width="100%">
+<img src="https://github.com/stackra-inc/laravel--laravel/framework/serializer/-/raw/main/.gitlab/banner.svg" alt="Serializer" width="100%">
 
 </div>
 
-Data serialization and transformation utilities for the Academorix Framework,
+Data serialization and transformation utilities for the Stackra Framework,
 providing safe and efficient methods for serializing and deserializing data in
 multiple formats.
 
@@ -43,7 +43,7 @@ features.
 The Serializer package is part of the Framework package:
 
 ```bash
-composer require academorix/serializer
+composer require stackra/serializer
 ```
 
 The service provider is automatically registered via Laravel's package
@@ -79,8 +79,8 @@ Handles JSON encoding and decoding with enhanced error handling.
 ### Using Facades
 
 ```php
-use Academorix\Serializer\Facades\Serializer;
-use Academorix\Serializer\Facades\Json;
+use Stackra\Serializer\Facades\Serializer;
+use Stackra\Serializer\Facades\Json;
 
 // PHP Serialization
 $serialized = Serializer::serialize(['key' => 'value']);
@@ -94,8 +94,8 @@ $data = Json::decode($json);
 ### Using Dependency Injection
 
 ```php
-use Academorix\Serializer\Contracts\Serializer;
-use Academorix\Serializer\Contracts\Json;
+use Stackra\Serializer\Contracts\Serializer;
+use Stackra\Serializer\Contracts\Json;
 
 class DataService
 {
@@ -120,12 +120,12 @@ class DataService
 
 ```php
 // Resolve from container
-$serializer = app(Academorix\Serializer\Serializer::class);
-$json = app(Academorix\Serializer\Json::class);
+$serializer = app(Stackra\Serializer\Serializer::class);
+$json = app(Stackra\Serializer\Json::class);
 
 // Or use contracts
-$serializer = app(Academorix\Serializer\Contracts\SerializerInterface::class);
-$json = app(Academorix\Serializer\Contracts\JsonInterface::class);
+$serializer = app(Stackra\Serializer\Contracts\SerializerInterface::class);
+$json = app(Stackra\Serializer\Contracts\JsonInterface::class);
 ```
 
 ## API Reference
@@ -137,7 +137,7 @@ $json = app(Academorix\Serializer\Contracts\JsonInterface::class);
 Serializes data into PHP's native format.
 
 ```php
-use Academorix\Serializer\Facades\Serializer;
+use Stackra\Serializer\Facades\Serializer;
 
 // Serialize various data types
 $string = Serializer::serialize('Hello World');
@@ -171,7 +171,7 @@ $serialized = Serializer::serialize($data);
 Unserializes a PHP serialized string.
 
 ```php
-use Academorix\Serializer\Facades\Serializer;
+use Stackra\Serializer\Facades\Serializer;
 
 // Basic unserialization (no classes allowed - secure)
 $data = Serializer::unserialize($serialized);
@@ -206,7 +206,7 @@ created, preventing potential security vulnerabilities.
 Checks if a string is valid serialized data.
 
 ```php
-use Academorix\Serializer\Facades\Serializer;
+use Stackra\Serializer\Facades\Serializer;
 
 $string = 'a:2:{s:4:"name";s:4:"John";s:3:"age";i:30;}';
 
@@ -236,7 +236,7 @@ Serializer::isSerialized('');            // false (empty string)
 Encodes data into JSON format.
 
 ```php
-use Academorix\Serializer\Facades\Json;
+use Stackra\Serializer\Facades\Json;
 
 // Basic encoding
 $json = Json::encode(['name' => 'John', 'age' => 30]);
@@ -280,7 +280,7 @@ $json = Json::encode($deeplyNested, 0, 1024);
 Decodes a JSON string.
 
 ```php
-use Academorix\Serializer\Facades\Json;
+use Stackra\Serializer\Facades\Json;
 
 // Decode to object (default)
 $object = Json::decode('{"name":"John","age":30}');
@@ -318,7 +318,7 @@ $data = Json::decode($json, true, 512, JSON_BIGINT_AS_STRING);
 Validates a JSON string.
 
 ```php
-use Academorix\Serializer\Facades\Json;
+use Stackra\Serializer\Facades\Json;
 
 $json = '{"name":"John","age":30}';
 
@@ -415,7 +415,7 @@ if (Json::isValid($input)) {
 ### 3. Handle Exceptions Gracefully
 
 ```php
-use Academorix\Foundation\Exceptions\InvalidArgumentException;
+use Stackra\Foundation\Exceptions\InvalidArgumentException;
 
 try {
     $data = Json::decode($input);
@@ -495,7 +495,7 @@ class SerializationHelper
 
 ```php
 use Tests\TestCase;
-use Academorix\Serializer\Facades\Serializer;
+use Stackra\Serializer\Facades\Serializer;
 
 class SerializerTest extends TestCase
 {
@@ -523,7 +523,7 @@ class SerializerTest extends TestCase
 
 ```php
 use Tests\TestCase;
-use Academorix\Serializer\Facades\Json;
+use Stackra\Serializer\Facades\Json;
 
 class JsonTest extends TestCase
 {
@@ -630,4 +630,4 @@ foreach ($chunks as $chunk) {
 
 ## License
 
-MIT License - Part of the Academorix Framework package.
+MIT License - Part of the Stackra Framework package.

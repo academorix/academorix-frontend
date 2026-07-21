@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/notifications-mail/metrics",
+  "id": "stackra://modules/notifications-mail/metrics",
   "$version": 1,
   "title": "notifications-mail \u2014 OpenTelemetry metrics",
   "description": "Per-provider send + delivery + bounce + cost metrics.",
   "instrumentation": "open-telemetry/sdk",
-  "namespace": "academorix.notifications.mail",
+  "namespace": "stackra.notifications.mail",
   "labelConventions": {
     "always": ["tenant_id"],
     "commonlyAvailable": ["provider", "category_slug", "outcome"],
@@ -12,14 +12,14 @@
   },
   "metrics": [
     {
-      "name": "academorix.notifications.mail.sends.total",
+      "name": "stackra.notifications.mail.sends.total",
       "kind": "counter",
       "unit": "sends",
       "labels": ["tenant_id", "provider", "category_slug", "outcome"],
       "description": "outcome: sent / suppressed / template_missing / kill_switched."
     },
     {
-      "name": "academorix.notifications.mail.send.duration_ms",
+      "name": "stackra.notifications.mail.send.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 200, 1000, 5000, 30000],
@@ -27,42 +27,42 @@
       "description": "Mail::send() duration \u2014 tests provider round-trip."
     },
     {
-      "name": "academorix.notifications.mail.deliveries.by_state_total",
+      "name": "stackra.notifications.mail.deliveries.by_state_total",
       "kind": "counter",
       "unit": "deliveries",
       "labels": ["provider", "state"],
       "description": "state: delivered / opened / clicked / bounced / complained / failed. Fed from webhook ingest."
     },
     {
-      "name": "academorix.notifications.mail.bounces.by_kind_total",
+      "name": "stackra.notifications.mail.bounces.by_kind_total",
       "kind": "counter",
       "unit": "bounces",
       "labels": ["provider", "kind"],
       "description": "kind: hard / soft. Hard bounces increment suppression."
     },
     {
-      "name": "academorix.notifications.mail.suppressions.gauge",
+      "name": "stackra.notifications.mail.suppressions.gauge",
       "kind": "gauge",
       "unit": "addresses",
       "labels": ["tenant_id", "reason"],
       "description": "Active MailSuppression rows by reason. Sampled hourly."
     },
     {
-      "name": "academorix.notifications.mail.suppressions.hit_rate_ratio",
+      "name": "stackra.notifications.mail.suppressions.hit_rate_ratio",
       "kind": "gauge",
       "unit": "ratio",
       "labels": ["tenant_id"],
       "description": "% of dispatch attempts refused by suppression check. Healthy tenant: < 5%. High = deliverability problem."
     },
     {
-      "name": "academorix.notifications.mail.cost_micro_units.total",
+      "name": "stackra.notifications.mail.cost_micro_units.total",
       "kind": "counter",
       "unit": "micro_currency",
       "labels": ["tenant_id", "provider"],
       "description": "Cost aggregation. SES has near-zero cost; SendGrid tier-based; Mailgun per-email."
     },
     {
-      "name": "academorix.notifications.mail.render.duration_ms",
+      "name": "stackra.notifications.mail.render.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1, 5, 25, 100, 500],
@@ -70,7 +70,7 @@
       "description": "Blade render time on the pre-rendered React Email HTML. Should stay < 5ms P99."
     },
     {
-      "name": "academorix.notifications.mail.webhook_ingest.duration_ms",
+      "name": "stackra.notifications.mail.webhook_ingest.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 50, 200, 1000],

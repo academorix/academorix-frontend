@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/invoice/helpers",
+  "id": "stackra://modules/invoice/helpers",
   "$version": 1,
   "title": "invoice — helper functions",
   "description": "Ergonomic helpers for creating invoices, computing aging, and rendering PDFs. All helpers are thin wrappers around bound services — never business logic. Callers who need transactional guarantees should invoke the bound services directly (via container-resolved injection).",
-  "namespace": "Academorix\\Finance\\Invoice\\Support",
+  "namespace": "Stackra\\Finance\\Invoice\\Support",
   "helpers": [
     {
       "signature": "create_draft_invoice(Tenant $tenant, Model $customer, ?Membership $membership = null, ?array $lines = [], string $currency = null, string $paymentTerms = 'net_30', string $series = 'INV'): Invoice",

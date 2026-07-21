@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Contracts\Services;
+namespace Stackra\Audit\Contracts\Services;
 
-use Academorix\Audit\Services\AuditQuery;
+use Stackra\Audit\Services\AuditQuery;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geography/subprocessors",
+  "id": "stackra://modules/geography/subprocessors",
   "$version": 1,
   "title": "geography \u2014 subprocessors",
   "description": "IP geolocation engages one true subprocessor (ip-api.com). MaxMind GeoLite2 runs locally as a binary DB \u2014 not a subprocessor. Vendor package `nnjeim/world` operates entirely offline once the seed is loaded.",

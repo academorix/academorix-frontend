@@ -18,15 +18,15 @@
  *   - Console commands: `#[AsCommand]` — auto-discovered by the
  *     base provider's `LoadsResources(commands: true)`.
  *   - Seeder: `#[AsSeeder(priority: 25)]` — composes
- *     {@see \Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
- *   - Events: `#[AsEvent]` (discovered by `academorix/events`).
+ *     {@see \Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
+ *   - Events: `#[AsEvent]` (discovered by `stackra/events`).
  *   - Observers: `#[ObservedBy]` on the models.
  *   - Policies: `#[UsePolicy]` on the models.
- *   - Middleware: `#[AsMiddleware]` (discovered by `academorix/routing`).
+ *   - Middleware: `#[AsMiddleware]` (discovered by `stackra/routing`).
  *   - Blueprint macro: `#[AsDatabaseBlueprint]` on `TenantableMacro`
- *     (auto-registered on `Blueprint` at boot by `academorix/database`).
+ *     (auto-registered on `Blueprint` at boot by `stackra/database`).
  *   - Tenancy hooks: `#[AsTenancyHook]` on `LogContextTenantHook` +
- *     `CachePrefixTenantHook` (discovered by `academorix/service-provider`).
+ *     `CachePrefixTenantHook` (discovered by `stackra/service-provider`).
  *   - Retention: `#[AsRetentionPolicy]` on the Tenant model.
  *   - Service impls: `TenantContextInterface` carries `#[Bind]`
  *     pointing at `TenantContextResolver` — consumer apps override
@@ -35,11 +35,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Providers;
+namespace Stackra\Tenancy\Providers;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * Tenancy module service provider.
@@ -62,7 +62,7 @@ use Academorix\ServiceProvider\Providers\ServiceProvider;
     // Console commands are auto-discovered via `#[AsCommand]`.
     commands: true,
     // Seeders auto-loaded from `database/seeders/` — discovered by
-    // `academorix/service-provider`'s `#[AsSeeder]` scanner.
+    // `stackra/service-provider`'s `#[AsSeeder]` scanner.
     seeders: true,
     // Publishable resources (config overrides, seed scaffolding).
     publishables: true,

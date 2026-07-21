@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Exceptions;
+namespace Stackra\Approvals\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Throwable;
 
@@ -16,7 +16,7 @@ use Throwable;
  *
  * Every approval template stores a `when_expression` and a set of
  * approver `selector` strings. Both flow through
- * {@see \Academorix\Approvals\Services\ExpressionLanguageAdapter::compile}
+ * {@see \Stackra\Approvals\Services\ExpressionLanguageAdapter::compile}
  * on write — a bad expression is rejected at the API boundary
  * before it can silently break approval intake at runtime.
  *
@@ -32,7 +32,7 @@ use Throwable;
  *
  * @since    0.1.0
  */
-final class ApprovalExpressionInvalidException extends AcademorixException
+final class ApprovalExpressionInvalidException extends StackraException
 {
     public const CODE = 'approvals.expression.invalid';
     public const TRANSLATION_KEY = 'approvals::errors.expression_invalid';

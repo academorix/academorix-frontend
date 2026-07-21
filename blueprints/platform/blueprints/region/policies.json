@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/region/policies",
+  "id": "stackra://modules/region/policies",
   "$version": 1,
   "title": "region — authorization policies",
   "description": "One policy — RegionPolicy — narrows by scope suffix (`.any` / `.tenant` / `.own`). Every tenant member can READ regions in their active tenant (they are a base commercial reference every UI dropdown needs). Only admins + owners can WRITE. The default region has extra guardrails: `CANNOT_DELETE_DEFAULT_REGION` is a hard 409 refusal even for owners; changing the default requires the caller to carry `regions.set_default`.",
   "policies": [
     {
       "model": "Region",
-      "class": "Academorix\\Region\\Policies\\RegionPolicy",
+      "class": "Stackra\\Region\\Policies\\RegionPolicy",
       "abilities": [
         {
           "action": "viewAny",

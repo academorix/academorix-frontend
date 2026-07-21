@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PublicSite\Contracts\Services;
+namespace Stackra\PublicSite\Contracts\Services;
 
-use Academorix\PublicSite\Services\SitemapGenerator;
+use Stackra\PublicSite\Services\SitemapGenerator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Contracts\Repositories;
+namespace Stackra\Auth\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Auth\Models\AuthJwtSigningKey}.
+ * Repository contract for {@see Stackra\Auth\Models\AuthJwtSigningKey}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `AuthJwtSigningKeyRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Auth\Models\AuthJwtSigningKey>
+ * @extends RepositoryInterface<\Stackra\Auth\Models\AuthJwtSigningKey>
  *
  * @category Auth
  *

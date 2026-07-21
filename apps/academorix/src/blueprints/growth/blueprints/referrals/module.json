@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "referrals",
   "alias": "referrals",
-  "namespace": "Academorix\\Growth\\Referrals",
+  "namespace": "Stackra\\Growth\\Referrals",
   "description": "The viral-loop tracker. Answers 'how did this signup / conversion come from an existing user's invitation, and what reward does the referrer get?'. Owns referral programs (per-tenant configuration: reward type + amount + trigger conditions + vesting rules + fraud thresholds), referral codes (per-user or per-campaign), referral tracking rows (referrer + referred + status transitions), reward vesting workflow (pending -> vested -> materialized-in-finance -> paid), and fraud detection (device fingerprint match, IP match, self-referral, click-storm patterns, velocity thresholds). Feeds marketing (referral_completed events fire as attributable conversions) and finance (vested rewards materialize as pending credits in the Wave 4 Finance module). Ships FIVE tables: `referral_programs` (per-tenant program config), `referral_codes` (per-user codes OR per-campaign codes with usage caps + expiry), `referrals` (the tracked referrer x referred x program x code instance), `referral_rewards` (per-referral reward records with vesting timeline), `referral_fraud_flags` (detection findings that block/hold rewards). Program config supports: single-sided (referrer only) or double-sided (both referrer + referred) rewards; reward types (percent_discount / fixed_amount / free_months / free_sessions / credits / point_award); trigger events (signup / trial_started / first_payment / subscription_renewal_1 / subscription_renewal_3 / lifetime_value_threshold_hit / athlete_enrolled / event_registered); vesting rules (immediate / trigger + Xd_hold / trigger + refund_window / N_events); fraud thresholds (max_referrals_per_hour, self_ip_match, device_fingerprint_match, disposable_email_domain, self_email_variant); referral code formats (user-scoped like `alice-a1b2c3` or campaign-scoped like `SUMMER25` or opaque UUID). Attribution-integrated: every referral captures the `attribution` snapshot at claim time and reads back into the `growth::attribution` context at conversion time. ATOMIC CONVERSION: when a Referral status transitions to `vested`, the observer creates the ReferralReward row(s) inside the SAME DB transaction (one row per side per program config). Materialization into a Finance credit is a subsequent async step (Wave 4). Every reward carries clawback semantics for refund / chargeback / fraud reversals.",
   "keywords": [
     "referrals",
@@ -40,7 +40,7 @@
     "wave-5"
   ],
   "priority": 68,
-  "providers": ["Academorix\\Growth\\Referrals\\Providers\\ReferralsServiceProvider"],
+  "providers": ["Stackra\\Growth\\Referrals\\Providers\\ReferralsServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

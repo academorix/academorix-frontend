@@ -13,9 +13,9 @@
  *
  * ## Companion attributes
  *
- *   - {@see \Academorix\Events\Attributes\BroadcastOn}     — Names the channel(s).
- *   - {@see \Academorix\Events\Attributes\BroadcastAs}     — Overrides the broadcast name.
- *   - {@see \Academorix\Events\Attributes\BroadcastQueue}  — Overrides the broadcast queue.
+ *   - {@see \Stackra\Events\Attributes\BroadcastOn}     — Names the channel(s).
+ *   - {@see \Stackra\Events\Attributes\BroadcastAs}     — Overrides the broadcast name.
+ *   - {@see \Stackra\Events\Attributes\BroadcastQueue}  — Overrides the broadcast queue.
  *
  * ## Semantics
  *
@@ -37,7 +37,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Events\Attributes;
+namespace Stackra\Events\Attributes;
 
 use Attribute;
 
@@ -57,7 +57,7 @@ final class Broadcastable
 
     /**
      * @param  'private'|'public'|'presence'|null  $channelType  Default channel type applied by
-     *                                                            {@see \Academorix\Events\Support\BroadcastConfigurator}
+     *                                                            {@see \Stackra\Events\Support\BroadcastConfigurator}
      *                                                            when `#[BroadcastOn]` names a plain-string
      *                                                            channel. `null` defers to the config value
      *                                                            `events.broadcast.default_channel_type`.

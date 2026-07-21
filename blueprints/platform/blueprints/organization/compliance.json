@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/organization/compliance",
+  "id": "stackra://modules/organization/compliance",
   "$version": 1,
   "title": "organization — compliance evidence",
   "description": "Organization structure changes are compliance-critical because they reveal a customer's org restructuring — reparenting, default flips, and archives are audit-material for SOC 2 CC6.3 and can be evidence in regulatory disputes about who controlled which asset when.",
@@ -35,7 +35,7 @@
         {
           "criterion": "CC7.2",
           "principle": "system monitoring",
-          "evidence": "Two independent invariants monitored: (1) exactly one is_default per tenant — reconciled nightly + monitored via the `academorix.organization.default_invariant.violations` metric; (2) tree_path consistency across parent_id — monitored via `academorix.organization.tree_path_drift.count` after every RebuildTreePathsJob."
+          "evidence": "Two independent invariants monitored: (1) exactly one is_default per tenant — reconciled nightly + monitored via the `stackra.organization.default_invariant.violations` metric; (2) tree_path consistency across parent_id — monitored via `stackra.organization.tree_path_drift.count` after every RebuildTreePathsJob."
         },
         {
           "criterion": "CC8.1",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/audit/traits",
+  "id": "stackra://modules/audit/traits",
   "$version": 1,
   "title": "audit — trait composition",
   "description": "This module ships ZERO owned traits. Capture is exclusively via the vendor `owen-it/laravel-auditing` package's `Auditable` trait — modules opt in to auditing by composing THAT trait on their Eloquent models. This module OWNS the storage adaptation + read surface + retention + export around the vendor's `audits` table; it does NOT introduce a parallel capture trait.",
@@ -14,34 +14,34 @@
     ],
     "foundation": [
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasUlids",
+        "trait": "Stackra\\Foundation\\Concerns\\HasUlids",
         "consumed_by": "AuditRetentionPolicy (arp_)"
       },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps",
+        "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps",
         "consumed_by": "AuditRetentionPolicy"
       },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasMetadata",
+        "trait": "Stackra\\Foundation\\Concerns\\HasMetadata",
         "consumed_by": "AuditRetentionPolicy"
       },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasAuditable",
+        "trait": "Stackra\\Foundation\\Concerns\\HasAuditable",
         "consumed_by": "AuditRetentionPolicy — the policy itself is audited (SELF-audit). Every policy CRUD writes an audit row via the vendor Auditable trait on the policy model.",
         "note": "Wraps `OwenIt\\Auditing\\Auditable` + adds our tenant_id column enforcement. Applied to policy rows but NOT to Audit rows themselves (audit rows don't audit themselves — that would recurse infinitely)."
       },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\IsRetentionAware",
+        "trait": "Stackra\\Foundation\\Concerns\\IsRetentionAware",
         "consumed_by": "Audit + AuditRetentionPolicy + AuditExport"
       },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\Filterable",
+        "trait": "Stackra\\Foundation\\Concerns\\Filterable",
         "consumed_by": "Audit + AuditRetentionPolicy + AuditExport"
       }
     ],
     "tenancy": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
         "reason": "Every entity carries tenant_id. Applied via global scope + auto-fill on save. Order matters: BelongsToTenant MUST come first among tenancy-related traits — our Audit model wraps the vendor Audit model and composes BelongsToTenant to enforce tenant scoping on reads."
       }
     ],

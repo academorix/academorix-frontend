@@ -1,8 +1,8 @@
 {
-  "name": "@academorix/authorization",
+  "name": "@stackra/authorization",
   "version": "0.0.0",
   "private": true,
-  "description": "Turborepo shim for the PHP `academorix/authorization` package. Ships attribute-driven controller authorization (`#[RequirePermission]`, `#[RequireRole]`, ...) with a reflection-cached middleware. NOTE: composer install is exposed as `install:composer` — never plain `install` — so pnpm's lifecycle does not run it during a root `pnpm install`.",
+  "description": "Turborepo shim for the PHP `stackra/authorization` package. Ships attribute-driven controller authorization (`#[RequirePermission]`, `#[RequireRole]`, ...) with a reflection-cached middleware. NOTE: composer install is exposed as `install:composer` — never plain `install` — so pnpm's lifecycle does not run it during a root `pnpm install`.",
   "scripts": {
     "install:composer": "composer install --no-interaction --prefer-dist"
   }

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Contracts\Data;
+namespace Stackra\Subscription\Contracts\Data;
 
-use Academorix\Subscription\Models\SubscriptionEvent;
+use Stackra\Subscription\Models\SubscriptionEvent;
 use Illuminate\Container\Attributes\Bind;
 
 /**

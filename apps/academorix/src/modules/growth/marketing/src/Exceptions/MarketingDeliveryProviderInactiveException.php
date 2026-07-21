@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Exceptions;
+namespace Stackra\Marketing\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to dispatch to a provider config with is_active=false.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MarketingDeliveryProviderInactiveException extends AcademorixException
+final class MarketingDeliveryProviderInactiveException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

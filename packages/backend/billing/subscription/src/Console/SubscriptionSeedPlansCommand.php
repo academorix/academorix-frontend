@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Console;
+namespace Stackra\Subscription\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Subscription\Contracts\Services\PlanRegistryInterface;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Subscription\Contracts\Services\PlanRegistryInterface;
 
 /**
  * `php artisan subscription:seed-plans` — print every discovered

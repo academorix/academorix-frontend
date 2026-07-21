@@ -25,20 +25,20 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  *
- * @see \Academorix\Settings\Attributes\AsSetting
- * @see \Academorix\Settings\Attributes\SettingField
- * @see \Academorix\Settings\Attributes\SettingGroup
+ * @see \Stackra\Settings\Attributes\AsSetting
+ * @see \Stackra\Settings\Attributes\SettingField
+ * @see \Stackra\Settings\Attributes\SettingGroup
  */
 
-namespace Academorix\Settings\Settings;
+namespace Stackra\Settings\Settings;
 
 use Spatie\LaravelSettings\Settings;
-use Academorix\Settings\Attributes\AsSetting;
-use Academorix\Settings\Attributes\SettingField;
-use Academorix\Settings\Attributes\SettingGroup;
-use Academorix\Settings\Enums\ControlType;
-use Academorix\Settings\Enums\MailDriver;
-use Academorix\Settings\Enums\SmtpEncryption;
+use Stackra\Settings\Attributes\AsSetting;
+use Stackra\Settings\Attributes\SettingField;
+use Stackra\Settings\Attributes\SettingGroup;
+use Stackra\Settings\Enums\ControlType;
+use Stackra\Settings\Enums\MailDriver;
+use Stackra\Settings\Enums\SmtpEncryption;
 
 /**
  * Mail Settings.
@@ -92,11 +92,11 @@ class MailSettings extends Settings
      * Sender display name.
      *
      * The human-readable name that appears in the "From" header of
-     * outgoing emails (e.g., "Academorix" or "Acme Support"). Recipients
+     * outgoing emails (e.g., "Stackra" or "Acme Support"). Recipients
      * see this name in their inbox alongside the from address.
      */
     #[SettingField(controlType: ControlType::Text, label: 'From Name', validation: ['nullable', 'string', 'max:100'], sortOrder: 2, group: 'Sender')]
-    public string $from_name = 'Academorix';
+    public string $from_name = 'Stackra';
 
     /**
      * Sender email address.
@@ -106,7 +106,7 @@ class MailSettings extends Settings
      * is authorized to send from.
      */
     #[SettingField(controlType: ControlType::Email, label: 'From Address', validation: ['nullable', 'string', 'email', 'max:255'], sortOrder: 3, group: 'Sender')]
-    public string $from_address = 'noreply@academorix.com';
+    public string $from_address = 'noreply@stackra.com';
 
     /**
      * Reply-to email address.

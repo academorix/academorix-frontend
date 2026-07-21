@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Database\Factories;
+namespace Stackra\Match\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Match\Contracts\Data\MatchSquadEntryInterface;
-use Academorix\Match\Models\MatchSquadEntry;
+use Stackra\Match\Contracts\Data\MatchSquadEntryInterface;
+use Stackra\Match\Models\MatchSquadEntry;
 
 /**
- * Factory for {@see \Academorix\Match\Models\MatchSquadEntry}.
+ * Factory for {@see \Stackra\Match\Models\MatchSquadEntry}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Match\Models\MatchSquadEntry>
+ * @extends Factory<\Stackra\Match\Models\MatchSquadEntry>
  *
  * @category Match
  *

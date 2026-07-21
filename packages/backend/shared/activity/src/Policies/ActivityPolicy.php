@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Policies;
+namespace Stackra\Activity\Policies;
 
-use Academorix\Activity\Contracts\Data\ActivityInterface;
-use Academorix\Activity\Enums\ActivityPermission;
-use Academorix\Activity\Models\Activity;
+use Stackra\Activity\Contracts\Data\ActivityInterface;
+use Stackra\Activity\Enums\ActivityPermission;
+use Stackra\Activity\Models\Activity;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

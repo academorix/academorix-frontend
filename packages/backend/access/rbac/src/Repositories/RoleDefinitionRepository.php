@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Repositories;
+namespace Stackra\Rbac\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Rbac\Contracts\Data\RoleDefinitionInterface;
-use Academorix\Rbac\Contracts\Repositories\RoleDefinitionRepositoryInterface;
-use Academorix\Rbac\Models\RoleDefinition;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Rbac\Contracts\Data\RoleDefinitionInterface;
+use Stackra\Rbac\Contracts\Repositories\RoleDefinitionRepositoryInterface;
+use Stackra\Rbac\Models\RoleDefinition;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Rbac\Models\RoleDefinition}.
+ * Attribute-first Eloquent repository for {@see Stackra\Rbac\Models\RoleDefinition}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(RoleDefinitionInterface::class)]` which resolves to
  * `RoleDefinition` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Rbac\Models\RoleDefinition>
+ * @extends Repository<\Stackra\Rbac\Models\RoleDefinition>
  *
  * @category Rbac
  *

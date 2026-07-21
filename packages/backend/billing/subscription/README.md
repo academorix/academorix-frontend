@@ -1,4 +1,4 @@
-# academorix/subscription
+# stackra/subscription
 
 Tenant subscription lifecycle. Wave 5 infrastructure. Wraps `laravel/cashier`
 for payment-provider-agnostic billing (Stripe + Paddle).

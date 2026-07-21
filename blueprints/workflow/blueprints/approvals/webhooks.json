@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/webhooks",
+  "id": "stackra://modules/workflow/approvals/webhooks",
   "$version": 1,
   "title": "approvals — outbound webhooks",
   "description": "This module dispatches a security-relevant + compliance-relevant subset of approval lifecycle events as outbound webhooks for tenants that opt in (SIEM integrations, custom governance pipelines, on-prem audit ingestors). Payloads are minimally-redacted — approver + requester fingerprints (SHA-256 of user_id), action metadata, timestamps. No PII, no context_json field values, no decision comments. Tenants configure endpoint URLs + secrets via the notifications module's outbound-webhook subscription surface.",

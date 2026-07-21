@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/referrals/schemas/referral-reward",
+  "id": "stackra://modules/referrals/schemas/referral-reward",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ReferralReward",
@@ -13,8 +13,8 @@
     "keyType": "string",
     "keyPrefix": "rrw_",
     "incrementing": false,
-    "model": "Academorix\\Growth\\Referrals\\Models\\ReferralReward",
-    "interface": "Academorix\\Growth\\Referrals\\Contracts\\Data\\ReferralRewardInterface",
+    "model": "Stackra\\Growth\\Referrals\\Models\\ReferralReward",
+    "interface": "Stackra\\Growth\\Referrals\\Contracts\\Data\\ReferralRewardInterface",
     "traits": [
       "HasFactory",
       "HasUlids",

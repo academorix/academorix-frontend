@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registrations\Actions\Tenant;
+namespace Stackra\Registrations\Actions\Tenant;
 
-use Academorix\Registrations\Contracts\Repositories\WaitlistEntryRepositoryInterface;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Delete;
+use Stackra\Registrations\Contracts\Repositories\WaitlistEntryRepositoryInterface;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Delete;
 use Illuminate\Http\Response;
 
 /**
  * `DELETE /api/v1/waitlist-entries/{entry}` — delete action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Delete(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Registrations

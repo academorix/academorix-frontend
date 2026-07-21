@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Enums;
+namespace Stackra\Geography\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `dir` on `language`.

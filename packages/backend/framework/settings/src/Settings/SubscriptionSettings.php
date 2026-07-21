@@ -14,14 +14,14 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Settings\Settings;
+namespace Stackra\Settings\Settings;
 
 use Spatie\LaravelSettings\Settings;
-use Academorix\Settings\Attributes\AsSetting;
-use Academorix\Settings\Attributes\SettingField;
-use Academorix\Settings\Attributes\SettingGroup;
-use Academorix\Settings\Enums\BillingProvider;
-use Academorix\Settings\Enums\ControlType;
+use Stackra\Settings\Attributes\AsSetting;
+use Stackra\Settings\Attributes\SettingField;
+use Stackra\Settings\Attributes\SettingGroup;
+use Stackra\Settings\Enums\BillingProvider;
+use Stackra\Settings\Enums\ControlType;
 
 /**
  * Subscription Settings.

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/user/compliance",
+  "id": "stackra://modules/user/compliance",
   "$version": 1,
   "title": "user \u2014 compliance evidence",
   "description": "Profile is the PII cluster. Provisioning is where compliance floors bite (age gate at User creation). Erasure is where retention windows matter. This module carries the biggest concentration of GDPR + COPPA + FERPA responsibilities in the identity tier.",

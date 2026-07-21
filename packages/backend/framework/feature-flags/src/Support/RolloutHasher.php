@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Support;
+namespace Stackra\FeatureFlags\Support;
 
 /**
  * Deterministic `(flag, scope_value) -> bucket` mapping for the `RolloutLayer`.

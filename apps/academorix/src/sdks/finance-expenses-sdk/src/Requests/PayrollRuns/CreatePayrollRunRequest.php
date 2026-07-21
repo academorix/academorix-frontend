@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FinanceExpensesSdk\Requests\PayrollRuns;
+namespace Stackra\FinanceExpensesSdk\Requests\PayrollRuns;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\FinanceExpensesSdk\Data\PayrollRunData;
-use Academorix\FinanceExpensesSdk\Payloads\PayrollRuns\CreatePayrollRunPayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\FinanceExpensesSdk\Data\PayrollRunData;
+use Stackra\FinanceExpensesSdk\Payloads\PayrollRuns\CreatePayrollRunPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/grants/policies",
+  "id": "stackra://modules/grants/policies",
   "$version": 1,
   "title": "grants — authorization policies",
-  "description": "One policy class with abilities that answer on both `sanctum` (tenant users managing grants in their own tenant) and `platform_admin` (Academorix ops cross-tenant audit-read + report generation) guards. Registered by GrantServiceProvider::registerPolicies(). Guard-aware — each ability checks the caller's guard and gates accordingly.",
+  "description": "One policy class with abilities that answer on both `sanctum` (tenant users managing grants in their own tenant) and `platform_admin` (Stackra ops cross-tenant audit-read + report generation) guards. Registered by GrantServiceProvider::registerPolicies(). Guard-aware — each ability checks the caller's guard and gates accordingly.",
   "policies": [
     {
-      "class": "Academorix\\Grant\\Policies\\AccessGrantPolicy",
-      "target": "Academorix\\Grant\\Models\\AccessGrant",
+      "class": "Stackra\\Grant\\Policies\\AccessGrantPolicy",
+      "target": "Stackra\\Grant\\Models\\AccessGrant",
       "guard": ["sanctum", "platform_admin"],
       "abilities": [
         {
@@ -80,7 +80,7 @@
           "name": "viewAnyPlatform",
           "guard": "platform_admin",
           "requires": ["platform.grants.viewAny"],
-          "description": "Cross-tenant list for Academorix ops. Every list read captures the (platform_user_id, tenant_ids_touched, filters) tuple in the audit stream."
+          "description": "Cross-tenant list for Stackra ops. Every list read captures the (platform_user_id, tenant_ids_touched, filters) tuple in the audit stream."
         },
         {
           "name": "viewPlatform",

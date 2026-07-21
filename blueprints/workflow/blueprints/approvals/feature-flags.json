@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/feature-flags",
+  "id": "stackra://modules/workflow/approvals/feature-flags",
   "$version": 1,
   "title": "approvals — kill switches",
   "engine": "laravel/pennant",

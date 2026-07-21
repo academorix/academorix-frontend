@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Storage\Models\File;
+use Stackra\Storage\Models\File;
 
 it('is a placeholder — replace with actual File unit tests', function (): void {
     expect(File::class)->toBeString();

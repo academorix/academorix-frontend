@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/schemas/notification-digest",
+  "id": "stackra://modules/notifications/schemas/notification-digest",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "NotificationDigest",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "dgst_",
     "incrementing": false,
-    "model": "Academorix\\Notifications\\Models\\NotificationDigest",
-    "interface": "Academorix\\Notifications\\Contracts\\Data\\NotificationDigestInterface",
-    "implements": ["Academorix\\Notifications\\Contracts\\Data\\NotificationDigestInterface"],
+    "model": "Stackra\\Notifications\\Models\\NotificationDigest",
+    "interface": "Stackra\\Notifications\\Contracts\\Data\\NotificationDigestInterface",
+    "implements": ["Stackra\\Notifications\\Contracts\\Data\\NotificationDigestInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

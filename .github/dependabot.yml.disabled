@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------------
 # @file        .github/dependabot.yml
-# @description Dependabot configuration for the Academorix frontend workspace.
+# @description Dependabot configuration for the Stackra frontend workspace.
 #              Dependabot walks every package.json under the pnpm workspace
 #              (root + apps/* + packages/*) and opens a PR per dependency
 #              update that is not filtered by the rules below.
@@ -61,9 +61,9 @@ updates:
     # Team handle in `org/team-slug` form. Adjust once the org + team
     # are provisioned — see CODEOWNERS for the same placeholder.
     reviewers:
-      - "academorix/platform-team"
+      - "stackra/platform-team"
     assignees:
-      - "academorix/platform-team"
+      - "stackra/platform-team"
     commit-message:
       # Conventional-commit prefix keeps titles green against the
       # `pr-title.yml` semantic-PR check + husky commitlint hook.
@@ -129,8 +129,8 @@ updates:
       - "automerge-candidate"
       - "ci"
     reviewers:
-      - "academorix/platform-team"
+      - "stackra/platform-team"
     assignees:
-      - "academorix/platform-team"
+      - "stackra/platform-team"
     commit-message:
       prefix: "chore(actions)"

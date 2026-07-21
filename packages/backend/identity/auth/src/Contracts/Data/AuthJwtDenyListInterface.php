@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Contracts\Data;
+namespace Stackra\Auth\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Auth\Models\AuthJwtDenyList;
+use Stackra\Auth\Models\AuthJwtDenyList;
 
 /**
  * Table shape for the `auth_jwt_deny_lists` table.

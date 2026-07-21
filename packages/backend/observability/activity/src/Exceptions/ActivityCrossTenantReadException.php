@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Exceptions;
+namespace Stackra\Activity\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempt to read an activity from a different tenant (bypassing BelongsToTenant scope via a raw ID query).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ActivityCrossTenantReadException extends AcademorixException
+final class ActivityCrossTenantReadException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

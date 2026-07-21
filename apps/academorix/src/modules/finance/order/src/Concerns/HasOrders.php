@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Order\Concerns;
+namespace Stackra\Order\Concerns;
 
 /**
  * Trait — HasOrders.

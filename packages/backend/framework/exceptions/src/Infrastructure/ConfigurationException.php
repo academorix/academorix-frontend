@@ -19,7 +19,7 @@
  *
  *   exceptions::infrastructure.configuration
  *
- * @see \Academorix\Exceptions\AcademorixException  Base class.
+ * @see \Stackra\Exceptions\StackraException  Base class.
  * @see ServiceUnavailableException  For runtime dependency outages
  *                                   (as opposed to boot-time
  *                                   misconfiguration).
@@ -27,14 +27,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Infrastructure;
+namespace Stackra\Exceptions\Infrastructure;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class ConfigurationException extends AcademorixException
+class ConfigurationException extends StackraException
 {
     /**
      * Machine-readable code — reporters route this literal to the

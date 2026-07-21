@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://github.com/academorix-inc/laravel--laravel/framework/enum/-/raw/main/.gitlab/banner.svg" alt="Enum" width="100%">
+<img src="https://github.com/stackra-inc/laravel--laravel/framework/enum/-/raw/main/.gitlab/banner.svg" alt="Enum" width="100%">
 
 </div>
 
@@ -25,10 +25,10 @@ your enums.
 ## Quick Start
 
 ```php
-use Academorix\Enum\Enum;
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Name;
-use Academorix\Enum\Meta\Meta;
+use Stackra\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Name;
+use Stackra\Enum\Meta\Meta;
 
 #[Meta([Description::class, Name::class])]
 enum Status: string
@@ -161,7 +161,7 @@ Status::labels();                   // Returns all translated labels
 ## Creating Custom Meta Properties
 
 ```php
-use Academorix\Enum\Meta\Property;
+use Stackra\Enum\Meta\Property;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_CLASS_CONSTANT)]
@@ -221,7 +221,7 @@ return [
 The `Enum` trait combines all features:
 
 ```php
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 enum Status: string
 {
@@ -245,9 +245,9 @@ The old enum system has been moved to `Enum.old`. To migrate:
 ### Before (Old System):
 
 ```php
-use Academorix\Enum\Enum;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Description;
+use Stackra\Enum\Enum;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Description;
 
 class Status extends Enum
 {
@@ -262,10 +262,10 @@ Status::ACTIVE();  // Returns Enum instance
 ### After (New System):
 
 ```php
-use Academorix\Enum\Enum;
-use Academorix\Enum\Attributes\Name;
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Meta\Meta;
+use Stackra\Enum\Enum;
+use Stackra\Enum\Attributes\Name;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Meta\Meta;
 
 #[Meta([Name::class, Description::class])]
 enum Status: string
@@ -282,4 +282,4 @@ Status::ACTIVE();  // Returns 'active' (the value)
 
 ## License
 
-MIT License - Part of the Academorix Framework package.
+MIT License - Part of the Stackra Framework package.

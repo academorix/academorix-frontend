@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/platform-user/schemas/platform-profile",
+  "id": "stackra://modules/platform-user/schemas/platform-profile",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "PlatformProfile",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "plp_",
     "incrementing": false,
-    "model": "Academorix\\PlatformUser\\Models\\PlatformProfile",
-    "interface": "Academorix\\PlatformUser\\Contracts\\Data\\PlatformProfileInterface",
-    "implements": ["Academorix\\PlatformUser\\Contracts\\Data\\PlatformProfileInterface"],
+    "model": "Stackra\\PlatformUser\\Models\\PlatformProfile",
+    "interface": "Stackra\\PlatformUser\\Contracts\\Data\\PlatformProfileInterface",
+    "implements": ["Stackra\\PlatformUser\\Contracts\\Data\\PlatformProfileInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

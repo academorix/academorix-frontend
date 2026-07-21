@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Analytics\Events;
+namespace Stackra\Analytics\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -14,7 +14,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * ## Consumers
  *
- * - monitoring::EmitDegradedDeliveryMetricListener — emits academorix.analytics.deliveries.partial gauge
+ * - monitoring::EmitDegradedDeliveryMetricListener — emits stackra.analytics.deliveries.partial gauge
  *
  * @category Analytics
  *

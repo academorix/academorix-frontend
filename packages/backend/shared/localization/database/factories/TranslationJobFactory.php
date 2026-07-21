@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Database\Factories;
+namespace Stackra\Localization\Database\Factories;
 
-use Academorix\Localization\Contracts\Data\TranslationJobInterface;
-use Academorix\Localization\Enums\TranslationJobKind;
-use Academorix\Localization\Enums\TranslationJobStatus;
-use Academorix\Localization\Enums\TranslatorDriverName;
-use Academorix\Localization\Models\TranslationJob;
+use Stackra\Localization\Contracts\Data\TranslationJobInterface;
+use Stackra\Localization\Enums\TranslationJobKind;
+use Stackra\Localization\Enums\TranslationJobStatus;
+use Stackra\Localization\Enums\TranslatorDriverName;
+use Stackra\Localization\Models\TranslationJob;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

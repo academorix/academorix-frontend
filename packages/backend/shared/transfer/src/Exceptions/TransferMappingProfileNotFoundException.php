@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Exceptions;
+namespace Stackra\Transfer\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a mapping-profile lookup returns nothing.
@@ -13,7 +13,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TransferMappingProfileNotFoundException extends AcademorixException
+final class TransferMappingProfileNotFoundException extends StackraException
 {
     public const CODE = 'TRANSFER_MAPPING_PROFILE_NOT_FOUND';
 

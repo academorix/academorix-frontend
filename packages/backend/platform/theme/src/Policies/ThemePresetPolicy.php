@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Policies;
+namespace Stackra\Theme\Policies;
 
-use Academorix\Theme\Contracts\Data\ThemePresetInterface;
-use Academorix\Theme\Models\ThemePreset;
-use Academorix\User\Models\User;
+use Stackra\Theme\Contracts\Data\ThemePresetInterface;
+use Stackra\Theme\Models\ThemePreset;
+use Stackra\User\Models\User;
 
 /**
  * Authorization policy for {@see ThemePreset}.
@@ -55,7 +55,7 @@ final class ThemePresetPolicy
     }
 
     /**
-     * Academorix staff only — mutates the shared platform catalogue.
+     * Stackra staff only — mutates the shared platform catalogue.
      */
     public function createPlatformPreset(User $user, ThemePreset $model): bool
     {

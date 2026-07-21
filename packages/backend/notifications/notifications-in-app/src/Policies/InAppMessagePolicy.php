@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Policies;
+namespace Stackra\Notifications\InApp\Policies;
 
-use Academorix\Notifications\Enums\NotificationsPermission;
-use Academorix\Notifications\InApp\Contracts\Data\InAppMessageInterface;
-use Academorix\Notifications\InApp\Models\InAppMessage;
+use Stackra\Notifications\Enums\NotificationsPermission;
+use Stackra\Notifications\InApp\Contracts\Data\InAppMessageInterface;
+use Stackra\Notifications\InApp\Models\InAppMessage;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

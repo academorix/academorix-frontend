@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/refund/errors",
+  "id": "stackra://modules/refund/errors",
   "$version": 1,
   "title": "refund — error codes",
   "namespace": "refund",

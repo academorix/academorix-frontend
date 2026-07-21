@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/compliance/schemas/dsar-artefact",
+  "id": "stackra://modules/compliance/schemas/dsar-artefact",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "DsarArtefact",
@@ -12,9 +12,9 @@
     "keyType": "string",
     "keyPrefix": "dsa_",
     "incrementing": false,
-    "model": "Academorix\\Compliance\\Models\\DsarArtefact",
-    "interface": "Academorix\\Compliance\\Contracts\\Data\\DsarArtefactInterface",
-    "implements": ["Academorix\\Compliance\\Contracts\\Data\\DsarArtefactInterface"],
+    "model": "Stackra\\Compliance\\Models\\DsarArtefact",
+    "interface": "Stackra\\Compliance\\Contracts\\Data\\DsarArtefactInterface",
+    "implements": ["Stackra\\Compliance\\Contracts\\Data\\DsarArtefactInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

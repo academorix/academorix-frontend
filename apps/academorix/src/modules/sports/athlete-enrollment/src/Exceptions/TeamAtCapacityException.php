@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AthleteEnrollment\Exceptions;
+namespace Stackra\AthleteEnrollment\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Team is at capacity + waitlist is not enabled on your tier.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TeamAtCapacityException extends AcademorixException
+final class TeamAtCapacityException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

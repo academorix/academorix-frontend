@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/coupon/permissions",
+  "id": "stackra://modules/coupon/permissions",
   "$version": 1,
   "title": "coupon — permissions",
-  "seeder": "Academorix\\Finance\\Coupon\\Database\\Seeders\\CouponPermissionSeeder",
+  "seeder": "Stackra\\Finance\\Coupon\\Database\\Seeders\\CouponPermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — owner + marketing manage coupons + read redemption ledger; support role reads only; customers have no explicit permissions (validate/preview routes are auth'd but scoped to auth()->id() via policy). Platform plane (platform_admin) — cross-tenant read for support intervention + regulator-facing reporting. All tenant permissions carry the appropriate resource prefix (`coupons.` for the aggregate, `coupon_redemptions.` for the pivot).",
   "permissions": [

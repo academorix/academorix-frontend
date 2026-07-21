@@ -1,47 +1,47 @@
 {
-  "id": "academorix://modules/activity/commands",
+  "id": "stackra://modules/activity/commands",
   "$version": 1,
   "title": "activity — artisan commands",
   "description": "Artisan commands this module ships. Registered by `ActivityServiceProvider::registerCommands()`. Support tooling audience — walk activity for a specific user / entity, count volume for capacity planning, trigger the retention pipeline manually during incidents, run the one-shot install migration.",
   "commands": [
     {
-      "class": "Academorix\\Observability\\Activity\\Console\\Commands\\ListActivitiesCommand",
+      "class": "Stackra\\Observability\\Activity\\Console\\Commands\\ListActivitiesCommand",
       "signature": "activity:list {--tenant=} {--user=} {--subject=} {--since=} {--until=} {--log-name=} {--limit=100}",
       "audience": "ops",
       "description": "Prints activities matching filters as a table. `--subject` accepts `type:id` (e.g. `booking:bkg_01H...`). `--since` / `--until` accept ISO-8601 or natural expressions ('yesterday', '1 hour ago'). Useful during support tickets when the tenant-facing UI doesn't surface enough context."
     },
     {
-      "class": "Academorix\\Observability\\Activity\\Console\\Commands\\ShowActivityCommand",
+      "class": "Stackra\\Observability\\Activity\\Console\\Commands\\ShowActivityCommand",
       "signature": "activity:show {activity_id}",
       "audience": "ops",
       "description": "Prints the full row + resolved subject + resolved causer + every sibling activity sharing the same batch_uuid. Debug tool for 'what exactly happened during that request'."
     },
     {
-      "class": "Academorix\\Observability\\Activity\\Console\\Commands\\CountActivitiesCommand",
+      "class": "Stackra\\Observability\\Activity\\Console\\Commands\\CountActivitiesCommand",
       "signature": "activity:count {--tenant=} {--log-name=} {--since=} {--until=} {--group-by=}",
       "audience": "ops",
       "description": "Counts activities matching filters. `--group-by` accepts `log_name`, `subject_type`, `causer_id`, `application_id`, `day`, `hour`. Powers capacity-planning + audit-adjacent volume reports without a full row scan."
     },
     {
-      "class": "Academorix\\Observability\\Activity\\Console\\Commands\\BackfillTenantIdCommand",
+      "class": "Stackra\\Observability\\Activity\\Console\\Commands\\BackfillTenantIdCommand",
       "signature": "activity:backfill-tenant-id {--batch-size=10000} {--dry-run} {--verify}",
       "audience": "ops",
       "description": "One-shot Wave-6 install migration. Reads `tenant_id` out of the vendor's `properties` JSONB blob and populates the new dedicated column. `--dry-run` counts affected rows without writing. `--verify` runs a companion check confirming zero rows remain with tenant_id IS NULL AND properties->>'tenant_id' IS NOT NULL."
     },
     {
-      "class": "Academorix\\Observability\\Activity\\Console\\Commands\\PurgeActivitiesCommand",
+      "class": "Stackra\\Observability\\Activity\\Console\\Commands\\PurgeActivitiesCommand",
       "signature": "activity:purge {--tenant=} {--log-name=} {--older-than=} {--batch-size=5000} {--dry-run}",
       "audience": "ops",
       "description": "Dispatches PurgeExpiredActivitiesJob. Optional per-tenant / per-log_name / per-age scoping. Called nightly by the scheduler + on-demand during incidents. `--dry-run` counts rows that would be deleted without actually deleting."
     },
     {
-      "class": "Academorix\\Observability\\Activity\\Console\\Commands\\ExtendRetentionCommand",
+      "class": "Stackra\\Observability\\Activity\\Console\\Commands\\ExtendRetentionCommand",
       "signature": "activity:extend-retention {--tenant=} {--log-name=} {--days=} {--reason=} {--expires-at=}",
       "audience": "ops",
       "description": "Creates or updates an ActivityRetentionPolicy from the CLI. Requires --reason with at least 20 chars (matches the online API). Used mostly for regulator-hold interventions that need to bypass the UI. Delegates to the API's write path so the same guards fire."
     },
     {
-      "class": "Academorix\\Observability\\Activity\\Console\\Commands\\ExportActivitiesCommand",
+      "class": "Stackra\\Observability\\Activity\\Console\\Commands\\ExportActivitiesCommand",
       "signature": "activity:export {--tenant=} {--from=} {--to=} {--log-names=} {--format=csv} {--output=}",
       "audience": "ops",
       "description": "Bulk export activities to a file. Alternative to the HTTP export endpoint for large tenants where the async job time-boxes out. Streams rows to `--output` (or stdout when omitted). `--format` accepts `csv`, `json`, `parquet`."

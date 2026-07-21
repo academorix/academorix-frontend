@@ -53,7 +53,7 @@
                   "kind": "Text",
                   "props": {
                     "className": "text-sm text-muted",
-                    "children": "System roles are shipped by Academorix. Custom roles are yours to define."
+                    "children": "System roles are shipped by Stackra. Custom roles are yours to define."
                   }
                 }
               ]

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Data;
+namespace Stackra\Webhook\Data;
 
-use Academorix\Webhook\Contracts\Data\WebhookSubscriptionInterface;
-use Academorix\Webhook\Enums\WebhookProbeStatus;
-use Academorix\Webhook\Enums\WebhookSubscriptionStatus;
-use Academorix\Webhook\Models\WebhookSubscription;
+use Stackra\Webhook\Contracts\Data\WebhookSubscriptionInterface;
+use Stackra\Webhook\Enums\WebhookProbeStatus;
+use Stackra\Webhook\Enums\WebhookSubscriptionStatus;
+use Stackra\Webhook\Models\WebhookSubscription;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

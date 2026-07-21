@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/entitlements/health",
+  "id": "stackra://modules/entitlements/health",
   "$version": 1,
   "title": "entitlements \u2014 health probes",
   "probes": [
     {
       "name": "entitlements-registry-warm",
-      "class": "Academorix\\Entitlements\\Health\\Probes\\RegistryWarmProbe",
+      "class": "Stackra\\Entitlements\\Health\\Probes\\RegistryWarmProbe",
       "category": "startup",
       "critical": true,
       "description": "EntitlementRegistry hydrated on boot. Ensures at least one #[Entitlement]-declared key registered.",
@@ -13,7 +13,7 @@
     },
     {
       "name": "entitlements-redis-reachable",
-      "class": "Academorix\\Entitlements\\Health\\Probes\\RedisReachableProbe",
+      "class": "Stackra\\Entitlements\\Health\\Probes\\RedisReachableProbe",
       "category": "readiness",
       "critical": true,
       "description": "Redis PING for the hot-path key namespace. Enforcer falls back to Postgres on failure.",
@@ -21,7 +21,7 @@
     },
     {
       "name": "entitlements-reset-recent",
-      "class": "Academorix\\Entitlements\\Health\\Probes\\ResetRecentProbe",
+      "class": "Stackra\\Entitlements\\Health\\Probes\\ResetRecentProbe",
       "category": "readiness",
       "critical": false,
       "description": "ResetPeriodicUsageJob ran in the last 20 minutes (schedule is every 15).",
@@ -29,7 +29,7 @@
     },
     {
       "name": "entitlements-reconcile-drift",
-      "class": "Academorix\\Entitlements\\Health\\Probes\\ReconcileDriftProbe",
+      "class": "Stackra\\Entitlements\\Health\\Probes\\ReconcileDriftProbe",
       "category": "readiness",
       "critical": false,
       "description": "Redis \u2194 Postgres drift within tolerance (< 100 per key). Sampled across active pool entitlements.",
@@ -38,7 +38,7 @@
     },
     {
       "name": "entitlements-usage-partition-current",
-      "class": "Academorix\\Entitlements\\Health\\Probes\\UsagePartitionCurrentProbe",
+      "class": "Stackra\\Entitlements\\Health\\Probes\\UsagePartitionCurrentProbe",
       "category": "readiness",
       "critical": false,
       "description": "EntitlementUsage table has a partition for the current month (Postgres native partitioning).",

@@ -4,10 +4,10 @@
  * @file database/factories/ScopeValueFactory.php
  *
  * @description
- * Factory for {@see \Academorix\Scope\Models\ScopeValue}. Emits a
+ * Factory for {@see \Stackra\Scope\Models\ScopeValue}. Emits a
  * scalar string value under the placeholder `testing` namespace.
  * Real production writes go through
- * {@see \Academorix\Scope\Contracts\ScopeResolutionInterface::write()}
+ * {@see \Stackra\Scope\Contracts\ScopeResolutionInterface::write()}
  * which routes through the consumer validator — bypassing it via
  * factory is only appropriate in tests that specifically want to
  * exercise the storage layer.
@@ -15,11 +15,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Database\Factories;
+namespace Stackra\Scope\Database\Factories;
 
-use Academorix\Scope\Contracts\Data\ScopeValueInterface;
-use Academorix\Scope\Models\ScopeNode;
-use Academorix\Scope\Models\ScopeValue;
+use Stackra\Scope\Contracts\Data\ScopeValueInterface;
+use Stackra\Scope\Models\ScopeNode;
+use Stackra\Scope\Models\ScopeValue;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

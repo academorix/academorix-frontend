@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/forms/policies",
+  "id": "stackra://modules/forms/policies",
   "$version": 1,
   "title": "forms — authorization policies",
   "description": "Three policies. Public submission bypasses the policy layer entirely (signed session URL is the auth mechanism). Admin CRUD on Form + FormVersion is tenant-admin only. FormSubmission view scoped to authoring user + admin — plus safeguarding officer sees submissions containing medical / safeguarding data.",
   "policies": [
     {
       "model": "Form",
-      "class": "Academorix\\Platform\\Forms\\Policies\\FormPolicy",
+      "class": "Stackra\\Platform\\Forms\\Policies\\FormPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -35,7 +35,7 @@
     },
     {
       "model": "FormVersion",
-      "class": "Academorix\\Platform\\Forms\\Policies\\FormVersionPolicy",
+      "class": "Stackra\\Platform\\Forms\\Policies\\FormVersionPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "form-versions.viewAny" },
         { "action": "view", "permission": "form-versions.view" },
@@ -50,7 +50,7 @@
     },
     {
       "model": "FormSubmission",
-      "class": "Academorix\\Platform\\Forms\\Policies\\FormSubmissionPolicy",
+      "class": "Stackra\\Platform\\Forms\\Policies\\FormSubmissionPolicy",
       "abilities": [
         {
           "action": "viewAny",

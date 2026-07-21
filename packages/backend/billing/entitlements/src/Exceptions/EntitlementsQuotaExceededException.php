@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Exceptions;
+namespace Stackra\Entitlements\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Enforcer refused because value_used + delta > value_cap.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class EntitlementsQuotaExceededException extends AcademorixException
+final class EntitlementsQuotaExceededException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

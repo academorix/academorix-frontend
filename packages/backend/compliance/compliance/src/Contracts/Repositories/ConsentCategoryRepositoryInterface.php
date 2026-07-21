@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Contracts\Repositories;
+namespace Stackra\Compliance\Contracts\Repositories;
 
-use Academorix\Compliance\Models\ConsentCategory;
-use Academorix\Compliance\Repositories\EloquentConsentCategoryRepository;
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Compliance\Models\ConsentCategory;
+use Stackra\Compliance\Repositories\EloquentConsentCategoryRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

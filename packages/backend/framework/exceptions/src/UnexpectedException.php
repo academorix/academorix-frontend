@@ -12,36 +12,36 @@
  *
  * If your code is about to throw `UnexpectedException`, that's a
  * signal to add a specific subclass to
- * {@see \Academorix\Exceptions\RECOMMENDATIONS.md}. This class only
- * exists to give {@see \Academorix\Exceptions\Support\ExceptionMapper}
+ * {@see \Stackra\Exceptions\RECOMMENDATIONS.md}. This class only
+ * exists to give {@see \Stackra\Exceptions\Support\ExceptionMapper}
  * a target for the "we don't know what this is" bucket.
  *
  * ## Translation key
  *
  *   exceptions::generic.unexpected
  *
- * @see AcademorixException  Base class.
- * @see \Academorix\Exceptions\Support\ExceptionMapper  The only legitimate producer of this class.
+ * @see StackraException  Base class.
+ * @see \Stackra\Exceptions\Support\ExceptionMapper  The only legitimate producer of this class.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions;
+namespace Stackra\Exceptions;
 
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-final class UnexpectedException extends AcademorixException
+final class UnexpectedException extends StackraException
 {
     /**
      * Machine-readable code — matches the base class default so
-     * clients that already special-case "unknown Academorix error"
+     * clients that already special-case "unknown Stackra error"
      * work uniformly whether the exception was mapped or fell
      * through raw.
      */
-    public const CODE = 'academorix.unexpected';
+    public const CODE = 'stackra.unexpected';
 
     /**
      * Class-level translation key pointing at

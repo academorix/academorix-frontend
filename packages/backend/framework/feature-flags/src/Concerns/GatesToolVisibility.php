@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Concerns;
+namespace Stackra\FeatureFlags\Concerns;
 
 /**
  * Attach to any AI tool class to gate its visibility behind a feature flag.

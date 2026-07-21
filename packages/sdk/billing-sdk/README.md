@@ -1,9 +1,9 @@
-# academorix/billing-sdk
+# stackra/billing-sdk
 
 Typed Saloon SDK for the Billing service — subscriptions, plans, invoices,
 licenses, usage, entitlements.
 
-Per-service umbrella SDK built on the shared kernel (`academorix/api-sdk`). It
+Per-service umbrella SDK built on the shared kernel (`stackra/api-sdk`). It
 owns the Billing service connector (config `sdk.billing.*`), a typed
 `BillingSdk` client, and a discovery pass scoped to
 `#[AsSdkResource(service: 'billing')]`.
@@ -11,7 +11,7 @@ owns the Billing service connector (config `sdk.billing.*`), a typed
 ## Usage
 
 ```php
-use Academorix\BillingSdk\Client\BillingSdk;
+use Stackra\BillingSdk\Client\BillingSdk;
 
 $billing = app(BillingSdk::class);
 $billing->someResource()->find($id);

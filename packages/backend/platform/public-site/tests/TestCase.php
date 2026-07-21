@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PublicSite\Tests;
+namespace Stackra\PublicSite\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/public-site.
+ * Base test case for stackra/public-site.
  *
  * @category PublicSite
  *

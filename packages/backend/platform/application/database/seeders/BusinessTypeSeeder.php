@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Database\Seeders;
+namespace Stackra\Application\Database\Seeders;
 
-use Academorix\Application\Contracts\Data\BusinessTypeInterface;
-use Academorix\Application\Enums\BusinessTypeEnum;
-use Academorix\Application\Models\BusinessType;
-use Academorix\ServiceProvider\Attributes\AsSeeder;
+use Stackra\Application\Contracts\Data\BusinessTypeInterface;
+use Stackra\Application\Enums\BusinessTypeEnum;
+use Stackra\Application\Models\BusinessType;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;
 
 /**
@@ -15,7 +15,7 @@ use Illuminate\Database\Seeder;
  * per case into `business_types`. Skips `BusinessTypeEnum::Custom` —
  * it's a code-level bucket only, never persisted.
  *
- * Discovered by `academorix/database`'s `#[AsSeeder]` scanner (ADR
+ * Discovered by `stackra/database`'s `#[AsSeeder]` scanner (ADR
  * 0011). Priority `20` puts it in the framework/tenancy tier, ahead
  * of every downstream module that references business types.
  *

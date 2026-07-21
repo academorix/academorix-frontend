@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Exceptions;
+namespace Stackra\Coaching\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * specializations must be an array of strings drawn from the specializations catalog.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CoachingProfileInvalidSpecializationsException extends AcademorixException
+final class CoachingProfileInvalidSpecializationsException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

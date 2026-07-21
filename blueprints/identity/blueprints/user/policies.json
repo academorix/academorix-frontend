@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/user/policies",
+  "id": "stackra://modules/user/policies",
   "$version": 1,
   "title": "user \u2014 authorization policies",
   "description": "Three policies. UserPolicy narrows by scope suffix (`.any` / `.tenant` / `.branch` / `.own`). ProfilePolicy is stricter (`.pii` gates the read side; only the subject or a `profile.update.pii` admin may write). TenantMemberPolicy is admin-only apart from the read-own case.",
   "policies": [
     {
       "model": "User",
-      "class": "Academorix\\User\\Policies\\UserPolicy",
+      "class": "Stackra\\User\\Policies\\UserPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -62,7 +62,7 @@
     },
     {
       "model": "Profile",
-      "class": "Academorix\\User\\Policies\\ProfilePolicy",
+      "class": "Stackra\\User\\Policies\\ProfilePolicy",
       "abilities": [
         {
           "action": "view",
@@ -103,7 +103,7 @@
     },
     {
       "model": "TenantMember",
-      "class": "Academorix\\User\\Policies\\TenantMemberPolicy",
+      "class": "Stackra\\User\\Policies\\TenantMemberPolicy",
       "abilities": [
         {
           "action": "viewAny",

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Contracts\Data;
+namespace Stackra\Branding\Contracts\Data;
 
-use Academorix\Branding\Models\Branding;
+use Stackra\Branding\Models\Branding;
 use Illuminate\Container\Attributes\Bind;
 
 /**

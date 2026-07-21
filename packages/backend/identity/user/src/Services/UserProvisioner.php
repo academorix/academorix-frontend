@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\User\Services;
+namespace Stackra\User\Services;
 
-use Academorix\User\Contracts\Services\UserProvisionerInterface;
+use Stackra\User\Contracts\Services\UserProvisionerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\User\Contracts\Repositories\ProfileRepositoryInterface;
+use Stackra\User\Contracts\Repositories\ProfileRepositoryInterface;
 
 /**
  * Concrete service — UserProvisioner.

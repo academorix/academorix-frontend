@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Exceptions;
+namespace Stackra\Search\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the referenced artifact source is missing or wrong.
@@ -13,7 +13,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SearchArtifactSourceInvalidException extends AcademorixException
+final class SearchArtifactSourceInvalidException extends StackraException
 {
     public const CODE = 'SEARCH_ARTIFACT_SOURCE_INVALID';
 

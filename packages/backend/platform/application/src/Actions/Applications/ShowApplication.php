@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Actions\Applications;
+namespace Stackra\Application\Actions\Applications;
 
-use Academorix\Application\Contracts\Repositories\ApplicationRepositoryInterface;
-use Academorix\Application\Data\ApplicationData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Where;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Application\Contracts\Repositories\ApplicationRepositoryInterface;
+use Stackra\Application\Data\ApplicationData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Where;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
@@ -43,7 +43,7 @@ final class ShowApplication
         $application = $this->applications->findBySlug($slug);
         if ($application === null) {
             throw (new ModelNotFoundException())->setModel(
-                \Academorix\Application\Models\Application::class,
+                \Stackra\Application\Models\Application::class,
                 [$slug],
             );
         }

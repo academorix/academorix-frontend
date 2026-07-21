@@ -17,7 +17,7 @@ Tenant subscription lifecycle. Wave 5 infrastructure. Wraps `laravel/cashier`.
 ## 2. How Application + Tenant + Plan + Subscription + Entitlements interact
 
 ```
-Application (Academorix Academy)
+Application (Stackra Academy)
 ├── payment_provider: 'stripe' | 'paddle'          ← immutable per-Application choice
 ├── Plans[]                                        ← catalogue per-Application
 │   ├── academy_free            (default_entitlements: { free tier caps })

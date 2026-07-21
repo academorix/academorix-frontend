@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Actions\Tenant;
+namespace Stackra\Notifications\Mail\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Notifications\Mail\Contracts\Repositories\MailSuppressionRepositoryInterface;
-use Academorix\Notifications\Mail\Enums\NotificationsMailPermission;
-use Academorix\Notifications\Mail\Models\MailSuppression;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Delete;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\WhereUlid;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Notifications\Mail\Contracts\Repositories\MailSuppressionRepositoryInterface;
+use Stackra\Notifications\Mail\Enums\NotificationsMailPermission;
+use Stackra\Notifications\Mail\Models\MailSuppression;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Delete;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\WhereUlid;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\Response;
 
 /**

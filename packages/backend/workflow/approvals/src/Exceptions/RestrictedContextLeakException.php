@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Exceptions;
+namespace Stackra\Approvals\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * PCI-DSS scanner detected a regex match for cardholder data in context_json.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class RestrictedContextLeakException extends AcademorixException
+final class RestrictedContextLeakException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

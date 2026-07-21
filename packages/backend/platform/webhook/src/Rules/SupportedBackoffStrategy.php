@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Rules;
+namespace Stackra\Webhook\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;

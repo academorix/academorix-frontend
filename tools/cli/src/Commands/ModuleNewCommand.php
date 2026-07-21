@@ -2,15 +2,15 @@
 
 /**
  * @file ModuleNewCommand.php
- * @module Academorix\Cli\Commands
- * @description `academorix module:new <tier/name>` — v0.1 placeholder.
+ * @module Stackra\Cli\Commands
+ * @description `stackra module:new <tier/name>` — v0.1 placeholder.
  *   v0.2 will scaffold the full 30-JSON blueprint set and run the
  *   validator.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Commands;
+namespace Stackra\Cli\Commands;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;

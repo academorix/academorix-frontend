@@ -1,25 +1,25 @@
 {
-  "id": "academorix://modules/domains/traits",
+  "id": "stackra://modules/domains/traits",
   "$version": 1,
   "title": "domains — model traits",
   "description": "No owned traits — the domains module consumes BelongsToTenant (from tenants) + BelongsToApplication (from application) to bind Domain rows to their tenant + product.",
   "owned": [],
   "consumed": [
     {
-      "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+      "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
       "source": "tenants",
       "usedBy": ["Domain"]
     },
     {
-      "trait": "Academorix\\Application\\Concerns\\BelongsToApplication",
+      "trait": "Stackra\\Application\\Concerns\\BelongsToApplication",
       "source": "application",
       "usedBy": ["Domain"]
     },
     { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory", "source": "framework" },
     { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids", "source": "framework" },
-    { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata", "source": "foundation" },
-    { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps", "source": "foundation" },
-    { "trait": "Academorix\\Foundation\\Concerns\\HasAuditable", "source": "foundation" },
+    { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata", "source": "foundation" },
+    { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps", "source": "foundation" },
+    { "trait": "Stackra\\Foundation\\Concerns\\HasAuditable", "source": "foundation" },
     {
       "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
       "source": "framework",

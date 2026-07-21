@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Database\Factories;
+namespace Stackra\Compliance\Database\Factories;
 
-use Academorix\Compliance\Contracts\Data\RetentionRunInterface;
-use Academorix\Compliance\Models\RetentionRun;
+use Stackra\Compliance\Contracts\Data\RetentionRunInterface;
+use Stackra\Compliance\Models\RetentionRun;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

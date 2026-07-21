@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Contracts\Services;
+namespace Stackra\Versioning\Contracts\Services;
 
-use Academorix\Versioning\Models\DeprecationNotice;
-use Academorix\Versioning\Services\DefaultDeprecationNoticeService;
+use Stackra\Versioning\Models\DeprecationNotice;
+use Stackra\Versioning\Services\DefaultDeprecationNoticeService;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 
@@ -26,7 +26,7 @@ interface DeprecationNoticeServiceInterface
 {
     /**
      * Publish a notice — flips `is_active = true`, sets `starts_at`
-     * if unset, and emits {@see \Academorix\Versioning\Events\DeprecationNoticePublished}.
+     * if unset, and emits {@see \Stackra\Versioning\Events\DeprecationNoticePublished}.
      */
     public function publish(DeprecationNotice $notice): void;
 

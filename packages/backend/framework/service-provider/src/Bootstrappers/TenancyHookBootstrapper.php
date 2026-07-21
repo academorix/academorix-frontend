@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceProvider\Bootstrappers;
+namespace Stackra\ServiceProvider\Bootstrappers;
 
-use Academorix\Foundation\Contracts\DiscoversAttributes;
-use Academorix\ServiceProvider\Attributes\AsBootstrapper;
-use Academorix\ServiceProvider\Attributes\AsTenancyHook;
-use Academorix\ServiceProvider\Contracts\TenancyHookInterface;
-use Academorix\ServiceProvider\Dispatchers\TenancyHookDispatcher;
-use Academorix\ServiceProvider\Registry\TenancyHookRegistry;
+use Stackra\Foundation\Contracts\DiscoversAttributes;
+use Stackra\ServiceProvider\Attributes\AsBootstrapper;
+use Stackra\ServiceProvider\Attributes\AsTenancyHook;
+use Stackra\ServiceProvider\Contracts\TenancyHookInterface;
+use Stackra\ServiceProvider\Dispatchers\TenancyHookDispatcher;
+use Stackra\ServiceProvider\Registry\TenancyHookRegistry;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Container\Attributes\Singleton;
 use Psr\Log\LoggerInterface;

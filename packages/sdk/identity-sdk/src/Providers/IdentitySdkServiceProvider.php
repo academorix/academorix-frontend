@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Academorix\IdentitySdk\Providers;
+namespace Stackra\IdentitySdk\Providers;
 
-use Academorix\IdentitySdk\Client\IdentitySdk;
-use Academorix\ApiSdk\Attributes\AsSdkResource;
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Contracts\SdkResource;
-use Academorix\ApiSdk\Enums\AuthStrategy;
-use Academorix\ApiSdk\Enums\LogLevel;
-use Academorix\ApiSdk\Registry\SdkResourceRegistry;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
+use Stackra\IdentitySdk\Client\IdentitySdk;
+use Stackra\ApiSdk\Attributes\AsSdkResource;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Contracts\SdkResource;
+use Stackra\ApiSdk\Enums\AuthStrategy;
+use Stackra\ApiSdk\Enums\LogLevel;
+use Stackra\ApiSdk\Registry\SdkResourceRegistry;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Psr\Log\LoggerInterface;
 
 /**
- * Root provider for `academorix/identity-sdk`.
+ * Root provider for `stackra/identity-sdk`.
  *
  * Builds the Identity service's own Saloon connector from `sdk.identity.*`,
  * runs a discovery pass scoped to `#[AsSdkResource(service: 'identity')]`, and

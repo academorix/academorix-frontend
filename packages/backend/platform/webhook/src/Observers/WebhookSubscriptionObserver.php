@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Observers;
+namespace Stackra\Webhook\Observers;
 
-use Academorix\Webhook\Contracts\Data\WebhookSubscriptionInterface;
-use Academorix\Webhook\Enums\WebhookSubscriptionStatus;
-use Academorix\Webhook\Events\WebhookSubscriptionCreated;
-use Academorix\Webhook\Events\WebhookSubscriptionDisabled;
-use Academorix\Webhook\Events\WebhookSubscriptionPaused;
-use Academorix\Webhook\Events\WebhookSubscriptionResumed;
-use Academorix\Webhook\Events\WebhookSubscriptionUpdated;
-use Academorix\Webhook\Models\WebhookSubscription;
+use Stackra\Webhook\Contracts\Data\WebhookSubscriptionInterface;
+use Stackra\Webhook\Enums\WebhookSubscriptionStatus;
+use Stackra\Webhook\Events\WebhookSubscriptionCreated;
+use Stackra\Webhook\Events\WebhookSubscriptionDisabled;
+use Stackra\Webhook\Events\WebhookSubscriptionPaused;
+use Stackra\Webhook\Events\WebhookSubscriptionResumed;
+use Stackra\Webhook\Events\WebhookSubscriptionUpdated;
+use Stackra\Webhook\Models\WebhookSubscription;
 
 /**
  * Lifecycle side effects on {@see WebhookSubscription}.

@@ -1,4 +1,4 @@
-# academorix/season
+# stackra/season
 
 Server-side Laravel package for the `season` module. Auto-generated from the
 blueprint at `modules/sports/blueprints/season/`.
@@ -43,6 +43,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-sports/season-sdk` under `sdk/sports-season-sdk/`. Consumers cross
+`stackra-sports/season-sdk` under `sdk/sports-season-sdk/`. Consumers cross
 the service boundary through the SDK; this package is the SERVER-side owner of
 the domain.

@@ -13,7 +13,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Exceptions;
+namespace Stackra\Scope\Exceptions;
 
 use RuntimeException;
 

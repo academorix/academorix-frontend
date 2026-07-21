@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Contracts\Data;
+namespace Stackra\Domains\Contracts\Data;
 
-use Academorix\Domains\Models\DomainRecord;
+use Stackra\Domains\Models\DomainRecord;
 use Illuminate\Container\Attributes\Bind;
 
 /**

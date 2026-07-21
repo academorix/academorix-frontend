@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Announcements\Enums;
+namespace Stackra\Announcements\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `audience_scope` on `announcement`.

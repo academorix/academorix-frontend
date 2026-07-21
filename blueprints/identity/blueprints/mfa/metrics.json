@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/mfa/metrics",
+  "id": "stackra://modules/mfa/metrics",
   "$version": 1,
   "title": "mfa — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "academorix.mfa",
+  "namespace": "stackra.mfa",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["method", "outcome", "reason", "trigger"],
@@ -21,35 +21,35 @@
   },
   "metrics": [
     {
-      "name": "academorix.mfa.enrollment.previews_issued",
+      "name": "stackra.mfa.enrollment.previews_issued",
       "kind": "counter",
       "unit": "previews",
       "labels": ["method"],
       "description": "Fired on MfaEnrollmentPreviewIssued. method=totp|webauthn (yes — WebAuthn enrolment also runs a preview round though the browser calls it 'options')."
     },
     {
-      "name": "academorix.mfa.enrollment.previews_purged",
+      "name": "stackra.mfa.enrollment.previews_purged",
       "kind": "counter",
       "unit": "previews",
       "labels": ["method"],
       "description": "PurgeUnconfirmedEnrollmentsJob output. Track the drop-off between enrolment previews and confirmations — high purge rate signals user friction OR bot-traffic hitting the endpoint."
     },
     {
-      "name": "academorix.mfa.enrollment.confirmed",
+      "name": "stackra.mfa.enrollment.confirmed",
       "kind": "counter",
       "unit": "enrolments",
       "labels": ["method"],
       "description": "Fired on MfaEnrollmentConfirmed."
     },
     {
-      "name": "academorix.mfa.enrollment.failed",
+      "name": "stackra.mfa.enrollment.failed",
       "kind": "counter",
       "unit": "enrolments",
       "labels": ["method", "reason"],
       "description": "Fired on MfaEnrollmentFailed. reason = confirmation_code_invalid | preview_expired | preview_missing | attestation_verification_failed | duplicate_credential."
     },
     {
-      "name": "academorix.mfa.enrollment.duration_ms",
+      "name": "stackra.mfa.enrollment.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1000, 5000, 15000, 30000, 60000, 120000, 300000],
@@ -57,28 +57,28 @@
       "description": "Wall-clock from MfaEnrollmentPreviewIssued to confirm (success) or expiry (failure). Signals user friction on the enrolment flow. Buckets tuned around the realistic 15s-2min range with wider extremes to capture outliers."
     },
     {
-      "name": "academorix.mfa.challenge.issued",
+      "name": "stackra.mfa.challenge.issued",
       "kind": "counter",
       "unit": "challenges",
       "labels": ["method"],
       "description": "Fired on MfaChallengeIssued."
     },
     {
-      "name": "academorix.mfa.challenge.succeeded",
+      "name": "stackra.mfa.challenge.succeeded",
       "kind": "counter",
       "unit": "verifications",
       "labels": ["method"],
       "description": "Fired on MfaChallengeSucceeded."
     },
     {
-      "name": "academorix.mfa.challenge.failed",
+      "name": "stackra.mfa.challenge.failed",
       "kind": "counter",
       "unit": "verifications",
       "labels": ["method", "reason"],
       "description": "Fired on MfaChallengeFailed. reason = code_mismatch | assertion_signature_invalid | sign_count_replay | recovery_code_invalid | expired | attempts_exhausted."
     },
     {
-      "name": "academorix.mfa.challenge.duration_ms",
+      "name": "stackra.mfa.challenge.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 50, 200, 500, 1000, 2000, 5000],
@@ -86,21 +86,21 @@
       "description": "Wall-clock of the verification action. Constant-time by design: success and failure must fall in the same bucket range to prevent timing enumeration. Any drift signals a code path where success/failure has diverged and needs the drift-tolerance branch corrected."
     },
     {
-      "name": "academorix.mfa.recovery_codes.consumed",
+      "name": "stackra.mfa.recovery_codes.consumed",
       "kind": "counter",
       "unit": "codes",
       "labels": [],
       "description": "Fired on MfaRecoveryCodeConsumed."
     },
     {
-      "name": "academorix.mfa.recovery_codes.regenerated",
+      "name": "stackra.mfa.recovery_codes.regenerated",
       "kind": "counter",
       "unit": "regenerations",
       "labels": ["trigger"],
       "description": "Fired on MfaRecoveryCodesRegenerated. trigger = self_service | admin_action (support tooling)."
     },
     {
-      "name": "academorix.mfa.recovery_codes.remaining_distribution",
+      "name": "stackra.mfa.recovery_codes.remaining_distribution",
       "kind": "histogram",
       "unit": "codes",
       "buckets": [0, 1, 2, 3, 5, 7, 10],
@@ -108,84 +108,84 @@
       "description": "Distribution of remaining recovery-code counts across all Identities with MFA enrolled. Emitted every 60s. Left-tail bump = users at risk of MFA lockout; watch for the fleet-wide count of Identities with 0 remaining as an SLO."
     },
     {
-      "name": "academorix.mfa.recovery_codes.low_notifications_dispatched",
+      "name": "stackra.mfa.recovery_codes.low_notifications_dispatched",
       "kind": "counter",
       "unit": "notifications",
       "labels": ["source"],
       "description": "source = per_consumption (from MfaBackupCodeCountLow) | nightly_sweep (from NotifyLowRecoveryCodesJob)."
     },
     {
-      "name": "academorix.mfa.webauthn.credentials_registered",
+      "name": "stackra.mfa.webauthn.credentials_registered",
       "kind": "counter",
       "unit": "credentials",
       "labels": ["attestation_format", "is_platform_authenticator", "is_synced_passkey"],
       "description": "Fired on WebauthnCredentialRegistered. Track adoption breakdown across authenticator types. is_platform_authenticator = true|false. is_synced_passkey = true|false (backup_state)."
     },
     {
-      "name": "academorix.mfa.webauthn.credentials_active",
+      "name": "stackra.mfa.webauthn.credentials_active",
       "kind": "gauge",
       "unit": "credentials",
       "labels": [],
       "description": "Count of webauthn_credentials rows where disabled_at IS NULL AND deleted_at IS NULL. Emitted every 5 minutes."
     },
     {
-      "name": "academorix.mfa.webauthn.credentials_disabled",
+      "name": "stackra.mfa.webauthn.credentials_disabled",
       "kind": "counter",
       "unit": "credentials",
       "labels": ["reason"],
       "description": "Fired on WebauthnCredentialDisabled. reason = user_action | admin_force_disable | lost_device."
     },
     {
-      "name": "academorix.mfa.webauthn.credentials_deleted",
+      "name": "stackra.mfa.webauthn.credentials_deleted",
       "kind": "counter",
       "unit": "credentials",
       "labels": ["trigger"],
       "description": "Fired on WebauthnCredentialDeleted. trigger = user_action | retention_purge | admin_action | identity_erasure_cascade."
     },
     {
-      "name": "academorix.mfa.webauthn.retention_purged",
+      "name": "stackra.mfa.webauthn.retention_purged",
       "kind": "counter",
       "unit": "credentials",
       "labels": [],
       "description": "CleanupDisabledWebauthnCredentialsJob output. Track the retention purge cadence."
     },
     {
-      "name": "academorix.mfa.webauthn.sign_count_replay_detected",
+      "name": "stackra.mfa.webauthn.sign_count_replay_detected",
       "kind": "counter",
       "unit": "events",
       "labels": ["attestation_format"],
       "description": "Fired when the observer refused an updating operation because sign_count went backward. High-signal security event — indicates a cloned authenticator OR a replay attack in progress. Alertable at any non-zero value across a 24h window."
     },
     {
-      "name": "academorix.mfa.disabled",
+      "name": "stackra.mfa.disabled",
       "kind": "counter",
       "unit": "disables",
       "labels": ["trigger"],
       "description": "Fired on cumulative MfaDisabled. trigger = self_service | admin_action | account_recovery | identity_erasure."
     },
     {
-      "name": "academorix.mfa.suspicious_activity.signals",
+      "name": "stackra.mfa.suspicious_activity.signals",
       "kind": "counter",
       "unit": "signals",
       "labels": ["disposition"],
       "description": "MfaSuspiciousActivityDetector output. disposition = notification_dispatched | debounced (within notification_debounce_hours) | subthreshold (signal below configured thresholds — but still counted for metric-level anomaly detection)."
     },
     {
-      "name": "academorix.mfa.step_up.enforced",
+      "name": "stackra.mfa.step_up.enforced",
       "kind": "counter",
       "unit": "enforcements",
       "labels": ["outcome"],
       "description": "mfa.require_recent_challenge middleware evaluations. outcome = pass (recent challenge on record) | reject (too stale) | not_applicable (Identity has no MFA)."
     },
     {
-      "name": "academorix.mfa.identities_with_mfa",
+      "name": "stackra.mfa.identities_with_mfa",
       "kind": "gauge",
       "unit": "identities",
       "labels": [],
       "description": "Count of Identity rows where mfa_secret_encrypted IS NOT NULL OR at least one active WebauthnCredential exists. Emitted every 5 minutes. Drives the fleet-wide MFA-adoption dashboard."
     },
     {
-      "name": "academorix.mfa.identities_required_but_missing",
+      "name": "stackra.mfa.identities_required_but_missing",
       "kind": "gauge",
       "unit": "identities",
       "labels": [],

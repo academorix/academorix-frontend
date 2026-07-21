@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/search/observers",
+  "id": "stackra://modules/search/observers",
   "$version": 1,
   "title": "search \u2014 Eloquent observers",
   "description": "Three owned observers on SearchIndex + SearchSyncJob + SearchSynonym. Enforce state machines, populate defaults at creation, and fan out lifecycle events afterCommit. SearchSavedQuery + SearchAnalyticsEvent do not need observers \u2014 SavedQuery is a simple CRUD entity, AnalyticsEvent is append-only and populated by the RecordSearchAnalyticsEventJob directly.",
   "observers": [
     {
       "model": "SearchIndex",
-      "observer": "Academorix\\Search\\Observers\\SearchIndexObserver",
+      "observer": "Stackra\\Search\\Observers\\SearchIndexObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `sidx_`",
         "creating \u2192 resolve tenant_id from TenancyResolver when caller didn't set it (null OK for platform-wide indexes)",
@@ -21,7 +21,7 @@
     },
     {
       "model": "SearchSyncJob",
-      "observer": "Academorix\\Search\\Observers\\SearchSyncJobObserver",
+      "observer": "Stackra\\Search\\Observers\\SearchSyncJobObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `ssync_`, tenant_id, causer polymorphic pair",
         "creating \u2192 resolve notify_channels + notify_locale (precedence: request > user setting > tenant setting > config default) and FREEZE on the row",
@@ -36,7 +36,7 @@
     },
     {
       "model": "SearchSynonym",
-      "observer": "Academorix\\Search\\Observers\\SearchSynonymObserver",
+      "observer": "Stackra\\Search\\Observers\\SearchSynonymObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `syn_`, tenant_id, created_by polymorphic pair",
         "creating \u2192 default source='tenant_admin' unless the row is being seeded from #[SearchSynonym] (then source='attribute' + is_system=true)",

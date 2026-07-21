@@ -92,9 +92,9 @@
     "@vivtel/metadata": "catalog:"
   },
   "devDependencies": {
-    "@academorix/config-tsconfig": "workspace:*",
-    "@academorix/config-tsup": "workspace:*",
-    "@academorix/typescript-config": "workspace:*",
+    "@stackra/config-tsconfig": "workspace:*",
+    "@stackra/config-tsup": "workspace:*",
+    "@stackra/typescript-config": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/support": "workspace:*",

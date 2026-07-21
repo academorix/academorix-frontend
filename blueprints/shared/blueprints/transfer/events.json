@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/transfer/events",
+  "id": "stackra://modules/transfer/events",
   "$version": 1,
   "title": "transfer \u2014 published events",
-  "namespace": "Academorix\\Transfer\\Events",
+  "namespace": "Stackra\\Transfer\\Events",
   "dispatchMode": "afterCommit",
   "events": [
     {
       "name": "XferJobQueued",
-      "class": "Academorix\\Transfer\\Events\\XferJobQueued",
+      "class": "Stackra\\Transfer\\Events\\XferJobQueued",
       "trigger": "XferJob row inserted (status=queued). Fires from XferJobObserver.created.",
       "queue": "transfer",
       "broadcastable": true,
@@ -28,7 +28,7 @@
     },
     {
       "name": "XferJobStarted",
-      "class": "Academorix\\Transfer\\Events\\XferJobStarted",
+      "class": "Stackra\\Transfer\\Events\\XferJobStarted",
       "trigger": "XferJob transitioned from queued \u2192 running. Fires from AbstractDynamicImport/Export BeforeImport / BeforeExport handler.",
       "queue": "transfer",
       "broadcastable": true,
@@ -44,7 +44,7 @@
     },
     {
       "name": "XferJobProgress",
-      "class": "Academorix\\Transfer\\Events\\XferJobProgress",
+      "class": "Stackra\\Transfer\\Events\\XferJobProgress",
       "trigger": "Fires every `config('transfer.progress_every_rows')` rows during a chunk, or on every shard completion. NOT audit-worthy \u2014 broadcast only.",
       "queue": null,
       "broadcastable": true,
@@ -58,7 +58,7 @@
     },
     {
       "name": "XferJobShardCompleted",
-      "class": "Academorix\\Transfer\\Events\\XferJobShardCompleted",
+      "class": "Stackra\\Transfer\\Events\\XferJobShardCompleted",
       "trigger": "One XferShard transitioned to succeeded or failed. Fires from XferShardObserver.updated. Coordinator job aggregates counters into the parent XferJob.",
       "queue": "transfer",
       "broadcastable": true,
@@ -76,7 +76,7 @@
     },
     {
       "name": "XferJobCompleted",
-      "class": "Academorix\\Transfer\\Events\\XferJobCompleted",
+      "class": "Stackra\\Transfer\\Events\\XferJobCompleted",
       "trigger": "XferJob transitioned to succeeded (zero failed rows). Fires from MarkXferJobCompletedJob.",
       "queue": "transfer",
       "broadcastable": true,
@@ -97,7 +97,7 @@
     },
     {
       "name": "XferJobPartiallySucceeded",
-      "class": "Academorix\\Transfer\\Events\\XferJobPartiallySucceeded",
+      "class": "Stackra\\Transfer\\Events\\XferJobPartiallySucceeded",
       "trigger": "XferJob transitioned to partially_succeeded (some rows failed but the run continued per stopOnError=false). Fires from MarkXferJobCompletedJob.",
       "queue": "transfer",
       "broadcastable": true,
@@ -116,7 +116,7 @@
     },
     {
       "name": "XferJobFailed",
-      "class": "Academorix\\Transfer\\Events\\XferJobFailed",
+      "class": "Stackra\\Transfer\\Events\\XferJobFailed",
       "trigger": "XferJob transitioned to failed (unrecoverable). Fires from AbstractDynamicImport/Export::failed(Throwable) handler.",
       "queue": "transfer",
       "broadcastable": true,
@@ -135,7 +135,7 @@
     },
     {
       "name": "XferJobCancelled",
-      "class": "Academorix\\Transfer\\Events\\XferJobCancelled",
+      "class": "Stackra\\Transfer\\Events\\XferJobCancelled",
       "trigger": "XferJob transitioned to cancelled either by user request (POST /jobs/{id}/cancel) or stale sweep (queued/running with no progress > 24h). Fires from XferJobObserver.updating.",
       "queue": "transfer",
       "broadcastable": true,
@@ -150,7 +150,7 @@
     },
     {
       "name": "XferArtifactPruned",
-      "class": "Academorix\\Transfer\\Events\\XferArtifactPruned",
+      "class": "Stackra\\Transfer\\Events\\XferArtifactPruned",
       "trigger": "XferArtifact file deleted from disk by PruneXferArtifactsJob. Row survives; path nulled + purged_at set.",
       "queue": "transfer",
       "broadcastable": false,
@@ -165,7 +165,7 @@
     },
     {
       "name": "SampleDataGenerated",
-      "class": "Academorix\\Transfer\\Events\\SampleDataGenerated",
+      "class": "Stackra\\Transfer\\Events\\SampleDataGenerated",
       "trigger": "GenerateSampleDataJob completed \u2014 fixture records inserted for a #[SampleData]-annotated entity.",
       "queue": "transfer",
       "broadcastable": true,

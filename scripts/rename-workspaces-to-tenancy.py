@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Rename workspaces → tenancy across the Academorix modules blueprint.
+Rename workspaces → tenancy across the Stackra modules blueprint.
 
 Reverses `scripts/rename-tenancy-to-workspaces.py` — takes the codebase
 back to the canonical vocabulary declared in `.kiro/steering/hierarchy.md`
@@ -10,8 +10,8 @@ WHAT IT DOES
     File contents (in every JSON / MD / PHP / TS file under modules/):
 
         # High-specificity structural refs FIRST — never ambiguous.
-        Academorix\\Workspaces\\ (both slash variants)  →  Academorix\\Tenancy\\
-        academorix://modules/workspaces/               →  academorix://modules/tenancy/
+        Stackra\\Workspaces\\ (both slash variants)  →  Stackra\\Tenancy\\
+        stackra://modules/workspaces/               →  stackra://modules/tenancy/
         modules/platform/workspaces/ (path)            →  modules/platform/tenancy/
         modules/workspaces/ (path)                     →  modules/tenancy/
         "module": "workspaces"                          →  "module": "tenancy"
@@ -95,7 +95,7 @@ from pathlib import Path
 # Config
 # --------------------------------------------------------------------------
 
-REPO_ROOT = Path("/Users/akouta/Projects/academorix-frontend")
+REPO_ROOT = Path("/Users/akouta/Projects/stackra-frontend")
 DEFAULT_SCOPES = [REPO_ROOT / "modules"]
 
 SCAN_EXTENSIONS = {
@@ -129,14 +129,14 @@ SUBSTITUTIONS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"\bworkspaces_count\b"), "tenants_count"),
 
     # ---- PHP namespaces — both escape flavours (unescaped + JSON-escaped) ----
-    # `Academorix\Workspaces\...` (PHP source).
-    (re.compile(r"Academorix\\Workspaces\\"), r"Academorix\\Tenancy\\"),
-    # `Academorix\\Workspaces\\...` (JSON-escaped, e.g. inside JSON strings).
-    (re.compile(r"Academorix\\\\Workspaces\\\\"), r"Academorix\\\\Tenancy\\\\"),
+    # `Stackra\Workspaces\...` (PHP source).
+    (re.compile(r"Stackra\\Workspaces\\"), r"Stackra\\Tenancy\\"),
+    # `Stackra\\Workspaces\\...` (JSON-escaped, e.g. inside JSON strings).
+    (re.compile(r"Stackra\\\\Workspaces\\\\"), r"Stackra\\\\Tenancy\\\\"),
 
     # ---- Blueprint URNs + module-ref JSON keys — always tenancy, never tenants ----
-    (re.compile(r"academorix://modules/workspaces/"), "academorix://modules/tenancy/"),
-    (re.compile(r"academorix://modules/workspaces(?=/|\b)"), "academorix://modules/tenancy"),
+    (re.compile(r"stackra://modules/workspaces/"), "stackra://modules/tenancy/"),
+    (re.compile(r"stackra://modules/workspaces(?=/|\b)"), "stackra://modules/tenancy"),
     (re.compile(r'"module":\s*"workspaces"'), '"module": "tenancy"'),
 
     # ---- Filesystem paths — folder rename is a path replacement ----
@@ -169,7 +169,7 @@ SUBSTITUTIONS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r'"foreign":\s*\{\s*"table":\s*"workspace_contacts"'), '"foreign": { "table": "tenant_contacts"'),
 
     # ---- PascalCase compounds — Workspaces (plural class prefix) first ----
-    # e.g. `WorkspacesServiceProvider`, `Academorix\Workspaces\Models\...`.
+    # e.g. `WorkspacesServiceProvider`, `Stackra\Workspaces\Models\...`.
     (re.compile(r"(?:\b|(?<=[a-z]))Workspaces(?=[A-Z_]|\b)"), "Tenancy"),
     # e.g. `Workspace`, `WorkspaceContact`, `BelongsToWorkspace`, `WorkspaceIntegration`.
     (re.compile(r"(?:\b|(?<=[a-z]))Workspace(?=[A-Z_]|\b)"), "Tenant"),

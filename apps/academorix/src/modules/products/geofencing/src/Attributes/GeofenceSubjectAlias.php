@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Attributes;
+namespace Stackra\Geofencing\Attributes;
 
 use Attribute;
 

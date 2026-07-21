@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Jobs;
+namespace Stackra\Search\Jobs;
 
-use Academorix\Search\Contracts\Data\SearchAnalyticsEventInterface;
-use Academorix\Search\Contracts\Repositories\SearchAnalyticsEventRepositoryInterface;
+use Stackra\Search\Contracts\Data\SearchAnalyticsEventInterface;
+use Stackra\Search\Contracts\Repositories\SearchAnalyticsEventRepositoryInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

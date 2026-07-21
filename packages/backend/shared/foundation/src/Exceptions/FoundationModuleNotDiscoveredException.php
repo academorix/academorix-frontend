@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Exceptions;
+namespace Stackra\Foundation\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The ModuleRegistry expected a module that didn't discover.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class FoundationModuleNotDiscoveredException extends AcademorixException
+final class FoundationModuleNotDiscoveredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tasks\Policies;
+namespace Stackra\Tasks\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Tasks\Models\Task;
+use Stackra\User\Models\User;
+use Stackra\Tasks\Models\Task;
 
 /**
- * Authorization policy for {@see \Academorix\Tasks\Models\Task}.
+ * Authorization policy for {@see \Stackra\Tasks\Models\Task}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Casts;
+namespace Stackra\Versioning\Casts;
 
-use Academorix\Versioning\Contracts\Data\ApiVersionInterface;
-use Academorix\Versioning\Contracts\Services\VersionSchemeRegistryInterface;
-use Academorix\Versioning\Exceptions\UnknownVersionSchemeException;
+use Stackra\Versioning\Contracts\Data\ApiVersionInterface;
+use Stackra\Versioning\Contracts\Services\VersionSchemeRegistryInterface;
+use Stackra\Versioning\Exceptions\UnknownVersionSchemeException;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 

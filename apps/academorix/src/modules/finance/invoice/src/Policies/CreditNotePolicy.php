@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invoice\Policies;
+namespace Stackra\Invoice\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Invoice\Models\CreditNote;
+use Stackra\User\Models\User;
+use Stackra\Invoice\Models\CreditNote;
 
 /**
- * Authorization policy for {@see \Academorix\Invoice\Models\CreditNote}.
+ * Authorization policy for {@see \Stackra\Invoice\Models\CreditNote}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

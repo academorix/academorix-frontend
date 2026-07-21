@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/admin-console/policies",
+  "id": "stackra://modules/admin-console/policies",
   "$version": 1,
   "title": "admin-console — authorization policies",
   "description": "Platform admin only. Guard = platform_admin. Every action requires super_admin OR the specific ops role, and every action fires the ObservePlatformAdmin middleware audit chain.",
   "policies": [
     {
       "model": "Impersonation",
-      "class": "Academorix\\Platform\\AdminConsole\\Policies\\ImpersonationPolicy",
+      "class": "Stackra\\Platform\\AdminConsole\\Policies\\ImpersonationPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -35,7 +35,7 @@
     },
     {
       "model": "TenantSuspension",
-      "class": "Academorix\\Platform\\AdminConsole\\Policies\\TenantSuspensionPolicy",
+      "class": "Stackra\\Platform\\AdminConsole\\Policies\\TenantSuspensionPolicy",
       "abilities": [
         {
           "action": "suspend",
@@ -52,7 +52,7 @@
     },
     {
       "model": "TenantDataExport",
-      "class": "Academorix\\Platform\\AdminConsole\\Policies\\TenantDataExportPolicy",
+      "class": "Stackra\\Platform\\AdminConsole\\Policies\\TenantDataExportPolicy",
       "abilities": [
         {
           "action": "create",

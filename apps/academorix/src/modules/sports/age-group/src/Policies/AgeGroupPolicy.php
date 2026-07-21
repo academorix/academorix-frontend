@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Policies;
+namespace Stackra\AgeGroup\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\AgeGroup\Models\AgeGroup;
+use Stackra\User\Models\User;
+use Stackra\AgeGroup\Models\AgeGroup;
 
 /**
- * Authorization policy for {@see \Academorix\AgeGroup\Models\AgeGroup}.
+ * Authorization policy for {@see \Stackra\AgeGroup\Models\AgeGroup}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

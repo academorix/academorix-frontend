@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/realtime/entitlements",
+  "id": "stackra://modules/realtime/entitlements",
   "$version": 1,
   "title": "realtime — entitlements consumed",
   "description": "Entitlements this module reads (slot / pool / boolean / unlimited).",

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attendance\Contracts\Repositories;
+namespace Stackra\Attendance\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Attendance\Models\AbsenceRecord}.
+ * Repository contract for {@see Stackra\Attendance\Models\AbsenceRecord}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `AbsenceRecordRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Attendance\Models\AbsenceRecord>
+ * @extends RepositoryInterface<\Stackra\Attendance\Models\AbsenceRecord>
  *
  * @category Attendance
  *

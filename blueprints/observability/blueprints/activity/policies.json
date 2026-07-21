@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/activity/policies",
+  "id": "stackra://modules/activity/policies",
   "$version": 1,
   "title": "activity — authorization policies",
   "description": "Two policy classes. `ActivityPolicy` gates reads on activity rows (writes never happen over HTTP — the vendor trait is the only write path). `ActivityRetentionPolicyPolicy` gates CRUD on retention overrides. Guard-aware — each ability checks the caller's guard (sanctum / platform_admin) and gates accordingly.",
   "policies": [
     {
-      "class": "Academorix\\Observability\\Activity\\Policies\\ActivityPolicy",
-      "target": "Academorix\\Observability\\Activity\\Models\\Activity",
+      "class": "Stackra\\Observability\\Activity\\Policies\\ActivityPolicy",
+      "target": "Stackra\\Observability\\Activity\\Models\\Activity",
       "guard": ["sanctum", "platform_admin"],
       "abilities": [
         {
@@ -52,7 +52,7 @@
           "name": "viewAnyPlatform",
           "guard": "platform_admin",
           "requires": ["platform.activity.viewAny"],
-          "description": "Cross-tenant list for Academorix ops. Every list read captures the (platform_user_id, tenant_ids_touched, filters) tuple in the audit stream."
+          "description": "Cross-tenant list for Stackra ops. Every list read captures the (platform_user_id, tenant_ids_touched, filters) tuple in the audit stream."
         },
         {
           "name": "viewPlatform",
@@ -63,8 +63,8 @@
       ]
     },
     {
-      "class": "Academorix\\Observability\\Activity\\Policies\\ActivityRetentionPolicyPolicy",
-      "target": "Academorix\\Observability\\Activity\\Models\\ActivityRetentionPolicy",
+      "class": "Stackra\\Observability\\Activity\\Policies\\ActivityRetentionPolicyPolicy",
+      "target": "Stackra\\Observability\\Activity\\Models\\ActivityRetentionPolicy",
       "guard": ["sanctum"],
       "abilities": [
         {

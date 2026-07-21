@@ -1,69 +1,69 @@
 {
-  "id": "academorix://modules/athlete/listeners",
+  "id": "stackra://modules/athlete/listeners",
   "$version": 1,
   "title": "athlete — subscribed events",
   "listeners": [
     {
       "event": "branch::BranchArchived",
-      "listener": "Academorix\\Sports\\Athlete\\Listeners\\PreventAthleteOrphansOnBranchArchived",
+      "listener": "Stackra\\Sports\\Athlete\\Listeners\\PreventAthleteOrphansOnBranchArchived",
       "queue": "athlete",
       "priority": 30,
       "purpose": "Refuses the Branch archive when any active/paused Athlete still references it. Fires a domain-level refusal; the branch module surfaces the error as BRANCH_HAS_ACTIVE_ATHLETES (409). Same-shape as the facility + staff sibling hooks."
     },
     {
       "event": "user::UserSoftDeleted",
-      "listener": "Academorix\\Sports\\Athlete\\Listeners\\PreventUserArchiveWithActiveAthlete",
+      "listener": "Stackra\\Sports\\Athlete\\Listeners\\PreventUserArchiveWithActiveAthlete",
       "queue": "athlete",
       "priority": 45,
       "purpose": "Pre-write hook: refuses the User soft-delete when the User has an active linked Athlete row (user_id-based FK) OR when the User is consent_recorded_by_user_id for any active minor athlete. Surfaces USER_HAS_ACTIVE_ATHLETE OR USER_IS_MINOR_CONSENT_RECORDER."
     },
     {
       "event": "athlete::AthleteCreated",
-      "listener": "Academorix\\Sports\\Athlete\\Listeners\\SetAgeGroupSnapshotOnAthleteCreated",
+      "listener": "Stackra\\Sports\\Athlete\\Listeners\\SetAgeGroupSnapshotOnAthleteCreated",
       "queue": "athlete",
       "priority": 20,
       "purpose": "In-band resolution of Athlete.current_age_group_id at create time. Runs AgeGroupResolver::resolveFor(athlete.dob) + updates the row before returning the create response. Without it, athletes would appear age-group-less until the next nightly RollAthleteAgeGroupSnapshotJob pass."
     },
     {
       "event": "athlete::AthleteArchived",
-      "listener": "Academorix\\Sports\\Athlete\\Listeners\\UnblockUserArchiveWhenLastAthleteArchived",
+      "listener": "Stackra\\Sports\\Athlete\\Listeners\\UnblockUserArchiveWhenLastAthleteArchived",
       "queue": "athlete",
       "priority": 50,
       "purpose": "Reverses PreventUserArchiveWithActiveAthlete. When the User has zero remaining active Athlete rows across all tenants, clears the block flag so a subsequent User archive succeeds."
     },
     {
       "event": "athlete::AthleteWithdrawn",
-      "listener": "Academorix\\Sports\\Athlete\\Listeners\\CancelActiveEnrollmentsOnAthleteWithdrawn",
+      "listener": "Stackra\\Sports\\Athlete\\Listeners\\CancelActiveEnrollmentsOnAthleteWithdrawn",
       "queue": "athlete",
       "purpose": "Wave 3a sibling: when an athlete withdraws, cascade-cancel every active AthleteEnrollment (transitions to withdrawn). Only fires when the withdrawal was invoked with cascade=true."
     },
     {
       "event": "athlete::AthleteGraduated",
-      "listener": "Academorix\\Sports\\Athlete\\Listeners\\CloseActiveEnrollmentsOnAthleteGraduated",
+      "listener": "Stackra\\Sports\\Athlete\\Listeners\\CloseActiveEnrollmentsOnAthleteGraduated",
       "queue": "athlete",
       "purpose": "Wave 3a sibling: cascade-close every active AthleteEnrollment (transitions to completed). Only fires when the graduate was invoked with cascade=true."
     },
     {
       "event": "age-group::AgeGroupBoundsChanged",
-      "listener": "Academorix\\Sports\\Athlete\\Listeners\\MaybeRecomputeAthleteAgeGroupSnapshots",
+      "listener": "Stackra\\Sports\\Athlete\\Listeners\\MaybeRecomputeAthleteAgeGroupSnapshots",
       "queue": "athlete",
       "purpose": "When an AgeGroup's bounds shift, recompute snapshots for every affected athlete in the tenant. Small tenants: in-band (bounded work). Enterprise tenants: defer to next nightly RollAthleteAgeGroupSnapshotJob (batched — a bounds change could touch thousands of rows)."
     },
     {
       "event": "age-group::AgeGroupCutoffChanged",
-      "listener": "Academorix\\Sports\\Athlete\\Listeners\\MaybeRecomputeAthleteAgeGroupSnapshots",
+      "listener": "Stackra\\Sports\\Athlete\\Listeners\\MaybeRecomputeAthleteAgeGroupSnapshots",
       "queue": "athlete",
       "purpose": "Same pattern for cutoff changes."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Sports\\Athlete\\Listeners\\PurgeAthleteDataForErasedTenant",
+      "listener": "Stackra\\Sports\\Athlete\\Listeners\\PurgeAthleteDataForErasedTenant",
       "queue": "athlete",
       "purpose": "Cascade delete via FK; migrates athlete_medical_history rows to the compliance-archive table (they outlive the tenant per 7-year medical retention)."
     },
     {
       "event": "user::UserActivated",
-      "listener": "Academorix\\Sports\\Athlete\\Listeners\\LinkPendingAthleteToNewUser",
+      "listener": "Stackra\\Sports\\Athlete\\Listeners\\LinkPendingAthleteToNewUser",
       "queue": "athlete",
       "purpose": "When a User activates (email verification completes), sweep for unlinked Athlete rows matching this User's email (metadata.email_hint). Auto-links + fires AthleteLinkedToUser. Skipped for minors."
     }

@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/versioning/notifications",
+  "id": "stackra://modules/versioning/notifications",
   "$version": 1,
   "title": "versioning \u2014 notification classes + categories",
   "description": "2 Notification classes + 2 categories registered with the notifications core. Fired when a DeprecationNotice publishes with notify_customers=true.",
-  "namespace": "Academorix\\Versioning\\Notifications",
+  "namespace": "Stackra\\Versioning\\Notifications",
   "notifications": ["ApiDeprecationNotification", "ApiSunsetNotification"],
   "categories": [
     {

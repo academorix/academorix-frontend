@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Contracts\Services;
+namespace Stackra\Subscription\Contracts\Services;
 
-use Academorix\Subscription\Models\Subscription;
-use Academorix\Subscription\Services\DefaultDunningOrchestrator;
+use Stackra\Subscription\Models\Subscription;
+use Stackra\Subscription\Services\DefaultDunningOrchestrator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

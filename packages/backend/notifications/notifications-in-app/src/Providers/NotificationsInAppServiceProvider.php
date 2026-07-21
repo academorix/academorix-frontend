@@ -18,11 +18,11 @@
  *     `#[RequirePermission]`.
  *   - Console commands: `#[AsCommand]` extending `BaseCommand`.
  *   - Seeder: `#[AsSeeder(priority: 46)]` composes
- *     {@see \Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
+ *     {@see \Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
  *   - Events: `#[AsEvent]` on every class.
  *   - Observers: `#[ObservedBy]` on the models.
  *   - Policies: `#[UsePolicy]` on the models.
- *   - Channel driver: `#[AsNotificationChannel]` on {@see \Academorix\Notifications\InApp\Channels\InAppChannel}.
+ *   - Channel driver: `#[AsNotificationChannel]` on {@see \Stackra\Notifications\InApp\Channels\InAppChannel}.
  *     The parent notifications module's channel registry is expected
  *     to consume this attribute via its own `#[HydratesFrom]` binding
  *     when landed. Until then, the driver still self-declares its
@@ -32,11 +32,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Providers;
+namespace Stackra\Notifications\InApp\Providers;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * notifications-in-app module service provider.

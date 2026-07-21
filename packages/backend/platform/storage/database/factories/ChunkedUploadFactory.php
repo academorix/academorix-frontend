@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Database\Factories;
+namespace Stackra\Storage\Database\Factories;
 
-use Academorix\Storage\Contracts\Data\ChunkedUploadInterface;
-use Academorix\Storage\Enums\ChunkedUploadState;
-use Academorix\Storage\Enums\FileKind as FileKindEnum;
-use Academorix\Storage\Models\ChunkedUpload;
+use Stackra\Storage\Contracts\Data\ChunkedUploadInterface;
+use Stackra\Storage\Enums\ChunkedUploadState;
+use Stackra\Storage\Enums\FileKind as FileKindEnum;
+use Stackra\Storage\Models\ChunkedUpload;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

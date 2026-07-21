@@ -1,9 +1,9 @@
 # Architecture Decision Records
 
 This directory records the significant architectural decisions made in the
-Academorix frontend (and the accompanying blueprint / backend surface it
+Stackra frontend (and the accompanying blueprint / backend surface it
 describes). Every ADR follows the same shape used by the sibling
-`academorix-backend/` repository — Context, Options, Decision, Consequences,
+`stackra-backend/` repository — Context, Options, Decision, Consequences,
 Related work.
 
 ## Numbering + supersession
@@ -17,14 +17,14 @@ Related work.
 
 ## Index
 
-Rows 0001–0023 originate at `academorix-backend/docs/adr/` and are cross-
+Rows 0001–0023 originate at `stackra-backend/docs/adr/` and are cross-
 referenced across `.kiro/agents/*.md` and `.kiro/steering/*.md`. This working
 directory adds ADR 0024 onward; when this tree consolidates back into
-`academorix-backend/`, the numbering stays continuous.
+`stackra-backend/`, the numbering stays continuous.
 
 | #                                           | Title                                                                                        | Status   |
 | ------------------------------------------- | -------------------------------------------------------------------------------------------- | -------- |
-| 0001–0023                                   | See `academorix-backend/docs/adr/README.md`                                                  | Accepted |
+| 0001–0023                                   | See `stackra-backend/docs/adr/README.md`                                                  | Accepted |
 | [0024](0024-enrollment-funnel-not-a-crm.md) | Enrollment funnel is not a CRM (drop `growth/crm-leads`, absorb into `sports/registrations`) | Accepted |
 | [0025](0025-integrations-two-lane-model.md) | Integrations two-lane model — provider slots now, marketplace app substrate for later        | Accepted |
 

@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/athlete/health",
+  "id": "stackra://modules/athlete/health",
   "$version": 1,
   "title": "athlete — health probes",
   "probes": [
     {
       "name": "athlete-schema-migrations-applied",
-      "class": "Academorix\\Sports\\Athlete\\Health\\Probes\\SchemaMigrationsAppliedProbe",
+      "class": "Stackra\\Sports\\Athlete\\Health\\Probes\\SchemaMigrationsAppliedProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms every migration this module ships has run: athletes, athlete_medical_history + their indexes.",
@@ -13,14 +13,14 @@
     },
     {
       "name": "athlete-medical-history-table-present",
-      "class": "Academorix\\Sports\\Athlete\\Health\\Probes\\MedicalHistoryTablePresentProbe",
+      "class": "Stackra\\Sports\\Athlete\\Health\\Probes\\MedicalHistoryTablePresentProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms the dedicated athlete_medical_history table exists (separate from the normal audits table). Missing this means every medical write silently lands in the normal audits table + loses the 7-year regulated-health retention guarantee."
     },
     {
       "name": "athlete-medical-queue-connected",
-      "class": "Academorix\\Sports\\Athlete\\Health\\Probes\\MedicalQueueConnectedProbe",
+      "class": "Stackra\\Sports\\Athlete\\Health\\Probes\\MedicalQueueConnectedProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms the medical-audit queue (default Redis) is reachable. Falls back to sync dispatch when unreachable — but the health probe surfaces the degraded state.",
@@ -28,7 +28,7 @@
     },
     {
       "name": "athlete-age-group-snapshot-currency",
-      "class": "Academorix\\Sports\\Athlete\\Health\\Probes\\AgeGroupSnapshotCurrencyProbe",
+      "class": "Stackra\\Sports\\Athlete\\Health\\Probes\\AgeGroupSnapshotCurrencyProbe",
       "category": "readiness",
       "critical": false,
       "description": "Detects athletes whose current_age_group_snapshot_at is older than 48 hours (the config threshold). Fires a WARN when > 100 stale athletes exist — indicates RollAthleteAgeGroupSnapshotJob has stalled.",
@@ -36,14 +36,14 @@
     },
     {
       "name": "athlete-consent-expiry-backlog",
-      "class": "Academorix\\Sports\\Athlete\\Health\\Probes\\ConsentExpiryBacklogProbe",
+      "class": "Stackra\\Sports\\Athlete\\Health\\Probes\\ConsentExpiryBacklogProbe",
       "category": "readiness",
       "critical": false,
       "description": "Detects athletes whose consent_recorded_at is > 365 days old (when athlete_consent_workflow entitlement is on) without any refresh. Fires a WARN when > 20 such athletes exist per tenant — indicates guardian outreach failure."
     },
     {
       "name": "athlete-orphan-athlete-detection",
-      "class": "Academorix\\Sports\\Athlete\\Health\\Probes\\OrphanAthleteDetectionProbe",
+      "class": "Stackra\\Sports\\Athlete\\Health\\Probes\\OrphanAthleteDetectionProbe",
       "category": "readiness",
       "critical": false,
       "description": "Detects Athlete rows with status='active' referencing a Branch with status != 'active' (would violate the PreventAthleteOrphansOnBranchArchived hook if retroactively applied — indicates historical drift).",
@@ -51,21 +51,21 @@
     },
     {
       "name": "athlete-minor-name-leakage-detection",
-      "class": "Academorix\\Sports\\Athlete\\Health\\Probes\\MinorNameLeakageDetectionProbe",
+      "class": "Stackra\\Sports\\Athlete\\Health\\Probes\\MinorNameLeakageDetectionProbe",
       "category": "readiness",
       "critical": true,
       "description": "Random-samples 100 platform-admin GET responses over the last hour + checks the redactor stripped minor names correctly. Any leakage is a P1 compliance incident."
     },
     {
       "name": "athlete-medical-history-write-latency",
-      "class": "Academorix\\Sports\\Athlete\\Health\\Probes\\MedicalHistoryWriteLatencyProbe",
+      "class": "Stackra\\Sports\\Athlete\\Health\\Probes\\MedicalHistoryWriteLatencyProbe",
       "category": "readiness",
       "critical": false,
       "description": "P99 write latency on athlete_medical_history. Should be < 100ms — small table with append-only writes; latency drift indicates disk pressure or lock contention."
     },
     {
       "name": "athlete-slot-headroom",
-      "class": "Academorix\\Sports\\Athlete\\Health\\Probes\\SlotHeadroomProbe",
+      "class": "Stackra\\Sports\\Athlete\\Health\\Probes\\SlotHeadroomProbe",
       "category": "readiness",
       "critical": false,
       "description": "Counts tenants within 10% of their athlete_slot cap. Product signal — the sales team may want to reach out for a tier upgrade."

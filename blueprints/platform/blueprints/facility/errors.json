@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/facility/errors",
+  "id": "stackra://modules/facility/errors",
   "$version": 1,
   "title": "facility — error codes",
   "namespace": "facility",

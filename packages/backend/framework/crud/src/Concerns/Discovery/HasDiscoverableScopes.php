@@ -8,10 +8,10 @@ declare(strict_types=1);
  * @description
  * Trait that adds `#[AsScope]` discovery to a service provider (or any
  * host with access to the service container). Resolves the unified
- * {@see \Academorix\Foundation\Contracts\DiscoversAttributes} contract
+ * {@see \Stackra\Foundation\Contracts\DiscoversAttributes} contract
  * — no direct dependency on the underlying attribute-manifest backend
  * (currently `olvlvl/composer-attribute-collector`, wrapped by
- * {@see \Academorix\Foundation\Discovery\AttributeDiscovery}).
+ * {@see \Stackra\Foundation\Discovery\AttributeDiscovery}).
  *
  * ## Boot-time contract
  *
@@ -32,11 +32,11 @@ declare(strict_types=1);
  * @since 2.0.0
  */
 
-namespace Academorix\Crud\Concerns\Discovery;
+namespace Stackra\Crud\Concerns\Discovery;
 
-use Academorix\Crud\Attributes\AsScope;
-use Academorix\Crud\Registries\ScopeRegistry;
-use Academorix\Foundation\Contracts\DiscoversAttributes;
+use Stackra\Crud\Attributes\AsScope;
+use Stackra\Crud\Registries\ScopeRegistry;
+use Stackra\Foundation\Contracts\DiscoversAttributes;
 use Illuminate\Database\Eloquent\Scope;
 use Throwable;
 

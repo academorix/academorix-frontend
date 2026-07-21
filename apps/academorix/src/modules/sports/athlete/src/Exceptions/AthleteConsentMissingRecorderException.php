@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Athlete\Exceptions;
+namespace Stackra\Athlete\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * consent_recorded_by_user_id required when any consent_* is true.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AthleteConsentMissingRecorderException extends AcademorixException
+final class AthleteConsentMissingRecorderException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

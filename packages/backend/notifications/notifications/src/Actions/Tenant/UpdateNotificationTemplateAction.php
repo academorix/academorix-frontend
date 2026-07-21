@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Actions\Tenant;
+namespace Stackra\Notifications\Actions\Tenant;
 
-use Academorix\Notifications\Contracts\Repositories\NotificationTemplateRepositoryInterface;
-use Academorix\Notifications\Data\NotificationTemplateData;
-use Academorix\Notifications\Data\Requests\UpdateNotificationTemplateRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\Notifications\Contracts\Repositories\NotificationTemplateRepositoryInterface;
+use Stackra\Notifications\Data\NotificationTemplateData;
+use Stackra\Notifications\Data\Requests\UpdateNotificationTemplateRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Patch;
 
 /**
  * `PATCH /api/v1/tenant/notification-templates/{template}` — update action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Patch(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Notifications

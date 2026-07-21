@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsSms\Contracts\Services;
+namespace Stackra\NotificationsSms\Contracts\Services;
 
-use Academorix\NotificationsSms\Services\SmsChannel;
+use Stackra\NotificationsSms\Services\SmsChannel;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invoice\Contracts\Services;
+namespace Stackra\Invoice\Contracts\Services;
 
-use Academorix\Invoice\Services\CreditNoteNumberGenerator;
+use Stackra\Invoice\Services\CreditNoteNumberGenerator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

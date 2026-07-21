@@ -1,7 +1,7 @@
-# academorix-platform/realtime-sdk
+# stackra-platform/realtime-sdk
 
 Wire-visible SDK surface for the `realtime` module of the Platform service.
-Auto-discovered by `academorix/platform-sdk` (the service umbrella) via
+Auto-discovered by `stackra/platform-sdk` (the service umbrella) via
 `#[AsSdkResource(name: 'realtime', service: 'platform')]`.
 
 ## Aggregates
@@ -29,7 +29,7 @@ src/
 Consumed only over HTTP via the umbrella client:
 
 ```php
-app(\Academorix\PlatformSdk\Client\PlatformSdk::class)
+app(\Stackra\PlatformSdk\Client\PlatformSdk::class)
     ->realtime()
     ->broadcastChannels()
     ->list();

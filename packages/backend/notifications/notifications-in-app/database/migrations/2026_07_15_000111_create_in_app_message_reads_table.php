@@ -7,7 +7,7 @@
  * Create the `in_app_message_reads` table.
  *
  * Per-user read / dismissed state for an
- * {@see \Academorix\Notifications\InApp\Models\InAppMessage} row. One
+ * {@see \Stackra\Notifications\InApp\Models\InAppMessage} row. One
  * row per `(in_app_message_id, addressee_id)`. Sibling table (not
  * columns on `in_app_messages`) so the message row stays immutable
  * and concurrency-safe.
@@ -18,8 +18,8 @@
 
 declare(strict_types=1);
 
-use Academorix\Notifications\InApp\Contracts\Data\InAppMessageInterface;
-use Academorix\Notifications\InApp\Contracts\Data\InAppMessageReadInterface;
+use Stackra\Notifications\InApp\Contracts\Data\InAppMessageInterface;
+use Stackra\Notifications\InApp\Contracts\Data\InAppMessageReadInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

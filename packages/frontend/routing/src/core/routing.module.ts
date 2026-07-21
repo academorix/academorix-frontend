@@ -54,7 +54,7 @@ import { SeoModule } from "@/seo/seo.module";
  *   imports: [
  *     RoutingModule.forRoot({
  *       basename: '/',
- *       rootDomain: 'academorix.app',
+ *       rootDomain: 'stackra.app',
  *       ai: false,
  *     }),
  *   ],

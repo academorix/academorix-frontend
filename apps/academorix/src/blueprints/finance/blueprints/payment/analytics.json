@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/payment/analytics",
+  "id": "stackra://modules/payment/analytics",
   "$version": 1,
   "title": "payment — product analytics",
   "sink": "segment",

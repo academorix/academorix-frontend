@@ -1,20 +1,20 @@
 {
-  "id": "academorix://modules/identity/attributes",
+  "id": "stackra://modules/identity/attributes",
   "$version": 1,
   "title": "identity \u2014 PHP attribute contracts",
   "description": "One attribute. #[AsCredentialListener] marks a class as a subscriber to credential-lifecycle events (registered, locked, password changed, MFA enrolled, erased). Discovered at boot by the IdentityServiceProvider so services under `auth/`, `notifications/`, `activity/`, and `observability/` can react without explicit event bindings.",
-  "namespace": "Academorix\\Identity\\Attributes",
+  "namespace": "Stackra\\Identity\\Attributes",
   "attributes": [
     {
       "name": "AsCredentialListener",
-      "class": "Academorix\\Identity\\Attributes\\AsCredentialListener",
+      "class": "Stackra\\Identity\\Attributes\\AsCredentialListener",
       "targets": ["class"],
       "params": [
         {
           "name": "events",
           "type": "array<string>",
           "default": ["*"],
-          "description": "Which credential events this class reacts to. Wildcard `*` = every event under `Academorix\\Identity\\Events\\*`. Specific list e.g. `['IdentityLocked', 'PasswordChanged']` subscribes to those only. Validated against the events map at boot; typos abort application boot."
+          "description": "Which credential events this class reacts to. Wildcard `*` = every event under `Stackra\\Identity\\Events\\*`. Specific list e.g. `['IdentityLocked', 'PasswordChanged']` subscribes to those only. Validated against the events map at boot; typos abort application boot."
         },
         {
           "name": "queue",

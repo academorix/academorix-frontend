@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Exceptions;
+namespace Stackra\Search\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a query exceeds `config('search.query.max_length')`.
@@ -13,7 +13,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SearchQueryTooLongException extends AcademorixException
+final class SearchQueryTooLongException extends StackraException
 {
     public const CODE = 'SEARCH_QUERY_TOO_LONG';
 

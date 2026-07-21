@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Dunning\Models;
+namespace Stackra\Dunning\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Dunning\Contracts\Data\DunningPlanInterface;
-use Academorix\Dunning\Database\Factories\DunningPlanFactory;
-use Academorix\Dunning\Policies\DunningPlanPolicy;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Dunning\Contracts\Data\DunningPlanInterface;
+use Stackra\Dunning\Database\Factories\DunningPlanFactory;
+use Stackra\Dunning\Policies\DunningPlanPolicy;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Actions\Tenant;
+namespace Stackra\Notifications\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Notifications\Contracts\Data\NotificationPreferenceInterface;
-use Academorix\Notifications\Contracts\Repositories\NotificationPreferenceRepositoryInterface;
-use Academorix\Notifications\Data\NotificationPreferenceData;
-use Academorix\Notifications\Data\Requests\UpdatePreferencesRequestData;
-use Academorix\Notifications\Enums\NotificationsPermission;
-use Academorix\Notifications\Models\NotificationPreference;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Patch;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Notifications\Contracts\Data\NotificationPreferenceInterface;
+use Stackra\Notifications\Contracts\Repositories\NotificationPreferenceRepositoryInterface;
+use Stackra\Notifications\Data\NotificationPreferenceData;
+use Stackra\Notifications\Data\Requests\UpdatePreferencesRequestData;
+use Stackra\Notifications\Enums\NotificationsPermission;
+use Stackra\Notifications\Models\NotificationPreference;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Patch;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Support\Str;
 

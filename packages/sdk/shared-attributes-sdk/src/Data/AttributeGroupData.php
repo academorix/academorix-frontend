@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SharedAttributesSdk\Data;
+namespace Stackra\SharedAttributesSdk\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Wire-visible response DTO for {@see \Academorix\Attributes\Models\AttributeGroup}.
+ * Wire-visible response DTO for {@see \Stackra\Attributes\Models\AttributeGroup}.
  *
  * Mirrors `schemas/attribute-group.schema.json` column-for-column, minus
  * the fields declared under `x-wire.hidden` which never leave the
@@ -26,7 +26,7 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
  * ## Example
  *
  * ```php
- * use Academorix\SharedSdk\Client\SharedSdk;
+ * use Stackra\SharedSdk\Client\SharedSdk;
  *
  * $row = app(SharedSdk::class)->attributes()->attributeGroups()->show($id);
  * ```

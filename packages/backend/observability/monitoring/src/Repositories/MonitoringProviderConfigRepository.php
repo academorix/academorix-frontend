@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Repositories;
+namespace Stackra\Monitoring\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Monitoring\Contracts\Data\MonitoringProviderConfigInterface;
-use Academorix\Monitoring\Contracts\Repositories\MonitoringProviderConfigRepositoryInterface;
-use Academorix\Monitoring\Models\MonitoringProviderConfig;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Monitoring\Contracts\Data\MonitoringProviderConfigInterface;
+use Stackra\Monitoring\Contracts\Repositories\MonitoringProviderConfigRepositoryInterface;
+use Stackra\Monitoring\Models\MonitoringProviderConfig;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Monitoring\Models\MonitoringProviderConfig}.
+ * Attribute-first Eloquent repository for {@see Stackra\Monitoring\Models\MonitoringProviderConfig}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(MonitoringProviderConfigInterface::class)]` which resolves to
  * `MonitoringProviderConfig` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Monitoring\Models\MonitoringProviderConfig>
+ * @extends Repository<\Stackra\Monitoring\Models\MonitoringProviderConfig>
  *
  * @category Monitoring
  *

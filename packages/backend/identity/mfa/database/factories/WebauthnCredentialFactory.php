@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Database\Factories;
+namespace Stackra\Mfa\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Mfa\Contracts\Data\WebauthnCredentialInterface;
-use Academorix\Mfa\Models\WebauthnCredential;
+use Stackra\Mfa\Contracts\Data\WebauthnCredentialInterface;
+use Stackra\Mfa\Models\WebauthnCredential;
 
 /**
- * Factory for {@see \Academorix\Mfa\Models\WebauthnCredential}.
+ * Factory for {@see \Stackra\Mfa\Models\WebauthnCredential}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Mfa\Models\WebauthnCredential>
+ * @extends Factory<\Stackra\Mfa\Models\WebauthnCredential>
  *
  * @category Mfa
  *

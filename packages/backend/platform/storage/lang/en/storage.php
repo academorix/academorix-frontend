@@ -4,7 +4,7 @@
  * @file modules/platform/storage/lang/en/storage.php
  *
  * @description
- * English translations for the `academorix/storage` module. Loaded
+ * English translations for the `stackra/storage` module. Loaded
  * under the `storage::` namespace.
  */
 

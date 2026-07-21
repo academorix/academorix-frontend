@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Database\Factories;
+namespace Stackra\Localization\Database\Factories;
 
-use Academorix\Localization\Contracts\Data\TranslationInterface;
-use Academorix\Localization\Enums\TranslationSource;
-use Academorix\Localization\Models\PlatformLanguage;
-use Academorix\Localization\Models\Translation;
+use Stackra\Localization\Contracts\Data\TranslationInterface;
+use Stackra\Localization\Enums\TranslationSource;
+use Stackra\Localization\Models\PlatformLanguage;
+use Stackra\Localization\Models\Translation;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

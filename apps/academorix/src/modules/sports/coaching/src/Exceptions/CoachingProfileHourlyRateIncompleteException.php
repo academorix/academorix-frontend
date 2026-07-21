@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Exceptions;
+namespace Stackra\Coaching\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * hourly_rate_cents and rate_currency must both be set or both null.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CoachingProfileHourlyRateIncompleteException extends AcademorixException
+final class CoachingProfileHourlyRateIncompleteException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

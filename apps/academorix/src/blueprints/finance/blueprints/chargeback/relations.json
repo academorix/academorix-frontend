@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/chargeback/relations",
+  "id": "stackra://modules/chargeback/relations",
   "$version": 1,
   "title": "chargeback — model relationships",
   "description": "Two owned entities. Every row is tenant-scoped (cascades on tenant delete). Chargeback is the aggregate root; ChargebackEvidence belongs to a Chargeback. Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / organization_id / region_id / branch_id / scope_node_id on any owned row — all cascade through tenant_id. Chargeback references Payment + Invoice + PaymentDispute + Transaction + Refund with RESTRICT semantics — financial records cannot orphan reversal records.",

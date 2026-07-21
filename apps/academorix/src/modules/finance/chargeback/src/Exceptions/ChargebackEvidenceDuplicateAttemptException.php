@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Exceptions;
+namespace Stackra\Chargeback\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Two evidence rows for the same chargeback cannot share submission_attempt_number (composite unique refused).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ChargebackEvidenceDuplicateAttemptException extends AcademorixException
+final class ChargebackEvidenceDuplicateAttemptException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

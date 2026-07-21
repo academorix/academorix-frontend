@@ -2,6 +2,6 @@
 
 ## Unreleased
 
-- Initial scaffold of the `academorix/subscription` module — Plan +
+- Initial scaffold of the `stackra/subscription` module — Plan +
   Subscription + SubscriptionEvent aggregates, actions, jobs, observers,
   policies, permissions.

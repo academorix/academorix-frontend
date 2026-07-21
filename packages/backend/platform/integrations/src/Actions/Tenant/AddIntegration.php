@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Actions\Tenant;
+namespace Stackra\Integrations\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Integrations\Contracts\Data\TenantIntegrationInterface;
-use Academorix\Integrations\Contracts\Repositories\TenantIntegrationRepositoryInterface;
-use Academorix\Integrations\Data\Requests\CreateIntegrationRequestData;
-use Academorix\Integrations\Data\TenantIntegrationData;
-use Academorix\Integrations\Enums\IntegrationSyncStatus;
-use Academorix\Integrations\Enums\IntegrationsPermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Integrations\Contracts\Data\TenantIntegrationInterface;
+use Stackra\Integrations\Contracts\Repositories\TenantIntegrationRepositoryInterface;
+use Stackra\Integrations\Data\Requests\CreateIntegrationRequestData;
+use Stackra\Integrations\Data\TenantIntegrationData;
+use Stackra\Integrations\Enums\IntegrationSyncStatus;
+use Stackra\Integrations\Enums\IntegrationsPermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 
 /**
  * `POST /api/v1/tenant/integrations` — tenant admin configures a

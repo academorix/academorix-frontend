@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDrillsSdk\Resources;
+namespace Stackra\SportsDrillsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsDrillsSdk\Data\SessionPlanData;
-use Academorix\SportsDrillsSdk\Requests\SessionPlans\CreateSessionPlanRequest;
-use Academorix\SportsDrillsSdk\Requests\SessionPlans\ListSessionPlansRequest;
-use Academorix\SportsDrillsSdk\Requests\SessionPlans\ShowSessionPlanRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsDrillsSdk\Data\SessionPlanData;
+use Stackra\SportsDrillsSdk\Requests\SessionPlans\CreateSessionPlanRequest;
+use Stackra\SportsDrillsSdk\Requests\SessionPlans\ListSessionPlansRequest;
+use Stackra\SportsDrillsSdk\Requests\SessionPlans\ShowSessionPlanRequest;
 use Saloon\Http\Response;
 
 /**
@@ -56,7 +56,7 @@ final readonly class SessionPlansResource
      *
      * @return SessionPlanData
      */
-    public function create(\Academorix\SportsDrillsSdk\Payloads\SessionPlans\CreateSessionPlanPayload $payload, ?string $idempotencyKey = null): SessionPlanData
+    public function create(\Stackra\SportsDrillsSdk\Payloads\SessionPlans\CreateSessionPlanPayload $payload, ?string $idempotencyKey = null): SessionPlanData
     {
         return $this->connector->send(new CreateSessionPlanRequest($payload, $idempotencyKey))->dto();
     }

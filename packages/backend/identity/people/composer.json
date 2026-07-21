@@ -1,10 +1,10 @@
 {
-  "name": "academorix/people",
+  "name": "stackra/people",
   "type": "library",
-  "description": "Academorix People module — server-side Laravel package emitted from the module blueprint at `modules/identity/blueprints/people/`. Complements the wire SDK at `academorix-identity/people-sdk`.",
+  "description": "Stackra People module — server-side Laravel package emitted from the module blueprint at `modules/identity/blueprints/people/`. Complements the wire SDK at `stackra-identity/people-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "identity",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-identity/people-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-identity/people-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\People\\": "src/"
+      "Stackra\\People\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\People\\Tests\\": "tests/"
+      "Stackra\\People\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\People\\Providers\\PeopleServiceProvider"
+        "Stackra\\People\\Providers\\PeopleServiceProvider"
       ],
       "aliases": {}
     }
@@ -68,7 +68,7 @@
   "repositories": [
     {
       "type": "path",
-      "url": "../../../../apps/academorix/src/sdks/identity-people-sdk",
+      "url": "../../../../apps/stackra/src/sdks/identity-people-sdk",
       "options": {
         "symlink": true
       }

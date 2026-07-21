@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Identity\Exceptions;
+namespace Stackra\Identity\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Entitlement gate refused (mfa_totp / mfa_webauthn not entitled) OR feature flag `identity.

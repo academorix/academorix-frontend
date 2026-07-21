@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Console\Commands;
+namespace Stackra\Geofencing\Console\Commands;
 
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Geofencing\Contracts\Geofenceable;
-use Academorix\Geofencing\Contracts\Services\GeofenceServiceInterface;
-use Academorix\Geofencing\Data\EvaluateGeofenceData;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Geofencing\Contracts\Geofenceable;
+use Stackra\Geofencing\Contracts\Services\GeofenceServiceInterface;
+use Stackra\Geofencing\Data\EvaluateGeofenceData;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Symfony\Component\Console\Attribute\AsCommand;

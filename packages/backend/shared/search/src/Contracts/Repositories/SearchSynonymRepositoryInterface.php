@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Contracts\Repositories;
+namespace Stackra\Search\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Search\Models\SearchSynonym;
-use Academorix\Search\Repositories\EloquentSearchSynonymRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Search\Models\SearchSynonym;
+use Stackra\Search\Repositories\EloquentSearchSynonymRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

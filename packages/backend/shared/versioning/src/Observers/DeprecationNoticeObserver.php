@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Observers;
+namespace Stackra\Versioning\Observers;
 
-use Academorix\Versioning\Contracts\Data\DeprecationNoticeInterface;
-use Academorix\Versioning\Events\DeprecationNoticePublished;
-use Academorix\Versioning\Models\DeprecationNotice;
+use Stackra\Versioning\Contracts\Data\DeprecationNoticeInterface;
+use Stackra\Versioning\Events\DeprecationNoticePublished;
+use Stackra\Versioning\Models\DeprecationNotice;
 
 /**
  * Lifecycle side effects on {@see DeprecationNotice}.

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Data;
+namespace Stackra\Entitlements\Data;
 
-use Academorix\Entitlements\Contracts\Data\EntitlementInterface;
-use Academorix\Entitlements\Enums\EntitlementKind;
-use Academorix\Entitlements\Enums\EntitlementPeriod;
-use Academorix\Entitlements\Enums\EntitlementSource;
-use Academorix\Entitlements\Models\Entitlement;
+use Stackra\Entitlements\Contracts\Data\EntitlementInterface;
+use Stackra\Entitlements\Enums\EntitlementKind;
+use Stackra\Entitlements\Enums\EntitlementPeriod;
+use Stackra\Entitlements\Enums\EntitlementSource;
+use Stackra\Entitlements\Models\Entitlement;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

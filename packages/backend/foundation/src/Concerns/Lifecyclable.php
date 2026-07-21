@@ -9,7 +9,7 @@ declare(strict_types=1);
  * Reusable before/after lifecycle hooks for any class that runs a
  * single-shot operation with optional pre-work and post-work.
  *
- * Composed by seeders (via {@see \Academorix\Database\Concerns\Enumable}),
+ * Composed by seeders (via {@see \Stackra\Database\Concerns\Enumable}),
  * discovery bootstrappers, and any other primitive that benefits from
  * "run these hooks before/after the main body" without having to
  * hand-roll two abstract methods per consumer.
@@ -23,7 +23,7 @@ declare(strict_types=1);
  * @since    0.1.0
  */
 
-namespace Academorix\Foundation\Concerns;
+namespace Stackra\Foundation\Concerns;
 
 /**
  * Before/after hook trait — override the phase you care about, ignore the rest.
@@ -31,7 +31,7 @@ namespace Academorix\Foundation\Concerns;
  * ## Usage
  *
  * ```php
- * use Academorix\Foundation\Concerns\Lifecyclable;
+ * use Stackra\Foundation\Concerns\Lifecyclable;
  *
  * final class SeedSomething extends Seeder
  * {

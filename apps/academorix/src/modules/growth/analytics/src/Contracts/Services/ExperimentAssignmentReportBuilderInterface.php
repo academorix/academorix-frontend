@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Analytics\Contracts\Services;
+namespace Stackra\Analytics\Contracts\Services;
 
-use Academorix\Analytics\Services\ExperimentAssignmentReportBuilder;
+use Stackra\Analytics\Services\ExperimentAssignmentReportBuilder;
 use Illuminate\Container\Attributes\Bind;
 
 /**

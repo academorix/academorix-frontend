@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AdminConsole\Contracts\Repositories;
+namespace Stackra\AdminConsole\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\AdminConsole\Models\AdminDashboardConfig}.
+ * Repository contract for {@see Stackra\AdminConsole\Models\AdminDashboardConfig}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `AdminDashboardConfigRepository`.
  *
- * @extends RepositoryInterface<\Academorix\AdminConsole\Models\AdminDashboardConfig>
+ * @extends RepositoryInterface<\Stackra\AdminConsole\Models\AdminDashboardConfig>
  *
  * @category AdminConsole
  *

@@ -12,10 +12,10 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Enum\Attributes;
+namespace Stackra\Enum\Attributes;
 
 use Attribute;
-use Academorix\Enum\Meta\Property;
+use Stackra\Enum\Meta\Property;
 
 /**
  * Label Attribute.
@@ -25,8 +25,8 @@ use Academorix\Enum\Meta\Property;
  *
  * ## Usage:
  * ```php
- * use Academorix\Enum\Attributes\Label;
- * use Academorix\Enum\Meta\Meta;
+ * use Stackra\Enum\Attributes\Label;
+ * use Stackra\Enum\Meta\Meta;
  *
  * #[Meta([Label::class])]
  * enum Status: string
@@ -47,7 +47,7 @@ use Academorix\Enum\Meta\Property;
  * Status::PENDING()->label();  // Returns 'Pending Approval'
  * ```
  *
- * @author  Academorix Development Team
+ * @author  Stackra Development Team
  *
  * @since   1.0.0
  */

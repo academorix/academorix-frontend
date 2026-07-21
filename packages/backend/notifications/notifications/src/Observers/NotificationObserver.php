@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Observers;
+namespace Stackra\Notifications\Observers;
 
-use Academorix\Notifications\Contracts\Data\NotificationInterface;
-use Academorix\Notifications\Enums\NotificationStatus;
-use Academorix\Notifications\Events\NotificationArchived;
-use Academorix\Notifications\Events\NotificationDelivered;
-use Academorix\Notifications\Events\NotificationDispatched;
-use Academorix\Notifications\Events\NotificationFailed;
-use Academorix\Notifications\Events\NotificationSeen;
-use Academorix\Notifications\Events\NotificationSent;
-use Academorix\Notifications\Models\Notification;
+use Stackra\Notifications\Contracts\Data\NotificationInterface;
+use Stackra\Notifications\Enums\NotificationStatus;
+use Stackra\Notifications\Events\NotificationArchived;
+use Stackra\Notifications\Events\NotificationDelivered;
+use Stackra\Notifications\Events\NotificationDispatched;
+use Stackra\Notifications\Events\NotificationFailed;
+use Stackra\Notifications\Events\NotificationSeen;
+use Stackra\Notifications\Events\NotificationSent;
+use Stackra\Notifications\Models\Notification;
 
 /**
  * Lifecycle side effects on {@see Notification}.

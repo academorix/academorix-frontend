@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Exceptions;
+namespace Stackra\AgeGroup\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The slug is one of the platform-reserved values (default, system, seeded, admin, platform).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AgeGroupSlugReservedException extends AcademorixException
+final class AgeGroupSlugReservedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/staff/schemas/coach",
+  "id": "stackra://modules/staff/schemas/coach",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Coach",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "coa_",
     "incrementing": false,
-    "model": "Academorix\\Staff\\Models\\Coach",
-    "interface": "Academorix\\Staff\\Contracts\\Data\\CoachInterface",
-    "implements": ["Academorix\\Staff\\Contracts\\Data\\CoachInterface"],
+    "model": "Stackra\\Staff\\Models\\Coach",
+    "interface": "Stackra\\Staff\\Contracts\\Data\\CoachInterface",
+    "implements": ["Stackra\\Staff\\Contracts\\Data\\CoachInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

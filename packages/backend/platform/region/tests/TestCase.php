@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Region\Tests;
+namespace Stackra\Region\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/region.
+ * Base test case for stackra/region.
  *
  * @category Region
  *

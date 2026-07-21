@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/branding/retention",
+  "id": "stackra://modules/branding/retention",
   "$version": 1,
   "title": "branding — data retention windows",
   "description": "Per-entity retention windows the retention runner respects.",

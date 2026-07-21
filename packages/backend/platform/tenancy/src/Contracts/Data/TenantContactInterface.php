@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Contracts\Data;
+namespace Stackra\Tenancy\Contracts\Data;
 
-use Academorix\Tenancy\Models\TenantContact;
+use Stackra\Tenancy\Models\TenantContact;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -41,7 +41,7 @@ interface TenantContactInterface
     public const string KEY_TYPE = 'string';
 
     /**
-     * Prefix for the {@see \Academorix\Database\Concerns\HasPrefixedUlid}
+     * Prefix for the {@see \Stackra\Database\Concerns\HasPrefixedUlid}
      * trait — `wct_<ulid>` (per the tenant-contact schema keyPrefix).
      */
     public const string ID_PREFIX = 'wct';

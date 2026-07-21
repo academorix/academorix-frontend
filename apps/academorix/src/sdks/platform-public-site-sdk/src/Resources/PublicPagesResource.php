@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformPublicSiteSdk\Resources;
+namespace Stackra\PlatformPublicSiteSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\PlatformPublicSiteSdk\Data\PublicPageData;
-use Academorix\PlatformPublicSiteSdk\Requests\PublicPages\CreatePublicPageRequest;
-use Academorix\PlatformPublicSiteSdk\Requests\PublicPages\ListPublicPagesRequest;
-use Academorix\PlatformPublicSiteSdk\Requests\PublicPages\ShowPublicPageRequest;
-use Academorix\PlatformPublicSiteSdk\Requests\PublicPages\UpdatePublicPageRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\PlatformPublicSiteSdk\Data\PublicPageData;
+use Stackra\PlatformPublicSiteSdk\Requests\PublicPages\CreatePublicPageRequest;
+use Stackra\PlatformPublicSiteSdk\Requests\PublicPages\ListPublicPagesRequest;
+use Stackra\PlatformPublicSiteSdk\Requests\PublicPages\ShowPublicPageRequest;
+use Stackra\PlatformPublicSiteSdk\Requests\PublicPages\UpdatePublicPageRequest;
 use Saloon\Http\Response;
 
 /**
@@ -57,7 +57,7 @@ final readonly class PublicPagesResource
      *
      * @return PublicPageData
      */
-    public function create(\Academorix\PlatformPublicSiteSdk\Payloads\PublicPages\CreatePublicPagePayload $payload, ?string $idempotencyKey = null): PublicPageData
+    public function create(\Stackra\PlatformPublicSiteSdk\Payloads\PublicPages\CreatePublicPagePayload $payload, ?string $idempotencyKey = null): PublicPageData
     {
         return $this->connector->send(new CreatePublicPageRequest($payload, $idempotencyKey))->dto();
     }
@@ -85,7 +85,7 @@ final readonly class PublicPagesResource
      *
      * @return PublicPageData
      */
-    public function update(string $page, \Academorix\PlatformPublicSiteSdk\Payloads\PublicPages\UpdatePublicPagePayload $payload, ?string $idempotencyKey = null): PublicPageData
+    public function update(string $page, \Stackra\PlatformPublicSiteSdk\Payloads\PublicPages\UpdatePublicPagePayload $payload, ?string $idempotencyKey = null): PublicPageData
     {
         return $this->connector->send(new UpdatePublicPageRequest($page, $payload, $idempotencyKey))->dto();
     }

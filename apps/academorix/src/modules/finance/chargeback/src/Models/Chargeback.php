@@ -4,24 +4,24 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Models;
+namespace Stackra\Chargeback\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Chargeback\Contracts\Data\ChargebackInterface;
-use Academorix\Chargeback\Database\Factories\ChargebackFactory;
-use Academorix\Chargeback\Enums\ChargebackNetwork;
-use Academorix\Chargeback\Enums\ChargebackProvider;
-use Academorix\Chargeback\Enums\ChargebackReasonCategory;
-use Academorix\Chargeback\Enums\ChargebackStatus;
-use Academorix\Chargeback\Policies\ChargebackPolicy;
-use Academorix\Foundation\Concerns\EncryptsSensitiveFields;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Chargeback\Contracts\Data\ChargebackInterface;
+use Stackra\Chargeback\Database\Factories\ChargebackFactory;
+use Stackra\Chargeback\Enums\ChargebackNetwork;
+use Stackra\Chargeback\Enums\ChargebackProvider;
+use Stackra\Chargeback\Enums\ChargebackReasonCategory;
+use Stackra\Chargeback\Enums\ChargebackStatus;
+use Stackra\Chargeback\Policies\ChargebackPolicy;
+use Stackra\Foundation\Concerns\EncryptsSensitiveFields;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

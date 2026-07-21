@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Safeguarding\Contracts\Repositories;
+namespace Stackra\Safeguarding\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Safeguarding\Models\BackgroundCheck}.
+ * Repository contract for {@see Stackra\Safeguarding\Models\BackgroundCheck}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `BackgroundCheckRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Safeguarding\Models\BackgroundCheck>
+ * @extends RepositoryInterface<\Stackra\Safeguarding\Models\BackgroundCheck>
  *
  * @category Safeguarding
  *

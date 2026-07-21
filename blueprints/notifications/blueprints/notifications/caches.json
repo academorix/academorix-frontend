@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/caches",
+  "id": "stackra://modules/notifications/caches",
   "$version": 1,
   "title": "notifications core \u2014 cache keys + tags",
   "description": "Every cache key is tagged with `notifications`. Composite tags used for tenant-scoped or user-scoped invalidation. Follows foundation's cache namespacing convention (each module owns its module-name tag + composite tags for scoped invalidation).",

@@ -111,7 +111,7 @@
                 "name": "destination_config.url",
                 "isRequired": true,
                 "type": "url",
-                "placeholder": "https://api.your-app.com/webhooks/academorix"
+                "placeholder": "https://api.your-app.com/webhooks/stackra"
               }
             },
             {

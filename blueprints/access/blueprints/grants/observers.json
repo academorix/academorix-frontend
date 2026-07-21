@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/grants/observers",
+  "id": "stackra://modules/grants/observers",
   "$version": 1,
   "title": "grants — Eloquent observers",
   "description": "Model observers registered by `GrantServiceProvider::boot()`. AccessGrantObserver enforces the six invariants that make grants safe: (1) cross-tenant refusal, (2) grantor-privilege check (no self-service privilege escalation), (3) permission-catalogue validation, (4) past-dated expires_at refusal, (5) immutability of subject/resource/permissions/decision after issue, (6) revoked-row protection.",
   "observers": [
     {
-      "class": "Academorix\\Grant\\Observers\\AccessGrantObserver",
-      "target": "Academorix\\Grant\\Models\\AccessGrant",
+      "class": "Stackra\\Grant\\Observers\\AccessGrantObserver",
+      "target": "Stackra\\Grant\\Models\\AccessGrant",
       "hooks": [
         {
           "event": "creating",

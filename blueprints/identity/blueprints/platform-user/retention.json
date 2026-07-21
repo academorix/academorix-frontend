@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/platform-user/retention",
+  "id": "stackra://modules/platform-user/retention",
   "$version": 1,
   "title": "platform-user \u2014 retention windows",
   "description": "Two-phase retention. Phase 1 (soft-delete, 90-day hold) starts on offboard \u2014 the row is soft-deleted, access is revoked, but the display_name + department + dates remain resolvable so audit rows written before offboard still name the staffer clearly. Phase 2 (hard delete) fires after the hold expires \u2014 the row is purged, audit rows referencing this PlatformUser are RETAINED with an anonymised actor placeholder (compliance retention prevails over erasure). Audit correlation IDs are preserved indefinitely.",

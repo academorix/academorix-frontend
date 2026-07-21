@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Repositories;
+namespace Stackra\Storage\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Storage\Contracts\Data\FileVariantInterface;
-use Academorix\Storage\Contracts\Repositories\FileVariantRepositoryInterface;
-use Academorix\Storage\Models\FileVariant;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Storage\Contracts\Data\FileVariantInterface;
+use Stackra\Storage\Contracts\Repositories\FileVariantRepositoryInterface;
+use Stackra\Storage\Models\FileVariant;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Storage\Models\FileVariant}.
+ * Attribute-first Eloquent repository for {@see Stackra\Storage\Models\FileVariant}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(FileVariantInterface::class)]` which resolves to
  * `FileVariant` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Storage\Models\FileVariant>
+ * @extends Repository<\Stackra\Storage\Models\FileVariant>
  *
  * @category Storage
  *

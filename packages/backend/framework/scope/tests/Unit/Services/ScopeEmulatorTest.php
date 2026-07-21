@@ -4,7 +4,7 @@
  * @file tests/Unit/Services/ScopeEmulatorTest.php
  *
  * @description
- * Unit tests for {@see \Academorix\Scope\Services\ScopeEmulator}
+ * Unit tests for {@see \Stackra\Scope\Services\ScopeEmulator}
  * — the three emulator methods (`runIn`, `runInNode`, `runInBlank`)
  * with the critical invariant: the previous context is restored
  * on RETURN and on EXCEPTION.
@@ -12,9 +12,9 @@
 
 declare(strict_types=1);
 
-use Academorix\Scope\Data\ScopeContextData;
-use Academorix\Scope\Services\ScopeContext;
-use Academorix\Scope\Services\ScopeEmulator;
+use Stackra\Scope\Data\ScopeContextData;
+use Stackra\Scope\Services\ScopeContext;
+use Stackra\Scope\Services\ScopeEmulator;
 
 uses()->group('unit', 'scope');
 

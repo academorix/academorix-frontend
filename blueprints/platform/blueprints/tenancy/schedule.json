@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tenancy/schedule",
+  "id": "stackra://modules/tenancy/schedule",
   "$version": 1,
   "title": "tenants — scheduled tasks",
   "description": "Cron entries registered via `Schedule::command()` and `Schedule::job()` in `TenancyServiceProvider::schedule()`. All times UTC. `runOnOneServer` set on every job so multi-node worker pools do not double-execute. `withoutOverlapping` set where the job window may exceed the interval.",

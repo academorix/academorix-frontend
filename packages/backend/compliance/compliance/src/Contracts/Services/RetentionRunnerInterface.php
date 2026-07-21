@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Contracts\Services;
+namespace Stackra\Compliance\Contracts\Services;
 
-use Academorix\Compliance\Models\RetentionRun;
-use Academorix\Compliance\Services\DefaultRetentionRunner;
+use Stackra\Compliance\Models\RetentionRun;
+use Stackra\Compliance\Services\DefaultRetentionRunner;
 use Illuminate\Container\Attributes\Bind;
 
 /**

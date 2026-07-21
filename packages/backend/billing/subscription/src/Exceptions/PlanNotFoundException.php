@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Exceptions;
+namespace Stackra\Subscription\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a plan lookup returns nothing — either the id is
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PlanNotFoundException extends AcademorixException
+final class PlanNotFoundException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

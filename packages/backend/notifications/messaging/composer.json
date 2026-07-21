@@ -1,10 +1,10 @@
 {
-  "name": "academorix/messaging",
+  "name": "stackra/messaging",
   "type": "library",
-  "description": "Academorix Messaging module — server-side Laravel package emitted from the module blueprint at `modules/notifications/blueprints/messaging/`. Complements the wire SDK at `academorix-notifications/messaging-sdk`.",
+  "description": "Stackra Messaging module — server-side Laravel package emitted from the module blueprint at `modules/notifications/blueprints/messaging/`. Complements the wire SDK at `stackra-notifications/messaging-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "notifications",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-notifications/messaging-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-notifications/messaging-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Messaging\\": "src/"
+      "Stackra\\Messaging\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Messaging\\Tests\\": "tests/"
+      "Stackra\\Messaging\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Messaging\\Providers\\MessagingServiceProvider"
+        "Stackra\\Messaging\\Providers\\MessagingServiceProvider"
       ],
       "aliases": {}
     }

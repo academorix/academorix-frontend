@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Attributes;
+namespace Stackra\Localization\Attributes;
 
 use Attribute;
 

@@ -9,7 +9,7 @@
  *
  * ## Why
  *
- * The Magento 2 / Laravel convention Academorix follows names
+ * The Magento 2 / Laravel convention Stackra follows names
  * every repository contract `<Model>RepositoryInterface`.
  * The `Interface` suffix is what:
  *
@@ -56,10 +56,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Violations\Severity;
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Violations\Severity;
+use Stackra\Architecture\Violations\Violation;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 

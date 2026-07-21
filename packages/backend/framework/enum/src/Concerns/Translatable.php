@@ -12,13 +12,13 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Enum\Concerns;
+namespace Stackra\Enum\Concerns;
 
 use Illuminate\Container\Container;
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Support\Reflection;
-use Academorix\Support\Str;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Support\Reflection;
+use Stackra\Support\Str;
 use ReflectionEnumUnitCase;
 
 /**
@@ -54,7 +54,7 @@ use ReflectionEnumUnitCase;
  * enum Status: string
  * {
  *     use Translatable;
- * use Academorix\Support\Str;
+ * use Stackra\Support\Str;
  *
  *     case ACTIVE = 'active';
  *     case INACTIVE = 'inactive';
@@ -65,7 +65,7 @@ use ReflectionEnumUnitCase;
  * Status::ACTIVE()->transDescription(); // Returns translated description
  * ```
  *
- * @author  Academorix Development Team
+ * @author  Stackra Development Team
  *
  * @since   1.0.0
  */

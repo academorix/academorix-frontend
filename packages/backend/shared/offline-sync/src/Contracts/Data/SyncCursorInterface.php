@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\OfflineSync\Contracts\Data;
+namespace Stackra\OfflineSync\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\OfflineSync\Models\SyncCursor;
+use Stackra\OfflineSync\Models\SyncCursor;
 
 /**
  * Table shape for the `sync_cursors` table.

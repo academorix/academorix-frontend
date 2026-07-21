@@ -138,7 +138,7 @@
                 "label": "Migration guide URL",
                 "name": "migration_guide_url",
                 "type": "url",
-                "placeholder": "https://docs.academorix.com/migration/v1-to-v2",
+                "placeholder": "https://docs.stackra.com/migration/v1-to-v2",
                 "description": "Optional. Falls back to parent version's sunset_notice_url."
               }
             },

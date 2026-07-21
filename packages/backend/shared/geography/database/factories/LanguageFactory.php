@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Database\Factories;
+namespace Stackra\Geography\Database\Factories;
 
-use Academorix\Geography\Contracts\Data\LanguageInterface;
-use Academorix\Geography\Models\Language;
+use Stackra\Geography\Contracts\Data\LanguageInterface;
+use Stackra\Geography\Models\Language;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

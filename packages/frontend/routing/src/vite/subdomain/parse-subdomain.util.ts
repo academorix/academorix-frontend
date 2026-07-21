@@ -38,11 +38,11 @@ import { Str } from "@stackra/support";
  *
  * @example
  * ```typescript
- * parseSubdomain('admin.academorix.app', 'academorix.app');
+ * parseSubdomain('admin.stackra.app', 'stackra.app');
  * // → 'admin'
- * parseSubdomain('www.academorix.app', 'academorix.app');
+ * parseSubdomain('www.stackra.app', 'stackra.app');
  * // → null (www is the apex)
- * parseSubdomain('academorix.app:5173', 'academorix.app');
+ * parseSubdomain('stackra.app:5173', 'stackra.app');
  * // → null (root)
  * ```
  */

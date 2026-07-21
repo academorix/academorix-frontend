@@ -18,9 +18,9 @@
  *   2. **Class attributes** — `#[Domain]`, `#[Repository]`,
  *      `#[Service]`, `#[Action]` on the class win outright.
  *   3. **Marker interfaces** — implements one of
- *      {@see \Academorix\Architecture\Contracts\Repository} /
- *      {@see \Academorix\Architecture\Contracts\Service} /
- *      {@see \Academorix\Architecture\Contracts\Action}.
+ *      {@see \Stackra\Architecture\Contracts\Repository} /
+ *      {@see \Stackra\Architecture\Contracts\Service} /
+ *      {@see \Stackra\Architecture\Contracts\Action}.
  *   4. **Base-class inheritance** — `extends Model` (or any
  *      configured domain base class) → `Model`;
  *      `extends Controller` → `Controller`.
@@ -40,9 +40,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Support;
+namespace Stackra\Architecture\Support;
 
-use Academorix\Architecture\Enums\LayerType;
+use Stackra\Architecture\Enums\LayerType;
 
 /**
  * Pure classifier — no I/O, no side effects.

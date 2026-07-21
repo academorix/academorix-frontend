@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Services;
+namespace Stackra\Webhook\Services;
 
-use Academorix\Webhook\Attributes\AsWebhookDestination;
-use Academorix\Webhook\Contracts\Services\WebhookDestinationInterface;
-use Academorix\Webhook\Contracts\Services\WebhookDestinationRegistryInterface;
-use Academorix\Webhook\Exceptions\InvalidDestinationConfigException;
+use Stackra\Webhook\Attributes\AsWebhookDestination;
+use Stackra\Webhook\Contracts\Services\WebhookDestinationInterface;
+use Stackra\Webhook\Contracts\Services\WebhookDestinationRegistryInterface;
+use Stackra\Webhook\Exceptions\InvalidDestinationConfigException;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Contracts\Container\Container;
 
@@ -15,7 +15,7 @@ use Illuminate\Contracts\Container\Container;
  * In-memory registry of every `#[AsWebhookDestination]`-marked driver.
  *
  * Hydrated at boot by the framework's generic hydration pump
- * ({@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper})
+ * ({@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper})
  * via the `#[HydratesFrom]` declaration on
  * {@see WebhookDestinationRegistryInterface::register()}. Consumed by
  * the sender + the tenant admin UI (which options to display when

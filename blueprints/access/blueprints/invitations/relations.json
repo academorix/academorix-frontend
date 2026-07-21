@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/invitations/relations",
+  "id": "stackra://modules/invitations/relations",
   "$version": 1,
   "title": "invitations — cross-module relations",
-  "description": "Eloquent relations rooted at this module's models. Target + inviter are polymorphic — this module never name-drops a concrete consumer. Every downstream module registers its `target_type` string via the InvitationTargetRegistry container binding at boot; the morph resolver reads the registry to hydrate the concrete model. Cross-tenant FKs remain forbidden — tenant_id is nullable ONLY to accommodate platform-scope invitations (Academorix staff onboarding).",
+  "description": "Eloquent relations rooted at this module's models. Target + inviter are polymorphic — this module never name-drops a concrete consumer. Every downstream module registers its `target_type` string via the InvitationTargetRegistry container binding at boot; the morph resolver reads the registry to hydrate the concrete model. Cross-tenant FKs remain forbidden — tenant_id is nullable ONLY to accommodate platform-scope invitations (Stackra staff onboarding).",
   "anchors": [
     {
       "model": {
         "name": "Invitation",
-        "class": "Academorix\\Invitations\\Models\\Invitation",
-        "schemaRef": "academorix://modules/invitations/schemas/invitation"
+        "class": "Stackra\\Invitations\\Models\\Invitation",
+        "schemaRef": "stackra://modules/invitations/schemas/invitation"
       },
       "relations": [
         {
@@ -17,7 +17,7 @@
           "target": {
             "module": "application",
             "model": "Application",
-            "class": "Academorix\\Application\\Models\\Application"
+            "class": "Stackra\\Application\\Models\\Application"
           },
           "foreignKey": "application_id",
           "ownerKey": "id"
@@ -28,7 +28,7 @@
           "target": {
             "module": "tenancy",
             "model": "Tenant",
-            "class": "Academorix\\Tenancy\\Models\\Tenant"
+            "class": "Stackra\\Tenancy\\Models\\Tenant"
           },
           "foreignKey": "tenant_id",
           "ownerKey": "id",
@@ -41,7 +41,7 @@
           "target": {
             "module": "user",
             "model": "User",
-            "class": "Academorix\\User\\Models\\User"
+            "class": "Stackra\\User\\Models\\User"
           },
           "foreignKey": "accepted_by_user_id",
           "ownerKey": "id",
@@ -54,7 +54,7 @@
           "target": {
             "module": "user",
             "model": "User",
-            "class": "Academorix\\User\\Models\\User"
+            "class": "Stackra\\User\\Models\\User"
           },
           "foreignKey": "revoked_by_user_id",
           "ownerKey": "id",
@@ -67,7 +67,7 @@
           "target": {
             "module": "invitations",
             "model": "InvitationEvent",
-            "class": "Academorix\\Invitations\\Models\\InvitationEvent"
+            "class": "Stackra\\Invitations\\Models\\InvitationEvent"
           },
           "foreignKey": "invitation_id",
           "cascade": {
@@ -105,7 +105,7 @@
               "module": null,
               "model": null,
               "inviterTypeKey": "system",
-              "note": "Platform-initiated invitations (Academorix ops, automated flows). inviter_id is NULL."
+              "note": "Platform-initiated invitations (Stackra ops, automated flows). inviter_id is NULL."
             }
           ]
         }
@@ -114,8 +114,8 @@
     {
       "model": {
         "name": "InvitationEvent",
-        "class": "Academorix\\Invitations\\Models\\InvitationEvent",
-        "schemaRef": "academorix://modules/invitations/schemas/invitation-event"
+        "class": "Stackra\\Invitations\\Models\\InvitationEvent",
+        "schemaRef": "stackra://modules/invitations/schemas/invitation-event"
       },
       "relations": [
         {
@@ -124,7 +124,7 @@
           "target": {
             "module": "invitations",
             "model": "Invitation",
-            "class": "Academorix\\Invitations\\Models\\Invitation"
+            "class": "Stackra\\Invitations\\Models\\Invitation"
           },
           "foreignKey": "invitation_id"
         },
@@ -134,7 +134,7 @@
           "target": {
             "module": "application",
             "model": "Application",
-            "class": "Academorix\\Application\\Models\\Application"
+            "class": "Stackra\\Application\\Models\\Application"
           },
           "foreignKey": "application_id"
         },
@@ -144,7 +144,7 @@
           "target": {
             "module": "tenancy",
             "model": "Tenant",
-            "class": "Academorix\\Tenancy\\Models\\Tenant"
+            "class": "Stackra\\Tenancy\\Models\\Tenant"
           },
           "foreignKey": "tenant_id",
           "nullable": true

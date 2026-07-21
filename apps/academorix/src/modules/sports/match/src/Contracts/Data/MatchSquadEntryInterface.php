@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Contracts\Data;
+namespace Stackra\Match\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Match\Models\MatchSquadEntry;
+use Stackra\Match\Models\MatchSquadEntry;
 
 /**
  * Table shape for the `match_squad_entries` table.

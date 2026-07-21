@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/identity/permissions",
+  "id": "stackra://modules/identity/permissions",
   "$version": 1,
   "title": "identity \u2014 permissions",
-  "seeder": "Academorix\\Identity\\Database\\Seeders\\IdentityPermissionSeeder",
+  "seeder": "Stackra\\Identity\\Database\\Seeders\\IdentityPermissionSeeder",
   "isSystem": true,
   "description": "Every permission on this table is scoped to the `platform_admin` guard. The tenant-audience `sanctum` guard NEVER interacts with Identity rows directly. See policies.json for the enforcement layer + boundary_note.",
   "permissions": [

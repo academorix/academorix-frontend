@@ -4,7 +4,7 @@
  * @file packages/architecture/src/Providers/ArchitectureServiceProvider.php
  *
  * @description
- * Package entry point for `academorix/architecture`. Wires the
+ * Package entry point for `stackra/architecture`. Wires the
  * full rule engine — parser, resolver, source rules, path rules,
  * artisan command — into the host application.
  *
@@ -20,7 +20,7 @@
  *   5. Binds each path rule (`PathRule`) transient with its own
  *      config subtree captured; tags each path rule under
  *      `architecture.path_rules`.
- *   6. Registers the `academorix:architecture:check` artisan
+ *   6. Registers the `stackra:architecture:check` artisan
  *      command with both tagged iterables injected.
  *   7. Publishes the config file under `architecture-config`.
  *
@@ -49,71 +49,71 @@
  * key, override the derivation by adding a `$ruleConfigKeyOverrides`
  * entry to this provider — none needed today.
  *
- * @see \Academorix\Foundation\Providers\AbstractModuleServiceProvider Base class.
+ * @see \Stackra\Foundation\Providers\AbstractModuleServiceProvider Base class.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Providers;
+namespace Stackra\Architecture\Providers;
 
-use Academorix\Architecture\Console\ArchitectureCheckCommand;
-use Academorix\Architecture\Contracts\ArchitectureRule;
-use Academorix\Architecture\Contracts\PathRule;
-use Academorix\Architecture\Enums\LayerType;
-use Academorix\Architecture\Rules\AbstractPathRule;
-use Academorix\Architecture\Rules\AbstractRule;
+use Stackra\Architecture\Console\ArchitectureCheckCommand;
+use Stackra\Architecture\Contracts\ArchitectureRule;
+use Stackra\Architecture\Contracts\PathRule;
+use Stackra\Architecture\Enums\LayerType;
+use Stackra\Architecture\Rules\AbstractPathRule;
+use Stackra\Architecture\Rules\AbstractRule;
 // ---------------------------------------------------------------
 // Source rules (extending AbstractRule)
 // ---------------------------------------------------------------
-use Academorix\Architecture\Rules\CommandUsesAttributeSignatureRule;
-use Academorix\Architecture\Rules\ControllerExtendsBaseRule;
-use Academorix\Architecture\Rules\ControllerNeedsAsControllerRule;
-use Academorix\Architecture\Rules\EnumIsBackedStringRule;
-use Academorix\Architecture\Rules\EnumUsesAcademorixEnumTraitRule;
-use Academorix\Architecture\Rules\EventReadonlyPropertiesRule;
-use Academorix\Architecture\Rules\EventsCarryAsEventAttributeRule;
-use Academorix\Architecture\Rules\ExceptionsExtendAcademorixBaseRule;
-use Academorix\Architecture\Rules\FinalDomainClassesRule;
-use Academorix\Architecture\Rules\JobHasQueueAttributeRule;
-use Academorix\Architecture\Rules\JobImplementsFailedRule;
-use Academorix\Architecture\Rules\MiddlewareNeedsAsMiddlewareRule;
-use Academorix\Architecture\Rules\ModelNoSideEffectsRule;
-use Academorix\Architecture\Rules\ModelUsesFillableAttributeRule;
-use Academorix\Architecture\Rules\NoAppMakeInConstructorRule;
-use Academorix\Architecture\Rules\NoDirectModelAccessRule;
-use Academorix\Architecture\Rules\NoEnvOutsideConfigRule;
-use Academorix\Architecture\Rules\NoFacadesInServicesRule;
-use Academorix\Architecture\Rules\NoFormRequestRule;
-use Academorix\Architecture\Rules\NoHttpNamespaceNestingRule;
-use Academorix\Architecture\Rules\NoJsonResourceRule;
-use Academorix\Architecture\Rules\NoQueryBuilderInServicesRule;
-use Academorix\Architecture\Rules\NoRepositoryFromControllerRule;
-use Academorix\Architecture\Rules\NoRequestValidateInControllerRule;
-use Academorix\Architecture\Rules\NoRouteFacadeRule;
-use Academorix\Architecture\Rules\NoSingletonOnScopedDepsRule;
-use Academorix\Architecture\Rules\NoStaticStateInServicesRule;
-use Academorix\Architecture\Rules\RepositoryNeedsBindRule;
-use Academorix\Architecture\Rules\RequireFileDocblockRule;
-use Academorix\Architecture\Rules\RequireStrictTypesRule;
-use Academorix\Architecture\Rules\SeedersCarryAsSeederAttributeRule;
-use Academorix\Architecture\Rules\ServiceProviderHasModuleAttributeRule;
+use Stackra\Architecture\Rules\CommandUsesAttributeSignatureRule;
+use Stackra\Architecture\Rules\ControllerExtendsBaseRule;
+use Stackra\Architecture\Rules\ControllerNeedsAsControllerRule;
+use Stackra\Architecture\Rules\EnumIsBackedStringRule;
+use Stackra\Architecture\Rules\EnumUsesStackraEnumTraitRule;
+use Stackra\Architecture\Rules\EventReadonlyPropertiesRule;
+use Stackra\Architecture\Rules\EventsCarryAsEventAttributeRule;
+use Stackra\Architecture\Rules\ExceptionsExtendStackraBaseRule;
+use Stackra\Architecture\Rules\FinalDomainClassesRule;
+use Stackra\Architecture\Rules\JobHasQueueAttributeRule;
+use Stackra\Architecture\Rules\JobImplementsFailedRule;
+use Stackra\Architecture\Rules\MiddlewareNeedsAsMiddlewareRule;
+use Stackra\Architecture\Rules\ModelNoSideEffectsRule;
+use Stackra\Architecture\Rules\ModelUsesFillableAttributeRule;
+use Stackra\Architecture\Rules\NoAppMakeInConstructorRule;
+use Stackra\Architecture\Rules\NoDirectModelAccessRule;
+use Stackra\Architecture\Rules\NoEnvOutsideConfigRule;
+use Stackra\Architecture\Rules\NoFacadesInServicesRule;
+use Stackra\Architecture\Rules\NoFormRequestRule;
+use Stackra\Architecture\Rules\NoHttpNamespaceNestingRule;
+use Stackra\Architecture\Rules\NoJsonResourceRule;
+use Stackra\Architecture\Rules\NoQueryBuilderInServicesRule;
+use Stackra\Architecture\Rules\NoRepositoryFromControllerRule;
+use Stackra\Architecture\Rules\NoRequestValidateInControllerRule;
+use Stackra\Architecture\Rules\NoRouteFacadeRule;
+use Stackra\Architecture\Rules\NoSingletonOnScopedDepsRule;
+use Stackra\Architecture\Rules\NoStaticStateInServicesRule;
+use Stackra\Architecture\Rules\RepositoryNeedsBindRule;
+use Stackra\Architecture\Rules\RequireFileDocblockRule;
+use Stackra\Architecture\Rules\RequireStrictTypesRule;
+use Stackra\Architecture\Rules\SeedersCarryAsSeederAttributeRule;
+use Stackra\Architecture\Rules\ServiceProviderHasModuleAttributeRule;
 // ---------------------------------------------------------------
 // Path rules (extending AbstractPathRule)
 // ---------------------------------------------------------------
-use Academorix\Architecture\Rules\MigrationHasDownRule;
-use Academorix\Architecture\Rules\NoAppFolderRule;
-use Academorix\Architecture\Rules\NoEnvFileRule;
-use Academorix\Architecture\Rules\NoResourcesFolderRule;
-use Academorix\Architecture\Rules\NoRouteServiceProviderRule;
-use Academorix\Architecture\Rules\NoRoutesFolderRule;
-use Academorix\Architecture\Rules\NoServiceLayerRule;
-use Academorix\Architecture\Rules\RepositoryInterfaceSuffixRule;
-use Academorix\Architecture\Support\LayerResolver;
-use Academorix\Architecture\Support\SourceFileParser;
-use Academorix\Foundation\Providers\AbstractModuleServiceProvider;
+use Stackra\Architecture\Rules\MigrationHasDownRule;
+use Stackra\Architecture\Rules\NoAppFolderRule;
+use Stackra\Architecture\Rules\NoEnvFileRule;
+use Stackra\Architecture\Rules\NoResourcesFolderRule;
+use Stackra\Architecture\Rules\NoRouteServiceProviderRule;
+use Stackra\Architecture\Rules\NoRoutesFolderRule;
+use Stackra\Architecture\Rules\NoServiceLayerRule;
+use Stackra\Architecture\Rules\RepositoryInterfaceSuffixRule;
+use Stackra\Architecture\Support\LayerResolver;
+use Stackra\Architecture\Support\SourceFileParser;
+use Stackra\Foundation\Providers\AbstractModuleServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
 
 #[AsModule(name: 'Architecture', priority: 100)]
 #[LoadsResources()]
@@ -156,10 +156,10 @@ final class ArchitectureServiceProvider extends AbstractModuleServiceProvider
         ModelUsesFillableAttributeRule::class,
         ModelNoSideEffectsRule::class,
         EnumIsBackedStringRule::class,
-        EnumUsesAcademorixEnumTraitRule::class,
+        EnumUsesStackraEnumTraitRule::class,
         EventReadonlyPropertiesRule::class,
         EventsCarryAsEventAttributeRule::class,
-        ExceptionsExtendAcademorixBaseRule::class,
+        ExceptionsExtendStackraBaseRule::class,
         JobHasQueueAttributeRule::class,
         JobImplementsFailedRule::class,
         CommandUsesAttributeSignatureRule::class,

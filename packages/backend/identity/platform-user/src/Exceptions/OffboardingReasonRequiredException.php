@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformUser\Exceptions;
+namespace Stackra\PlatformUser\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * POST /offboard was called without a reason, or with a reason outside 20–1000 chars.

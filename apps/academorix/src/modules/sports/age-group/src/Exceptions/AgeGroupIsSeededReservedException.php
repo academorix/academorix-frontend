@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Exceptions;
+namespace Stackra\AgeGroup\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to create an AgeGroup with is_seeded=true from a non-seeder call site.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AgeGroupIsSeededReservedException extends AcademorixException
+final class AgeGroupIsSeededReservedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

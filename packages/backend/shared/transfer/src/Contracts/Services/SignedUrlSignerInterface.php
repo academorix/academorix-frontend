@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Contracts\Services;
+namespace Stackra\Transfer\Contracts\Services;
 
-use Academorix\Transfer\Services\DefaultSignedUrlSigner;
+use Stackra\Transfer\Services\DefaultSignedUrlSigner;
 use Illuminate\Container\Attributes\Bind;
 
 /**

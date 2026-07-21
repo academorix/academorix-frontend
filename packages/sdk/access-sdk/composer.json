@@ -1,10 +1,10 @@
 {
-  "name": "academorix/access-sdk",
+  "name": "stackra/access-sdk",
   "type": "library",
   "description": "Typed Saloon SDK for the Access service — roles, permissions, policies, scopes, groups, invitations.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "sdk",
     "saloon",
     "api-client",
@@ -12,10 +12,10 @@
   ],
   "require": {
     "php": "^8.3",
-    "academorix/api-sdk": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
-    "academorix/service-provider": "@dev",
+    "stackra/api-sdk": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/service-provider": "@dev",
     "illuminate/contracts": "^13.0",
     "illuminate/support": "^13.0",
     "saloonphp/saloon": "^3.10",
@@ -30,18 +30,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\AccessSdk\\": "src/"
+      "Stackra\\AccessSdk\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\AccessSdk\\Tests\\": "tests/"
+      "Stackra\\AccessSdk\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\AccessSdk\\Providers\\AccessSdkServiceProvider"
+        "Stackra\\AccessSdk\\Providers\\AccessSdkServiceProvider"
       ],
       "aliases": {}
     }

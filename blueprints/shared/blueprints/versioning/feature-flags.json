@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/versioning/feature-flags",
+  "id": "stackra://modules/versioning/feature-flags",
   "$version": 1,
   "title": "versioning \u2014 kill switches + rollout controls",
   "description": "Pennant flags. Kill switches default ON.",

@@ -2,7 +2,7 @@
 
 /**
  * @file AbstractCommand.php
- * @module Academorix\Cli\Commands
+ * @module Stackra\Cli\Commands
  * @description Base class every concrete command extends. Composes all 14
  *   concern traits so a concrete command only has to implement
  *   {@see handle()}. Error handling, banner rendering, and input validation
@@ -11,23 +11,23 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Commands;
+namespace Stackra\Cli\Commands;
 
-use Academorix\Cli\Concerns\HandlesErrors;
-use Academorix\Cli\Concerns\RendersBrandArt;
-use Academorix\Cli\Concerns\UsesBlueprint;
-use Academorix\Cli\Concerns\UsesCatalog;
-use Academorix\Cli\Concerns\UsesComposer;
-use Academorix\Cli\Concerns\UsesFilesystem;
-use Academorix\Cli\Concerns\UsesFormatters;
-use Academorix\Cli\Concerns\UsesGit;
-use Academorix\Cli\Concerns\UsesLaravelPrompts;
-use Academorix\Cli\Concerns\UsesOmniTerm;
-use Academorix\Cli\Concerns\UsesPnpm;
-use Academorix\Cli\Concerns\UsesStubs;
-use Academorix\Cli\Concerns\UsesTemplates;
-use Academorix\Cli\Concerns\ValidatesInput;
-use Academorix\Cli\Container;
+use Stackra\Cli\Concerns\HandlesErrors;
+use Stackra\Cli\Concerns\RendersBrandArt;
+use Stackra\Cli\Concerns\UsesBlueprint;
+use Stackra\Cli\Concerns\UsesCatalog;
+use Stackra\Cli\Concerns\UsesComposer;
+use Stackra\Cli\Concerns\UsesFilesystem;
+use Stackra\Cli\Concerns\UsesFormatters;
+use Stackra\Cli\Concerns\UsesGit;
+use Stackra\Cli\Concerns\UsesLaravelPrompts;
+use Stackra\Cli\Concerns\UsesOmniTerm;
+use Stackra\Cli\Concerns\UsesPnpm;
+use Stackra\Cli\Concerns\UsesStubs;
+use Stackra\Cli\Concerns\UsesTemplates;
+use Stackra\Cli\Concerns\ValidatesInput;
+use Stackra\Cli\Container;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -67,7 +67,7 @@ abstract class AbstractCommand extends Command
     }
 
     /**
-     * Every command accepts `--no-banner` to suppress the ACADEMORIX banner
+     * Every command accepts `--no-banner` to suppress the STACKRA banner
      * (useful in CI + programmatic invocations). Concrete commands should
      * call `parent::configure()` if they override.
      */
@@ -78,7 +78,7 @@ abstract class AbstractCommand extends Command
             'no-banner',
             null,
             InputOption::VALUE_NONE,
-            'Suppress the ACADEMORIX banner.',
+            'Suppress the STACKRA banner.',
         );
     }
 

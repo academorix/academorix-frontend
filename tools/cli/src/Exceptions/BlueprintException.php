@@ -2,15 +2,15 @@
 
 /**
  * @file BlueprintException.php
- * @module Academorix\Cli\Exceptions
+ * @module Stackra\Cli\Exceptions
  * @description Blueprint-specific errors. Thrown by
- *   {@see \Academorix\Cli\Blueprint\BlueprintReader} and
- *   {@see \Academorix\Cli\Blueprint\BlueprintValidator}.
+ *   {@see \Stackra\Cli\Blueprint\BlueprintReader} and
+ *   {@see \Stackra\Cli\Blueprint\BlueprintValidator}.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Exceptions;
+namespace Stackra\Cli\Exceptions;
 
 /**
  * Named factories for every blueprint error the CLI raises.
@@ -24,7 +24,7 @@ final class BlueprintException extends CliException
             sprintf('No blueprints/**/%s/ directory was found in the workspace.', $moduleName),
             [
                 'Verify the module name is spelled correctly.',
-                'Run `academorix module:new '.$moduleName.'` to scaffold it.',
+                'Run `stackra module:new '.$moduleName.'` to scaffold it.',
             ],
             2,
         );

@@ -2,21 +2,21 @@
 
 /**
  * @file UsesStubs.php
- * @module Academorix\Cli\Concerns
- * @description Delegates to {@see \Academorix\Cli\Stubs\StubRenderer}. The
+ * @module Stackra\Cli\Concerns
+ * @description Delegates to {@see \Stackra\Cli\Stubs\StubRenderer}. The
  *   trait is intentionally thin — real logic lives in the service class.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Concerns;
+namespace Stackra\Cli\Concerns;
 
-use Academorix\Cli\Stubs\StubRenderer;
+use Stackra\Cli\Stubs\StubRenderer;
 
 /**
- * Composed by every command through {@see \Academorix\Cli\Commands\AbstractCommand}.
+ * Composed by every command through {@see \Stackra\Cli\Commands\AbstractCommand}.
  *
- * @property \Academorix\Cli\Container $container populated by {@see \Academorix\Cli\Commands\AbstractCommand}
+ * @property \Stackra\Cli\Container $container populated by {@see \Stackra\Cli\Commands\AbstractCommand}
  */
 trait UsesStubs
 {

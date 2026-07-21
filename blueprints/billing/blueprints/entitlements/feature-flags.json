@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/entitlements/feature-flags",
+  "id": "stackra://modules/entitlements/feature-flags",
   "$version": 1,
   "title": "entitlements \u2014 kill switches",
   "engine": "laravel/pennant",
@@ -38,13 +38,13 @@
       "key": "entitlements.graceful_degradation_mode",
       "kind": "operational-mode",
       "default": "off",
-      "description": "Fail-open policy when Redis is unreachable OR the hot-path returns an error. Off (default) = fail closed \u2014 refuse the metered operation with EntitlementCheckFailed. On = fail open \u2014 allow the operation, emit `academorix.entitlement.fail_open_total{key,reason}` metric, log a WARN record. Turn on during incident triage when refusing operations is more costly than temporarily over-serving. NEVER leave on outside a declared incident \u2014 documented fail-open windows must be logged in the incident retro.",
+      "description": "Fail-open policy when Redis is unreachable OR the hot-path returns an error. Off (default) = fail closed \u2014 refuse the metered operation with EntitlementCheckFailed. On = fail open \u2014 allow the operation, emit `stackra.entitlement.fail_open_total{key,reason}` metric, log a WARN record. Turn on during incident triage when refusing operations is more costly than temporarily over-serving. NEVER leave on outside a declared incident \u2014 documented fail-open windows must be logged in the incident retro.",
       "modes": {
         "off": "Fail closed. Redis outage \u2192 EntitlementCheckFailed (retryable). Every consumer catches + surfaces `503 Service Unavailable` to callers. Correctness > availability.",
-        "on": "Fail open. Redis outage \u2192 operation permitted + academorix.entitlement.fail_open_total increments. Availability > correctness for the outage window."
+        "on": "Fail open. Redis outage \u2192 operation permitted + stackra.entitlement.fail_open_total increments. Availability > correctness for the outage window."
       },
       "escalation": "Alert routed to on-call SRE when metric exceeds 100 events/minute; auto-page above 1000 events/minute. Auto-disable after 60 minutes to prevent accidental extended fail-open state.",
-      "related_metric": "academorix.entitlement.fail_open_total"
+      "related_metric": "stackra.entitlement.fail_open_total"
     }
   ]
 }

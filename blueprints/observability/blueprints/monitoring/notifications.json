@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/monitoring/notifications",
+  "id": "stackra://modules/monitoring/notifications",
   "$version": 1,
   "title": "monitoring — notification classes + categories",
-  "namespace": "Academorix\\Observability\\Monitoring\\Notifications",
+  "namespace": "Stackra\\Observability\\Monitoring\\Notifications",
   "notifications": [
     "MonitoringAlertFiredNotification",
     "MonitoringIncidentOpenedNotification",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tenancy/schemas/tenant",
+  "id": "stackra://modules/tenancy/schemas/tenant",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Tenant",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "ten_",
     "incrementing": false,
-    "model": "Academorix\\Tenancy\\Models\\Tenant",
-    "interface": "Academorix\\Tenancy\\Contracts\\Data\\TenantInterface",
-    "implements": ["Academorix\\Tenancy\\Contracts\\Data\\TenantInterface"],
+    "model": "Stackra\\Tenancy\\Models\\Tenant",
+    "interface": "Stackra\\Tenancy\\Contracts\\Data\\TenantInterface",
+    "implements": ["Stackra\\Tenancy\\Contracts\\Data\\TenantInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

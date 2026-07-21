@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Exceptions;
+namespace Stackra\Monitoring\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * signal_type not one of the 7 supported values.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MonitoringInvalidSignalTypeException extends AcademorixException
+final class MonitoringInvalidSignalTypeException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

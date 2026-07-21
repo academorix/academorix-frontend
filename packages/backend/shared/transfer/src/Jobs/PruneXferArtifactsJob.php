@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Jobs;
+namespace Stackra\Transfer\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

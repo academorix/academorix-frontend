@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tasks\Database\Factories;
+namespace Stackra\Tasks\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Tasks\Contracts\Data\TaskAssignmentInterface;
-use Academorix\Tasks\Models\TaskAssignment;
+use Stackra\Tasks\Contracts\Data\TaskAssignmentInterface;
+use Stackra\Tasks\Models\TaskAssignment;
 
 /**
- * Factory for {@see \Academorix\Tasks\Models\TaskAssignment}.
+ * Factory for {@see \Stackra\Tasks\Models\TaskAssignment}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Tasks\Models\TaskAssignment>
+ * @extends Factory<\Stackra\Tasks\Models\TaskAssignment>
  *
  * @category Tasks
  *

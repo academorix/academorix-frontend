@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Notifications;
+namespace Stackra\Localization\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

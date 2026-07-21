@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "integrations",
   "alias": "integrations",
-  "namespace": "Academorix\\Integrations",
+  "namespace": "Stackra\\Integrations",
   "description": "Two-lane integration substrate per ADR 0025. Lane 1 (SHIPS NOW) — allowlisted native provider integrations via `IntegrationProvider` (allowlist catalog) + `TenantIntegration` (per-tenant configured instance). Providers auto-discovered via `#[AsIntegrationProvider(kind, slug)]` — Stripe, Paddle, Pipedrive, HubSpot, Twilio, Zoom, Google Calendar, Apple Wallet, Google Wallet, Mailchimp, Xero, and every other native integration. Lane 2 (SCHEMA ONLY, MARKETPLACE DEFERRED) — `App` + `AppInstallation` + `AppWebhookSubscription` model the future third-party marketplace. Data model lands day-one to avoid retrofit; no third-party accepted until compliance + review process ships. First-party partner apps may be seeded with `is_first_party: true`. Enhanced consent flow required for any app requesting child-data scopes (athletes / medical / attendance / safeguarding).",
   "keywords": [
     "integration",
@@ -20,7 +20,7 @@
     "wave-1"
   ],
   "priority": 12,
-  "providers": ["Academorix\\Integrations\\Providers\\IntegrationsServiceProvider"],
+  "providers": ["Stackra\\Integrations\\Providers\\IntegrationsServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy"],
   "extendedBy": [],
@@ -153,7 +153,7 @@
     "lane_1_providers": {
       "status": "ships_now",
       "shape": "IntegrationProvider (allowlist) + TenantIntegration (per-tenant configured instance)",
-      "extension_mechanism": "#[AsIntegrationProvider(kind, slug)] on a PHP class implementing IntegrationProviderInterface. Class ships in a package deployed by Academorix or a vetted partner via PR.",
+      "extension_mechanism": "#[AsIntegrationProvider(kind, slug)] on a PHP class implementing IntegrationProviderInterface. Class ships in a package deployed by Stackra or a vetted partner via PR.",
       "shipped_provider_kinds": [
         "payment",
         "crm",
@@ -201,7 +201,7 @@
   },
   "hosts": {
     "platform-admin": {
-      "description": "Academorix staff surface. Provider catalog CRUD (system rows; guarded), app review, cross-tenant install oversight. All secrets always redacted on read.",
+      "description": "Stackra staff surface. Provider catalog CRUD (system rows; guarded), app review, cross-tenant install oversight. All secrets always redacted on read.",
       "routes": [
         "GET /api/v1/platform/integration-providers",
         "POST /api/v1/platform/integration-providers/{slug}/enable",

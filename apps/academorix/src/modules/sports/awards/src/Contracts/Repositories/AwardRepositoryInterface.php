@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Awards\Contracts\Repositories;
+namespace Stackra\Awards\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Awards\Models\Award}.
+ * Repository contract for {@see Stackra\Awards\Models\Award}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `AwardRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Awards\Models\Award>
+ * @extends RepositoryInterface<\Stackra\Awards\Models\Award>
  *
  * @category Awards
  *

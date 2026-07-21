@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/platform-user/errors",
+  "id": "stackra://modules/platform-user/errors",
   "$version": 1,
   "title": "platform-user \u2014 error codes",
   "namespace": "platform-user",

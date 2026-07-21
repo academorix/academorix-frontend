@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Expenses\Services;
+namespace Stackra\Expenses\Services;
 
-use Academorix\Expenses\Contracts\Services\AccountingSyncerInterface;
+use Stackra\Expenses\Contracts\Services\AccountingSyncerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Expenses\Contracts\Repositories\BudgetRepositoryInterface;
+use Stackra\Expenses\Contracts\Repositories\BudgetRepositoryInterface;
 
 /**
  * Concrete service — AccountingSyncer.

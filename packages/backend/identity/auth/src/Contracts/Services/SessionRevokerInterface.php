@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Contracts\Services;
+namespace Stackra\Auth\Contracts\Services;
 
-use Academorix\Auth\Services\SessionRevoker;
+use Stackra\Auth\Services\SessionRevoker;
 use Illuminate\Container\Attributes\Bind;
 
 /**

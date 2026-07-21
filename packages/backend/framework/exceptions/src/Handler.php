@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions;
+namespace Stackra\Exceptions;
 
-use Academorix\Exceptions\Contracts\ErrorFormatterInterface;
-use Academorix\Exceptions\Contracts\ExceptionReporterInterface;
+use Stackra\Exceptions\Contracts\ErrorFormatterInterface;
+use Stackra\Exceptions\Contracts\ExceptionReporterInterface;
 use Illuminate\Auth\AuthenticationException as LaravelAuthenticationException;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Foundation\Exceptions\Handler as LaravelHandler;
@@ -19,7 +19,7 @@ use Throwable;
  * Custom exception handler that replaces Laravel's default. The
  * container is instructed to resolve
  * `Illuminate\Contracts\Debug\ExceptionHandler` to this class via
- * {@see \Academorix\Exceptions\Providers\ExceptionsServiceProvider}.
+ * {@see \Stackra\Exceptions\Providers\ExceptionsServiceProvider}.
  *
  * ## Responsibilities
  *
@@ -49,11 +49,11 @@ use Throwable;
  *
  * ## Reference architecture note
  *
- * This class is inspired by the shared "Academorix" handler pattern
- * but adapted to `Academorix` conventions:
+ * This class is inspired by the shared "Stackra" handler pattern
+ * but adapted to `Stackra` conventions:
  *
- *   - Uses container tagging (`academorix.exception.formatters` /
- *     `academorix.exception.reporters`) instead of custom attribute
+ *   - Uses container tagging (`stackra.exception.formatters` /
+ *     `stackra.exception.reporters`) instead of custom attribute
  *     binding (`#[Bind]` / `#[Singleton]`) — which lives in a
  *     separate container-attributes package we don't yet have.
  *   - Adds the `defaultRender` fall-through so unmatched exceptions

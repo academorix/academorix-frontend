@@ -12,8 +12,8 @@
  *
  * Registered under the alias `authorize.action` via the
  * `#[AsMiddleware]` attribute below — discovered at boot by
- * {@see \Academorix\Routing\Providers\RoutingServiceProvider}, so
- * {@see \Academorix\Authorization\Providers\AuthorizationServiceProvider}
+ * {@see \Stackra\Routing\Providers\RoutingServiceProvider}, so
+ * {@see \Stackra\Authorization\Providers\AuthorizationServiceProvider}
  * has no imperative alias wiring to carry.
  *
  * The consumer app pushes it onto the `api` middleware group in
@@ -28,15 +28,15 @@
  *
  * For each attribute family attached to the class + method:
  *
- *   - {@see \Academorix\Authorization\Attributes\RequirePermission}
+ *   - {@see \Stackra\Authorization\Attributes\RequirePermission}
  *     — user holds ALL listed permissions (AND).
- *   - {@see \Academorix\Authorization\Attributes\RequireAnyPermission}
+ *   - {@see \Stackra\Authorization\Attributes\RequireAnyPermission}
  *     — user holds AT LEAST ONE listed permission (OR).
- *   - {@see \Academorix\Authorization\Attributes\RequireRole}
+ *   - {@see \Stackra\Authorization\Attributes\RequireRole}
  *     — user holds ALL listed roles (AND).
- *   - {@see \Academorix\Authorization\Attributes\RequireAnyRole}
+ *   - {@see \Stackra\Authorization\Attributes\RequireAnyRole}
  *     — user holds AT LEAST ONE listed role (OR).
- *   - {@see \Academorix\Authorization\Attributes\AllowGuest}
+ *   - {@see \Stackra\Authorization\Attributes\AllowGuest}
  *     — short-circuits the "unauthenticated" check.
  *
  * Multiple attributes across different families combine with AND:
@@ -102,14 +102,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Authorization\Middleware;
+namespace Stackra\Authorization\Middleware;
 
-use Academorix\Authorization\Attributes\AllowGuest;
-use Academorix\Authorization\Attributes\RequireAnyPermission;
-use Academorix\Authorization\Attributes\RequireAnyRole;
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Authorization\Attributes\RequireRole;
-use Academorix\Routing\Attributes\AsMiddleware;
+use Stackra\Authorization\Attributes\AllowGuest;
+use Stackra\Authorization\Attributes\RequireAnyPermission;
+use Stackra\Authorization\Attributes\RequireAnyRole;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Authorization\Attributes\RequireRole;
+use Stackra\Routing\Attributes\AsMiddleware;
 use Closure;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;

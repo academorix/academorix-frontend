@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Exceptions;
+namespace Stackra\Transfer\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a mapping profile references an attribute that isn't
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TransferMappingProfileInvalidException extends AcademorixException
+final class TransferMappingProfileInvalidException extends StackraException
 {
     public const CODE = 'TRANSFER_MAPPING_PROFILE_INVALID';
 

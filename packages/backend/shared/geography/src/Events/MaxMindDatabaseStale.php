@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Events;
+namespace Stackra\Geography\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 /**
  * Fired when the health probe detects the local GeoLite2-City.mmdb
  * is older than `config('geography.maxmind.stale_days')`.
  *
- * Consumed by {@see \Academorix\Geography\Listeners\DispatchRefreshMaxMindOnStale}
+ * Consumed by {@see \Stackra\Geography\Listeners\DispatchRefreshMaxMindOnStale}
  * to trigger a refresh outside the weekly cadence.
  *
  * @category Geography

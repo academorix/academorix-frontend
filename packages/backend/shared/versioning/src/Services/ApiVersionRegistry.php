@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Services;
+namespace Stackra\Versioning\Services;
 
-use Academorix\Versioning\Attributes\AsApiSurface;
-use Academorix\Versioning\Contracts\Repositories\ApiVersionRepositoryInterface;
-use Academorix\Versioning\Contracts\Services\ApiVersionRegistryInterface;
-use Academorix\Versioning\Models\ApiVersion;
+use Stackra\Versioning\Attributes\AsApiSurface;
+use Stackra\Versioning\Contracts\Repositories\ApiVersionRepositoryInterface;
+use Stackra\Versioning\Contracts\Services\ApiVersionRegistryInterface;
+use Stackra\Versioning\Models\ApiVersion;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

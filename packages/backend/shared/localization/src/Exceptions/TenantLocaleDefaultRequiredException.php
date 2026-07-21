@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Exceptions;
+namespace Stackra\Localization\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a caller tries to disable / delete the tenant's
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TenantLocaleDefaultRequiredException extends AcademorixException
+final class TenantLocaleDefaultRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

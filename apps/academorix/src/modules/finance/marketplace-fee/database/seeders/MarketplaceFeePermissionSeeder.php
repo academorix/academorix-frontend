@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\MarketplaceFee\Database\Seeders;
+namespace Stackra\MarketplaceFee\Database\Seeders;
 
-use Academorix\MarketplaceFee\Enums\MarketplaceFeePermission;
-use Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
-use Academorix\ServiceProvider\Attributes\AsSeeder;
+use Stackra\MarketplaceFee\Enums\MarketplaceFeePermission;
+use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;
 
 /**

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/grants/relations",
+  "id": "stackra://modules/grants/relations",
   "$version": 1,
   "title": "grants — cross-module relations",
   "description": "AccessGrant is the aggregate root. It is polymorphic on TWO axes: (subject_type, subject_id) — the principal receiving the permission (today always User); (resource_type, resource_id) — the target the permission applies to (any domain aggregate that composes IsGrantable + registers via GrantableRegistry). Concrete tenant + granted_by / revoked_by FKs are hard; every other resource / subject reference is polymorphic. Cross-tenant FKs are forbidden — the observer refuses `resource.tenant_id !== subject.tenant_id !== grant.tenant_id` with GRANT_CROSS_TENANT.",
@@ -7,8 +7,8 @@
     {
       "model": {
         "name": "AccessGrant",
-        "class": "Academorix\\Grant\\Models\\AccessGrant",
-        "schemaRef": "academorix://modules/grants/schemas/access-grant"
+        "class": "Stackra\\Grant\\Models\\AccessGrant",
+        "schemaRef": "stackra://modules/grants/schemas/access-grant"
       },
       "relations": [
         {
@@ -17,7 +17,7 @@
           "target": {
             "module": "tenancy",
             "model": "Tenant",
-            "class": "Academorix\\Tenancy\\Models\\Tenant"
+            "class": "Stackra\\Tenancy\\Models\\Tenant"
           },
           "foreignKey": "tenant_id",
           "ownerKey": "id",
@@ -30,7 +30,7 @@
           "target": {
             "module": "user",
             "model": "User",
-            "class": "Academorix\\User\\Models\\User"
+            "class": "Stackra\\User\\Models\\User"
           },
           "foreignKey": "granted_by",
           "ownerKey": "id",
@@ -44,7 +44,7 @@
           "target": {
             "module": "user",
             "model": "User",
-            "class": "Academorix\\User\\Models\\User"
+            "class": "Stackra\\User\\Models\\User"
           },
           "foreignKey": "revoked_by",
           "ownerKey": "id",

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Order\Contracts\Repositories;
+namespace Stackra\Order\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Order\Models\OrderLine}.
+ * Repository contract for {@see Stackra\Order\Models\OrderLine}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `OrderLineRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Order\Models\OrderLine>
+ * @extends RepositoryInterface<\Stackra\Order\Models\OrderLine>
  *
  * @category Order
  *

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Database\Factories;
+namespace Stackra\Notifications\Database\Factories;
 
-use Academorix\Notifications\Contracts\Data\NotificationInterface;
-use Academorix\Notifications\Enums\NotificationPriority;
-use Academorix\Notifications\Enums\NotificationStatus;
-use Academorix\Notifications\Models\Notification;
+use Stackra\Notifications\Contracts\Data\NotificationInterface;
+use Stackra\Notifications\Enums\NotificationPriority;
+use Stackra\Notifications\Enums\NotificationStatus;
+use Stackra\Notifications\Models\Notification;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

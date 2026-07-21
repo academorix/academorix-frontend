@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Teams\Policies;
+namespace Stackra\Teams\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Teams\Models\Team;
+use Stackra\User\Models\User;
+use Stackra\Teams\Models\Team;
 
 /**
- * Authorization policy for {@see \Academorix\Teams\Models\Team}.
+ * Authorization policy for {@see \Stackra\Teams\Models\Team}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/telemetry/config",
+  "id": "stackra://modules/telemetry/config",
   "$version": 1,
   "title": "telemetry \u2014 developer configuration",
   "configFile": "config/telemetry.php",
@@ -13,13 +13,13 @@
           "path": "telemetry.resource.service_name",
           "type": "string",
           "env": "OTEL_SERVICE_NAME",
-          "default": "academorix"
+          "default": "stackra"
         },
         {
           "path": "telemetry.resource.service_namespace",
           "type": "string",
           "env": "OTEL_SERVICE_NAMESPACE",
-          "default": "academorix"
+          "default": "stackra"
         },
         {
           "path": "telemetry.resource.service_version",
@@ -156,7 +156,7 @@
         {
           "path": "telemetry.logs.sinks.file.path",
           "type": "string",
-          "default": "storage/logs/academorix.log"
+          "default": "storage/logs/stackra.log"
         },
         { "path": "telemetry.logs.sinks.file.days", "type": "int", "default": 14 },
         {

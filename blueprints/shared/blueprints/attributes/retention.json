@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/attributes/retention",
+  "id": "stackra://modules/attributes/retention",
   "$version": 1,
   "title": "attributes — data retention windows",
   "description": "Definitions + active sets retained while referenced. Superseded set versions preserved as long as ANY host record snapshots them (historic-render integrity). This is a compliance policy — deleting a superseded set breaks historic assessments.",

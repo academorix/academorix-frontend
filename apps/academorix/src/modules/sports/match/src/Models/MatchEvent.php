@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Models;
+namespace Stackra\Match\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Match\Contracts\Data\MatchEventInterface;
-use Academorix\Match\Database\Factories\MatchEventFactory;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Match\Enums\MatchEventType;
-use Academorix\Match\Policies\MatchEventPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Match\Contracts\Data\MatchEventInterface;
+use Stackra\Match\Database\Factories\MatchEventFactory;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Match\Enums\MatchEventType;
+use Stackra\Match\Policies\MatchEventPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

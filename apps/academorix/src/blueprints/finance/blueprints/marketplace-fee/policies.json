@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/marketplace-fee/policies",
+  "id": "stackra://modules/marketplace-fee/policies",
   "$version": 1,
   "title": "marketplace-fee — authorization policies",
   "description": "Tenant plane read-only (transparency). Platform plane write. FeeSchedule.activate refuses when effective_from is in the past (never retroactive per DL-5 note in tasks.md).",
   "policies": [
     {
       "model": "FeeSchedule",
-      "class": "Academorix\\Finance\\MarketplaceFee\\Policies\\FeeSchedulePolicy",
+      "class": "Stackra\\Finance\\MarketplaceFee\\Policies\\FeeSchedulePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -35,7 +35,7 @@
     },
     {
       "model": "FeeApplication",
-      "class": "Academorix\\Finance\\MarketplaceFee\\Policies\\FeeApplicationPolicy",
+      "class": "Stackra\\Finance\\MarketplaceFee\\Policies\\FeeApplicationPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -47,7 +47,7 @@
     },
     {
       "model": "FeePayout",
-      "class": "Academorix\\Finance\\MarketplaceFee\\Policies\\FeePayoutPolicy",
+      "class": "Stackra\\Finance\\MarketplaceFee\\Policies\\FeePayoutPolicy",
       "abilities": [
         { "action": "platformViewAny", "permission": "platform.fee-payouts.viewAny" },
         { "action": "platformView", "permission": "platform.fee-payouts.view" },

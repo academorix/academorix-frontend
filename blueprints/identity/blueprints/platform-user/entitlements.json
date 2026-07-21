@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/platform-user/entitlements",
+  "id": "stackra://modules/platform-user/entitlements",
   "$version": 1,
   "title": "platform-user \u2014 internal capability flags",
-  "description": "These are NOT tenant-facing entitlements \u2014 they are Academorix-internal capability flags that a super_admin toggles per PlatformUser to grant elevated permissions. Distinct from RBAC roles (which grant broad ability sets); entitlements are individual per-staffer capability gates that require explicit approval (usually via a separate ticket + super_admin signoff). Each entitlement grant is audit-logged with the granting actor + reason.",
+  "description": "These are NOT tenant-facing entitlements \u2014 they are Stackra-internal capability flags that a super_admin toggles per PlatformUser to grant elevated permissions. Distinct from RBAC roles (which grant broad ability sets); entitlements are individual per-staffer capability gates that require explicit approval (usually via a separate ticket + super_admin signoff). Each entitlement grant is audit-logged with the granting actor + reason.",
   "kinds": [{ "kind": "boolean" }],
   "reference": {
     "publishedBy": "access/rbac (entitlements substrate reused; the entitlements table itself is owned by that module)",
@@ -37,7 +37,7 @@
     {
       "key": "platform.tenant_admin",
       "kind": "boolean",
-      "description": "Grants the holder the ability to perform admin actions on any tenant (change tenant status, disable a tenant, force-purge tenant data on request). Cross-tenant by construction. Every action writes both a platform-plane audit row AND a tenant-plane audit row (dual-writes so both the tenant DPO + the Academorix compliance officer see the same action).",
+      "description": "Grants the holder the ability to perform admin actions on any tenant (change tenant status, disable a tenant, force-purge tenant data on request). Cross-tenant by construction. Every action writes both a platform-plane audit row AND a tenant-plane audit row (dual-writes so both the tenant DPO + the Stackra compliance officer see the same action).",
       "grantedBy": "super_admin only",
       "audit_severity": "critical",
       "requires_reason": true,

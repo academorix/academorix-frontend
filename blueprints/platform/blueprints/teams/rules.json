@@ -1,69 +1,69 @@
 {
-  "id": "academorix://modules/teams/rules",
+  "id": "stackra://modules/teams/rules",
   "$version": 1,
   "title": "teams — validation rules",
   "description": "Custom Laravel validation rules published by TeamsServiceProvider::boot(). All rules are used both by the observer chain (for authoritative refusal on write) AND by FormRequest data classes (for early request-time validation with clear error surfaces).",
-  "namespace": "Academorix\\Teams\\Rules",
+  "namespace": "Stackra\\Teams\\Rules",
   "rules": [
     {
       "name": "valid_hex_color",
-      "class": "Academorix\\Teams\\Rules\\ValidHexColor",
+      "class": "Stackra\\Teams\\Rules\\ValidHexColor",
       "signature": "valid_hex_color",
       "description": "Value matches ^#[0-9A-Fa-f]{6}$ — a 7-character hex color literal. Used for primary_color + secondary_color.",
       "default_message": "The :attribute must be a 7-character hex color (e.g. #1a2b3c)."
     },
     {
       "name": "valid_e164_phone",
-      "class": "Academorix\\Teams\\Rules\\ValidE164Phone",
+      "class": "Stackra\\Teams\\Rules\\ValidE164Phone",
       "signature": "valid_e164_phone",
       "description": "Value is a valid E.164 phone number (^\\+[1-9]\\d{1,14}$). Used for trialist_phone.",
       "default_message": "The :attribute must be a valid international phone number in E.164 format (e.g. +14155551234)."
     },
     {
       "name": "valid_url",
-      "class": "Academorix\\Teams\\Rules\\ValidUrl",
+      "class": "Stackra\\Teams\\Rules\\ValidUrl",
       "signature": "valid_url",
       "description": "Value is a valid https URL. Used for logo_url.",
       "default_message": "The :attribute must be a valid HTTPS URL."
     },
     {
       "name": "valid_gender_category",
-      "class": "Academorix\\Teams\\Rules\\ValidGenderCategory",
+      "class": "Stackra\\Teams\\Rules\\ValidGenderCategory",
       "signature": "valid_gender_category",
       "description": "Value is one of: male / female / mixed / any. Backed by the GenderCategory enum cast.",
       "default_message": "The :attribute must be one of: male, female, mixed, any."
     },
     {
       "name": "valid_age_range",
-      "class": "Academorix\\Teams\\Rules\\ValidAgeRange",
+      "class": "Stackra\\Teams\\Rules\\ValidAgeRange",
       "signature": "valid_age_range",
       "description": "When both min_age and max_age are set: refuse when min_age > max_age; refuse either value outside [3, 100]. Passes when both are null (no age constraint).",
       "default_message": "The team's age range is invalid: min_age must be <= max_age, and both must be between 3 and 100."
     },
     {
       "name": "valid_capacity",
-      "class": "Academorix\\Teams\\Rules\\ValidCapacity",
+      "class": "Stackra\\Teams\\Rules\\ValidCapacity",
       "signature": "valid_capacity",
       "description": "capacity is null OR (>=1 AND <=500). capacity_waitlist is null OR (>=0 AND <=100).",
       "default_message": "The :attribute must be null or a positive integer within the platform limits (capacity: 1-500, waitlist: 0-100)."
     },
     {
       "name": "valid_schedule_pattern",
-      "class": "Academorix\\Teams\\Rules\\ValidSchedulePattern",
+      "class": "Stackra\\Teams\\Rules\\ValidSchedulePattern",
       "signature": "valid_schedule_pattern",
       "description": "Validates the schedule_pattern JSONB blob against schemas/team.schema.json (schedulePattern sub-shape). Shape: { monday: [{ starts: 'HH:MM', ends: 'HH:MM' }], ..., sunday: [...] }. Each window: starts + ends are 'HH:MM' 24h strings; ends > starts; no overlapping windows within a day.",
       "default_message": "The :attribute is not a valid schedule pattern. Each day must have non-overlapping HH:MM–HH:MM windows."
     },
     {
       "name": "valid_result_shape",
-      "class": "Academorix\\Teams\\Rules\\ValidResultShape",
+      "class": "Stackra\\Teams\\Rules\\ValidResultShape",
       "signature": "valid_result_shape",
       "description": "Validates the EventTeam.result JSONB against a sport-agnostic pattern set. Accepts one of: (1) score shape `{ score: { home: int, away: int }, ... }`; (2) position shape `{ position: int, ... }`; (3) points shape `{ points: int, ... }`; (4) mixed shape combining any of the above. Refuses arbitrary top-level keys not in the recognised catalogue.",
       "default_message": "The result blob doesn't match a recognised shape. See docs/team-event-results.md for the pattern catalogue."
     },
     {
       "name": "team_member_polymorphic_target_exists",
-      "class": "Academorix\\Teams\\Rules\\TeamMemberPolymorphicTargetExists",
+      "class": "Stackra\\Teams\\Rules\\TeamMemberPolymorphicTargetExists",
       "signature": "team_member_polymorphic_target_exists",
       "description": "Defensive rule — verifies (member_type, member_id) resolves to a live row of the declared type when the type has a registered resolver in config('teams.polymorphism.member_type_registry'). Skipped for pre-Wave-3 types (athlete, coach, staff) that don't have a resolver yet — the row is written as a placeholder + reconciled when the parent module lands.",
       "default_message": "The team member reference (:member_type, :member_id) doesn't resolve to a live row.",

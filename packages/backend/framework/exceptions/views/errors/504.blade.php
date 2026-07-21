@@ -12,7 +12,7 @@
 * - Overloaded upstream server
 *
 * @extends foundation::layouts.app
-* @package Academorix\Foundation
+* @package Stackra\Foundation
 */
 --}}
 @extends('foundation::layouts.app')

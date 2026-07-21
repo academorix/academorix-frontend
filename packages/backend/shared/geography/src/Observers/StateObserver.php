@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Observers;
+namespace Stackra\Geography\Observers;
 
-use Academorix\Geography\Contracts\Data\CityInterface;
-use Academorix\Geography\Contracts\Data\StateInterface;
-use Academorix\Geography\Events\Domain\StateCreated;
-use Academorix\Geography\Events\Domain\StateDeleted;
-use Academorix\Geography\Events\Domain\StateUpdated;
-use Academorix\Geography\Models\City;
-use Academorix\Geography\Models\State;
+use Stackra\Geography\Contracts\Data\CityInterface;
+use Stackra\Geography\Contracts\Data\StateInterface;
+use Stackra\Geography\Events\Domain\StateCreated;
+use Stackra\Geography\Events\Domain\StateDeleted;
+use Stackra\Geography\Events\Domain\StateUpdated;
+use Stackra\Geography\Models\City;
+use Stackra\Geography\Models\State;
 use InvalidArgumentException;
 
 /**

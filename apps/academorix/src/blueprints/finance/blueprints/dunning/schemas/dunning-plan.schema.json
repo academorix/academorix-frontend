@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/dunning/schemas/dunning-plan",
+  "id": "stackra://modules/dunning/schemas/dunning-plan",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "DunningPlan",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "dpl_",
     "incrementing": false,
-    "model": "Academorix\\Finance\\Dunning\\Models\\DunningPlan",
-    "interface": "Academorix\\Finance\\Dunning\\Contracts\\Data\\DunningPlanInterface",
-    "implements": ["Academorix\\Finance\\Dunning\\Contracts\\Data\\DunningPlanInterface"],
+    "model": "Stackra\\Finance\\Dunning\\Models\\DunningPlan",
+    "interface": "Stackra\\Finance\\Dunning\\Contracts\\Data\\DunningPlanInterface",
+    "implements": ["Stackra\\Finance\\Dunning\\Contracts\\Data\\DunningPlanInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

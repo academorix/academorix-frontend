@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsMail\Services;
+namespace Stackra\NotificationsMail\Services;
 
-use Academorix\NotificationsMail\Contracts\Services\MailSuppressionRegistryInterface;
+use Stackra\NotificationsMail\Contracts\Services\MailSuppressionRegistryInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\NotificationsMail\Contracts\Repositories\MailSuppressionRepositoryInterface;
+use Stackra\NotificationsMail\Contracts\Repositories\MailSuppressionRepositoryInterface;
 
 /**
  * Concrete service — MailSuppressionRegistry.

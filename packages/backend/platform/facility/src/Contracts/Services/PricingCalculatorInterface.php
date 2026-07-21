@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Contracts\Services;
+namespace Stackra\Facility\Contracts\Services;
 
-use Academorix\Facility\Services\PricingCalculator;
+use Stackra\Facility\Services\PricingCalculator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

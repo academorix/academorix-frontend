@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformApplicationSdk\Payloads\BusinessTypes;
+namespace Stackra\PlatformApplicationSdk\Payloads\BusinessTypes;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\Max;

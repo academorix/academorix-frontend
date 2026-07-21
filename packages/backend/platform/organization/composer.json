@@ -1,10 +1,10 @@
 {
-  "name": "academorix/organization",
+  "name": "stackra/organization",
   "type": "library",
-  "description": "Academorix Organization module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/organization/`. Complements the wire SDK at `academorix-platform/organization-sdk`.",
+  "description": "Stackra Organization module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/organization/`. Complements the wire SDK at `stackra-platform/organization-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "platform",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-platform/organization-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-platform/organization-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Organization\\": "src/"
+      "Stackra\\Organization\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Organization\\Tests\\": "tests/"
+      "Stackra\\Organization\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Organization\\Providers\\OrganizationServiceProvider"
+        "Stackra\\Organization\\Providers\\OrganizationServiceProvider"
       ],
       "aliases": {}
     }

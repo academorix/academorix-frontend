@@ -4,15 +4,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformUser\Contracts\Data;
+namespace Stackra\PlatformUser\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\PlatformUser\Models\PlatformUser;
+use Stackra\PlatformUser\Models\PlatformUser;
 
 /**
  * Table shape for the `platform_users` table.
  *
- * Academorix-staff principal.
+ * Stackra-staff principal.
  *
  * @category PlatformUser
  *

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformCredentialsSdk\Requests\Credentials;
+namespace Stackra\PlatformCredentialsSdk\Requests\Credentials;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\PlatformCredentialsSdk\Data\CredentialData;
-use Academorix\PlatformCredentialsSdk\Payloads\Credentials\CreateCredentialPayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\PlatformCredentialsSdk\Data\CredentialData;
+use Stackra\PlatformCredentialsSdk\Payloads\Credentials\CreateCredentialPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Contracts\Repositories;
+namespace Stackra\Match\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Match\Models\OpponentLogo}.
+ * Repository contract for {@see Stackra\Match\Models\OpponentLogo}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `OpponentLogoRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Match\Models\OpponentLogo>
+ * @extends RepositoryInterface<\Stackra\Match\Models\OpponentLogo>
  *
  * @category Match
  *

@@ -1,20 +1,20 @@
 {
-  "id": "academorix://modules/mfa/attributes",
+  "id": "stackra://modules/mfa/attributes",
   "$version": 1,
   "title": "mfa — PHP attribute contracts",
   "description": "One attribute. #[AsMfaListener] marks a class as a subscriber to MFA challenge + enrolment + credential lifecycle events (challenge issued, challenge succeeded, challenge failed, enrolment confirmed, credential registered, recovery-code consumed). Discovered at boot by the MfaServiceProvider so services under `notifications/`, `activity/`, `observability/`, and any tenant-defined listener can react without explicit event bindings.",
-  "namespace": "Academorix\\Mfa\\Attributes",
+  "namespace": "Stackra\\Mfa\\Attributes",
   "attributes": [
     {
       "name": "AsMfaListener",
-      "class": "Academorix\\Mfa\\Attributes\\AsMfaListener",
+      "class": "Stackra\\Mfa\\Attributes\\AsMfaListener",
       "targets": ["class"],
       "params": [
         {
           "name": "events",
           "type": "array<string>",
           "default": ["*"],
-          "description": "Which MFA events this class reacts to. Wildcard `*` = every event under `Academorix\\Mfa\\Events\\*`. Specific list e.g. `['MfaChallengeFailed', 'MfaRecoveryCodeConsumed']` subscribes to those only. Validated against the events map at boot; typos abort application boot."
+          "description": "Which MFA events this class reacts to. Wildcard `*` = every event under `Stackra\\Mfa\\Events\\*`. Specific list e.g. `['MfaChallengeFailed', 'MfaRecoveryCodeConsumed']` subscribes to those only. Validated against the events map at boot; typos abort application boot."
         },
         {
           "name": "queue",

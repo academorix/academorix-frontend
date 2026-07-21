@@ -1,10 +1,10 @@
 {
-  "name": "academorix/approvals",
+  "name": "stackra/approvals",
   "type": "library",
-  "description": "Academorix Approvals module — server-side Laravel package emitted from the module blueprint at `modules/workflow/blueprints/approvals/`. Complements the wire SDK at `academorix-workflow/approvals-sdk`.",
+  "description": "Stackra Approvals module — server-side Laravel package emitted from the module blueprint at `modules/workflow/blueprints/approvals/`. Complements the wire SDK at `stackra-workflow/approvals-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "workflow",
@@ -17,14 +17,14 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix/enum": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix-workflow/approvals-sdk": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra/enum": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra-workflow/approvals-sdk": "@dev",
     "symfony/expression-language": "^7.0"
   },
   "require-dev": {
@@ -36,18 +36,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Approvals\\": "src/"
+      "Stackra\\Approvals\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Approvals\\Tests\\": "tests/"
+      "Stackra\\Approvals\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Approvals\\Providers\\ApprovalsServiceProvider"
+        "Stackra\\Approvals\\Providers\\ApprovalsServiceProvider"
       ],
       "aliases": {}
     }

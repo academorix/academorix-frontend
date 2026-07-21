@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Tests;
+namespace Stackra\Rbac\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/rbac.
+ * Base test case for stackra/rbac.
  *
  * @category Rbac
  *

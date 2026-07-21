@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDevelopmentSdk\Resources;
+namespace Stackra\SportsDevelopmentSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsDevelopmentSdk\Data\TalentFlagData;
-use Academorix\SportsDevelopmentSdk\Requests\TalentFlags\CreateTalentFlagRequest;
-use Academorix\SportsDevelopmentSdk\Requests\TalentFlags\ListTalentFlagsRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsDevelopmentSdk\Data\TalentFlagData;
+use Stackra\SportsDevelopmentSdk\Requests\TalentFlags\CreateTalentFlagRequest;
+use Stackra\SportsDevelopmentSdk\Requests\TalentFlags\ListTalentFlagsRequest;
 use Saloon\Http\Response;
 
 /**
@@ -55,7 +55,7 @@ final readonly class TalentFlagsResource
      *
      * @return TalentFlagData
      */
-    public function create(\Academorix\SportsDevelopmentSdk\Payloads\TalentFlags\CreateTalentFlagPayload $payload, ?string $idempotencyKey = null): TalentFlagData
+    public function create(\Stackra\SportsDevelopmentSdk\Payloads\TalentFlags\CreateTalentFlagPayload $payload, ?string $idempotencyKey = null): TalentFlagData
     {
         return $this->connector->send(new CreateTalentFlagRequest($payload, $idempotencyKey))->dto();
     }

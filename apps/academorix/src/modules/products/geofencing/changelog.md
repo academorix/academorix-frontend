@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to `academorix/geofencing`.
+All notable changes to `stackra/geofencing`.
 
 ## [Unreleased]
 

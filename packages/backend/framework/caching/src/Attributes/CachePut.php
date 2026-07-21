@@ -26,15 +26,15 @@
  *   - `Cacheable` writes only on miss. `CachePut` writes always.
  *   - Both share the same key + tag composition rules.
  *
- * @see \Academorix\Caching\Attributes\Cacheable Read counterpart.
- * @see \Academorix\Caching\Attributes\CacheEvict Invalidation counterpart.
+ * @see \Stackra\Caching\Attributes\Cacheable Read counterpart.
+ * @see \Stackra\Caching\Attributes\CacheEvict Invalidation counterpart.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Caching\Attributes;
+namespace Stackra\Caching\Attributes;
 
-use Academorix\Caching\Contracts\CacheKeyGenerator;
+use Stackra\Caching\Contracts\CacheKeyGenerator;
 use Attribute;
 
 /**

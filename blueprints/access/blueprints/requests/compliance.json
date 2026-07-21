@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/access/requests/compliance",
+  "id": "stackra://modules/access/requests/compliance",
   "$version": 1,
   "title": "requests \u2014 regulatory compliance",
   "description": "Compliance controls this module produces evidence for. Access requests are authorization decisions \u2014 SOC 2 Trust Services Criteria CC6 (logical access) is the primary applicable regime, with GDPR Art. 32 (security of processing) applying to the audit trail itself.",

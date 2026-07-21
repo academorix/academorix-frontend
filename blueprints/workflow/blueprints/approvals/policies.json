@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/workflow/approvals/policies",
+  "id": "stackra://modules/workflow/approvals/policies",
   "$version": 1,
   "title": "approvals — authorization policies",
-  "description": "Four policies gate the module's write paths. Approvable-action management is platform-only (Academorix defines the registry — tenants don't add new action types). Template CRUD is tenant-admin. Instance abilities are per-role: viewAny + view + withdraw for requesters + admins, approve + reject for approvers only (with a deeper defense — the caller MUST be in the requirement's resolved_approvers). Decisions are effectively write-once — no update, no delete.",
+  "description": "Four policies gate the module's write paths. Approvable-action management is platform-only (Stackra defines the registry — tenants don't add new action types). Template CRUD is tenant-admin. Instance abilities are per-role: viewAny + view + withdraw for requesters + admins, approve + reject for approvers only (with a deeper defense — the caller MUST be in the requirement's resolved_approvers). Decisions are effectively write-once — no update, no delete.",
   "policies": [
     {
       "model": "ApprovableAction",
-      "class": "Academorix\\Approval\\Policies\\ApprovableActionPolicy",
+      "class": "Stackra\\Approval\\Policies\\ApprovableActionPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -32,7 +32,7 @@
     },
     {
       "model": "ApprovalTemplate",
-      "class": "Academorix\\Approval\\Policies\\ApprovalTemplatePolicy",
+      "class": "Stackra\\Approval\\Policies\\ApprovalTemplatePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -83,7 +83,7 @@
     },
     {
       "model": "ApprovalInstance",
-      "class": "Academorix\\Approval\\Policies\\ApprovalInstancePolicy",
+      "class": "Stackra\\Approval\\Policies\\ApprovalInstancePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -124,7 +124,7 @@
     },
     {
       "model": "ApprovalDecision",
-      "class": "Academorix\\Approval\\Policies\\ApprovalDecisionPolicy",
+      "class": "Stackra\\Approval\\Policies\\ApprovalDecisionPolicy",
       "abilities": [
         {
           "action": "view",

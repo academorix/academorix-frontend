@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Services;
+namespace Stackra\Audit\Services;
 
-use Academorix\Audit\Attributes\Auditable;
-use Academorix\Audit\Contracts\Services\AuditRegistryInterface;
+use Stackra\Audit\Attributes\Auditable;
+use Stackra\Audit\Contracts\Services\AuditRegistryInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**
@@ -15,10 +15,10 @@ use Illuminate\Container\Attributes\Singleton;
  *
  * `[<class-string> => list<string>]` — model FQCN → encrypt-field
  * list. Hydrated at boot by the framework's generic hydration pump
- * ({@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper})
+ * ({@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper})
  * via the `#[HydratesFrom]` declaration on
  * {@see AuditRegistryInterface::register()}. Queried by
- * {@see \Academorix\Audit\Casts\EncryptedAuditValueCast} on every
+ * {@see \Stackra\Audit\Casts\EncryptedAuditValueCast} on every
  * model attribute cast.
  *
  * ## Duplicate registration

@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Services;
+namespace Stackra\Marketing\Services;
 
-use Academorix\Marketing\Contracts\Services\MarketingProviderManagerInterface;
+use Stackra\Marketing\Contracts\Services\MarketingProviderManagerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Marketing\Contracts\Repositories\MarketingDeadLetterRepositoryInterface;
+use Stackra\Marketing\Contracts\Repositories\MarketingDeadLetterRepositoryInterface;
 
 /**
  * Concrete service — MarketingProviderManager.

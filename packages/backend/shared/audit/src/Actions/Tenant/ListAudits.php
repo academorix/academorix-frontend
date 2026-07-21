@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Actions\Tenant;
+namespace Stackra\Audit\Actions\Tenant;
 
-use Academorix\Audit\Contracts\Repositories\AuditRepositoryInterface;
-use Academorix\Audit\Data\AuditData;
-use Academorix\Audit\Enums\AuditPermission;
-use Academorix\Audit\Models\Audit;
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Audit\Contracts\Repositories\AuditRepositoryInterface;
+use Stackra\Audit\Data\AuditData;
+use Stackra\Audit\Enums\AuditPermission;
+use Stackra\Audit\Models\Audit;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 use Spatie\LaravelData\DataCollection;
 
 /**
@@ -26,7 +26,7 @@ use Spatie\LaravelData\DataCollection;
  * plus the platform-plane rows (tenant_id NULL). The DPO surface
  * INTENTIONALLY excludes platform-plane rows because the DPO has no
  * standing to see cross-tenant compliance events —
- * {@see \Academorix\Audit\Policies\AuditPolicy::belongsToCaller()} enforces
+ * {@see \Stackra\Audit\Policies\AuditPolicy::belongsToCaller()} enforces
  * this at the row level.
  *
  * @category Audit

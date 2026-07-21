@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Services;
+namespace Stackra\Notifications\Services;
 
-use Academorix\Notifications\Contracts\Services\NotificationTemplateRegistryInterface;
+use Stackra\Notifications\Contracts\Services\NotificationTemplateRegistryInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

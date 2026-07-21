@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Jobs;
+namespace Stackra\Geofencing\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;

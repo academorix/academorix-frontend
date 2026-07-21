@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsMedicalSdk\Requests\Injuries;
+namespace Stackra\SportsMedicalSdk\Requests\Injuries;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsMedicalSdk\Data\InjuryData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsMedicalSdk\Data\InjuryData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

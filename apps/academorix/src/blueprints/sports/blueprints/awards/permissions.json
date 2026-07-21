@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/awards/permissions",
+  "id": "stackra://modules/awards/permissions",
   "$version": 1,
   "title": "awards — permissions",
-  "seeder": "Academorix\\Sports\\Awards\\Database\\Seeders\\AwardsPermissionSeeder",
+  "seeder": "Stackra\\Sports\\Awards\\Database\\Seeders\\AwardsPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

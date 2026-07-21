@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\User\Database\Factories;
+namespace Stackra\User\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\User\Contracts\Data\ProfileInterface;
-use Academorix\User\Models\Profile;
+use Stackra\User\Contracts\Data\ProfileInterface;
+use Stackra\User\Models\Profile;
 
 /**
- * Factory for {@see \Academorix\User\Models\Profile}.
+ * Factory for {@see \Stackra\User\Models\Profile}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\User\Models\Profile>
+ * @extends Factory<\Stackra\User\Models\Profile>
  *
  * @category User
  *

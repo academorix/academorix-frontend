@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invitations/entitlements",
+  "id": "stackra://modules/invitations/entitlements",
   "$version": 1,
   "title": "invitations — entitlements",
   "description": "Two entitlement KEYS this module reads at send time. Values are seeded per Tenant by the entitlements module (from Subscription plan + BusinessType.default_config.entitlements) and cached per tenant. Enforcement lives in the `throttle.invitations` middleware — a 402 is returned when the tenant is at cap, distinct from the 429 rate-limit response.",

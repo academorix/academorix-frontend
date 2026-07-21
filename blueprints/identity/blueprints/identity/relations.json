@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/identity/relations",
+  "id": "stackra://modules/identity/relations",
   "$version": 1,
   "title": "identity \u2014 model relationships",
   "description": "Identity is a GLOBAL root aggregate \u2014 it has NO outbound FKs. Application, Tenant, and User all reference Identity, never the reverse. Inbound FKs from `user::User`, `user::PlatformUser`, `mfa::MfaChallenge`, `auth::PasswordResetToken`, and `auth::EmailVerificationToken`. This module ships the Identity model only; the inbound-FK models are owned by the referencing modules and shown here for context.",

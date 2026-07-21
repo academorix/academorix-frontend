@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "approvals",
   "alias": "approvals",
-  "namespace": "Academorix\\Approval",
+  "namespace": "Stackra\\Approval",
   "description": "The multi-party approval workflow engine. Every action across the platform that needs 'N humans must approve before this executes' traverses this module — from access grants (via access/requests) to money movements (refunds >$500), configuration changes, sensitive data access, platform-staff impersonation session extensions. Ships the `#[AsApprovableAction]` attribute for domain modules to decorate their actions, the `approve` middleware that intercepts execution and routes through the engine, the `symfony/expression-language`-backed rule engine that evaluates template `when_expression` conditions + approver selectors, seven owned tables that persist templates + instances + decisions, sequential + parallel approver groups via `sort_order` on template_approvers, OOF-aware approver resolution via access/delegation, quorum evaluation per requirement + AND-across-requirements per instance, recall/withdraw before decision, hard timeout via `expires_at` + configurable `on_timeout` behavior (expire vs approve vs escalate), automated reminders per approver, comprehensive audit trail. Templates are RUNTIME DATA — tenant admins author + version them via the workflow-approval-templates surface without deployment. This is the load-bearing module for governance: SOC 2 + ISO 27001 + PCI-DSS access-review controls all rely on it. Rejected: `#[RequiresApproval(template:, when:)]` static attribute (D-A4 — templates as code would require deploy to change approver rules). Rejected: `HasApprovals` trait intercepting `__invoke()` (D-A5 — PHP mechanics don't support it; middleware is the seam). Rejected: json-logic-php + custom DSL + OPA/Cerbos (D-A6 — expression-language is PHP-native + sandbox-friendly + cache-compilable). Rejected: single-JSON approver-groups column (D-A7 — normalized `approval_template_approvers` table keeps quorum evaluation SQL-queryable).",
   "keywords": [
     "approval-engine",
@@ -35,7 +35,7 @@
     "approvable-actions-registry"
   ],
   "priority": 34,
-  "providers": ["Academorix\\Approval\\Providers\\ApprovalServiceProvider"],
+  "providers": ["Stackra\\Approval\\Providers\\ApprovalServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

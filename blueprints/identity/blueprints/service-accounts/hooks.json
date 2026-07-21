@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/service-accounts/hooks",
+  "id": "stackra://modules/service-accounts/hooks",
   "$version": 1,
   "title": "service-accounts \u2014 tenancy hooks",
   "description": "service-accounts has NO tenancy hooks. The module owns a table (`service_accounts`) that CAN carry `tenant_id`, but no `TenantProvisioned` action mutates the table \u2014 SAs are provisioned by a platform_admin operator via HTTP or CLI, never automatically as a side-effect of tenant creation.",

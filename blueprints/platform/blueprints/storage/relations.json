@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/storage/relations",
+  "id": "stackra://modules/storage/relations",
   "$version": 1,
   "title": "storage \u2014 model relationships",
   "description": "Four owned entities with tight internal graph. External graph is intentionally minimal: the module publishes the HasFiles trait so downstream models attach polymorphically (fileable_type / fileable_id) without adding foreign keys back to this module.",

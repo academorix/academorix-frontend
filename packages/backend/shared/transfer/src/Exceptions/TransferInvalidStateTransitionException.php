@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Exceptions;
+namespace Stackra\Transfer\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised on an illegal state-machine transition caught by
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TransferInvalidStateTransitionException extends AcademorixException
+final class TransferInvalidStateTransitionException extends StackraException
 {
     public const CODE = 'TRANSFER_INVALID_STATE_TRANSITION';
 

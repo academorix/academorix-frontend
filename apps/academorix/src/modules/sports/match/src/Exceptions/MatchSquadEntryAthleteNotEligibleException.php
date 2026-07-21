@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Exceptions;
+namespace Stackra\Match\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to add an athlete to the squad whose active AthleteEnrollment does not match the match's season.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MatchSquadEntryAthleteNotEligibleException extends AcademorixException
+final class MatchSquadEntryAthleteNotEligibleException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

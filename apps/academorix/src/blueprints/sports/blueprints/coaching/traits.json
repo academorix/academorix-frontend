@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/coaching/traits",
+  "id": "stackra://modules/coaching/traits",
   "$version": 1,
   "title": "coaching — trait composition",
   "description": "Four owned traits — one anchor + three composition helpers. Anchor: BelongsToCoachingProfile for downstream models with a coaching_profile_id FK. Helpers: HasCoachAssignments / HasCoachCertifications / HasCoachSkillRatings compose the reverse relations onto CoachingProfile itself.",
   "owned": [
     {
-      "trait": "Academorix\\Sports\\Coaching\\Concerns\\BelongsToCoachingProfile",
+      "trait": "Stackra\\Sports\\Coaching\\Concerns\\BelongsToCoachingProfile",
       "description": "Mixed into any downstream model that carries a `coaching_profile_id` FK. Adds the `coachingProfile()` belongsTo relation + a `resolveInCoachingProfile(?CoachingProfile)` query scope + a `booted()` hook that refuses to save when coachingProfile.tenant_id != row.tenant_id (cross-tenant defense-in-depth).",
       "public": true,
       "usedBy": [
@@ -17,19 +17,19 @@
       "conflicts_with": []
     },
     {
-      "trait": "Academorix\\Sports\\Coaching\\Concerns\\HasCoachAssignments",
+      "trait": "Stackra\\Sports\\Coaching\\Concerns\\HasCoachAssignments",
       "description": "Composed onto CoachingProfile. Adds `assignments()` (hasMany CoachAssignment), `activeAssignments()` (filtered), `headCoachAssignments()`, `assistantAssignments()`. Read-only accessors.",
       "public": true,
       "usedBy": ["coaching::CoachingProfile"]
     },
     {
-      "trait": "Academorix\\Sports\\Coaching\\Concerns\\HasCoachCertifications",
+      "trait": "Stackra\\Sports\\Coaching\\Concerns\\HasCoachCertifications",
       "description": "Composed onto CoachingProfile. Adds `certifications()`, `verifiedCertifications()`, `expiringCertifications(int $withinDays)`, `expiredCertifications()`.",
       "public": true,
       "usedBy": ["coaching::CoachingProfile"]
     },
     {
-      "trait": "Academorix\\Sports\\Coaching\\Concerns\\HasCoachSkillRatings",
+      "trait": "Stackra\\Sports\\Coaching\\Concerns\\HasCoachSkillRatings",
       "description": "Composed onto CoachingProfile. Adds `skillRatings()`, `currentRatings()` (unexpired), `ratingsForSport(string)`, `ratingsForDiscipline(string)`, `ratingsForPosition(string)`, `topRatingFor(string $ratableType, string $ratableId)`.",
       "public": true,
       "usedBy": ["coaching::CoachingProfile"]
@@ -42,37 +42,37 @@
       { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" }
     ],
-    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "tenants": [{ "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" }],
     "staff": [
       {
-        "trait": "Academorix\\Staff\\Concerns\\BelongsToStaff",
+        "trait": "Stackra\\Staff\\Concerns\\BelongsToStaff",
         "reason": "CoachingProfile carries staff_id — cascades tenant + branch through the parent Staff."
       }
     ],
     "branch": [
       {
-        "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch",
+        "trait": "Stackra\\Branch\\Concerns\\BelongsToBranch",
         "reason": "CoachingProfile.branch_id direct — cascades organization + region + tenant through the branch."
       }
     ],
     "user": [
       {
-        "trait": "Academorix\\User\\Concerns\\BelongsToUser",
+        "trait": "Stackra\\User\\Concerns\\BelongsToUser",
         "reason": "CoachSkillRating carries rated_by_user_id; CoachCertification carries verified_by_admin_user_id; CoachAssignment carries assigned_by_user_id — enables audit-trail joins."
       }
     ],
     "audit": [
       {
-        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "trait": "Stackra\\Audit\\Concerns\\Auditable",
         "reason": "Every state mutation (verification, deactivation, rating value change, certification verify) is compliance-relevant."
       }
     ],
-    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
+    "activity": [{ "trait": "Stackra\\Activity\\Concerns\\HasActivityLog" }]
   },
   "composition": {
     "coachingProfile": {

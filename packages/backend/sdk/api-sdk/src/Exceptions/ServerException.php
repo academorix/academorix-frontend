@@ -15,7 +15,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Exceptions;
+namespace Stackra\ApiSdk\Exceptions;
 
 /**
  * HTTP 5xx — the API returned a server error.

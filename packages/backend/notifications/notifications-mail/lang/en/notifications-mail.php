@@ -4,7 +4,7 @@
  * @file modules/notifications/notifications-mail/lang/en/notifications-mail.php
  *
  * @description
- * English translations for the `academorix/notifications-mail`
+ * English translations for the `stackra/notifications-mail`
  * module. Every error `i18n_key` in the blueprint's `errors.json`
  * resolves to a message under `notifications.mail.errors.*` here.
  */

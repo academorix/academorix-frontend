@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Observers;
+namespace Stackra\Geography\Observers;
 
-use Academorix\Geography\Contracts\Data\CurrencyInterface;
-use Academorix\Geography\Events\Domain\CurrencyCreated;
-use Academorix\Geography\Events\Domain\CurrencyDeleted;
-use Academorix\Geography\Events\Domain\CurrencyUpdated;
-use Academorix\Geography\Models\Currency;
+use Stackra\Geography\Contracts\Data\CurrencyInterface;
+use Stackra\Geography\Events\Domain\CurrencyCreated;
+use Stackra\Geography\Events\Domain\CurrencyDeleted;
+use Stackra\Geography\Events\Domain\CurrencyUpdated;
+use Stackra\Geography\Models\Currency;
 use InvalidArgumentException;
 
 /**

@@ -1,4 +1,4 @@
-import { defineBaseConfig } from "@academorix/config-tsup";
+import { defineBaseConfig } from "@stackra/config-tsup";
 
 export default defineBaseConfig({
   index: "src/core/index.ts",

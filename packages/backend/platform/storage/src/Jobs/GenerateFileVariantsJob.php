@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Jobs;
+namespace Stackra\Storage\Jobs;
 
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Contracts\Repositories\FileRepositoryInterface;
-use Academorix\Storage\Contracts\Services\FileKindRegistryInterface;
-use Academorix\Storage\Contracts\Services\VariantGeneratorInterface;
-use Academorix\Storage\Events\FileVariantsCompleted;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Contracts\Repositories\FileRepositoryInterface;
+use Stackra\Storage\Contracts\Services\FileKindRegistryInterface;
+use Stackra\Storage\Contracts\Services\VariantGeneratorInterface;
+use Stackra\Storage\Events\FileVariantsCompleted;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

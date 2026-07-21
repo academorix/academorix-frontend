@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Dunning\Repositories;
+namespace Stackra\Dunning\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Dunning\Contracts\Data\DunningPlanInterface;
-use Academorix\Dunning\Contracts\Repositories\DunningPlanRepositoryInterface;
-use Academorix\Dunning\Models\DunningPlan;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Dunning\Contracts\Data\DunningPlanInterface;
+use Stackra\Dunning\Contracts\Repositories\DunningPlanRepositoryInterface;
+use Stackra\Dunning\Models\DunningPlan;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Dunning\Models\DunningPlan}.
+ * Attribute-first Eloquent repository for {@see Stackra\Dunning\Models\DunningPlan}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(DunningPlanInterface::class)]` which resolves to
  * `DunningPlan` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Dunning\Models\DunningPlan>
+ * @extends Repository<\Stackra\Dunning\Models\DunningPlan>
  *
  * @category Dunning
  *

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Analytics\Contracts\Data;
+namespace Stackra\Analytics\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Analytics\Models\AnalyticsIdentity;
+use Stackra\Analytics\Models\AnalyticsIdentity;
 
 /**
  * Table shape for the `analytics_identities` table.

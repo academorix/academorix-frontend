@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Contracts\Services;
+namespace Stackra\Coaching\Contracts\Services;
 
-use Academorix\Coaching\Services\CoachingProfileVerifier;
+use Stackra\Coaching\Services\CoachingProfileVerifier;
 use Illuminate\Container\Attributes\Bind;
 
 /**

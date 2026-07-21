@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Events;
+namespace Stackra\Integrations\Events;
 
-use Academorix\Events\Attributes\AsEvent;
-use Academorix\Integrations\Models\TenantIntegration;
+use Stackra\Events\Attributes\AsEvent;
+use Stackra\Integrations\Models\TenantIntegration;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 

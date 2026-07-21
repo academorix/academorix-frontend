@@ -14,10 +14,10 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  *
- * @see \Academorix\Sentry\Compiler\SentryCompiler
+ * @see \Stackra\Sentry\Compiler\SentryCompiler
  */
 
-namespace Academorix\Sentry\Attributes;
+namespace Stackra\Sentry\Attributes;
 
 use Attribute;
 
@@ -32,8 +32,8 @@ use Attribute;
  *
  * ### Basic Context Provider:
  * ```php
- * use Academorix\Sentry\Attributes\AsSentryContext;
- * use Academorix\Sentry\Contracts\SentryContext;
+ * use Stackra\Sentry\Attributes\AsSentryContext;
+ * use Stackra\Sentry\Contracts\SentryContext;
  * use Sentry\State\Scope;
  * use Throwable;
  *

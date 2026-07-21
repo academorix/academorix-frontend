@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/athlete-guardian/feature-flags",
+  "id": "stackra://modules/athlete-guardian/feature-flags",
   "$version": 1,
   "title": "athlete-guardian — kill switches",
   "engine": "laravel/pennant",

@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "messaging",
   "alias": "messaging",
-  "namespace": "Academorix\\Messaging",
+  "namespace": "Stackra\\Messaging",
   "description": "Direct messaging + group threads per blueprint §16.1. Ships THREE owned entities: `Conversation` (1:1 or group thread — scope IN branch/team/adhoc + subject + last_message_at; retention per tenant policy), `ConversationParticipant` (User in a Conversation with per-user state — muted_until + last_read_at + role in the thread), `Message` (single message — body / attachments / sent_at / read_by JSONB of user_id → read_at). Live typing indicator + presence via realtime channel `tenant.{id}.conversation.{convId}`. Distinct from Notifications (system → user) and Announcements (admin → many); this is USER ↔ USER DM.",
   "keywords": [
     "messaging",
@@ -14,7 +14,7 @@
     "wave-2"
   ],
   "priority": 73,
-  "providers": ["Academorix\\Messaging\\Providers\\MessagingServiceProvider"],
+  "providers": ["Stackra\\Messaging\\Providers\\MessagingServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

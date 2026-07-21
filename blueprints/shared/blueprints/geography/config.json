@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geography/config",
+  "id": "stackra://modules/geography/config",
   "$version": 1,
   "title": "geography \u2014 developer configuration",
   "configFile": "config/geography.php",
@@ -94,12 +94,12 @@
     "vendor_overrides": {
       "description": "Keys rebound at GeographyServiceProvider::register(). These override values in vendor's config/world.php.",
       "keys": [
-        { "path": "world.models.country", "value": "Academorix\\Geography\\Models\\Country" },
-        { "path": "world.models.state", "value": "Academorix\\Geography\\Models\\State" },
-        { "path": "world.models.city", "value": "Academorix\\Geography\\Models\\City" },
-        { "path": "world.models.currency", "value": "Academorix\\Geography\\Models\\Currency" },
-        { "path": "world.models.language", "value": "Academorix\\Geography\\Models\\Language" },
-        { "path": "world.models.timezone", "value": "Academorix\\Geography\\Models\\Timezone" },
+        { "path": "world.models.country", "value": "Stackra\\Geography\\Models\\Country" },
+        { "path": "world.models.state", "value": "Stackra\\Geography\\Models\\State" },
+        { "path": "world.models.city", "value": "Stackra\\Geography\\Models\\City" },
+        { "path": "world.models.currency", "value": "Stackra\\Geography\\Models\\Currency" },
+        { "path": "world.models.language", "value": "Stackra\\Geography\\Models\\Language" },
+        { "path": "world.models.timezone", "value": "Stackra\\Geography\\Models\\Timezone" },
         {
           "path": "world.accepted_locales",
           "value": "config('geography.accepted_locales', [23 vendor default locales + any localization-approved additions])"

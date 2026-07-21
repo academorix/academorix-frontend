@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Jobs;
+namespace Stackra\Integrations\Jobs;
 
-use Academorix\Integrations\Contracts\Repositories\TenantIntegrationRepositoryInterface;
-use Academorix\Integrations\Contracts\Services\IntegrationRegistryInterface;
-use Academorix\Integrations\Events\IntegrationTokenRefreshed;
-use Academorix\Integrations\Models\TenantIntegration;
+use Stackra\Integrations\Contracts\Repositories\TenantIntegrationRepositoryInterface;
+use Stackra\Integrations\Contracts\Services\IntegrationRegistryInterface;
+use Stackra\Integrations\Events\IntegrationTokenRefreshed;
+use Stackra\Integrations\Models\TenantIntegration;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

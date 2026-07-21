@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/user/jobs",
+  "id": "stackra://modules/user/jobs",
   "$version": 1,
   "title": "user \u2014 background jobs",
   "jobs": [
     {
-      "class": "Academorix\\User\\Jobs\\ProvisionUserJob",
+      "class": "Stackra\\User\\Jobs\\ProvisionUserJob",
       "queue": "notifications",
       "purpose": "Async provisioning path used when invitation acceptance triggers user creation from a background worker (e.g. a mail bounce retry, a delayed SSO grant exchange). Wraps the synchronous `ProvisionUser` action so the same code path runs whether invoked from an HTTP request or a queue worker.",
       "steps": [
@@ -23,7 +23,7 @@
       "backoff": [10, 60, 300]
     },
     {
-      "class": "Academorix\\User\\Jobs\\UpdateLastActiveJob",
+      "class": "Stackra\\User\\Jobs\\UpdateLastActiveJob",
       "queue": "low",
       "purpose": "Batched update of `tenant_members.last_active_at`. Every authenticated request stamps the current timestamp into an in-memory buffer; this job flushes the buffer to the DB every minute so the DB doesn't take a row lock per request.",
       "steps": [
@@ -38,7 +38,7 @@
       "note": "Fire-and-forget. If a batch fails, next dispatch picks up the buffer + a couple of minutes of activity is lost \u2014 acceptable for a `last_active_at` display field."
     },
     {
-      "class": "Academorix\\User\\Jobs\\CleanupOrphanedProfilesJob",
+      "class": "Stackra\\User\\Jobs\\CleanupOrphanedProfilesJob",
       "queue": "low",
       "purpose": "Deletes Profile rows that have no User referencing them AND are older than `user.privacy.orphaned_profile_ttl_hours` (default 24 hours). Orphans occur when provisioning creates a Profile then fails to link the User \u2014 rare but possible under a partial rollback.",
       "steps": [
@@ -51,7 +51,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\User\\Jobs\\PurgeErasedUsersJob",
+      "class": "Stackra\\User\\Jobs\\PurgeErasedUsersJob",
       "queue": "low",
       "purpose": "GDPR Art. 17 finalisation. Hard-deletes soft-deleted User rows past the erasure hold window (default 30 days per `user.privacy.erasure_hold_days`). Cascade deletes their Profile + TenantMember rows; fires UserHardDeleted.",
       "steps": [

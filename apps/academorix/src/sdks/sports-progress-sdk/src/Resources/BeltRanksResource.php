@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsProgressSdk\Resources;
+namespace Stackra\SportsProgressSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsProgressSdk\Data\BeltRankData;
-use Academorix\SportsProgressSdk\Requests\BeltRanks\ListBeltRanksRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsProgressSdk\Data\BeltRankData;
+use Stackra\SportsProgressSdk\Requests\BeltRanks\ListBeltRanksRequest;
 use Saloon\Http\Response;
 
 /**

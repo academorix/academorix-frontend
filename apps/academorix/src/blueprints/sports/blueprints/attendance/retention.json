@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/attendance/retention",
+  "id": "stackra://modules/attendance/retention",
   "$version": 1,
   "title": "attendance — retention windows",
   "description": "Attendance records retain 7 years post-session (10 years Enterprise via attendance_extended_retention entitlement) for federation + tax + regulatory-records compliance. Absence records retain 3 years. Late arrivals co-terminous with parent AttendanceRecord. Attendance policies retain while active + 7 years post-archive. Records under regulator hold survive TenantErased as compliance archive rows.",

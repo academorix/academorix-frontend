@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Events;
+namespace Stackra\Referrals\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - activity::WriteToActivityLog
  * - attribution::CaptureInvitationClickTouchpoint
- * - observability::MetricsCollector (academorix.referrals.invitations_clicked_total)
+ * - observability::MetricsCollector (stackra.referrals.invitations_clicked_total)
  *
  * @category Referrals
  *

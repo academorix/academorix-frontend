@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Services;
+namespace Stackra\Mfa\Services;
 
-use Academorix\Mfa\Contracts\Services\MfaSuspiciousActivityDetectorInterface;
+use Stackra\Mfa\Contracts\Services\MfaSuspiciousActivityDetectorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Mfa\Contracts\Repositories\MfaChallengeRepositoryInterface;
+use Stackra\Mfa\Contracts\Repositories\MfaChallengeRepositoryInterface;
 
 /**
  * Concrete service — MfaSuspiciousActivityDetector.

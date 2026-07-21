@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformIntegrationsSdk\Payloads\TenantIntegrations;
+namespace Stackra\PlatformIntegrationsSdk\Payloads\TenantIntegrations;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\Max;

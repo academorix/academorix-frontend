@@ -226,7 +226,7 @@ tenants, so I can operate in the right academy without re-logging in.
    indicator.
 2. Switching tenants SHALL re-bootstrap identity (`/auth/me`) and reset the
    scope (org/branch/season) to that tenant's defaults.
-3. Cross-tenant identity linking (the Academorix ID / People module) is **out of
+3. Cross-tenant identity linking (the Stackra ID / People module) is **out of
    scope for the UI in early waves** and SHALL be represented only as a
    placeholder module until its wave.
 

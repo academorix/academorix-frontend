@@ -4,7 +4,7 @@
  * @file packages/exceptions/tests/Unit/MaskingPolicyTest.php
  *
  * @description
- * Unit coverage for {@see \Academorix\Exceptions\Support\MaskingPolicy},
+ * Unit coverage for {@see \Stackra\Exceptions\Support\MaskingPolicy},
  * the immutable value object that tells the renderer HOW aggressively
  * to mask an exception on the way out.
  *
@@ -36,9 +36,9 @@
 
 declare(strict_types=1);
 
-use Academorix\Exceptions\Enums\ErrorSeverity;
-use Academorix\Exceptions\Support\MaskingPolicy;
-use Academorix\Foundation\Enums\AppEnvironment;
+use Stackra\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\Support\MaskingPolicy;
+use Stackra\Foundation\Enums\AppEnvironment;
 
 // -----------------------------------------------------------------
 // MaskingPolicy::forRequest — the four canonical quadrants

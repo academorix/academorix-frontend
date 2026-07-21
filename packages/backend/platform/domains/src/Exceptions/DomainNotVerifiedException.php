@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Exceptions;
+namespace Stackra\Domains\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Raised when a caller attempts to promote an unverified Domain to

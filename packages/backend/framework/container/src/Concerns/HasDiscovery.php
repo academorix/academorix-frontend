@@ -7,8 +7,8 @@ declare(strict_types=1);
  *
  * @description
  * Runtime fallback for discovering + registering classes marked with
- * {@see \Academorix\Container\Attributes\Overrides} — the Pattern B
- * container-binding attribute the Academorix framework ships to
+ * {@see \Stackra\Container\Attributes\Overrides} — the Pattern B
+ * container-binding attribute the Stackra framework ships to
  * complement Laravel's canonical
  * {@see \Illuminate\Container\Attributes\Bind}.
  *
@@ -18,7 +18,7 @@ declare(strict_types=1);
  * trait and invokes `discoverOverriddenClasses()` during `register()`.
  * Runs on every boot in dev; in production this is superseded by a
  * compiled binding manifest emitted by
- * `\Academorix\Container\Compiler\ContainerCompiler` (planned) once
+ * `\Stackra\Container\Compiler\ContainerCompiler` (planned) once
  * `php artisan di:compile` runs.
  *
  *   - Runs: local dev, tests, first boot before `di:compile`, after
@@ -55,9 +55,9 @@ declare(strict_types=1);
  * ## Usage
  *
  * ```php
- * use Academorix\Container\Concerns\HasDiscovery;
- * use Academorix\ServiceProvider\Attributes\Module;
- * use Academorix\ServiceProvider\Providers\ServiceProvider;
+ * use Stackra\Container\Concerns\HasDiscovery;
+ * use Stackra\ServiceProvider\Attributes\Module;
+ * use Stackra\ServiceProvider\Providers\ServiceProvider;
  *
  * #[Module(name: 'Container', priority: 1)]
  * final class ContainerServiceProvider extends ServiceProvider
@@ -72,7 +72,7 @@ declare(strict_types=1);
  * }
  * ```
  *
- * @see \Academorix\Container\Attributes\Overrides The attribute this trait discovers.
+ * @see \Stackra\Container\Attributes\Overrides The attribute this trait discovers.
  * @see \Illuminate\Container\Attributes\Bind Canonical Laravel counterpart (Pattern A).
  *
  * @category Concerns
@@ -80,10 +80,10 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Container\Concerns;
+namespace Stackra\Container\Concerns;
 
-use Academorix\Container\Attributes\Overrides;
-use Academorix\Foundation\Contracts\DiscoversAttributes;
+use Stackra\Container\Attributes\Overrides;
+use Stackra\Foundation\Contracts\DiscoversAttributes;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Container\Attributes\Singleton;
 use ReflectionClass;

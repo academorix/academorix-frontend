@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/activity/data-classes",
+  "id": "stackra://modules/activity/data-classes",
   "$version": 1,
   "title": "activity — field-level data classification",
   "description": "Every column on Activity + ActivityRetentionPolicy classified by sensitivity tier. Drives DSAR export scope, right-to-erasure behaviour, encryption-at-rest policy. Field paths: `Activity.field` / `ActivityRetentionPolicy.field`.",

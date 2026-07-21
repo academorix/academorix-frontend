@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/private-sessions/config",
+  "id": "stackra://modules/private-sessions/config",
   "$version": 1,
   "title": "private-sessions — config keys",
   "description": "config/<module>.php shape + defaults.",

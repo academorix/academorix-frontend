@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Performance\Contracts\Services;
+namespace Stackra\Performance\Contracts\Services;
 
-use Academorix\Performance\Services\PercentileCalculator;
+use Stackra\Performance\Services\PercentileCalculator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

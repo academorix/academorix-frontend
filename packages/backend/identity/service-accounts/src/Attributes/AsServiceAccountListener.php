@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Attributes;
+namespace Stackra\ServiceAccounts\Attributes;
 
 use Attribute;
 

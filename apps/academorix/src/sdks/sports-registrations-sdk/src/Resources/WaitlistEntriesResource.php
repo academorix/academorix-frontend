@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsRegistrationsSdk\Resources;
+namespace Stackra\SportsRegistrationsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsRegistrationsSdk\Data\WaitlistEntryData;
-use Academorix\SportsRegistrationsSdk\Requests\WaitlistEntries\DeleteWaitlistEntryRequest;
-use Academorix\SportsRegistrationsSdk\Requests\WaitlistEntries\ListWaitlistEntriesRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsRegistrationsSdk\Data\WaitlistEntryData;
+use Stackra\SportsRegistrationsSdk\Requests\WaitlistEntries\DeleteWaitlistEntryRequest;
+use Stackra\SportsRegistrationsSdk\Requests\WaitlistEntries\ListWaitlistEntriesRequest;
 use Saloon\Http\Response;
 
 /**

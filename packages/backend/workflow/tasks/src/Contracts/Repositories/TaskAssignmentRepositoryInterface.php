@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tasks\Contracts\Repositories;
+namespace Stackra\Tasks\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Tasks\Models\TaskAssignment}.
+ * Repository contract for {@see Stackra\Tasks\Models\TaskAssignment}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `TaskAssignmentRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Tasks\Models\TaskAssignment>
+ * @extends RepositoryInterface<\Stackra\Tasks\Models\TaskAssignment>
  *
  * @category Tasks
  *

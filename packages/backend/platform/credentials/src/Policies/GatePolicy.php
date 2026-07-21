@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Credentials\Policies;
+namespace Stackra\Credentials\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Credentials\Models\Gate;
+use Stackra\User\Models\User;
+use Stackra\Credentials\Models\Gate;
 
 /**
- * Authorization policy for {@see \Academorix\Credentials\Models\Gate}.
+ * Authorization policy for {@see \Stackra\Credentials\Models\Gate}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

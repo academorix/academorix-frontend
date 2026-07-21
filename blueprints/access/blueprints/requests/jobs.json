@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/access/requests/jobs",
+  "id": "stackra://modules/access/requests/jobs",
   "$version": 1,
   "title": "requests \u2014 queued jobs",
   "description": "Three queued jobs. All models re-hydrated from DB on handle (no stale-payload risk). ShouldBeUnique on jobs whose duplicate execution would over-send.",
@@ -7,7 +7,7 @@
   "defaultConnection": "redis",
   "jobs": [
     {
-      "class": "Academorix\\AccessRequest\\Jobs\\NotifyApproversJob",
+      "class": "Stackra\\AccessRequest\\Jobs\\NotifyApproversJob",
       "description": "Dispatched from ShimApprovalRequestedListener after AccessRequestSubmitted fires. Iterates the resolved approvers set for the request's requirements + dispatches AccessRequestSubmittedNotification to each. Idempotent via (instance_id, approver_id) unique key \u2014 duplicate runs no-op. Fires AccessRequestApproverNotified per successful delivery for the analytics pipeline.",
       "queue": "notifications",
       "tries": 5,
@@ -22,7 +22,7 @@
       }
     },
     {
-      "class": "Academorix\\AccessRequest\\Jobs\\NotifyRequesterOfDecisionJob",
+      "class": "Stackra\\AccessRequest\\Jobs\\NotifyRequesterOfDecisionJob",
       "description": "Dispatched when a terminal event fires (AccessRequestApproved / Rejected / Expired). Delivers the matching notification (AccessRequestApprovedNotification / RejectedNotification / ExpiredNotification) to the requester. Unique key per (instance_id, decision_kind) prevents duplicate notifications on transient failures.",
       "queue": "notifications",
       "tries": 5,
@@ -37,7 +37,7 @@
       }
     },
     {
-      "class": "Academorix\\AccessRequest\\Jobs\\CleanupOrphanedRequestsJob",
+      "class": "Stackra\\AccessRequest\\Jobs\\CleanupOrphanedRequestsJob",
       "description": "Daily sweeper. Scans approval_instances where `action_key='access.grants.create'` AND status='pending' AND (`subject_id` no longer resolves to a live row OR the resource_type is no longer in the registry). Auto-rejects with `reason='resource_no_longer_exists'` via workflow/approvals::withdraw with a system actor. Batched at 500 per run to avoid blocking the queue. Idempotent by construction \u2014 rejected instances are skipped on the next sweep.",
       "queue": "retention",
       "tries": 3,

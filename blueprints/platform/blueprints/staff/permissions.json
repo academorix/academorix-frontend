@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/staff/permissions",
+  "id": "stackra://modules/staff/permissions",
   "$version": 1,
   "title": "staff — permissions",
-  "seeder": "Academorix\\Staff\\Database\\Seeders\\StaffPermissionSeeder",
+  "seeder": "Stackra\\Staff\\Database\\Seeders\\StaffPermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — Staff + Coach CRUD by hr / owner / admin / branch_manager, self-service via .own scope suffix. Platform plane (platform_admin) — cross-tenant read + compensation-audit for compliance ops. All permissions carry the `staff.` or `coach.` prefix (or `platform.staff.` / `platform.coach.` on platform audience) to align with hierarchy.md §4 audience-boundary rules. Note: this module introduces the `hr` role via the RoleDefinition catalogue in the rbac module — the `hr` role gets most staff permissions but NOT `staff.hire` or `staff.suspend` by default (those stay owner/admin-only unless the tenant explicitly extends the hr role).",
   "permissions": [

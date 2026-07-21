@@ -16,7 +16,7 @@
  * analysers treat as "programmer bug" and encourage silencing. Our
  * domain exceptions are recoverable, expected control flow — the
  * subclass tree here is intentionally rooted at
- * {@see \Academorix\Exceptions\AcademorixException} (a
+ * {@see \Stackra\Exceptions\StackraException} (a
  * `RuntimeException`) so that signal isn't confused.
  *
  * ## Translation key
@@ -37,14 +37,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Domain;
+namespace Stackra\Exceptions\Domain;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class DomainException extends AcademorixException
+class DomainException extends StackraException
 {
     /**
      * Machine-readable code — the generic fallback for domain rule
@@ -57,7 +57,7 @@ class DomainException extends AcademorixException
      * Class-level translation key pointing at
      * `lang/en/domain.php → rule_violated`. Overridable per-instance
      * via
-     * {@see \Academorix\Exceptions\Concerns\TranslatesMessages::withTranslationKey()}.
+     * {@see \Stackra\Exceptions\Concerns\TranslatesMessages::withTranslationKey()}.
      */
     public const TRANSLATION_KEY = 'exceptions::domain.rule_violated';
 

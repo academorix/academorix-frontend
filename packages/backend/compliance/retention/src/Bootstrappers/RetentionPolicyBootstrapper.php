@@ -4,9 +4,9 @@
  * @file packages/compliance/retention/src/Bootstrappers/RetentionPolicyBootstrapper.php
  *
  * @description
- * Populates {@see \Academorix\Retention\Registry\RetentionPolicyRegistry}
+ * Populates {@see \Stackra\Retention\Registry\RetentionPolicyRegistry}
  * from every class carrying
- * {@see \Academorix\Retention\Attributes\AsRetentionPolicy}.
+ * {@see \Stackra\Retention\Attributes\AsRetentionPolicy}.
  *
  * ## Migration history
  *
@@ -14,7 +14,7 @@
  * in Phase 2.C — the class now sits under `Bootstrappers/`
  * alongside every other bootstrapper in the monorepo, and it
  * extends the canonical framework
- * {@see \Academorix\ServiceProvider\Bootstrappers\AbstractBootstrapper}
+ * {@see \Stackra\ServiceProvider\Bootstrappers\AbstractBootstrapper}
  * base.
  *
  * ## Why the shared discovery service
@@ -44,14 +44,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Retention\Bootstrappers;
+namespace Stackra\Retention\Bootstrappers;
 
-use Academorix\Foundation\Contracts\DiscoversAttributes;
-use Academorix\Retention\Attributes\AsRetentionPolicy;
-use Academorix\Retention\Enums\RetentionAction;
-use Academorix\Retention\Registry\RetentionPolicyRegistry;
-use Academorix\Retention\Support\RetentionPolicyDescriptor;
-use Academorix\ServiceProvider\Bootstrappers\AbstractBootstrapper;
+use Stackra\Foundation\Contracts\DiscoversAttributes;
+use Stackra\Retention\Attributes\AsRetentionPolicy;
+use Stackra\Retention\Enums\RetentionAction;
+use Stackra\Retention\Registry\RetentionPolicyRegistry;
+use Stackra\Retention\Support\RetentionPolicyDescriptor;
+use Stackra\ServiceProvider\Bootstrappers\AbstractBootstrapper;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Database\Eloquent\Model;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Data;
+namespace Stackra\Geography\Data;
 
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
@@ -37,7 +37,7 @@ final class GeolocationData extends Data
      * @param  float|null   $longitude       City-level longitude.
      * @param  string|null  $timezone        IANA timezone name.
      * @param  int|null     $accuracyRadius  Radius in km (MaxMind-provided).
-     * @param  string       $source          Deciding source — see {@see \Academorix\Geography\Enums\GeolocationSource}.
+     * @param  string       $source          Deciding source — see {@see \Stackra\Geography\Enums\GeolocationSource}.
      */
     public function __construct(
         public string $ip,

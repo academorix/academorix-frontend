@@ -1,10 +1,10 @@
 {
-  "name": "academorix/staff",
+  "name": "stackra/staff",
   "type": "library",
-  "description": "Academorix Staff module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/staff/`. Complements the wire SDK at `academorix-platform/staff-sdk`.",
+  "description": "Stackra Staff module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/staff/`. Complements the wire SDK at `stackra-platform/staff-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "platform",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-platform/staff-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-platform/staff-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Staff\\": "src/"
+      "Stackra\\Staff\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Staff\\Tests\\": "tests/"
+      "Stackra\\Staff\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Staff\\Providers\\StaffServiceProvider"
+        "Stackra\\Staff\\Providers\\StaffServiceProvider"
       ],
       "aliases": {}
     }

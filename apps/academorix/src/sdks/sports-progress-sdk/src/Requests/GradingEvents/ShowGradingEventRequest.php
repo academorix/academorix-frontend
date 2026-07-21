@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsProgressSdk\Requests\GradingEvents;
+namespace Stackra\SportsProgressSdk\Requests\GradingEvents;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsProgressSdk\Data\GradingEventData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsProgressSdk\Data\GradingEventData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

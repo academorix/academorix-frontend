@@ -2,11 +2,11 @@
   "$version": 1,
   "name": "public-site",
   "alias": "public-site",
-  "namespace": "Academorix\\PublicSite",
+  "namespace": "Stackra\\PublicSite",
   "description": "Tenant public-facing pages per blueprint §16.9. Ships TWO owned entities: `PublicPage` (slug + title + content_blocks + SEO metadata; route-mounted on tenant public host), `ContentBlock` (reusable block — kind IN hero/text/gallery/cta + payload + order). White-label branding via `platform/branding`; public read-models via Match/Competition/Registration; SEO metadata for rich previews. Registration entry point cascades into `sports/registrations` (Wave 1).",
   "keywords": ["public-site", "cms", "landing", "seo", "content-block", "public-results", "wave-4"],
   "priority": 90,
-  "providers": ["Academorix\\PublicSite\\Providers\\PublicSiteServiceProvider"],
+  "providers": ["Stackra\\PublicSite\\Providers\\PublicSiteServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

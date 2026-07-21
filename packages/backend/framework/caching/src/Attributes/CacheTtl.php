@@ -36,7 +36,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Caching\Attributes;
+namespace Stackra\Caching\Attributes;
 
 use Attribute;
 

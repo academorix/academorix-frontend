@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/age-group/retention",
+  "id": "stackra://modules/age-group/retention",
   "$version": 1,
   "title": "age-group — retention windows",
   "description": "AgeGroup rows follow a soft-delete → archived → hard-delete lifecycle. The hold window is 1095 days (3 years) matching rolling youth-development cohort windows so an archived age group stays recoverable across a full cohort's lifetime. Audit rows produced by this module outlive their source AgeGroup for 7 years (minor-safeguarding retention floor).",
@@ -23,7 +23,7 @@
         "action": "hard delete",
         "job": "PurgeArchivedAgeGroupsJob",
         "cascades": [],
-        "note": "IF any inbound row (Team, EventDivision, TeamRegistration) still references the AgeGroup past the retention window, the job SKIPS the row + logs a telemetry counter (`academorix.age_group.purge_pending.count`). The row survives another day. Explicit `age-group:archive --force` bypasses the FK check but does NOT delete referring rows."
+        "note": "IF any inbound row (Team, EventDivision, TeamRegistration) still references the AgeGroup past the retention window, the job SKIPS the row + logs a telemetry counter (`stackra.age_group.purge_pending.count`). The row survives another day. Explicit `age-group:archive --force` bypasses the FK check but does NOT delete referring rows."
       }
     },
     {

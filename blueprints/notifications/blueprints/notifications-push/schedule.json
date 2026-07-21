@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-push/schedule",
+  "id": "stackra://modules/notifications-push/schedule",
   "$version": 1,
   "title": "notifications-push \u2014 scheduled tasks",
   "entries": [

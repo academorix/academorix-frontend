@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Rules;
+namespace Stackra\Search\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;

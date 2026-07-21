@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Nightwatch\Filters;
 
-use Academorix\Nightwatch\Attributes\AsNightwatchFilter;
-use Academorix\Nightwatch\Contracts\NightwatchFilter;
-use Academorix\Nightwatch\Enums\NightwatchEventType;
+use Stackra\Nightwatch\Attributes\AsNightwatchFilter;
+use Stackra\Nightwatch\Contracts\NightwatchFilter;
+use Stackra\Nightwatch\Enums\NightwatchEventType;
 
 /**
  * Example: Cache Query Filter.

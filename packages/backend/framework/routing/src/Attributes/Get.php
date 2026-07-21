@@ -11,14 +11,14 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use BackedEnum;
 use Exception;
 use OpenApi\Attributes as OA;
-use Academorix\Foundation\Enums\PolicyAbility;
-use Academorix\Support\Reflection;
+use Stackra\Foundation\Enums\PolicyAbility;
+use Stackra\Support\Reflection;
 use Spatie\RouteAttributes\Attributes\Get as SpatieGet;
 
 /**
@@ -30,7 +30,7 @@ use Spatie\RouteAttributes\Attributes\Get as SpatieGet;
  * ## Usage:
  *
  * ```php
- * use Academorix\Routing\Attributes\Get;
+ * use Stackra\Routing\Attributes\Get;
  *
  * #[Get(
  *     uri: '/',

@@ -7,7 +7,7 @@
  * Named cadence for the `#[Schedule(...)]` attribute. Every case
  * maps onto a single Laravel scheduler builder method — the
  * {@see self::apply()} method is what
- * {@see \Academorix\Scheduling\Support\ScheduleRegistrar}
+ * {@see \Stackra\Scheduling\Support\ScheduleRegistrar}
  * calls at boot to turn declarative metadata into a concrete
  * scheduled event.
  *
@@ -31,10 +31,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scheduling\Enums;
+namespace Stackra\Scheduling\Enums;
 
 use Illuminate\Console\Scheduling\Event;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 enum Frequency: string
 {
@@ -43,7 +43,7 @@ enum Frequency: string
     /**
      * Every minute. The most frequent cadence Laravel exposes as a
      * named helper. Beware — heavy jobs at this cadence require
-     * {@see \Academorix\Scheduling\Attributes\WithoutOverlapping}
+     * {@see \Stackra\Scheduling\Attributes\WithoutOverlapping}
      * or the queue backlog will grow unbounded.
      */
     case EveryMinute = 'every_minute';

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/private-sessions/jobs",
+  "id": "stackra://modules/private-sessions/jobs",
   "$version": 1,
   "title": "private-sessions — queued jobs",
   "description": "Queued jobs this module dispatches.",

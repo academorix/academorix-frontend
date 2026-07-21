@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Repositories;
+namespace Stackra\Audit\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Audit\Contracts\Data\AuditInterface;
-use Academorix\Audit\Contracts\Repositories\AuditRepositoryInterface;
-use Academorix\Audit\Models\Audit;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Audit\Contracts\Data\AuditInterface;
+use Stackra\Audit\Contracts\Repositories\AuditRepositoryInterface;
+use Stackra\Audit\Models\Audit;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Audit\Models\Audit}.
+ * Attribute-first Eloquent repository for {@see Stackra\Audit\Models\Audit}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AuditInterface::class)]` which resolves to
  * `Audit` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Audit\Models\Audit>
+ * @extends Repository<\Stackra\Audit\Models\Audit>
  *
  * @category Audit
  *

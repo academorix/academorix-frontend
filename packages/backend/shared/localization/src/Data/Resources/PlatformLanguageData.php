@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Data\Resources;
+namespace Stackra\Localization\Data\Resources;
 
-use Academorix\Localization\Contracts\Data\PlatformLanguageInterface;
-use Academorix\Localization\Enums\TextDirection;
-use Academorix\Localization\Models\PlatformLanguage;
+use Stackra\Localization\Contracts\Data\PlatformLanguageInterface;
+use Stackra\Localization\Enums\TextDirection;
+use Stackra\Localization\Models\PlatformLanguage;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;

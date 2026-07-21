@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Safeguarding\Actions\Tenant;
+namespace Stackra\Safeguarding\Actions\Tenant;
 
-use Academorix\Safeguarding\Contracts\Repositories\BackgroundCheckRepositoryInterface;
-use Academorix\Safeguarding\Data\BackgroundCheckData;
-use Academorix\Safeguarding\Data\Requests\CreateBackgroundCheckRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Safeguarding\Contracts\Repositories\BackgroundCheckRepositoryInterface;
+use Stackra\Safeguarding\Data\BackgroundCheckData;
+use Stackra\Safeguarding\Data\Requests\CreateBackgroundCheckRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/background-checks` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Safeguarding

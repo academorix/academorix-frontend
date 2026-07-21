@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Requests\Exceptions;
+namespace Stackra\Requests\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * One or more `permissions_wanted` are not declared on the resource type via `#[AccessRequestable(permissions: [.

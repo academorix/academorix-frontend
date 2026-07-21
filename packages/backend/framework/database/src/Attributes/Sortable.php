@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Database\Attributes;
+namespace Stackra\Database\Attributes;
 
 use Attribute;
 
@@ -36,8 +36,8 @@ use Attribute;
 #[Attribute(Attribute::TARGET_CLASS)]
 final readonly class Sortable
 {
-    /** 
- * @var array<string>|string Sortable field names or '*' for all. 
+    /**
+ * @var array<string>|string Sortable field names or '*' for all.
  */
     public array|string $fields;
 

@@ -27,11 +27,11 @@ declare(strict_types=1);
  * @method static COMMAND()          Returns the COMMAND enum instance
  */
 
-namespace Academorix\Nightwatch\Enums;
+namespace Stackra\Nightwatch\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Enum;
 
 enum NightwatchEventType: string
 {

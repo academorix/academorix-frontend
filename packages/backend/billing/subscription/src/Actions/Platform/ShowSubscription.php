@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Actions\Platform;
+namespace Stackra\Subscription\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
-use Academorix\Subscription\Data\SubscriptionData;
-use Academorix\Subscription\Enums\SubscriptionPermission;
-use Academorix\Subscription\Exceptions\SubscriptionNotFoundException;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
+use Stackra\Subscription\Data\SubscriptionData;
+use Stackra\Subscription\Enums\SubscriptionPermission;
+use Stackra\Subscription\Exceptions\SubscriptionNotFoundException;
 
 /**
  * `GET /api/v1/platform/subscriptions/{subscription}` — read one

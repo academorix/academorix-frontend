@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Models;
+namespace Stackra\Theme\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Theme\Contracts\Data\ThemeTokenOverrideInterface;
-use Academorix\Theme\Database\Factories\ThemeTokenOverrideFactory;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
-use Academorix\Theme\Policies\ThemeTokenOverridePolicy;
+use Stackra\Theme\Contracts\Data\ThemeTokenOverrideInterface;
+use Stackra\Theme\Database\Factories\ThemeTokenOverrideFactory;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Theme\Policies\ThemeTokenOverridePolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

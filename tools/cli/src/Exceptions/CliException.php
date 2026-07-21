@@ -2,7 +2,7 @@
 
 /**
  * @file CliException.php
- * @module Academorix\Cli\Exceptions
+ * @module Stackra\Cli\Exceptions
  * @description Base exception for the CLI. Every subclass carries a
  *   headline (one-line error card title), a remediation list (bullet-
  *   list "how to fix" steps), and an exit code.
@@ -15,7 +15,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Exceptions;
+namespace Stackra\Cli\Exceptions;
 
 use RuntimeException;
 
@@ -61,7 +61,7 @@ class CliException extends RuntimeException
     {
         return new self(
             'Invalid project name',
-            sprintf('"%s" is not a valid Academorix project name.', $name),
+            sprintf('"%s" is not a valid Stackra project name.', $name),
             [
                 'Project names must be kebab-case, 2-30 characters.',
                 'Start with a lowercase letter; letters, digits, and hyphens only.',
@@ -102,11 +102,11 @@ class CliException extends RuntimeException
     public static function forMissingWorkspaceRoot(): self
     {
         return new self(
-            'Not inside an Academorix workspace',
+            'Not inside an Stackra workspace',
             'Could not find `pnpm-workspace.yaml` in the current directory or any parent.',
             [
-                'Run this command from inside an Academorix workspace.',
-                'Or bootstrap a new one with `academorix new <name>`.',
+                'Run this command from inside an Stackra workspace.',
+                'Or bootstrap a new one with `stackra new <name>`.',
             ],
             3,
         );

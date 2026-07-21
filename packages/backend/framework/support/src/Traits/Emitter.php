@@ -12,9 +12,9 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Support\Traits;
+namespace Stackra\Support\Traits;
 
-use Academorix\Support\Arr;
+use Stackra\Support\Arr;
 
 /**
  * Emitter adds event-related features to any class.

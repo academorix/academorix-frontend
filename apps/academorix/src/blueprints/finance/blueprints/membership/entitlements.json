@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/membership/entitlements",
+  "id": "stackra://modules/membership/entitlements",
   "$version": 1,
   "title": "membership — declared entitlements",
   "description": "Nine entitlement keys. `membership_capture` is the master boolean — off means the whole module is inert. `membership_plan_slot` caps plan-catalog size per tenant. `membership_slot` is enforced via plan.max_active_members. Tier-gated features enable trial periods, multi-currency, prorated hard-cancels, gift memberships, add-on management, and extended retention. Entitlements NEVER carry `application_id` on membership rows — they resolve via the tenant's active TenantSubscription (which itself carries application_id, per hierarchy.md §2).",

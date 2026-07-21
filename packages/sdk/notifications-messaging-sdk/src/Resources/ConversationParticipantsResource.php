@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsMessagingSdk\Resources;
+namespace Stackra\NotificationsMessagingSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\NotificationsMessagingSdk\Data\ConversationParticipantData;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\NotificationsMessagingSdk\Data\ConversationParticipantData;
 use Saloon\Http\Response;
 
 /**

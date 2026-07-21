@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PublicSite\Contracts\Data;
+namespace Stackra\PublicSite\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\PublicSite\Models\ContentBlock;
+use Stackra\PublicSite\Models\ContentBlock;
 
 /**
  * Table shape for the `content_blocks` table.

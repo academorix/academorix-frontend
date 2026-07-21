@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/notifications-in-app/events",
+  "id": "stackra://modules/notifications-in-app/events",
   "$version": 1,
   "title": "notifications-in-app \u2014 published events",
-  "namespace": "Academorix\\NotificationsInApp\\Events",
+  "namespace": "Stackra\\NotificationsInApp\\Events",
   "dispatchMode": "afterCommit",
   "description": "Events fired by the in-app transport. The base `notifications` module publishes the core lifecycle events (NotificationDispatched, NotificationDelivered, NotificationFailed) \u2014 those are the primary observability surface. This module publishes only in-app-specific reactions.",
   "events": [
     {
       "name": "InAppDeliveryBroadcast",
-      "class": "Academorix\\NotificationsInApp\\Events\\InAppDeliveryBroadcast",
+      "class": "Stackra\\NotificationsInApp\\Events\\InAppDeliveryBroadcast",
       "trigger": "InAppTransport::send() finished writing the delivery row + queued the WebSocket broadcast. Fires exactly once per (tenant, user, notification).",
       "queue": null,
       "broadcast": true,
@@ -30,7 +30,7 @@
     },
     {
       "name": "InAppDeliveryRead",
-      "class": "Academorix\\NotificationsInApp\\Events\\InAppDeliveryRead",
+      "class": "Stackra\\NotificationsInApp\\Events\\InAppDeliveryRead",
       "trigger": "A NotificationDelivery.read_at was set from null. Fires exactly once per delivery (idempotent). NOT fired on subsequent mark-read attempts.",
       "queue": "notifications",
       "consumers": [
@@ -48,7 +48,7 @@
     },
     {
       "name": "InAppDeliveryDismissed",
-      "class": "Academorix\\NotificationsInApp\\Events\\InAppDeliveryDismissed",
+      "class": "Stackra\\NotificationsInApp\\Events\\InAppDeliveryDismissed",
       "trigger": "User clicked dismiss on the bell UI. Sets dismissed_at + fires event once. Distinct from InAppDeliveryRead \u2014 a delivery can be read (viewed in a modal) without being dismissed (still visible in the drawer).",
       "queue": "notifications",
       "payload": {
@@ -61,7 +61,7 @@
     },
     {
       "name": "InAppBulkMarkAllRead",
-      "class": "Academorix\\NotificationsInApp\\Events\\InAppBulkMarkAllRead",
+      "class": "Stackra\\NotificationsInApp\\Events\\InAppBulkMarkAllRead",
       "trigger": "Bulk mark-all-read operation completed for a caller. Emitted from BulkMarkReadJob on job success \u2014 the read events themselves are batched-suppressed (would generate N events for N deliveries; that's noise).",
       "queue": "notifications",
       "payload": {

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\IdentityPeopleSdk\Resources;
+namespace Stackra\IdentityPeopleSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\IdentityPeopleSdk\Data\PersonGuardianLinkData;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\IdentityPeopleSdk\Data\PersonGuardianLinkData;
 use Saloon\Http\Response;
 
 /**

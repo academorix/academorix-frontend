@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Console;
+namespace Stackra\Entitlements\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Entitlements\Jobs\ExportUsageForBillingJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Entitlements\Jobs\ExportUsageForBillingJob;
 
 /**
  * `php artisan entitlements:report-usage {--month=}` — dispatch

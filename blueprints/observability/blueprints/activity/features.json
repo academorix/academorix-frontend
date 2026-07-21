@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/activity/features",
+  "id": "stackra://modules/activity/features",
   "$version": 1,
   "title": "activity — feature keys",
   "description": "Business features this module publishes for tenant-facing UX. Resolved by the tenant client from GET /api/auth/me → data.features. Distinct from entitlements (quota + gate) — features control whether the UI SHOWS a capability.",

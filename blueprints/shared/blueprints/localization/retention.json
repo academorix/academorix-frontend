@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/localization/retention",
+  "id": "stackra://modules/localization/retention",
   "$version": 1,
   "title": "localization \u2014 retention windows",
   "description": "PlatformLanguage + TenantLocale retained while tenant active. Translation retention driven by source: file-imported = permanent, human-verified = permanent, ai-translated = TTL per plan. TranslationJob = 1 year hot, then hard purge.",

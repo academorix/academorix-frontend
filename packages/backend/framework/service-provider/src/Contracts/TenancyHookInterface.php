@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceProvider\Contracts;
+namespace Stackra\ServiceProvider\Contracts;
 
-use Academorix\ServiceProvider\Attributes\AsTenancyHook;
-use Academorix\ServiceProvider\Dispatchers\TenancyHookDispatcher;
-use Academorix\ServiceProvider\Registry\TenancyHookRegistry;
-use Academorix\ServiceProvider\Support\TenantHookContext;
+use Stackra\ServiceProvider\Attributes\AsTenancyHook;
+use Stackra\ServiceProvider\Dispatchers\TenancyHookDispatcher;
+use Stackra\ServiceProvider\Registry\TenancyHookRegistry;
+use Stackra\ServiceProvider\Support\TenantHookContext;
 
 /**
  * Per-tenant lifecycle contract — fires on every tenant init and

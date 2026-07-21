@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Actions\Tenant;
+namespace Stackra\Match\Actions\Tenant;
 
-use Academorix\Match\Contracts\Repositories\OpponentLogoRepositoryInterface;
-use Academorix\Match\Data\OpponentLogoData;
-use Academorix\Match\Data\Requests\UpdateOpponentLogoRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\Match\Contracts\Repositories\OpponentLogoRepositoryInterface;
+use Stackra\Match\Data\OpponentLogoData;
+use Stackra\Match\Data\Requests\UpdateOpponentLogoRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Patch;
 
 /**
  * `PATCH /api/v1/opponent-logos/{opponent_logo}` — update action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Patch(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Match

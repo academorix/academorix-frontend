@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Grants\Database\Factories;
+namespace Stackra\Grants\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Grants\Contracts\Data\AccessGrantInterface;
-use Academorix\Grants\Models\AccessGrant;
+use Stackra\Grants\Contracts\Data\AccessGrantInterface;
+use Stackra\Grants\Models\AccessGrant;
 
 /**
- * Factory for {@see \Academorix\Grants\Models\AccessGrant}.
+ * Factory for {@see \Stackra\Grants\Models\AccessGrant}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Grants\Models\AccessGrant>
+ * @extends Factory<\Stackra\Grants\Models\AccessGrant>
  *
  * @category Grants
  *

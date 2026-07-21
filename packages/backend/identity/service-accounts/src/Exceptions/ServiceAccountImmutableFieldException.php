@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Exceptions;
+namespace Stackra\ServiceAccounts\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * PATCH attempted to change `application_id`, `tenant_id`, or `signer_kid`.

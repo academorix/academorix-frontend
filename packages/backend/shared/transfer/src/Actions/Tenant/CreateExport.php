@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Actions\Tenant;
+namespace Stackra\Transfer\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Transfer\Contracts\Data\XferJobInterface;
-use Academorix\Transfer\Contracts\Repositories\XferJobRepositoryInterface;
-use Academorix\Transfer\Data\Requests\CreateExportRequestData;
-use Academorix\Transfer\Data\XferJobData;
-use Academorix\Transfer\Enums\TransferPermission;
-use Academorix\Transfer\Enums\XferKind;
-use Academorix\Transfer\Jobs\ExportEntityJob;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Transfer\Contracts\Data\XferJobInterface;
+use Stackra\Transfer\Contracts\Repositories\XferJobRepositoryInterface;
+use Stackra\Transfer\Data\Requests\CreateExportRequestData;
+use Stackra\Transfer\Data\XferJobData;
+use Stackra\Transfer\Enums\TransferPermission;
+use Stackra\Transfer\Enums\XferKind;
+use Stackra\Transfer\Jobs\ExportEntityJob;
 
 /**
  * `POST /api/v1/transfer/exports` — create an export job.
@@ -39,7 +39,7 @@ final class CreateExport
 
     public function __invoke(CreateExportRequestData $data): XferJobData
     {
-        /** @var \Academorix\Transfer\Models\XferJob $job */
+        /** @var \Stackra\Transfer\Models\XferJob $job */
         $job = $this->jobs->create([
             XferJobInterface::ATTR_KIND       => XferKind::Export->value,
             XferJobInterface::ATTR_ENTITY_KEY => $data->entity,

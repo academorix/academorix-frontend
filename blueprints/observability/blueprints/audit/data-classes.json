@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/audit/data-classes",
+  "id": "stackra://modules/audit/data-classes",
   "$version": 1,
   "title": "audit — field classification",
   "description": "Field-level classification per foundation's five-tier taxonomy. Audit's `old_values` + `new_values` are the load-bearing surfaces — they may contain RAW PII (email, phone, medical record numbers, financial identifiers) because regulators require full diff context to reconstruct a mutation. Encrypted at rest via Postgres TDE. NEVER surfaced on the tenant wire without the audit.audits.reveal_raw_diff permission + a chain-of-custody meta-audit row.",

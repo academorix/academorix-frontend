@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Services;
+namespace Stackra\Versioning\Services;
 
-use Academorix\Versioning\Contracts\Services\DeprecationNoticeServiceInterface;
+use Stackra\Versioning\Contracts\Services\DeprecationNoticeServiceInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Versioning\Contracts\Repositories\ApiVersionRepositoryInterface;
+use Stackra\Versioning\Contracts\Repositories\ApiVersionRepositoryInterface;
 
 /**
  * Concrete service — DeprecationNoticeService.

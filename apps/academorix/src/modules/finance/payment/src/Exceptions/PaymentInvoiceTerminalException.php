@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Exceptions;
+namespace Stackra\Payment\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to create a PaymentIntent against an invoice in terminal status (paid, void, uncollectible, refunded).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PaymentInvoiceTerminalException extends AcademorixException
+final class PaymentInvoiceTerminalException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

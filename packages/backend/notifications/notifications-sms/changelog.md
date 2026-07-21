@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to `academorix/notifications-sms`.
+All notable changes to `stackra/notifications-sms`.
 
 ## [Unreleased]
 

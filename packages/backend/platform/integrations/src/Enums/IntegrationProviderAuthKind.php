@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Enums;
+namespace Stackra\Integrations\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `auth_kind` on `integration-provider`.

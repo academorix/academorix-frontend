@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsMail\Contracts\Services;
+namespace Stackra\NotificationsMail\Contracts\Services;
 
-use Academorix\NotificationsMail\Services\MailSuppressionRegistry;
+use Stackra\NotificationsMail\Services\MailSuppressionRegistry;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -47,14 +47,14 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\ServiceProvider\Concerns;
+namespace Stackra\ServiceProvider\Concerns;
 
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Attributes\OnBoot;
-use Academorix\ServiceProvider\Attributes\OnRegister;
-use Academorix\ServiceProvider\Attributes\OnTerminate;
-use Academorix\ServiceProvider\Contracts\HasBindings;
-use Academorix\ServiceProvider\Contracts\HasMacros;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\OnBoot;
+use Stackra\ServiceProvider\Attributes\OnRegister;
+use Stackra\ServiceProvider\Attributes\OnTerminate;
+use Stackra\ServiceProvider\Contracts\HasBindings;
+use Stackra\ServiceProvider\Contracts\HasMacros;
 use olvlvl\ComposerAttributeCollector\Attributes;
 
 /**

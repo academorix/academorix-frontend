@@ -4,7 +4,7 @@
  * @file modules/shared/geography/config/geography.php
  *
  * @description
- * Runtime knobs for the `academorix/geography` module. Merged under the
+ * Runtime knobs for the `stackra/geography` module. Merged under the
  * `geography.*` key by the base ServiceProvider's LoadsResources concern.
  * Downstream modules read via `config('geography.*')` (never `env()` outside
  * this file per Octane-first rules).
@@ -88,12 +88,12 @@ return [
     */
     'vendor_overrides' => [
         'models' => [
-            'country'  => \Academorix\Geography\Models\Country::class,
-            'state'    => \Academorix\Geography\Models\State::class,
-            'city'     => \Academorix\Geography\Models\City::class,
-            'currency' => \Academorix\Geography\Models\Currency::class,
-            'language' => \Academorix\Geography\Models\Language::class,
-            'timezone' => \Academorix\Geography\Models\Timezone::class,
+            'country'  => \Stackra\Geography\Models\Country::class,
+            'state'    => \Stackra\Geography\Models\State::class,
+            'city'     => \Stackra\Geography\Models\City::class,
+            'currency' => \Stackra\Geography\Models\Currency::class,
+            'language' => \Stackra\Geography\Models\Language::class,
+            'timezone' => \Stackra\Geography\Models\Timezone::class,
         ],
     ],
 

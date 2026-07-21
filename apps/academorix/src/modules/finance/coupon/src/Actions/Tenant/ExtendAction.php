@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Actions\Tenant;
+namespace Stackra\Coupon\Actions\Tenant;
 
-use Academorix\Coupon\Contracts\Data\CouponInterface;
-use Academorix\Coupon\Contracts\Repositories\CouponRepositoryInterface;
-use Academorix\Coupon\Data\CouponData;
-use Academorix\Coupon\Data\Requests\ExtendCouponRequestData;
-use Academorix\Coupon\Exceptions\CouponInactiveException;
-use Academorix\Coupon\Exceptions\CouponInvalidEffectiveRangeException;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Coupon\Contracts\Data\CouponInterface;
+use Stackra\Coupon\Contracts\Repositories\CouponRepositoryInterface;
+use Stackra\Coupon\Data\CouponData;
+use Stackra\Coupon\Data\Requests\ExtendCouponRequestData;
+use Stackra\Coupon\Exceptions\CouponInactiveException;
+use Stackra\Coupon\Exceptions\CouponInvalidEffectiveRangeException;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `POST /api/v1/coupons/{coupon}/extend` — push the coupon expiry forward.

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Actions\Central;
+namespace Stackra\Subscription\Actions\Central;
 
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Subscription\Jobs\SyncFromCashierWebhookJob;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Subscription\Jobs\SyncFromCashierWebhookJob;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

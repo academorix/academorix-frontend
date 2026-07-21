@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Exceptions;
+namespace Stackra\Tax\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Tenant already has an active config for this provider.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TaxProviderAlreadyConfiguredException extends AcademorixException
+final class TaxProviderAlreadyConfiguredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

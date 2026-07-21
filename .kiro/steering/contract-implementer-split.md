@@ -67,7 +67,7 @@ authoring a new pair.
 
 ### Light package — `<concern>`
 
-Composer name: `academorix/<concern>`. What ships:
+Composer name: `stackra/<concern>`. What ships:
 
 - `Attributes/` — every `#[AsX]` / `#[RequireX]` marker consumers attach to
   their classes.
@@ -84,7 +84,7 @@ Consumers depend on this. It must stay cheap.
 
 ### Heavy package — `<concern>-<impl>` (or just `<concern>-implementation`)
 
-Composer name: `academorix/<impl-name>` — pick the name that describes the
+Composer name: `stackra/<impl-name>` — pick the name that describes the
 implementation, not the concern. For authorization the impl name is `access`;
 for a future feature-flags split it might be `feature-flags-store`.
 
@@ -163,7 +163,7 @@ some consumers NEED the storage + admin? If yes, split. If no, ship one package.
 | Contracts placed in the heavy package                                                                    | Contracts live in the light package — one layer below their implementers. Otherwise consumers can't type against them without pulling in the storage.                    |
 | Middleware with an Eloquent type-hint in the light package                                               | Middleware types against the contract (`UserContract`, `PermissionStore`), never against the concrete model.                                                             |
 | Vendor dependency (spatie/`*`, laravel-pennant) declared in the light package                            | Vendor deps live in the heavy package. The light package's `require` block declares only framework + PHP.                                                                |
-| Two packages authored but the heavy package's tests reach into the light package's `tests/` for fixtures | Each package's tests are self-contained. Shared fixtures live in `academorix/testing` (or a dedicated `<concern>-testing` sibling if the fixtures are concern-specific). |
+| Two packages authored but the heavy package's tests reach into the light package's `tests/` for fixtures | Each package's tests are self-contained. Shared fixtures live in `stackra/testing` (or a dedicated `<concern>-testing` sibling if the fixtures are concern-specific). |
 | Heavy package registers the CONTRACT tag at boot                                                         | Contract tag is registered by the light package's provider (it OWNS the contract). Heavy package registers IMPLEMENTERS against the existing tag.                        |
 | Splitting a concern where only one or two consumers exercise it                                          | Ship ONE package. The split's ceremony only pays off when many consumers reference the concern.                                                                          |
 | Naming the heavy package `<concern>-impl`                                                                | Name it for what it does (`access`, `feature-flags-store`, `audit-log`).                                                                                                 |

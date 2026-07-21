@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-push/webhooks",
+  "id": "stackra://modules/notifications-push/webhooks",
   "$version": 1,
   "title": "notifications-push \u2014 webhook namespaces",
   "description": "This module does NOT own outbound customer webhooks (delegated to notifications core). Documents INBOUND provider feedback delegated via the webhook module.",
@@ -13,21 +13,21 @@
     {
       "provider": "fcm",
       "config_key": "notifications-push.webhook_secrets.fcm",
-      "signature_strategy": "Academorix\\Notifications\\Push\\Signatures\\FcmSignatureStrategy",
+      "signature_strategy": "Stackra\\Notifications\\Push\\Signatures\\FcmSignatureStrategy",
       "expected_events": ["delivery.receipt", "invalid_token"],
       "note": "FCM feedback comes via Google Cloud Pub/Sub push subscription. Signature verification uses Google OIDC JWT."
     },
     {
       "provider": "apns",
       "config_key": "notifications-push.webhook_secrets.apns",
-      "signature_strategy": "Academorix\\Notifications\\Push\\Signatures\\ApnsFeedbackStrategy",
+      "signature_strategy": "Stackra\\Notifications\\Push\\Signatures\\ApnsFeedbackStrategy",
       "expected_events": ["invalid_token", "topic_disallowed", "bad_device_token", "unregistered"],
       "note": "APNs delivers feedback via the streaming Feedback Service. Signatures via mTLS + configured trust store."
     },
     {
       "provider": "onesignal",
       "config_key": "notifications-push.webhook_secrets.onesignal",
-      "signature_strategy": "Academorix\\Notifications\\Push\\Signatures\\OneSignalSignatureStrategy",
+      "signature_strategy": "Stackra\\Notifications\\Push\\Signatures\\OneSignalSignatureStrategy",
       "expected_events": ["notification.sent", "notification.clicked", "notification.dismissed"]
     }
   ],

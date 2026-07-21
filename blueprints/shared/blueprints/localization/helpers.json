@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/localization/helpers",
+  "id": "stackra://modules/localization/helpers",
   "$version": 1,
   "title": "localization \u2014 helper functions",
   "description": "Helper overrides + our own `t()` short helper. All Laravel behaviours preserved because our decorator EXTENDS Illuminate\\Translation\\Translator rather than replacing it.",
-  "namespace": "Academorix\\Localization\\Support",
+  "namespace": "Stackra\\Localization\\Support",
   "helpers": [
     {
       "signature": "t(string $key, array $replace = [], ?string $locale = null): mixed",

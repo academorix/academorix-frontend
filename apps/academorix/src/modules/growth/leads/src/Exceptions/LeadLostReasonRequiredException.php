@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Exceptions;
+namespace Stackra\Leads\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * stage=LOST transitions require lost_reason on the same request.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class LeadLostReasonRequiredException extends AcademorixException
+final class LeadLostReasonRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

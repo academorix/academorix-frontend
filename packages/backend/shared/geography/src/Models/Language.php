@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Models;
+namespace Stackra\Geography\Models;
 
-use Academorix\Geography\Contracts\Data\LanguageInterface;
-use Academorix\Geography\Database\Factories\LanguageFactory;
-use Academorix\Geography\Observers\LanguageObserver;
-use Academorix\Geography\Policies\LanguagePolicy;
+use Stackra\Geography\Contracts\Data\LanguageInterface;
+use Stackra\Geography\Database\Factories\LanguageFactory;
+use Stackra\Geography\Observers\LanguageObserver;
+use Stackra\Geography\Policies\LanguagePolicy;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;

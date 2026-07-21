@@ -4,14 +4,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Actions\Platform;
+namespace Stackra\Compliance\Actions\Platform;
 
-use Academorix\Compliance\Contracts\Repositories\RetentionRunRepositoryInterface;
-use Academorix\Compliance\Data\RetentionRunData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Compliance\Contracts\Repositories\RetentionRunRepositoryInterface;
+use Stackra\Compliance\Data\RetentionRunData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\LaravelData\PaginatedDataCollection;
@@ -20,7 +20,7 @@ use Spatie\LaravelData\PaginatedDataCollection;
  * `GET /api/v1/platform/compliance/retention-runs` — list action (platform-admin audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Compliance
@@ -50,7 +50,7 @@ final class ListRetentionRunAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Academorix\Compliance\Models\RetentionRun> $page */
+        /** @var LengthAwarePaginator<int, \Stackra\Compliance\Models\RetentionRun> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

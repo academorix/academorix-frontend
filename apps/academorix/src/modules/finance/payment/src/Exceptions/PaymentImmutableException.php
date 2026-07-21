@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Exceptions;
+namespace Stackra\Payment\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to mutate a field on a Payment row that is IMMUTABLE after create.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PaymentImmutableException extends AcademorixException
+final class PaymentImmutableException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

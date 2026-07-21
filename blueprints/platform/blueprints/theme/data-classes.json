@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/theme/data-classes",
+  "id": "stackra://modules/theme/data-classes",
   "$version": 1,
   "title": "theme — data classification",
   "description": "Theme rows carry NO PII beyond created_by / updated_by references — the tokens themselves are design values. user_theme_preferences carries per-user preferences (mode + accessibility flags) which are functional metadata, not personal identifiers.",

@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/teams/permissions",
+  "id": "stackra://modules/teams/permissions",
   "$version": 1,
   "title": "teams — permissions",
-  "seeder": "Academorix\\Teams\\Database\\Seeders\\TeamsPermissionSeeder",
+  "seeder": "Stackra\\Teams\\Database\\Seeders\\TeamsPermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — team catalogue CRUD by admin/owner/branch-manager; roster management by coach + branch-manager+; trial workflow by coach + branch-manager+; event-team participation by coach + branch-manager+. Members can see teams they're on. Platform plane (platform_admin) — cross-tenant read + force-close. All permissions carry the `teams.` prefix (or `platform.teams.` on the platform audience) to align with hierarchy.md §4 audience-boundary rules.",
   "permissions": [

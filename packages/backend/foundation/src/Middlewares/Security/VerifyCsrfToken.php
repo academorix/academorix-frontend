@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Foundation\Middlewares\Security;
+namespace Stackra\Foundation\Middlewares\Security;
 
 use Closure;
 use Exception;
@@ -25,9 +25,9 @@ use Illuminate\Support\Facades\Session;
 use function in_array;
 use function is_string;
 
-use Academorix\Foundation\Enums\HttpMethod;
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Support\Str;
+use Stackra\Foundation\Enums\HttpMethod;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

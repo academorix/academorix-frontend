@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "user",
   "alias": "user",
-  "namespace": "Academorix\\User",
+  "namespace": "Stackra\\User",
   "description": "Per-Application projection of an Identity. Owns three entities: User (identity × application × tenant — the authenticated principal for one Application), Profile (1:1 PII satellite carrying first/last/display name, phone, avatar, locale, timezone, DOB), and TenantMember (multi-tenant pivot letting one User participate in more than one Tenant inside the same Application). Ships provisioning (`ProvisionUser` action — create User from an existing Identity + Application + Tenant, assign initial role, link a fresh Profile, issue email verification challenge), lifecycle transitions (activate / suspend / restore / erase), self-service `/me` endpoints, and multi-tenant switching (`/me/tenants/{tenant}/switch`). Domain-agnostic: creates Users for admins, coaches, receptionists, and adult / teen athletes alike — the athlete-with-login flow is enabled by keeping `Athlete.user_id` nullable in the future `sports/athletes/` module, which layers its own `LinkAthleteToUser` action ON TOP of the generic `ProvisionUser` shipped here. Publishes the `.own` scope resolver (a permission suffix consulted by the base repository at query time so `athletes.view.own` implicitly narrows to `WHERE user_id = current_user_id`). PII cluster on Profile — the redactor rules always apply unless the caller carries `profile.view.pii`. Layered config via the scope substrate: framework defaults → business-type defaults → tenant settings → region overrides, gated by compliance floors (COPPA 13 / GDPR minor age per country / FERPA educational records) which tenant overrides may only tighten.",
   "keywords": [
     "user",
@@ -17,7 +17,7 @@
     "pii"
   ],
   "priority": 18,
-  "providers": ["Academorix\\User\\Providers\\UserServiceProvider"],
+  "providers": ["Stackra\\User\\Providers\\UserServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "identity", "application", "tenancy"],
   "extendedBy": ["auth"],

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Attributes;
+namespace Stackra\Localization\Attributes;
 
 use Attribute;
 
@@ -10,12 +10,12 @@ use Attribute;
  * Register a class as a machine-translation driver.
  *
  * Discovered at boot by the framework's generic hydration pump
- * ({@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper})
+ * ({@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper})
  * via the `#[HydratesFrom]` declaration on
- * {@see \Academorix\Localization\Contracts\Services\TranslatorDriverRegistryInterface::register()}.
+ * {@see \Stackra\Localization\Contracts\Services\TranslatorDriverRegistryInterface::register()}.
  * Every class carrying this attribute lands in the registry and is
  * resolvable through
- * {@see \Academorix\Localization\Services\TranslatorDriverManager}
+ * {@see \Stackra\Localization\Services\TranslatorDriverManager}
  * via the `name` key.
  *
  * ## Example

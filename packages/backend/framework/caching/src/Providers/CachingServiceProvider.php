@@ -4,22 +4,22 @@
  * @file packages/framework/caching/src/Providers/CachingServiceProvider.php
  *
  * @description
- * Root service provider for `academorix/caching`. Wires:
+ * Root service provider for `stackra/caching`. Wires:
  *
  *   1. The `caching.*` config namespace (merges the shipped
  *      default into the app's config bag; publishable under the
  *      `caching-config` tag for env-specific overrides).
  *
- *   2. The {@see \Academorix\Caching\Support\CacheKeyBuilder}
+ *   2. The {@see \Stackra\Caching\Support\CacheKeyBuilder}
  *      singleton, seeded with `caching.tag_prefix`.
  *
- *   3. The {@see \Academorix\Caching\Support\TaggableCacheGuard}
+ *   3. The {@see \Stackra\Caching\Support\TaggableCacheGuard}
  *      singleton, seeded with `caching.fail_open_untagged`.
  *
- *   4. The {@see \Academorix\Caching\Registry\CacheTagResolverRegistry}
+ *   4. The {@see \Stackra\Caching\Registry\CacheTagResolverRegistry}
  *      singleton, hydrated by the boot-time discovery pass.
  *
- *   5. The {@see \Academorix\Caching\Support\CacheTagBuilder}
+ *   5. The {@see \Stackra\Caching\Support\CacheTagBuilder}
  *      singleton, injected with the registry + tag prefix.
  *
  *   6. The boot-time discovery pass that reads every
@@ -32,7 +32,7 @@
  *
  * The provider is deliberately thin. Every extension point is
  * discovered via an attribute — the shipped
- * {@see \Academorix\Caching\Resolvers\NullCacheTagResolver} is
+ * {@see \Stackra\Caching\Resolvers\NullCacheTagResolver} is
  * discovered exactly like any consumer resolver via its own
  * `#[AsCacheTagResolver]`. There's no special-cased branch for
  * package-owned defaults.
@@ -44,24 +44,24 @@
  * captures mutable state; no facades are read inside container
  * bindings that persist beyond a single request lifecycle.
  *
- * @see \Academorix\Caching\Attributes\AsCacheTagResolver Discovery marker.
- * @see \Academorix\Caching\Registry\CacheTagResolverRegistry Discovery target.
+ * @see \Stackra\Caching\Attributes\AsCacheTagResolver Discovery marker.
+ * @see \Stackra\Caching\Registry\CacheTagResolverRegistry Discovery target.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Caching\Providers;
+namespace Stackra\Caching\Providers;
 
-use Academorix\Caching\Attributes\AsCacheTagResolver;
-use Academorix\Caching\Contracts\CacheTagResolver;
-use Academorix\Caching\Registry\CacheTagResolverRegistry;
-use Academorix\Caching\Support\CacheKeyBuilder;
-use Academorix\Caching\Support\CacheTagBuilder;
-use Academorix\Caching\Support\TaggableCacheGuard;
+use Stackra\Caching\Attributes\AsCacheTagResolver;
+use Stackra\Caching\Contracts\CacheTagResolver;
+use Stackra\Caching\Registry\CacheTagResolverRegistry;
+use Stackra\Caching\Support\CacheKeyBuilder;
+use Stackra\Caching\Support\CacheTagBuilder;
+use Stackra\Caching\Support\TaggableCacheGuard;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
 
 /**
  * Root provider for the caching package.

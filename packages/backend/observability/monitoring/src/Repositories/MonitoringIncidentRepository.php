@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Repositories;
+namespace Stackra\Monitoring\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Monitoring\Contracts\Data\MonitoringIncidentInterface;
-use Academorix\Monitoring\Contracts\Repositories\MonitoringIncidentRepositoryInterface;
-use Academorix\Monitoring\Models\MonitoringIncident;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Monitoring\Contracts\Data\MonitoringIncidentInterface;
+use Stackra\Monitoring\Contracts\Repositories\MonitoringIncidentRepositoryInterface;
+use Stackra\Monitoring\Models\MonitoringIncident;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Monitoring\Models\MonitoringIncident}.
+ * Attribute-first Eloquent repository for {@see Stackra\Monitoring\Models\MonitoringIncident}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(MonitoringIncidentInterface::class)]` which resolves to
  * `MonitoringIncident` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Monitoring\Models\MonitoringIncident>
+ * @extends Repository<\Stackra\Monitoring\Models\MonitoringIncident>
  *
  * @category Monitoring
  *

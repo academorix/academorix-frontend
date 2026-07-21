@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/storage/rules",
+  "id": "stackra://modules/storage/rules",
   "$version": 1,
   "title": "storage \u2014 validation rules",
-  "namespace": "Academorix\\Storage\\Rules",
+  "namespace": "Stackra\\Storage\\Rules",
   "description": "Custom Laravel validation rules published by StorageServiceProvider::boot(). Consumers use them in FormRequest / Data class rule sets.",
   "rules": [
     {
       "name": "valid_mime_for_kind",
-      "class": "Academorix\\Storage\\Rules\\ValidMimeForKind",
+      "class": "Stackra\\Storage\\Rules\\ValidMimeForKind",
       "signature": "valid_mime_for_kind:<kind>",
       "description": "Ensures the uploaded file's sniffed MIME matches the target kind's allowed_mimes list. Sniff is finfo-based; client Content-Type header is IGNORED.",
       "params": [
@@ -19,7 +19,7 @@
     },
     {
       "name": "max_size_for_kind",
-      "class": "Academorix\\Storage\\Rules\\MaxSizeForKind",
+      "class": "Stackra\\Storage\\Rules\\MaxSizeForKind",
       "signature": "max_size_for_kind:<kind>",
       "description": "Ensures the uploaded file's size does not exceed the kind's max_size_mb.",
       "params": [{ "name": "kind", "type": "string" }],
@@ -29,7 +29,7 @@
     },
     {
       "name": "valid_file_kind",
-      "class": "Academorix\\Storage\\Rules\\ValidFileKind",
+      "class": "Stackra\\Storage\\Rules\\ValidFileKind",
       "signature": "valid_file_kind",
       "description": "Ensures the value is a registered kind key.",
       "params": [],
@@ -39,7 +39,7 @@
     },
     {
       "name": "unique_sha256_within_tenant",
-      "class": "Academorix\\Storage\\Rules\\UniqueSha256WithinTenant",
+      "class": "Stackra\\Storage\\Rules\\UniqueSha256WithinTenant",
       "signature": "unique_sha256_within_tenant",
       "description": "For kinds that opt out of dedup (`#[FileKind(dedupable: false)]`), enforces sha256 uniqueness within the tenant. Skipped for dedupable kinds \u2014 duplicates are the expected case there.",
       "params": [],
@@ -49,7 +49,7 @@
     },
     {
       "name": "valid_signed_url_reason",
-      "class": "Academorix\\Storage\\Rules\\ValidSignedUrlReason",
+      "class": "Stackra\\Storage\\Rules\\ValidSignedUrlReason",
       "signature": "valid_signed_url_reason:<caller_permission>",
       "description": "Ensures the requested signed-URL reason is permitted for the caller. `share` and `admin_action` require elevated permissions.",
       "params": [{ "name": "caller_permission", "type": "string", "default": "files.view" }],
@@ -59,7 +59,7 @@
     },
     {
       "name": "valid_cidr",
-      "class": "Academorix\\Storage\\Rules\\ValidCidr",
+      "class": "Stackra\\Storage\\Rules\\ValidCidr",
       "signature": "valid_cidr",
       "description": "Validates that a string is a valid CIDR block. Used for ip_lock validation on signed-URL issue requests. Accepts IPv4 (`192.0.2.0/24`) and IPv6 (`2001:db8::/32`) formats.",
       "params": [],

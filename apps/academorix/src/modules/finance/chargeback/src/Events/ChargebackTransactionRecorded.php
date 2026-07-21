@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Events;
+namespace Stackra\Chargeback\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog (retention: 7 years — financial record)
  * - activity::WriteToActivityLog
- * - observability::MetricsCollector (academorix.chargeback.losses_total_cents counter — sum of amount_cents)
+ * - observability::MetricsCollector (stackra.chargeback.losses_total_cents counter — sum of amount_cents)
  *
  * @category Chargeback
  *

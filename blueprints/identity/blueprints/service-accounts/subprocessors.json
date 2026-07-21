@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/service-accounts/subprocessors",
+  "id": "stackra://modules/service-accounts/subprocessors",
   "$version": 1,
   "title": "service-accounts \u2014 subprocessors",
   "description": "Zero primary subprocessors. This module operates entirely in-process for the credential-storage + JWT-signing paths. Optional secondary subprocessors are: (a) AWS EventBridge for kid-rotation notifications (Wave 1c \u2014 when RS256 asymmetric keys move to AWS KMS-hosted material), (b) PagerDuty for on-call escalation of suspicious-activity notifications (composed via the platform-user module's routing, not directly by this module). None are engaged in the Wave 1a HS256 shipping path.",
@@ -8,7 +8,7 @@
     "bcrypt \u2014 in-process libsodium, no data leaves the app",
     "firebase/php-jwt \u2014 in-process library invoked via auth::JwtSigner; no external calls",
     "OpenTelemetry / metrics collector \u2014 receives aggregate metrics only (no service_account_id in metric labels per metrics.json)",
-    "Segment / product analytics \u2014 receives service_account_id (internal-workforce plane events) but these are internal Academorix operational telemetry, not tenant data \u2014 same tier as platform-user events",
+    "Segment / product analytics \u2014 receives service_account_id (internal-workforce plane events) but these are internal Stackra operational telemetry, not tenant data \u2014 same tier as platform-user events",
     "Email delivery (SES / Postmark / SMTP relay) \u2014 handled by `notifications` module; service-accounts does not maintain its own delivery pipeline",
     "Slack \u2014 same; delivered via notifications module for the SA-lifecycle notifications listed in notifications.json"
   ],

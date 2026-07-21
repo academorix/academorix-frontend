@@ -2,18 +2,18 @@
 
 /**
  * @file MakeActionCommand.php
- * @module Academorix\Cli\Commands
- * @description `academorix make:action <ClassName> --module=<tier/name>
+ * @module Stackra\Cli\Commands
+ * @description `stackra make:action <ClassName> --module=<tier/name>
  *   --verb=<Http> --route=<path>` — emits a single Laravel action from
  *   the `php.action` stub.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Commands;
+namespace Stackra\Cli\Commands;
 
-use Academorix\Cli\Support\Console;
-use Academorix\Cli\Support\PathResolver;
+use Stackra\Cli\Support\Console;
+use Stackra\Cli\Support\PathResolver;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -51,7 +51,7 @@ final class MakeActionCommand extends AbstractCommand
         $moduleDir = sprintf('%s/packages/backend/%s/%s', $workspaceRoot, $tier, $slug);
         $this->assertDirectoryExists($moduleDir);
 
-        $namespace = sprintf('Academorix\\%s\\%s\\Actions', $this->pascal($tier), $this->pascal($slug));
+        $namespace = sprintf('Stackra\\%s\\%s\\Actions', $this->pascal($tier), $this->pascal($slug));
         $outputPath = sprintf('%s/src/Actions/%s.php', $moduleDir, $className);
 
         $tokens = [
@@ -64,10 +64,10 @@ final class MakeActionCommand extends AbstractCommand
             'moduleName' => $module,
             'tier' => $tier,
             'date' => date('Y-m-d'),
-            'version' => \Academorix\Cli\Application::VERSION,
+            'version' => \Stackra\Cli\Application::VERSION,
         ];
 
-        if (! $this->container->resolve(\Academorix\Cli\Stubs\StubRegistry::class)->has('php.action')) {
+        if (! $this->container->resolve(\Stackra\Cli\Stubs\StubRegistry::class)->has('php.action')) {
             $this->omni->statusError(
                 'Stub not registered',
                 'The php.action stub is not in StubRegistry::defaultStubs() yet.',

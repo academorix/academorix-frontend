@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/audit/schedule",
+  "id": "stackra://modules/audit/schedule",
   "$version": 1,
   "title": "audit — scheduled tasks",
   "description": "Four scheduled entries: per-tenant retention purge nightly, retention-override expiry sweep nightly, hot-to-cold archive migration weekly, monthly regulator compliance report.",

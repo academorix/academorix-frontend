@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Attributes;
+namespace Stackra\Mfa\Attributes;
 
 use Attribute;
 

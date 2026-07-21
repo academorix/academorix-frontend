@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Services;
+namespace Stackra\Audit\Services;
 
-use Academorix\Audit\Contracts\Services\TenantIdBackfillerInterface;
+use Stackra\Audit\Contracts\Services\TenantIdBackfillerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Audit\Contracts\Repositories\AuditRetentionPolicyRepositoryInterface;
+use Stackra\Audit\Contracts\Repositories\AuditRetentionPolicyRepositoryInterface;
 
 /**
  * Concrete service — TenantIdBackfiller.

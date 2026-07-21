@@ -1,6 +1,6 @@
 # Architecture
 
-`academorix-backend` is a Composer path-repository monorepo orchestrated by
+`stackra-backend` is a Composer path-repository monorepo orchestrated by
 Turborepo. The layout:
 
 ```
@@ -8,7 +8,7 @@ apps/
   template/         — headless REST API template
   api/              — main tenant API (added in Phase 2 of migration)
   ai-service/       — standalone AI microservice
-packages/           — shared PHP libraries (`academorix/*`)
+packages/           — shared PHP libraries (`stackra/*`)
 docker/             — production Dockerfiles + local compose
 docs/               — architecture, migration, doppler, package-authoring
 scripts/            — bootstrap + migration helpers

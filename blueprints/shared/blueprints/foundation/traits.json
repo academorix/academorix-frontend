@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/foundation/traits",
+  "id": "stackra://modules/foundation/traits",
   "$version": 1,
   "title": "foundation — model traits",
-  "description": "The trait contract every downstream module composes on top of. Foundation owns 9 traits and 8 paired migration macros. Each trait describes: the columns it adds, the query scopes it introduces, the event hooks it registers, the relations it opens, the backing package (when third-party), and the models it's typically applied to. The `compositionExample` at the bottom shows the canonical trait order every persistent model uses. NOTE: `Importable` / `Exportable` (previously listed here) moved to `modules/transfer/` \u2014 the CSV/Excel/PDF/JSON import + export substrate now owns its own attribute-driven registration + queue chain + notification lifecycle. Consumer modules that opted into imports/exports switch to `Academorix\\Transfer\\Concerns\\HasImportable` / `HasExportable`. `Searchable` (previously listed here) moved to `modules/search/` on Wave 6 inception \u2014 the search substrate now owns its own attribute-driven registration + engine adapters (Meilisearch / PG FTS / pgvector / ES) + zero-downtime reindex via alias swap + synonyms + saved queries + analytics. Consumer modules that opted into search switch to `Academorix\\Search\\Concerns\\HasSearchable`.",
+  "description": "The trait contract every downstream module composes on top of. Foundation owns 9 traits and 8 paired migration macros. Each trait describes: the columns it adds, the query scopes it introduces, the event hooks it registers, the relations it opens, the backing package (when third-party), and the models it's typically applied to. The `compositionExample` at the bottom shows the canonical trait order every persistent model uses. NOTE: `Importable` / `Exportable` (previously listed here) moved to `modules/transfer/` \u2014 the CSV/Excel/PDF/JSON import + export substrate now owns its own attribute-driven registration + queue chain + notification lifecycle. Consumer modules that opted into imports/exports switch to `Stackra\\Transfer\\Concerns\\HasImportable` / `HasExportable`. `Searchable` (previously listed here) moved to `modules/search/` on Wave 6 inception \u2014 the search substrate now owns its own attribute-driven registration + engine adapters (Meilisearch / PG FTS / pgvector / ES) + zero-downtime reindex via alias swap + synonyms + saved queries + analytics. Consumer modules that opted into search switch to `Stackra\\Search\\Concerns\\HasSearchable`.",
   "owned": [
     {
       "trait": "HasSystemFlag",
-      "class": "Academorix\\Foundation\\Concerns\\HasSystemFlag",
+      "class": "Stackra\\Foundation\\Concerns\\HasSystemFlag",
       "description": "Marks rows the platform seeded (as opposed to rows the customer created). `is_system=true` rows are refused on Policy@update / @delete. Prevents tenant admins from accidentally editing or deleting platform-owned records (default business types, seeded permissions, system integrations).",
       "pairedBlueprint": "systemFlag",
       "adds": {
@@ -52,7 +52,7 @@
     },
     {
       "trait": "HasUserstamps",
-      "class": "Academorix\\Foundation\\Concerns\\HasUserstamps",
+      "class": "Stackra\\Foundation\\Concerns\\HasUserstamps",
       "description": "Adds the userstamp trio (created_by / updated_by / deleted_by). Values auto-filled from the resolved caller on save / update / soft-delete. UUID FK to `users.id` (nullable for platform-initiated writes and seeded rows).",
       "pairedBlueprint": "userstampable",
       "adds": {
@@ -97,7 +97,7 @@
     },
     {
       "trait": "HasAuditable",
-      "class": "Academorix\\Foundation\\Concerns\\HasAuditable",
+      "class": "Stackra\\Foundation\\Concerns\\HasAuditable",
       "description": "Wraps `owen-it/laravel-auditing`. Writes an audit row to the `audits` table on every mutation with tenant_id + user_id + attribute diff. The audit table itself lives in the `audit` module; this trait writes to it via the wrapper.",
       "backingPackage": "owen-it/laravel-auditing",
       "pairedBlueprint": "auditable",
@@ -128,7 +128,7 @@
     },
     {
       "trait": "HasVersions",
-      "class": "Academorix\\Foundation\\Concerns\\HasVersions",
+      "class": "Stackra\\Foundation\\Concerns\\HasVersions",
       "description": "Row-level version history \u2014 full state snapshots on every save with rollback + structured diffing. Wraps `mpociot/versionable`. Every mutation writes a snapshot of the model state (JSON blob) to the polymorphic `versions` table + provides `revertToVersion(n)`, `previousVersion()`, `currentVersion()`, `getVersions()`, `diffVersions(from, to)`. Distinct from HasAuditable: auditable stores diffs + actor for compliance evidence, HasVersions stores FULL SNAPSHOTS for rollback UX. Both traits coexist because they answer different questions \u2014 auditable answers 'who changed what', HasVersions answers 'restore to how it looked at 3pm yesterday'.",
       "backingPackage": "mpociot/versionable",
       "pairedBlueprint": "versionable",
@@ -195,7 +195,7 @@
     },
     {
       "trait": "HasMetadata",
-      "class": "Academorix\\Foundation\\Concerns\\HasMetadata",
+      "class": "Stackra\\Foundation\\Concerns\\HasMetadata",
       "description": "Adds a free-form `metadata` JSONB column + `array` cast + fluent accessors. NEVER queried against \u2014 metadata is opaque to the database engine. Use it for platform notes, integration references, ticket IDs, migration source tags, provisioner tags, canary bucket assignments \u2014 anything that doesn't earn a first-class column.",
       "pairedBlueprint": "metadata",
       "adds": {
@@ -220,7 +220,7 @@
     },
     {
       "trait": "Sortable",
-      "class": "Academorix\\Foundation\\Concerns\\Sortable",
+      "class": "Stackra\\Foundation\\Concerns\\Sortable",
       "description": "Adds a `sort_order` unsigned int column + sortable query scope + drag-and-drop reorder helpers.",
       "backingPackage": "spatie/eloquent-sortable",
       "pairedBlueprint": "sortable",
@@ -267,7 +267,7 @@
     },
     {
       "trait": "Filterable",
-      "class": "Academorix\\Foundation\\Concerns\\Filterable",
+      "class": "Stackra\\Foundation\\Concerns\\Filterable",
       "description": "Integration with `spatie/laravel-query-builder`. Reads a static `filterable(): array` method on the model.",
       "backingPackage": "spatie/laravel-query-builder",
       "pairedBlueprint": "filterable",
@@ -285,7 +285,7 @@
     },
     {
       "trait": "Sluggable",
-      "class": "Academorix\\Foundation\\Concerns\\Sluggable",
+      "class": "Stackra\\Foundation\\Concerns\\Sluggable",
       "description": "Adds a `slug` string column with a unique index + auto-fills on save.",
       "backingPackage": "cviebrock/eloquent-sluggable",
       "pairedBlueprint": "sluggable",
@@ -338,7 +338,7 @@
     },
     {
       "trait": "HasVectorEmbeddings",
-      "class": "Academorix\\Foundation\\Concerns\\HasVectorEmbeddings",
+      "class": "Stackra\\Foundation\\Concerns\\HasVectorEmbeddings",
       "description": "v2 STUB. Adds a pgvector `embeddings` column of configurable dimension + a `nearest($vector, $count)` scope for cosine-similarity queries. Deferred until AI features land.",
       "backingPackage": "pgvector-php + configurable embedder",
       "pairedBlueprint": "embeddings",

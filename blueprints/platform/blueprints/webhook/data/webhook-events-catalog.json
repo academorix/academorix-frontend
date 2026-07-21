@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/webhook/data/webhook-events-catalog",
+  "id": "stackra://modules/webhook/data/webhook-events-catalog",
   "$version": 1,
   "title": "webhook \u2014 bootstrap event catalog seed",
   "description": "Bootstrap events registered with the WebhookRegistry at deploy time. Only meta events \u2014 webhook.test (synthetic test event) + webhook.probe (health probe). Real business events (invitation.sent, notification.delivered, subscription.created, etc.) register at boot via #[AsWebhookEvent] discovery.",
-  "seeder": "Academorix\\Webhook\\Database\\Seeders\\BootstrapEventCatalogSeeder",
+  "seeder": "Stackra\\Webhook\\Database\\Seeders\\BootstrapEventCatalogSeeder",
   "target": "WebhookRegistry (in-memory / Redis cache)",
   "events": [
     {
       "name": "webhook.test",
-      "class": "Academorix\\Webhook\\Events\\WebhookTestEvent",
+      "class": "Stackra\\Webhook\\Events\\WebhookTestEvent",
       "version": "v1",
       "description": "Synthetic test event dispatched by /subscriptions/{id}/test endpoint. Receivers should acknowledge with 200 OK and ignore.",
       "payload_shape": {
@@ -22,7 +22,7 @@
     },
     {
       "name": "webhook.probe",
-      "class": "Academorix\\Webhook\\Events\\WebhookProbeEvent",
+      "class": "Stackra\\Webhook\\Events\\WebhookProbeEvent",
       "version": "v1",
       "description": "Health probe event (only referenced by WebhookProbeJob for the probe HEAD; NOT dispatched as a real payload). Kept in catalog for documentation.",
       "payload_shape": null,

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Analytics\Contracts\Data;
+namespace Stackra\Analytics\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Analytics\Models\AnalyticsProviderConfig;
+use Stackra\Analytics\Models\AnalyticsProviderConfig;
 
 /**
  * Table shape for the `analytics_provider_configs` table.

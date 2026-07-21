@@ -1,61 +1,61 @@
 {
-  "id": "academorix://modules/tax/commands",
+  "id": "stackra://modules/tax/commands",
   "$version": 1,
   "title": "tax — Artisan commands",
   "commands": [
     {
       "signature": "tax:list-rates {--tenant=} {--jurisdiction=} {--rate-type=} {--active} {--limit=100}",
-      "class": "Academorix\\Finance\\Tax\\Console\\Commands\\ListRatesCommand",
+      "class": "Stackra\\Finance\\Tax\\Console\\Commands\\ListRatesCommand",
       "purpose": "Table view of tax_rates. Filterable by tenant, jurisdiction (accepts ULID or ISO country/state code), rate_type, and --active (effective_from <= today AND (effective_to IS NULL OR effective_to > today))."
     },
     {
       "signature": "tax:sync-rates {--tenant=} {--provider=} {--dry-run}",
-      "class": "Academorix\\Finance\\Tax\\Console\\Commands\\SyncRatesCommand",
+      "class": "Stackra\\Finance\\Tax\\Console\\Commands\\SyncRatesCommand",
       "purpose": "Trigger SyncTaxRatesFromProviderJob for a tenant + provider. --dry-run reports what would change without persisting. Weekly cron; this command is for on-demand runs (post-jurisdiction-fiscal-change)."
     },
     {
       "signature": "tax:list-jurisdictions {--tenant=} {--country=} {--platform-only} {--tenant-only} {--limit=200}",
-      "class": "Academorix\\Finance\\Tax\\Console\\Commands\\ListJurisdictionsCommand",
+      "class": "Stackra\\Finance\\Tax\\Console\\Commands\\ListJurisdictionsCommand",
       "purpose": "View tax_jurisdictions. --platform-only filters tenant_id IS NULL; --tenant-only filters tenant_id IS NOT NULL (custom jurisdictions). Default: both."
     },
     {
       "signature": "tax:add-jurisdiction {--tenant=} {--country=} {--state=?} {--city=?} {--postal-pattern=?} {--tax-type=} {--nexus-type=?} {--registration-number=?} {--effective-from=}",
-      "class": "Academorix\\Finance\\Tax\\Console\\Commands\\AddJurisdictionCommand",
+      "class": "Stackra\\Finance\\Tax\\Console\\Commands\\AddJurisdictionCommand",
       "purpose": "Scriptable jurisdiction create. --tenant absent = platform-reference jurisdiction (requires super_admin). Validates against ISO 3166-1 + ISO 3166-2. Requires tax_jurisdiction_custom entitlement when tenant is set."
     },
     {
       "signature": "tax:list-exemptions {--tenant=} {--exemption-type=} {--verification-status=} {--customer-type=} {--customer-id=} {--jurisdiction=} {--expiring-within-days=?} {--limit=100}",
-      "class": "Academorix\\Finance\\Tax\\Console\\Commands\\ListExemptionsCommand",
+      "class": "Stackra\\Finance\\Tax\\Console\\Commands\\ListExemptionsCommand",
       "purpose": "Table view of tax_exemptions. Filterable by verification_status (pending / verified / rejected / expired), customer, jurisdiction, and --expiring-within-days for the 60/30/7-day warning cadence."
     },
     {
       "signature": "tax:verify-exemption {exemption} {--verified-by=} {--note=}",
-      "class": "Academorix\\Finance\\Tax\\Console\\Commands\\VerifyExemptionCommand",
+      "class": "Stackra\\Finance\\Tax\\Console\\Commands\\VerifyExemptionCommand",
       "purpose": "Manually mark an exemption verified. --verified-by required (ULID of the reviewing user; defaults to the authed platform admin). --note optional (written to audit trail). Refuses when verification_status != 'pending'."
     },
     {
       "signature": "tax:reject-exemption {exemption} --reason={reason} {--rejected-by=} {--note=}",
-      "class": "Academorix\\Finance\\Tax\\Console\\Commands\\RejectExemptionCommand",
+      "class": "Stackra\\Finance\\Tax\\Console\\Commands\\RejectExemptionCommand",
       "purpose": "Manually mark an exemption rejected. --reason required (one of: invalid_certificate / expired_at_creation / jurisdiction_mismatch / fraudulent / other). Fires TaxExemptionRejectedNotification. Refuses when verification_status != 'pending'."
     },
     {
       "signature": "tax:list-calculations {--tenant=} {--provider=} {--invoice-line=} {--from=} {--to=} {--limit=100}",
-      "class": "Academorix\\Finance\\Tax\\Console\\Commands\\ListCalculationsCommand",
+      "class": "Stackra\\Finance\\Tax\\Console\\Commands\\ListCalculationsCommand",
       "purpose": "Read-only tax_calculations view. Filter by tenant, provider, invoice_line_id, date range. Default sort: calculated_at DESC."
     },
     {
       "signature": "tax:describe-calculation {calculation}",
-      "class": "Academorix\\Finance\\Tax\\Console\\Commands\\DescribeCalculationCommand",
+      "class": "Stackra\\Finance\\Tax\\Console\\Commands\\DescribeCalculationCommand",
       "purpose": "Verbose read of one calculation: base fields + tax_rate_snapshot + exemption_applied + provider_metadata + linked invoice_line. Support tool for regulator inquiries about specific historical tax computations."
     },
     {
       "signature": "tax:configure-provider {--tenant=} {--provider=} {--config-file=} {--jurisdictions=*} {--dry-run}",
-      "class": "Academorix\\Finance\\Tax\\Console\\Commands\\ConfigureProviderCommand",
+      "class": "Stackra\\Finance\\Tax\\Console\\Commands\\ConfigureProviderCommand",
       "purpose": "Scriptable provider config create/update. --config-file=path/to/config.json is validated against the per-provider JSON schema. --jurisdictions is the list of country codes this provider handles for the tenant. --dry-run validates + shows diff without persisting. Encrypts config at rest."
     },
     {
       "signature": "tax:test-provider {provider_config} {--jurisdiction=} {--amount-cents=} {--currency=USD}",
-      "class": "Academorix\\Finance\\Tax\\Console\\Commands\\TestProviderCommand",
+      "class": "Stackra\\Finance\\Tax\\Console\\Commands\\TestProviderCommand",
       "purpose": "Send a synthetic calculation via the provider's sandbox endpoint. Reports the resolved tax amount + latency + any errors. Used by ops to validate a tenant's provider config."
     }
   ]

@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/compliance/attributes",
+  "id": "stackra://modules/compliance/attributes",
   "$version": 1,
   "title": "compliance — PHP attribute contracts",
   "description": "Five attributes discovered at build time by CompileComplianceRegistries. The compiler maps class + method targets into DsarContributorRegistry + ConsentGate + LegalHoldGate + RetentionPolicyResolver so runtime enforcement is a hash-map lookup, never a reflection call.",
-  "namespace": "Academorix\\Compliance\\Attributes",
+  "namespace": "Stackra\\Compliance\\Attributes",
   "attributes": [
     {
       "name": "DsarExportable",
-      "class": "Academorix\\Compliance\\Attributes\\DsarExportable",
+      "class": "Stackra\\Compliance\\Attributes\\DsarExportable",
       "targets": ["class"],
       "description": "Declares that the annotated model class contributes rows to a DSAR export bundle. The DsarOrchestrator scans registered classes during Dsar.state=collecting to build the artefact list for a subject.",
       "params": [
@@ -59,7 +59,7 @@
     },
     {
       "name": "DsarErasable",
-      "class": "Academorix\\Compliance\\Attributes\\DsarErasable",
+      "class": "Stackra\\Compliance\\Attributes\\DsarErasable",
       "targets": ["class"],
       "description": "Declares that the annotated model class supports DSAR erasure. Every DsarExportable class should ALSO be DsarErasable unless a compliance-supported retention prevents deletion (e.g. tax receipts under 7-year regulatory retention \u2014 in which case the class is DsarExportable but NOT DsarErasable, and the DSAR request is partially fulfilled with a rejection note for the retained records).",
       "params": [
@@ -106,7 +106,7 @@
     },
     {
       "name": "ConsentRequired",
-      "class": "Academorix\\Compliance\\Attributes\\ConsentRequired",
+      "class": "Stackra\\Compliance\\Attributes\\ConsentRequired",
       "targets": ["class", "method"],
       "description": "Marks an action / class / job as gated on a specific consent category. Enforced by the ConsentGate facade at method entry OR by the compliance.consent.gate HTTP middleware on routes. Requests / jobs targeting a subject without the required consent get a `ConsentRequiredException` (mapped to HTTP 451 Unavailable For Legal Reasons at the API boundary).",
       "params": [
@@ -134,7 +134,7 @@
     },
     {
       "name": "RetentionPolicy",
-      "class": "Academorix\\Compliance\\Attributes\\RetentionPolicy",
+      "class": "Stackra\\Compliance\\Attributes\\RetentionPolicy",
       "targets": ["class"],
       "description": "Declares an INLINE retention policy for the annotated model. Overrides the module's own `retention.json` when the retention runner encounters conflicting values (attribute wins for the annotated class only; retention.json wins for every other class in the same module).",
       "params": [
@@ -175,7 +175,7 @@
     },
     {
       "name": "LegalHoldable",
-      "class": "Academorix\\Compliance\\Attributes\\LegalHoldable",
+      "class": "Stackra\\Compliance\\Attributes\\LegalHoldable",
       "targets": ["class"],
       "description": "Declares that the annotated model class supports legal hold. LegalHoldGate scans registered classes at boot; runtime calls check the LegalHold table for freezes on this model's rows before any purge / erase / hard-delete action.",
       "params": [
@@ -203,7 +203,7 @@
     }
   ],
   "discovery": {
-    "loader": "Academorix\\Compliance\\Discovery\\CompileComplianceRegistries",
+    "loader": "Stackra\\Compliance\\Discovery\\CompileComplianceRegistries",
     "runs_at": "boot (after ContainerBooted event)",
     "output_registries": [
       "DsarContributorRegistry \u2014 map of subject-column \u2192 list of contributor class names",

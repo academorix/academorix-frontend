@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Repositories;
+namespace Stackra\Match\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Match\Contracts\Data\OpponentLogoInterface;
-use Academorix\Match\Contracts\Repositories\OpponentLogoRepositoryInterface;
-use Academorix\Match\Models\OpponentLogo;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Match\Contracts\Data\OpponentLogoInterface;
+use Stackra\Match\Contracts\Repositories\OpponentLogoRepositoryInterface;
+use Stackra\Match\Models\OpponentLogo;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Match\Models\OpponentLogo}.
+ * Attribute-first Eloquent repository for {@see Stackra\Match\Models\OpponentLogo}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(OpponentLogoInterface::class)]` which resolves to
  * `OpponentLogo` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Match\Models\OpponentLogo>
+ * @extends Repository<\Stackra\Match\Models\OpponentLogo>
  *
  * @category Match
  *

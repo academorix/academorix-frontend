@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Data;
+namespace Stackra\Subscription\Data;
 
-use Academorix\Subscription\Contracts\Data\PlanInterface;
-use Academorix\Subscription\Enums\BillingCycle;
-use Academorix\Subscription\Enums\BillingMode;
-use Academorix\Subscription\Enums\PlanTier;
-use Academorix\Subscription\Models\Plan;
+use Stackra\Subscription\Contracts\Data\PlanInterface;
+use Stackra\Subscription\Enums\BillingCycle;
+use Stackra\Subscription\Enums\BillingMode;
+use Stackra\Subscription\Enums\PlanTier;
+use Stackra\Subscription\Models\Plan;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

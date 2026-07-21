@@ -10,9 +10,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Enums;
+namespace Stackra\ApiSdk\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Which Saloon authenticator the connector installs.
@@ -21,7 +21,7 @@ use Academorix\Enum\Enum;
  *
  *   - `Bearer` → `Saloon\Http\Auth\TokenAuthenticator` +
  *      `Authorization: Bearer <token>` header.
- *   - `ApiKey` → `Academorix\ApiSdk\Authentication\ApiKeyAuthenticator`
+ *   - `ApiKey` → `Stackra\ApiSdk\Authentication\ApiKeyAuthenticator`
  *      with the header name from `sdk.api.auth.header`.
  *   - `None`   — no auth; used for the SDK's health-probe
  *      endpoint when the token isn't available yet (bootstrap

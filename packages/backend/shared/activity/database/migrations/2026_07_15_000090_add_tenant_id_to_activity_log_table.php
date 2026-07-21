@@ -22,7 +22,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Activity\Contracts\Data\ActivityInterface;
+use Stackra\Activity\Contracts\Data\ActivityInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsProgressSdk\Tests;
+namespace Stackra\SportsProgressSdk\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix-sports/progress-sdk.
+ * Base test case for stackra-sports/progress-sdk.
  *
  * @category ProgressSdk
  *

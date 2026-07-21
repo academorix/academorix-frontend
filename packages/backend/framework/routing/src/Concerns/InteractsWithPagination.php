@@ -30,15 +30,15 @@
  *     composition alone.
  *
  * @see InteractsWithResponse  Provides the actual `response()` method.
- * @see \Academorix\Routing\Http\ResponseBuilder  Emitted by the paginate helpers.
+ * @see \Stackra\Routing\Http\ResponseBuilder  Emitted by the paginate helpers.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Routing\Concerns;
+namespace Stackra\Routing\Concerns;
 
-use Academorix\Exceptions\Http\ValidationException;
-use Academorix\Routing\Http\ResponseBuilder;
+use Stackra\Exceptions\Http\ValidationException;
+use Stackra\Routing\Http\ResponseBuilder;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Pagination\Paginator;

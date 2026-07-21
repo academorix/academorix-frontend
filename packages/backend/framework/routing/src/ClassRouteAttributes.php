@@ -11,10 +11,10 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing;
+namespace Stackra\Routing;
 
-use Academorix\Support\Arr;
-use Academorix\Support\Str;
+use Stackra\Support\Arr;
+use Stackra\Support\Str;
 use ReflectionAttribute;
 use ReflectionClass;
 use Spatie\RouteAttributes\Attributes\Group;

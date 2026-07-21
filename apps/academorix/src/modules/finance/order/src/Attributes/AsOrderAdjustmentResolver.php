@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Order\Attributes;
+namespace Stackra\Order\Attributes;
 
 use Attribute;
 

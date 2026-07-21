@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Contracts\Data;
+namespace Stackra\Coupon\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Coupon\Models\Coupon;
+use Stackra\Coupon\Models\Coupon;
 
 /**
  * Table shape for the `coupons` table.

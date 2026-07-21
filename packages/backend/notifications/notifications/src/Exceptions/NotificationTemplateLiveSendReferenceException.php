@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Exceptions;
+namespace Stackra\Notifications\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when an admin attempts to delete a `NotificationTemplate`
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationTemplateLiveSendReferenceException extends AcademorixException
+final class NotificationTemplateLiveSendReferenceException extends StackraException
 {
     public const CODE = 'NOTIFICATIONS_TEMPLATE_LIVE_SEND_REFERENCE';
 

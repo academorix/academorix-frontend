@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Attributes;
+namespace Stackra\Notifications\Attributes;
 
 use Attribute;
 

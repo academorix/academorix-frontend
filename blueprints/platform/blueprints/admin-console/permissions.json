@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/admin-console/permissions",
+  "id": "stackra://modules/admin-console/permissions",
   "$version": 1,
   "title": "admin-console — permissions",
-  "seeder": "Academorix\\Platform\\AdminConsole\\Database\\Seeders\\AdminConsolePermissionSeeder",
+  "seeder": "Stackra\\Platform\\AdminConsole\\Database\\Seeders\\AdminConsolePermissionSeeder",
   "isSystem": true,
   "description": "Guard = platform_admin exclusively. Zero tenant-side seeding.",
   "permissions": [

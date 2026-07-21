@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Season\Exceptions;
+namespace Stackra\Season\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * playoff_ends_at either precedes playoff_starts_at OR falls after Season.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SeasonPlayoffInvalidEndException extends AcademorixException
+final class SeasonPlayoffInvalidEndException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

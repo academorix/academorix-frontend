@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/newsletter/middleware",
+  "id": "stackra://modules/newsletter/middleware",
   "$version": 1,
   "title": "newsletter \u2014 HTTP middleware",
   "description": "Owns one middleware: `newsletter.token.verify` for signed subscribe / confirm / unsubscribe tokens. Consumes foundation + tenants stack otherwise.",
   "middleware": [
     {
       "name": "newsletter.token.verify",
-      "class": "Academorix\\Newsletter\\Http\\Middleware\\VerifyNewsletterToken",
+      "class": "Stackra\\Newsletter\\Http\\Middleware\\VerifyNewsletterToken",
       "description": "Verifies signed HMAC token in the URL path against the subscription's stored token + expiry. Populates the request with the resolved NewsletterSubscription. 404 on mismatch to avoid enumeration.",
       "usedOn": [
         "/newsletters/{newsletter}/confirm/{token}",

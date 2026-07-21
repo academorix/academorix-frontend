@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Exceptions;
+namespace Stackra\Registry\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Platform admin attempted to reseed while an active SeedPlatformSportsCatalogJob or ReconcileSportReferencesJob is running.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ReseedLockedInUseException extends AcademorixException
+final class ReseedLockedInUseException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

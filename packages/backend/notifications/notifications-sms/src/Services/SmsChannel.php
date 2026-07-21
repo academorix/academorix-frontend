@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsSms\Services;
+namespace Stackra\NotificationsSms\Services;
 
-use Academorix\NotificationsSms\Contracts\Services\SmsChannelInterface;
+use Stackra\NotificationsSms\Contracts\Services\SmsChannelInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\NotificationsSms\Contracts\Repositories\SmsOptOutRepositoryInterface;
+use Stackra\NotificationsSms\Contracts\Repositories\SmsOptOutRepositoryInterface;
 
 /**
  * Concrete service — SmsChannel.

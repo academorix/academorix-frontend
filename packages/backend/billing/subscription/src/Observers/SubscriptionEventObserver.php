@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Observers;
+namespace Stackra\Subscription\Observers;
 
-use Academorix\Subscription\Contracts\Data\SubscriptionEventInterface;
-use Academorix\Subscription\Contracts\Repositories\SubscriptionEventRepositoryInterface;
-use Academorix\Subscription\Exceptions\WebhookDuplicateException;
-use Academorix\Subscription\Models\SubscriptionEvent;
+use Stackra\Subscription\Contracts\Data\SubscriptionEventInterface;
+use Stackra\Subscription\Contracts\Repositories\SubscriptionEventRepositoryInterface;
+use Stackra\Subscription\Exceptions\WebhookDuplicateException;
+use Stackra\Subscription\Models\SubscriptionEvent;
 
 /**
  * Lifecycle side effects on {@see SubscriptionEvent}.

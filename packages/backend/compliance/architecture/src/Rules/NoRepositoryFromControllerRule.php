@@ -23,7 +23,7 @@
  *      `repository_namespaces` prefix.
  *   2. A `use` statement whose target class is marked with the
  *      `#[Repository]` attribute or implements
- *      {@see \Academorix\Architecture\Contracts\Repository}.
+ *      {@see \Stackra\Architecture\Contracts\Repository}.
  *
  * The second check requires resolving the imported class's OWN
  * metadata — which we can do because the scanner parses every
@@ -40,11 +40,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Enums\LayerType;
-use Academorix\Architecture\Support\SourceFile;
-use Academorix\Architecture\Violations\Severity;
+use Stackra\Architecture\Enums\LayerType;
+use Stackra\Architecture\Support\SourceFile;
+use Stackra\Architecture\Violations\Severity;
 
 /**
  * Opt-in strict-mode enforcement of "Controllers never touch
@@ -72,7 +72,7 @@ final class NoRepositoryFromControllerRule extends AbstractRule
     }
 
     /**
-     * @return list<\Academorix\Architecture\Violations\Violation>
+     * @return list<\Stackra\Architecture\Violations\Violation>
      */
     public function check(SourceFile $file): array
     {

@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/webhook/events",
+  "id": "stackra://modules/webhook/events",
   "$version": 1,
   "title": "webhook \u2014 published events",
   "description": "14 events across subscription lifecycle + delivery lifecycle + health probes + inbound receipts. All afterCommit.",
-  "namespace": "Academorix\\Webhook\\Events",
+  "namespace": "Stackra\\Webhook\\Events",
   "dispatchMode": "afterCommit",
   "events": [
     {
       "name": "WebhookSubscriptionCreated",
-      "class": "Academorix\\Webhook\\Events\\WebhookSubscriptionCreated",
+      "class": "Stackra\\Webhook\\Events\\WebhookSubscriptionCreated",
       "trigger": "New WebhookSubscription persisted.",
       "queue": "notifications",
       "consumers": [
@@ -27,7 +27,7 @@
     },
     {
       "name": "WebhookSubscriptionUpdated",
-      "class": "Academorix\\Webhook\\Events\\WebhookSubscriptionUpdated",
+      "class": "Stackra\\Webhook\\Events\\WebhookSubscriptionUpdated",
       "trigger": "WebhookSubscription attributes changed. Fires on every save; HasVersions captures the snapshot separately.",
       "queue": "notifications",
       "consumers": ["versioning::ValidateSubscriptionVersion"],
@@ -35,7 +35,7 @@
     },
     {
       "name": "WebhookSubscriptionPaused",
-      "class": "Academorix\\Webhook\\Events\\WebhookSubscriptionPaused",
+      "class": "Stackra\\Webhook\\Events\\WebhookSubscriptionPaused",
       "trigger": "state \u2192 paused (manual admin action or platform-ops pause).",
       "queue": "notifications",
       "consumers": ["compliance::AuditListener"],
@@ -48,7 +48,7 @@
     },
     {
       "name": "WebhookSubscriptionResumed",
-      "class": "Academorix\\Webhook\\Events\\WebhookSubscriptionResumed",
+      "class": "Stackra\\Webhook\\Events\\WebhookSubscriptionResumed",
       "trigger": "state \u2192 active (from paused or disabled).",
       "queue": "notifications",
       "consumers": ["compliance::AuditListener"],
@@ -61,7 +61,7 @@
     },
     {
       "name": "WebhookSubscriptionDisabled",
-      "class": "Academorix\\Webhook\\Events\\WebhookSubscriptionDisabled",
+      "class": "Stackra\\Webhook\\Events\\WebhookSubscriptionDisabled",
       "trigger": "state \u2192 disabled (auto: 410 Gone / consecutive_failure_threshold / api_version_sunset / tenant_suspended; or manual).",
       "queue": "notifications-critical",
       "consumers": [
@@ -78,7 +78,7 @@
     },
     {
       "name": "WebhookSubscriptionUpgraded",
-      "class": "Academorix\\Webhook\\Events\\WebhookSubscriptionUpgraded",
+      "class": "Stackra\\Webhook\\Events\\WebhookSubscriptionUpgraded",
       "trigger": "AutoUpgradePinnedSubscriptionsJob transitioned subscription.api_version from a sunset version to the migration_target_slug.",
       "queue": "notifications",
       "consumers": [
@@ -95,7 +95,7 @@
     },
     {
       "name": "WebhookSecretRotated",
-      "class": "Academorix\\Webhook\\Events\\WebhookSecretRotated",
+      "class": "Stackra\\Webhook\\Events\\WebhookSecretRotated",
       "trigger": "Admin rotated the signing secret. secret_previous set + grace window started.",
       "queue": "notifications",
       "consumers": ["compliance::AuditSecretRotationListener"],
@@ -108,7 +108,7 @@
     },
     {
       "name": "WebhookDeliveryDispatched",
-      "class": "Academorix\\Webhook\\Events\\WebhookDeliveryDispatched",
+      "class": "Stackra\\Webhook\\Events\\WebhookDeliveryDispatched",
       "trigger": "DispatchWebhookJob started \u2014 state transitions pending \u2192 inFlight. Emitted for observability.",
       "queue": "notifications",
       "consumers": ["observability::MetricsCollector"],
@@ -122,7 +122,7 @@
     },
     {
       "name": "WebhookDelivered",
-      "class": "Academorix\\Webhook\\Events\\WebhookDelivered",
+      "class": "Stackra\\Webhook\\Events\\WebhookDelivered",
       "trigger": "Delivery succeeded (2xx response). state \u2192 delivered.",
       "queue": "notifications",
       "consumers": ["observability::MetricsCollector", "notifications::TrackDeliveryListener"],
@@ -138,7 +138,7 @@
     },
     {
       "name": "WebhookDeliveryFailed",
-      "class": "Academorix\\Webhook\\Events\\WebhookDeliveryFailed",
+      "class": "Stackra\\Webhook\\Events\\WebhookDeliveryFailed",
       "trigger": "Retryable failure (408/425/429/5xx or network error). state \u2192 failedRetryable + next_attempt_at scheduled.",
       "queue": "notifications",
       "consumers": ["observability::MetricsCollector"],
@@ -154,7 +154,7 @@
     },
     {
       "name": "WebhookDeliveryFailedPermanent",
-      "class": "Academorix\\Webhook\\Events\\WebhookDeliveryFailedPermanent",
+      "class": "Stackra\\Webhook\\Events\\WebhookDeliveryFailedPermanent",
       "trigger": "Non-retryable failure (410 Gone, other 4xx, max_attempts exhausted, or hard error). state \u2192 failedPermanent.",
       "queue": "notifications-critical",
       "consumers": ["observability::MetricsCollector", "compliance::AuditPermanentFailureListener"],
@@ -171,7 +171,7 @@
     },
     {
       "name": "WebhookProbeFailed",
-      "class": "Academorix\\Webhook\\Events\\WebhookProbeFailed",
+      "class": "Stackra\\Webhook\\Events\\WebhookProbeFailed",
       "trigger": "WebhookProbeJob observed N consecutive health probe failures for a subscription.",
       "queue": "notifications-critical",
       "consumers": [
@@ -188,7 +188,7 @@
     },
     {
       "name": "InboundWebhookReceived",
-      "class": "Academorix\\Webhook\\Events\\InboundWebhookReceived",
+      "class": "Stackra\\Webhook\\Events\\InboundWebhookReceived",
       "trigger": "Inbound receiver accepted a signature-verified request. Fanned out to downstream module listeners.",
       "queue": "notifications-webhooks",
       "consumers": [
@@ -210,7 +210,7 @@
     },
     {
       "name": "InboundWebhookProcessed",
-      "class": "Academorix\\Webhook\\Events\\InboundWebhookProcessed",
+      "class": "Stackra\\Webhook\\Events\\InboundWebhookProcessed",
       "trigger": "Downstream module signalled completion of inbound webhook processing.",
       "queue": "notifications-webhooks",
       "consumers": ["observability::MetricsCollector"],

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Observers;
+namespace Stackra\Application\Observers;
 
-use Academorix\Application\Contracts\Data\ApplicationInterface;
-use Academorix\Application\Events\ApplicationDisabled;
-use Academorix\Application\Events\ApplicationEnabled;
-use Academorix\Application\Exceptions\SystemRowImmutableException;
-use Academorix\Application\Models\Application;
+use Stackra\Application\Contracts\Data\ApplicationInterface;
+use Stackra\Application\Events\ApplicationDisabled;
+use Stackra\Application\Events\ApplicationEnabled;
+use Stackra\Application\Exceptions\SystemRowImmutableException;
+use Stackra\Application\Models\Application;
 use Illuminate\Support\Facades\Event;
 
 /**

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceProvider\Bootstrappers;
+namespace Stackra\ServiceProvider\Bootstrappers;
 
-use Academorix\Foundation\Contracts\DiscoversAttributes;
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Foundation\Contracts\DiscoversAttributes;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Contracts\Container\Container;

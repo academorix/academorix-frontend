@@ -1,41 +1,41 @@
 {
-  "id": "academorix://modules/storage/commands",
+  "id": "stackra://modules/storage/commands",
   "$version": 1,
   "title": "storage \u2014 Artisan commands",
   "commands": [
     {
       "signature": "storage:describe {--kind=} {--tenant=}",
-      "class": "Academorix\\Storage\\Console\\Commands\\DescribeCommand",
+      "class": "Stackra\\Storage\\Console\\Commands\\DescribeCommand",
       "purpose": "Print the compiled FileKindRegistry (every #[FileKind] discovered) + FileTypeStatistics per tenant when --tenant is set. Filter by --kind to inspect a single kind's config + current usage."
     },
     {
       "signature": "storage:reprocess-variants {file? : File ULID} {--kind= : Reprocess every file of this kind} {--tenant= : Reprocess every file of this tenant} {--variant= : Reprocess only this variant key}",
-      "class": "Academorix\\Storage\\Console\\Commands\\ReprocessVariantsCommand",
+      "class": "Stackra\\Storage\\Console\\Commands\\ReprocessVariantsCommand",
       "purpose": "Force regenerate variants after a recipe change. Batches through GenerateFileVariantsJob. Idempotent \u2014 skips variants already at the current recipe version."
     },
     {
       "signature": "storage:rescan-virus {file? : File ULID} {--tenant=} {--state=infected}",
-      "class": "Academorix\\Storage\\Console\\Commands\\RescanVirusCommand",
+      "class": "Stackra\\Storage\\Console\\Commands\\RescanVirusCommand",
       "purpose": "Requeue ScanFileForVirusesJob for the target file(s). Useful after AV signature database update or scan_failed backlog clear. --state=infected retries only quarantined files (rehab pass after a false-positive signature was corrected upstream)."
     },
     {
       "signature": "storage:purge-orphans {--dry-run} {--older-than=7 : Days}",
-      "class": "Academorix\\Storage\\Console\\Commands\\PurgeOrphansCommand",
+      "class": "Stackra\\Storage\\Console\\Commands\\PurgeOrphansCommand",
       "purpose": "Manual invocation of DedupOrphanBlobsJob. Reports refcount drift + orphaned blobs (physical bytes with zero File rows referencing them, typically from crashed uploads). --dry-run prints without deleting."
     },
     {
       "signature": "storage:reconcile-quota {--tenant= : Single tenant} {--all}",
-      "class": "Academorix\\Storage\\Console\\Commands\\ReconcileQuotaCommand",
+      "class": "Stackra\\Storage\\Console\\Commands\\ReconcileQuotaCommand",
       "purpose": "Manual invocation of SyncStorageEntitlementUsageJob for a single tenant or all tenants. Prints the drift + correction table."
     },
     {
       "signature": "storage:dedup-audit {--tenant= : Tenant scope} {--min-shared=2}",
-      "class": "Academorix\\Storage\\Console\\Commands\\DedupAuditCommand",
+      "class": "Stackra\\Storage\\Console\\Commands\\DedupAuditCommand",
       "purpose": "Report on content-addressable dedup effectiveness: which sha256 hashes are shared across how many tenants + total bytes saved. --min-shared filters for hashes shared by at least N tenants."
     },
     {
       "signature": "storage:signed-url-revoke-all {file : File ULID} {--reason=admin_bulk_revoke}",
-      "class": "Academorix\\Storage\\Console\\Commands\\SignedUrlRevokeAllCommand",
+      "class": "Stackra\\Storage\\Console\\Commands\\SignedUrlRevokeAllCommand",
       "purpose": "Emergency revocation of every active signed URL for a file. Wraps the DELETE /files/{file}/signed-urls endpoint for CLI use during incidents (leaked signature discovered, user credential compromise)."
     }
   ]

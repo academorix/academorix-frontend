@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Contracts\Services;
+namespace Stackra\Webhook\Contracts\Services;
 
-use Academorix\Webhook\Models\WebhookSubscription;
-use Academorix\Webhook\Services\DefaultBackoffStrategyResolver;
+use Stackra\Webhook\Models\WebhookSubscription;
+use Stackra\Webhook\Services\DefaultBackoffStrategyResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

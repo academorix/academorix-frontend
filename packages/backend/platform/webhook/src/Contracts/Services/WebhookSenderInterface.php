@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Contracts\Services;
+namespace Stackra\Webhook\Contracts\Services;
 
-use Academorix\Webhook\Models\WebhookDelivery;
-use Academorix\Webhook\Models\WebhookSubscription;
-use Academorix\Webhook\Services\DefaultWebhookSender;
+use Stackra\Webhook\Models\WebhookDelivery;
+use Stackra\Webhook\Models\WebhookSubscription;
+use Stackra\Webhook\Services\DefaultWebhookSender;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -15,7 +15,7 @@ use Illuminate\Container\Attributes\Bind;
  * The default implementation
  * ({@see DefaultWebhookSender}) creates the delivery row, applies
  * the destination-driver policy, and hands off to
- * {@see \Academorix\Webhook\Jobs\DispatchWebhookJob} for the actual
+ * {@see \Stackra\Webhook\Jobs\DispatchWebhookJob} for the actual
  * send.
  *
  * `#[Bind(DefaultWebhookSender::class)]` — Pattern A per

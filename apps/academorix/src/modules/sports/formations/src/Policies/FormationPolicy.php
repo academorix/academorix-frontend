@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Formations\Policies;
+namespace Stackra\Formations\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Formations\Models\Formation;
+use Stackra\User\Models\User;
+use Stackra\Formations\Models\Formation;
 
 /**
- * Authorization policy for {@see \Academorix\Formations\Models\Formation}.
+ * Authorization policy for {@see \Stackra\Formations\Models\Formation}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

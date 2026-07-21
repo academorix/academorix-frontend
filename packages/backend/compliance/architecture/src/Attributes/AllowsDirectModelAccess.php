@@ -6,7 +6,7 @@
  * @description
  * Explicit escape hatch: this class is allowed to import Model
  * classes DIRECTLY, bypassing the
- * {@see \Academorix\Architecture\Rules\NoDirectModelAccessRule}.
+ * {@see \Stackra\Architecture\Rules\NoDirectModelAccessRule}.
  *
  * ## When to use
  *
@@ -30,7 +30,7 @@
  * ## Usage
  *
  * ```php
- * use Academorix\Architecture\Attributes\AllowsDirectModelAccess;
+ * use Stackra\Architecture\Attributes\AllowsDirectModelAccess;
  *
  * #[AllowsDirectModelAccess(reason: 'One-off DBA script — remove after billing v2 lands.')]
  * final class BackfillInvoiceStatusCommand extends Command
@@ -44,13 +44,13 @@
  * }
  * ```
  *
- * @see \Academorix\Architecture\Attributes\Domain      Marker for the Model side.
- * @see \Academorix\Architecture\Attributes\Repository  Preferred alternative to this attribute.
+ * @see \Stackra\Architecture\Attributes\Domain      Marker for the Model side.
+ * @see \Stackra\Architecture\Attributes\Repository  Preferred alternative to this attribute.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Attributes;
+namespace Stackra\Architecture\Attributes;
 
 use Attribute;
 use InvalidArgumentException;

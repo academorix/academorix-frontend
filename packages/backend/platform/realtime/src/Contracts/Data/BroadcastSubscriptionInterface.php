@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Realtime\Contracts\Data;
+namespace Stackra\Realtime\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Realtime\Models\BroadcastSubscription;
+use Stackra\Realtime\Models\BroadcastSubscription;
 
 /**
  * Table shape for the `broadcast_subscriptions` table.

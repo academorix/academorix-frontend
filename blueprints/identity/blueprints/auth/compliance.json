@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/auth/compliance",
+  "id": "stackra://modules/auth/compliance",
   "$version": 1,
   "title": "auth \u2014 compliance evidence",
   "description": "Auth is the enforcement layer for every authentication + session-management compliance obligation. NIST 800-63B (authentication), OWASP ASVS V3 (session management), OAuth 2.0 draft-ietf-oauth-security-topics (refresh rotation), GDPR + CCPA (session log retention + right-to-erasure cascade), SOC 2 (audit trail on every login/logout), COPPA (age-gate composition with the identity substrate). Every enforceable rule is codified as CODE + AUDIT.",

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Jobs;
+namespace Stackra\Subscription\Jobs;
 
-use Academorix\Subscription\Contracts\Data\SubscriptionInterface;
-use Academorix\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
-use Academorix\Subscription\Enums\SubscriptionState;
-use Academorix\Subscription\Events\TrialEnding;
+use Stackra\Subscription\Contracts\Data\SubscriptionInterface;
+use Stackra\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
+use Stackra\Subscription\Enums\SubscriptionState;
+use Stackra\Subscription\Events\TrialEnding;
 use Carbon\CarbonImmutable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;

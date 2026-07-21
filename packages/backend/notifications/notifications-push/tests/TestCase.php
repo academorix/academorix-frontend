@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsPush\Tests;
+namespace Stackra\NotificationsPush\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/notifications-push.
+ * Base test case for stackra/notifications-push.
  *
  * @category NotificationsPush
  *

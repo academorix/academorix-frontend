@@ -6,7 +6,7 @@ declare(strict_types=1);
  * @file packages/crud/src/Providers/CrudServiceProvider.php
  *
  * @description
- * Root service provider for `academorix/crud`. Auto-discovered by
+ * Root service provider for `stackra/crud`. Auto-discovered by
  * Laravel via `composer.json`'s `extra.laravel.providers`, so
  * consumer apps get the entire wiring by simply requiring the
  * package — no manual registration in `bootstrap/providers.php`.
@@ -17,9 +17,9 @@ declare(strict_types=1);
  * a `bindings()` method now carries `#[Singleton]` directly on
  * the concrete class:
  *
- *   - {@see \Academorix\Crud\Registries\CriteriaRegistry}
- *   - {@see \Academorix\Crud\Registries\ScopeRegistry}
- *   - {@see \Academorix\Crud\Registries\RepositoryConfigRegistry}
+ *   - {@see \Stackra\Crud\Registries\CriteriaRegistry}
+ *   - {@see \Stackra\Crud\Registries\ScopeRegistry}
+ *   - {@see \Stackra\Crud\Registries\RepositoryConfigRegistry}
  *
  * The container reads the attribute at resolution time and
  * caches one instance per worker — same behaviour the old
@@ -33,9 +33,9 @@ declare(strict_types=1);
  * ## Attribute-only registration
  *
  * Every repository / criterion / scope in every package declares
- * itself via {@see \Academorix\Crud\Attributes\AsRepository},
- * {@see \Academorix\Crud\Attributes\AsCriteria}, or
- * {@see \Academorix\Crud\Attributes\AsScope}. Discovery is
+ * itself via {@see \Stackra\Crud\Attributes\AsRepository},
+ * {@see \Stackra\Crud\Attributes\AsCriteria}, or
+ * {@see \Stackra\Crud\Attributes\AsScope}. Discovery is
  * automated end-to-end:
  *
  *   1. `composer dump-autoload` scans every autoloadable class and
@@ -51,8 +51,8 @@ declare(strict_types=1);
  *
  * Criteria + scopes MUST land in their registries BEFORE
  * repositories are discovered — a repository's
- * {@see \Academorix\Crud\Attributes\UseCriteria} /
- * {@see \Academorix\Crud\Attributes\UseScope} declarations
+ * {@see \Stackra\Crud\Attributes\UseCriteria} /
+ * {@see \Stackra\Crud\Attributes\UseScope} declarations
  * reference names / class strings that need to already be
  * resolvable when the repository's config is pre-computed.
  *
@@ -64,20 +64,20 @@ declare(strict_types=1);
  * state on the provider itself, no facade capture, no request
  * references.
  *
- * @see \Academorix\ServiceProvider\Providers\ServiceProvider  Base class.
- * @see \Academorix\Crud\Concerns\HasDiscovery                 Discovery workhorse.
+ * @see \Stackra\ServiceProvider\Providers\ServiceProvider  Base class.
+ * @see \Stackra\Crud\Concerns\HasDiscovery                 Discovery workhorse.
  */
 
-namespace Academorix\Crud\Providers;
+namespace Stackra\Crud\Providers;
 
-use Academorix\Crud\Concerns\HasDiscovery;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\OnBoot;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\Crud\Concerns\HasDiscovery;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\OnBoot;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
- * Root service provider for the `academorix/crud` package.
+ * Root service provider for the `stackra/crud` package.
  *
  * Zero-body class beyond the boot-time discovery hook — every
  * binding lives on the concrete class via `#[Singleton]`.

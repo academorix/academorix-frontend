@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Actions\PublicExchange;
+namespace Stackra\ServiceAccounts\Actions\PublicExchange;
 
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\ServiceAccounts\Contracts\Data\ServiceAccountInterface;
-use Academorix\ServiceAccounts\Contracts\Repositories\ServiceAccountRepositoryInterface;
-use Academorix\ServiceAccounts\Contracts\Services\ServiceAccountJwtIssuerInterface;
-use Academorix\ServiceAccounts\Data\Requests\TokenExchangeRequestData;
-use Academorix\ServiceAccounts\Data\TokenIssuedData;
-use Academorix\ServiceAccounts\Exceptions\InvalidServiceAccountCredentialsException;
-use Academorix\ServiceAccounts\Models\ServiceAccount;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\ServiceAccounts\Contracts\Data\ServiceAccountInterface;
+use Stackra\ServiceAccounts\Contracts\Repositories\ServiceAccountRepositoryInterface;
+use Stackra\ServiceAccounts\Contracts\Services\ServiceAccountJwtIssuerInterface;
+use Stackra\ServiceAccounts\Data\Requests\TokenExchangeRequestData;
+use Stackra\ServiceAccounts\Data\TokenIssuedData;
+use Stackra\ServiceAccounts\Exceptions\InvalidServiceAccountCredentialsException;
+use Stackra\ServiceAccounts\Models\ServiceAccount;
 use DateTimeInterface;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Http\JsonResponse;

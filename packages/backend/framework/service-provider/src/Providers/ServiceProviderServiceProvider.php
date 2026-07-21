@@ -6,7 +6,7 @@ declare(strict_types=1);
  * @file packages/service-provider/src/Providers/ServiceProviderServiceProvider.php
  *
  * @description
- * Auto-discovered root provider for `academorix/service-provider`.
+ * Auto-discovered root provider for `stackra/service-provider`.
  * Its sole job is to include the composer-attribute-collector's
  * generated `vendor/attributes.php` so olvlvl's runtime
  * `Attributes::forClass(...)` / `Attributes::findTargetClasses(...)`
@@ -14,7 +14,7 @@ declare(strict_types=1);
  *
  * ## Why a wrapping provider
  *
- * The package's abstract {@see \Academorix\ServiceProvider\Providers\ServiceProvider}
+ * The package's abstract {@see \Stackra\ServiceProvider\Providers\ServiceProvider}
  * is meant to be *extended* by consumer packages (blog, tenancy, ai,
  * etc.). Those concrete providers auto-register through Laravel's
  * standard `extra.laravel.providers` discovery. This provider is
@@ -31,18 +31,18 @@ declare(strict_types=1);
  * to boot the service-provider package.
  *
  * The pattern here mirrors
- * {@see \Academorix\Health\Providers\HealthServiceProvider::loadAttributesFile()}
+ * {@see \Stackra\Health\Providers\HealthServiceProvider::loadAttributesFile()}
  * — same guards, same rationale.
  *
- * @see \Academorix\ServiceProvider\Providers\ServiceProvider  The abstract base consumers extend.
- * @see \Academorix\Health\Providers\HealthServiceProvider     The pattern this mirrors.
+ * @see \Stackra\ServiceProvider\Providers\ServiceProvider  The abstract base consumers extend.
+ * @see \Stackra\Health\Providers\HealthServiceProvider     The pattern this mirrors.
  */
 
-namespace Academorix\ServiceProvider\Providers;
+namespace Stackra\ServiceProvider\Providers;
 
-use Academorix\ServiceProvider\Console\BootstrapCacheCommand;
-use Academorix\ServiceProvider\Console\BootstrapClearCommand;
-use Academorix\ServiceProvider\Registry\BootstrapperRegistry;
+use Stackra\ServiceProvider\Console\BootstrapCacheCommand;
+use Stackra\ServiceProvider\Console\BootstrapClearCommand;
+use Stackra\ServiceProvider\Registry\BootstrapperRegistry;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use olvlvl\ComposerAttributeCollector\Attributes;
 

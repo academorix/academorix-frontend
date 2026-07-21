@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Enums;
+namespace Stackra\Integrations\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
- * Outcome of the most recent {@see \Academorix\Integrations\Jobs\SyncIntegrationJob}
+ * Outcome of the most recent {@see \Stackra\Integrations\Jobs\SyncIntegrationJob}
  * run against a given integration.
  *
  * ## Cases
@@ -19,7 +19,7 @@ use Academorix\Enum\Enum;
  *  * {@see self::Success} — the last sync completed cleanly.
  *  * {@see self::Partial} — the last sync completed but some records
  *    were skipped (rate limits, per-row validation errors).
- *  * {@see self::Failed}  — the last sync raised — {@see \Academorix\Integrations\Events\IntegrationSyncFailed}
+ *  * {@see self::Failed}  — the last sync raised — {@see \Stackra\Integrations\Events\IntegrationSyncFailed}
  *    carries the error string.
  *
  * @category Integrations

@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payout\Services;
+namespace Stackra\Payout\Services;
 
-use Academorix\Payout\Contracts\Services\PayoutSyncerInterface;
+use Stackra\Payout\Contracts\Services\PayoutSyncerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Payout\Contracts\Repositories\PayoutItemRepositoryInterface;
+use Stackra\Payout\Contracts\Repositories\PayoutItemRepositoryInterface;
 
 /**
  * Concrete service — PayoutSyncer.

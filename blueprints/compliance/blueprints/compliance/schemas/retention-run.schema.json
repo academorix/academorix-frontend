@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/compliance/schemas/retention-run",
+  "id": "stackra://modules/compliance/schemas/retention-run",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "RetentionRun",
@@ -12,9 +12,9 @@
     "keyType": "string",
     "keyPrefix": "rtr_",
     "incrementing": false,
-    "model": "Academorix\\Compliance\\Models\\RetentionRun",
-    "interface": "Academorix\\Compliance\\Contracts\\Data\\RetentionRunInterface",
-    "implements": ["Academorix\\Compliance\\Contracts\\Data\\RetentionRunInterface"],
+    "model": "Stackra\\Compliance\\Models\\RetentionRun",
+    "interface": "Stackra\\Compliance\\Contracts\\Data\\RetentionRunInterface",
+    "implements": ["Stackra\\Compliance\\Contracts\\Data\\RetentionRunInterface"],
     "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "Filterable"],
     "casts": {
       "triggered_by": "string",

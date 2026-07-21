@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Tests;
+namespace Stackra\Application\Tests;
 
-use Academorix\Application\Providers\ApplicationServiceProvider;
+use Stackra\Application\Providers\ApplicationServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base Feature-test case for `academorix/application`.
+ * Base Feature-test case for `stackra/application`.
  *
  * Orchestra Testbench loads the module's service provider + every
  * framework provider the module depends on (authorization, caching,

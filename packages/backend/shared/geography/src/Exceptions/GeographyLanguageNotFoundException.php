@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Exceptions;
+namespace Stackra\Geography\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a language lookup finds no matching row.
@@ -13,7 +13,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GeographyLanguageNotFoundException extends AcademorixException
+final class GeographyLanguageNotFoundException extends StackraException
 {
     public const CODE = 'GEOGRAPHY_LANGUAGE_NOT_FOUND';
 

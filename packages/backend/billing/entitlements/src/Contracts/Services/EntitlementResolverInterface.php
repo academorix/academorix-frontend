@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Contracts\Services;
+namespace Stackra\Entitlements\Contracts\Services;
 
-use Academorix\Entitlements\Models\Entitlement;
-use Academorix\Entitlements\Services\DefaultEntitlementResolver;
+use Stackra\Entitlements\Models\Entitlement;
+use Stackra\Entitlements\Services\DefaultEntitlementResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

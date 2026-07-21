@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Events;
+namespace Stackra\Integrations\Events;
 
-use Academorix\Events\Attributes\AsEvent;
-use Academorix\Integrations\Enums\IntegrationSyncStatus;
-use Academorix\Integrations\Models\TenantIntegration;
+use Stackra\Events\Attributes\AsEvent;
+use Stackra\Integrations\Enums\IntegrationSyncStatus;
+use Stackra\Integrations\Models\TenantIntegration;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 
 /**
- * Dispatched when {@see \Academorix\Integrations\Jobs\SyncIntegrationJob}
+ * Dispatched when {@see \Stackra\Integrations\Jobs\SyncIntegrationJob}
  * finishes a sync pass — the `status` payload carries the backing
  * value of {@see IntegrationSyncStatus} (`success` or `partial`).
  *

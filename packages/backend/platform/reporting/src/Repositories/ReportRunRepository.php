@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Reporting\Repositories;
+namespace Stackra\Reporting\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Reporting\Contracts\Data\ReportRunInterface;
-use Academorix\Reporting\Contracts\Repositories\ReportRunRepositoryInterface;
-use Academorix\Reporting\Models\ReportRun;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Reporting\Contracts\Data\ReportRunInterface;
+use Stackra\Reporting\Contracts\Repositories\ReportRunRepositoryInterface;
+use Stackra\Reporting\Models\ReportRun;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Reporting\Models\ReportRun}.
+ * Attribute-first Eloquent repository for {@see Stackra\Reporting\Models\ReportRun}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ReportRunInterface::class)]` which resolves to
  * `ReportRun` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Reporting\Models\ReportRun>
+ * @extends Repository<\Stackra\Reporting\Models\ReportRun>
  *
  * @category Reporting
  *

@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/theme/metrics",
+  "id": "stackra://modules/theme/metrics",
   "$version": 1,
   "title": "theme — OpenTelemetry metrics",
   "instrumentation": "open-telemetry/sdk",
-  "namespace": "academorix.theme",
+  "namespace": "stackra.theme",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["mode", "category"],
@@ -18,35 +18,35 @@
   },
   "metrics": [
     {
-      "name": "academorix.theme.themes.created.total",
+      "name": "stackra.theme.themes.created.total",
       "kind": "counter",
       "unit": "themes",
       "labels": ["mode"],
       "description": "Theme rows created."
     },
     {
-      "name": "academorix.theme.themes.activated.total",
+      "name": "stackra.theme.themes.activated.total",
       "kind": "counter",
       "unit": "activations",
       "labels": ["mode"],
       "description": "ThemeActivated events fired. Increments once per activation."
     },
     {
-      "name": "academorix.theme.presets.created.total",
+      "name": "stackra.theme.presets.created.total",
       "kind": "counter",
       "unit": "presets",
       "labels": ["mode", "category", "kind"],
       "description": "kind: platform (tenant_id=null) or tenant_custom."
     },
     {
-      "name": "academorix.theme.token_overrides.created.total",
+      "name": "stackra.theme.token_overrides.created.total",
       "kind": "counter",
       "unit": "overrides",
       "labels": ["token_type"],
       "description": "ThemeTokenOverride rows created."
     },
     {
-      "name": "academorix.theme.css_regen_duration_ms",
+      "name": "stackra.theme.css_regen_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 100, 500, 1000, 5000, 10000],
@@ -54,7 +54,7 @@
       "description": "RegenerateRenderedCssJob completion time. outcome: succeeded / failed / retried."
     },
     {
-      "name": "academorix.theme.resolver_duration_ms",
+      "name": "stackra.theme.resolver_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1, 5, 25, 100, 500],
@@ -62,35 +62,35 @@
       "description": "TokenResolver::resolveTokens duration. cache_state: hit / miss / stale."
     },
     {
-      "name": "academorix.theme.resolver_cache_hit_ratio",
+      "name": "stackra.theme.resolver_cache_hit_ratio",
       "kind": "gauge",
       "unit": "ratio",
       "labels": ["mode"],
       "description": "Sampled every 30s from Redis counters."
     },
     {
-      "name": "academorix.theme.contrast_findings.total",
+      "name": "stackra.theme.contrast_findings.total",
       "kind": "counter",
       "unit": "findings",
       "labels": ["severity", "wcag_level"],
       "description": "ContrastAuditor findings. severity: fail_aa / fail_aaa / warn / pass. wcag_level: AA / AAA."
     },
     {
-      "name": "academorix.theme.accessibility_flag_state",
+      "name": "stackra.theme.accessibility_flag_state",
       "kind": "gauge",
       "unit": "1",
       "labels": ["flag"],
       "description": "Fraction of active themes with each accessibility flag enabled (sampled every 60s). flag: high_contrast / reduced_motion / larger_text / focus_visible_always."
     },
     {
-      "name": "academorix.theme.rollback_available_activations",
+      "name": "stackra.theme.rollback_available_activations",
       "kind": "gauge",
       "unit": "activations",
       "labels": ["mode"],
       "description": "Count of retained historical Theme rows per (tenant, mode). Approaches the last-N cap (5 or 20)."
     },
     {
-      "name": "academorix.theme.preset_thumbnail_generation_duration_ms",
+      "name": "stackra.theme.preset_thumbnail_generation_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [500, 1000, 5000, 15000, 30000, 60000],
@@ -98,7 +98,7 @@
       "description": "PreviewPresetJob completion time. outcome: succeeded / failed / timed_out."
     },
     {
-      "name": "academorix.theme.user_preference_updates.total",
+      "name": "stackra.theme.user_preference_updates.total",
       "kind": "counter",
       "unit": "updates",
       "labels": ["preferred_mode"],

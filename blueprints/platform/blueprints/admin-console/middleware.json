@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/admin-console/middleware",
+  "id": "stackra://modules/admin-console/middleware",
   "$version": 1,
   "title": "admin-console — HTTP middleware",
   "description": "Middleware aliases this module contributes.",

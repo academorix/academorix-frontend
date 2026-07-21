@@ -2,22 +2,22 @@
 
 /**
  * @file UsesTemplates.php
- * @module Academorix\Cli\Concerns
- * @description Delegates to {@see \Academorix\Cli\Templates\TemplateManager}.
+ * @module Stackra\Cli\Concerns
+ * @description Delegates to {@see \Stackra\Cli\Templates\TemplateManager}.
  *   Commands clone a template directory (backend-app / web-app / mobile-app)
  *   into a destination and hydrate every text file with tokens.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Concerns;
+namespace Stackra\Cli\Concerns;
 
-use Academorix\Cli\Templates\TemplateManager;
+use Stackra\Cli\Templates\TemplateManager;
 
 /**
- * Composed by every command through {@see \Academorix\Cli\Commands\AbstractCommand}.
+ * Composed by every command through {@see \Stackra\Cli\Commands\AbstractCommand}.
  *
- * @property \Academorix\Cli\Container $container populated by {@see \Academorix\Cli\Commands\AbstractCommand}
+ * @property \Stackra\Cli\Container $container populated by {@see \Stackra\Cli\Commands\AbstractCommand}
  */
 trait UsesTemplates
 {

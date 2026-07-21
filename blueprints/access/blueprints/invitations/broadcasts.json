@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invitations/broadcasts",
+  "id": "stackra://modules/invitations/broadcasts",
   "$version": 1,
   "title": "invitations — broadcast channels",
   "description": "Real-time broadcast channels this module owns. Registered by `InvitationsServiceProvider::registerBroadcastChannels()`. One tenant-scoped channel; carries all state transitions so the admin invitations table can update live without polling.",

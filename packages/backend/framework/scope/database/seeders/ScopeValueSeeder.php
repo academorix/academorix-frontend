@@ -4,7 +4,7 @@
  * @file database/seeders/ScopeValueSeeder.php
  *
  * @description
- * Demo-only seeder for {@see \Academorix\Scope\Models\ScopeValue}.
+ * Demo-only seeder for {@see \Stackra\Scope\Models\ScopeValue}.
  * Writes a small sample of stored values against the demo tree
  * so contributors can exercise `Scope::resolve()` end-to-end
  * without hand-inserting rows. The `testing` namespace is used
@@ -14,11 +14,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Database\Seeders;
+namespace Stackra\Scope\Database\Seeders;
 
-use Academorix\ServiceProvider\Attributes\AsSeeder;
-use Academorix\Scope\Models\ScopeNode;
-use Academorix\Scope\Models\ScopeValue;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
+use Stackra\Scope\Models\ScopeNode;
+use Stackra\Scope\Models\ScopeValue;
 use Illuminate\Database\Seeder;
 
 /**

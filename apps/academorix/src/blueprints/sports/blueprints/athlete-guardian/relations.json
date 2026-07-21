@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/athlete-guardian/relations",
+  "id": "stackra://modules/athlete-guardian/relations",
   "$version": 1,
   "title": "athlete-guardian — model relationships",
   "description": "One owned entity: AthleteGuardian. Pivot between Tenant + Athlete + User. Cascades organization + region + branch through athlete → branch. Cascades application through tenant. No `application_id`, `organization_id`, `region_id`, `branch_id`, or `scope_node_id` — forbidden columns per tenancy-columns.md §5. Every outbound FK stays same-tenant per defense-in-depth.",

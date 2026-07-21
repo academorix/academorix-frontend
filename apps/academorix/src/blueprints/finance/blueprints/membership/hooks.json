@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/membership/hooks",
+  "id": "stackra://modules/membership/hooks",
   "$version": 1,
   "title": "membership — TenancyHook + lifecycle hooks",
-  "namespace": "Academorix\\Finance\\Membership\\Hooks",
+  "namespace": "Stackra\\Finance\\Membership\\Hooks",
   "description": "Twelve hooks. Two are LOAD-BEARING — CreateInvoiceOnMembershipCreated (atomic invoice creation) and SnapshotTaxCalculationOnMembershipCreated (frozen tax audit). Three cascade prevention (plan archive / branch archive / athlete + tenant erasure). Six domain hooks driving pass generation + retry ladder + refund calculation. One coupon snapshot hook.",
   "hooks": [
     {
       "name": "CreateInvoiceOnMembershipCreated",
-      "class": "Academorix\\Finance\\Membership\\Hooks\\CreateInvoiceOnMembershipCreated",
+      "class": "Stackra\\Finance\\Membership\\Hooks\\CreateInvoiceOnMembershipCreated",
       "kind": "atomic_invoice",
       "listens_to": "membership::Membership.creating (pre-commit)",
       "purpose": "LOAD-BEARING. Opens (or joins) a DB transaction; creates the invoice::Invoice row with total_amount = price_snapshot_cents + tax_amount - coupon_discount, currency = membership.currency, status = 'pending'; back-references membership_id on the invoice. On failure, rolls back BOTH writes + fires MEMBERSHIP_INVOICE_CREATE_FAILED (500, retryable). Verified by the atomic_membership_invoice_creation rule as a post-hook assertion.",
@@ -16,7 +16,7 @@
     },
     {
       "name": "SnapshotTaxCalculationOnMembershipCreated",
-      "class": "Academorix\\Finance\\Membership\\Hooks\\SnapshotTaxCalculationOnMembershipCreated",
+      "class": "Stackra\\Finance\\Membership\\Hooks\\SnapshotTaxCalculationOnMembershipCreated",
       "kind": "snapshot",
       "listens_to": "membership::Membership.creating (pre-commit)",
       "purpose": "Invokes tax::TaxCalculator.calculate(region_id, price_cents, currency) and FREEZES the result on membership.tax_calculation_id + membership.tax_calculation_snapshot. IMMUTABLE thereafter — mid-contract VAT changes never re-apply. Priority 8 — runs after CreateInvoiceOnMembershipCreated but before other listeners.",
@@ -24,7 +24,7 @@
     },
     {
       "name": "SnapshotCouponRedemptionOnMembershipCreated",
-      "class": "Academorix\\Finance\\Membership\\Hooks\\SnapshotCouponRedemptionOnMembershipCreated",
+      "class": "Stackra\\Finance\\Membership\\Hooks\\SnapshotCouponRedemptionOnMembershipCreated",
       "kind": "snapshot",
       "listens_to": "membership::Membership.creating (pre-commit)",
       "purpose": "When coupon_id set, invokes coupon::CouponRedeemer.redeem(coupon_id, membership) with in-transaction row lock; freezes the resulting discount details on membership.coupon_snapshot; increments coupon usage counter. On CouponRedeemer refusal (expired / max_uses / not_applicable), rolls back the whole membership create + fires MEMBERSHIP_COUPON_INVALID.",
@@ -32,7 +32,7 @@
     },
     {
       "name": "GeneratePassesOnMembershipActivated",
-      "class": "Academorix\\Finance\\Membership\\Hooks\\GeneratePassesOnMembershipActivated",
+      "class": "Stackra\\Finance\\Membership\\Hooks\\GeneratePassesOnMembershipActivated",
       "kind": "cascade",
       "listens_to": "membership::MembershipActivated",
       "purpose": "Post-commit hook. Dispatches IssuePassesForPeriodJob to generate plan.passes_per_period Pass rows for the current period (valid_from = current_period_starts_at, valid_until = current_period_ends_at, pass_type = 'trial' if trial else 'standard').",
@@ -40,7 +40,7 @@
     },
     {
       "name": "ExtendPeriodOnRenewalSucceeded",
-      "class": "Academorix\\Finance\\Membership\\Hooks\\ExtendPeriodOnRenewalSucceeded",
+      "class": "Stackra\\Finance\\Membership\\Hooks\\ExtendPeriodOnRenewalSucceeded",
       "kind": "cascade",
       "listens_to": "membership::MembershipRenewed OR membership::MembershipRenewalRecovered",
       "purpose": "Advances membership.current_period_starts_at + current_period_ends_at by billing_interval * billing_interval_count. Sets next_renewal_at = new current_period_ends_at (unless lifetime). Resets consecutive_failed_renewal_count = 0. Increments lifetime_value_cents by renewal.total_amount_cents. Dispatches IssuePassesForPeriodJob for the new period. If plan.passes_carry_over = true, unused passes from the previous period are re-issued as pass_type='carryover' with the new valid_until.",
@@ -48,7 +48,7 @@
     },
     {
       "name": "TriggerRetryLadderOnRenewalFailed",
-      "class": "Academorix\\Finance\\Membership\\Hooks\\TriggerRetryLadderOnRenewalFailed",
+      "class": "Stackra\\Finance\\Membership\\Hooks\\TriggerRetryLadderOnRenewalFailed",
       "kind": "cascade",
       "listens_to": "membership::MembershipRenewalFailed",
       "purpose": "Increments membership.consecutive_failed_renewal_count. If renewal.attempt_number < 4, schedules RetryFailedRenewalJob at next_attempt_at (day+3 / day+7 / day+14 per attempt_number). If attempt_number >= 3 AND consecutive_failed_renewal_count >= 3, schedules LapseMembershipJob after final attempt window. Dispatches NotifyPaymentFailureJob for dunning email cadence (24h / 72h / 7d).",
@@ -56,7 +56,7 @@
     },
     {
       "name": "ExpirePassesOnMembershipLapsed",
-      "class": "Academorix\\Finance\\Membership\\Hooks\\ExpirePassesOnMembershipLapsed",
+      "class": "Stackra\\Finance\\Membership\\Hooks\\ExpirePassesOnMembershipLapsed",
       "kind": "cascade",
       "listens_to": "membership::MembershipLapsed",
       "purpose": "Marks all unconsumed passes for the membership as expired (sets valid_until = now(), fires PassExpired per pass). Lapsed = involuntary termination; unlike cancelled where remaining period passes stay valid.",
@@ -64,7 +64,7 @@
     },
     {
       "name": "ExpirePassesOnMembershipCancelled",
-      "class": "Academorix\\Finance\\Membership\\Hooks\\ExpirePassesOnMembershipCancelled",
+      "class": "Stackra\\Finance\\Membership\\Hooks\\ExpirePassesOnMembershipCancelled",
       "kind": "cascade",
       "listens_to": "membership::MembershipCancelled",
       "purpose": "For hard cancels: expires all unconsumed passes immediately. For soft cancels (period-end): NO-OP — passes remain valid through the period (ExpireStalePassesJob handles the natural expiry at valid_until).",
@@ -72,7 +72,7 @@
     },
     {
       "name": "CalculateProratedRefundOnHardCancel",
-      "class": "Academorix\\Finance\\Membership\\Hooks\\CalculateProratedRefundOnHardCancel",
+      "class": "Stackra\\Finance\\Membership\\Hooks\\CalculateProratedRefundOnHardCancel",
       "kind": "refund",
       "listens_to": "membership::MembershipCancelled (with cancellation_kind='hard_immediate')",
       "purpose": "Enterprise-only. Computes prorated refund = price_snapshot_cents * (days_remaining / period_days). For 'full_within_grace' policy AND within refund_grace_days of contract signing, computes full price_snapshot_cents refund instead. Dispatches a refund request to the refund module (Wave 4.5+ — currently emits a stub event). Records refund_id + refund_amount_cents on membership.metadata.",
@@ -80,7 +80,7 @@
     },
     {
       "name": "PreventPlanArchiveWithActiveMemberships",
-      "class": "Academorix\\Finance\\Membership\\Hooks\\PreventPlanArchiveWithActiveMemberships",
+      "class": "Stackra\\Finance\\Membership\\Hooks\\PreventPlanArchiveWithActiveMemberships",
       "kind": "cascade_prevention",
       "listens_to": "membership::MembershipPlan.updating (is_active → false, pre-write)",
       "purpose": "Refuses plan archive when Membership rows in status IN ('pending', 'active', 'paused') reference the plan. Admin must first migrate memberships to another plan (via /upgrade or /downgrade endpoints) or wait for terminal transitions.",
@@ -89,7 +89,7 @@
     },
     {
       "name": "PreventBranchArchiveWithActiveMemberships",
-      "class": "Academorix\\Finance\\Membership\\Hooks\\PreventBranchArchiveWithActiveMemberships",
+      "class": "Stackra\\Finance\\Membership\\Hooks\\PreventBranchArchiveWithActiveMemberships",
       "kind": "cascade_prevention",
       "listens_to": "branch::BranchArchived (pre-write)",
       "purpose": "Refuses the branch archive when active memberships reference it. Admin must migrate or terminate memberships first.",
@@ -98,7 +98,7 @@
     },
     {
       "name": "PurgeMembershipDataForErasedTenant",
-      "class": "Academorix\\Finance\\Membership\\Hooks\\PurgeMembershipDataForErasedTenant",
+      "class": "Stackra\\Finance\\Membership\\Hooks\\PurgeMembershipDataForErasedTenant",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErased",
       "purpose": "Cascade delete via FK. Refund records + Invoice records + Renewal records survive as compliance archive rows (managed by compliance module — retention: 10 years SOX 404). Writes compliance audit + emits count metrics per aggregate."

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/coupon/schemas/coupon-redemption",
+  "id": "stackra://modules/coupon/schemas/coupon-redemption",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "CouponRedemption",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "crd_",
     "incrementing": false,
-    "model": "Academorix\\Finance\\Coupon\\Models\\CouponRedemption",
-    "interface": "Academorix\\Finance\\Coupon\\Contracts\\Data\\CouponRedemptionInterface",
-    "implements": ["Academorix\\Finance\\Coupon\\Contracts\\Data\\CouponRedemptionInterface"],
+    "model": "Stackra\\Finance\\Coupon\\Models\\CouponRedemption",
+    "interface": "Stackra\\Finance\\Coupon\\Contracts\\Data\\CouponRedemptionInterface",
+    "implements": ["Stackra\\Finance\\Coupon\\Contracts\\Data\\CouponRedemptionInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

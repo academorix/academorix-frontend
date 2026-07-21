@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Contracts\Services;
+namespace Stackra\Rbac\Contracts\Services;
 
-use Academorix\Rbac\Services\ScopeSuffixValidator;
+use Stackra\Rbac\Services\ScopeSuffixValidator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

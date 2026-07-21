@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsRegistrationsSdk\Resources;
+namespace Stackra\SportsRegistrationsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsRegistrationsSdk\Data\TrialBookingData;
-use Academorix\SportsRegistrationsSdk\Requests\TrialBookings\ListTrialBookingsRequest;
-use Academorix\SportsRegistrationsSdk\Requests\TrialBookings\UpdateTrialBookingRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsRegistrationsSdk\Data\TrialBookingData;
+use Stackra\SportsRegistrationsSdk\Requests\TrialBookings\ListTrialBookingsRequest;
+use Stackra\SportsRegistrationsSdk\Requests\TrialBookings\UpdateTrialBookingRequest;
 use Saloon\Http\Response;
 
 /**
@@ -56,7 +56,7 @@ final readonly class TrialBookingsResource
      *
      * @return TrialBookingData
      */
-    public function update(string $trial, \Academorix\SportsRegistrationsSdk\Payloads\TrialBookings\UpdateTrialBookingPayload $payload, ?string $idempotencyKey = null): TrialBookingData
+    public function update(string $trial, \Stackra\SportsRegistrationsSdk\Payloads\TrialBookings\UpdateTrialBookingPayload $payload, ?string $idempotencyKey = null): TrialBookingData
     {
         return $this->connector->send(new UpdateTrialBookingRequest($trial, $payload, $idempotencyKey))->dto();
     }

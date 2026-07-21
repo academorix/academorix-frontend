@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Actions\Overrides;
+namespace Stackra\FeatureFlags\Actions\Overrides;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureOverrideRepositoryInterface;
-use Academorix\FeatureFlags\Data\FeatureOverrideData;
-use Academorix\FeatureFlags\Data\Requests\UpdateOverrideRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Put;
-use Academorix\Routing\Attributes\WhereUlid;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureOverrideRepositoryInterface;
+use Stackra\FeatureFlags\Data\FeatureOverrideData;
+use Stackra\FeatureFlags\Data\Requests\UpdateOverrideRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Put;
+use Stackra\Routing\Attributes\WhereUlid;
 
 /**
  * `PUT /api/v1/feature-flags/overrides/{id}` — update an override.
@@ -53,7 +53,7 @@ final class UpdateOverride
             static fn ($v): bool => $v !== null,
         );
 
-        /** @var \Academorix\FeatureFlags\Models\FeatureOverride $row */
+        /** @var \Stackra\FeatureFlags\Models\FeatureOverride $row */
         $row = $this->repository->update($id, $patch);
 
         return FeatureOverrideData::fromModel($row);

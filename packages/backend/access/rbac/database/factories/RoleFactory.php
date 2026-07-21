@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Database\Factories;
+namespace Stackra\Rbac\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Rbac\Contracts\Data\RoleInterface;
-use Academorix\Rbac\Models\Role;
+use Stackra\Rbac\Contracts\Data\RoleInterface;
+use Stackra\Rbac\Models\Role;
 
 /**
- * Factory for {@see \Academorix\Rbac\Models\Role}.
+ * Factory for {@see \Stackra\Rbac\Models\Role}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Rbac\Models\Role>
+ * @extends Factory<\Stackra\Rbac\Models\Role>
  *
  * @category Rbac
  *

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Services;
+namespace Stackra\Newsletter\Services;
 
-use Academorix\Newsletter\Contracts\Data\NewsletterAudienceInterface;
-use Academorix\Newsletter\Contracts\Data\NewsletterSubscriptionInterface;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterSubscriptionRepositoryInterface;
-use Academorix\Newsletter\Contracts\Services\AudienceEvaluatorInterface;
-use Academorix\Newsletter\Enums\NewsletterSubscriptionStatus;
-use Academorix\Newsletter\Models\NewsletterAudience;
-use Academorix\Newsletter\Models\NewsletterSubscription;
+use Stackra\Newsletter\Contracts\Data\NewsletterAudienceInterface;
+use Stackra\Newsletter\Contracts\Data\NewsletterSubscriptionInterface;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterSubscriptionRepositoryInterface;
+use Stackra\Newsletter\Contracts\Services\AudienceEvaluatorInterface;
+use Stackra\Newsletter\Enums\NewsletterSubscriptionStatus;
+use Stackra\Newsletter\Models\NewsletterAudience;
+use Stackra\Newsletter\Models\NewsletterSubscription;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Support\Collection;
 

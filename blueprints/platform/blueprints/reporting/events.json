@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/reporting/events",
+  "id": "stackra://modules/reporting/events",
   "$version": 1,
   "title": "reporting — published events",
-  "namespace": "Academorix\\Platform\\Reporting\\Events",
+  "namespace": "Stackra\\Platform\\Reporting\\Events",
   "dispatchMode": "afterCommit",
   "description": "Cross-module analytics + scheduled report generation. Every export event carries the actor + data-classification level for compliance audit (which staff exported which PII from which module).",
   "events": [

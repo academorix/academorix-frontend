@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/activity/listeners",
+  "id": "stackra://modules/activity/listeners",
   "$version": 1,
   "title": "activity — subscribed events",
   "description": "Cross-module reactions handled by this module. Listens to tenant / user / identity lifecycle events so activity data stays consistent when the referenced entities change state; listens to WebSocket connection events so live-feed subscribers are tracked; listens to audit rules changes so the two-lane contract stays coherent.",
   "listeners": [
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Observability\\Activity\\Listeners\\PurgeActivitiesForErasedTenant",
+      "listener": "Stackra\\Observability\\Activity\\Listeners\\PurgeActivitiesForErasedTenant",
       "queue": "retention",
       "purpose": "Cascade delete every activity row for the erased tenant. The `tenant_id` cascade FK already handles the DB rows; this listener writes the compliance audit trail entry, emits the count metric, deletes any per-tenant retention policies, and clears the tenant's cold-storage archive markers. Distinct from audit's cascade — audit anonymises (retains rows for compliance); activity purges (rows are user-facing feed only).",
       "shouldQueue": true,
@@ -15,7 +15,7 @@
     },
     {
       "event": "user::IdentityErased",
-      "listener": "Academorix\\Observability\\Activity\\Listeners\\PurgeActivitiesForErasedIdentity",
+      "listener": "Stackra\\Observability\\Activity\\Listeners\\PurgeActivitiesForErasedIdentity",
       "queue": "retention",
       "purpose": "GDPR Art. 17 erasure cascade. Hard-delete every activity WHERE causer is a User linked to the erased identity OR subject is a User linked to the erased identity. Preserves the audit-log row noting the cascade count. Activity does NOT anonymise (unlike audit) — activity rows are user-facing narrative and preserving them post-erasure would leak the erased identity's actions on other users' feeds.",
       "shouldQueue": true,
@@ -23,14 +23,14 @@
     },
     {
       "event": "user::UserDeleted",
-      "listener": "Academorix\\Observability\\Activity\\Listeners\\NullifyActivityCauserForDeletedUser",
+      "listener": "Stackra\\Observability\\Activity\\Listeners\\NullifyActivityCauserForDeletedUser",
       "queue": "activity",
       "purpose": "When a User is soft-deleted, null the `causer_id` on active activity rows attributed to them. The rows themselves stay (they're needed for the audit-adjacent feed) but the causer reference becomes NULL so the feed doesn't dangle. Metric emitted so ops can watch the null-causer ratio (a spike suggests bulk user deletion).",
       "shouldQueue": true
     },
     {
       "event": "activity::ActivityRecorded",
-      "listener": "Academorix\\Observability\\Activity\\Listeners\\PublishActivityBroadcast",
+      "listener": "Stackra\\Observability\\Activity\\Listeners\\PublishActivityBroadcast",
       "queue": "notifications",
       "purpose": "Push the recorded activity to `tenant.{tenantId}.activity` + `user.{userId}.activity` reverb channels. Gated by the tenant's `activity_broadcast` entitlement — Free-tier tenants skip broadcast (the feed still exists; it just polls instead of streaming). Skipped for activities in log_names configured as broadcast-off in settings.",
       "shouldQueue": true,
@@ -41,7 +41,7 @@
     },
     {
       "event": "activity::ActivityRecorded",
-      "listener": "Academorix\\Observability\\Activity\\Listeners\\QueueForDigestEmail",
+      "listener": "Stackra\\Observability\\Activity\\Listeners\\QueueForDigestEmail",
       "queue": "notifications",
       "purpose": "For every user who has opted into digest email AND follows this activity's subject (or matches the log_name's default recipient rule), enqueue the activity row on their pending-digest set. The daily/weekly digest scheduler reads pending sets + fires ActivityDigestEmailNotification. Gated by `activity_digest_email` entitlement (Medium+).",
       "shouldQueue": true,
@@ -49,21 +49,21 @@
     },
     {
       "event": "activity::ActivityRetentionPolicyCreated",
-      "listener": "Academorix\\Observability\\Activity\\Listeners\\ReplanRetentionForPolicyChange",
+      "listener": "Stackra\\Observability\\Activity\\Listeners\\ReplanRetentionForPolicyChange",
       "queue": "retention",
       "purpose": "When a new policy lands, verify the tenant's activity rows are consistent with it. If the new policy is MORE restrictive than the previous default (shorter retention), immediately schedule a PurgeExpiredActivitiesJob run for this tenant + log_name. If MORE permissive (longer retention), no immediate action — the extended window just means fewer rows will be purged going forward.",
       "shouldQueue": true
     },
     {
       "event": "compliance::LegalHoldPlaced",
-      "listener": "Academorix\\Observability\\Activity\\Listeners\\SuspendPurgeForLegalHold",
+      "listener": "Stackra\\Observability\\Activity\\Listeners\\SuspendPurgeForLegalHold",
       "queue": "retention",
       "purpose": "When compliance places a legal hold on a tenant / entity, mark related activity rows as `hold_until` (via metadata property) so the purge pipeline skips them. Rows remain purge-eligible for tenants not on hold — legal holds are surgical.",
       "shouldQueue": true
     },
     {
       "event": "compliance::LegalHoldReleased",
-      "listener": "Academorix\\Observability\\Activity\\Listeners\\ResumePurgeAfterLegalHold",
+      "listener": "Stackra\\Observability\\Activity\\Listeners\\ResumePurgeAfterLegalHold",
       "queue": "retention",
       "purpose": "Clears the `hold_until` marker + schedules an immediate PurgeExpiredActivitiesJob to catch up on any rows that were held past their retention window. Emits a metric so ops can quantify the hold's data-retention impact.",
       "shouldQueue": true

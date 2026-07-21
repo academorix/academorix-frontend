@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-in-app/entitlements",
+  "id": "stackra://modules/notifications-in-app/entitlements",
   "$version": 1,
   "title": "notifications-in-app \u2014 declared entitlements",
   "description": "None. In-app delivery is always available; tenants don't buy per-delivery quotas for it (unlike SMS which meters). Entitlements for total notification volume live on the parent `notifications` module. Marker file with an explanation.",

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Contracts\Services;
+namespace Stackra\Webhook\Contracts\Services;
 
-use Academorix\Webhook\Models\WebhookDelivery;
-use Academorix\Webhook\Models\WebhookSubscription;
+use Stackra\Webhook\Models\WebhookDelivery;
+use Stackra\Webhook\Models\WebhookSubscription;
 
 /**
  * A pluggable destination driver.

@@ -29,23 +29,23 @@
  * ## Return shape
  *
  * Every `for*()` method returns an `iterable` of typed target
- * objects — {@see \Academorix\Foundation\Discovery\ClassTarget},
- * {@see \Academorix\Foundation\Discovery\MethodTarget},
- * {@see \Academorix\Foundation\Discovery\PropertyTarget},
- * {@see \Academorix\Foundation\Discovery\ParameterTarget}. Callers
+ * objects — {@see \Stackra\Foundation\Discovery\ClassTarget},
+ * {@see \Stackra\Foundation\Discovery\MethodTarget},
+ * {@see \Stackra\Foundation\Discovery\PropertyTarget},
+ * {@see \Stackra\Foundation\Discovery\ParameterTarget}. Callers
  * iterate lazily; there is no eager materialisation cost.
  *
- * @see \Academorix\Foundation\Discovery\AttributeDiscovery Production implementation.
+ * @see \Stackra\Foundation\Discovery\AttributeDiscovery Production implementation.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Contracts;
+namespace Stackra\Foundation\Contracts;
 
-use Academorix\Foundation\Discovery\ClassTarget;
-use Academorix\Foundation\Discovery\MethodTarget;
-use Academorix\Foundation\Discovery\ParameterTarget;
-use Academorix\Foundation\Discovery\PropertyTarget;
+use Stackra\Foundation\Discovery\ClassTarget;
+use Stackra\Foundation\Discovery\MethodTarget;
+use Stackra\Foundation\Discovery\ParameterTarget;
+use Stackra\Foundation\Discovery\PropertyTarget;
 
 /**
  * The uniform attribute-discovery API.

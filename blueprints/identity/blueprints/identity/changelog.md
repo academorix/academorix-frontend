@@ -12,7 +12,7 @@ enforceable surface for the code phase that follows.
 ### Structural
 
 - `Identity` model authored — global credential record, one row per real human
-  across every Academorix Application (design.md D1).
+  across every Stackra Application (design.md D1).
 - Table `identities` — nine credential + audit columns + soft-delete substrate.
   NO `tenant_id`, NO `application_id` (global by design).
 - Prefixed ULID `idn_...` as primary key. Prefix registered in

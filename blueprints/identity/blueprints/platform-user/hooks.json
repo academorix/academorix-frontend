@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/platform-user/hooks",
+  "id": "stackra://modules/platform-user/hooks",
   "$version": 1,
   "title": "platform-user \u2014 tenancy hooks",
   "description": "This module publishes NO tenancy hooks. Deliberate \u2014 platform_users is CROSS-TENANT by construction (see tenancy-columns.md \u00a72 exception + design.md \u00a74.3). The `#[AsTenancyHook]` mechanism (from the tenancy substrate) fires on every tenant-init to set request-scoped state (log context, cache prefix, tenant-aware config resolution). PlatformUser rows do NOT participate in tenant-init because they have no `tenant_id` \u2014 the platform_admin guard is orthogonal to tenant resolution. The `platform.audit` middleware handles the platform-plane's own request-scoped state (correlation_id, actor stamping) via a different mechanism (a standard Laravel middleware, not a tenancy hook). This file exists for uniform module shape and to explicitly document the non-participation.",
-  "contract": "Academorix\\ServiceProvider\\Contracts\\TenancyHookInterface",
-  "dispatcher": "Academorix\\ServiceProvider\\Dispatchers\\TenancyHookDispatcher",
-  "registry": "Academorix\\ServiceProvider\\Registry\\TenancyHookRegistry",
+  "contract": "Stackra\\ServiceProvider\\Contracts\\TenancyHookInterface",
+  "dispatcher": "Stackra\\ServiceProvider\\Dispatchers\\TenancyHookDispatcher",
+  "registry": "Stackra\\ServiceProvider\\Registry\\TenancyHookRegistry",
   "hooks": [],
   "notes": [
     "Every reviewer + the `tenancy-compliance-auditor` agent expects this file to remain empty. A future PR that adds a tenancy hook here is a compliance violation \u2014 platform_users cannot be tenant-scoped.",

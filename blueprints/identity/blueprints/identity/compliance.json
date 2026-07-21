@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/identity/compliance",
+  "id": "stackra://modules/identity/compliance",
   "$version": 1,
   "title": "identity \u2014 compliance evidence",
   "description": "Identity is the most compliance-sensitive aggregate in the platform. Every enforceable rule from GDPR (Art. 5, 6, 17, 25, 32), COPPA (13-year-old floor), CCPA (right-to-know + right-to-delete), and NIST 800-63B (authentication policy) applies here. Every enforcement is codified as CODE + AUDIT rather than a policy document; the compliance officer verifies via automated checks against the entries below.",

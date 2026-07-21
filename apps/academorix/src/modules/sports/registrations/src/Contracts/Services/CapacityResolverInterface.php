@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registrations\Contracts\Services;
+namespace Stackra\Registrations\Contracts\Services;
 
-use Academorix\Registrations\Data\CapacityStatusData;
-use Academorix\Registrations\Services\CapacityResolver;
+use Stackra\Registrations\Data\CapacityStatusData;
+use Stackra\Registrations\Services\CapacityResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

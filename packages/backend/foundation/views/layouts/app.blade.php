@@ -1,11 +1,11 @@
 @php
-    use Academorix\Foundation\Enums\Theme;
+    use Stackra\Foundation\Enums\Theme;
 @endphp
 {{--
 Application Layout
 
 Shared layout with HeroUI design system and theme support.
-Used across all academorix for consistent UI.
+Used across all stackra for consistent UI.
 
 ## Theme Support:
 - Auto-detection: Automatically detects system/device theme preference

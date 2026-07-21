@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/membership/metrics",
+  "id": "stackra://modules/membership/metrics",
   "$version": 1,
   "title": "membership — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "academorix.membership",
+  "namespace": "stackra.membership",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["status", "cancellation_kind", "billing_interval", "pass_type"],
@@ -19,94 +19,94 @@
   },
   "metrics": [
     {
-      "name": "academorix.membership.count",
+      "name": "stackra.membership.count",
       "kind": "gauge",
       "unit": "memberships",
       "labels": ["status", "billing_interval"]
     },
     {
-      "name": "academorix.membership.mrr_cents",
+      "name": "stackra.membership.mrr_cents",
       "kind": "gauge",
       "unit": "cents",
       "labels": ["currency"],
       "description": "Monthly recurring revenue at this instant — sum of price_snapshot_cents normalized to monthly for all active memberships."
     },
     {
-      "name": "academorix.membership.created_total",
+      "name": "stackra.membership.created_total",
       "kind": "counter",
       "unit": "memberships",
       "labels": ["billing_interval", "used_trial"]
     },
     {
-      "name": "academorix.membership.activated_total",
+      "name": "stackra.membership.activated_total",
       "kind": "counter",
       "unit": "memberships",
       "labels": ["billing_interval"]
     },
     {
-      "name": "academorix.membership.renewed_total",
+      "name": "stackra.membership.renewed_total",
       "kind": "counter",
       "unit": "memberships",
       "labels": ["was_recovered"]
     },
     {
-      "name": "academorix.membership.renewal_failed_total",
+      "name": "stackra.membership.renewal_failed_total",
       "kind": "counter",
       "unit": "renewals",
       "labels": ["attempt_number", "failure_reason_category"]
     },
     {
-      "name": "academorix.membership.renewal_recovered_total",
+      "name": "stackra.membership.renewal_recovered_total",
       "kind": "counter",
       "unit": "renewals",
       "labels": ["recovered_on_attempt"],
       "description": "Dunning-effectiveness signal."
     },
     {
-      "name": "academorix.membership.lapsed_total",
+      "name": "stackra.membership.lapsed_total",
       "kind": "counter",
       "unit": "memberships",
       "labels": []
     },
     {
-      "name": "academorix.membership.cancelled_total",
+      "name": "stackra.membership.cancelled_total",
       "kind": "counter",
       "unit": "memberships",
       "labels": ["cancellation_kind"]
     },
     {
-      "name": "academorix.membership.refunded_total",
+      "name": "stackra.membership.refunded_total",
       "kind": "counter",
       "unit": "memberships",
       "labels": ["refund_reason_category"]
     },
     {
-      "name": "academorix.membership.chargedback_total",
+      "name": "stackra.membership.chargedback_total",
       "kind": "counter",
       "unit": "memberships",
       "labels": ["reason_code"]
     },
     {
-      "name": "academorix.membership.trial_converted_total",
+      "name": "stackra.membership.trial_converted_total",
       "kind": "counter",
       "unit": "memberships",
       "labels": []
     },
     {
-      "name": "academorix.membership.trial_expired_total",
+      "name": "stackra.membership.trial_expired_total",
       "kind": "counter",
       "unit": "memberships",
       "labels": []
     },
     {
-      "name": "academorix.membership.churn_rate_percent",
+      "name": "stackra.membership.churn_rate_percent",
       "kind": "gauge",
       "unit": "percent",
       "labels": [],
       "description": "Last-30d churn (cancelled + lapsed) / active-at-start. Recomputed hourly."
     },
     {
-      "name": "academorix.membership.invoice_create_duration_ms",
+      "name": "stackra.membership.invoice_create_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 200, 1000, 5000],
@@ -114,56 +114,56 @@
       "description": "Atomic invoice creation duration. P99 target < 1000ms."
     },
     {
-      "name": "academorix.membership.atomic_invoice_failed_total",
+      "name": "stackra.membership.atomic_invoice_failed_total",
       "kind": "counter",
       "unit": "failures",
       "labels": [],
       "description": "CRITICAL. Every increment is P1. Atomic invoice creation rolled back."
     },
     {
-      "name": "academorix.membership.entitlement.gate_refusals_total",
+      "name": "stackra.membership.entitlement.gate_refusals_total",
       "kind": "counter",
       "unit": "refusals",
       "labels": ["entitlement_key"]
     },
     {
-      "name": "academorix.membership.plan.count",
+      "name": "stackra.membership.plan.count",
       "kind": "gauge",
       "unit": "plans",
       "labels": ["is_active"]
     },
     {
-      "name": "academorix.membership.plan.capacity_reached_total",
+      "name": "stackra.membership.plan.capacity_reached_total",
       "kind": "counter",
       "unit": "events",
       "labels": []
     },
     {
-      "name": "academorix.membership.pass.issued_total",
+      "name": "stackra.membership.pass.issued_total",
       "kind": "counter",
       "unit": "passes",
       "labels": ["pass_type"]
     },
     {
-      "name": "academorix.membership.pass.consumed_total",
+      "name": "stackra.membership.pass.consumed_total",
       "kind": "counter",
       "unit": "passes",
       "labels": ["pass_type"]
     },
     {
-      "name": "academorix.membership.pass.expired_total",
+      "name": "stackra.membership.pass.expired_total",
       "kind": "counter",
       "unit": "passes",
       "labels": ["pass_type"]
     },
     {
-      "name": "academorix.membership.pass.refunded_total",
+      "name": "stackra.membership.pass.refunded_total",
       "kind": "counter",
       "unit": "passes",
       "labels": []
     },
     {
-      "name": "academorix.membership.pass.consumption_within_valid_window",
+      "name": "stackra.membership.pass.consumption_within_valid_window",
       "kind": "counter",
       "unit": "attempts",
       "labels": [

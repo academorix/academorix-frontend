@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Region\Contracts\Services;
+namespace Stackra\Region\Contracts\Services;
 
-use Academorix\Region\Services\TimezoneResolver;
+use Stackra\Region\Services\TimezoneResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

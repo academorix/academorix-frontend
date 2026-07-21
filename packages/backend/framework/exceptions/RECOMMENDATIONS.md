@@ -88,8 +88,8 @@ the recommended base class to extend.
 | `IdempotencyKeyReplayException`     | 409  | `ConflictException`   | Carry the original response so retries return the same body.                                          |
 | `AttendanceLockedException`         | 423  | `DomainException`     | Once a coach has closed attendance for a session, retroactive edits are forbidden. HTTP 423 (Locked). |
 | `SlotUnavailableException`          | 409  | `ConflictException`   | Two clients tried to grab the same slot.                                                              |
-| `ContentModerationBlockedException` | 451  | `AcademorixException` | Content flagged by moderation. HTTP 451 (unavailable for legal reasons).                              |
-| `ExportTooLargeException`           | 400  | `AcademorixException` | Client asked for more than N rows; suggest date-range narrowing.                                      |
+| `ContentModerationBlockedException` | 451  | `StackraException` | Content flagged by moderation. HTTP 451 (unavailable for legal reasons).                              |
+| `ExportTooLargeException`           | 400  | `StackraException` | Client asked for more than N rows; suggest date-range narrowing.                                      |
 | `WebhookSignatureInvalidException`  | 400  | `ForbiddenException`  | Severity=Alert, category=Security.                                                                    |
 
 ### AI-service specific (once `apps/ai-service` lands)
@@ -98,7 +98,7 @@ the recommended base class to extend.
 | ---------------------------------- | ---- | ----------------------------- | ------------------------------------------------------------- |
 | `AiProviderQuotaExceededException` | 429  | `TooManyRequestsException`    | Carries provider-specific `retryAfter`.                       |
 | `AiPromptTooLongException`         | 400  | `ValidationException`         | Input exceeded provider token limit.                          |
-| `AiSafetyRefusalException`         | 451  | `AcademorixException`         | Model refused on safety grounds; log for review, don't retry. |
+| `AiSafetyRefusalException`         | 451  | `StackraException`         | Model refused on safety grounds; log for review, don't retry. |
 | `AiToolCallLoopException`          | 500  | `InvariantViolationException` | Agent looped past `MAX_TOOL_CALLS`.                           |
 | `AiCitationMissingException`       | 502  | `IntegrationException`        | Required RAG citation missing from output.                    |
 
@@ -106,10 +106,10 @@ the recommended base class to extend.
 
 | Class                               | HTTP | Package                                                       |
 | ----------------------------------- | ---- | ------------------------------------------------------------- |
-| `LivenessCheckFailedException`      | 400  | `academorix/identity`                                         |
-| `ConsentNotGrantedException`        | 403  | `academorix/consent`                                          |
-| `SubscriptionPastDueException`      | 402  | `academorix/billing` (subclass of `PaymentRequiredException`) |
-| `MigrationVersionMismatchException` | 500  | `academorix/db`                                               |
+| `LivenessCheckFailedException`      | 400  | `stackra/identity`                                         |
+| `ConsentNotGrantedException`        | 403  | `stackra/consent`                                          |
+| `SubscriptionPastDueException`      | 402  | `stackra/billing` (subclass of `PaymentRequiredException`) |
+| `MigrationVersionMismatchException` | 500  | `stackra/db`                                               |
 
 ## 4. Authoring conventions
 
@@ -127,7 +127,7 @@ the recommended base class to extend.
   `->withContext(...)->withTranslationReplacements(...)`.
 - **Never** throw `\Exception`, `\RuntimeException`, `\InvalidArgumentException`
   from domain code. Those types are for guards (`Assert::*` in
-  `academorix/foundation`) and adapters that translate them to a domain
+  `stackra/foundation`) and adapters that translate them to a domain
   exception on the way out.
 - **Never** put user IDs / emails / tokens directly in `$e->getMessage()`. Put
   them in `->withContext([...])` — the masker will still redact obvious matches
@@ -144,7 +144,7 @@ the recommended base class to extend.
 
 ```php
 // packages/billing/src/Exceptions/InvoiceOverdueException.php
-final class InvoiceOverdueException extends AcademorixException
+final class InvoiceOverdueException extends StackraException
 {
     public const CODE = 'billing.invoice.overdue';
     public const TRANSLATION_KEY = 'exceptions::errors.billing.invoice_overdue';

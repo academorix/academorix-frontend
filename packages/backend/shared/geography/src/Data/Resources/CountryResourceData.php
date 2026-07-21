@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Data\Resources;
+namespace Stackra\Geography\Data\Resources;
 
-use Academorix\Geography\Contracts\Data\CountryInterface;
-use Academorix\Geography\Models\Country;
+use Stackra\Geography\Contracts\Data\CountryInterface;
+use Stackra\Geography\Models\Country;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;

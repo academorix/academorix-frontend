@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/referrals/middleware",
+  "id": "stackra://modules/referrals/middleware",
   "$version": 1,
   "title": "referrals — HTTP middleware",
   "middleware": [
     {
       "alias": "referrals.enforce_capture_entitlement",
-      "class": "Academorix\\Growth\\Referrals\\Http\\Middleware\\EnforceCaptureEntitlement",
+      "class": "Stackra\\Growth\\Referrals\\Http\\Middleware\\EnforceCaptureEntitlement",
       "priority": 40,
       "description": "Thin wrapper over entitlement.enforce that specifically checks the `referrals_capture` entitlement. On refusal, returns 402 `REFERRAL_CAPTURE_NOT_ENTITLED` with an upgrade CTA in the response envelope's .errors[0].meta.upgrade_url.",
       "auto_applied": false,
@@ -13,7 +13,7 @@
     },
     {
       "alias": "referrals.enforce_active_program",
-      "class": "Academorix\\Growth\\Referrals\\Http\\Middleware\\EnforceActiveProgram",
+      "class": "Stackra\\Growth\\Referrals\\Http\\Middleware\\EnforceActiveProgram",
       "priority": 42,
       "description": "For referral claim routes. Reads {code} path parameter; resolves via ReferralCodeRepository → ReferralProgram; refuses when program.status != 'active' OR program.program_starts_at > now() OR program_ends_at < now(). On success, stores program on RequestContext::referralProgram() so downstream services can call Request::activeReferralProgram() without re-fetching.",
       "auto_applied": false,
@@ -21,7 +21,7 @@
     },
     {
       "alias": "referrals.resolve_active_referral",
-      "class": "Academorix\\Growth\\Referrals\\Http\\Middleware\\ResolveActiveReferral",
+      "class": "Stackra\\Growth\\Referrals\\Http\\Middleware\\ResolveActiveReferral",
       "priority": 44,
       "description": "Reads the signed referral cookie (set by the /claim endpoint) and loads the Referral row into RequestContext::inboundReferral(). Applied to the signup + trigger paths so downstream services can correlate the current user's action with a previously-claimed referral. Optional (skipped when the request carries no cookie — most routes).",
       "auto_applied": false,

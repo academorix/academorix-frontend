@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/leads/schemas/lead-activity",
+  "id": "stackra://modules/leads/schemas/lead-activity",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "LeadActivity",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "lea_",
     "incrementing": false,
-    "model": "Academorix\\Growth\\Leads\\Models\\LeadActivity",
-    "interface": "Academorix\\Growth\\Leads\\Contracts\\Data\\LeadActivityInterface",
-    "implements": ["Academorix\\Growth\\Leads\\Contracts\\Data\\LeadActivityInterface"],
+    "model": "Stackra\\Growth\\Leads\\Models\\LeadActivity",
+    "interface": "Stackra\\Growth\\Leads\\Contracts\\Data\\LeadActivityInterface",
+    "implements": ["Stackra\\Growth\\Leads\\Contracts\\Data\\LeadActivityInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

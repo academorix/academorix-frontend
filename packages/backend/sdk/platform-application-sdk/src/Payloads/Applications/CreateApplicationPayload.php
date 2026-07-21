@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformApplicationSdk\Payloads\Applications;
+namespace Stackra\PlatformApplicationSdk\Payloads\Applications;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\Max;
@@ -36,8 +36,8 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
  * $payload = new CreateApplicationPayload(
  *     slug: 'ticketing',
  *     name: 'Ticketing',
- *     centralHost: 'ticketing.academorix.app',
- *     platformAdminHost: 'admin.ticketing.academorix.app',
+ *     centralHost: 'ticketing.stackra.app',
+ *     platformAdminHost: 'admin.ticketing.stackra.app',
  * );
  * $wire = $payload->toArray();  // snake_case, ready to send.
  * ```
@@ -53,7 +53,7 @@ final class CreateApplicationPayload extends Data
      * @param  string                       $slug                  URL-safe application identifier. `1..63` chars; kebab-case DNS-safe segment.
      * @param  string                       $name                  Display name. `1..200` chars.
      * @param  string                       $centralHost           Marketing + workspace-picker host. RFC-1123 hostname; `≤200` chars.
-     * @param  string                       $platformAdminHost     Academorix staff surface host. RFC-1123 hostname; `≤200` chars.
+     * @param  string                       $platformAdminHost     Stackra staff surface host. RFC-1123 hostname; `≤200` chars.
      * @param  string                       $defaultLocale         Default IETF locale tag. Defaults to `en`.
      * @param  string                       $defaultTimezone       Default IANA timezone name. Defaults to `UTC`.
      * @param  string                       $defaultCurrency       Default ISO-4217 currency code. Defaults to `USD`.

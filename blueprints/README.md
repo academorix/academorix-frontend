@@ -1,10 +1,10 @@
-# `modules/` — Academorix blueprint index
+# `modules/` — Stackra blueprint index
 
 **Read this first.** Every artefact under `modules/` is a _blueprint_ — a set of
 language-neutral JSON manifests that declare a bounded context (schemas, traits,
 attributes, relations, events, jobs, retention, wire contracts). The runtime
 code that satisfies these blueprints lives in the sibling
-[`academorix-backend`](https://github.com/) repo under
+[`stackra-backend`](https://github.com/) repo under
 `apps/<service>-service/src/modules/<module>/`. Blueprints are the source of
 truth for both codebases: the backend generates against them, the frontend
 type-generates SDKs from them.

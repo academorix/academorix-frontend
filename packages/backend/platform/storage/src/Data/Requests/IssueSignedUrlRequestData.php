@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Data\Requests;
+namespace Stackra\Storage\Data\Requests;
 
-use Academorix\Storage\Enums\SignedUrlPurpose;
+use Stackra\Storage\Enums\SignedUrlPurpose;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Between;
 use Spatie\LaravelData\Attributes\Validation\Enum;

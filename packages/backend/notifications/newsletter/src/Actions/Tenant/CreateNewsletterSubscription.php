@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Actions\Tenant;
+namespace Stackra\Newsletter\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Newsletter\Contracts\Data\NewsletterInterface;
-use Academorix\Newsletter\Contracts\Data\NewsletterSubscriptionInterface;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterRepositoryInterface;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterSubscriptionRepositoryInterface;
-use Academorix\Newsletter\Data\NewsletterSubscriptionData;
-use Academorix\Newsletter\Data\Requests\AdminCreateSubscriptionRequestData;
-use Academorix\Newsletter\Enums\NewsletterPermission;
-use Academorix\Newsletter\Enums\NewsletterSubscriptionStatus;
-use Academorix\Newsletter\Exceptions\NewsletterNotFoundException;
-use Academorix\Newsletter\Services\DefaultNewsletterService;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Newsletter\Contracts\Data\NewsletterInterface;
+use Stackra\Newsletter\Contracts\Data\NewsletterSubscriptionInterface;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterRepositoryInterface;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterSubscriptionRepositoryInterface;
+use Stackra\Newsletter\Data\NewsletterSubscriptionData;
+use Stackra\Newsletter\Data\Requests\AdminCreateSubscriptionRequestData;
+use Stackra\Newsletter\Enums\NewsletterPermission;
+use Stackra\Newsletter\Enums\NewsletterSubscriptionStatus;
+use Stackra\Newsletter\Exceptions\NewsletterNotFoundException;
+use Stackra\Newsletter\Services\DefaultNewsletterService;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `POST /api/v1/newsletters/{newsletter}/subscriptions` — admin

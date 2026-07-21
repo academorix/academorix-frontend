@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Reporting\Repositories;
+namespace Stackra\Reporting\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Reporting\Contracts\Data\ReportDefinitionInterface;
-use Academorix\Reporting\Contracts\Repositories\ReportDefinitionRepositoryInterface;
-use Academorix\Reporting\Models\ReportDefinition;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Reporting\Contracts\Data\ReportDefinitionInterface;
+use Stackra\Reporting\Contracts\Repositories\ReportDefinitionRepositoryInterface;
+use Stackra\Reporting\Models\ReportDefinition;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Reporting\Models\ReportDefinition}.
+ * Attribute-first Eloquent repository for {@see Stackra\Reporting\Models\ReportDefinition}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ReportDefinitionInterface::class)]` which resolves to
  * `ReportDefinition` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Reporting\Models\ReportDefinition>
+ * @extends Repository<\Stackra\Reporting\Models\ReportDefinition>
  *
  * @category Reporting
  *

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/mfa/sdui/resources/mfa/panel",
+  "id": "stackra://modules/mfa/sdui/resources/mfa/panel",
   "$version": 1,
   "kind": "screen",
   "route": "/me/mfa",

@@ -4,7 +4,7 @@
  * @file database/seeders/ScopeAliasSeeder.php
  *
  * @description
- * Demo-only seeder for {@see \Academorix\Scope\Models\ScopeAlias}.
+ * Demo-only seeder for {@see \Stackra\Scope\Models\ScopeAlias}.
  * Installs one alias so the demo tenant's admin UI shows the
  * word "Organisation" wherever the platform would otherwise
  * render "Owner". Real deployments choose their own labels via
@@ -13,11 +13,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Database\Seeders;
+namespace Stackra\Scope\Database\Seeders;
 
-use Academorix\ServiceProvider\Attributes\AsSeeder;
-use Academorix\Scope\Models\ScopeAlias;
-use Academorix\Scope\Models\ScopeDefinition;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
+use Stackra\Scope\Models\ScopeAlias;
+use Stackra\Scope\Models\ScopeDefinition;
 use Illuminate\Database\Seeder;
 
 /**

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Observers;
+namespace Stackra\Notifications\Observers;
 
-use Academorix\Notifications\Events\PreferenceUpdated;
-use Academorix\Notifications\Models\NotificationPreference;
+use Stackra\Notifications\Events\PreferenceUpdated;
+use Stackra\Notifications\Models\NotificationPreference;
 
 /**
  * Lifecycle side effects on {@see NotificationPreference}.

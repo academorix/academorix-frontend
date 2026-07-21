@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/teams/compliance",
+  "id": "stackra://modules/teams/compliance",
   "$version": 1,
   "title": "teams — compliance evidence",
   "description": "Teams is child-safety-critical (rosters commonly contain minors) + anti-discrimination-sensitive (trial rejections must be defensible) + financial-record-adjacent (trial fees + Wave 4 team-related invoicing). SOC 2 CC6.3, GDPR minimisation on trialist PII, WCAG 2.2 AA on the roster + trial-decision surfaces, anti-discrimination retention on rejected trials (3 years for defence against future claims).",
@@ -55,7 +55,7 @@
         {
           "criterion": "CC7.2",
           "principle": "system monitoring",
-          "evidence": "TeamMemberInvariantViolation event is a P1 signal + tracked via academorix.teams.member_invariant.violations counter (should stay at 0). The reconciler runs nightly."
+          "evidence": "TeamMemberInvariantViolation event is a P1 signal + tracked via stackra.teams.member_invariant.violations counter (should stay at 0). The reconciler runs nightly."
         },
         {
           "criterion": "CC9.1",

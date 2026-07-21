@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tax/relations",
+  "id": "stackra://modules/tax/relations",
   "$version": 1,
   "title": "tax — model relationships",
   "description": "Four owned entities. TaxJurisdiction is the reference-data root; TaxRate + TaxExemption reference it. TaxCalculation is standalone (references invoice_lines from Wave 4 finance::invoice). Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / region_id / organization_id / scope_node_id on any owned row.",

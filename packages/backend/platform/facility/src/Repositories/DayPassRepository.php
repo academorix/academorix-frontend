@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Repositories;
+namespace Stackra\Facility\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Facility\Contracts\Data\DayPassInterface;
-use Academorix\Facility\Contracts\Repositories\DayPassRepositoryInterface;
-use Academorix\Facility\Models\DayPass;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Facility\Contracts\Data\DayPassInterface;
+use Stackra\Facility\Contracts\Repositories\DayPassRepositoryInterface;
+use Stackra\Facility\Models\DayPass;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Facility\Models\DayPass}.
+ * Attribute-first Eloquent repository for {@see Stackra\Facility\Models\DayPass}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(DayPassInterface::class)]` which resolves to
  * `DayPass` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Facility\Models\DayPass>
+ * @extends Repository<\Stackra\Facility\Models\DayPass>
  *
  * @category Facility
  *

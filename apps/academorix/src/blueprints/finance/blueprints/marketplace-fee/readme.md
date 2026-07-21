@@ -1,9 +1,9 @@
 # marketplace-fee
 
-Academorix's take-rate on Parents → Academy transactions. Per DL-5 (tasks.md),
+Stackra's take-rate on Parents → Academy transactions. Per DL-5 (tasks.md),
 Stripe Connect is the default gateway and fee-splits happen at charge time via
 Stripe Application Fees: the tenant Connect account receives
-`charge - platform_fee` and the Academorix platform account receives the
+`charge - platform_fee` and the Stackra platform account receives the
 platform fee.
 
 ## Not to be confused with
@@ -24,7 +24,7 @@ platform fee.
 - `fee_applications` — one row per transaction where a fee was applied. Belongs
   to Tenant + Payment (restrict) + FeeSchedule (restrict). Contains
   `calculated_fee_minor`, `stripe_application_fee_id`, `applied_at`.
-- `fee_payouts` — Academorix-facing payout of fees to the platform account.
+- `fee_payouts` — Stackra-facing payout of fees to the platform account.
   Roll-up over `fee_applications` in a period. Belongs to Tenant + Application
   (cascade).
 

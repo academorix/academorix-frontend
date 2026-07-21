@@ -11,12 +11,12 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use BackedEnum;
 use OpenApi\Attributes as OA;
-use Academorix\Foundation\Enums\PolicyAbility;
+use Stackra\Foundation\Enums\PolicyAbility;
 use Spatie\RouteAttributes\Attributes\Post as SpatiePost;
 
 /**
@@ -28,7 +28,7 @@ use Spatie\RouteAttributes\Attributes\Post as SpatiePost;
  * ## Usage:
  *
  * ```php
- * use Academorix\Routing\Attributes\Post;
+ * use Stackra\Routing\Attributes\Post;
  *
  * #[Post(
  *     uri: '/',

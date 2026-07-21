@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/reception/subprocessors",
+  "id": "stackra://modules/reception/subprocessors",
   "$version": 1,
   "title": "reception — subprocessors used",
   "description": "Third-party subprocessors this module uses for its own operation.",

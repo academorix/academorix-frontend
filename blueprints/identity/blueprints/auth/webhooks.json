@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/auth/webhooks",
+  "id": "stackra://modules/auth/webhooks",
   "$version": 1,
   "title": "auth \u2014 outbound webhooks",
   "description": "Auth DISPATCHES a small, security-relevant set of outbound webhook events for tenants that opt in. Payloads are HEAVILY redacted \u2014 identity fingerprints, no email, no dob, no IPs. Distinct from identity substrate (which dispatches ZERO webhooks); auth's events are legitimately useful for tenant-side integrations (session-management dashboards, SIEM feeds).",
@@ -46,7 +46,7 @@
         "occurred_at": "ISO-8601 timestamp",
         "target_user_fingerprint": "string",
         "target_application_id": "ULID",
-        "impersonator_department": "string (e.g. 'support', 'security' \u2014 which Academorix team)",
+        "impersonator_department": "string (e.g. 'support', 'security' \u2014 which Stackra team)",
         "reason": "string (mandatory audit-logged justification)",
         "session_expires_at": "ISO-8601 timestamp"
       },
@@ -69,7 +69,7 @@
       "name": "kms.key.rotated",
       "description": "Optional AWS EventBridge integration \u2014 KMS notifies when the key backing JWT-signing-key encryption rotates. Received event triggers RotateJwtSigningKeyJob for the affected Application(s).",
       "provider": "aws-kms",
-      "handler": "Academorix\\Auth\\Listeners\\OnKmsKeyRotated",
+      "handler": "Stackra\\Auth\\Listeners\\OnKmsKeyRotated",
       "required": false,
       "notes": "Best-effort. Missing the event is not catastrophic \u2014 the monthly cron rotation cadence also fires."
     }

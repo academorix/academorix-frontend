@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\People\Models;
+namespace Stackra\People\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\People\Contracts\Data\TenantLinkRequestInterface;
-use Academorix\People\Database\Factories\TenantLinkRequestFactory;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\People\Enums\TenantLinkRequestStatus;
-use Academorix\People\Policies\TenantLinkRequestPolicy;
+use Stackra\People\Contracts\Data\TenantLinkRequestInterface;
+use Stackra\People\Database\Factories\TenantLinkRequestFactory;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\People\Enums\TenantLinkRequestStatus;
+use Stackra\People\Policies\TenantLinkRequestPolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/storage/compliance",
+  "id": "stackra://modules/storage/compliance",
   "$version": 1,
   "title": "storage \u2014 compliance evidence",
   "description": "Storage handles user-supplied content \u2014 the most PII-heavy surface in the platform. Compliance obligations centre on: (a) data minimisation via kind-level MIME + size caps, (b) storage limitation via retention windows + tenant cascade, (c) integrity + confidentiality via signed URLs + antivirus, (d) DSAR support via cross-tenant erasure orchestration, (e) subprocessor management for the S3 / CDN / AV vendor chain.",

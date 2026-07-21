@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Contracts\Data;
+namespace Stackra\Invitations\Contracts\Data;
 
-use Academorix\Invitations\Models\InvitationEvent;
+use Stackra\Invitations\Models\InvitationEvent;
 use Illuminate\Container\Attributes\Bind;
 
 /**

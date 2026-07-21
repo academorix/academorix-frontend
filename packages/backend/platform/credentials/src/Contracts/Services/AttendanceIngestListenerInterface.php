@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Credentials\Contracts\Services;
+namespace Stackra\Credentials\Contracts\Services;
 
-use Academorix\Credentials\Services\AttendanceIngestListener;
+use Stackra\Credentials\Services\AttendanceIngestListener;
 use Illuminate\Container\Attributes\Bind;
 
 /**

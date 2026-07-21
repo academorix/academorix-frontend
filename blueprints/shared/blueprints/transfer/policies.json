@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/transfer/policies",
+  "id": "stackra://modules/transfer/policies",
   "$version": 1,
   "title": "transfer \u2014 authorization policies",
   "policies": [
     {
       "model": "XferJob",
-      "class": "Academorix\\Transfer\\Policies\\XferJobPolicy",
+      "class": "Stackra\\Transfer\\Policies\\XferJobPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -47,7 +47,7 @@
     },
     {
       "model": "XferMappingProfile",
-      "class": "Academorix\\Transfer\\Policies\\XferMappingProfilePolicy",
+      "class": "Stackra\\Transfer\\Policies\\XferMappingProfilePolicy",
       "abilities": [
         {
           "action": "viewAny",

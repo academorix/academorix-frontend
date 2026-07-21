@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Repositories;
+namespace Stackra\Search\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Search\Contracts\Data\SearchSynonymInterface;
-use Academorix\Search\Contracts\Repositories\SearchSynonymRepositoryInterface;
-use Academorix\Search\Models\SearchSynonym;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Search\Contracts\Data\SearchSynonymInterface;
+use Stackra\Search\Contracts\Repositories\SearchSynonymRepositoryInterface;
+use Stackra\Search\Models\SearchSynonym;
 use Illuminate\Support\Collection;
 
 /**

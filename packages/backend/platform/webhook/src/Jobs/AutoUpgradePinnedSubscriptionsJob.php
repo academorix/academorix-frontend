@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Jobs;
+namespace Stackra\Webhook\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

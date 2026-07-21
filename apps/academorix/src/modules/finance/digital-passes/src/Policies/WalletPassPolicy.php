@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\DigitalPasses\Policies;
+namespace Stackra\DigitalPasses\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\DigitalPasses\Models\WalletPass;
+use Stackra\User\Models\User;
+use Stackra\DigitalPasses\Models\WalletPass;
 
 /**
- * Authorization policy for {@see \Academorix\DigitalPasses\Models\WalletPass}.
+ * Authorization policy for {@see \Stackra\DigitalPasses\Models\WalletPass}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

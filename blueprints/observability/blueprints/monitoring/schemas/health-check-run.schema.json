@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/monitoring/schemas/health-check-run",
+  "id": "stackra://modules/monitoring/schemas/health-check-run",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "HealthCheckRun",
@@ -13,10 +13,10 @@
     "keyType": "string",
     "keyPrefix": "hcr_",
     "incrementing": false,
-    "model": "Academorix\\Observability\\Monitoring\\Models\\HealthCheckRun",
-    "interface": "Academorix\\Observability\\Monitoring\\Contracts\\Data\\HealthCheckRunInterface",
+    "model": "Stackra\\Observability\\Monitoring\\Models\\HealthCheckRun",
+    "interface": "Stackra\\Observability\\Monitoring\\Contracts\\Data\\HealthCheckRunInterface",
     "implements": [
-      "Academorix\\Observability\\Monitoring\\Contracts\\Data\\HealthCheckRunInterface"
+      "Stackra\\Observability\\Monitoring\\Contracts\\Data\\HealthCheckRunInterface"
     ],
     "traits": [
       "HasFactory",

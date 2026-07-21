@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/foundation/events",
+  "id": "stackra://modules/foundation/events",
   "$version": 1,
   "title": "foundation — domain events",
   "description": "Five framework-level events. All fire synchronously (NOT ShouldDispatchAfterCommit) because they carry the boot + module + config + health signals that downstream listeners MUST observe in order. Listeners subscribe via each module's own listeners.json.",
@@ -7,7 +7,7 @@
   "events": [
     {
       "name": "ApplicationBooted",
-      "class": "Academorix\\Foundation\\Events\\ApplicationBooted",
+      "class": "Stackra\\Foundation\\Events\\ApplicationBooted",
       "when": "Fires after Laravel's service-provider chain completes + every ModuleServiceProvider has booted + the ModuleRegistry is fully resolved. Signal to downstream listeners that the platform is ready to serve traffic.",
       "afterCommit": false,
       "payload": {
@@ -19,7 +19,7 @@
     },
     {
       "name": "ModuleDiscovered",
-      "class": "Academorix\\Foundation\\Events\\ModuleDiscovered",
+      "class": "Stackra\\Foundation\\Events\\ModuleDiscovered",
       "when": "Fires per-module during ModuleRegistry's discovery pass, BEFORE the module's service provider boots. Used by observability + audit modules to record which modules loaded in which order.",
       "afterCommit": false,
       "payload": {
@@ -31,7 +31,7 @@
     },
     {
       "name": "ModuleBooted",
-      "class": "Academorix\\Foundation\\Events\\ModuleBooted",
+      "class": "Stackra\\Foundation\\Events\\ModuleBooted",
       "when": "Fires per-module AFTER the module's service provider register + boot phases complete + all contributions (traits, middleware, events, hooks, ...) are registered. Downstream modules can subscribe to know when a dependency finished booting (rare — usually the DI container handles this).",
       "afterCommit": false,
       "payload": {
@@ -42,7 +42,7 @@
     },
     {
       "name": "HealthProbeFailed",
-      "class": "Academorix\\Foundation\\Events\\HealthProbeFailed",
+      "class": "Stackra\\Foundation\\Events\\HealthProbeFailed",
       "when": "Fires when a health probe returns a failure status. Downstream observability + alerting modules subscribe to route these to the correct channels (PagerDuty for critical failures, Slack for non-critical).",
       "afterCommit": false,
       "payload": {
@@ -57,7 +57,7 @@
     },
     {
       "name": "ConfigReloaded",
-      "class": "Academorix\\Foundation\\Events\\ConfigReloaded",
+      "class": "Stackra\\Foundation\\Events\\ConfigReloaded",
       "when": "Fires when config is hot-reloaded via `POST /api/v1/platform/config/reload` OR when the config cache is regenerated on deploy. Modules with cached config drop their caches on receipt.",
       "afterCommit": false,
       "payload": {

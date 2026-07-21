@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Contracts\Repositories;
+namespace Stackra\Integrations\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Integrations\Models\AppInstallation}.
+ * Repository contract for {@see Stackra\Integrations\Models\AppInstallation}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `AppInstallationRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Integrations\Models\AppInstallation>
+ * @extends RepositoryInterface<\Stackra\Integrations\Models\AppInstallation>
  *
  * @category Integrations
  *

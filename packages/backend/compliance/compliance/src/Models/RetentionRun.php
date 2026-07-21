@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Models;
+namespace Stackra\Compliance\Models;
 
-use Academorix\Compliance\Contracts\Data\RetentionRunInterface;
-use Academorix\Compliance\Database\Factories\RetentionRunFactory;
-use Academorix\Compliance\Observers\RetentionRunObserver;
-use Academorix\Compliance\Policies\RetentionRunPolicy;
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Compliance\Contracts\Data\RetentionRunInterface;
+use Stackra\Compliance\Database\Factories\RetentionRunFactory;
+use Stackra\Compliance\Observers\RetentionRunObserver;
+use Stackra\Compliance\Policies\RetentionRunPolicy;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

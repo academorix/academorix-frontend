@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Console;
+namespace Stackra\Transfer\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Transfer\Jobs\PruneXferArtifactsJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Transfer\Jobs\PruneXferArtifactsJob;
 
 /**
  * `php artisan transfer:prune` — dispatch the retention prune.

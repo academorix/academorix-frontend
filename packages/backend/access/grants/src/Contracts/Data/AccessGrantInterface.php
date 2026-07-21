@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Grants\Contracts\Data;
+namespace Stackra\Grants\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Grants\Models\AccessGrant;
+use Stackra\Grants\Models\AccessGrant;
 
 /**
  * Table shape for the `access_grants` table.

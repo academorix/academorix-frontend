@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Rules;
+namespace Stackra\Application\Rules;
 
-use Academorix\Application\Contracts\Data\BusinessTypeInterface;
-use Academorix\Application\Contracts\Repositories\BusinessTypeRepositoryInterface;
-use Academorix\Application\Enums\BusinessTypeEnum;
+use Stackra\Application\Contracts\Data\BusinessTypeInterface;
+use Stackra\Application\Contracts\Repositories\BusinessTypeRepositoryInterface;
+use Stackra\Application\Enums\BusinessTypeEnum;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 

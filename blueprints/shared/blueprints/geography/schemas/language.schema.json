@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geography/schemas/language",
+  "id": "stackra://modules/geography/schemas/language",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Language",
@@ -19,9 +19,9 @@
     "keyType": "int",
     "incrementing": true,
     "timestamps": false,
-    "model": "Academorix\\Geography\\Models\\Language",
-    "interface": "Academorix\\Geography\\Contracts\\Data\\LanguageInterface",
-    "implements": ["Academorix\\Geography\\Contracts\\Data\\LanguageInterface"],
+    "model": "Stackra\\Geography\\Models\\Language",
+    "interface": "Stackra\\Geography\\Contracts\\Data\\LanguageInterface",
+    "implements": ["Stackra\\Geography\\Contracts\\Data\\LanguageInterface"],
     "traits": ["HasFactory", "Filterable"],
     "observers": ["LanguageObserver"]
   },
@@ -70,7 +70,7 @@
     "envelope": "spatie-data",
     "wrap": "data",
     "mapper": "SnakeCaseMapper",
-    "resource_class": "Academorix\\Geography\\Data\\Resources\\LanguageResourceData"
+    "resource_class": "Stackra\\Geography\\Data\\Resources\\LanguageResourceData"
   },
   "x-route-binding": {
     "strategy": "resolveRouteBinding",

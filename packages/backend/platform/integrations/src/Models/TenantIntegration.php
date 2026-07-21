@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Models;
+namespace Stackra\Integrations\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Integrations\Casts\IntegrationConfig;
-use Academorix\Integrations\Contracts\Data\TenantIntegrationInterface;
-use Academorix\Integrations\Database\Factories\TenantIntegrationFactory;
-use Academorix\Integrations\Enums\IntegrationKind;
-use Academorix\Integrations\Enums\IntegrationSyncStatus;
-use Academorix\Integrations\Observers\TenantIntegrationObserver;
-use Academorix\Integrations\Policies\TenantIntegrationPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Integrations\Casts\IntegrationConfig;
+use Stackra\Integrations\Contracts\Data\TenantIntegrationInterface;
+use Stackra\Integrations\Database\Factories\TenantIntegrationFactory;
+use Stackra\Integrations\Enums\IntegrationKind;
+use Stackra\Integrations\Enums\IntegrationSyncStatus;
+use Stackra\Integrations\Observers\TenantIntegrationObserver;
+use Stackra\Integrations\Policies\TenantIntegrationPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;

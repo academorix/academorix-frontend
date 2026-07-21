@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-in-app/routes",
+  "id": "stackra://modules/notifications-in-app/routes",
   "$version": 1,
   "title": "notifications-in-app \u2014 HTTP routes",
   "description": "Tenant-facing REST surface for the in-app notification bell UX. List / mark-read / dismiss / mark-all-read. All routes are Sanctum-authenticated + tenant-scoped via the tenancy:resolve middleware. The transport itself pushes over WebSockets (see broadcasts.json); these routes serve state hydration + user actions.",
@@ -20,42 +20,42 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\NotificationsInApp\\Http\\Controllers\\ListDeliveriesController@index",
+          "controller": "Stackra\\NotificationsInApp\\Http\\Controllers\\ListDeliveriesController@index",
           "permission": "notifications.viewOwn",
           "description": "List the caller's in-app deliveries. Supports spatie/laravel-query-builder filters: is_read, is_dismissed, category_slug, priority. Sorted by created_at desc by default."
         },
         {
           "method": "GET",
           "path": "/unread-count",
-          "controller": "Academorix\\NotificationsInApp\\Http\\Controllers\\UnreadCountController@show",
+          "controller": "Stackra\\NotificationsInApp\\Http\\Controllers\\UnreadCountController@show",
           "permission": "notifications.viewOwn",
           "description": "Cheap endpoint for the badge \u2014 returns { data: { unread_count: 12 } }. Cached in Redis per (tenant_id, user_id) for 30s; invalidated on read/dismiss events."
         },
         {
           "method": "POST",
           "path": "/{delivery}/mark-read",
-          "controller": "Academorix\\NotificationsInApp\\Http\\Controllers\\MarkReadController@store",
+          "controller": "Stackra\\NotificationsInApp\\Http\\Controllers\\MarkReadController@store",
           "permission": "notifications.viewOwn",
           "description": "Marks the delivery as read for the caller. Idempotent \u2014 second call is a no-op that still returns 200."
         },
         {
           "method": "POST",
           "path": "/mark-all-read",
-          "controller": "Academorix\\NotificationsInApp\\Http\\Controllers\\MarkAllReadController@store",
+          "controller": "Stackra\\NotificationsInApp\\Http\\Controllers\\MarkAllReadController@store",
           "permission": "notifications.viewOwn",
           "description": "Bulk mark-read for every unread in-app delivery targeting the caller in the current tenant. Async-flushed via BulkMarkReadJob when count > 500."
         },
         {
           "method": "POST",
           "path": "/{delivery}/dismiss",
-          "controller": "Academorix\\NotificationsInApp\\Http\\Controllers\\DismissController@store",
+          "controller": "Stackra\\NotificationsInApp\\Http\\Controllers\\DismissController@store",
           "permission": "notifications.viewOwn",
           "description": "Dismisses the delivery from the caller's bell UI. Sets dismissed_at; distinct from delete \u2014 the delivery row remains for audit."
         },
         {
           "method": "GET",
           "path": "/preferences/summary",
-          "controller": "Academorix\\NotificationsInApp\\Http\\Controllers\\PreferencesSummaryController@show",
+          "controller": "Stackra\\NotificationsInApp\\Http\\Controllers\\PreferencesSummaryController@show",
           "permission": "notifications.viewOwn",
           "description": "Returns which categories the caller has in-app delivery enabled for. Read-only; write path lives on the parent notifications module."
         }

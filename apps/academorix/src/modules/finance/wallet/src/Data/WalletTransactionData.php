@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Wallet\Data;
+namespace Stackra\Wallet\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Server-side output DTO for {@see \Academorix\Wallet\Models\WalletTransaction}.
+ * Server-side output DTO for {@see \Stackra\Wallet\Models\WalletTransaction}.
  *
  * Consumed by controllers + services on the SERVER side. This is
  * distinct from the wire SDK's DTO (which sits under
- * `Academorix\FinanceWalletSdk\Data`) — the wire DTO travels across the HTTP
+ * `Stackra\FinanceWalletSdk\Data`) — the wire DTO travels across the HTTP
  * boundary; this one stays in-process.
  *
  * @category Wallet

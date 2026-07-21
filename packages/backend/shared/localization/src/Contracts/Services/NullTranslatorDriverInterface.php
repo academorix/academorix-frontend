@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Contracts\Services;
+namespace Stackra\Localization\Contracts\Services;
 
-use Academorix\Localization\Services\NullTranslatorDriver;
+use Stackra\Localization\Services\NullTranslatorDriver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

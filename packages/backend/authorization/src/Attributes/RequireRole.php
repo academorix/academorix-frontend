@@ -5,7 +5,7 @@
  *
  * @description
  * `#[RequireRole]` — declarative route-level ROLE gate. The
- * {@see \Academorix\Authorization\Middleware\AuthorizeControllerAction}
+ * {@see \Stackra\Authorization\Middleware\AuthorizeControllerAction}
  * middleware inspects the resolved controller class + action
  * method for this attribute and enforces its checks BEFORE the
  * controller body runs.
@@ -43,13 +43,13 @@
  * their own user model as long as it implements the same method
  * signature.
  *
- * @see \Academorix\Authorization\Middleware\AuthorizeControllerAction Enforcement point.
+ * @see \Stackra\Authorization\Middleware\AuthorizeControllerAction Enforcement point.
  * @see RequireAnyRole                                                 OR semantics variant.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Authorization\Attributes;
+namespace Stackra\Authorization\Attributes;
 
 use Attribute;
 use BackedEnum;

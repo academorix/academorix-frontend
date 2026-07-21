@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tenancy/config",
+  "id": "stackra://modules/tenancy/config",
   "$version": 1,
   "title": "tenants — developer configuration",
   "description": "Developer / operator configuration for this module. Mirrors `config/tenants.php` in the Laravel app. Values are STATIC per deploy — mutating them requires a redeploy or a `php artisan config:cache` refresh. Distinct from `settings.json` (which is user-facing and tenant-editable via the dashboard). Every key documented with type, default, env var (when overridable), and secret flag (when the value must be stored in an ENV or Vault, never checked into git).",
@@ -43,7 +43,7 @@
         {
           "path": "tenants.hosts.resolver_class",
           "type": "string",
-          "default": "Academorix\\Tenancy\\Hosts\\HostResolver",
+          "default": "Stackra\\Tenancy\\Hosts\\HostResolver",
           "description": "FQCN of the class that maps a request Host header to (Application, Tenant | null). Swappable for testing."
         }
       ]
@@ -210,13 +210,13 @@
         {
           "path": "tenants.notifications.from_address",
           "type": "email",
-          "default": "no-reply@academorix.app",
+          "default": "no-reply@stackra.app",
           "env": "TENANCY_MAIL_FROM"
         },
         {
           "path": "tenants.notifications.support_address",
           "type": "email",
-          "default": "support@academorix.app",
+          "default": "support@stackra.app",
           "env": "TENANCY_SUPPORT_ADDR"
         },
         {

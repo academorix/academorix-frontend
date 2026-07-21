@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Middleware;
+namespace Stackra\Subscription\Middleware;
 
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Subscription\Contracts\Data\SubscriptionInterface;
-use Academorix\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
-use Academorix\Subscription\Enums\SubscriptionState;
-use Academorix\Subscription\Exceptions\SubscriptionActiveRequiredException;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Subscription\Contracts\Data\SubscriptionInterface;
+use Stackra\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
+use Stackra\Subscription\Enums\SubscriptionState;
+use Stackra\Subscription\Exceptions\SubscriptionActiveRequiredException;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -78,7 +78,7 @@ final class EnforceActiveSubscription
     /**
      * Normalise a subscription's state to its scalar backing value.
      */
-    private function stateValue(\Academorix\Subscription\Models\Subscription $subscription): string
+    private function stateValue(\Stackra\Subscription\Models\Subscription $subscription): string
     {
         $state = $subscription->{SubscriptionInterface::ATTR_STATE};
 

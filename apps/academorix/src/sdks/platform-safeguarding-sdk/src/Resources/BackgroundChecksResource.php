@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformSafeguardingSdk\Resources;
+namespace Stackra\PlatformSafeguardingSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\PlatformSafeguardingSdk\Data\BackgroundCheckData;
-use Academorix\PlatformSafeguardingSdk\Requests\BackgroundChecks\CreateBackgroundCheckRequest;
-use Academorix\PlatformSafeguardingSdk\Requests\BackgroundChecks\ListBackgroundChecksAdminRequest;
-use Academorix\PlatformSafeguardingSdk\Requests\BackgroundChecks\ListBackgroundChecksRequest;
-use Academorix\PlatformSafeguardingSdk\Requests\BackgroundChecks\ShowBackgroundCheckRequest;
-use Academorix\PlatformSafeguardingSdk\Requests\BackgroundChecks\UpdateBackgroundCheckRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\PlatformSafeguardingSdk\Data\BackgroundCheckData;
+use Stackra\PlatformSafeguardingSdk\Requests\BackgroundChecks\CreateBackgroundCheckRequest;
+use Stackra\PlatformSafeguardingSdk\Requests\BackgroundChecks\ListBackgroundChecksAdminRequest;
+use Stackra\PlatformSafeguardingSdk\Requests\BackgroundChecks\ListBackgroundChecksRequest;
+use Stackra\PlatformSafeguardingSdk\Requests\BackgroundChecks\ShowBackgroundCheckRequest;
+use Stackra\PlatformSafeguardingSdk\Requests\BackgroundChecks\UpdateBackgroundCheckRequest;
 use Saloon\Http\Response;
 
 /**
@@ -58,7 +58,7 @@ final readonly class BackgroundChecksResource
      *
      * @return BackgroundCheckData
      */
-    public function create(\Academorix\PlatformSafeguardingSdk\Payloads\BackgroundChecks\CreateBackgroundCheckPayload $payload, ?string $idempotencyKey = null): BackgroundCheckData
+    public function create(\Stackra\PlatformSafeguardingSdk\Payloads\BackgroundChecks\CreateBackgroundCheckPayload $payload, ?string $idempotencyKey = null): BackgroundCheckData
     {
         return $this->connector->send(new CreateBackgroundCheckRequest($payload, $idempotencyKey))->dto();
     }
@@ -86,7 +86,7 @@ final readonly class BackgroundChecksResource
      *
      * @return BackgroundCheckData
      */
-    public function update(string $check, \Academorix\PlatformSafeguardingSdk\Payloads\BackgroundChecks\UpdateBackgroundCheckPayload $payload, ?string $idempotencyKey = null): BackgroundCheckData
+    public function update(string $check, \Stackra\PlatformSafeguardingSdk\Payloads\BackgroundChecks\UpdateBackgroundCheckPayload $payload, ?string $idempotencyKey = null): BackgroundCheckData
     {
         return $this->connector->send(new UpdateBackgroundCheckRequest($check, $payload, $idempotencyKey))->dto();
     }

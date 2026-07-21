@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Services;
+namespace Stackra\Localization\Services;
 
-use Academorix\Localization\Contracts\Services\LocaleResolutionStrategyRegistryInterface;
-use Academorix\Localization\Contracts\Services\LocaleResolverInterface;
-use Academorix\Localization\Data\LocaleResolutionResultData;
-use Academorix\Localization\Enums\LocaleResolutionSource;
+use Stackra\Localization\Contracts\Services\LocaleResolutionStrategyRegistryInterface;
+use Stackra\Localization\Contracts\Services\LocaleResolverInterface;
+use Stackra\Localization\Data\LocaleResolutionResultData;
+use Stackra\Localization\Enums\LocaleResolutionSource;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Http\Request;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Refund\Models\Refund;
+use Stackra\Refund\Models\Refund;
 
 it('is a placeholder — replace with actual Refund unit tests', function (): void {
     expect(Refund::class)->toBeString();

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transaction/macros",
+  "id": "stackra://modules/transaction/macros",
   "$version": 1,
   "title": "transaction — published macros",
   "description": "The transaction module publishes ZERO framework macros. Every consumer touches the transaction surface via injected services (TransactionRecorder, TransactionReverser, AccountBalanceCalculator) or the domain-event listener path (invoice.paid → RecordInvoicePaidTransactionJob). No middleware attaches per-request state that consumers would surface as a Request macro.",

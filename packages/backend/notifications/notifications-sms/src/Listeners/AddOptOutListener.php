@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Listeners;
+namespace Stackra\Notifications\Sms\Listeners;
 
-use Academorix\Notifications\Sms\Enums\SmsOptOutReason;
-use Academorix\Notifications\Sms\Events\SmsUndeliverable;
-use Academorix\Notifications\Sms\Jobs\RecordSmsOptOutJob;
+use Stackra\Notifications\Sms\Enums\SmsOptOutReason;
+use Stackra\Notifications\Sms\Events\SmsUndeliverable;
+use Stackra\Notifications\Sms\Jobs\RecordSmsOptOutJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 /**

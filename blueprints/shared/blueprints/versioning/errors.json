@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/versioning/errors",
+  "id": "stackra://modules/versioning/errors",
   "$version": 1,
   "title": "versioning \u2014 error codes",
   "description": "Module-scoped errors. Namespace: VERSIONING_.",

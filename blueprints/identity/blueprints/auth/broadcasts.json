@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/auth/broadcasts",
+  "id": "stackra://modules/auth/broadcasts",
   "$version": 1,
   "title": "auth \u2014 broadcast channels",
   "description": "Auth publishes NO broadcast channels. Every auth-lifecycle event is either fire-and-forget or routed through notifications / activity / audit. Real-time push of session-revocation to open browser tabs would be nice-to-have but the correct pattern is: session revocation invalidates the PAT \u2192 the SPA's next request returns 401 \u2014 no broadcast required.",

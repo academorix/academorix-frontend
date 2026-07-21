@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Reporting\Contracts\Repositories;
+namespace Stackra\Reporting\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Reporting\Models\ReportRun}.
+ * Repository contract for {@see Stackra\Reporting\Models\ReportRun}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `ReportRunRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Reporting\Models\ReportRun>
+ * @extends RepositoryInterface<\Stackra\Reporting\Models\ReportRun>
  *
  * @category Reporting
  *

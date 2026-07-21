@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/schemas/notification-template",
+  "id": "stackra://modules/notifications/schemas/notification-template",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "NotificationTemplate",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "tpl_",
     "incrementing": false,
-    "model": "Academorix\\Notifications\\Models\\NotificationTemplate",
-    "interface": "Academorix\\Notifications\\Contracts\\Data\\NotificationTemplateInterface",
-    "implements": ["Academorix\\Notifications\\Contracts\\Data\\NotificationTemplateInterface"],
+    "model": "Stackra\\Notifications\\Models\\NotificationTemplate",
+    "interface": "Stackra\\Notifications\\Contracts\\Data\\NotificationTemplateInterface",
+    "implements": ["Stackra\\Notifications\\Contracts\\Data\\NotificationTemplateInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

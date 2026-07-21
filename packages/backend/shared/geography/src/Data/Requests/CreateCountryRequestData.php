@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Data\Requests;
+namespace Stackra\Geography\Data\Requests;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\In;

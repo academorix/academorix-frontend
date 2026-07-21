@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Exceptions;
+namespace Stackra\Audit\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a lookup expects an audit row but none is bound.
@@ -19,7 +19,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AuditNotFoundException extends AcademorixException
+final class AuditNotFoundException extends StackraException
 {
     public const CODE = 'audit.not_found';
 

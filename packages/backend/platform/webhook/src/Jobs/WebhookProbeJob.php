@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Jobs;
+namespace Stackra\Webhook\Jobs;
 
-use Academorix\Webhook\Contracts\Data\WebhookSubscriptionInterface;
-use Academorix\Webhook\Contracts\Repositories\WebhookSubscriptionRepositoryInterface;
-use Academorix\Webhook\Enums\WebhookProbeStatus;
-use Academorix\Webhook\Events\WebhookProbeFailed;
+use Stackra\Webhook\Contracts\Data\WebhookSubscriptionInterface;
+use Stackra\Webhook\Contracts\Repositories\WebhookSubscriptionRepositoryInterface;
+use Stackra\Webhook\Enums\WebhookProbeStatus;
+use Stackra\Webhook\Events\WebhookProbeFailed;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

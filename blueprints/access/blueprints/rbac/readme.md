@@ -59,7 +59,7 @@ spec, plus one composed identity:
 | Principal             | Guard            | Tenancy?               | Application binding                          | Notes                                                 |
 | --------------------- | ---------------- | ---------------------- | -------------------------------------------- | ----------------------------------------------------- |
 | `User`                | `sanctum`        | tenant-scoped          | per-Application (via `users.application_id`) | The per-Application projection of an Identity         |
-| `PlatformUser`        | `platform_admin` | cross-tenant           | cross-Application                            | Academorix staff — support, security, compliance      |
+| `PlatformUser`        | `platform_admin` | cross-tenant           | cross-Application                            | Stackra staff — support, security, compliance      |
 | `ServiceAccount`      | `sanctum`        | tenant-scoped OR cross | per-Application OR cross                     | Machine credentials for inter-service calls           |
 | `Identity` (indirect) | n/a              | n/a                    | n/a                                          | Never holds roles directly — Users on the Identity do |
 
@@ -137,7 +137,7 @@ violation).
 
 ## 5. System roles vs custom roles
 
-**System roles** (`is_system = true`) are shipped by Academorix and provisioned
+**System roles** (`is_system = true`) are shipped by Stackra and provisioned
 per business_type on `TenantProvisioned`. Examples:
 
 - Sports academy: `owner`, `admin`, `head_coach`, `coach`, `receptionist`,
@@ -181,7 +181,7 @@ tier, `expires_at` writes are refused at the observer layer.
 
 ## 7. The `role_definitions` metadata layer
 
-Distinct from spatie's `roles` table. `role_definitions` holds the Academorix
+Distinct from spatie's `roles` table. `role_definitions` holds the Stackra
 metadata that spatie doesn't model:
 
 - `business_type_slugs` — which business_types default-provision this role
@@ -252,7 +252,7 @@ Two layers of config resolve at request time:
 ```
 Framework defaults (config/rbac.php)
     ↓ overridden by
-Tenant settings (via academorix/settings for TENANT-configurable keys —
+Tenant settings (via stackra/settings for TENANT-configurable keys —
                  e.g. auto-seed-defaults on provisioning, cache TTL)
 
 BLOCKED BY:

@@ -4,7 +4,7 @@
  * @file modules/shared/audit/config/audit.php
  *
  * @description
- * Runtime knobs for the `academorix/audit` module. Merged under the
+ * Runtime knobs for the `stackra/audit` module. Merged under the
  * `audit.*` key by the base ServiceProvider's LoadsResources concern.
  *
  * Overrides on top of owen-it/laravel-auditing's own `config/audit.php`
@@ -91,7 +91,7 @@ return [
     */
     'cold' => [
         'driver'            => env('AUDIT_COLD_DRIVER', 's3'),
-        'bucket'            => env('AUDIT_COLD_BUCKET', 'academorix-audit-cold'),
+        'bucket'            => env('AUDIT_COLD_BUCKET', 'stackra-audit-cold'),
         'rotate_batch_size' => env('AUDIT_COLD_ROTATE_BATCH_SIZE', 1000),
         'object_lock_mode'  => env('AUDIT_COLD_OBJECT_LOCK_MODE', 'COMPLIANCE'),
     ],

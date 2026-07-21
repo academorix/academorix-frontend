@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Contracts\Services;
+namespace Stackra\Storage\Contracts\Services;
 
-use Academorix\Storage\Enums\FileKind;
-use Academorix\Storage\Services\DefaultMimeTypeAllowlist;
+use Stackra\Storage\Enums\FileKind;
+use Stackra\Storage\Services\DefaultMimeTypeAllowlist;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -14,7 +14,7 @@ use Illuminate\Container\Attributes\Bind;
  * Reads the `#[FileKind]` recipe from
  * {@see FileKindRegistryInterface} and enforces the per-kind
  * allow-list on every upload. Used by
- * {@see \Academorix\Storage\Middleware\StorageMimeValidate} +
+ * {@see \Stackra\Storage\Middleware\StorageMimeValidate} +
  * the `ValidMimeForKind` validation rule.
  *
  * `#[Bind(DefaultMimeTypeAllowlist::class)]` — Pattern A per

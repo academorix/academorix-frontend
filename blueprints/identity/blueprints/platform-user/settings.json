@@ -1,16 +1,16 @@
 {
-  "id": "academorix://modules/platform-user/settings",
+  "id": "stackra://modules/platform-user/settings",
   "$version": 1,
   "title": "platform-user \u2014 settings",
-  "description": "Platform-plane settings. Distinct from the tenant plane's settings substrate \u2014 there is NO per-tenant override here. All settings apply Academorix-wide + are edited only by super_admin via the platform-admin UI. Values persist through the same `settings` module infrastructure the tenant plane uses, but the `scope` on every entry is `platform` (not `tenant`).",
+  "description": "Platform-plane settings. Distinct from the tenant plane's settings substrate \u2014 there is NO per-tenant override here. All settings apply Stackra-wide + are edited only by super_admin via the platform-admin UI. Values persist through the same `settings` module infrastructure the tenant plane uses, but the `scope` on every entry is `platform` (not `tenant`).",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "platform_user",
-      "class": "Academorix\\PlatformUser\\Settings\\PlatformUserSettings",
+      "class": "Stackra\\PlatformUser\\Settings\\PlatformUserSettings",
       "label": "Platform staff",
-      "description": "Company-wide policies for Academorix internal staff management.",
+      "description": "Company-wide policies for Stackra internal staff management.",
       "icon": "user-group",
       "scope": "platform",
       "public": false,
@@ -173,7 +173,7 @@
     }
   ],
   "notes": [
-    "There is NO tenant-facing settings group. Platform staff policies are Academorix-wide.",
+    "There is NO tenant-facing settings group. Platform staff policies are Stackra-wide.",
     "There is NO user-facing settings group. A PlatformUser's OWN preferences are captured on the PlatformProfile row (timezone, display_name, avatar) \u2014 accessible via the /platform-profiles/me self-service endpoint, not via the settings module.",
     "Every setting mutation writes an audit row via the `platform.audit` middleware. Some (offboarding.retention_hold_days, mfa.require_on_every_request) additionally require a co-signer / incident-commander sign-off surfaced as an approval workflow on the settings-mutation endpoint."
   ]

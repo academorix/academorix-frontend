@@ -1,4 +1,4 @@
-# @academorix/config-eslint
+# @stackra/config-eslint
 
 Shared ESLint flat config presets. Every `eslint.config.mjs` in the monorepo
 starts from one of these:
@@ -13,7 +13,7 @@ starts from one of these:
 
 ```js
 // apps/dashboard/eslint.config.mjs
-import viteApp from "@academorix/config-eslint/vite-app";
+import viteApp from "@stackra/config-eslint/vite-app";
 
 export default [
   ...viteApp,

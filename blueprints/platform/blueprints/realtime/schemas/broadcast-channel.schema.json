@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/realtime/schemas/broadcast-channel",
+  "id": "stackra://modules/realtime/schemas/broadcast-channel",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "BroadcastChannel",

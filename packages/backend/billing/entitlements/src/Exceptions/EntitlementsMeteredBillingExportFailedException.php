@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Exceptions;
+namespace Stackra\Entitlements\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * ExportUsageForBillingJob failed against Stripe/Paddle.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class EntitlementsMeteredBillingExportFailedException extends AcademorixException
+final class EntitlementsMeteredBillingExportFailedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

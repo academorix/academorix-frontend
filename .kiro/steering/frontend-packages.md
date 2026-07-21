@@ -11,35 +11,35 @@ fileMatchPattern: "packages/framework/**/{composer.json,README.md,src/**/*.php}"
 > below is enforceable; change the rule means amending the ADR.
 
 Every backend framework package under `packages/framework/*` gets a matching
-TypeScript + React package at `academorix-frontend/packages/<name>/`. The
+TypeScript + React package at `stackra-frontend/packages/<name>/`. The
 frontend package is created **after** the backend package is diagnostics-clean
 and its SDK sibling ships stable wire-visible DTOs. Never colocate a `/react`
 folder inside a backend package.
 
-Reference implementation: `academorix/feature-flags` (backend) ↔
-`@academorix/feature-flags` (frontend).
+Reference implementation: `stackra/feature-flags` (backend) ↔
+`@stackra/feature-flags` (frontend).
 
 ## 1. Naming and location
 
 | Backend                            | Frontend                                     |
 | ---------------------------------- | -------------------------------------------- |
-| Composer: `academorix/<name>`      | npm: `@academorix/<name>`                    |
-| Path: `packages/framework/<name>/` | Path: `academorix-frontend/packages/<name>/` |
-| PHP namespace: `Academorix\<Name>` | TS exports: `@academorix/<name>` barrel      |
+| Composer: `stackra/<name>`      | npm: `@stackra/<name>`                    |
+| Path: `packages/framework/<name>/` | Path: `stackra-frontend/packages/<name>/` |
+| PHP namespace: `Stackra\<Name>` | TS exports: `@stackra/<name>` barrel      |
 | SDK sibling: `sdk/` (Saloon)       | Consumer of that SDK: this frontend package  |
 
 Directory name matches on both sides (kebab-case). Register the package in
-`academorix-frontend/pnpm-workspace.yaml` under the `packages: - "packages/*"`
+`stackra-frontend/pnpm-workspace.yaml` under the `packages: - "packages/*"`
 glob — no config change needed for a new package as long as it lives at the top
 level of `packages/`.
 
 ## 2. Canonical file structure
 
 ```
-academorix-frontend/packages/<name>/
-├── package.json                  ← "@academorix/<name>"
+stackra-frontend/packages/<name>/
+├── package.json                  ← "@stackra/<name>"
 ├── tsconfig.json                 ← extends monorepo tsconfig.base.json
-├── vitest.config.ts              ← extends @academorix/testing/preset
+├── vitest.config.ts              ← extends @stackra/testing/preset
 ├── README.md
 ├── src/
 │   ├── index.ts                  ← public API barrel
@@ -187,11 +187,11 @@ Every consumer-facing package ships a `testing/` module:
   implementation for consumer tests
 - `mockApi.ts` — MSW handlers or a plain object mock
 
-Downstream apps import from `@academorix/<name>/testing`:
+Downstream apps import from `@stackra/<name>/testing`:
 
 ```typescript
 // consumer app test
-import { TestFeatureFlagsProvider } from '@academorix/feature-flags/testing';
+import { TestFeatureFlagsProvider } from '@stackra/feature-flags/testing';
 
 render(
   <TestFeatureFlagsProvider flags={{ 'billing.new_flow': true }}>
@@ -222,7 +222,7 @@ tree-shakes out of production bundles.
 
 | Anti-pattern                                             | Correct                                                                   |
 | -------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `/react` folder inside a backend package                 | Frontend package at `academorix-frontend/packages/<name>/`                |
+| `/react` folder inside a backend package                 | Frontend package at `stackra-frontend/packages/<name>/`                |
 | TypeScript `enum {}`                                     | `const {} as const` + literal-union type                                  |
 | `fetch()` per `useFeature()` call                        | Read from context populated by boot payload                               |
 | Custom design system components                          | Compose `@heroui/react` primitives                                        |
@@ -230,7 +230,7 @@ tree-shakes out of production bundles.
 | Hand-syncing types across 3+ packages                    | OpenAPI generation via Scramble                                           |
 | Query key strings                                        | Typed query-key factories (`featureFlagsKeys.override(id)`)               |
 | Mutation without invalidation                            | Every mutation invalidates its matching query key                         |
-| Ad-hoc mocks in downstream tests                         | Import `Test<Name>Provider` + `mockApi` from `@academorix/<name>/testing` |
+| Ad-hoc mocks in downstream tests                         | Import `Test<Name>Provider` + `mockApi` from `@stackra/<name>/testing` |
 | Frontend algorithm without a parity test                 | Property test that snapshots backend outputs                              |
 
 ## 12. Package.json conventions
@@ -263,7 +263,7 @@ docblocks + focused prose in class docblocks).
 
 ## 14. File naming and layout conventions
 
-Verified against `academorix-frontend/packages/ui/src/react/**`. Every new
+Verified against `stackra-frontend/packages/ui/src/react/**`. Every new
 frontend package must match this convention exactly. Reference files:
 
 - Component: `packages/ui/src/react/components/pin-lock/pin-lock.component.tsx`
@@ -327,7 +327,7 @@ utilities/rollout-hasher/
 
 Single-file exports still get their own folder — the `index.ts` barrel is the
 public boundary. That keeps consumer imports insulated from filename changes
-(`import { useFeature } from '@academorix/feature-flags'`).
+(`import { useFeature } from '@stackra/feature-flags'`).
 
 ### 14.3 Folder names (plural at the collection level)
 
@@ -368,7 +368,7 @@ suffix without the prefix (`FeatureGateProps`, `PinLockProps`).
   import { FeatureGate } from "@/components/feature-gate";
 
   // ✅ package import (top-level barrel)
-  import { FeatureGate } from "@academorix/feature-flags";
+  import { FeatureGate } from "@stackra/feature-flags";
   ```
 
 ### 14.6 Anti-patterns
@@ -387,7 +387,7 @@ suffix without the prefix (`FeatureGateProps`, `PinLockProps`).
 
 ## 15. Architecture doctrine — DI-first, no refine.dev
 
-Every frontend package builds on `@academorix/container` (a NestJS-compatible DI
+Every frontend package builds on `@stackra/container` (a NestJS-compatible DI
 container living at `packages/foundation/container/`). Never adopt refine.dev,
 Redux Toolkit Query, or another opinion layer on top — the container is the
 answer for wiring services, and React Query is the answer for server-state
@@ -451,7 +451,7 @@ Every domain service is:
 
 ```typescript
 // services/feature-flags/feature-flags.service.token.ts
-import type { InjectionToken } from "@academorix/container";
+import type { InjectionToken } from "@stackra/container";
 import type { IFeatureFlagsService } from "./feature-flags.service.interface";
 
 export const FEATURE_FLAGS_SERVICE: InjectionToken<IFeatureFlagsService> =
@@ -460,7 +460,7 @@ export const FEATURE_FLAGS_SERVICE: InjectionToken<IFeatureFlagsService> =
 
 ```typescript
 // services/feature-flags/feature-flags.service.ts
-import { Injectable, Inject } from "@academorix/container";
+import { Injectable, Inject } from "@stackra/container";
 
 import type { IFeatureFlagsService } from "./feature-flags.service.interface";
 import { FeatureFlagsHttpService } from "../http/feature-flags-http.service";
@@ -486,7 +486,7 @@ Each package ships a `<Name>Module` with a `forRoot(options)` static factory:
 
 ```typescript
 // module/feature-flags.module.ts
-import { Module, type DynamicModule } from "@academorix/container";
+import { Module, type DynamicModule } from "@stackra/container";
 
 import { FeatureFlagsHttpService } from "../services/http/feature-flags-http.service";
 import { FeatureFlagsService } from "../services/feature-flags/feature-flags.service";
@@ -521,7 +521,7 @@ React Query for caching:
 // hooks/use-flags/use-flags.hook.ts
 "use client";
 
-import { useInject } from "@academorix/container/react";
+import { useInject } from "@stackra/container/react";
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 
 import { FEATURE_FLAGS_SERVICE } from "../../services/feature-flags/feature-flags.service.token";
@@ -547,8 +547,8 @@ Test provider swaps the service binding:
 
 ```typescript
 // testing/test-feature-flags-provider/test-feature-flags-provider.provider.tsx
-import { Module, ApplicationFactory } from "@academorix/container";
-import { ContainerProvider } from "@academorix/container/react";
+import { Module, ApplicationFactory } from "@stackra/container";
+import { ContainerProvider } from "@stackra/container/react";
 
 import { FEATURE_FLAGS_SERVICE } from "../../services/feature-flags/feature-flags.service.token";
 import { InMemoryFeatureFlagsService } from "../in-memory-feature-flags.service";
@@ -572,7 +572,7 @@ construction.
 
 ### 15.7 The 15 generic hooks — build once, reuse everywhere
 
-Ship a shared `@academorix/data` package with 15 resource-shape hooks so every
+Ship a shared `@stackra/data` package with 15 resource-shape hooks so every
 domain package composes them instead of reinventing:
 
 | Hook                  | Purpose                             |
@@ -630,7 +630,7 @@ exactly.
   DI.
 
 This is the same layering Angular ships. React inherits it via
-`@academorix/container`.
+`@stackra/container`.
 
 ## 16. Interface file placement — colocated vs central
 
@@ -706,7 +706,7 @@ concerns:
 - ✅ URL path overrides for this domain
 - ✅ Per-package cache TTLs
 - ❌ HTTP concerns (baseUrl, tokenProvider, headers) — those go on
-  `IHttpModuleOptions` in `@academorix/http`
+  `IHttpModuleOptions` in `@stackra/http`
 - ❌ Tenancy concerns — those go on `TenancyModule.forRoot()`
 - ❌ Auth concerns — those go on `AuthModule.forRoot()`
 
@@ -778,7 +778,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createOverrideInputSchema,
   type CreateOverrideInputSchema,
-} from "@academorix/feature-flags/schemas";
+} from "@stackra/feature-flags/schemas";
 
 function OverrideForm() {
   const form = useForm<CreateOverrideInputSchema>({
@@ -791,10 +791,10 @@ function OverrideForm() {
 The `./schemas` entry point is exported from `package.json` so consumers can
 import directly without pulling the full package barrel.
 
-## 20. Shared HTTP package — @academorix/http
+## 20. Shared HTTP package — @stackra/http
 
 Every domain package's `@Injectable()` service **injects `HTTP_SERVICE`** from
-`@academorix/http`. Never ship a per-domain HTTP wrapper.
+`@stackra/http`. Never ship a per-domain HTTP wrapper.
 
 ### 20.1 Wiring order in the root AppModule
 
@@ -822,8 +822,8 @@ class AppModule {}
 ### 20.2 Domain service shape
 
 ```typescript
-import { Injectable, Inject } from "@academorix/container";
-import { HTTP_SERVICE, type IHttpService } from "@academorix/http";
+import { Injectable, Inject } from "@stackra/container";
+import { HTTP_SERVICE, type IHttpService } from "@stackra/http";
 
 @Injectable()
 export class FeatureFlagsService implements IFeatureFlagsService {
@@ -858,7 +858,7 @@ package.
 
 ## 21. Final layout — reference
 
-Verified against `academorix-frontend/packages/feature-flags/`:
+Verified against `stackra-frontend/packages/feature-flags/`:
 
 ```
 src/
@@ -921,16 +921,16 @@ Anti-patterns collected in one place:
 | --------------------------------------------------- | --------------------------------------------- |
 | `src/module/` folder for one file                   | `src/<name>.module.ts` flat                   |
 | `src/query-keys/` folder for one file               | `src/constants/query-keys.constant.ts`        |
-| Per-domain HTTP wrapper                             | Inject `HTTP_SERVICE` from `@academorix/http` |
+| Per-domain HTTP wrapper                             | Inject `HTTP_SERVICE` from `@stackra/http` |
 | Inline `IContextValue` in the context file          | Colocated in the provider's `.interface.ts`   |
 | Central `types/service-contracts.ts`                | `services/<name>/<name>.service.interface.ts` |
 | Hand-declared TS interface duplicating a Zod schema | `type X = z.infer<typeof xSchema>`            |
 | Zod schema for internal domain models               | Plain TS interface — Zod at boundaries only   |
 
-## 22. Shared data hooks — @academorix/data
+## 22. Shared data hooks — @stackra/data
 
 Every domain package with an admin surface (list / one / create / update /
-delete) **consumes `@academorix/data`** instead of shipping bespoke React Query
+delete) **consumes `@stackra/data`** instead of shipping bespoke React Query
 hooks per resource.
 
 ### 22.1 The seam — `IResourceProvider<T>` + `ResourceToken<T>`
@@ -944,12 +944,12 @@ Each resource in a domain package has:
 
 ```typescript
 // src/resources/overrides/overrides-resource.provider.ts
-import { Injectable, Inject } from "@academorix/container";
+import { Injectable, Inject } from "@stackra/container";
 import type {
   IResourceProvider,
   IResourceListParams,
   IResourceListResult,
-} from "@academorix/data";
+} from "@stackra/data";
 
 @Injectable()
 export class OverridesResourceProvider implements IResourceProvider<IFeatureOverrideData> {
@@ -981,10 +981,10 @@ export class OverridesResourceProvider implements IResourceProvider<IFeatureOver
 
 ```typescript
 // src/resources/overrides/overrides-resource.token.ts
-import type { ResourceToken } from "@academorix/data";
+import type { ResourceToken } from "@stackra/data";
 
 export const OVERRIDES_RESOURCE: ResourceToken<IFeatureOverrideData> = Symbol(
-  "@academorix/feature-flags:OVERRIDES_RESOURCE",
+  "@stackra/feature-flags:OVERRIDES_RESOURCE",
 );
 ```
 
@@ -1056,7 +1056,7 @@ For each admin resource in the package:
 5. Update the package README with the new consumption pattern.
 
 The hot-path context hooks (`useFeature`, `useFeatureResolution`, etc.) do NOT
-go through `@academorix/data` — they read from a React context populated by the
+go through `@stackra/data` — they read from a React context populated by the
 boot payload, not through a `ResourceToken`. Keep them separate.
 
 ## 23. Laravel-style config docblocks
@@ -1170,7 +1170,7 @@ export function useOverridesSummary() {
 }
 ```
 
-Never bake domain semantics into `@academorix/data` — the generic hooks stay
+Never bake domain semantics into `@stackra/data` — the generic hooks stay
 generic.
 
 ### 24.4 Anti-patterns

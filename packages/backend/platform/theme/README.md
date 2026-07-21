@@ -1,4 +1,4 @@
-# academorix/theme
+# stackra/theme
 
 Server-side Laravel package for the `theme` module. Auto-generated from the
 blueprint at `modules/platform/blueprints/theme/`.
@@ -46,6 +46,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-platform/theme-sdk` under `sdk/platform-theme-sdk/`. Consumers cross
+`stackra-platform/theme-sdk` under `sdk/platform-theme-sdk/`. Consumers cross
 the service boundary through the SDK; this package is the SERVER-side owner of
 the domain.

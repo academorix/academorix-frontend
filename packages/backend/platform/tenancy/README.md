@@ -1,6 +1,6 @@
-# academorix/tenancy
+# stackra/tenancy
 
-Tenancy domain module for Academorix. Owns the `Tenant` aggregate and its named
+Tenancy domain module for Stackra. Owns the `Tenant` aggregate and its named
 `TenantContact` roster, plus the tenant-scope substrate every downstream module
 composes.
 
@@ -8,13 +8,13 @@ composes.
 
 | Aggregate       | ULID prefix | Purpose                                                                                                                     |
 | --------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `Tenant`        | `ten_`      | Customer of an Academorix Application — carries `application_id` (one of the eight boundary rows per `tenancy-columns.md`). |
+| `Tenant`        | `ten_`      | Customer of an Stackra Application — carries `application_id` (one of the eight boundary rows per `tenancy-columns.md`). |
 | `TenantContact` | `wct_`      | Named contact per role (billing / legal / DPO / technical / security / support / owner). GDPR Art. 30 ROPA compliance.      |
 
 ## Install
 
 ```bash
-composer require academorix/tenancy
+composer require stackra/tenancy
 ```
 
 Auto-registers via `extra.laravel.providers` — no `config/app.php` edits.
@@ -27,7 +27,7 @@ of that blueprint.
 
 ## Contributes
 
-- **Traits** — `Academorix\Tenancy\Concerns\BelongsToTenant` +
+- **Traits** — `Stackra\Tenancy\Concerns\BelongsToTenant` +
   `BelongsToTenantOptional` — applied to every row scoped to a tenant.
 - **Macro** — `tenantable()` on `Blueprint` (via `#[AsDatabaseBlueprint]`) —
   adds `tenant_id` + FK + composite index in one call.
@@ -36,10 +36,10 @@ of that blueprint.
 - **Tenancy hooks** — `LogContextTenantHook` (priority 10),
   `CachePrefixTenantHook` (priority 20) — set per-tenant log context + cache
   prefix on request init.
-- **Permissions** — `Academorix\Tenancy\Enums\TenancyPermission` (four cases:
+- **Permissions** — `Stackra\Tenancy\Enums\TenancyPermission` (four cases:
   `manage_tenants`, `view_tenants`, `tenants.manage_own_settings`,
   `tenants.manage_contacts`).
-- **Roles** — `Academorix\Tenancy\Enums\TenancyRole` (Owner + hierarchy).
+- **Roles** — `Stackra\Tenancy\Enums\TenancyRole` (Owner + hierarchy).
 - **Commands** — `tenancy:archive`, `tenancy:hard-delete-archived`,
   `tenancy:seed-defaults`.
 - **Events** — 11 tenant lifecycle events (`TenantProvisioning`,

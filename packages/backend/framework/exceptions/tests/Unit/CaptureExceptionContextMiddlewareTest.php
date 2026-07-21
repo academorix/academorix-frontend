@@ -5,7 +5,7 @@
  *
  * @description
  * Locks in the request-scoped snapshot behaviour of
- * {@see \Academorix\Exceptions\Middleware\CaptureExceptionContext}.
+ * {@see \Stackra\Exceptions\Middleware\CaptureExceptionContext}.
  *
  * ## Why the snapshot exists
  *
@@ -28,7 +28,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Exceptions\Middleware\CaptureExceptionContext;
+use Stackra\Exceptions\Middleware\CaptureExceptionContext;
 use Illuminate\Auth\GenericUser;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -54,12 +54,12 @@ $run = function (Request $request, Closure $next): ?array {
         // to inspect the container binding afterwards.
     }
 
-    if (! $this->app->bound('academorix.exception_context')) {
+    if (! $this->app->bound('stackra.exception_context')) {
         return null;
     }
 
     /** @var array<string, mixed> $snapshot */
-    $snapshot = $this->app->make('academorix.exception_context');
+    $snapshot = $this->app->make('stackra.exception_context');
 
     return $snapshot;
 };

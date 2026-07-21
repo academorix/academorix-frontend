@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\OfflineSync\Jobs;
+namespace Stackra\OfflineSync\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

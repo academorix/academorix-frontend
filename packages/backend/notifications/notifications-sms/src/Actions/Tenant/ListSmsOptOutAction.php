@@ -4,14 +4,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsSms\Actions\Tenant;
+namespace Stackra\NotificationsSms\Actions\Tenant;
 
-use Academorix\NotificationsSms\Contracts\Repositories\SmsOptOutRepositoryInterface;
-use Academorix\NotificationsSms\Data\SmsOptOutData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\NotificationsSms\Contracts\Repositories\SmsOptOutRepositoryInterface;
+use Stackra\NotificationsSms\Data\SmsOptOutData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\LaravelData\PaginatedDataCollection;
@@ -20,7 +20,7 @@ use Spatie\LaravelData\PaginatedDataCollection;
  * `GET /api/v1/tenant/sms-opt-outs` — list action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category NotificationsSms
@@ -50,7 +50,7 @@ final class ListSmsOptOutAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Academorix\NotificationsSms\Models\SmsOptOut> $page */
+        /** @var LengthAwarePaginator<int, \Stackra\NotificationsSms\Models\SmsOptOut> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

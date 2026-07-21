@@ -1,4 +1,4 @@
-# academorix/transaction
+# stackra/transaction
 
 Server-side Laravel package for the `transaction` module. Auto-generated from
 the blueprint at `modules/finance/blueprints/transaction/`.
@@ -44,6 +44,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-finance/transaction-sdk` under `sdk/finance-transaction-sdk/`.
+`stackra-finance/transaction-sdk` under `sdk/finance-transaction-sdk/`.
 Consumers cross the service boundary through the SDK; this package is the
 SERVER-side owner of the domain.

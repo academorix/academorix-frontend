@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/foundation/features",
+  "id": "stackra://modules/foundation/features",
   "$version": 1,
   "title": "foundation \u2014 feature keys",
   "description": "Empty by design. Foundation is Wave 0 infrastructure \u2014 always on. Every downstream module publishes its own feature keys through the `feature-flag` module. Foundation itself has kill-switches (see feature-flags.json) for individual health probes + middleware, but those are ops-side toggles, not tenant-facing features. Marker file preserved to keep the blueprint layout consistent.",

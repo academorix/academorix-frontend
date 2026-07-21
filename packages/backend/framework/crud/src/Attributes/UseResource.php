@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Crud\Attributes;
+namespace Stackra\Crud\Attributes;
 
 use Attribute;
 
@@ -27,8 +27,8 @@ use function in_array;
  *
  * ## Basic Usage:
  * ```php
- * use Academorix\Crud\Attributes\UseResource;
- * use Academorix\Users\Resources\UserResource;
+ * use Stackra\Crud\Attributes\UseResource;
+ * use Stackra\Users\Resources\UserResource;
  *
  * #[UseResource(UserResource::class)]
  * class UserService extends Service

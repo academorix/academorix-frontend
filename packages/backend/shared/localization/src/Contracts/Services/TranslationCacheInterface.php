@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Contracts\Services;
+namespace Stackra\Localization\Contracts\Services;
 
-use Academorix\Localization\Services\RedisTranslationCache;
+use Stackra\Localization\Services\RedisTranslationCache;
 use Illuminate\Container\Attributes\Bind;
 
 /**
- * Read-through cache in front of the {@see \Academorix\Localization\Models\Translation} table.
+ * Read-through cache in front of the {@see \Stackra\Localization\Models\Translation} table.
  *
  * The decorated Translator asks this contract first — a hit avoids
  * the DB round-trip entirely; a miss loads the row + populates the

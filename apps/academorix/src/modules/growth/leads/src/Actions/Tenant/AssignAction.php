@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Actions\Tenant;
+namespace Stackra\Leads\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Leads\Contracts\Data\LeadActivityInterface;
-use Academorix\Leads\Contracts\Data\LeadInterface;
-use Academorix\Leads\Contracts\Repositories\LeadActivityRepositoryInterface;
-use Academorix\Leads\Contracts\Repositories\LeadRepositoryInterface;
-use Academorix\Leads\Data\LeadData;
-use Academorix\Leads\Data\Requests\AssignLeadRequestData;
-use Academorix\Leads\Enums\LeadActivityType;
-use Academorix\Leads\Enums\LeadsPermission;
-use Academorix\Leads\Events\LeadReassigned;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Leads\Contracts\Data\LeadActivityInterface;
+use Stackra\Leads\Contracts\Data\LeadInterface;
+use Stackra\Leads\Contracts\Repositories\LeadActivityRepositoryInterface;
+use Stackra\Leads\Contracts\Repositories\LeadRepositoryInterface;
+use Stackra\Leads\Data\LeadData;
+use Stackra\Leads\Data\Requests\AssignLeadRequestData;
+use Stackra\Leads\Enums\LeadActivityType;
+use Stackra\Leads\Enums\LeadsPermission;
+use Stackra\Leads\Events\LeadReassigned;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Contracts\Events\Dispatcher;

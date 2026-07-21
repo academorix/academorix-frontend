@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Jobs;
+namespace Stackra\Tenancy\Jobs;
 
-use Academorix\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
-use Academorix\Tenancy\Events\TenantProvisioned;
-use Academorix\Tenancy\Models\Tenant;
+use Stackra\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
+use Stackra\Tenancy\Events\TenantProvisioned;
+use Stackra\Tenancy\Models\Tenant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -20,7 +20,7 @@ use Illuminate\Queue\SerializesModels;
 /**
  * Async provisioning tail.
  *
- * The synchronous {@see \Academorix\Tenancy\Actions\Support\ProvisionTenant}
+ * The synchronous {@see \Stackra\Tenancy\Actions\Support\ProvisionTenant}
  * orchestrator creates the Tenant + owner + default sub-rows in one
  * transaction. This job handles the outbound side (welcome email,
  * DNS record write for the auto-subdomain, search index warm-up).

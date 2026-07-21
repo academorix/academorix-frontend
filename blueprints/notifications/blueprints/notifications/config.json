@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/config",
+  "id": "stackra://modules/notifications/config",
   "$version": 1,
   "title": "notifications core \u2014 developer configuration",
   "description": "Developer / operator configuration. Mirrors `config/notifications.php`. Deploy-static; changes require redeploy + `config:cache`. Per-channel config lives in the respective channel module's config.json.",
@@ -138,7 +138,7 @@
           "path": "notifications.emails.artifact_base_url",
           "type": "string",
           "env": "NOTIFICATIONS_EMAILS_ARTIFACT_BASE_URL",
-          "example": "s3://academorix-emails/",
+          "example": "s3://stackra-emails/",
           "description": "Optional S3 base URL if templates are read from S3 at boot instead of a bundled manifest."
         },
         {

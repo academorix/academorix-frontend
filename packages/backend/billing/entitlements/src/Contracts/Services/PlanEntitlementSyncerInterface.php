@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Contracts\Services;
+namespace Stackra\Entitlements\Contracts\Services;
 
-use Academorix\Entitlements\Services\NullPlanEntitlementSyncer;
+use Stackra\Entitlements\Services\NullPlanEntitlementSyncer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SharedOfflineSyncSdk\Tests;
+namespace Stackra\SharedOfflineSyncSdk\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix-shared/offline-sync-sdk.
+ * Base test case for stackra-shared/offline-sync-sdk.
  *
  * @category OfflineSyncSdk
  *

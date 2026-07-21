@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Services;
+namespace Stackra\Storage\Services;
 
-use Academorix\Storage\Contracts\Services\AntivirusScannerInterface;
-use Academorix\Storage\Enums\VirusScanState;
-use Academorix\Storage\Models\File;
+use Stackra\Storage\Contracts\Services\AntivirusScannerInterface;
+use Stackra\Storage\Enums\VirusScanState;
+use Stackra\Storage\Models\File;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

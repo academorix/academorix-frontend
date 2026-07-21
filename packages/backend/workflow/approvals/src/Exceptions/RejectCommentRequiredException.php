@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Exceptions;
+namespace Stackra\Approvals\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Reject decisions require a comment.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class RejectCommentRequiredException extends AcademorixException
+final class RejectCommentRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

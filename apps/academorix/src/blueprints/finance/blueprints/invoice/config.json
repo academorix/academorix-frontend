@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invoice/config",
+  "id": "stackra://modules/invoice/config",
   "$version": 1,
   "title": "invoice — developer configuration",
   "configFile": "config/invoice.php",
@@ -38,8 +38,8 @@
         {
           "path": "invoice.pdf.template",
           "type": "string",
-          "default": "academorix-default",
-          "description": "Template name. Options: 'academorix-default' (Small tier), 'tenant-branded' (Medium+ with invoice_tenant_branded_pdf), 'minimal' (compact single-page), 'vat-eu' (VAT-jurisdiction-compliant layout for EU tenants)."
+          "default": "stackra-default",
+          "description": "Template name. Options: 'stackra-default' (Small tier), 'tenant-branded' (Medium+ with invoice_tenant_branded_pdf), 'minimal' (compact single-page), 'vat-eu' (VAT-jurisdiction-compliant layout for EU tenants)."
         },
         {
           "path": "invoice.pdf.driver",

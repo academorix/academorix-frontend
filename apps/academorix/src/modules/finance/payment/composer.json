@@ -1,10 +1,10 @@
 {
-  "name": "academorix/payment",
+  "name": "stackra/payment",
   "type": "library",
-  "description": "Academorix Payment module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/payment/`. Complements the wire SDK at `academorix-finance/payment-sdk`.",
+  "description": "Stackra Payment module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/payment/`. Complements the wire SDK at `stackra-finance/payment-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "finance",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-finance/payment-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-finance/payment-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Payment\\": "src/"
+      "Stackra\\Payment\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Payment\\Tests\\": "tests/"
+      "Stackra\\Payment\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Payment\\Providers\\PaymentServiceProvider"
+        "Stackra\\Payment\\Providers\\PaymentServiceProvider"
       ],
       "aliases": {}
     }

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDrillsSdk\Requests\SessionPlans;
+namespace Stackra\SportsDrillsSdk\Requests\SessionPlans;
 
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\ApiSdk\Data\PaginationLinks;
-use Academorix\ApiSdk\Data\PaginationMeta;
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsDrillsSdk\Data\SessionPlanData;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\ApiSdk\Data\PaginationLinks;
+use Stackra\ApiSdk\Data\PaginationMeta;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsDrillsSdk\Data\SessionPlanData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

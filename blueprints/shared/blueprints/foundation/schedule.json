@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/foundation/schedule",
+  "id": "stackra://modules/foundation/schedule",
   "$version": 1,
   "title": "foundation — scheduled tasks",
   "description": "Two base scheduled tasks. Every entry runs `runOnOneServer` (multi-node worker pools do not duplicate work) + `withoutOverlapping` where windows may exceed the interval.",

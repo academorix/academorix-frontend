@@ -2,7 +2,7 @@
 
 Overview
 
-The Serializer module in Academorix provides robust and flexible solutions for
+The Serializer module in Stackra provides robust and flexible solutions for
 serializing and unserializing data. It includes three key serializers that
 handle different serialization requirements, ensuring data integrity and
 simplifying interactions with closures, JSON, and generic PHP serialization.
@@ -35,7 +35,7 @@ Outputs: Hello, Serializer!
 
 $jsonSerializer = new Json();
 
-$data = ['name' => 'Academorix', 'module' => 'Serializer'];
+$data = ['name' => 'Stackra', 'module' => 'Serializer'];
 $jsonString =
 $jsonSerializer->encode($data);
 
@@ -73,7 +73,7 @@ Installation
 
 1.  Add the module to your project using composer:
 
-composer require academorix/serializer
+composer require stackra/serializer
 
 2.  Register the module in your application bootstrap file if necessary.
 

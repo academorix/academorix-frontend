@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Repositories;
+namespace Stackra\Invitations\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Invitations\Contracts\Data\InvitationInterface;
-use Academorix\Invitations\Contracts\Repositories\InvitationRepositoryInterface;
-use Academorix\Invitations\Models\Invitation;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Invitations\Contracts\Data\InvitationInterface;
+use Stackra\Invitations\Contracts\Repositories\InvitationRepositoryInterface;
+use Stackra\Invitations\Models\Invitation;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Invitations\Models\Invitation}.
+ * Attribute-first Eloquent repository for {@see Stackra\Invitations\Models\Invitation}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(InvitationInterface::class)]` which resolves to
  * `Invitation` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Invitations\Models\Invitation>
+ * @extends Repository<\Stackra\Invitations\Models\Invitation>
  *
  * @category Invitations
  *

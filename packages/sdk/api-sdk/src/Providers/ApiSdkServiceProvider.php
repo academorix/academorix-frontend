@@ -4,7 +4,7 @@
  * @file packages/sdk/api-sdk/src/Providers/ApiSdkServiceProvider.php
  *
  * @description
- * Root service provider for `academorix/api-sdk`. Auto-discovered
+ * Root service provider for `stackra/api-sdk`. Auto-discovered
  * by Laravel via `composer.json`'s `extra.laravel.providers`.
  *
  * ## What this provider does
@@ -44,32 +44,32 @@
  * the connector is immutable. No closure captures request-scoped
  * state.
  *
- * @see \Academorix\ApiSdk\Attributes\AsSdkResource Discovery marker.
- * @see \Academorix\ApiSdk\Registry\SdkResourceRegistry Discovery target.
- * @see \Academorix\ApiSdk\Client\ApiClient Consumer-facing facade.
+ * @see \Stackra\ApiSdk\Attributes\AsSdkResource Discovery marker.
+ * @see \Stackra\ApiSdk\Registry\SdkResourceRegistry Discovery target.
+ * @see \Stackra\ApiSdk\Client\ApiClient Consumer-facing facade.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Providers;
+namespace Stackra\ApiSdk\Providers;
 
-use Academorix\ApiSdk\Attributes\AsSdkResource;
-use Academorix\ApiSdk\Client\ApiClient;
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Contracts\ApiClientInterface;
-use Academorix\ApiSdk\Contracts\SdkResource;
-use Academorix\ApiSdk\Enums\AuthStrategy;
-use Academorix\ApiSdk\Enums\LogLevel;
-use Academorix\ApiSdk\Registry\SdkResourceRegistry;
-use Academorix\ApiSdk\Testing\ApiFake;
+use Stackra\ApiSdk\Attributes\AsSdkResource;
+use Stackra\ApiSdk\Client\ApiClient;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Contracts\ApiClientInterface;
+use Stackra\ApiSdk\Contracts\SdkResource;
+use Stackra\ApiSdk\Enums\AuthStrategy;
+use Stackra\ApiSdk\Enums\LogLevel;
+use Stackra\ApiSdk\Registry\SdkResourceRegistry;
+use Stackra\ApiSdk\Testing\ApiFake;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Psr\Log\LoggerInterface;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
 
 /**
- * Root provider for `academorix/api-sdk`.
+ * Root provider for `stackra/api-sdk`.
  */
 #[AsModule(name: 'ApiSdk', priority: 100)]
 #[LoadsResources()]

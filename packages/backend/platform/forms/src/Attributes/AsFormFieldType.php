@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Attributes;
+namespace Stackra\Forms\Attributes;
 
 use Attribute;
 

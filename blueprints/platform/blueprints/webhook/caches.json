@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/webhook/caches",
+  "id": "stackra://modules/webhook/caches",
   "$version": 1,
   "title": "webhook \u2014 cache keys + tags",
   "description": "Registries + per-subscription lookup caches. Registries loaded once at boot; per-subscription caches invalidated on subscription mutations.",

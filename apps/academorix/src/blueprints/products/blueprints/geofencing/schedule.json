@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geofencing/schedule",
+  "id": "stackra://modules/geofencing/schedule",
   "$version": 1,
   "title": "geofencing \u2014 scheduled tasks",
   "entries": [

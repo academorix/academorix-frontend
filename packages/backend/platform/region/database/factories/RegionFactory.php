@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Region\Database\Factories;
+namespace Stackra\Region\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Region\Contracts\Data\RegionInterface;
-use Academorix\Region\Models\Region;
+use Stackra\Region\Contracts\Data\RegionInterface;
+use Stackra\Region\Models\Region;
 
 /**
- * Factory for {@see \Academorix\Region\Models\Region}.
+ * Factory for {@see \Stackra\Region\Models\Region}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Region\Models\Region>
+ * @extends Factory<\Stackra\Region\Models\Region>
  *
  * @category Region
  *

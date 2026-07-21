@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/storage/schemas/signed-url-audit",
+  "id": "stackra://modules/storage/schemas/signed-url-audit",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "SignedUrlAudit",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "sua_",
     "incrementing": false,
-    "model": "Academorix\\Storage\\Models\\SignedUrlAudit",
-    "interface": "Academorix\\Storage\\Contracts\\Data\\SignedUrlAuditInterface",
-    "implements": ["Academorix\\Storage\\Contracts\\Data\\SignedUrlAuditInterface"],
+    "model": "Stackra\\Storage\\Models\\SignedUrlAudit",
+    "interface": "Stackra\\Storage\\Contracts\\Data\\SignedUrlAuditInterface",
+    "implements": ["Stackra\\Storage\\Contracts\\Data\\SignedUrlAuditInterface"],
     "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "Filterable"],
     "casts": {
       "reason": "SignedUrlReason",

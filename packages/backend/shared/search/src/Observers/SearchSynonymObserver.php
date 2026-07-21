@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Observers;
+namespace Stackra\Search\Observers;
 
-use Academorix\Search\Contracts\Data\SearchSynonymInterface;
-use Academorix\Search\Events\SearchSynonymCreated;
-use Academorix\Search\Events\SearchSynonymDeleted;
-use Academorix\Search\Events\SearchSynonymUpdated;
-use Academorix\Search\Models\SearchSynonym;
+use Stackra\Search\Contracts\Data\SearchSynonymInterface;
+use Stackra\Search\Events\SearchSynonymCreated;
+use Stackra\Search\Events\SearchSynonymDeleted;
+use Stackra\Search\Events\SearchSynonymUpdated;
+use Stackra\Search\Models\SearchSynonym;
 
 /**
  * Lifecycle side effects on {@see SearchSynonym}.

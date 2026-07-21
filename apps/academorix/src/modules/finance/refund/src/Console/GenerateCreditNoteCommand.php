@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Refund\Console;
+namespace Stackra\Refund\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan refund:generate-credit-note` — Generate credit note — refund command.

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Contracts\Services;
+namespace Stackra\Facility\Contracts\Services;
 
-use Academorix\Facility\Services\PassProvisioner;
+use Stackra\Facility\Services\PassProvisioner;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/sports-registry/settings",
+  "id": "stackra://modules/sports-registry/settings",
   "$version": 1,
   "title": "sports-registry — settings",
   "description": "Tenant-scoped policy for the sports registry catalog. Small + Medium tiers see a mostly read-only settings pane (indicating the tenant is locked to the platform catalog); Enterprise tenants see the full custom-creation surface.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "sports_registry",
-      "class": "Academorix\\Sports\\Registry\\Settings\\SportsRegistrySettings",
+      "class": "Stackra\\Sports\\Registry\\Settings\\SportsRegistrySettings",
       "label": "Sports catalog",
       "description": "Configure the tenant's sports taxonomy — platform-seeded rows + tenant custom entries (Enterprise-only).",
       "icon": "trophy",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/access/requests/entitlements",
+  "id": "stackra://modules/access/requests/entitlements",
   "$version": 1,
   "title": "requests \u2014 entitlements",
   "description": "Entitlement keys this module reads at request time. Values seeded per Tenant by the entitlements module from Subscription plan + BusinessType.default_config. Enforcement points are the CreateAccessRequestAction (for pool-decrement) and the SPA (for feature-flag rendering).",

@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/offline-sync/events",
+  "id": "stackra://modules/offline-sync/events",
   "$version": 1,
   "title": "offline-sync — published events",
-  "namespace": "Academorix\\Shared\\OfflineSync\\Events",
+  "namespace": "Stackra\\Shared\\OfflineSync\\Events",
   "dispatchMode": "afterCommit",
   "description": "Mobile / desktop offline-first sync substrate. Every device tracks its own outbox + inbox; conflicts resolved by last-writer-wins with client-timestamp OR merge strategy per aggregate.",
   "events": [

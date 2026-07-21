@@ -4,7 +4,7 @@
  * @file modules/products/geofencing/config/geofencing.php
  *
  * @description
- * Runtime knobs for the `academorix/geofencing` module. Merged under the
+ * Runtime knobs for the `stackra/geofencing` module. Merged under the
  * `geofencing.*` key by the base ServiceProvider's LoadsResources concern.
  */
 

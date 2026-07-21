@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Exceptions;
+namespace Stackra\Versioning\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * migration_target_slug references self, non-existent version, or a version that's itself sunset.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class VersioningMigrationTargetInvalidException extends AcademorixException
+final class VersioningMigrationTargetInvalidException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

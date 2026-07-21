@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformCredentialsSdk;
+namespace Stackra\PlatformCredentialsSdk;
 
-use Academorix\ApiSdk\Attributes\AsSdkResource;
-use Academorix\ApiSdk\Resources\BaseSdkResource;
+use Stackra\ApiSdk\Attributes\AsSdkResource;
+use Stackra\ApiSdk\Resources\BaseSdkResource;
 
 /**
  * Top-level SDK Resource for the `credentials` module.

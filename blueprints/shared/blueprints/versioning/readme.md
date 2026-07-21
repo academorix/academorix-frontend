@@ -1,4 +1,4 @@
-# academorix/versioning
+# stackra/versioning
 
 Public interface versioning substrate. Owns the platform surface every consumer
 (REST, webhook, GraphQL) reads to decide "which version am I speaking?" and
@@ -14,7 +14,7 @@ Public interface versioning substrate. Owns the platform surface every consumer
 ## Install
 
 ```bash
-composer require academorix/versioning
+composer require stackra/versioning
 ```
 
 ## Blueprint
@@ -54,7 +54,7 @@ Wire contract at `modules/shared/versioning/`.
 Config-driven (see `config/versioning.php`). Default order:
 
 1. URL path — `/api/v1/...`
-2. Content negotiation — `Accept: application/vnd.academorix.v2+json`
+2. Content negotiation — `Accept: application/vnd.stackra.v2+json`
 3. Webhook subscription — pinned column on the outbound webhook row.
 4. GraphQL context — `@api(version: v2)` directive. Feature-flag gated.
 5. Query param — `?version=v1`. Non-production by default.

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Data;
+namespace Stackra\Notifications\Push\Data;
 
-use Academorix\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
-use Academorix\Notifications\Push\Enums\PushPlatform;
-use Academorix\Notifications\Push\Enums\PushProvider;
-use Academorix\Notifications\Push\Models\PushSubscription;
+use Stackra\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
+use Stackra\Notifications\Push\Enums\PushPlatform;
+use Stackra\Notifications\Push\Enums\PushProvider;
+use Stackra\Notifications\Push\Models\PushSubscription;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

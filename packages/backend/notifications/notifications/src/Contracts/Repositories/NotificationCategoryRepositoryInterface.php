@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Contracts\Repositories;
+namespace Stackra\Notifications\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Notifications\Models\NotificationCategory;
-use Academorix\Notifications\Repositories\EloquentNotificationCategoryRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Notifications\Models\NotificationCategory;
+use Stackra\Notifications\Repositories\EloquentNotificationCategoryRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

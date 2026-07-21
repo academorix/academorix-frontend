@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsSeasonSdk\Enums;
+namespace Stackra\SportsSeasonSdk\Enums;
 
 /**
  * Wire-visible backed enum for `season.season_type`.

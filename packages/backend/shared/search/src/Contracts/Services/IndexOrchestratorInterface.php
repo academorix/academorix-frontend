@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Contracts\Services;
+namespace Stackra\Search\Contracts\Services;
 
-use Academorix\Search\Models\SearchSyncJob;
-use Academorix\Search\Services\DefaultIndexOrchestrator;
+use Stackra\Search\Models\SearchSyncJob;
+use Stackra\Search\Services\DefaultIndexOrchestrator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

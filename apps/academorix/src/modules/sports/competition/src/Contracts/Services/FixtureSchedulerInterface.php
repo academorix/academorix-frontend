@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Competition\Contracts\Services;
+namespace Stackra\Competition\Contracts\Services;
 
-use Academorix\Competition\Services\FixtureScheduler;
+use Stackra\Competition\Services\FixtureScheduler;
 use Illuminate\Container\Attributes\Bind;
 
 /**

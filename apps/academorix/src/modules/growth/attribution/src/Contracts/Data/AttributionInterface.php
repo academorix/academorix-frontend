@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Contracts\Data;
+namespace Stackra\Attribution\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Attribution\Models\Attribution;
+use Stackra\Attribution\Models\Attribution;
 
 /**
  * Table shape for the `attributions` table.

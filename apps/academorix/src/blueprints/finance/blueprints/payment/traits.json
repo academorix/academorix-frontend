@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/payment/traits",
+  "id": "stackra://modules/payment/traits",
   "$version": 1,
   "title": "payment — trait composition",
   "description": "Five owned traits. `BelongsToPayment`, `BelongsToPaymentMethod`, `BelongsToPaymentIntent` are the FK traits for downstream models (PaymentDispute, PaymentIntent, PaymentMethod cross-references). `HasPaymentDisputes` + `HasPaymentMethods` are inverse-side conveniences on the Payment + Customer models. Order matters when composed with BelongsToTenant — tenant MUST come first so the scope chain observes the tenant context.",
   "owned": [
     {
-      "trait": "Academorix\\Finance\\Payment\\Concerns\\BelongsToPayment",
+      "trait": "Stackra\\Finance\\Payment\\Concerns\\BelongsToPayment",
       "description": "Mixed into any domain model that carries a `payment_id` FK. Adds the `payment()` belongsTo relation. Used by PaymentDispute — no downstream module currently attaches to payments via a payment_id FK held on this side (refund + chargeback are separate modules with their own FKs pointing at Payment).",
       "public": true,
       "usedBy": [
@@ -18,7 +18,7 @@
       ]
     },
     {
-      "trait": "Academorix\\Finance\\Payment\\Concerns\\BelongsToPaymentMethod",
+      "trait": "Stackra\\Finance\\Payment\\Concerns\\BelongsToPaymentMethod",
       "description": "Mixed into any domain model that carries a `payment_method_id` FK. Adds the `paymentMethod()` belongsTo relation. Used by Payment + PaymentIntent — the FK is nullable in both (some flows don't involve a saved method).",
       "public": true,
       "usedBy": [
@@ -27,7 +27,7 @@
       ]
     },
     {
-      "trait": "Academorix\\Finance\\Payment\\Concerns\\BelongsToPaymentIntent",
+      "trait": "Stackra\\Finance\\Payment\\Concerns\\BelongsToPaymentIntent",
       "description": "Mixed into any domain model that carries a `payment_intent_id` FK. Adds the `paymentIntent()` belongsTo relation. Used by Payment — the intent is the parent for every payment.",
       "public": true,
       "usedBy": [
@@ -35,13 +35,13 @@
       ]
     },
     {
-      "trait": "Academorix\\Finance\\Payment\\Concerns\\HasPaymentDisputes",
+      "trait": "Stackra\\Finance\\Payment\\Concerns\\HasPaymentDisputes",
       "description": "Composed onto the Payment model. Adds `->disputes()` (hasMany over PaymentDispute), `->openDisputes()` (scope filter status NOT IN terminal), `->hasOpenDispute()` boolean helper, `->totalDisputedAmount()` sums amount_cents of open disputes.",
       "public": true,
       "usedBy": ["payment::Payment"]
     },
     {
-      "trait": "Academorix\\Finance\\Payment\\Concerns\\HasPaymentMethods",
+      "trait": "Stackra\\Finance\\Payment\\Concerns\\HasPaymentMethods",
       "description": "Composed onto customer models (User, Athlete). Adds `->paymentMethods()` (morphMany over PaymentMethod via customer_type + customer_id), `->activePaymentMethods()` (scope filter is_active=true), `->defaultPaymentMethod()` (single is_default=true active method), `->cardPaymentMethods()` (scope filter method_type='card'). NOT installed by default — customer models opt-in via `use HasPaymentMethods` in their own class.",
       "public": true,
       "usedBy": [
@@ -63,36 +63,36 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\Searchable",
+        "trait": "Stackra\\Foundation\\Concerns\\Searchable",
         "reason": "Payment (searchable by payment_number, provider_reference_id, invoice number cross-reference). NOT the other three (accessed via relations)."
       }
     ],
     "tenants": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
         "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
       }
     ],
     "audit": [
       {
-        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "trait": "Stackra\\Audit\\Concerns\\Auditable",
         "reason": "Every write to payments / payment_methods / payment_intents / payment_disputes is compliance-relevant (financial retention 7 years; 10y Enterprise)."
       }
     ],
     "activity": [
       {
-        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
         "reason": "Payment + PaymentMethod + PaymentIntent + PaymentDispute — every admin action feeds the staff-visible activity feed."
       }
     ],
     "invoice": [
       {
-        "trait": "Academorix\\Finance\\Invoice\\Concerns\\BelongsToInvoice",
+        "trait": "Stackra\\Finance\\Invoice\\Concerns\\BelongsToInvoice",
         "reason": "Payment + PaymentIntent both reference invoice_id."
       }
     ]

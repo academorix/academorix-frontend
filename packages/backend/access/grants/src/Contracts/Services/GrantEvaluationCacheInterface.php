@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Grants\Contracts\Services;
+namespace Stackra\Grants\Contracts\Services;
 
-use Academorix\Grants\Services\GrantEvaluationCache;
+use Stackra\Grants\Services\GrantEvaluationCache;
 use Illuminate\Container\Attributes\Bind;
 
 /**

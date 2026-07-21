@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Exceptions;
+namespace Stackra\Transfer\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Row-level exception — append-mode import found a row matching an
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TransferDuplicateRowException extends AcademorixException
+final class TransferDuplicateRowException extends StackraException
 {
     public const CODE = 'TRANSFER_DUPLICATE_ROW';
 

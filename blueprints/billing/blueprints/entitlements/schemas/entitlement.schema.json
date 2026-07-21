@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/entitlements/schemas/entitlement",
+  "id": "stackra://modules/entitlements/schemas/entitlement",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Entitlement",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "ent_",
     "incrementing": false,
-    "model": "Academorix\\Entitlements\\Models\\Entitlement",
-    "interface": "Academorix\\Entitlements\\Contracts\\Data\\EntitlementInterface",
-    "implements": ["Academorix\\Entitlements\\Contracts\\Data\\EntitlementInterface"],
+    "model": "Stackra\\Entitlements\\Models\\Entitlement",
+    "interface": "Stackra\\Entitlements\\Contracts\\Data\\EntitlementInterface",
+    "implements": ["Stackra\\Entitlements\\Contracts\\Data\\EntitlementInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

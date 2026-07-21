@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Organization\Console;
+namespace Stackra\Organization\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan organization:create` — Create a new organization.

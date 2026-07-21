@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Repositories;
+namespace Stackra\Tax\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Tax\Contracts\Data\TaxJurisdictionInterface;
-use Academorix\Tax\Contracts\Repositories\TaxJurisdictionRepositoryInterface;
-use Academorix\Tax\Models\TaxJurisdiction;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Tax\Contracts\Data\TaxJurisdictionInterface;
+use Stackra\Tax\Contracts\Repositories\TaxJurisdictionRepositoryInterface;
+use Stackra\Tax\Models\TaxJurisdiction;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Tax\Models\TaxJurisdiction}.
+ * Attribute-first Eloquent repository for {@see Stackra\Tax\Models\TaxJurisdiction}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(TaxJurisdictionInterface::class)]` which resolves to
  * `TaxJurisdiction` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Tax\Models\TaxJurisdiction>
+ * @extends Repository<\Stackra\Tax\Models\TaxJurisdiction>
  *
  * @category Tax
  *

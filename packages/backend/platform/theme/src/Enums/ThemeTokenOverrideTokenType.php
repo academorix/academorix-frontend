@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Enums;
+namespace Stackra\Theme\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `token_type` on `theme-token-override`.

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Actions\Tenant;
+namespace Stackra\Coupon\Actions\Tenant;
 
-use Academorix\Coupon\Contracts\Services\CouponRedeemerInterface;
-use Academorix\Coupon\Data\Requests\PreviewCouponRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Coupon\Contracts\Services\CouponRedeemerInterface;
+use Stackra\Coupon\Data\Requests\PreviewCouponRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

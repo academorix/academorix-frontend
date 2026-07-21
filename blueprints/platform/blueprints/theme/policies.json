@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/theme/policies",
+  "id": "stackra://modules/theme/policies",
   "$version": 1,
   "title": "theme — authorization policies",
   "policies": [
     {
       "model": "Theme",
-      "class": "Academorix\\Platform\\Theme\\Policies\\ThemePolicy",
+      "class": "Stackra\\Platform\\Theme\\Policies\\ThemePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -46,7 +46,7 @@
     },
     {
       "model": "ThemePreset",
-      "class": "Academorix\\Platform\\Theme\\Policies\\ThemePresetPolicy",
+      "class": "Stackra\\Platform\\Theme\\Policies\\ThemePresetPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -66,7 +66,7 @@
         {
           "action": "createPlatformPreset",
           "permission": "platform.theme.manage-presets",
-          "scope": "platform_admin guard — Academorix staff only. Writes tenant_id NULL rows."
+          "scope": "platform_admin guard — Stackra staff only. Writes tenant_id NULL rows."
         },
         {
           "action": "update",
@@ -92,7 +92,7 @@
     },
     {
       "model": "ThemeTokenOverride",
-      "class": "Academorix\\Platform\\Theme\\Policies\\ThemeTokenOverridePolicy",
+      "class": "Stackra\\Platform\\Theme\\Policies\\ThemeTokenOverridePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -123,7 +123,7 @@
     },
     {
       "model": "UserThemePreference",
-      "class": "Academorix\\Platform\\Theme\\Policies\\UserThemePreferencePolicy",
+      "class": "Stackra\\Platform\\Theme\\Policies\\UserThemePreferencePolicy",
       "note": "Policy is authored here even though the underlying row (user_theme_preferences) lives in the user module. Theme is the resolver.",
       "abilities": [
         {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Contracts\Services;
+namespace Stackra\Notifications\Sms\Contracts\Services;
 
-use Academorix\Notifications\Sms\Services\SmsTransportManager;
+use Stackra\Notifications\Sms\Services\SmsTransportManager;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -20,7 +20,7 @@ interface SmsTransportManagerInterface
     /**
      * Resolve a driver by name.
      *
-     * @throws \Academorix\Notifications\Sms\Exceptions\SmsProviderDisabledException
+     * @throws \Stackra\Notifications\Sms\Exceptions\SmsProviderDisabledException
      */
     public function driver(string $name): SmsTransportInterface;
 

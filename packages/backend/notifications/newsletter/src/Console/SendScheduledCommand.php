@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Console;
+namespace Stackra\Newsletter\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterCampaignRepositoryInterface;
-use Academorix\Newsletter\Jobs\SendNewsletterCampaignJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterCampaignRepositoryInterface;
+use Stackra\Newsletter\Jobs\SendNewsletterCampaignJob;
 
 /**
  * `php artisan newsletter:send-scheduled` — dispatch orchestrators

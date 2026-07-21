@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/age-group/errors",
+  "id": "stackra://modules/age-group/errors",
   "$version": 1,
   "title": "age-group — error codes",
   "namespace": "age_group",

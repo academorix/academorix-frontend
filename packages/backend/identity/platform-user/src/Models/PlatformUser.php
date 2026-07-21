@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformUser\Models;
+namespace Stackra\PlatformUser\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\PlatformUser\Contracts\Data\PlatformUserInterface;
-use Academorix\PlatformUser\Database\Factories\PlatformUserFactory;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\PlatformUser\Enums\PlatformUserStatus;
-use Academorix\PlatformUser\Policies\PlatformUserPolicy;
+use Stackra\PlatformUser\Contracts\Data\PlatformUserInterface;
+use Stackra\PlatformUser\Database\Factories\PlatformUserFactory;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\PlatformUser\Enums\PlatformUserStatus;
+use Stackra\PlatformUser\Policies\PlatformUserPolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -32,7 +32,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 /**
  * Eloquent model for a PlatformUser.
  *
- * Academorix-staff principal.
+ * Stackra-staff principal.
  *
  * @category PlatformUser
  *

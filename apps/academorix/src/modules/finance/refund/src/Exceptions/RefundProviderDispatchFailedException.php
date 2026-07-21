@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Refund\Exceptions;
+namespace Stackra\Refund\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * P1 signal.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class RefundProviderDispatchFailedException extends AcademorixException
+final class RefundProviderDispatchFailedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

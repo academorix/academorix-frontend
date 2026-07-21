@@ -55,7 +55,7 @@ import {
  * export default defineConfig({
  *   plugins: [
  *     router({
- *       rootDomain: 'academorix.app',
+ *       rootDomain: 'stackra.app',
  *       devMode: 'localhost',
  *       devSubdomains: ['admin', 'ops'],
  *       moduleFile: 'src/app.module.ts',

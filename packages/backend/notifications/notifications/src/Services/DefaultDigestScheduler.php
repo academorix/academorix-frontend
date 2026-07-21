@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Services;
+namespace Stackra\Notifications\Services;
 
-use Academorix\Notifications\Contracts\Data\NotificationDigestInterface;
-use Academorix\Notifications\Contracts\Data\NotificationInterface;
-use Academorix\Notifications\Contracts\Repositories\NotificationDigestRepositoryInterface;
-use Academorix\Notifications\Contracts\Services\DigestSchedulerInterface;
-use Academorix\Notifications\Enums\DigestMode;
-use Academorix\Notifications\Models\Notification;
-use Academorix\Notifications\Models\NotificationDigest;
+use Stackra\Notifications\Contracts\Data\NotificationDigestInterface;
+use Stackra\Notifications\Contracts\Data\NotificationInterface;
+use Stackra\Notifications\Contracts\Repositories\NotificationDigestRepositoryInterface;
+use Stackra\Notifications\Contracts\Services\DigestSchedulerInterface;
+use Stackra\Notifications\Enums\DigestMode;
+use Stackra\Notifications\Models\Notification;
+use Stackra\Notifications\Models\NotificationDigest;
 use Carbon\CarbonImmutable;
 use Illuminate\Container\Attributes\Scoped;
 

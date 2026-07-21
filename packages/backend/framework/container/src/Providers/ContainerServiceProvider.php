@@ -6,7 +6,7 @@ declare(strict_types=1);
  * @file packages/framework/container/src/Providers/ContainerServiceProvider.php
  *
  * @description
- * Root service provider for `academorix/container`. Its single job is
+ * Root service provider for `stackra/container`. Its single job is
  * to run the `#[Overrides]` discovery pass at register time so every
  * class carrying that Pattern-B binding attribute is wired into the
  * container before any other module's `register()` observes the
@@ -23,11 +23,11 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Container\Providers;
+namespace Stackra\Container\Providers;
 
-use Academorix\Container\Concerns\HasDiscovery;
-use Academorix\ServiceProvider\Attributes\Module;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\Container\Concerns\HasDiscovery;
+use Stackra\ServiceProvider\Attributes\Module;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 use Override;
 
 /**
@@ -46,7 +46,7 @@ class ContainerServiceProvider extends ServiceProvider
      * Register any application services.
      *
      * Discovers every class carrying
-     * {@see \Academorix\Container\Attributes\Overrides} and wires
+     * {@see \Stackra\Container\Attributes\Overrides} and wires
      * `$app->bind($attribute->abstract, $carrierClass)` (honouring
      * `#[Singleton]` / `#[Scoped]` lifetime markers + environment
      * filters).

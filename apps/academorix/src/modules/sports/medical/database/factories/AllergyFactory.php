@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Medical\Database\Factories;
+namespace Stackra\Medical\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Medical\Contracts\Data\AllergyInterface;
-use Academorix\Medical\Models\Allergy;
+use Stackra\Medical\Contracts\Data\AllergyInterface;
+use Stackra\Medical\Models\Allergy;
 
 /**
- * Factory for {@see \Academorix\Medical\Models\Allergy}.
+ * Factory for {@see \Stackra\Medical\Models\Allergy}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Medical\Models\Allergy>
+ * @extends Factory<\Stackra\Medical\Models\Allergy>
  *
  * @category Medical
  *

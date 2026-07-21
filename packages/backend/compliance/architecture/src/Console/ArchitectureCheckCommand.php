@@ -4,7 +4,7 @@
  * @file packages/architecture/src/Console/ArchitectureCheckCommand.php
  *
  * @description
- * Artisan command: `academorix:architecture:check`.
+ * Artisan command: `stackra:architecture:check`.
  *
  * Runs the {@see CodebaseScanner} over the configured paths and
  * pretty-prints every {@see Violation}. Exits non-zero when at
@@ -28,7 +28,7 @@
  *
  * Add this to CI:
  *
- *     php artisan academorix:architecture:check
+ *     php artisan stackra:architecture:check
  *
  * When violations are found, the command prints them and exits
  * with code 1. When the codebase is clean, exit code 0. That's
@@ -37,20 +37,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Console;
+namespace Stackra\Architecture\Console;
 
-use Academorix\Architecture\Contracts\ArchitectureRule;
-use Academorix\Architecture\Contracts\PathRule;
-use Academorix\Architecture\Scanner\CodebaseScanner;
-use Academorix\Architecture\Support\SourceFileParser;
-use Academorix\Architecture\Violations\Severity;
-use Academorix\Architecture\Violations\Violation;
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Architecture\Contracts\ArchitectureRule;
+use Stackra\Architecture\Contracts\PathRule;
+use Stackra\Architecture\Scanner\CodebaseScanner;
+use Stackra\Architecture\Support\SourceFileParser;
+use Stackra\Architecture\Violations\Severity;
+use Stackra\Architecture\Violations\Violation;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 use Throwable;
 
 #[AsCommand(
-    name: 'academorix:architecture:check',
+    name: 'stackra:architecture:check',
     description: 'Verify architectural layering rules across the configured source paths.',
 )]
 final class ArchitectureCheckCommand extends BaseCommand
@@ -59,7 +59,7 @@ final class ArchitectureCheckCommand extends BaseCommand
      * Signature — `signature` short-forms mirror the docblock
      * options. Kept in sync with the class docblock.
      */
-    protected $signature = 'academorix:architecture:check
+    protected $signature = 'stackra:architecture:check
         {--path=* : Override the scan paths (absolute or workspace-relative)}
         {--json : Emit newline-delimited JSON instead of the pretty report}
         {--warnings-as-errors : Treat every violation as an error for this run}';
@@ -292,7 +292,7 @@ final class ArchitectureCheckCommand extends BaseCommand
     /**
      * Human-readable output — grouped by rule id, rendered through
      * OmniTerm so the output stays visually consistent with every
-     * other Academorix command.
+     * other Stackra command.
      *
      * @param  list<Violation>  $violations
      */

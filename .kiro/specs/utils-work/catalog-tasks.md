@@ -50,8 +50,8 @@ docs              array<string>
 
 ### Description text
 
-Include a top-level `description`: "Academorix package catalog entry (v1) —
-machine-readable per-package metadata consumed by the `academorix new` CLI and
+Include a top-level `description`: "Stackra package catalog entry (v1) —
+machine-readable per-package metadata consumed by the `stackra new` CLI and
 every design agent that needs to know what a package does before recommending
 it."
 
@@ -61,20 +61,20 @@ it."
 
 ```sh
 gh gist create .ref/schemas/catalog.v1.json --public \
-  --desc "Academorix package catalog.json schema (v1) — https://github.com/academorix"
+  --desc "Stackra package catalog.json schema (v1) — https://github.com/stackra"
 ```
 
 Then capture the raw URL (see `fullplan.md` for the pinned URL used in the
 recreated workspace):
 
 ```
-https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json
+https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json
 ```
 
 Verify the gist actually serves the schema:
 
 ```sh
-curl -sSfL "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json" -o /tmp/verify.json
+curl -sSfL "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json" -o /tmp/verify.json
 python3 -c "import json ; d=json.load(open('/tmp/verify.json')) ; assert '\$schema' in d.get('properties',{}), 'must include \$schema'"
 ```
 
@@ -91,8 +91,8 @@ Four-tier taxonomy. Total: 139 backend packages.
 
 Every app boots against these. Zero business logic. Zero SaaS opinion.
 
-- `academorix/foundation` — path `packages/backend/foundation/`
-- `academorix-shared/foundation` — path `packages/backend/shared/foundation/`
+- `stackra/foundation` — path `packages/backend/foundation/`
+- `stackra-shared/foundation` — path `packages/backend/shared/foundation/`
 
 ### Tier 2 — Framework (24 packages)
 
@@ -211,8 +211,8 @@ Every catalog.json is a JSON object with these fields, ordered exactly:
 
 ```jsonc
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/foundation", // or @stackra/foo for frontend
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/foundation", // or @stackra/foo for frontend
   "tier": "foundation", // foundation | framework | saas
   "surfaces": ["core"], // subset of core/react/native/testing
   "kind": "framework-plumbing", // framework-plumbing | sdk | feature | tooling
@@ -220,8 +220,8 @@ Every catalog.json is a JSON object with these fields, ordered exactly:
   "capabilities": ["capability phrase 1, max 100 chars", "capability phrase 2"],
   "when_to_use": "One-sentence guidance.",
   "when_not_to_use": "One-sentence alt referencing the sibling package.",
-  "peer_deps": ["academorix/foundation", "spatie/laravel-data"],
-  "backend_pair": null, // or "academorix/notifications"
+  "peer_deps": ["stackra/foundation", "spatie/laravel-data"],
+  "backend_pair": null, // or "stackra/notifications"
   "size_gzip_kb": {}, // populated later by size pipeline
   "maturity": "alpha", // alpha for now across the board
   "owning_agent": "laravel-feature-builder",
@@ -234,11 +234,11 @@ Every catalog.json is a JSON object with these fields, ordered exactly:
 - `purpose` ≤ 200 chars, ends with a period
 - `capabilities` — 3 to 8 items, each ≤ 100 chars
 - `peer_deps` — extract from the package's `composer.json` / `package.json`
-  `dependencies`. Include `academorix/*` + `@stackra/*` internal deps and
+  `dependencies`. Include `stackra/*` + `@stackra/*` internal deps and
   heavyweight third-party ones (spatie/*, laravel/pennant, etc.). Exclude
   `illuminate/*` (Laravel core), dev-only, and PHP itself.
 - `backend_pair` — for frontend packages that mirror a backend module (e.g.
-  `@stackra/notifications` pairs with `academorix/notifications`). Null when
+  `@stackra/notifications` pairs with `stackra/notifications`). Null when
   there's no pair.
 - `owning_agent` — assign per tier:
   - Backend all tiers → `laravel-feature-builder`
@@ -272,7 +272,7 @@ Supports `--dry-run` and `--quiet`.
 ### Signature
 
 ```python
-SCHEMA_URL = 'https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json'
+SCHEMA_URL = 'https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json'
 
 # python3 scripts/add-catalog-schema.py [--dry-run] [--quiet]
 ```
@@ -340,7 +340,7 @@ For `platform/{branch,facility,reception,safeguarding,teams}` and
 ls -la .ref/schemas/catalog.v1.json
 
 # 2. Schema on gist (may need cache-bust)
-curl -sSfL "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json?_=$(date +%s)" | \
+curl -sSfL "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json?_=$(date +%s)" | \
   python3 -c 'import json,sys ; d=json.load(sys.stdin) ; print("OK" if "$schema" in d.get("properties",{}) else "FAIL")'
 
 # 3. Tier doc

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Exceptions;
+namespace Stackra\Theme\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * PreviewPresetJob's headless browser failed (Puppeteer crash, timeout, memory limit).

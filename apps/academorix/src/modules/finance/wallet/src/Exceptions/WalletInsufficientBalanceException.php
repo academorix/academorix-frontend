@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Wallet\Exceptions;
+namespace Stackra\Wallet\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Debit or hold amount exceeds available balance (balance - reserved).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class WalletInsufficientBalanceException extends AcademorixException
+final class WalletInsufficientBalanceException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

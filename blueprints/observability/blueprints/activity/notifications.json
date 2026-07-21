@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/activity/notifications",
+  "id": "stackra://modules/activity/notifications",
   "$version": 1,
   "title": "activity — Laravel notifications",
   "description": "Two notifications this module owns. `ActivityDigestEmailNotification` is the daily/weekly summary email of activity a user has opted into. `ActivityPurgeCompletedNotification` is the weekly admin digest showing which activity rows were purged / archived last week (transparency requirement per the retention promise).",
-  "namespace": "Academorix\\Observability\\Activity\\Notifications",
+  "namespace": "Stackra\\Observability\\Activity\\Notifications",
   "notifications": [
     {
-      "class": "Academorix\\Observability\\Activity\\Notifications\\ActivityDigestEmailNotification",
+      "class": "Stackra\\Observability\\Activity\\Notifications\\ActivityDigestEmailNotification",
       "channels": ["mail"],
       "consentTier": "functional",
       "targets": [
@@ -22,7 +22,7 @@
       "unsubscribeMechanism": "in-email link + /settings/notifications toggle"
     },
     {
-      "class": "Academorix\\Observability\\Activity\\Notifications\\ActivityPurgeCompletedNotification",
+      "class": "Stackra\\Observability\\Activity\\Notifications\\ActivityPurgeCompletedNotification",
       "channels": ["mail", "database"],
       "consentTier": "transactional",
       "targets": ["User with role owner OR admin OR compliance_officer in the tenant"],

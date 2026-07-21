@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Services;
+namespace Stackra\Integrations\Services;
 
-use Academorix\Integrations\Contracts\Services\IntegrationRegistryInterface;
-use Academorix\Integrations\Models\TenantIntegration;
+use Stackra\Integrations\Contracts\Services\IntegrationRegistryInterface;
+use Stackra\Integrations\Models\TenantIntegration;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

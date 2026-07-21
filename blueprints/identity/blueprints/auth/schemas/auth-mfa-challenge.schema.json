@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/auth/schemas/auth-mfa-challenge",
+  "id": "stackra://modules/auth/schemas/auth-mfa-challenge",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "MfaChallenge",
@@ -13,7 +13,7 @@
     "keyType": "string",
     "keyPrefix": "amc_",
     "incrementing": false,
-    "model": "Academorix\\Auth\\Models\\MfaChallenge",
+    "model": "Stackra\\Auth\\Models\\MfaChallenge",
     "traits": ["HasFactory", "HasUlids", "HasUserstamps", "HasMetadata", "Filterable"],
     "casts": {
       "context": "array",

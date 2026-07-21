@@ -12,13 +12,13 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing;
+namespace Stackra\Routing;
 
 /**
  * BaseController alias.
  *
  * Backward-compatible alias for the Controller class.
- * New code should use `Academorix\Routing\Controller` directly.
+ * New code should use `Stackra\Routing\Controller` directly.
  *
  * @see Controller
  */

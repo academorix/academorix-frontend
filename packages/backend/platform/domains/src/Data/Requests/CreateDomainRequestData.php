@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Data\Requests;
+namespace Stackra\Domains\Data\Requests;
 
-use Academorix\Domains\Enums\DomainKind;
-use Academorix\Domains\Enums\DomainVerificationMethod;
-use Academorix\Domains\Rules\ValidDomainHost;
+use Stackra\Domains\Enums\DomainKind;
+use Stackra\Domains\Enums\DomainVerificationMethod;
+use Stackra\Domains\Rules\ValidDomainHost;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Enum;
 use Spatie\LaravelData\Attributes\Validation\Max;

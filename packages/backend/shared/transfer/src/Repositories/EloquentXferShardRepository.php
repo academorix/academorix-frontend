@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Repositories;
+namespace Stackra\Transfer\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Transfer\Contracts\Data\XferShardInterface;
-use Academorix\Transfer\Contracts\Repositories\XferShardRepositoryInterface;
-use Academorix\Transfer\Enums\XferShardStatus;
-use Academorix\Transfer\Models\XferShard;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Transfer\Contracts\Data\XferShardInterface;
+use Stackra\Transfer\Contracts\Repositories\XferShardRepositoryInterface;
+use Stackra\Transfer\Enums\XferShardStatus;
+use Stackra\Transfer\Models\XferShard;
 use Illuminate\Support\Collection;
 
 /**

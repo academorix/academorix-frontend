@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/invoice/schedule",
+  "id": "stackra://modules/invoice/schedule",
   "$version": 1,
   "title": "invoice — scheduled tasks",
   "entries": [
     {
       "name": "invoice-mark-overdue",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Invoice\\Jobs\\MarkOverdueInvoicesJob",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Invoice\\Jobs\\MarkOverdueInvoicesJob",
       "cron": "0 1 * * *",
       "timezone": "UTC",
       "purpose": "Nightly 01:00 UTC: find invoices where due_date < now() AND status IN ('open', 'partially_paid') and transition to 'past_due'. Kicks off the dunning ladder via InvoicePastDue event."
@@ -26,7 +26,7 @@
     },
     {
       "name": "invoice-reconcile-payments",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Invoice\\Jobs\\ReconcileInvoicePaymentsJob",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Invoice\\Jobs\\ReconcileInvoicePaymentsJob",
       "cron": "0 3 * * *",
       "timezone": "UTC",
       "purpose": "Nightly 03:00 UTC: recompute invoices.amount_paid_cents from the transactions ledger. Detects drift + emits P1 metric on findings. Enterprise deployments run this more frequently via override in settings."
@@ -40,7 +40,7 @@
     },
     {
       "name": "invoice-purge-expired",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Invoice\\Jobs\\PurgeExpiredInvoiceDataJob",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Invoice\\Jobs\\PurgeExpiredInvoiceDataJob",
       "cron": "0 5 * * 0",
       "timezone": "UTC",
       "purpose": "Weekly Sunday 05:00 UTC: apply the per-entity retention windows. Invoices > 7y (10 for Enterprise) migrate to compliance archive; PDFs migrate S3 hot → Glacier. Credit notes NEVER auto-purged."
@@ -71,7 +71,7 @@
       "command": "invoice:detect-stale-drafts",
       "cron": "0 8 * * 1",
       "timezone": "UTC",
-      "purpose": "Weekly Monday 08:00 UTC: find invoices in status='draft' AND created_at < now() - interval '90 days'. Emits academorix.invoice.stale_drafts gauge. Ops decides whether to void + archive or preserve."
+      "purpose": "Weekly Monday 08:00 UTC: find invoices in status='draft' AND created_at < now() - interval '90 days'. Emits stackra.invoice.stale_drafts gauge. Ops decides whether to void + archive or preserve."
     }
   ]
 }

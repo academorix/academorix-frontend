@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/rbac/observers",
+  "id": "stackra://modules/rbac/observers",
   "$version": 1,
   "title": "rbac \u2014 Eloquent observers",
   "observers": [
     {
       "model": "Role",
-      "observer": "Academorix\\Rbac\\Observers\\RoleObserver",
+      "observer": "Stackra\\Rbac\\Observers\\RoleObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `rol_`",
         "creating \u2192 refuse when name fails valid_role_name rule",
@@ -24,14 +24,14 @@
     },
     {
       "model": "Permission",
-      "observer": "Academorix\\Rbac\\Observers\\PermissionObserver",
+      "observer": "Stackra\\Rbac\\Observers\\PermissionObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `per_`",
         "creating \u2192 refuse when name fails valid_permission_name rule (dot notation + valid scope suffix + no reserved prefix)",
         "creating \u2192 refuse when the (application_id, tenant_id, name, guard_name) composite already exists",
         "creating \u2192 refuse when tenant lacks custom_permissions entitlement + is_system=false (only Enterprise can create new permission strings)",
         "creating (is_system=false) \u2192 fire PermissionCreated",
-        "creating (is_system=true) \u2192 fire PermissionCreated + emit `academorix.rbac.permissions.total` gauge update",
+        "creating (is_system=true) \u2192 fire PermissionCreated + emit `stackra.rbac.permissions.total` gauge update",
         "updating (name / guard_name / application_id changed) \u2192 refuse when is_system=true \u2014 fire SystemRoleModificationRefused (same event; the permission surface uses the same alert path)",
         "deleting \u2192 refuse when is_system=true \u2014 fire SystemPermissionDeletionRefused error",
         "deleting \u2192 refuse when any role_has_permissions or model_has_permissions rows reference this permission (`PERMISSION_IN_USE`)",
@@ -40,7 +40,7 @@
     },
     {
       "model": "RoleHasPermissions (pivot)",
-      "observer": "Academorix\\Rbac\\Observers\\RoleHasPermissionsObserver",
+      "observer": "Stackra\\Rbac\\Observers\\RoleHasPermissionsObserver",
       "handles": [
         "creating \u2192 refuse when role.guard_name !== permission.guard_name \u2014 fire GuardMismatchRefused",
         "creating \u2192 refuse when role.application_id !== permission.application_id (both non-null) \u2014 fire ApplicationMismatchRefused",
@@ -55,7 +55,7 @@
     },
     {
       "model": "ModelHasRoles (pivot)",
-      "observer": "Academorix\\Rbac\\Observers\\ModelHasRolesObserver",
+      "observer": "Stackra\\Rbac\\Observers\\ModelHasRolesObserver",
       "handles": [
         "creating \u2192 refuse when role.guard_name doesn't match the principal's guard (`GuardMismatch`)",
         "creating \u2192 refuse when role.application_id doesn't match the principal's application_id (for User principals) \u2014 `PRINCIPAL_APPLICATION_MISMATCH`",
@@ -66,14 +66,14 @@
         "creating \u2192 denormalise application_id + tenant_id from the role",
         "creating \u2192 populate assigned_by + assigned_at from the current actor (auth()->user()) if not explicitly set",
         "created \u2192 fire RoleAssignedToPrincipal",
-        "updated (expires_at changed) \u2192 emit `academorix.rbac.assignments.expiration_extended` metric",
+        "updated (expires_at changed) \u2192 emit `stackra.rbac.assignments.expiration_extended` metric",
         "deleting \u2192 fire RoleRevokedFromPrincipal with the resolved trigger",
         "any mutation \u2192 fire PermissionCacheInvalidated for the affected principal"
       ]
     },
     {
       "model": "ModelHasPermissions (pivot)",
-      "observer": "Academorix\\Rbac\\Observers\\ModelHasPermissionsObserver",
+      "observer": "Stackra\\Rbac\\Observers\\ModelHasPermissionsObserver",
       "handles": [
         "creating \u2192 refuse on guard mismatch + application mismatch (same rules as ModelHasRolesObserver)",
         "creating \u2192 denormalise application_id + tenant_id",
@@ -84,7 +84,7 @@
     },
     {
       "model": "RoleDefinition",
-      "observer": "Academorix\\Rbac\\Observers\\RoleDefinitionObserver",
+      "observer": "Stackra\\Rbac\\Observers\\RoleDefinitionObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `rdf_`",
         "creating \u2192 verify role_id references a valid, is_system=true role",
@@ -94,7 +94,7 @@
         "creating \u2192 invalidate rbac:role_definitions:{application_id} cache",
         "updating (default_permissions or business_type_slugs changed) \u2192 invalidate rbac:role_definitions:{application_id} + optionally re-run TenantDefaultRoleSeeder for affected tenants (config-gated)",
         "deleting \u2192 refuse when any active role_definitions references this row (must archive first)",
-        "any mutation \u2192 emit `academorix.rbac.role_definitions.updated` metric"
+        "any mutation \u2192 emit `stackra.rbac.role_definitions.updated` metric"
       ]
     }
   ]

@@ -4,7 +4,7 @@
  * @file modules/shared/transfer/config/transfer.php
  *
  * @description
- * Runtime knobs for the `academorix/transfer` module. Merged under
+ * Runtime knobs for the `stackra/transfer` module. Merged under
  * the `transfer.*` key by the base ServiceProvider's LoadsResources
  * concern. Downstream modules read via `config('transfer.*')` (never
  * `env()` outside this file per Octane-first rules).

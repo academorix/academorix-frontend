@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Contracts\Data;
+namespace Stackra\Leads\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Leads\Models\LeadTask;
+use Stackra\Leads\Models\LeadTask;
 
 /**
  * Table shape for the `lead_tasks` table.

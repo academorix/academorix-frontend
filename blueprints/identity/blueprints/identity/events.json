@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/identity/events",
+  "id": "stackra://modules/identity/events",
   "$version": 1,
   "title": "identity \u2014 published events",
-  "namespace": "Academorix\\Identity\\Events",
+  "namespace": "Stackra\\Identity\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every credential-lifecycle event fires after DB commit so downstream listeners never see uncommitted state. Payloads are readonly value objects (readonly class + readonly properties) \u2014 immutable by construction so a listener cannot mutate the shape another listener depends on. Payloads carry `identity_id` only; downstream services that need email / dob / MFA state re-fetch through IdentityRepository so redaction rules apply consistently.",
   "events": [
     {
       "name": "IdentityRegistered",
-      "class": "Academorix\\Identity\\Events\\IdentityRegistered",
+      "class": "Stackra\\Identity\\Events\\IdentityRegistered",
       "trigger": "New Identity row inserted after passing compliance-floor + email-uniqueness checks. Fires exactly once per Identity, ever.",
       "queue": "notifications",
       "consumers": [
@@ -27,7 +27,7 @@
     },
     {
       "name": "IdentityEmailVerificationRequested",
-      "class": "Academorix\\Identity\\Events\\IdentityEmailVerificationRequested",
+      "class": "Stackra\\Identity\\Events\\IdentityEmailVerificationRequested",
       "trigger": "New EmailVerificationToken issued (registration OR email-change flow). Debounced 60s per identity_id.",
       "queue": "notifications",
       "consumers": ["notifications::DispatchEmailVerificationNotification"],
@@ -40,7 +40,7 @@
     },
     {
       "name": "IdentityEmailVerified",
-      "class": "Academorix\\Identity\\Events\\IdentityEmailVerified",
+      "class": "Stackra\\Identity\\Events\\IdentityEmailVerified",
       "trigger": "Identity.email_verified_at flipped from NULL to now(). Idempotent \u2014 re-verifying a verified identity is a no-op.",
       "queue": "notifications",
       "consumers": [
@@ -55,7 +55,7 @@
     },
     {
       "name": "PasswordChanged",
-      "class": "Academorix\\Identity\\Events\\PasswordChanged",
+      "class": "Stackra\\Identity\\Events\\PasswordChanged",
       "trigger": "Identity.password_hash mutated (via voluntary change OR forced reset). Password added to password_history_hashed rolling window in the same transaction.",
       "queue": "notifications",
       "consumers": [
@@ -74,7 +74,7 @@
     },
     {
       "name": "PasswordResetRequested",
-      "class": "Academorix\\Identity\\Events\\PasswordResetRequested",
+      "class": "Stackra\\Identity\\Events\\PasswordResetRequested",
       "trigger": "POST /api/v1/auth/password/forgot passed rate-limit + resolved a real Identity. NEVER fired when the email is unknown (email-enumeration safety \u2014 the endpoint still returns 200 so the caller can't distinguish).",
       "queue": "notifications",
       "consumers": ["notifications::DispatchPasswordResetNotification"],
@@ -88,7 +88,7 @@
     },
     {
       "name": "PasswordResetCompleted",
-      "class": "Academorix\\Identity\\Events\\PasswordResetCompleted",
+      "class": "Stackra\\Identity\\Events\\PasswordResetCompleted",
       "trigger": "PasswordResetToken exchanged for a new password. Token consumed atomically.",
       "queue": "notifications",
       "consumers": [
@@ -103,7 +103,7 @@
     },
     {
       "name": "IdentityLocked",
-      "class": "Academorix\\Identity\\Events\\IdentityLocked",
+      "class": "Stackra\\Identity\\Events\\IdentityLocked",
       "trigger": "failed_attempts_count reached `identity.lockout.max_failed_attempts` (default 5). locked_until set to now() + `lockout_minutes` (progressive backoff when consecutive lockouts occur within one hour).",
       "queue": "notifications-critical",
       "consumers": [
@@ -122,7 +122,7 @@
     },
     {
       "name": "IdentityUnlocked",
-      "class": "Academorix\\Identity\\Events\\IdentityUnlocked",
+      "class": "Stackra\\Identity\\Events\\IdentityUnlocked",
       "trigger": "AutoUnlockExpiredLockoutsJob cleared an expired lockout OR platform-admin invoked `identity:unlock`. failed_attempts_count reset to 0 in the same transaction.",
       "queue": "notifications",
       "consumers": ["activity::WriteToActivityLog", "observability::EmitIdentityUnlockedMetric"],
@@ -135,7 +135,7 @@
     },
     {
       "name": "MfaEnrolled",
-      "class": "Academorix\\Identity\\Events\\MfaEnrolled",
+      "class": "Stackra\\Identity\\Events\\MfaEnrolled",
       "trigger": "Identity.mfa_secret_encrypted transitioned from NULL to a KMS-encrypted value AND the enrolment was confirmed by a valid TOTP challenge. Recovery codes generated + hashed in the same transaction.",
       "queue": "notifications",
       "consumers": [
@@ -151,7 +151,7 @@
     },
     {
       "name": "MfaDisabled",
-      "class": "Academorix\\Identity\\Events\\MfaDisabled",
+      "class": "Stackra\\Identity\\Events\\MfaDisabled",
       "trigger": "Identity.mfa_secret_encrypted transitioned to NULL. Recovery codes purged in the same transaction. Requires re-authentication + explicit consent \u2014 never fires as a side-effect.",
       "queue": "notifications-critical",
       "consumers": [
@@ -168,7 +168,7 @@
     },
     {
       "name": "RecoveryCodesRegenerated",
-      "class": "Academorix\\Identity\\Events\\RecoveryCodesRegenerated",
+      "class": "Stackra\\Identity\\Events\\RecoveryCodesRegenerated",
       "trigger": "Identity holder invoked the regenerate-recovery-codes flow. Old codes purged, new codes hashed + persisted, plaintext shown once in the response.",
       "queue": "notifications",
       "consumers": ["activity::WriteToActivityLog"],
@@ -181,7 +181,7 @@
     },
     {
       "name": "IdentityErased",
-      "class": "Academorix\\Identity\\Events\\IdentityErased",
+      "class": "Stackra\\Identity\\Events\\IdentityErased",
       "trigger": "Identity soft-deleted (GDPR erasure request received) OR hard-deleted (hold-period expired). Two dispatches per full erasure lifecycle.",
       "queue": "notifications-critical",
       "consumers": [

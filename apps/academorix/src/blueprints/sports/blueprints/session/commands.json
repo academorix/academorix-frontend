@@ -1,96 +1,96 @@
 {
-  "id": "academorix://modules/session/commands",
+  "id": "stackra://modules/session/commands",
   "$version": 1,
   "title": "session — Artisan commands",
   "commands": [
     {
       "signature": "session:list {--tenant=} {--status=} {--team=} {--season=} {--event=} {--branch=} {--head-coach=} {--sport=} {--include-safeguarding} {--limit=50}",
-      "class": "Academorix\\Sports\\Session\\Console\\Commands\\ListSessionsCommand",
+      "class": "Stackra\\Sports\\Session\\Console\\Commands\\ListSessionsCommand",
       "purpose": "Enumerate sessions. Prints id, tenant, name, session_type, starts_at (from booking), status, head_coach, checked_in_count."
     },
     {
       "signature": "session:describe {session : ULID or slug} {--tenant=} {--include-attendance} {--include-ratings} {--include-audit-history}",
-      "class": "Academorix\\Sports\\Session\\Console\\Commands\\DescribeSessionCommand",
+      "class": "Stackra\\Sports\\Session\\Console\\Commands\\DescribeSessionCommand",
       "purpose": "Print full session resolution trace: row + resource_booking window + attached coaches + attendance list + ratings summary + last 10 audit rows."
     },
     {
       "signature": "session:create {tenant : ULID or slug} {branch : ULID or slug} {resource_booking : ULID} {name} {--type=practice} {--team=} {--season=} {--event=} {--sport=} {--head-coach=} {--capacity=} {--min-attendance=} {--curriculum=}",
-      "class": "Academorix\\Sports\\Session\\Console\\Commands\\CreateSessionCommand",
+      "class": "Stackra\\Sports\\Session\\Console\\Commands\\CreateSessionCommand",
       "purpose": "CLI create. Consumes 1 session_slot per ISO calendar week. Same-tenant/branch invariants enforced."
     },
     {
       "signature": "session:confirm {session : ULID or slug}",
-      "class": "Academorix\\Sports\\Session\\Console\\Commands\\ConfirmSessionCommand",
+      "class": "Stackra\\Sports\\Session\\Console\\Commands\\ConfirmSessionCommand",
       "purpose": "scheduled -> confirmed."
     },
     {
       "signature": "session:reschedule {session : ULID or slug} {new_resource_booking : ULID} {--reason=}",
-      "class": "Academorix\\Sports\\Session\\Console\\Commands\\RescheduleSessionCommand",
+      "class": "Stackra\\Sports\\Session\\Console\\Commands\\RescheduleSessionCommand",
       "purpose": "Swap resource_booking_id. Fires SessionRescheduled."
     },
     {
       "signature": "session:cancel {session : ULID or slug} {reason : cancellation reason (REQUIRED)} {--force-short-notice}",
-      "class": "Academorix\\Sports\\Session\\Console\\Commands\\CancelSessionCommand",
+      "class": "Stackra\\Sports\\Session\\Console\\Commands\\CancelSessionCommand",
       "purpose": "Cancel a session. Fires SessionCancelled. --force-short-notice bypasses the <24h permission check (for ops incidents)."
     },
     {
       "signature": "session:start {session : ULID or slug}",
-      "class": "Academorix\\Sports\\Session\\Console\\Commands\\StartSessionCommand",
+      "class": "Stackra\\Sports\\Session\\Console\\Commands\\StartSessionCommand",
       "purpose": "Manual transition to in_progress."
     },
     {
       "signature": "session:complete {session : ULID or slug}",
-      "class": "Academorix\\Sports\\Session\\Console\\Commands\\CompleteSessionCommand",
+      "class": "Stackra\\Sports\\Session\\Console\\Commands\\CompleteSessionCommand",
       "purpose": "Manual transition to completed."
     },
     {
       "signature": "session:check-in {session : ULID or slug} {athlete : ULID or slug} {--at=}",
-      "class": "Academorix\\Sports\\Session\\Console\\Commands\\CheckInAthleteCommand",
+      "class": "Stackra\\Sports\\Session\\Console\\Commands\\CheckInAthleteCommand",
       "purpose": "Check an athlete into a session. --at overrides the check-in timestamp (default now())."
     },
     {
       "signature": "session:mark-absent {session : ULID or slug} {athlete : ULID or slug}",
-      "class": "Academorix\\Sports\\Session\\Console\\Commands\\MarkAbsentCommand",
+      "class": "Stackra\\Sports\\Session\\Console\\Commands\\MarkAbsentCommand",
       "purpose": "Mark athlete absent."
     },
     {
       "signature": "session:mark-late {session : ULID or slug} {athlete : ULID or slug} {--minutes=}",
-      "class": "Academorix\\Sports\\Session\\Console\\Commands\\MarkLateCommand",
+      "class": "Stackra\\Sports\\Session\\Console\\Commands\\MarkLateCommand",
       "purpose": "Mark athlete late with the late_minutes computed or explicit."
     },
     {
       "signature": "session:remove-athlete {session : ULID or slug} {athlete : ULID or slug} {--reason=}",
-      "class": "Academorix\\Sports\\Session\\Console\\Commands\\RemoveAthleteCommand",
+      "class": "Stackra\\Sports\\Session\\Console\\Commands\\RemoveAthleteCommand",
       "purpose": "Soft-delete an attendance row. Fires SessionAthleteRemoved."
     },
     {
       "signature": "session:assign-coach {session : ULID or slug} {--head=} {--assistant=*} {--supervising-staff=}",
-      "class": "Academorix\\Sports\\Session\\Console\\Commands\\AssignCoachCommand",
+      "class": "Stackra\\Sports\\Session\\Console\\Commands\\AssignCoachCommand",
       "purpose": "Assign / reassign coaches. Fires SessionCoachAssigned or SessionCoachReassigned per change."
     },
     {
       "signature": "session:update-curriculum {session : ULID or slug} {--topic=} {--plan-url=}",
-      "class": "Academorix\\Sports\\Session\\Console\\Commands\\UpdateCurriculumCommand",
+      "class": "Stackra\\Sports\\Session\\Console\\Commands\\UpdateCurriculumCommand",
       "purpose": "Update curriculum_topic / lesson_plan_url. Fires SessionCurriculumTopicUpdated."
     },
     {
       "signature": "session:aggregate-ratings {--tenant=} {--dry-run}",
-      "class": "Academorix\\Sports\\Session\\Console\\Commands\\AggregateRatingsCommand",
+      "class": "Stackra\\Sports\\Session\\Console\\Commands\\AggregateRatingsCommand",
       "purpose": "Force-run AggregateSessionRatingsJob."
     },
     {
       "signature": "session:reconcile-attendance {--tenant=} {--dry-run}",
-      "class": "Academorix\\Sports\\Session\\Console\\Commands\\ReconcileAttendanceCommand",
+      "class": "Stackra\\Sports\\Session\\Console\\Commands\\ReconcileAttendanceCommand",
       "purpose": "Force-run ReconcileAttendanceCountsJob."
     },
     {
       "signature": "session:archive {session : ULID or slug}",
-      "class": "Academorix\\Sports\\Session\\Console\\Commands\\ArchiveSessionCommand",
+      "class": "Stackra\\Sports\\Session\\Console\\Commands\\ArchiveSessionCommand",
       "purpose": "Soft-archive a completed/cancelled session."
     },
     {
       "signature": "session:restore {session : ULID or slug}",
-      "class": "Academorix\\Sports\\Session\\Console\\Commands\\RestoreSessionCommand",
+      "class": "Stackra\\Sports\\Session\\Console\\Commands\\RestoreSessionCommand",
       "purpose": "Restore an archived session."
     }
   ]

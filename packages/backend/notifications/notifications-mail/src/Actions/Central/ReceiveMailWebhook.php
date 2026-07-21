@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Actions\Central;
+namespace Stackra\Notifications\Mail\Actions\Central;
 
-use Academorix\Notifications\Mail\Jobs\IngestMailProviderWebhookJob;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Notifications\Mail\Jobs\IngestMailProviderWebhookJob;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -18,7 +18,7 @@ use Illuminate\Http\Request;
  *
  * The signature IS the credential — the `verify.mail-webhook`
  * middleware verifies it before the action runs. A failed signature
- * raises {@see \Academorix\Notifications\Mail\Exceptions\MailWebhookSignatureFailedException}
+ * raises {@see \Stackra\Notifications\Mail\Exceptions\MailWebhookSignatureFailedException}
  * (HTTP 401) upstream; a request that reaches `__invoke()` here is
  * already trusted.
  *

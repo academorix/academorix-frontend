@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Models;
+namespace Stackra\Match\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Match\Contracts\Data\MatchFixtureInterface;
-use Academorix\Match\Database\Factories\MatchFixtureFactory;
-use Academorix\Branch\Concerns\BelongsToBranch;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Match\Policies\MatchFixturePolicy;
-use Academorix\Season\Concerns\BelongsToSeason;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Match\Contracts\Data\MatchFixtureInterface;
+use Stackra\Match\Database\Factories\MatchFixtureFactory;
+use Stackra\Branch\Concerns\BelongsToBranch;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Match\Policies\MatchFixturePolicy;
+use Stackra\Season\Concerns\BelongsToSeason;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

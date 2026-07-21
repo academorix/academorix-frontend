@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Development\Contracts\Data;
+namespace Stackra\Development\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Development\Models\Goal;
+use Stackra\Development\Models\Goal;
 
 /**
  * Table shape for the `goals` table.

@@ -1,16 +1,16 @@
 <div align="center">
 
-<img src="https://github.com/academorix-inc/laravel--laravel/framework/support/-/raw/main/.gitlab/banner.svg" alt="Support" width="100%">
+<img src="https://github.com/stackra-inc/laravel--laravel/framework/support/-/raw/main/.gitlab/banner.svg" alt="Support" width="100%">
 
 </div>
 
-The Academorix Rain Support contains common classes relevant to supporting the
-other Academorix Rain libraries. It adds the following features:
+The Stackra Rain Support contains common classes relevant to supporting the
+other Stackra Rain libraries. It adds the following features:
 
 ### Scaffolding
 
 See the Scaffolding Commands section of the
-[Console documentation](https://academorixcms.com/docs/console/commands).
+[Console documentation](https://stackracms.com/docs/console/commands).
 
 ### A true Singleton trait
 
@@ -19,7 +19,7 @@ matter what. Use it in your classes like this:
 
     class MyClass
     {
-        use \Academorix\Support\Traits\Singleton;
+        use \Stackra\Support\Traits\Singleton;
     }
 
     $class = MyClass::instance();
@@ -43,7 +43,7 @@ Adds event related features to any class.
 
     class MyClass
     {
-        use Academorix\Support\Traits\Emitter;
+        use Stackra\Support\Traits\Emitter;
     }
 
 **Bind to an event**

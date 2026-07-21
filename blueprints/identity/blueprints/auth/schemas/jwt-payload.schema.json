@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/auth/schemas/jwt-payload",
+  "id": "stackra://modules/auth/schemas/jwt-payload",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "JwtPayload",
@@ -10,15 +10,15 @@
     "iss": {
       "type": "string",
       "format": "uri",
-      "description": "Issuer. Always identity-service's public URL, e.g. `https://identity.academorix.com`. Downstream verifiers check this.",
-      "example": "https://identity.academorix.com"
+      "description": "Issuer. Always identity-service's public URL, e.g. `https://identity.stackra.com`. Downstream verifiers check this.",
+      "example": "https://identity.stackra.com"
     },
     "aud": {
       "type": "array",
       "items": { "type": "string" },
       "minItems": 1,
       "description": "Audience \u2014 the fully-qualified hosts the token is intended for. Downstream verifiers check their own hostname is in the array.",
-      "example": ["sports.academorix.com"]
+      "example": ["sports.stackra.com"]
     },
     "sub": {
       "type": "string",

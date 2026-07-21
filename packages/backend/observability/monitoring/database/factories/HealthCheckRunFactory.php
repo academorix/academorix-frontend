@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Database\Factories;
+namespace Stackra\Monitoring\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Monitoring\Contracts\Data\HealthCheckRunInterface;
-use Academorix\Monitoring\Models\HealthCheckRun;
+use Stackra\Monitoring\Contracts\Data\HealthCheckRunInterface;
+use Stackra\Monitoring\Models\HealthCheckRun;
 
 /**
- * Factory for {@see \Academorix\Monitoring\Models\HealthCheckRun}.
+ * Factory for {@see \Stackra\Monitoring\Models\HealthCheckRun}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Monitoring\Models\HealthCheckRun>
+ * @extends Factory<\Stackra\Monitoring\Models\HealthCheckRun>
  *
  * @category Monitoring
  *

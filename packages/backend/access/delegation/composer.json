@@ -1,10 +1,10 @@
 {
-  "name": "academorix/delegation",
+  "name": "stackra/delegation",
   "type": "library",
-  "description": "Academorix Delegation module — server-side Laravel package emitted from the module blueprint at `modules/access/blueprints/delegation/`. Complements the wire SDK at `academorix-access/delegation-sdk`.",
+  "description": "Stackra Delegation module — server-side Laravel package emitted from the module blueprint at `modules/access/blueprints/delegation/`. Complements the wire SDK at `stackra-access/delegation-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "access",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-access/delegation-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-access/delegation-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Delegation\\": "src/"
+      "Stackra\\Delegation\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Delegation\\Tests\\": "tests/"
+      "Stackra\\Delegation\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Delegation\\Providers\\DelegationServiceProvider"
+        "Stackra\\Delegation\\Providers\\DelegationServiceProvider"
       ],
       "aliases": {}
     }

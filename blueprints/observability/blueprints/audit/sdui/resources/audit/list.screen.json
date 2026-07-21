@@ -81,7 +81,7 @@
               "props": {
                 "label": "Auditable type",
                 "name": "filter[auditable_type]",
-                "placeholder": "e.g. Membership or Academorix\\Finance\\Models\\Membership"
+                "placeholder": "e.g. Membership or Stackra\\Finance\\Models\\Membership"
               },
               "actions": { "onChange": { "kind": "data.applyFilter", "source": "audits" } }
             },

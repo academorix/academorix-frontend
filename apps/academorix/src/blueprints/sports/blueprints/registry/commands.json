@@ -1,56 +1,56 @@
 {
-  "id": "academorix://modules/sports-registry/commands",
+  "id": "stackra://modules/sports-registry/commands",
   "$version": 1,
   "title": "sports-registry — Artisan commands",
   "commands": [
     {
       "signature": "sports:registry:list {--tenant=} {--kind=all} {--category=} {--platform-only} {--custom-only} {--inactive} {--limit=200}",
-      "class": "Academorix\\Sports\\Registry\\Console\\Commands\\ListRegistryCommand",
+      "class": "Stackra\\Sports\\Registry\\Console\\Commands\\ListRegistryCommand",
       "purpose": "Enumerate registry rows. --kind=sport|discipline|position|all (default all). Filters by tenant / category / platform-vs-custom / active. Prints a table with id, tenant (or 'platform'), kind, name, slug, category (Sport only), parent slug (Discipline/Position), is_active, downstream_reference_count. Ops tooling."
     },
     {
       "signature": "sports:registry:describe {slug} {--kind=sport} {--tenant=} {--include-children} {--include-refs}",
-      "class": "Academorix\\Sports\\Registry\\Console\\Commands\\DescribeRegistryCommand",
+      "class": "Stackra\\Sports\\Registry\\Console\\Commands\\DescribeRegistryCommand",
       "purpose": "Print full detail for one row. --kind=sport|discipline|position (default sport). Shows the row + optional children (disciplines under a sport; positions under a discipline) + optional downstream reference counts across every table in the reconciler config. Useful for debugging why a downstream Wave 3 row's sport_key doesn't resolve."
     },
     {
       "signature": "sports:registry:resolve {sport_key} {--discipline=} {--position=} {--tenant=}",
-      "class": "Academorix\\Sports\\Registry\\Console\\Commands\\ResolveRegistryCommand",
+      "class": "Stackra\\Sports\\Registry\\Console\\Commands\\ResolveRegistryCommand",
       "purpose": "Call the SportKeyResolver + print the full resolution trace. Useful for debugging why a downstream row's sport_key fails to resolve. Prints the candidates checked (tenant custom active → platform active → tenant custom historical → platform historical) + which layer matched (or that no layer matched)."
     },
     {
       "signature": "sports:registry:seed-platform-catalog {--force} {--dry-run}",
-      "class": "Academorix\\Sports\\Registry\\Console\\Commands\\SeedPlatformCatalogCommand",
+      "class": "Stackra\\Sports\\Registry\\Console\\Commands\\SeedPlatformCatalogCommand",
       "purpose": "Dispatch SeedPlatformSportsCatalogJob. Idempotent — a no-op when the catalog is already seeded unless --force. With --force, UPSERTS every row from `data/platform-sports-catalog.json` (adds new, updates existing) + deactivates rows removed from the JSON. --dry-run reports the planned adds/updates/deactivates without persisting. Refused when the job is already running (RESEED_LOCKED_IN_USE)."
     },
     {
       "signature": "sports:registry:reseed-platform-catalog {--force} {--dry-run}",
-      "class": "Academorix\\Sports\\Registry\\Console\\Commands\\ReseedPlatformCatalogCommand",
+      "class": "Stackra\\Sports\\Registry\\Console\\Commands\\ReseedPlatformCatalogCommand",
       "purpose": "Alias for `sports:registry:seed-platform-catalog --force`. Explicit re-seed command for platform ops running after a JSON edit. --dry-run reports the planned changes."
     },
     {
       "signature": "sports:registry:reconcile-references {--tenant=} {--table=} {--dry-run}",
-      "class": "Academorix\\Sports\\Registry\\Console\\Commands\\ReconcileReferencesCommand",
+      "class": "Stackra\\Sports\\Registry\\Console\\Commands\\ReconcileReferencesCommand",
       "purpose": "Force-run the ReconcileSportReferencesJob. --tenant scopes to a single tenant; without it, scans every tenant. --table scopes to a single reference table (e.g. `teams`); without it, sweeps every table in `config('sports_registry.reconciler.reference_tables')`. --dry-run reports the drift without firing SportPrefixResolutionFailed events (so callers can preview without triggering notifications)."
     },
     {
       "signature": "sports:registry:create-custom-sport {tenant : ULID or slug} {name} {slug} {category} {--description=} {--governing-body=} {--gender=any} {--min-age=} {--max-age=} {--color=} {--icon=}",
-      "class": "Academorix\\Sports\\Registry\\Console\\Commands\\CreateCustomSportCommand",
+      "class": "Stackra\\Sports\\Registry\\Console\\Commands\\CreateCustomSportCommand",
       "purpose": "CLI shortcut for POST /api/v1/sports. Requires the tenant to hold `sports_registry_custom` entitlement (Enterprise-only). Refuses when slug collides with a platform slug or an existing tenant slug. Consumes 1 sports_registry_custom_slot."
     },
     {
       "signature": "sports:registry:create-custom-discipline {tenant : ULID or slug} {sport_slug} {name} {slug} {--description=} {--format-type=} {--min-players=} {--max-players=} {--duration-min=}",
-      "class": "Academorix\\Sports\\Registry\\Console\\Commands\\CreateCustomDisciplineCommand",
+      "class": "Stackra\\Sports\\Registry\\Console\\Commands\\CreateCustomDisciplineCommand",
       "purpose": "CLI shortcut for POST /api/v1/disciplines. Requires the tenant to hold `sports_registry_custom` entitlement. Parent Sport (identified by slug) must be either platform-seeded OR the tenant's own custom. Cross-tenant parent refused with CROSS_TENANT_REGISTRY_REFERENCE."
     },
     {
       "signature": "sports:registry:create-custom-position {tenant : ULID or slug} {discipline_slug} {name} {slug} {--description=} {--field-position} {--offensive} {--defensive} {--jersey-min=} {--jersey-max=}",
-      "class": "Academorix\\Sports\\Registry\\Console\\Commands\\CreateCustomPositionCommand",
+      "class": "Stackra\\Sports\\Registry\\Console\\Commands\\CreateCustomPositionCommand",
       "purpose": "CLI shortcut for POST /api/v1/positions. Same tenant + parent validation as create-custom-discipline."
     },
     {
       "signature": "sports:registry:deactivate {slug} {--kind=sport} {--tenant=} {--cascade} {--force-hard-delete}",
-      "class": "Academorix\\Sports\\Registry\\Console\\Commands\\DeactivateRegistryCommand",
+      "class": "Stackra\\Sports\\Registry\\Console\\Commands\\DeactivateRegistryCommand",
       "purpose": "Deactivate a Sport / Discipline / Position by slug. --kind selects the entity type (default sport). --cascade sweeps active children (Sport → deactivate all Disciplines + Positions; Discipline → deactivate all Positions). --force-hard-delete bypasses the retention window + hard-deletes an already-deactivated custom row (requires ops sign-off; never applies to platform-seeded rows). Refuses when downstream references exist (SPORT_REFERENCE_IN_USE / etc.)."
     }
   ]

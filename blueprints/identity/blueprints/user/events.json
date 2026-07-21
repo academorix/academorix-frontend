@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/user/events",
+  "id": "stackra://modules/user/events",
   "$version": 1,
   "title": "user \u2014 published events",
-  "namespace": "Academorix\\User\\Events",
+  "namespace": "Stackra\\User\\Events",
   "dispatchMode": "afterCommit",
   "events": [
     {
       "name": "UserProvisioned",
-      "class": "Academorix\\User\\Events\\UserProvisioned",
+      "class": "Stackra\\User\\Events\\UserProvisioned",
       "trigger": "ProvisionUser action completed. Fires exactly once per (identity_id, application_id, tenant_id) triple.",
       "queue": "notifications",
       "consumers": [
@@ -32,7 +32,7 @@
     },
     {
       "name": "UserActivated",
-      "class": "Academorix\\User\\Events\\UserActivated",
+      "class": "Stackra\\User\\Events\\UserActivated",
       "trigger": "User.status transitioned pending \u2192 active (post-email-verification OR admin activation).",
       "queue": "notifications",
       "consumers": [
@@ -49,7 +49,7 @@
     },
     {
       "name": "UserSuspended",
-      "class": "Academorix\\User\\Events\\UserSuspended",
+      "class": "Stackra\\User\\Events\\UserSuspended",
       "trigger": "User.status transitioned active \u2192 suspended. Also invalidates every Sanctum PAT + JWT refresh token attached to this User.",
       "queue": "notifications",
       "consumers": [
@@ -68,7 +68,7 @@
     },
     {
       "name": "UserRestored",
-      "class": "Academorix\\User\\Events\\UserRestored",
+      "class": "Stackra\\User\\Events\\UserRestored",
       "trigger": "Soft-deleted User row restored within the erasure hold window (default 30 days).",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -82,7 +82,7 @@
     },
     {
       "name": "UserSoftDeleted",
-      "class": "Academorix\\User\\Events\\UserSoftDeleted",
+      "class": "Stackra\\User\\Events\\UserSoftDeleted",
       "trigger": "User.deleted_at set (soft delete). Distinct from UserHardDeleted \u2014 the row survives in the hold window.",
       "queue": "notifications",
       "consumers": [
@@ -99,7 +99,7 @@
     },
     {
       "name": "UserHardDeleted",
-      "class": "Academorix\\User\\Events\\UserHardDeleted",
+      "class": "Stackra\\User\\Events\\UserHardDeleted",
       "trigger": "PurgeErasedUsersJob removed the row after the hold window. Cascade delete of TenantMember rows completes atomically before dispatch.",
       "queue": "notifications-critical",
       "consumers": [
@@ -115,7 +115,7 @@
     },
     {
       "name": "ProfileUpdated",
-      "class": "Academorix\\User\\Events\\ProfileUpdated",
+      "class": "Stackra\\User\\Events\\ProfileUpdated",
       "trigger": "Any Profile field mutated (except avatar_url \u2014 that fires AvatarUpdated).",
       "queue": "notifications",
       "consumers": [
@@ -133,7 +133,7 @@
     },
     {
       "name": "AvatarUpdated",
-      "class": "Academorix\\User\\Events\\AvatarUpdated",
+      "class": "Stackra\\User\\Events\\AvatarUpdated",
       "trigger": "Profile.avatar_url set OR cleared. Fired independently of ProfileUpdated because avatar changes trigger a media-pruning listener.",
       "queue": "notifications",
       "consumers": [
@@ -152,7 +152,7 @@
     },
     {
       "name": "UserLinkedToTenant",
-      "class": "Academorix\\User\\Events\\UserLinkedToTenant",
+      "class": "Stackra\\User\\Events\\UserLinkedToTenant",
       "trigger": "TenantMember row created (user joined an additional Tenant within the same Application).",
       "queue": "notifications",
       "consumers": [
@@ -171,7 +171,7 @@
     },
     {
       "name": "UserRemovedFromTenant",
-      "class": "Academorix\\User\\Events\\UserRemovedFromTenant",
+      "class": "Stackra\\User\\Events\\UserRemovedFromTenant",
       "trigger": "TenantMember row soft-deleted OR hard-deleted. Sanctum PATs scoped to that (User, Tenant) pair are revoked in-process.",
       "queue": "notifications",
       "consumers": [
@@ -190,7 +190,7 @@
     },
     {
       "name": "UserSwitchedActiveTenant",
-      "class": "Academorix\\User\\Events\\UserSwitchedActiveTenant",
+      "class": "Stackra\\User\\Events\\UserSwitchedActiveTenant",
       "trigger": "User called POST /me/tenants/{tenant}/switch. Session state updated; next API call carries the new tenant in `X-Tenant-Id`.",
       "queue": null,
       "consumers": ["activity::WriteToActivityLog"],
@@ -203,7 +203,7 @@
     },
     {
       "name": "UserPreferredLocaleChanged",
-      "class": "Academorix\\User\\Events\\UserPreferredLocaleChanged",
+      "class": "Stackra\\User\\Events\\UserPreferredLocaleChanged",
       "trigger": "User.preferred_locale updated. Distinct from ProfileUpdated because Profile.locale is a separate override.",
       "queue": "notifications",
       "consumers": [
@@ -219,7 +219,7 @@
     },
     {
       "name": "TenantMembershipRoleChanged",
-      "class": "Academorix\\User\\Events\\TenantMembershipRoleChanged",
+      "class": "Stackra\\User\\Events\\TenantMembershipRoleChanged",
       "trigger": "TenantMember.role_id updated (admin promoted / demoted a member).",
       "queue": "notifications",
       "consumers": [

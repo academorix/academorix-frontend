@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/notifications-mail/policies",
+  "id": "stackra://modules/notifications-mail/policies",
   "$version": 1,
   "title": "notifications-mail \u2014 authorization policies",
   "description": "One policy on MailSuppression. HasSystemFlag enforces edit/delete refusal on is_system=true rows via the trait's global rule.",
   "policies": [
     {
       "model": "MailSuppression",
-      "class": "Academorix\\Notifications\\Mail\\Policies\\MailSuppressionPolicy",
+      "class": "Stackra\\Notifications\\Mail\\Policies\\MailSuppressionPolicy",
       "abilities": [
         {
           "action": "viewAny",

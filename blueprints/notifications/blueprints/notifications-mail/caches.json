@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-mail/caches",
+  "id": "stackra://modules/notifications-mail/caches",
   "$version": 1,
   "title": "notifications-mail \u2014 cache keys + tags",
   "description": "Suppression bloom filter for hot-path lookup + per-provider config caches.",

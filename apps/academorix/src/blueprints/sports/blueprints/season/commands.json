@@ -1,76 +1,76 @@
 {
-  "id": "academorix://modules/season/commands",
+  "id": "stackra://modules/season/commands",
   "$version": 1,
   "title": "season — Artisan commands",
   "commands": [
     {
       "signature": "season:list {--tenant=} {--status=} {--current} {--organization=} {--branch=} {--sport=} {--include-archived} {--limit=50}",
-      "class": "Academorix\\Sports\\Season\\Console\\Commands\\ListSeasonsCommand",
+      "class": "Stackra\\Sports\\Season\\Console\\Commands\\ListSeasonsCommand",
       "purpose": "Enumerate Seasons. Filter by tenant / status / is_current / organization / branch / sport_key. Prints a table with id, tenant, name, sport, start_date, end_date, status, is_current, sort_order. Ops tooling only."
     },
     {
       "signature": "season:describe {season : ULID or slug} {--tenant=} {--include-enrollments} {--include-audit-history}",
-      "class": "Academorix\\Sports\\Season\\Console\\Commands\\DescribeSeasonCommand",
+      "class": "Stackra\\Sports\\Season\\Console\\Commands\\DescribeSeasonCommand",
       "purpose": "Print the resolution trace for one Season: full row + resolved phase (via SeasonPhaseCalculator, side-by-side with current status so drift is visible) + inbound reference counts (Team, AthleteEnrollment, Event, Session) + registration window analysis (open/closed/late) + last 10 audit rows when --include-audit-history."
     },
     {
       "signature": "season:create {tenant : ULID or slug} {name} {start_date} {end_date} {--slug=} {--type=annual} {--organization=} {--branch=} {--sport=} {--current} {--has-playoffs} {--playoff-start=} {--playoff-end=} {--registration-opens=} {--registration-closes=} {--allows-late} {--late-fee-cents=} {--late-ends=}",
-      "class": "Academorix\\Sports\\Season\\Console\\Commands\\CreateSeasonCommand",
+      "class": "Stackra\\Sports\\Season\\Console\\Commands\\CreateSeasonCommand",
       "purpose": "CLI create. Only tenant + name + start_date + end_date are required. Consumes 1 season_slot per overlapping calendar year unless --system is set (reserved for migration paths). --current sets is_current=true (auto-demotes the previous current in the same scope tuple)."
     },
     {
       "signature": "season:set-current {season : ULID or slug} {--force-no-current-in-sibling}",
-      "class": "Academorix\\Sports\\Season\\Console\\Commands\\SetCurrentSeasonCommand",
+      "class": "Stackra\\Sports\\Season\\Console\\Commands\\SetCurrentSeasonCommand",
       "purpose": "Flip is_current=true + auto-demote the previous current in the same scope tuple. Fires SeasonCurrentChanged (audit-critical, cannot-opt-out notification). --force-no-current-in-sibling permits demoting the current row without promoting the target — leaves the tuple current-less (rare)."
     },
     {
       "signature": "season:open-registration {season : ULID or slug} {--reason=} {--early}",
-      "class": "Academorix\\Sports\\Season\\Console\\Commands\\OpenRegistrationCommand",
+      "class": "Stackra\\Sports\\Season\\Console\\Commands\\OpenRegistrationCommand",
       "purpose": "Manual transition planned -> registration_open. --early bypasses the scheduled-open guardrail (owner-only permission). Fires SeasonRegistrationOpened."
     },
     {
       "signature": "season:close-registration {season : ULID or slug} {--reason=}",
-      "class": "Academorix\\Sports\\Season\\Console\\Commands\\CloseRegistrationCommand",
+      "class": "Stackra\\Sports\\Season\\Console\\Commands\\CloseRegistrationCommand",
       "purpose": "Manual transition registration_open -> registration_closed. Fires SeasonRegistrationClosed. Does NOT block the late-registration window."
     },
     {
       "signature": "season:start {season : ULID or slug} {--reason=} {--early}",
-      "class": "Academorix\\Sports\\Season\\Console\\Commands\\StartSeasonCommand",
+      "class": "Stackra\\Sports\\Season\\Console\\Commands\\StartSeasonCommand",
       "purpose": "Manual transition to in_progress. --early bypasses the scheduled-start guardrail. Fires SeasonStarted."
     },
     {
       "signature": "season:begin-playoffs {season : ULID or slug} {--reason=} {--early}",
-      "class": "Academorix\\Sports\\Season\\Console\\Commands\\BeginPlayoffsCommand",
+      "class": "Stackra\\Sports\\Season\\Console\\Commands\\BeginPlayoffsCommand",
       "purpose": "Manual transition in_progress -> playoffs. Refused when has_playoffs=false. --early bypasses the scheduled-playoff-start guardrail. Fires SeasonPlayoffsBegun."
     },
     {
       "signature": "season:complete {season : ULID or slug} {--reason=}",
-      "class": "Academorix\\Sports\\Season\\Console\\Commands\\CompleteSeasonCommand",
+      "class": "Stackra\\Sports\\Season\\Console\\Commands\\CompleteSeasonCommand",
       "purpose": "Manual transition to completed. Fires SeasonCompleted."
     },
     {
       "signature": "season:archive {season : ULID or slug} {--reason=} {--force}",
-      "class": "Academorix\\Sports\\Season\\Console\\Commands\\ArchiveSeasonCommand",
+      "class": "Stackra\\Sports\\Season\\Console\\Commands\\ArchiveSeasonCommand",
       "purpose": "Soft-archive the Season + fire SeasonArchived. Refused when is_current=true OR when inbound rows exist unless --force. --force bypasses the FK check (operator confirms) — leaves referring rows pointing at a now-archived Season (they survive the retention window)."
     },
     {
       "signature": "season:restore {season : ULID or slug}",
-      "class": "Academorix\\Sports\\Season\\Console\\Commands\\RestoreSeasonCommand",
+      "class": "Stackra\\Sports\\Season\\Console\\Commands\\RestoreSeasonCommand",
       "purpose": "Restore an archived Season to completed status. Only within the retention window (default 2555 days). Fires SeasonRestored."
     },
     {
       "signature": "season:reconcile-current {--tenant=} {--auto-heal} {--dry-run}",
-      "class": "Academorix\\Sports\\Season\\Console\\Commands\\ReconcileCurrentCommand",
+      "class": "Stackra\\Sports\\Season\\Console\\Commands\\ReconcileCurrentCommand",
       "purpose": "Force-run ReconcileCurrentSeasonInvariantJob. --tenant scopes to a single tenant; without it, scans every tenant. --auto-heal keeps the newest is_current row + demotes the older ones. --dry-run reports the planned actions."
     },
     {
       "signature": "season:roll-phase {--tenant=} {--dry-run}",
-      "class": "Academorix\\Sports\\Season\\Console\\Commands\\RollPhaseCommand",
+      "class": "Stackra\\Sports\\Season\\Console\\Commands\\RollPhaseCommand",
       "purpose": "Force-run RollSeasonPhaseJob. Rare — used by ops during scheduled maintenance or after an outage to catch up phase transitions the hourly cron missed. --dry-run reports the planned transitions."
     },
     {
       "signature": "season:seed-defaults-for-legacy-tenants {--limit=100} {--dry-run}",
-      "class": "Academorix\\Sports\\Season\\Console\\Commands\\SeedDefaultsForLegacyTenantsCommand",
+      "class": "Stackra\\Sports\\Season\\Console\\Commands\\SeedDefaultsForLegacyTenantsCommand",
       "purpose": "One-shot: at Wave 3a deploy time, iterate every existing tenant on a seasonal business_type (sports_academy/school/federation/club) that lacks a default season + dispatch SeedDefaultSeasonForTenantJob for each. --limit chunks the run. --dry-run reports the target list. Idempotent — re-running is safe."
     }
   ]

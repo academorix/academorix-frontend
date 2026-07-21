@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/audit/helpers",
+  "id": "stackra://modules/audit/helpers",
   "$version": 1,
   "title": "audit — helper functions",
   "description": "Ergonomic helpers for audit-adjacent operations. Thin wrappers around bound services — never business logic. Callers who need the primary query surface use the AuditQuery bound service; helpers here are for ad-hoc scripts + platform-support tooling.",
-  "namespace": "Academorix\\Observability\\Audit\\Support",
+  "namespace": "Stackra\\Observability\\Audit\\Support",
   "helpers": [
     {
       "signature": "audit_query(): AuditQuery",

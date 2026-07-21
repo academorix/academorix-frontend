@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Exceptions;
+namespace Stackra\Registry\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to flip is_platform_seeded post-create.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class IsPlatformSeededImmutableException extends AcademorixException
+final class IsPlatformSeededImmutableException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

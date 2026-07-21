@@ -1,16 +1,16 @@
-# academorix/exceptions
+# stackra/exceptions
 
 Structured exception hierarchy, translation-aware user messages, sensitive-data
 masking, JSON error renderer, structured log reporter, Sentry context
 enrichment, and Spatie Ignition + `laravel/ai` solution providers for every
-Academorix app and package. Depends on [`academorix/foundation`](../foundation).
+Stackra app and package. Depends on [`stackra/foundation`](../foundation).
 
 ## What you get in one line
 
 ```php
 // bootstrap/app.php
 ->withExceptions(function (Exceptions $exceptions): void {
-    \Academorix\Exceptions\Support\ExceptionsBootstrap::configure($exceptions);
+    \Stackra\Exceptions\Support\ExceptionsBootstrap::configure($exceptions);
 })
 ```
 
@@ -34,7 +34,7 @@ That single call gives you:
 ```json
 {
   "error": {
-    "type": "urn:academorix:error:http.validation",
+    "type": "urn:stackra:error:http.validation",
     "code": "http.validation",
     "title": "Please review the highlighted fields and try again.",
     "status": 422,
@@ -62,11 +62,11 @@ Prefer domain-specific classes with named factories. Every class inherits
 `::make()` from the base for the free-form path:
 
 ```php
-use Academorix\Exceptions\Http\ValidationException;
-use Academorix\Exceptions\Http\ConflictException;
-use Academorix\Exceptions\Http\TooManyRequestsException;
-use Academorix\Exceptions\Domain\BusinessRuleException;
-use Academorix\Exceptions\Auth\ForbiddenException;
+use Stackra\Exceptions\Http\ValidationException;
+use Stackra\Exceptions\Http\ConflictException;
+use Stackra\Exceptions\Http\TooManyRequestsException;
+use Stackra\Exceptions\Domain\BusinessRuleException;
+use Stackra\Exceptions\Auth\ForbiddenException;
 
 // Named factory — the preferred style
 throw ForbiddenException::missingPermission('billing.write');
@@ -134,7 +134,7 @@ php artisan vendor:publish --tag=exceptions-translations
 
 ## Sensitive data masking
 
-The `SensitiveDataMasker` (`Academorix\Exceptions\Support\SensitiveDataMasker`)
+The `SensitiveDataMasker` (`Stackra\Exceptions\Support\SensitiveDataMasker`)
 runs at every egress boundary — JSON response, log line, Sentry event. It:
 
 - **Redacts sensitive keys** by case-insensitive substring match (`password`,
@@ -165,7 +165,7 @@ Temporarily disable masking (support consoles, integration tests that need the
 raw payload):
 
 ```php
-use Academorix\Exceptions\Support\SensitiveDataMasker;
+use Stackra\Exceptions\Support\SensitiveDataMasker;
 
 $raw = SensitiveDataMasker::reveal(function () use ($masker, $context) {
     return $masker->maskArray($context); // returns unmasked here
@@ -177,7 +177,7 @@ Never wrap production HTTP handlers with it.
 
 ## Structured log reporter
 
-`LogReporter` (`Academorix\Exceptions\Reporting\LogReporter`) writes a JSON log
+`LogReporter` (`Stackra\Exceptions\Reporting\LogReporter`) writes a JSON log
 line per exception:
 
 ```json
@@ -210,10 +210,10 @@ line per exception:
 
 Two providers registered when Ignition is installed:
 
-- **`AcademorixSolutionsProvider`** — deterministic hints for our own exception
+- **`StackraSolutionsProvider`** — deterministic hints for our own exception
   types (`ConfigurationException` → "check Doppler", `IntegrationException` →
   "check upstream status page", ...)
-- **`AcademorixAiSolutionsProvider`** — delegates to the first-party
+- **`StackraAiSolutionsProvider`** — delegates to the first-party
   [Laravel AI SDK](https://laravel.com/docs/13.x/ai-sdk). Provider, model, and
   API keys come from `config/ai.php` — the SDK's own config — so switching from
   OpenAI to Anthropic to Ollama is a single-line change.
@@ -230,23 +230,23 @@ Then set your provider in `config/ai.php` per the SDK docs.
 
 | Namespace                                                        | Purpose                                                                     |
 | ---------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `Academorix\Exceptions\AcademorixException`                      | Base class. Provides `::make()`, translation, masking hook, fluent setters. |
-| `Academorix\Exceptions\Enums\ErrorSeverity`                      | PSR-3 aligned severity.                                                     |
-| `Academorix\Exceptions\Enums\ErrorCategory`                      | Coarse bucket for dashboards.                                               |
-| `Academorix\Exceptions\Support\ExceptionsBootstrap::configure()` | Single-call wiring for `bootstrap/app.php`.                                 |
-| `Academorix\Exceptions\Support\ExceptionMapper`                  | Framework → Academorix translator.                                          |
-| `Academorix\Exceptions\Support\SensitiveDataMasker`              | Redactor used at every egress boundary.                                     |
-| `Academorix\Exceptions\Http\Responses\JsonErrorRenderer`         | Invokable JSON response builder.                                            |
-| `Academorix\Exceptions\Middleware\CaptureExceptionContext`       | Snapshots request metadata for reporters.                                   |
-| `Academorix\Exceptions\Reporting\LogReporter`                    | Structured, masked, PSR-3-aware log writer.                                 |
-| `Academorix\Exceptions\Reporting\SentryContextEnricher`          | Sentry scope enrichment.                                                    |
-| `Academorix\Exceptions\Ignition\AcademorixSolutionsProvider`     | Deterministic Ignition solutions.                                           |
-| `Academorix\Exceptions\Ignition\AcademorixAiSolutionsProvider`   | AI-powered Ignition solutions via `laravel/ai`.                             |
+| `Stackra\Exceptions\StackraException`                      | Base class. Provides `::make()`, translation, masking hook, fluent setters. |
+| `Stackra\Exceptions\Enums\ErrorSeverity`                      | PSR-3 aligned severity.                                                     |
+| `Stackra\Exceptions\Enums\ErrorCategory`                      | Coarse bucket for dashboards.                                               |
+| `Stackra\Exceptions\Support\ExceptionsBootstrap::configure()` | Single-call wiring for `bootstrap/app.php`.                                 |
+| `Stackra\Exceptions\Support\ExceptionMapper`                  | Framework → Stackra translator.                                          |
+| `Stackra\Exceptions\Support\SensitiveDataMasker`              | Redactor used at every egress boundary.                                     |
+| `Stackra\Exceptions\Http\Responses\JsonErrorRenderer`         | Invokable JSON response builder.                                            |
+| `Stackra\Exceptions\Middleware\CaptureExceptionContext`       | Snapshots request metadata for reporters.                                   |
+| `Stackra\Exceptions\Reporting\LogReporter`                    | Structured, masked, PSR-3-aware log writer.                                 |
+| `Stackra\Exceptions\Reporting\SentryContextEnricher`          | Sentry scope enrichment.                                                    |
+| `Stackra\Exceptions\Ignition\StackraSolutionsProvider`     | Deterministic Ignition solutions.                                           |
+| `Stackra\Exceptions\Ignition\StackraAiSolutionsProvider`   | AI-powered Ignition solutions via `laravel/ai`.                             |
 
 ## Testing
 
 ```bash
-pnpm turbo run test --filter=@academorix/exceptions
+pnpm turbo run test --filter=@stackra/exceptions
 ```
 
 The full catalogue of shipped classes + the "what to add next" list lives in

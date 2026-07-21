@@ -3,7 +3,7 @@
  * @file strip-stackra-ui.mjs
  * @description
  * `@stackra/ui` doesn't exist in this workspace (packages/ui ships as
- * `@academorix/ui`). Remove every `@stackra/ui` reference from the 5
+ * `@stackra/ui`). Remove every `@stackra/ui` reference from the 5
  * dead `@stackra/*` packages that carry it as an optional peer +
  * devDep. Safe: the peer is already marked `optional: true`.
  */

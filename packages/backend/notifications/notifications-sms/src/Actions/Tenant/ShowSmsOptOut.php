@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Actions\Tenant;
+namespace Stackra\Notifications\Sms\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Notifications\Sms\Contracts\Repositories\SmsOptOutRepositoryInterface;
-use Academorix\Notifications\Sms\Data\SmsOptOutData;
-use Academorix\Notifications\Sms\Enums\NotificationsSmsPermission;
-use Academorix\Notifications\Sms\Exceptions\SmsOptedOutException;
-use Academorix\Notifications\Sms\Models\SmsOptOut;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Notifications\Sms\Contracts\Repositories\SmsOptOutRepositoryInterface;
+use Stackra\Notifications\Sms\Data\SmsOptOutData;
+use Stackra\Notifications\Sms\Enums\NotificationsSmsPermission;
+use Stackra\Notifications\Sms\Exceptions\SmsOptedOutException;
+use Stackra\Notifications\Sms\Models\SmsOptOut;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `GET /api/v1/tenant/sms-opt-outs/{opt_out}` — show one opt-out.

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/branch/listeners",
+  "id": "stackra://modules/branch/listeners",
   "$version": 1,
   "title": "branch — subscribed events",
   "listeners": [
@@ -10,31 +10,31 @@
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Branch\\Listeners\\BranchesOnTenantErased",
+      "listener": "Stackra\\Branch\\Listeners\\BranchesOnTenantErased",
       "queue": "notifications-critical",
       "purpose": "Fires when a Tenant is being erased. Iterates every Branch on the tenant: cancels any in-flight `GeocodeAddressJob` for those branches (avoids wasted subprocessor spend after the row is gone) + emits a per-branch metric so the platform can graph erasure fanout. The actual DELETE cascades via the DB FK (`branches.tenant_id ON DELETE CASCADE`) — this listener runs BEFORE the cascade to do the job-cancellation cleanup."
     },
     {
       "event": "organization::OrganizationArchived",
-      "listener": "Academorix\\Branch\\Listeners\\OnOrganizationArchived",
+      "listener": "Stackra\\Branch\\Listeners\\OnOrganizationArchived",
       "queue": "notifications",
       "purpose": "Fires when the Organization module (a sibling) archives an Organization. Verifies that every Branch under the archived org is already closed OR under-migration; refuses the org archival otherwise via the shared archival-precondition contract. Belt-and-braces on top of the Organization module's own checks."
     },
     {
       "event": "region::RegionArchived",
-      "listener": "Academorix\\Branch\\Listeners\\OnRegionArchived",
+      "listener": "Stackra\\Branch\\Listeners\\OnRegionArchived",
       "queue": "notifications",
       "purpose": "Same shape as OnOrganizationArchived — verifies no active Branch references the region before allowing region archival."
     },
     {
       "event": "geofencing::GeofencePolygonUpdated",
-      "listener": "Academorix\\Branch\\Listeners\\OnGeofencePolygonUpdated",
+      "listener": "Stackra\\Branch\\Listeners\\OnGeofencePolygonUpdated",
       "queue": "notifications",
       "purpose": "Wave 3 hand-off. Fires when the geofencing module (once landed) updates a polygon attached to a Branch. Invalidates the `br:coverage:{branch_id}` cache + fires an activity_log entry naming the change. No-op in Wave 2 (the geofencing module doesn't ship yet); listener is registered lazily via the discovery scan when geofencing appears."
     },
     {
       "event": "entitlements::EntitlementChanged",
-      "listener": "Academorix\\Branch\\Listeners\\OnBranchEntitlementChanged",
+      "listener": "Stackra\\Branch\\Listeners\\OnBranchEntitlementChanged",
       "queue": "notifications",
       "purpose": "Fires when any of the 5 branch entitlements changes for a tenant (branch_slot / branch_geocoding / branch_capacity_gating / branch_amenities / branch_multi_period_hours). Reconciles the tenant's state — e.g. when `branch_slot` decreases below the current active-branch count on downgrade, the reconciler picks the newest-created non-default branches and freezes them (status=paused with reason='entitlement_downgrade'). See the entitlements-reconciler service for the full policy."
     }

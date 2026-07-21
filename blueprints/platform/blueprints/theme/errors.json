@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/theme/errors",
+  "id": "stackra://modules/theme/errors",
   "$version": 1,
   "title": "theme — error codes",
   "namespace": "theme",

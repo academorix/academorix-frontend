@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Tests;
+namespace Stackra\Versioning\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/versioning.
+ * Base test case for stackra/versioning.
  *
  * @category Versioning
  *

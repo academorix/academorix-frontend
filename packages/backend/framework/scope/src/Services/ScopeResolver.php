@@ -15,15 +15,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Services;
+namespace Stackra\Scope\Services;
 
-use Academorix\Scope\Contracts\ScopeContextInterface;
-use Academorix\Scope\Contracts\ScopeRegistryInterface;
-use Academorix\Scope\Contracts\ScopeResolutionInterface;
-use Academorix\Scope\Data\ResolvedScopeValue;
-use Academorix\Scope\Exceptions\ScopeValidationException;
-use Academorix\Scope\Models\ScopeNode;
-use Academorix\Scope\Models\ScopeValue;
+use Stackra\Scope\Contracts\ScopeContextInterface;
+use Stackra\Scope\Contracts\ScopeRegistryInterface;
+use Stackra\Scope\Contracts\ScopeResolutionInterface;
+use Stackra\Scope\Data\ResolvedScopeValue;
+use Stackra\Scope\Exceptions\ScopeValidationException;
+use Stackra\Scope\Models\ScopeNode;
+use Stackra\Scope\Models\ScopeValue;
 
 /**
  * Cascading resolver.

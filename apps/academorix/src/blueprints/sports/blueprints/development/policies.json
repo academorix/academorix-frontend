@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/development/policies",
+  "id": "stackra://modules/development/policies",
   "$version": 1,
   "title": "development — authorization policies",
   "policies": [
     {
       "model": "Pathway",
-      "class": "Academorix\\Sports\\Development\\Policies\\PathwayPolicy",
+      "class": "Stackra\\Sports\\Development\\Policies\\PathwayPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "development.pathways.viewAny" },
         { "action": "view", "permission": "development.pathways.view" },
@@ -28,7 +28,7 @@
     },
     {
       "model": "AthletePathwayAssignment",
-      "class": "Academorix\\Sports\\Development\\Policies\\AthletePathwayAssignmentPolicy",
+      "class": "Stackra\\Sports\\Development\\Policies\\AthletePathwayAssignmentPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "development.assignments.viewAny" },
         { "action": "view", "permission": "development.assignments.view" },
@@ -51,7 +51,7 @@
     },
     {
       "model": "AthleteGoal",
-      "class": "Academorix\\Sports\\Development\\Policies\\AthleteGoalPolicy",
+      "class": "Stackra\\Sports\\Development\\Policies\\AthleteGoalPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "development.goals.viewAny" },
         { "action": "view", "permission": "development.goals.view" },
@@ -74,7 +74,7 @@
     },
     {
       "model": "ScoutingReport",
-      "class": "Academorix\\Sports\\Development\\Policies\\ScoutingReportPolicy",
+      "class": "Stackra\\Sports\\Development\\Policies\\ScoutingReportPolicy",
       "abilities": [
         {
           "action": "viewAny",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/safeguarding/retention",
+  "id": "stackra://modules/safeguarding/retention",
   "$version": 1,
   "title": "safeguarding — data retention windows",
   "description": "Legal-hold module. Every incident record is retained for the STATUTE OF LIMITATIONS of the involved incident type (up to indefinite for child protection escalations). StaffCheck rows retained 7yr post-expiry for compliance audit.",
@@ -44,5 +44,5 @@
     },
     { "entity": "StaffCheckAttachment", "hot_days": null, "on_purge": "cascade_with_parent" }
   ],
-  "legal_hold_exception": "Any incident escalated to external authorities OR involving a minor's safety marks the entire incident chain (incident + attachments + access grants + linked messages) as legal-hold. Legal-hold records are NEVER deleted regardless of tenant termination — they persist under Academorix's compliance obligation to authorities."
+  "legal_hold_exception": "Any incident escalated to external authorities OR involving a minor's safety marks the entire incident chain (incident + attachments + access grants + linked messages) as legal-hold. Legal-hold records are NEVER deleted regardless of tenant termination — they persist under Stackra's compliance obligation to authorities."
 }

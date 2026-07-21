@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Observers;
+namespace Stackra\Notifications\Push\Observers;
 
-use Academorix\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
-use Academorix\Notifications\Push\Contracts\Services\TokenValidatorInterface;
-use Academorix\Notifications\Push\Enums\PushSubscriptionExpiredReason;
-use Academorix\Notifications\Push\Events\PushSubscriptionExpired;
-use Academorix\Notifications\Push\Events\PushSubscriptionRegistered;
-use Academorix\Notifications\Push\Events\PushSubscriptionRevoked;
-use Academorix\Notifications\Push\Exceptions\InvalidDeviceTokenException;
-use Academorix\Notifications\Push\Models\PushSubscription;
+use Stackra\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
+use Stackra\Notifications\Push\Contracts\Services\TokenValidatorInterface;
+use Stackra\Notifications\Push\Enums\PushSubscriptionExpiredReason;
+use Stackra\Notifications\Push\Events\PushSubscriptionExpired;
+use Stackra\Notifications\Push\Events\PushSubscriptionRegistered;
+use Stackra\Notifications\Push\Events\PushSubscriptionRevoked;
+use Stackra\Notifications\Push\Exceptions\InvalidDeviceTokenException;
+use Stackra\Notifications\Push\Models\PushSubscription;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 

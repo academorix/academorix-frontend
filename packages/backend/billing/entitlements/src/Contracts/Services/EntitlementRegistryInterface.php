@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Contracts\Services;
+namespace Stackra\Entitlements\Contracts\Services;
 
-use Academorix\Entitlements\Attributes\ConsumesEntitlement;
-use Academorix\Entitlements\Enums\EntitlementKind;
-use Academorix\Entitlements\Enums\EntitlementPeriod;
-use Academorix\Entitlements\Services\EntitlementRegistry;
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Entitlements\Attributes\ConsumesEntitlement;
+use Stackra\Entitlements\Enums\EntitlementKind;
+use Stackra\Entitlements\Enums\EntitlementPeriod;
+use Stackra\Entitlements\Services\EntitlementRegistry;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
 use Illuminate\Container\Attributes\Bind;
 
 /**
  * In-memory registry of every `#[ConsumesEntitlement]`-declared key.
  *
  * Hydrated at boot by the framework's generic
- * {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ * {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  * pump via the {@see HydratesFrom} attribute on {@see register()}.
  * Consumers query the registry for the shipped default value + kind
  * when provisioning a new tenant.

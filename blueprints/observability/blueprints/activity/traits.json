@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/activity/traits",
+  "id": "stackra://modules/activity/traits",
   "$version": 1,
   "title": "activity — model traits",
   "description": "Trait contract this module owns (`LogsActivity`, `BelongsToActivity`) and consumes from foundation / tenancy / vendor. `LogsActivity` is the primary extension point — every domain aggregate that wants user-facing activity capture composes it and configures `getActivitylogOptions()`.",
   "owned": [
     {
       "trait": "LogsActivity",
-      "class": "Academorix\\Observability\\Activity\\Concerns\\LogsActivity",
-      "schemaRef": "academorix://modules/activity/schemas/activity",
-      "description": "Composed on domain models that want user-facing activity capture. Wraps `Spatie\\Activitylog\\Traits\\LogsActivity` — the vendor trait provides the machinery; this trait adds three Academorix-flavoured guarantees. (1) The activity's `tenant_id` matches the model's `tenant_id` on every write (safety cross-check pre-persist). (2) The activity's `application_id` is auto-filled from request context. (3) The composing model's `getActivitylogOptions()` must set a `log_name` in the module's registered catalog OR the trait throws at model boot — this catches typos in log_name references at deploy time instead of run time.",
+      "class": "Stackra\\Observability\\Activity\\Concerns\\LogsActivity",
+      "schemaRef": "stackra://modules/activity/schemas/activity",
+      "description": "Composed on domain models that want user-facing activity capture. Wraps `Spatie\\Activitylog\\Traits\\LogsActivity` — the vendor trait provides the machinery; this trait adds three Stackra-flavoured guarantees. (1) The activity's `tenant_id` matches the model's `tenant_id` on every write (safety cross-check pre-persist). (2) The activity's `application_id` is auto-filled from request context. (3) The composing model's `getActivitylogOptions()` must set a `log_name` in the module's registered catalog OR the trait throws at model boot — this catches typos in log_name references at deploy time instead of run time.",
       "public": true,
       "adds": {
         "columns": [],
@@ -22,7 +22,7 @@
           {
             "name": "activities",
             "type": "MorphMany",
-            "target": "Academorix\\Observability\\Activity\\Models\\Activity",
+            "target": "Stackra\\Observability\\Activity\\Models\\Activity",
             "morphType": "subject_type",
             "morphId": "subject_id",
             "description": "All activities targeting this row as subject. Ordered by created_at DESC. Consumed by /api/v1/activities/by-entity/{type}/{id}."
@@ -30,7 +30,7 @@
           {
             "name": "recentActivities",
             "type": "MorphMany",
-            "target": "Academorix\\Observability\\Activity\\Models\\Activity",
+            "target": "Stackra\\Observability\\Activity\\Models\\Activity",
             "morphType": "subject_type",
             "morphId": "subject_id",
             "scopes": ["recent"],
@@ -71,7 +71,7 @@
     },
     {
       "trait": "BelongsToActivity",
-      "class": "Academorix\\Observability\\Activity\\Concerns\\BelongsToActivity",
+      "class": "Stackra\\Observability\\Activity\\Concerns\\BelongsToActivity",
       "description": "Composed on rows created BY an activity (e.g. a notification triggered by an activity, a follow-up task). Adds a nullable `activity_id` FK + BelongsTo relation for provenance / traceability. Optional — most modules don't need it.",
       "public": true,
       "adds": {
@@ -96,7 +96,7 @@
           {
             "name": "originActivity",
             "type": "BelongsTo",
-            "target": "Academorix\\Observability\\Activity\\Models\\Activity"
+            "target": "Stackra\\Observability\\Activity\\Models\\Activity"
           }
         ]
       },
@@ -119,13 +119,13 @@
     },
     {
       "trait": "BelongsToTenant",
-      "class": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+      "class": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
       "source": "tenancy",
       "description": "Applies the tenant global scope + auto-fills tenant_id on save. Registered FIRST in the composition chain."
     },
     {
       "trait": "HasUserstamps",
-      "class": "Academorix\\Foundation\\Concerns\\HasUserstamps",
+      "class": "Stackra\\Foundation\\Concerns\\HasUserstamps",
       "source": "foundation",
       "description": "created_by / updated_by / deleted_by on ActivityRetentionPolicy. NOT applied to Activity — the vendor table doesn't have those columns, and adding them would leak into every activity row unnecessarily (the `causer` already carries actor identity)."
     },
@@ -137,13 +137,13 @@
     },
     {
       "trait": "Filterable",
-      "class": "Academorix\\Foundation\\Concerns\\Filterable",
+      "class": "Stackra\\Foundation\\Concerns\\Filterable",
       "source": "foundation",
       "description": "Query-string filter support for the list endpoints — filter[log_name], filter[causer_id], filter[subject_type], filter[event], filter[from], filter[to]."
     },
     {
       "trait": "Searchable",
-      "class": "Academorix\\Foundation\\Concerns\\Searchable",
+      "class": "Stackra\\Foundation\\Concerns\\Searchable",
       "source": "foundation",
       "description": "Full-text search over `description` for admin dashboards. Applied to Activity only."
     },
@@ -157,6 +157,6 @@
   "compositionExample": {
     "language": "php",
     "note": "Consumer example — Booking model composes LogsActivity.",
-    "code": "use Academorix\\Observability\\Activity\\Concerns\\LogsActivity;\nuse Spatie\\Activitylog\\LogOptions;\n\nfinal class Booking extends Model\n{\n    use BelongsToTenant;   // ← must be first (tenancy hook)\n    use LogsActivity;\n\n    protected function getActivitylogOptions(): LogOptions\n    {\n        return LogOptions::defaults()\n            ->logOnly(['facility_id', 'starts_at', 'ends_at', 'status'])\n            ->logOnlyDirty()\n            ->useLogName('bookings')\n            ->setDescriptionForEvent(fn (string $event) => match ($event) {\n                'created' => sprintf(\n                    '%s booked %s for %s',\n                    $this->causer?->display_name ?? 'Someone',\n                    $this->facility->name,\n                    $this->starts_at->format('D M j'),\n                ),\n                'updated' => sprintf(\n                    '%s updated their booking on %s',\n                    $this->causer?->display_name ?? 'Someone',\n                    $this->facility->name,\n                ),\n                'deleted' => sprintf(\n                    '%s cancelled their booking on %s',\n                    $this->causer?->display_name ?? 'Someone',\n                    $this->facility->name,\n                ),\n                default => 'Booking changed',\n            });\n    }\n}"
+    "code": "use Stackra\\Observability\\Activity\\Concerns\\LogsActivity;\nuse Spatie\\Activitylog\\LogOptions;\n\nfinal class Booking extends Model\n{\n    use BelongsToTenant;   // ← must be first (tenancy hook)\n    use LogsActivity;\n\n    protected function getActivitylogOptions(): LogOptions\n    {\n        return LogOptions::defaults()\n            ->logOnly(['facility_id', 'starts_at', 'ends_at', 'status'])\n            ->logOnlyDirty()\n            ->useLogName('bookings')\n            ->setDescriptionForEvent(fn (string $event) => match ($event) {\n                'created' => sprintf(\n                    '%s booked %s for %s',\n                    $this->causer?->display_name ?? 'Someone',\n                    $this->facility->name,\n                    $this->starts_at->format('D M j'),\n                ),\n                'updated' => sprintf(\n                    '%s updated their booking on %s',\n                    $this->causer?->display_name ?? 'Someone',\n                    $this->facility->name,\n                ),\n                'deleted' => sprintf(\n                    '%s cancelled their booking on %s',\n                    $this->causer?->display_name ?? 'Someone',\n                    $this->facility->name,\n                ),\n                default => 'Booking changed',\n            });\n    }\n}"
   }
 }

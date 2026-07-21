@@ -1,10 +1,10 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/notifications-sdk",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/notifications-sdk",
   "tier": "saas",
   "surfaces": ["core"],
   "kind": "sdk",
-  "purpose": "Typed Saloon SDK for the Notifications service — email, SMS, push, in-app, WhatsApp, templates, digests. Umbrella client built on academorix/api-sdk.",
+  "purpose": "Typed Saloon SDK for the Notifications service — email, SMS, push, in-app, WhatsApp, templates, digests. Umbrella client built on stackra/api-sdk.",
   "capabilities": [
     "NotificationsSdk umbrella client (config sdk.notifications.*)",
     "#[AsSdkResource(service: 'notifications')] discovery scope",
@@ -14,12 +14,12 @@
     "Digest schedule + preview requests"
   ],
   "when_to_use": "A domain service that needs to trigger a transactional notification to a tenant end-user.",
-  "when_not_to_use": "For campaign-scale marketing blasts, use the platform sibling academorix/marketing package.",
+  "when_not_to_use": "For campaign-scale marketing blasts, use the platform sibling stackra/marketing package.",
   "peer_deps": [
-    "academorix/api-sdk",
-    "academorix/exceptions",
-    "academorix/foundation",
-    "academorix/service-provider",
+    "stackra/api-sdk",
+    "stackra/exceptions",
+    "stackra/foundation",
+    "stackra/service-provider",
     "saloonphp/saloon",
     "spatie/laravel-data"
   ],

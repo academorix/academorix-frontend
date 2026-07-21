@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Season\Attributes;
+namespace Stackra\Season\Attributes;
 
 use Attribute;
 

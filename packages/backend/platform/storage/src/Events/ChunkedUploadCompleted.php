@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Events;
+namespace Stackra\Storage\Events;
 
-use Academorix\Events\Attributes\AsEvent;
-use Academorix\Storage\Models\ChunkedUpload;
-use Academorix\Storage\Models\File;
+use Stackra\Events\Attributes\AsEvent;
+use Stackra\Storage\Models\ChunkedUpload;
+use Stackra\Storage\Models\File;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 

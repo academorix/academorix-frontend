@@ -53,7 +53,7 @@ jobs:
           body: |
             **Preview scope**
 
-            - Dashboard SPA: ${{ steps.diff.outputs.changed_dashboard == '1' && 'affected — verify at https://dashboard-academorix.vercel.app after Vercel builds this PR' || 'not affected' }}
-            - Landing page: ${{ steps.diff.outputs.changed_landing == '1' && 'affected — verify at https://academorix-frontend-landing-page.vercel.app after Vercel builds this PR' || 'not affected' }}
+            - Dashboard SPA: ${{ steps.diff.outputs.changed_dashboard == '1' && 'affected — verify at https://dashboard-stackra.vercel.app after Vercel builds this PR' || 'not affected' }}
+            - Landing page: ${{ steps.diff.outputs.changed_landing == '1' && 'affected — verify at https://stackra-frontend-landing-page.vercel.app after Vercel builds this PR' || 'not affected' }}
 
             Vercel will comment with the exact preview URLs once its build completes.

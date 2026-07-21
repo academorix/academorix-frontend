@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Staff\Contracts\Services;
+namespace Stackra\Staff\Contracts\Services;
 
-use Academorix\Staff\Services\CertificationValidator;
+use Stackra\Staff\Services\CertificationValidator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

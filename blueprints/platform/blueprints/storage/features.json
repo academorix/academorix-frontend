@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/storage/features",
+  "id": "stackra://modules/storage/features",
   "$version": 1,
   "title": "storage \u2014 feature keys",
   "description": "Tenant-facing capabilities gated by plan tier. Enforcement happens at the middleware / policy layer via feature-flag checks; tenant admins CANNOT toggle these directly \u2014 they're plan-tier expressions.",

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Exceptions;
+namespace Stackra\Newsletter\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * User already opted out of marketing.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NewsletterPreferenceOptedOutException extends AcademorixException
+final class NewsletterPreferenceOptedOutException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Dunning\Contracts\Data;
+namespace Stackra\Dunning\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Dunning\Models\DunningRun;
+use Stackra\Dunning\Models\DunningRun;
 
 /**
  * Table shape for the `dunning_runs` table.

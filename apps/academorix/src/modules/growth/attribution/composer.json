@@ -1,10 +1,10 @@
 {
-  "name": "academorix/attribution",
+  "name": "stackra/attribution",
   "type": "library",
-  "description": "Academorix Attribution module — server-side Laravel package emitted from the module blueprint at `modules/growth/blueprints/attribution/`. Complements the wire SDK at `academorix-growth/attribution-sdk`.",
+  "description": "Stackra Attribution module — server-side Laravel package emitted from the module blueprint at `modules/growth/blueprints/attribution/`. Complements the wire SDK at `stackra-growth/attribution-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "growth",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-growth/attribution-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-growth/attribution-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Attribution\\": "src/"
+      "Stackra\\Attribution\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Attribution\\Tests\\": "tests/"
+      "Stackra\\Attribution\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Attribution\\Providers\\AttributionServiceProvider"
+        "Stackra\\Attribution\\Providers\\AttributionServiceProvider"
       ],
       "aliases": {}
     }

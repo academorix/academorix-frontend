@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/retention",
+  "id": "stackra://modules/workflow/approvals/retention",
   "$version": 1,
   "title": "approvals — retention windows",
   "description": "Retention aligns with SOC 2 CC6.3 (7-year evidence retention on executed approvals) + GDPR Art. 5(1)(e) storage limitation (90-day hold on non-executed flows). Approval templates are governance artefacts retained indefinitely (old versions preserved, never hard-deleted except on tenant erasure). Approval decisions are retained forever — decisions are the audit event and never redacted or purged.",

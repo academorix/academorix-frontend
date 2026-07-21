@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Athlete\Exceptions;
+namespace Stackra\Athlete\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Branch transfer lands in Wave 3b.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AthleteBranchImmutableWave3AException extends AcademorixException
+final class AthleteBranchImmutableWave3AException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

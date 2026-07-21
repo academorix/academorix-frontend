@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\People\Database\Factories;
+namespace Stackra\People\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\People\Contracts\Data\TenantLinkRequestInterface;
-use Academorix\People\Models\TenantLinkRequest;
+use Stackra\People\Contracts\Data\TenantLinkRequestInterface;
+use Stackra\People\Models\TenantLinkRequest;
 
 /**
- * Factory for {@see \Academorix\People\Models\TenantLinkRequest}.
+ * Factory for {@see \Stackra\People\Models\TenantLinkRequest}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\People\Models\TenantLinkRequest>
+ * @extends Factory<\Stackra\People\Models\TenantLinkRequest>
  *
  * @category People
  *

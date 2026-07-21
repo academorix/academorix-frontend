@@ -11,7 +11,7 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use Spatie\RouteAttributes\Attributes\Prefix as SpatiePrefix;
@@ -29,8 +29,8 @@ use Spatie\RouteAttributes\Attributes\Prefix as SpatiePrefix;
  *
  * ## Usage:
  * ```php
- * use Academorix\Routing\Attributes\Prefix;
- * use Academorix\Routing\Attributes\Get;
+ * use Stackra\Routing\Attributes\Prefix;
+ * use Stackra\Routing\Attributes\Get;
  *
  * #[Prefix('admin')]
  * class AdminController

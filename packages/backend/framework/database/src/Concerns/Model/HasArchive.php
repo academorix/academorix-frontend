@@ -17,7 +17,7 @@ declare(strict_types=1);
  *
  * ## Usage:
  * ```php
- * use Academorix\Database\Concerns\Model\HasArchive;
+ * use Stackra\Database\Concerns\Model\HasArchive;
  *
  * class Project extends Model
  * {
@@ -45,7 +45,7 @@ declare(strict_types=1);
  * @see \Illuminate\Database\Eloquent\Scope
  */
 
-namespace Academorix\Database\Concerns\Model;
+namespace Stackra\Database\Concerns\Model;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -69,9 +69,9 @@ trait HasArchive
     {
         // Read attribute configuration (if present)
         $config = null;
-        $forClass = \Academorix\Database\Support\AttributeReader::forClass(static::class);
+        $forClass = \Stackra\Database\Support\AttributeReader::forClass(static::class);
         foreach ($forClass->classAttributes as $attr) {
-            if ($attr instanceof \Academorix\Database\Attributes\Archivable) {
+            if ($attr instanceof \Stackra\Database\Attributes\Archivable) {
                 $config = $attr;
                 break;
             }
@@ -206,9 +206,9 @@ trait HasArchive
      */
     protected function resolveArchiveColumn(): string
     {
-        $forClass = \Academorix\Database\Support\AttributeReader::forClass(static::class);
+        $forClass = \Stackra\Database\Support\AttributeReader::forClass(static::class);
         foreach ($forClass->classAttributes as $attr) {
-            if ($attr instanceof \Academorix\Database\Attributes\Archivable) {
+            if ($attr instanceof \Stackra\Database\Attributes\Archivable) {
                 return $attr->column;
             }
         }

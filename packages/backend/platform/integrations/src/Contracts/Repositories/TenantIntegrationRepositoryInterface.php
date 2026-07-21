@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Contracts\Repositories;
+namespace Stackra\Integrations\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Integrations\Enums\IntegrationKind;
-use Academorix\Integrations\Models\TenantIntegration;
-use Academorix\Integrations\Repositories\EloquentTenantIntegrationRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Integrations\Enums\IntegrationKind;
+use Stackra\Integrations\Models\TenantIntegration;
+use Stackra\Integrations\Repositories\EloquentTenantIntegrationRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 
@@ -35,7 +35,7 @@ interface TenantIntegrationRepositoryInterface extends RepositoryInterface
     /**
      * Every active integration whose `next_sync_at` has arrived.
      *
-     * Consumed by {@see \Academorix\Integrations\Console\IntegrationsRotateTokensCommand}
+     * Consumed by {@see \Stackra\Integrations\Console\IntegrationsRotateTokensCommand}
      * and the periodic sync tick.
      *
      * @return Collection<int, TenantIntegration>

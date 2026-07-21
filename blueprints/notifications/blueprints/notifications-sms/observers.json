@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/notifications-sms/observers",
+  "id": "stackra://modules/notifications-sms/observers",
   "$version": 1,
   "title": "notifications-sms \u2014 Eloquent observers",
   "observers": [
     {
       "model": "SmsOptOut",
-      "observer": "Academorix\\Notifications\\Sms\\Observers\\SmsOptOutObserver",
+      "observer": "Stackra\\Notifications\\Sms\\Observers\\SmsOptOutObserver",
       "handles": [
         "creating \u2192 normalise phone to E.164 (via PhoneNumberCast) + populate phone_country_code",
         "creating \u2192 refuse duplicate (tenant_id, phone) via unique index",

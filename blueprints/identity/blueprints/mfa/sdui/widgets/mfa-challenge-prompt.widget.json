@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/mfa/sdui/widgets/mfa-challenge-prompt",
+  "id": "stackra://modules/mfa/sdui/widgets/mfa-challenge-prompt",
   "$version": 1,
   "kind": "widget",
   "name": "mfa-challenge-prompt",

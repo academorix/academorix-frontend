@@ -1,17 +1,17 @@
 {
-  "id": "academorix://modules/platform-user/analytics",
+  "id": "stackra://modules/platform-user/analytics",
   "$version": 1,
   "title": "platform-user \u2014 product analytics",
   "sink": "segment",
   "consentTiers": ["essential", "functional", "analytics", "marketing"],
-  "description": "Analytics events on the Academorix-staff plane. These land in the internal analytics tenant (a separate Segment source from the tenant-facing product), never mixed with tenant end-user events. Consent tier is `essential` \u2014 platform-staff analytics are internal-workforce metrics governed by the employment contract, not by the tenant-plane consent framework.",
+  "description": "Analytics events on the Stackra-staff plane. These land in the internal analytics tenant (a separate Segment source from the tenant-facing product), never mixed with tenant end-user events. Consent tier is `essential` \u2014 platform-staff analytics are internal-workforce metrics governed by the employment contract, not by the tenant-plane consent framework.",
   "events": [
     {
       "name": "Platform User Hired",
       "kind": "track",
       "consent_required": "essential",
       "properties": ["platform_user_id", "department", "employment_type", "hire_date", "actor_id"],
-      "description": "New Academorix staffer provisioned. Feeds the headcount + hiring-velocity dashboards."
+      "description": "New Stackra staffer provisioned. Feeds the headcount + hiring-velocity dashboards."
     },
     {
       "name": "Platform User Offboarded",
@@ -25,7 +25,7 @@
         "trigger",
         "actor_id"
       ],
-      "description": "Academorix staffer offboarded. `trigger` distinguishes voluntary vs involuntary. Feeds attrition dashboards."
+      "description": "Stackra staffer offboarded. `trigger` distinguishes voluntary vs involuntary. Feeds attrition dashboards."
     },
     {
       "name": "Platform User Department Changed",
@@ -82,7 +82,7 @@
     }
   ],
   "notes": [
-    "There is deliberately NO 'Platform User PII Viewed' event to analytics \u2014 that stays in the audit trail (compliance evidence) and never leaves the Academorix boundary.",
+    "There is deliberately NO 'Platform User PII Viewed' event to analytics \u2014 that stays in the audit trail (compliance evidence) and never leaves the Stackra boundary.",
     "Segment write key resolves via env `SEGMENT_INTERNAL_WRITE_KEY` (distinct from `SEGMENT_TENANT_WRITE_KEY`).",
     "The `actor_id` property is always a PlatformUser id (never a User id). Cross-plane actor references are not permitted \u2014 platform events are staff-plane only."
   ]

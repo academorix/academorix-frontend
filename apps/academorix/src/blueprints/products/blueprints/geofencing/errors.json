@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geofencing/errors",
+  "id": "stackra://modules/geofencing/errors",
   "$version": 1,
   "title": "geofencing \u2014 error codes",
   "namespace": "geofencing",

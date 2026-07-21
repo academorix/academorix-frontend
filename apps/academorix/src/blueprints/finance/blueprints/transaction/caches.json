@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transaction/caches",
+  "id": "stackra://modules/transaction/caches",
   "$version": 1,
   "title": "transaction — cache keys + tags",
   "driver": "redis",

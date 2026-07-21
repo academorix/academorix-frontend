@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/workflow/approvals/attributes",
+  "id": "stackra://modules/workflow/approvals/attributes",
   "$version": 1,
   "title": "approvals — PHP attribute contracts",
   "description": "Three attributes. `#[AsApprovableAction]` marks an invokable action class as gated by the approval engine — the `approve` middleware reads this attribute at request time to decide whether to defer execution or pass through. `#[AsApprovalListener]` marks a service as a consumer of approval-lifecycle events for the discovery loader. `#[RegistersApprovableAction]` is a boot-time discovery marker on service providers so a provider can bulk-declare approvable actions in a small footprint (rare — most modules put the attribute on the action class itself). Rejected alternative: `#[RequiresApproval(template:, when:)]` static attribute carrying rule config (design.md D-A4 — templates as code force a deploy to change approver rules; runtime data is the whole point).",
-  "namespace": "Academorix\\Approval\\Attributes",
+  "namespace": "Stackra\\Approval\\Attributes",
   "attributes": [
     {
       "name": "AsApprovableAction",
-      "class": "Academorix\\Approval\\Attributes\\AsApprovableAction",
+      "class": "Stackra\\Approval\\Attributes\\AsApprovableAction",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Applied to an invokable action class (`__invoke()` handler) whose execution is gated by the approval engine. The `approve` middleware reads the attribute via reflection, looks up matching approval_templates for `(tenant, action_key)`, and either passes through (no matching template) or defers execution (template matches → creates approval_instance → 202 Accepted). At execute-time the same action is dispatched by ApprovalInstanceExecutor with the `scoped('approvals.executing')` flag set, and the middleware passes through to prevent infinite loops.",
@@ -41,7 +41,7 @@
     },
     {
       "name": "AsApprovalListener",
-      "class": "Academorix\\Approval\\Attributes\\AsApprovalListener",
+      "class": "Stackra\\Approval\\Attributes\\AsApprovalListener",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a service class as an approval-lifecycle listener. The discovery loader scans classes carrying this attribute at boot + wires them to the `Illuminate\\Events\\Dispatcher` for the declared events. Prefer this to Laravel's static `$listen` array so listener registration stays co-located with the listener class itself.",
@@ -50,7 +50,7 @@
           "name": "events",
           "type": "array<class-string>",
           "required": true,
-          "description": "FQCN list of `Academorix\\Approval\\Events\\*` classes this listener reacts to. Ordering within the array is not significant. Example: `[ApprovalGranted::class, ApprovalRejected::class]`."
+          "description": "FQCN list of `Stackra\\Approval\\Events\\*` classes this listener reacts to. Ordering within the array is not significant. Example: `[ApprovalGranted::class, ApprovalRejected::class]`."
         },
         {
           "name": "queue",
@@ -69,7 +69,7 @@
     },
     {
       "name": "RegistersApprovableAction",
-      "class": "Academorix\\Approval\\Attributes\\RegistersApprovableAction",
+      "class": "Stackra\\Approval\\Attributes\\RegistersApprovableAction",
       "targets": ["class"],
       "isRepeatable": true,
       "description": "Applied to a service provider class to bulk-declare approvable actions at boot. Used ONLY when a module has a dozen+ approvable actions whose registration would clutter each action class with a per-class attribute (e.g. finance module registering 15 different money-movement actions). The typical case is one `#[AsApprovableAction]` per action class — this attribute is the exception, not the norm.",
@@ -90,7 +90,7 @@
           "name": "actionClassFqcn",
           "type": "string",
           "required": true,
-          "description": "Fully-qualified class name of the invokable action. MUST implement `Academorix\\Approval\\Contracts\\ApprovableActionInterface` (declares `approvalContext()` + `approvalLabel()`)."
+          "description": "Fully-qualified class name of the invokable action. MUST implement `Stackra\\Approval\\Contracts\\ApprovableActionInterface` (declares `approvalContext()` + `approvalLabel()`)."
         },
         {
           "name": "label",

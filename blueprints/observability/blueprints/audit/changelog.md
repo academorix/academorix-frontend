@@ -22,7 +22,7 @@ Nothing yet.
   - `Audit` — vendor-adapted `owen-it/laravel-auditing` row. Primary key stays
     bigint (vendor default; no ULID conversion in Wave 6). Extended with
     `tenant_id UUID NOT NULL` + `application_id UUID NULLABLE` + five composite
-    indexes. Wrapped by our `Academorix\Observability\Audit\Models\Audit` which
+    indexes. Wrapped by our `Stackra\Observability\Audit\Models\Audit` which
     composes `BelongsToTenant` (global scope + auto-fill).
   - `AuditRetentionPolicy` (`arp_`) — per-tenant retention override.
     Enterprise-only (via `audit_retention_extended` entitlement).

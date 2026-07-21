@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/versioning/policies",
+  "id": "stackra://modules/versioning/policies",
   "$version": 1,
   "title": "versioning \u2014 authorization policies",
   "description": "Two policies. Both enforce is_system=true refusal for non-super_admin edits (via foundation's HasSystemFlag). Lifecycle actions (release / deprecate / sunset) are further gated to super_admin because they affect the platform.",
   "policies": [
     {
       "model": "ApiVersion",
-      "class": "Academorix\\Versioning\\Policies\\ApiVersionPolicy",
+      "class": "Stackra\\Versioning\\Policies\\ApiVersionPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -53,7 +53,7 @@
     },
     {
       "model": "DeprecationNotice",
-      "class": "Academorix\\Versioning\\Policies\\DeprecationNoticePolicy",
+      "class": "Stackra\\Versioning\\Policies\\DeprecationNoticePolicy",
       "abilities": [
         {
           "action": "viewAny",

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDevelopmentSdk\Requests\TalentFlags;
+namespace Stackra\SportsDevelopmentSdk\Requests\TalentFlags;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsDevelopmentSdk\Data\TalentFlagData;
-use Academorix\SportsDevelopmentSdk\Payloads\TalentFlags\CreateTalentFlagPayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsDevelopmentSdk\Data\TalentFlagData;
+use Stackra\SportsDevelopmentSdk\Payloads\TalentFlags\CreateTalentFlagPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

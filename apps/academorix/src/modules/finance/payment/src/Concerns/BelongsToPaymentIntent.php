@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Concerns;
+namespace Stackra\Payment\Concerns;
 
 /**
  * Trait — BelongsToPaymentIntent.

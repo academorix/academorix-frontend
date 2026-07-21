@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Attributes;
+namespace Stackra\Notifications\Sms\Attributes;
 
 use Attribute;
 
@@ -10,7 +10,7 @@ use Attribute;
  * Register a class as an SMS provider driver.
  *
  * A driver implements
- * {@see \Academorix\Notifications\Sms\Contracts\Services\SmsTransportInterface}
+ * {@see \Stackra\Notifications\Sms\Contracts\Services\SmsTransportInterface}
  * and knows how to send an SMS via its backend (Twilio, MessageBird, Vonage,
  * Plivo, AWS SNS, or an in-house transport).
  *

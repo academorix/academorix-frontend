@@ -1,4 +1,4 @@
-# academorix/drills
+# stackra/drills
 
 Server-side Laravel package for the `drills` module. Auto-generated from the
 blueprint at `modules/sports/blueprints/drills/`.
@@ -48,6 +48,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-sports/drills-sdk` under `sdk/sports-drills-sdk/`. Consumers cross
+`stackra-sports/drills-sdk` under `sdk/sports-drills-sdk/`. Consumers cross
 the service boundary through the SDK; this package is the SERVER-side owner of
 the domain.

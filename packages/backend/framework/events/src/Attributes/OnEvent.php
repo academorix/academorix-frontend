@@ -6,7 +6,7 @@
  * @description
  * Class-level, repeatable attribute that marks a class as a listener
  * for a specific event. Discovered by
- * {@see \Academorix\Events\Support\EventDiscovery} via
+ * {@see \Stackra\Events\Support\EventDiscovery} via
  * `olvlvl/composer-attribute-collector` at boot and registered with
  * Laravel's event dispatcher — so packages never have to maintain a
  * `EventServiceProvider::$listen` map.
@@ -31,7 +31,7 @@
  * `#[OnEvent(B::class)]` on the same class body — the scanner
  * registers one listener binding per attribute instance.
  *
- * @see \Academorix\Events\Attributes\ListensFor  For method-scoped
+ * @see \Stackra\Events\Attributes\ListensFor  For method-scoped
  *                                                  registrations with
  *                                                  an explicit `method`
  *                                                  name.
@@ -39,7 +39,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Events\Attributes;
+namespace Stackra\Events\Attributes;
 
 use Attribute;
 

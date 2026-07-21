@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/auth/macros",
+  "id": "stackra://modules/auth/macros",
   "$version": 1,
   "title": "auth \u2014 published macros",
   "description": "Two macros. `Str::sanctum_token_prefix` gives callers a consistent way to format Sanctum PATs (Laravel doesn't expose one out of the box). `Blueprint::auth_token_fields` is the migration shorthand for the token-storage column set every auth-owned token table shares.",
@@ -67,5 +67,5 @@
       "usage_example": "Schema::create('auth_password_resets', function (Blueprint $t) {\n    $t->ulidPrefixed('id', 'apr');\n    $t->foreignUlid('identity_id')->constrained('identities')->cascadeOnDelete();\n    $t->auth_token_fields();\n    $t->timestamps();\n    $t->userstamps();\n});"
     }
   ],
-  "registered_by": "Academorix\\Auth\\Providers\\AuthServiceProvider::boot()"
+  "registered_by": "Stackra\\Auth\\Providers\\AuthServiceProvider::boot()"
 }

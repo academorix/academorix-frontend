@@ -2,21 +2,21 @@
 
 /**
  * @file ValidatesInput.php
- * @module Academorix\Cli\Concerns
+ * @module Stackra\Cli\Concerns
  * @description Input validation helpers. Every assertion throws a
- *   {@see \Academorix\Cli\Exceptions\CliException} subclass with an
+ *   {@see \Stackra\Cli\Exceptions\CliException} subclass with an
  *   appropriate remediation. Concrete commands call these early so
  *   downstream code can trust its inputs.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Concerns;
+namespace Stackra\Cli\Concerns;
 
-use Academorix\Cli\Exceptions\CliException;
+use Stackra\Cli\Exceptions\CliException;
 
 /**
- * Composed by every command through {@see \Academorix\Cli\Commands\AbstractCommand}.
+ * Composed by every command through {@see \Stackra\Cli\Commands\AbstractCommand}.
  */
 trait ValidatesInput
 {

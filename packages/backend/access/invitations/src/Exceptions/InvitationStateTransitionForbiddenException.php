@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Exceptions;
+namespace Stackra\Invitations\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Raised when an update attempts to transition an invitation to a

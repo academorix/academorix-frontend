@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PublicSite\Data;
+namespace Stackra\PublicSite\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Server-side output DTO for {@see \Academorix\PublicSite\Models\PublicPage}.
+ * Server-side output DTO for {@see \Stackra\PublicSite\Models\PublicPage}.
  *
  * Consumed by controllers + services on the SERVER side. This is
  * distinct from the wire SDK's DTO (which sits under
- * `Academorix\PlatformPublicSiteSdk\Data`) — the wire DTO travels across the HTTP
+ * `Stackra\PlatformPublicSiteSdk\Data`) — the wire DTO travels across the HTTP
  * boundary; this one stays in-process.
  *
  * @category PublicSite

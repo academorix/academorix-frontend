@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/localization/notifications",
+  "id": "stackra://modules/localization/notifications",
   "$version": 1,
   "title": "localization \u2014 notification classes + categories",
-  "namespace": "Academorix\\Localization\\Notifications",
+  "namespace": "Stackra\\Localization\\Notifications",
   "notifications": [
     "TranslationJobCompletedNotification",
     "TranslationJobFailedNotification",

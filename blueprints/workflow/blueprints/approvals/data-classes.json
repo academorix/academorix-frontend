@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/data-classes",
+  "id": "stackra://modules/workflow/approvals/data-classes",
   "$version": 1,
   "title": "approvals — field classification",
   "description": "Approval instances carry two categories of sensitive data: (1) `context_json` + `payload_json` blobs which are polymorphic and may contain fields at any classification tier (a refund's `amount_cents`, an access request's `resource_owner_id`, an impersonation-extension's target user id). Both blobs inherit the STRICTEST classification tier of any nested field — the presenter redacts before wire projection. (2) Approver identities + decision comments are `confidential` — a decision comment on a compliance-approval flow may reveal internal-only rationale. Every template's `when_expression` + `selector_expression` are `internal` (they encode business rules that tenants author, but the strings themselves have no PII).",
@@ -225,7 +225,7 @@
   },
   "input_dtos": [
     {
-      "class": "Academorix\\Approval\\Data\\CreateApprovalTemplateInput",
+      "class": "Stackra\\Approval\\Data\\CreateApprovalTemplateInput",
       "shape": {
         "action_key": "string (validated via valid_action_key rule)",
         "name": "string (max 200)",
@@ -240,7 +240,7 @@
       }
     },
     {
-      "class": "Academorix\\Approval\\Data\\CreateApprovalTemplateApproverInput",
+      "class": "Stackra\\Approval\\Data\\CreateApprovalTemplateApproverInput",
       "shape": {
         "group_name": "string (max 100)",
         "sort_order": "int (0..100)",
@@ -252,7 +252,7 @@
       }
     },
     {
-      "class": "Academorix\\Approval\\Data\\UpdateApprovalTemplateInput",
+      "class": "Stackra\\Approval\\Data\\UpdateApprovalTemplateInput",
       "shape": {
         "name": "string | null",
         "description": "string | null",
@@ -265,7 +265,7 @@
       }
     },
     {
-      "class": "Academorix\\Approval\\Data\\PreflightTemplateInput",
+      "class": "Stackra\\Approval\\Data\\PreflightTemplateInput",
       "shape": {
         "action_key": "string",
         "when_expression": "string | null",
@@ -274,32 +274,32 @@
       }
     },
     {
-      "class": "Academorix\\Approval\\Data\\PreflightGroupInput",
+      "class": "Stackra\\Approval\\Data\\PreflightGroupInput",
       "shape": {
         "group_name": "string",
         "selector_expression": "string"
       }
     },
     {
-      "class": "Academorix\\Approval\\Data\\ApproveInstanceInput",
+      "class": "Stackra\\Approval\\Data\\ApproveInstanceInput",
       "shape": {
         "comment": "string | null (max 1000)"
       }
     },
     {
-      "class": "Academorix\\Approval\\Data\\RejectInstanceInput",
+      "class": "Stackra\\Approval\\Data\\RejectInstanceInput",
       "shape": {
         "comment": "string (required; min 10 chars — SOC 2 evidence; max 1000)"
       }
     },
     {
-      "class": "Academorix\\Approval\\Data\\WithdrawInstanceInput",
+      "class": "Stackra\\Approval\\Data\\WithdrawInstanceInput",
       "shape": {
         "reason": "string | null (max 500 — optional withdrawal rationale)"
       }
     },
     {
-      "class": "Academorix\\Approval\\Data\\GenerateAuditReportInput",
+      "class": "Stackra\\Approval\\Data\\GenerateAuditReportInput",
       "shape": {
         "period_start": "ISO-8601",
         "period_end": "ISO-8601",
@@ -311,35 +311,35 @@
   ],
   "output_dtos": [
     {
-      "class": "Academorix\\Approval\\Data\\ApprovalInstanceData",
+      "class": "Stackra\\Approval\\Data\\ApprovalInstanceData",
       "purpose": "Tenant + platform-plane instance projection. See wire_projection.ApprovalInstanceData."
     },
     {
-      "class": "Academorix\\Approval\\Data\\ApprovalRequirementData",
+      "class": "Stackra\\Approval\\Data\\ApprovalRequirementData",
       "purpose": "Per-group requirement projection."
     },
     {
-      "class": "Academorix\\Approval\\Data\\ApprovalDecisionData",
+      "class": "Stackra\\Approval\\Data\\ApprovalDecisionData",
       "purpose": "Per-decision projection."
     },
     {
-      "class": "Academorix\\Approval\\Data\\ApprovalTemplateData",
+      "class": "Stackra\\Approval\\Data\\ApprovalTemplateData",
       "purpose": "Template projection for the authoring UI."
     },
     {
-      "class": "Academorix\\Approval\\Data\\ApprovalTemplateApproverData",
+      "class": "Stackra\\Approval\\Data\\ApprovalTemplateApproverData",
       "purpose": "Approver group projection."
     },
     {
-      "class": "Academorix\\Approval\\Data\\ApprovableActionData",
+      "class": "Stackra\\Approval\\Data\\ApprovableActionData",
       "purpose": "Registry entry projection (approvable-actions list)."
     },
     {
-      "class": "Academorix\\Approval\\Data\\ApprovalPreflightResultData",
+      "class": "Stackra\\Approval\\Data\\ApprovalPreflightResultData",
       "purpose": "Dry-run result for template authoring."
     },
     {
-      "class": "Academorix\\Approval\\Data\\ApprovalAuditReportData",
+      "class": "Stackra\\Approval\\Data\\ApprovalAuditReportData",
       "purpose": "Compliance report projection."
     }
   ],

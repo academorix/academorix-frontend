@@ -28,9 +28,9 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\ServiceProvider\Concerns;
+namespace Stackra\ServiceProvider\Concerns;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\AsModule;
 use olvlvl\ComposerAttributeCollector\Attributes;
 
 /**

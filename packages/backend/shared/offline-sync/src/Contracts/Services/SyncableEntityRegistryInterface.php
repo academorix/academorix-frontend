@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\OfflineSync\Contracts\Services;
+namespace Stackra\OfflineSync\Contracts\Services;
 
-use Academorix\OfflineSync\Services\SyncableEntityRegistry;
+use Stackra\OfflineSync\Services\SyncableEntityRegistry;
 use Illuminate\Container\Attributes\Bind;
 
 /**

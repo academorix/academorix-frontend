@@ -1,10 +1,10 @@
 {
-  "name": "academorix/registrations",
+  "name": "stackra/registrations",
   "type": "library",
-  "description": "Academorix Registrations module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/registrations/`. Complements the wire SDK at `academorix-sports/registrations-sdk`.",
+  "description": "Stackra Registrations module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/registrations/`. Complements the wire SDK at `stackra-sports/registrations-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "sports",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-sports/registrations-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-sports/registrations-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Registrations\\": "src/"
+      "Stackra\\Registrations\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Registrations\\Tests\\": "tests/"
+      "Stackra\\Registrations\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Registrations\\Providers\\RegistrationsServiceProvider"
+        "Stackra\\Registrations\\Providers\\RegistrationsServiceProvider"
       ],
       "aliases": {}
     }

@@ -1,12 +1,12 @@
 {
-  "name": "academorix/foundation",
+  "name": "stackra/foundation",
   "type": "library",
-  "description": "Shared kernel for every Academorix package: module service-provider base class, cross-cutting contracts, correlation-id middleware, guard clauses, testable clock.",
+  "description": "Shared kernel for every Stackra package: module service-provider base class, cross-cutting contracts, correlation-id middleware, guard clauses, testable clock.",
   "license": "proprietary",
   "require": {
     "php": "^8.3",
-    "academorix/enum": "@dev",
-    "academorix/service-provider": "@dev",
+    "stackra/enum": "@dev",
+    "stackra/service-provider": "@dev",
     "illuminate/config": "^13.0",
     "illuminate/contracts": "^13.0",
     "illuminate/http": "^13.0",
@@ -22,7 +22,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Foundation\\": "src/"
+      "Stackra\\Foundation\\": "src/"
     },
     "files": [
       "src/Support/helpers.php"
@@ -30,13 +30,13 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Foundation\\Tests\\": "tests/"
+      "Stackra\\Foundation\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Foundation\\Providers\\FoundationServiceProvider"
+        "Stackra\\Foundation\\Providers\\FoundationServiceProvider"
       ],
       "aliases": {}
     }

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceProvider\Registry;
+namespace Stackra\ServiceProvider\Registry;
 
-use Academorix\ServiceProvider\Bootstrappers\TenancyHookBootstrapper;
-use Academorix\ServiceProvider\Contracts\TenancyHookInterface;
-use Academorix\ServiceProvider\Dispatchers\TenancyHookDispatcher;
+use Stackra\ServiceProvider\Bootstrappers\TenancyHookBootstrapper;
+use Stackra\ServiceProvider\Contracts\TenancyHookInterface;
+use Stackra\ServiceProvider\Dispatchers\TenancyHookDispatcher;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

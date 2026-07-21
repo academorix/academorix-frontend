@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Contracts\Data;
+namespace Stackra\Search\Contracts\Data;
 
-use Academorix\Search\Models\SearchSynonym;
+use Stackra\Search\Models\SearchSynonym;
 use Illuminate\Container\Attributes\Bind;
 
 /**

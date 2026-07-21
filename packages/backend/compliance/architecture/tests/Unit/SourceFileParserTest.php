@@ -4,7 +4,7 @@
  * @file packages/architecture/tests/Unit/SourceFileParserTest.php
  *
  * @description
- * Behaviour tests for {@see \Academorix\Architecture\Support\SourceFileParser}.
+ * Behaviour tests for {@see \Stackra\Architecture\Support\SourceFileParser}.
  *
  * The parser is regex-driven and covers a specific subset of the
  * PHP grammar (see the class docblock for the full contract). This
@@ -27,11 +27,11 @@
 
 declare(strict_types=1);
 
-use Academorix\Architecture\Support\MethodDeclaration;
-use Academorix\Architecture\Support\PropertyDeclaration;
-use Academorix\Architecture\Support\SourceFile;
-use Academorix\Architecture\Support\SourceFileParser;
-use Academorix\Architecture\Support\UseStatement;
+use Stackra\Architecture\Support\MethodDeclaration;
+use Stackra\Architecture\Support\PropertyDeclaration;
+use Stackra\Architecture\Support\SourceFile;
+use Stackra\Architecture\Support\SourceFileParser;
+use Stackra\Architecture\Support\UseStatement;
 
 // -----------------------------------------------------------------
 // Namespace + class declaration.
@@ -588,7 +588,7 @@ it('matches hasClassAttribute by short name and by FQCN', function (): void {
 
     // Full FQCN — hasClassAttribute normalises both sides to the
     // short name so an FQCN needle finds a short-name haystack.
-    expect($file->hasClassAttribute('Academorix\\Architecture\\Attributes\\Repository'))->toBeTrue();
+    expect($file->hasClassAttribute('Stackra\\Architecture\\Attributes\\Repository'))->toBeTrue();
 
     // Sanity — a non-matching attribute returns false.
     expect($file->hasClassAttribute('Domain'))->toBeFalse();

@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\People\Services;
+namespace Stackra\People\Services;
 
-use Academorix\People\Contracts\Services\LinkRequestOrchestratorInterface;
+use Stackra\People\Contracts\Services\LinkRequestOrchestratorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\People\Contracts\Repositories\PersonGuardianLinkRepositoryInterface;
+use Stackra\People\Contracts\Repositories\PersonGuardianLinkRepositoryInterface;
 
 /**
  * Concrete service — LinkRequestOrchestrator.

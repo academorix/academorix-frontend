@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/branch/helpers",
+  "id": "stackra://modules/branch/helpers",
   "$version": 1,
   "title": "branch — helper functions",
   "description": "Three published helpers for common branch lookups from any layer (controller, action, listener, blade template, Artisan command).",
-  "namespace": "Academorix\\Branch\\Support",
+  "namespace": "Stackra\\Branch\\Support",
   "helpers": [
     {
       "signature": "active_branch(): ?Branch",

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Enums;
+namespace Stackra\Subscription\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
  * Marketing-plan tier a `Plan` row occupies.
  *
  * Drives sort ordering in the pricing UI and the swap-direction
  * inference (upgrade / downgrade / switch) in
- * {@see \Academorix\Subscription\Observers\SubscriptionObserver}.
+ * {@see \Stackra\Subscription\Observers\SubscriptionObserver}.
  *
  * ## Cases
  *

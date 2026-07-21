@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsProgressSdk\Enums;
+namespace Stackra\SportsProgressSdk\Enums;
 
 /**
  * Wire-visible backed enum for `coach-note.visibility`.

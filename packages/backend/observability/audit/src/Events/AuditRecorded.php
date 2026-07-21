@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Events;
+namespace Stackra\Audit\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -14,7 +14,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * ## Consumers
  *
- * - compliance::PublishComplianceMetricsListener — increments `academorix.compliance.audit.records_total` counter
+ * - compliance::PublishComplianceMetricsListener — increments `stackra.compliance.audit.records_total` counter
  * - monitoring::EmitAuditFireRateListener — feeds an ops signal for detecting unusual audit-fire spikes (potential data-mutation storm)
  * - activity::CorrelateAuditToActivityListener (planned Wave 6) — some domain mutations correlate an audit row to an activity_log row; the listener adds `related_audit_id` on the corresponding activity row
  *

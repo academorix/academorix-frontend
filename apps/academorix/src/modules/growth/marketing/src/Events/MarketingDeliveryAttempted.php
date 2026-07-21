@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Events;
+namespace Stackra\Marketing\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -14,7 +14,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * ## Consumers
  *
- * - monitoring::MetricsCollector (increments academorix.marketing.deliveries.attempted_total)
+ * - monitoring::MetricsCollector (increments stackra.marketing.deliveries.attempted_total)
  *
  * @category Marketing
  *

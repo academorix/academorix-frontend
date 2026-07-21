@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/branch/retention",
+  "id": "stackra://modules/branch/retention",
   "$version": 1,
   "title": "branch — retention windows",
   "description": "Branch rows carry no PII directly (the venue's address is public-adjacent; the phone / email are business contacts, not personal PII). Retention is driven by compliance material — closed branches are referenced by historic invoices, activity logs, and audit trails, so they persist indefinitely. Hard-delete is a two-person platform-support action, never a public API surface.",

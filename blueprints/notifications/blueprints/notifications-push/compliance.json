@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-push/compliance",
+  "id": "stackra://modules/notifications-push/compliance",
   "$version": 1,
   "title": "notifications-push \u2014 compliance evidence",
   "description": "Primary enforcement point for COPPA VPC on push to minors + GDPR Art. 32 encryption of device tokens.",
@@ -10,7 +10,7 @@
         {
           "section": "\u00a7312.5",
           "principle": "verifiable parental consent (VPC)",
-          "evidence": "Marketing-priority pushes refused for recipients with consent_age_gate=minor_under_consent_age until VPC captured by compliance module. Every gate decision metric-tracked (academorix.notifications.push.coppa_gates.total)."
+          "evidence": "Marketing-priority pushes refused for recipients with consent_age_gate=minor_under_consent_age until VPC captured by compliance module. Every gate decision metric-tracked (stackra.notifications.push.coppa_gates.total)."
         },
         {
           "section": "\u00a7312.10",

@@ -1,4 +1,4 @@
-// Academorix module dependency graph.
+// Stackra module dependency graph.
 //
 // Nodes: every module folder under `modules/<tier>/<name>/`.
 // Edges: A -> B means A depends on B (A's module.json.dependencies contains B).
@@ -25,7 +25,7 @@
 //   dot -Tsvg modules/shared/foundation/data/module-graph.dot -o module-graph.svg
 //   dot -Tpng modules/shared/foundation/data/module-graph.dot -o module-graph.png
 
-digraph AcademorixModules {
+digraph StackraModules {
   rankdir = TB;
   compound = true;
   splines = ortho;

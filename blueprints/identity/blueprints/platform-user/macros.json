@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/platform-user/macros",
+  "id": "stackra://modules/platform-user/macros",
   "$version": 1,
   "title": "platform-user \u2014 published macros",
   "description": "This module publishes NO Blueprint macros. Foundation owns the cross-cutting infrastructure macros (`tenantable`, `userstamps`, `metadata`, `audit_columns`), and the platform_users + platform_profiles migrations use those foundation macros directly. There is no per-module column shape unique to platform-user that would warrant a dedicated macro. This file exists for uniform module shape \u2014 add a macro here only when a column pattern emerges that is genuinely reused across multiple platform-user-related tables (e.g. a future `platform_impersonation_sessions` table might warrant a `platform_actor_columns` macro that stamps platform_user_id + tenure_at_action). For now, empty.",
   "namespace_note": "Blueprint macros are a Laravel core convention on `Illuminate\\Database\\Schema\\Blueprint`. If we later add one, register it via `PlatformUserServiceProvider::boot()` alongside the model-observer wiring.",
   "macros": [],
-  "registered_by": "Academorix\\PlatformUser\\Providers\\PlatformUserServiceProvider::boot()",
+  "registered_by": "Stackra\\PlatformUser\\Providers\\PlatformUserServiceProvider::boot()",
   "notes": [
     "The `on_call_rotation_key` column pattern (on platform_users only) is not a macro candidate \u2014 it appears in exactly one table.",
     "The `employment lifecycle` column bundle (status, hire_date, offboarded_at, offboarding_reason, employment_type, department, job_title) is candidate for a future `employment_columns` macro if `identity/service-accounts` or another module needs the same shape. Track in the retention-follow-up backlog."

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/broadcasts",
+  "id": "stackra://modules/notifications/broadcasts",
   "$version": 1,
   "title": "notifications core \u2014 broadcast channels",
   "description": "Real-time channels for the inbox UX. The channel binding lives in this module; notifications-in-app is the module that actually pushes NotificationCreated messages onto these channels. Uses Laravel Reverb (self-hosted WebSocket server) in dev + prod; Pusher/Ably remain as pluggable alternatives via BroadcastManager.",
@@ -9,7 +9,7 @@
       "name": "user.{id}.notifications",
       "kind": "private",
       "authorization": {
-        "class": "Academorix\\Notifications\\Broadcasting\\UserNotificationsChannel",
+        "class": "Stackra\\Notifications\\Broadcasting\\UserNotificationsChannel",
         "rule": "$user->id === (string) $id"
       },
       "purpose": "Per-user private inbox live-updates. New in-app notifications, seen-count changes, and archive events push here. Client subscribes on inbox mount + updates the bell badge in real time.",
@@ -23,7 +23,7 @@
       "name": "tenant.{id}.notifications",
       "kind": "private",
       "authorization": {
-        "class": "Academorix\\Notifications\\Broadcasting\\TenantNotificationsChannel",
+        "class": "Stackra\\Notifications\\Broadcasting\\TenantNotificationsChannel",
         "rule": "$user->can('platform.notifications.viewAny') OR ($user->tenant_id === (string) $id AND $user->can('notifications.admin.view'))"
       },
       "purpose": "Tenant-admin realtime dashboard. Aggregate send counts, delivery-failure spikes, template publish events. Used by the admin sends dashboard SDUI screen.",

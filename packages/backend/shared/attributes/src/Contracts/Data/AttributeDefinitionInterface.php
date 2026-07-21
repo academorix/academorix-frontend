@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attributes\Contracts\Data;
+namespace Stackra\Attributes\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Attributes\Models\AttributeDefinition;
+use Stackra\Attributes\Models\AttributeDefinition;
 
 /**
  * Table shape for the `attribute_definitions` table.

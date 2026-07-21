@@ -45,7 +45,7 @@
                 "label": "Name",
                 "name": "name",
                 "isRequired": true,
-                "placeholder": "Academorix Academy"
+                "placeholder": "Stackra Academy"
               }
             },
             {

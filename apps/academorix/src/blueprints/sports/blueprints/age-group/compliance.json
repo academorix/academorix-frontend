@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/age-group/compliance",
+  "id": "stackra://modules/age-group/compliance",
   "$version": 1,
   "title": "age-group — compliance evidence",
   "description": "AgeGroup is safeguarding-critical reference data. The row itself carries no PII, but the fields (min_age_inclusive, max_age_inclusive, cutoff_date_kind, is_youth) drive minor-safeguarding rules for every downstream Team + Athlete. Changes to bounds/cutoff are audit-critical (7-year retention) for compliance replay: any COPPA / FERPA / GDPR-child inquiry may need to reconstruct which Athletes qualified for which groups at any past point in time.",

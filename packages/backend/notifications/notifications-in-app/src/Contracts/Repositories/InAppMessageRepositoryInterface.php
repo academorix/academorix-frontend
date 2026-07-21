@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Contracts\Repositories;
+namespace Stackra\Notifications\InApp\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Notifications\InApp\Models\InAppMessage;
-use Academorix\Notifications\InApp\Repositories\EloquentInAppMessageRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Notifications\InApp\Models\InAppMessage;
+use Stackra\Notifications\InApp\Repositories\EloquentInAppMessageRepository;
 use DateTimeInterface;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;

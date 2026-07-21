@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Casts;
+namespace Stackra\Webhook\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Contracts\Data;
+namespace Stackra\Subscription\Contracts\Data;
 
-use Academorix\Subscription\Models\Plan;
+use Stackra\Subscription\Models\Plan;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -10,15 +10,15 @@ describe two entirely different money flows. Never conflate them.
 
 | `finance::Membership`                                   | `subscription::TenantSubscription`                  |
 | ------------------------------------------------------- | --------------------------------------------------- |
-| The **parent pays the academy** — customer subscription | The **academy pays Academorix** — SaaS subscription |
-| Renews on the academy's Stripe/Paddle account           | Renews on Academorix's Stripe/Paddle account        |
+| The **parent pays the academy** — customer subscription | The **academy pays Stackra** — SaaS subscription |
+| Renews on the academy's Stripe/Paddle account           | Renews on Stackra's Stripe/Paddle account        |
 | Owns `Pass` credits per period                          | Owns `EntitlementLicense` rows per app              |
 | Prefix `mbr_`                                           | Prefix distinct — Wave 1 pre-existing               |
 | `belongsTo(Tenant, Region, Branch, Athlete)`            | `belongsTo(Tenant, Application)`                    |
 | Lives in Finance module                                 | Lives in Subscription module                        |
 
 A tenant might hold ten thousand Memberships (families paying for their kids)
-AND exactly one TenantSubscription (the academy paying its Academorix bill). One
+AND exactly one TenantSubscription (the academy paying its Stackra bill). One
 is retail; one is wholesale. They never share code paths.
 
 ## 2. What this module owns

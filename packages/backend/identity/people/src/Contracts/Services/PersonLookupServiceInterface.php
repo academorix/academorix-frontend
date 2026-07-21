@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\People\Contracts\Services;
+namespace Stackra\People\Contracts\Services;
 
-use Academorix\People\Services\PersonLookupService;
+use Stackra\People\Services\PersonLookupService;
 use Illuminate\Container\Attributes\Bind;
 
 /**

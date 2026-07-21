@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Enums;
+namespace Stackra\Tenancy\Enums;
 
-use Academorix\Authorization\Attributes\RoleMeta;
-use Academorix\Authorization\Concerns\HasRoleMetadata;
-use Academorix\Authorization\Contracts\RoleEnum;
-use Academorix\Authorization\Enums\Guard;
-use Academorix\Enum\Enum;
+use Stackra\Authorization\Attributes\RoleMeta;
+use Stackra\Authorization\Concerns\HasRoleMetadata;
+use Stackra\Authorization\Contracts\RoleEnum;
+use Stackra\Authorization\Enums\Guard;
+use Stackra\Enum\Enum;
 
 /**
  * Roles the Tenancy module contributes to the fleet-wide access
  * catalogue.
  *
- * The {@see \Academorix\Authorization\Concerns\HasRoleMetadata}
+ * The {@see \Stackra\Authorization\Concerns\HasRoleMetadata}
  * trait implements the four `RoleEnum` accessors by reading each
  * case's `#[RoleMeta]` attribute — no boilerplate on the enum.
  *

@@ -13,10 +13,10 @@
  * ## Discovery
  *
  * Implementations are marked with
- * {@see \Academorix\Caching\Attributes\AsCacheTagResolver} — the
+ * {@see \Stackra\Caching\Attributes\AsCacheTagResolver} — the
  * `CachingServiceProvider` performs a single boot-time discovery
  * pass via `olvlvl/composer-attribute-collector` and hydrates
- * a memoised registry ({@see \Academorix\Caching\Registry\CacheTagResolverRegistry}).
+ * a memoised registry ({@see \Stackra\Caching\Registry\CacheTagResolverRegistry}).
  * Under Octane this reflection cost is paid once per worker.
  *
  * ## Composition model
@@ -48,14 +48,14 @@
  * of `#[OnRegister(priority: N)]` in the service-provider
  * package. The default is `100`.
  *
- * @see \Academorix\Caching\Attributes\AsCacheTagResolver Discovery marker.
- * @see \Academorix\Caching\Support\CacheTagBuilder Consumer.
- * @see \Academorix\Caching\Resolvers\NullCacheTagResolver Default no-op.
+ * @see \Stackra\Caching\Attributes\AsCacheTagResolver Discovery marker.
+ * @see \Stackra\Caching\Support\CacheTagBuilder Consumer.
+ * @see \Stackra\Caching\Resolvers\NullCacheTagResolver Default no-op.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Caching\Contracts;
+namespace Stackra\Caching\Contracts;
 
 /**
  * Contributes zero-or-more tag segments to the composed tag

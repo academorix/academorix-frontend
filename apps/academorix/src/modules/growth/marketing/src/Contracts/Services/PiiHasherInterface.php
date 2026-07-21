@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Contracts\Services;
+namespace Stackra\Marketing\Contracts\Services;
 
-use Academorix\Marketing\Services\PiiHasher;
+use Stackra\Marketing\Services\PiiHasher;
 use Illuminate\Container\Attributes\Bind;
 
 /**

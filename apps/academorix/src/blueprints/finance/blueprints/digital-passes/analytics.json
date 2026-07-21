@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/digital-passes/analytics",
+  "id": "stackra://modules/digital-passes/analytics",
   "$version": 1,
   "title": "digital-passes — product-analytics events",
   "description": "PostHog / Mixpanel / Segment events this module emits.",

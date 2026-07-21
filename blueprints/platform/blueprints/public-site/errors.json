@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/public-site/errors",
+  "id": "stackra://modules/public-site/errors",
   "$version": 1,
   "title": "public-site — error catalogue",
   "description": "Domain exception classes + HTTP status + translation keys.",

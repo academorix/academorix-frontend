@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Actions\Tenant;
+namespace Stackra\Integrations\Actions\Tenant;
 
-use Academorix\Integrations\Contracts\Repositories\TenantIntegrationRepositoryInterface;
-use Academorix\Integrations\Data\TenantIntegrationData;
-use Academorix\Integrations\Data\Requests\UpdateTenantIntegrationRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\Integrations\Contracts\Repositories\TenantIntegrationRepositoryInterface;
+use Stackra\Integrations\Data\TenantIntegrationData;
+use Stackra\Integrations\Data\Requests\UpdateTenantIntegrationRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Patch;
 
 /**
  * `PATCH /api/v1/tenant-integrations/{integration}` — update action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Patch(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Integrations

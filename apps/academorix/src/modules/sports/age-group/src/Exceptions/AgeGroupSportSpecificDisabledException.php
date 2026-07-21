@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Exceptions;
+namespace Stackra\AgeGroup\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to set sport_key on an AgeGroup but the tenant lacks the `age_group_sport_specific` entitlement (Enterprise-only).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AgeGroupSportSpecificDisabledException extends AcademorixException
+final class AgeGroupSportSpecificDisabledException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

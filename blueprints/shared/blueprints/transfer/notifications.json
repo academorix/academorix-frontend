@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/transfer/notifications",
+  "id": "stackra://modules/transfer/notifications",
   "$version": 1,
   "title": "transfer \u2014 notification classes + categories",
-  "namespace": "Academorix\\Transfer\\Notifications",
+  "namespace": "Stackra\\Transfer\\Notifications",
   "description": "Three notifications covering the terminal outcome space. Channels resolved once at dispatch from xfer_jobs.notify_channels and delivered through the notifications module. Cancellations are silent \u2014 the user initiated them.",
   "notifications": [
     "XferJobCompletedNotification",

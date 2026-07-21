@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/localization/schemas/translation",
+  "id": "stackra://modules/localization/schemas/translation",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Translation",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "trn_",
     "incrementing": false,
-    "model": "Academorix\\Localization\\Models\\Translation",
-    "interface": "Academorix\\Localization\\Contracts\\Data\\TranslationInterface",
-    "implements": ["Academorix\\Localization\\Contracts\\Data\\TranslationInterface"],
+    "model": "Stackra\\Localization\\Models\\Translation",
+    "interface": "Stackra\\Localization\\Contracts\\Data\\TranslationInterface",
+    "implements": ["Stackra\\Localization\\Contracts\\Data\\TranslationInterface"],
     "traits": ["HasFactory", "HasUlids", "HasMetadata", "Filterable"],
     "casts": {
       "value": "array",

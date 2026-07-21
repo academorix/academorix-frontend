@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Exceptions;
+namespace Stackra\Subscription\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a Cashier webhook signature fails verification. HTTP
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class WebhookSignatureInvalidException extends AcademorixException
+final class WebhookSignatureInvalidException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

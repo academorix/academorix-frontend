@@ -4,7 +4,7 @@
  * @file modules/platform/branding/config/branding.php
  *
  * @description
- * Runtime knobs for the `academorix/branding` module.
+ * Runtime knobs for the `stackra/branding` module.
  */
 
 declare(strict_types=1);

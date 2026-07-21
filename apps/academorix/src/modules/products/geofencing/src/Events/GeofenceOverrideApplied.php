@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Events;
+namespace Stackra\Geofencing\Events;
 
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 /**
  * A new override row was minted — supersedes the original OUTSIDE / ERROR
  * check with an admin-approved INSIDE row.

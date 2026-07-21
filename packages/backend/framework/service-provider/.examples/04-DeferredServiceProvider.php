@@ -31,16 +31,16 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Reporting\Providers;
+namespace Stackra\Reporting\Providers;
 
-use Academorix\Reporting\Contracts\ReportExporterInterface;
-use Academorix\Reporting\Contracts\ReportGeneratorInterface;
-use Academorix\Reporting\Services\ReportExporter;
-use Academorix\Reporting\Services\ReportGenerator;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Contracts\HasBindings;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\Reporting\Contracts\ReportExporterInterface;
+use Stackra\Reporting\Contracts\ReportGeneratorInterface;
+use Stackra\Reporting\Services\ReportExporter;
+use Stackra\Reporting\Services\ReportGenerator;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Contracts\HasBindings;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * Reporting module service provider — deferred loading example.
@@ -51,7 +51,7 @@ use Academorix\ServiceProvider\Providers\ServiceProvider;
  */
 #[AsModule(
     name: 'Reporting',
-    namespace: 'Academorix\\Reporting',
+    namespace: 'Stackra\\Reporting',
     priority: 200,
 )]
 #[LoadsResources(

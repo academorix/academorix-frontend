@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Contracts\Services;
+namespace Stackra\Marketing\Contracts\Services;
 
-use Academorix\Marketing\Services\CircuitBreakerGate;
+use Stackra\Marketing\Services\CircuitBreakerGate;
 use Illuminate\Container\Attributes\Bind;
 
 /**

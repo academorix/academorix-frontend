@@ -1,6 +1,6 @@
 <?php return array(
     'root' => array(
-        'name' => 'academorix/scope',
+        'name' => 'stackra/scope',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
         'reference' => 'b4856bb48c6551fe1d5b04aa389dec85e0c4e435',
@@ -12,52 +12,52 @@
         'dev' => true,
     ),
     'versions' => array(
-        'academorix/caching' => array(
+        'stackra/caching' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
             'reference' => 'abc235fad1fbb694b582810704fcd69353fad196',
             'type' => 'library',
-            'install_path' => __DIR__ . '/../academorix/caching',
+            'install_path' => __DIR__ . '/../stackra/caching',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-        'academorix/database' => array(
+        'stackra/database' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
             'reference' => '42af7dc67ba66fab377760bb5961910d2ac6fe2e',
             'type' => 'library',
-            'install_path' => __DIR__ . '/../academorix/database',
+            'install_path' => __DIR__ . '/../stackra/database',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-        'academorix/enum' => array(
+        'stackra/enum' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
             'reference' => 'a68d26cbc0d1c5e376d9872ebce3623bc0834a3d',
             'type' => 'library',
-            'install_path' => __DIR__ . '/../academorix/enum',
+            'install_path' => __DIR__ . '/../stackra/enum',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-        'academorix/exceptions' => array(
+        'stackra/exceptions' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
             'reference' => '8f2cb2f189e98489e37d0f4d80ce8013f050330d',
             'type' => 'library',
-            'install_path' => __DIR__ . '/../academorix/exceptions',
+            'install_path' => __DIR__ . '/../stackra/exceptions',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-        'academorix/foundation' => array(
+        'stackra/foundation' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
             'reference' => 'aba248301f80db755ed2ea255b752d9e63b92e08',
             'type' => 'library',
-            'install_path' => __DIR__ . '/../academorix/foundation',
+            'install_path' => __DIR__ . '/../stackra/foundation',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-        'academorix/scope' => array(
+        'stackra/scope' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
             'reference' => 'b4856bb48c6551fe1d5b04aa389dec85e0c4e435',
@@ -68,12 +68,12 @@
             ),
             'dev_requirement' => false,
         ),
-        'academorix/service-provider' => array(
+        'stackra/service-provider' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
             'reference' => 'c11d1efe3584cf994fa1379450d41a504fb87638',
             'type' => 'library',
-            'install_path' => __DIR__ . '/../academorix/service-provider',
+            'install_path' => __DIR__ . '/../stackra/service-provider',
             'aliases' => array(),
             'dev_requirement' => false,
         ),

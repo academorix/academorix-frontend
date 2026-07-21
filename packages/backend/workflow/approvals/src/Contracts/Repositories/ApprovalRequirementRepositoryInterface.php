@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Contracts\Repositories;
+namespace Stackra\Approvals\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Approvals\Models\ApprovalRequirement}.
+ * Repository contract for {@see Stackra\Approvals\Models\ApprovalRequirement}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `ApprovalRequirementRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Approvals\Models\ApprovalRequirement>
+ * @extends RepositoryInterface<\Stackra\Approvals\Models\ApprovalRequirement>
  *
  * @category Approvals
  *

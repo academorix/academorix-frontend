@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Exceptions;
+namespace Stackra\Attribution\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * landing_page or referrer failed URL validation (not a valid URL, too long, contains characters outside RFC 3986).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AttributionInvalidUrlException extends AcademorixException
+final class AttributionInvalidUrlException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

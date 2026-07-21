@@ -26,22 +26,22 @@
  *       // public"). Every other module-provider array below stays
  *       // `protected` — those are ours, not Laravel's.
  *       public array $bindings = [
- *           \Academorix\Billing\Contracts\Invoicer::class
- *               => \Academorix\Billing\Services\StripeInvoicer::class,
+ *           \Stackra\Billing\Contracts\Invoicer::class
+ *               => \Stackra\Billing\Services\StripeInvoicer::class,
  *       ];
  *
  *       public array $singletons = [
- *           \Academorix\Billing\Contracts\PriceCatalog::class
- *               => \Academorix\Billing\Services\CachedPriceCatalog::class,
+ *           \Stackra\Billing\Contracts\PriceCatalog::class
+ *               => \Stackra\Billing\Services\CachedPriceCatalog::class,
  *       ];
  *
  *       protected array $policies = [
- *           \Academorix\Billing\Models\Invoice::class
- *               => \Academorix\Billing\Policies\InvoicePolicy::class,
+ *           \Stackra\Billing\Models\Invoice::class
+ *               => \Stackra\Billing\Policies\InvoicePolicy::class,
  *       ];
  *
  *       protected array $middlewareAliases = [
- *           'billing.subscribed' => \Academorix\Billing\Http\Middleware\EnsureSubscribed::class,
+ *           'billing.subscribed' => \Stackra\Billing\Http\Middleware\EnsureSubscribed::class,
  *       ];
  *
  *       protected array $routes = [
@@ -49,7 +49,7 @@
  *       ];
  *
  *       protected array $commands = [
- *           \Academorix\Billing\Console\SyncStripe::class,
+ *           \Stackra\Billing\Console\SyncStripe::class,
  *       ];
  *   }
  *
@@ -61,7 +61,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Providers;
+namespace Stackra\Foundation\Providers;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;

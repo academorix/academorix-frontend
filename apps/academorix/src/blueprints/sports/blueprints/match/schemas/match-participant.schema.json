@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/match/schemas/match-participant",
+  "id": "stackra://modules/match/schemas/match-participant",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "MatchParticipant",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "mpa_",
     "incrementing": false,
-    "model": "Academorix\\Sports\\Match\\Models\\MatchParticipant",
-    "interface": "Academorix\\Sports\\Match\\Contracts\\Data\\MatchParticipantInterface",
-    "implements": ["Academorix\\Sports\\Match\\Contracts\\Data\\MatchParticipantInterface"],
+    "model": "Stackra\\Sports\\Match\\Models\\MatchParticipant",
+    "interface": "Stackra\\Sports\\Match\\Contracts\\Data\\MatchParticipantInterface",
+    "implements": ["Stackra\\Sports\\Match\\Contracts\\Data\\MatchParticipantInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

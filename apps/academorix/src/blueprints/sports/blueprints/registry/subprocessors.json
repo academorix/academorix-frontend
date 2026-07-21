@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/sports-registry/subprocessors",
+  "id": "stackra://modules/sports-registry/subprocessors",
   "$version": 1,
   "title": "sports-registry — subprocessors",
   "description": "The sports-registry module engages ZERO third-party processors. The catalog is stored in the tenant's own database + carries only taxonomy metadata (name, slug, category, governing body). No user data ever leaves the module boundary.",

@@ -1,10 +1,10 @@
 {
-  "name": "academorix/session",
+  "name": "stackra/session",
   "type": "library",
-  "description": "Academorix Session module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/session/`. Complements the wire SDK at `academorix-sports/session-sdk`.",
+  "description": "Stackra Session module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/session/`. Complements the wire SDK at `stackra-sports/session-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "sports",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-sports/session-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-sports/session-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Session\\": "src/"
+      "Stackra\\Session\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Session\\Tests\\": "tests/"
+      "Stackra\\Session\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Session\\Providers\\SessionServiceProvider"
+        "Stackra\\Session\\Providers\\SessionServiceProvider"
       ],
       "aliases": {}
     }

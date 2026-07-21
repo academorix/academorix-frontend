@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/notifications/settings",
+  "id": "stackra://modules/notifications/settings",
   "$version": 1,
   "title": "notifications core \u2014 settings",
   "description": "Core notification settings shared across channels. Canonical group/section/field taxonomy. Two #[AsSetting] classes: `NotificationSenderSettings` (identity + brand) and `NotificationBehaviourSettings` (digest + consent + quiet hours).",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "notifications_sender",
-      "class": "Academorix\\Notifications\\Settings\\NotificationSenderSettings",
+      "class": "Stackra\\Notifications\\Settings\\NotificationSenderSettings",
       "label": "Sender identity",
       "description": "Default sender identity + brand overlay for outbound notifications across channels.",
       "icon": "identification",
@@ -27,7 +27,7 @@
               "name": "display_name",
               "controlType": "text",
               "label": "From display name",
-              "defaultValue": "Academorix",
+              "defaultValue": "Stackra",
               "validation": ["required", "string", "max:40"],
               "sortOrder": 1,
               "helpText": "Kept short (< 40 chars) for provider compatibility."
@@ -36,7 +36,7 @@
               "name": "from_email",
               "controlType": "email",
               "label": "From email",
-              "defaultValue": "no-reply@academorix.app",
+              "defaultValue": "no-reply@stackra.app",
               "validation": ["required", "email", "max:254"],
               "sortOrder": 2,
               "helpText": "Must match a verified sender identity on the mail provider (validated at save time)."
@@ -54,7 +54,7 @@
               "name": "postal_address",
               "controlType": "textarea",
               "label": "Postal address",
-              "defaultValue": "Academorix Ltd, 123 Placeholder St, City, Country",
+              "defaultValue": "Stackra Ltd, 123 Placeholder St, City, Country",
               "validation": ["required", "string", "max:500"],
               "sortOrder": 4,
               "helpText": "Required for CAN-SPAM footer. Rendered into email footer as-is."
@@ -100,7 +100,7 @@
     },
     {
       "key": "notifications_behaviour",
-      "class": "Academorix\\Notifications\\Settings\\NotificationBehaviourSettings",
+      "class": "Stackra\\Notifications\\Settings\\NotificationBehaviourSettings",
       "label": "Notification behaviour",
       "description": "Digest defaults + consent defaults + quiet hours defaults.",
       "icon": "bell",

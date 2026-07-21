@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Messaging\Database\Factories;
+namespace Stackra\Messaging\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Messaging\Contracts\Data\ConversationInterface;
-use Academorix\Messaging\Models\Conversation;
+use Stackra\Messaging\Contracts\Data\ConversationInterface;
+use Stackra\Messaging\Models\Conversation;
 
 /**
- * Factory for {@see \Academorix\Messaging\Models\Conversation}.
+ * Factory for {@see \Stackra\Messaging\Models\Conversation}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Messaging\Models\Conversation>
+ * @extends Factory<\Stackra\Messaging\Models\Conversation>
  *
  * @category Messaging
  *

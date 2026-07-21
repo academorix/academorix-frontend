@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/identity/broadcasts",
+  "id": "stackra://modules/identity/broadcasts",
   "$version": 1,
   "title": "identity \u2014 broadcast channels",
   "description": "Identity publishes NO broadcast channels. The module is internal-only \u2014 every state change is either (a) a fire-and-forget event consumed by other server-side modules or (b) a mail / in-app notification routed through the notifications module.",

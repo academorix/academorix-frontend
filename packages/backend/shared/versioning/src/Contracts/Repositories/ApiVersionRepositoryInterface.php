@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Contracts\Repositories;
+namespace Stackra\Versioning\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Versioning\Enums\ApiVersionStatus;
-use Academorix\Versioning\Models\ApiVersion;
-use Academorix\Versioning\Repositories\EloquentApiVersionRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Versioning\Enums\ApiVersionStatus;
+use Stackra\Versioning\Models\ApiVersion;
+use Stackra\Versioning\Repositories\EloquentApiVersionRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

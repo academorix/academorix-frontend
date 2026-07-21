@@ -12,13 +12,13 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Enum\Concerns;
+namespace Stackra\Enum\Concerns;
 
 use BackedEnum;
 use Closure;
-use Academorix\Support\Arr;
-use Academorix\Support\Reflection;
-use Academorix\Support\Str;
+use Stackra\Support\Arr;
+use Stackra\Support\Reflection;
+use Stackra\Support\Str;
 
 /**
  * Optionable Trait.
@@ -28,14 +28,14 @@ use Academorix\Support\Str;
  *
  * ## Usage:
  * ```php
- * use Academorix\Enum\Attributes\Label;
- * use Academorix\Enum\Meta\Meta;
+ * use Stackra\Enum\Attributes\Label;
+ * use Stackra\Enum\Meta\Meta;
  *
  * #[Meta([Label::class])]
  * enum Status: string
  * {
  *     use Optionable;
- * use Academorix\Support\Str;
+ * use Stackra\Support\Str;
  *
  *     #[Label('Active Status')]
  *     case ACTIVE = 'active';
@@ -51,7 +51,7 @@ use Academorix\Support\Str;
  * //          <option value="inactive">Inactive</option>
  * ```
  *
- * @author  Academorix Development Team
+ * @author  Stackra Development Team
  *
  * @since   1.0.0
  */

@@ -4,15 +4,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Contracts\Data;
+namespace Stackra\Rbac\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Rbac\Models\Permission;
+use Stackra\Rbac\Models\Permission;
 
 /**
  * Table shape for the `permissions` table.
  *
- * Spatie's `permissions` table augmented with Academorix scope columns (application_id, tenant_id, is_system, description, module_slug, sort_order).
+ * Spatie's `permissions` table augmented with Stackra scope columns (application_id, tenant_id, is_system, description, module_slug, sort_order).
  *
  * @category Rbac
  *

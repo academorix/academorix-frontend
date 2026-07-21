@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Policies;
+namespace Stackra\Monitoring\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Monitoring\Models\MonitoringAlertPolicy;
+use Stackra\User\Models\User;
+use Stackra\Monitoring\Models\MonitoringAlertPolicy;
 
 /**
- * Authorization policy for {@see \Academorix\Monitoring\Models\MonitoringAlertPolicy}.
+ * Authorization policy for {@see \Stackra\Monitoring\Models\MonitoringAlertPolicy}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

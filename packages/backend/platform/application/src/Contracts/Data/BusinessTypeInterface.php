@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Contracts\Data;
+namespace Stackra\Application\Contracts\Data;
 
-use Academorix\Application\Models\BusinessType;
+use Stackra\Application\Models\BusinessType;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -44,7 +44,7 @@ interface BusinessTypeInterface
     public const string KEY_TYPE = 'string';
 
     /**
-     * Prefix for the {@see \Academorix\Database\Concerns\HasPrefixedUlid}
+     * Prefix for the {@see \Stackra\Database\Concerns\HasPrefixedUlid}
      * trait — the trait joins `<ID_PREFIX>_<ulid>` to produce the
      * primary key (e.g. `bst_01HZQK8YXBR3MDMP6QT9NR8N4F`).
      */

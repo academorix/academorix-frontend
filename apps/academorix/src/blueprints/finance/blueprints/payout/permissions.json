@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/payout/permissions",
+  "id": "stackra://modules/payout/permissions",
   "$version": 1,
   "title": "payout — permissions",
-  "seeder": "Academorix\\Finance\\Payout\\Database\\Seeders\\PayoutPermissionSeeder",
+  "seeder": "Stackra\\Finance\\Payout\\Database\\Seeders\\PayoutPermissionSeeder",
   "isSystem": true,
   "description": "Finance role only — payouts are financial-sensitive. Guardians never see payouts (they're academy-facing only). Reconciliation resolution requires finance role.",
   "permissions": [

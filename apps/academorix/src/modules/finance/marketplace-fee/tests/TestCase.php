@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\MarketplaceFee\Tests;
+namespace Stackra\MarketplaceFee\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/marketplace-fee.
+ * Base test case for stackra/marketplace-fee.
  *
  * @category MarketplaceFee
  *

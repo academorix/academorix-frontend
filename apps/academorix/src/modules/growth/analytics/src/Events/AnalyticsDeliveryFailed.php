@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Analytics\Events;
+namespace Stackra\Analytics\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -15,7 +15,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * ## Consumers
  *
  * - analytics::CircuitBreakerFailureListener — records failure into circuit_breaker_state, may transition to open
- * - monitoring::EmitFailureMetricListener — emits academorix.analytics.deliveries.by_state_total counter
+ * - monitoring::EmitFailureMetricListener — emits stackra.analytics.deliveries.by_state_total counter
  *
  * @category Analytics
  *

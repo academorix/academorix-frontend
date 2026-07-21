@@ -1,6 +1,6 @@
 ---
 description: >-
-  End-to-End Test Engineer for Academorix — owns Playwright suites for the web
+  End-to-End Test Engineer for Stackra — owns Playwright suites for the web
   surface and Detox suites for the React Native surface. Runs against canary
   environments in Phase 5. Reports to quality-lead. Writes tests only; does not
   modify production code.

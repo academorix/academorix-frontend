@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/platform-user/subprocessors",
+  "id": "stackra://modules/platform-user/subprocessors",
   "$version": 1,
   "title": "platform-user \u2014 subprocessors",
-  "description": "One optional subprocessor: PagerDuty for on-call rotation resolution + escalation paging. Optional \u2014 enabled per environment via `platform-user.on_call.enabled`. Off = the internal `on_call_rotation_entries` table backs OnCallResolver and no external calls fire. Even when enabled, only PlatformUser display_name + phone_e164 + department are sent to PagerDuty \u2014 never tenant data. Since PagerDuty processes ACADEMORIX employee data (not tenant end-user data), this is a workforce-management subprocessor arrangement, distinct from the tenant-side subprocessor tier that GDPR Art. 28 primarily governs.",
+  "description": "One optional subprocessor: PagerDuty for on-call rotation resolution + escalation paging. Optional \u2014 enabled per environment via `platform-user.on_call.enabled`. Off = the internal `on_call_rotation_entries` table backs OnCallResolver and no external calls fire. Even when enabled, only PlatformUser display_name + phone_e164 + department are sent to PagerDuty \u2014 never tenant data. Since PagerDuty processes STACKRA employee data (not tenant end-user data), this is a workforce-management subprocessor arrangement, distinct from the tenant-side subprocessor tier that GDPR Art. 28 primarily governs.",
   "regulatoryBasis": [
     "soc2 CC6.7 (subprocessor evaluation)",
     "iso 27001 A.15.1 (supplier relationships)"
@@ -11,7 +11,7 @@
     {
       "name": "PagerDuty",
       "role": "on_call_rotation_and_escalation",
-      "purpose": "Backs the OnCallResolver when `platform-user.on_call.default_backend = pagerduty`. Owns the schedule authoring surface (Academorix ops maintains schedules in PagerDuty's own UI), the escalation-policy resolution, and the paging channels (SMS + phone + push). Academorix reads current-on-call via PagerDuty's REST API v2 (GET /oncalls filtered by escalation_policy_id).",
+      "purpose": "Backs the OnCallResolver when `platform-user.on_call.default_backend = pagerduty`. Owns the schedule authoring surface (Stackra ops maintains schedules in PagerDuty's own UI), the escalation-policy resolution, and the paging channels (SMS + phone + push). Stackra reads current-on-call via PagerDuty's REST API v2 (GET /oncalls filtered by escalation_policy_id).",
       "data_processed": [
         "PlatformUser.id (opaque ULID)",
         "PlatformProfile.first_name + last_name (identifying the on-call staffer)",
@@ -25,7 +25,7 @@
         "PlatformProfile.github_handle",
         "PlatformProfile.avatar_url",
         "PlatformUser.offboarding_reason",
-        "any tenant-plane data \u2014 tenant PII never leaves the Academorix boundary via this integration"
+        "any tenant-plane data \u2014 tenant PII never leaves the Stackra boundary via this integration"
       ],
       "location": "US-East (Amazon AWS us-east-1). PagerDuty is US-only for backend processing.",
       "legal_basis": "contract",

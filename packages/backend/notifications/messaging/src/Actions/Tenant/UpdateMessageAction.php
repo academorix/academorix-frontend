@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Messaging\Actions\Tenant;
+namespace Stackra\Messaging\Actions\Tenant;
 
-use Academorix\Messaging\Contracts\Repositories\MessageRepositoryInterface;
-use Academorix\Messaging\Data\MessageData;
-use Academorix\Messaging\Data\Requests\UpdateMessageRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\Messaging\Contracts\Repositories\MessageRepositoryInterface;
+use Stackra\Messaging\Data\MessageData;
+use Stackra\Messaging\Data\Requests\UpdateMessageRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Patch;
 
 /**
  * `PATCH /api/v1/messages/{message}` — update action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Patch(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Messaging

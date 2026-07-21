@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Repositories;
+namespace Stackra\Transfer\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Transfer\Contracts\Data\XferMappingProfileInterface;
-use Academorix\Transfer\Contracts\Repositories\XferMappingProfileRepositoryInterface;
-use Academorix\Transfer\Models\XferMappingProfile;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Transfer\Contracts\Data\XferMappingProfileInterface;
+use Stackra\Transfer\Contracts\Repositories\XferMappingProfileRepositoryInterface;
+use Stackra\Transfer\Models\XferMappingProfile;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Transfer\Models\XferMappingProfile}.
+ * Attribute-first Eloquent repository for {@see Stackra\Transfer\Models\XferMappingProfile}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(XferMappingProfileInterface::class)]` which resolves to
  * `XferMappingProfile` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Transfer\Models\XferMappingProfile>
+ * @extends Repository<\Stackra\Transfer\Models\XferMappingProfile>
  *
  * @category Transfer
  *

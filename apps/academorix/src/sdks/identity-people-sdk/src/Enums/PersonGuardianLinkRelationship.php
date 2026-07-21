@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\IdentityPeopleSdk\Enums;
+namespace Stackra\IdentityPeopleSdk\Enums;
 
 /**
  * Wire-visible backed enum for `person-guardian-link.relationship`.

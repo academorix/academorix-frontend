@@ -1,7 +1,7 @@
-# academorix-sports/medical-sdk
+# stackra-sports/medical-sdk
 
 Wire-visible SDK surface for the `medical` module of the Sports service.
-Auto-discovered by `academorix/sports-sdk` (the service umbrella) via
+Auto-discovered by `stackra/sports-sdk` (the service umbrella) via
 `#[AsSdkResource(name: 'medical', service: 'sports')]`.
 
 ## Aggregates
@@ -34,7 +34,7 @@ src/
 Consumed only over HTTP via the umbrella client:
 
 ```php
-app(\Academorix\SportsSdk\Client\SportsSdk::class)
+app(\Stackra\SportsSdk\Client\SportsSdk::class)
     ->medical()
     ->allergies()
     ->list();

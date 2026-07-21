@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Services;
+namespace Stackra\Compliance\Services;
 
-use Academorix\Compliance\Contracts\Data\DsarInterface;
-use Academorix\Compliance\Contracts\Services\DsarOrchestratorInterface;
-use Academorix\Compliance\Enums\DsarState;
-use Academorix\Compliance\Events\DsarAssembled;
-use Academorix\Compliance\Events\DsarCollectionStarted;
-use Academorix\Compliance\Events\DsarDelivered;
-use Academorix\Compliance\Events\DsarRejected;
-use Academorix\Compliance\Events\DsarTriaged;
-use Academorix\Compliance\Exceptions\DsarStateInvalidException;
-use Academorix\Compliance\Models\Dsar;
+use Stackra\Compliance\Contracts\Data\DsarInterface;
+use Stackra\Compliance\Contracts\Services\DsarOrchestratorInterface;
+use Stackra\Compliance\Enums\DsarState;
+use Stackra\Compliance\Events\DsarAssembled;
+use Stackra\Compliance\Events\DsarCollectionStarted;
+use Stackra\Compliance\Events\DsarDelivered;
+use Stackra\Compliance\Events\DsarRejected;
+use Stackra\Compliance\Events\DsarTriaged;
+use Stackra\Compliance\Exceptions\DsarStateInvalidException;
+use Stackra\Compliance\Models\Dsar;
 use DateTimeInterface;
 use Illuminate\Container\Attributes\Scoped;
 

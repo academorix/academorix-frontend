@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Contracts\Repositories;
+namespace Stackra\Auth\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Auth\Models\AuthEmailVerification}.
+ * Repository contract for {@see Stackra\Auth\Models\AuthEmailVerification}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `AuthEmailVerificationRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Auth\Models\AuthEmailVerification>
+ * @extends RepositoryInterface<\Stackra\Auth\Models\AuthEmailVerification>
  *
  * @category Auth
  *

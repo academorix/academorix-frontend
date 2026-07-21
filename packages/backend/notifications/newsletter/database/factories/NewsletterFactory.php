@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Database\Factories;
+namespace Stackra\Newsletter\Database\Factories;
 
-use Academorix\Newsletter\Contracts\Data\NewsletterInterface;
-use Academorix\Newsletter\Enums\NewsletterCadence;
-use Academorix\Newsletter\Enums\NewsletterStatus;
-use Academorix\Newsletter\Models\Newsletter;
+use Stackra\Newsletter\Contracts\Data\NewsletterInterface;
+use Stackra\Newsletter\Enums\NewsletterCadence;
+use Stackra\Newsletter\Enums\NewsletterStatus;
+use Stackra\Newsletter\Models\Newsletter;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

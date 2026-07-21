@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Season\Services;
+namespace Stackra\Season\Services;
 
-use Academorix\Season\Contracts\Services\SeasonSeedingStrategyInterface;
+use Stackra\Season\Contracts\Services\SeasonSeedingStrategyInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Season\Contracts\Repositories\SeasonRepositoryInterface;
+use Stackra\Season\Contracts\Repositories\SeasonRepositoryInterface;
 
 /**
  * Concrete service — SeasonSeedingStrategy.

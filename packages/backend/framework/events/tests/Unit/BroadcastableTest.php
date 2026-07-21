@@ -6,27 +6,27 @@
  * @description
  * Unit coverage for the broadcasting attribute family:
  *
- *   - {@see \Academorix\Events\Attributes\Broadcastable}
- *   - {@see \Academorix\Events\Attributes\BroadcastOn}
- *   - {@see \Academorix\Events\Attributes\BroadcastAs}
- *   - {@see \Academorix\Events\Attributes\BroadcastQueue}
- *   - {@see \Academorix\Events\Support\BroadcastConfigurator}
+ *   - {@see \Stackra\Events\Attributes\Broadcastable}
+ *   - {@see \Stackra\Events\Attributes\BroadcastOn}
+ *   - {@see \Stackra\Events\Attributes\BroadcastAs}
+ *   - {@see \Stackra\Events\Attributes\BroadcastQueue}
+ *   - {@see \Stackra\Events\Support\BroadcastConfigurator}
  *
  * The Configurator tests are pure-unit — no Testbench boot — so
  * they exercise the resolver's channel-type wrapping, placeholder
  * interpolation, and factory class-string branch against
- * hand-built {@see \Academorix\Events\Support\BroadcastMetadata}
+ * hand-built {@see \Stackra\Events\Support\BroadcastMetadata}
  * entries.
  */
 
 declare(strict_types=1);
 
-use Academorix\Events\Attributes\Broadcastable;
-use Academorix\Events\Attributes\BroadcastAs;
-use Academorix\Events\Attributes\BroadcastOn;
-use Academorix\Events\Attributes\BroadcastQueue;
-use Academorix\Events\Support\BroadcastConfigurator;
-use Academorix\Events\Support\BroadcastMetadata;
+use Stackra\Events\Attributes\Broadcastable;
+use Stackra\Events\Attributes\BroadcastAs;
+use Stackra\Events\Attributes\BroadcastOn;
+use Stackra\Events\Attributes\BroadcastQueue;
+use Stackra\Events\Support\BroadcastConfigurator;
+use Stackra\Events\Support\BroadcastMetadata;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;

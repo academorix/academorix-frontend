@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Events;
+namespace Stackra\Entitlements\Events;
 
-use Academorix\Entitlements\Models\Entitlement;
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Entitlements\Models\Entitlement;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 

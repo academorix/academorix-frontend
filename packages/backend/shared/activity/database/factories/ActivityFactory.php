@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Database\Factories;
+namespace Stackra\Activity\Database\Factories;
 
-use Academorix\Activity\Contracts\Data\ActivityInterface;
-use Academorix\Activity\Models\Activity;
+use Stackra\Activity\Contracts\Data\ActivityInterface;
+use Stackra\Activity\Models\Activity;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

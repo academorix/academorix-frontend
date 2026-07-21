@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/digital-passes/hooks",
+  "id": "stackra://modules/digital-passes/hooks",
   "$version": 1,
   "title": "digital-passes — tenant hooks",
   "description": "Per-tenant lifecycle callbacks (log context, cache prefix, cache invalidation).",

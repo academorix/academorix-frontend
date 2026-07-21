@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/audit/schemas/audit-retention-policy",
+  "id": "stackra://modules/audit/schemas/audit-retention-policy",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "AuditRetentionPolicy",
@@ -12,10 +12,10 @@
     "keyType": "string",
     "keyPrefix": "arp_",
     "incrementing": false,
-    "model": "Academorix\\Observability\\Audit\\Models\\AuditRetentionPolicy",
-    "interface": "Academorix\\Observability\\Audit\\Contracts\\Data\\AuditRetentionPolicyInterface",
+    "model": "Stackra\\Observability\\Audit\\Models\\AuditRetentionPolicy",
+    "interface": "Stackra\\Observability\\Audit\\Contracts\\Data\\AuditRetentionPolicyInterface",
     "implements": [
-      "Academorix\\Observability\\Audit\\Contracts\\Data\\AuditRetentionPolicyInterface"
+      "Stackra\\Observability\\Audit\\Contracts\\Data\\AuditRetentionPolicyInterface"
     ],
     "traits": [
       "HasFactory",

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invoice\Exceptions;
+namespace Stackra\Invoice\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Line CRUD is only allowed while parent invoice.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvoiceLineParentNotDraftException extends AcademorixException
+final class InvoiceLineParentNotDraftException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

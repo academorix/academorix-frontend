@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Athlete\Data;
+namespace Stackra\Athlete\Data;
 
-use Academorix\Athlete\Contracts\Data\AthleteInterface;
-use Academorix\Athlete\Models\Athlete;
+use Stackra\Athlete\Contracts\Data\AthleteInterface;
+use Stackra\Athlete\Models\Athlete;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;

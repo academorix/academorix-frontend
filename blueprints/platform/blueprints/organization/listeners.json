@@ -1,65 +1,65 @@
 {
-  "id": "academorix://modules/organization/listeners",
+  "id": "stackra://modules/organization/listeners",
   "$version": 1,
   "title": "organization — subscribed events",
   "listeners": [
     {
       "event": "tenancy::TenantProvisioned",
-      "listener": "Academorix\\Organization\\Listeners\\SeedDefaultOrganizationOnTenantProvisioned",
+      "listener": "Stackra\\Organization\\Listeners\\SeedDefaultOrganizationOnTenantProvisioned",
       "queue": "notifications",
       "purpose": "Dispatch SeedDefaultOrganizationForTenantJob for the newly-provisioned tenant. Runs post-commit so the tenant row is guaranteed durable before the child insert."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Organization\\Listeners\\PurgeOrganizationsForErasedTenant",
+      "listener": "Stackra\\Organization\\Listeners\\PurgeOrganizationsForErasedTenant",
       "queue": "notifications-critical",
       "purpose": "Cascade hard-delete of every Organization for the erased tenant. FK cascade handles the actual delete; this listener writes the compliance audit trail entry + releases every organization_slot entitlement for the tenant."
     },
     {
       "event": "tenancy::TenantSuspended",
-      "listener": "Academorix\\Organization\\Listeners\\PauseOrganizationsForSuspendedTenant",
+      "listener": "Stackra\\Organization\\Listeners\\PauseOrganizationsForSuspendedTenant",
       "queue": "notifications",
       "purpose": "When a tenant is suspended, every active Organization transitions to paused (via a batch update). Reverses on TenantResumed."
     },
     {
       "event": "tenancy::TenantResumed",
-      "listener": "Academorix\\Organization\\Listeners\\ResumeOrganizationsForResumedTenant",
+      "listener": "Stackra\\Organization\\Listeners\\ResumeOrganizationsForResumedTenant",
       "queue": "notifications",
       "purpose": "Reverse of PauseOrganizationsForSuspendedTenant. Transitions organizations paused by the tenant-suspend cascade back to active. Rows paused BEFORE the tenant suspension (independent pause events) stay paused — recorded in `paused_before_tenant_suspend=true` metadata."
     },
     {
       "event": "organization::OrganizationParentChanged",
-      "listener": "Academorix\\Organization\\Listeners\\DispatchRebuildTreePathsJob",
+      "listener": "Stackra\\Organization\\Listeners\\DispatchRebuildTreePathsJob",
       "queue": null,
       "purpose": "Sync-dispatch RebuildTreePathsJob for the moved subtree. Kept sync (not queued) so the cache-invalidation window is exactly the job duration."
     },
     {
       "event": "organization::OrganizationDefaultChanged",
-      "listener": "Academorix\\Organization\\Listeners\\InvalidateDefaultOrganizationCache",
+      "listener": "Stackra\\Organization\\Listeners\\InvalidateDefaultOrganizationCache",
       "queue": null,
       "purpose": "Invalidates `org:default:{tenant_id}` Redis key so the next request re-warms with the new default."
     },
     {
       "event": "organization::OrganizationCreated",
-      "listener": "Academorix\\Organization\\Listeners\\WarmSlotUsageCache",
+      "listener": "Stackra\\Organization\\Listeners\\WarmSlotUsageCache",
       "queue": "notifications",
       "purpose": "Recompute `org:slot_usage:{tenant_id}` from source of truth after each create so the entitlement-bar UI stays accurate."
     },
     {
       "event": "organization::OrganizationArchived",
-      "listener": "Academorix\\Organization\\Listeners\\ReleaseOrganizationSlot",
+      "listener": "Stackra\\Organization\\Listeners\\ReleaseOrganizationSlot",
       "queue": "notifications",
       "purpose": "Releases 1 unit of the organization_slot entitlement counter."
     },
     {
       "event": "organization::OrganizationRestored",
-      "listener": "Academorix\\Organization\\Listeners\\ReconsumeOrganizationSlot",
+      "listener": "Stackra\\Organization\\Listeners\\ReconsumeOrganizationSlot",
       "queue": "notifications",
       "purpose": "Re-consumes 1 unit of the organization_slot entitlement counter (restore fails when the tenant is at cap)."
     },
     {
       "event": "entitlements::EntitlementDowngraded",
-      "listener": "Academorix\\Organization\\Listeners\\HandleHierarchyEntitlementLoss",
+      "listener": "Stackra\\Organization\\Listeners\\HandleHierarchyEntitlementLoss",
       "queue": "notifications-critical",
       "purpose": "When a tenant loses the organization_hierarchy entitlement (downgrade Enterprise → Medium), FLATTEN the tree — every non-default child Organization has its parent_id set to null (children reparent to the tenant root). Handled per hierarchy.md §10 tier-transition rules. Emits OrganizationParentChanged for each row so downstream tree caches invalidate."
     }

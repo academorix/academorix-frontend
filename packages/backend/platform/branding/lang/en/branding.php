@@ -4,7 +4,7 @@
  * @file modules/platform/branding/lang/en/branding.php
  *
  * @description
- * English translations for the `academorix/branding` module.
+ * English translations for the `stackra/branding` module.
  */
 
 declare(strict_types=1);

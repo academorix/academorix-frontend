@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/private-sessions/middleware",
+  "id": "stackra://modules/private-sessions/middleware",
   "$version": 1,
   "title": "private-sessions — HTTP middleware",
   "description": "Middleware aliases this module contributes.",

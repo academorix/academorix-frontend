@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Actions\Tenant;
+namespace Stackra\Storage\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Patch;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Storage\Contracts\Services\ChunkedUploadCoordinatorInterface;
-use Academorix\Storage\Data\ChunkedUploadData;
-use Academorix\Storage\Data\Requests\UploadChunkRequestData;
-use Academorix\Storage\Enums\StoragePermission;
-use Academorix\Storage\Models\ChunkedUpload;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Patch;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Storage\Contracts\Services\ChunkedUploadCoordinatorInterface;
+use Stackra\Storage\Data\ChunkedUploadData;
+use Stackra\Storage\Data\Requests\UploadChunkRequestData;
+use Stackra\Storage\Enums\StoragePermission;
+use Stackra\Storage\Models\ChunkedUpload;
 use Illuminate\Http\Request;
 
 /**

@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AdminConsole\Database\Seeders;
+namespace Stackra\AdminConsole\Database\Seeders;
 
-use Academorix\AdminConsole\Enums\AdminConsolePermission;
-use Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
-use Academorix\ServiceProvider\Attributes\AsSeeder;
+use Stackra\AdminConsole\Enums\AdminConsolePermission;
+use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;
 
 /**

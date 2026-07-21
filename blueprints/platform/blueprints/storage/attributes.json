@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/storage/attributes",
+  "id": "stackra://modules/storage/attributes",
   "$version": 1,
   "title": "storage \u2014 PHP attribute contracts",
   "description": "Four attributes. Discovered at build time by CompileStorageRegistries. The compiler maps class properties + classes into the FileKindRegistry so runtime enforcement is a hash-map lookup, not a reflection call.",
-  "namespace": "Academorix\\Storage\\Attributes",
+  "namespace": "Stackra\\Storage\\Attributes",
   "attributes": [
     {
       "name": "Attachable",
-      "class": "Academorix\\Storage\\Attributes\\Attachable",
+      "class": "Stackra\\Storage\\Attributes\\Attachable",
       "targets": ["method", "property"],
       "description": "Declares that the annotated model member is a file-attachment surface. Runtime: the HasFiles trait exposes accessors that resolve to this kind. Multiple #[Attachable] on the same model = multiple file surfaces (e.g. a User with avatar + cover_photo).",
       "params": [
@@ -41,7 +41,7 @@
     },
     {
       "name": "FileKind",
-      "class": "Academorix\\Storage\\Attributes\\FileKind",
+      "class": "Stackra\\Storage\\Attributes\\FileKind",
       "targets": ["class"],
       "description": "Registers a file kind with FileKindRegistry. A file kind bundles mime allow-list + max size + variant recipe + antivirus + retention. Kinds are DECLARED by whichever module owns the attaching entity (e.g. `user` declares `avatar`, `subscription` declares `plan_cover`). The compiler ensures no two modules declare the same kind key.",
       "params": [
@@ -99,7 +99,7 @@
     },
     {
       "name": "GeneratesVariants",
-      "class": "Academorix\\Storage\\Attributes\\GeneratesVariants",
+      "class": "Stackra\\Storage\\Attributes\\GeneratesVariants",
       "targets": ["method", "property", "class"],
       "description": "Requests async variant generation on upload. When applied to a property, layers on top of the property's #[Attachable]. When applied to a class, applies to every attachable property on that class.",
       "params": [
@@ -113,33 +113,33 @@
     },
     {
       "name": "RequiresVirusScan",
-      "class": "Academorix\\Storage\\Attributes\\RequiresVirusScan",
+      "class": "Stackra\\Storage\\Attributes\\RequiresVirusScan",
       "targets": ["method", "property", "class"],
       "description": "Explicitly requires virus scanning on upload. Every kind requires scan by default; this attribute pins the requirement at the property level for readability + audit clarity. Redundant with `#[FileKind(requires_virus_scan: true)]`.",
       "params": []
     }
   ],
   "variant_recipes": {
-    "description": "Variants are declared separately via classes that implement Academorix\\Storage\\Contracts\\VariantRecipe. The recipe declares its transformer (image resize, PDF thumbnail extraction, video keyframe) + output MIME + output settings. Registered in the container via the VariantRegistry binding.",
+    "description": "Variants are declared separately via classes that implement Stackra\\Storage\\Contracts\\VariantRecipe. The recipe declares its transformer (image resize, PDF thumbnail extraction, video keyframe) + output MIME + output settings. Registered in the container via the VariantRegistry binding.",
     "default_recipes": [
       {
         "key": "thumbnail",
-        "class": "Academorix\\Storage\\Variants\\ThumbnailRecipe",
+        "class": "Stackra\\Storage\\Variants\\ThumbnailRecipe",
         "output": "128x128 crop, WebP + JPEG fallback"
       },
       {
         "key": "medium",
-        "class": "Academorix\\Storage\\Variants\\MediumRecipe",
+        "class": "Stackra\\Storage\\Variants\\MediumRecipe",
         "output": "512x512 fit-inside, WebP + JPEG"
       },
       {
         "key": "hero",
-        "class": "Academorix\\Storage\\Variants\\HeroRecipe",
+        "class": "Stackra\\Storage\\Variants\\HeroRecipe",
         "output": "1920x1080 fit-inside, WebP + JPEG"
       },
       {
         "key": "pdf-thumbnail",
-        "class": "Academorix\\Storage\\Variants\\PdfThumbnailRecipe",
+        "class": "Stackra\\Storage\\Variants\\PdfThumbnailRecipe",
         "output": "First page as 256x256 JPEG"
       }
     ]

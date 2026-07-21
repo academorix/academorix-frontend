@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attributes\Services;
+namespace Stackra\Attributes\Services;
 
-use Academorix\Attributes\Contracts\Services\AttributeValidatorInterface;
+use Stackra\Attributes\Contracts\Services\AttributeValidatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Attributes\Contracts\Repositories\AttributeDefinitionRepositoryInterface;
+use Stackra\Attributes\Contracts\Repositories\AttributeDefinitionRepositoryInterface;
 
 /**
  * Concrete service — AttributeValidator.

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Database\Factories;
+namespace Stackra\Search\Database\Factories;
 
-use Academorix\Search\Contracts\Data\SearchSyncJobInterface;
-use Academorix\Search\Enums\SearchSyncJobStatus;
-use Academorix\Search\Models\SearchSyncJob;
+use Stackra\Search\Contracts\Data\SearchSyncJobInterface;
+use Stackra\Search\Enums\SearchSyncJobStatus;
+use Stackra\Search\Models\SearchSyncJob;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file packages/exceptions/src/Ignition/AcademorixAiSolutionsProvider.php
+ * @file packages/exceptions/src/Ignition/StackraAiSolutionsProvider.php
  *
  * @description
  * AI-augmented solutions for un-mapped throwables. Delegates to the
@@ -33,13 +33,13 @@
  *
  *   - Exception class + message.
  *   - Origin file + line.
- *   - Academorix `errorCode`, `category`, `severity`, `context`
+ *   - Stackra `errorCode`, `category`, `severity`, `context`
  *     (masked — see below).
  *   - Last 5 stack frames (also masked).
  *
  * We do NOT send request bodies, form input, or user data. Even
  * within the seed, everything passes through
- * {@see \Academorix\Exceptions\Support\SensitiveDataMasker} so an
+ * {@see \Stackra\Exceptions\Support\SensitiveDataMasker} so an
  * accidental bearer token in a stack-trace argument doesn't leave
  * the developer's laptop.
  *
@@ -47,24 +47,24 @@
  *
  * `spatie/laravel-ignition` v2 ships its own Ignition Pro AI
  * provider that covers framework-native throwables well. This class
- * complements it — the domain context ({@see AcademorixException}'s
+ * complements it — the domain context ({@see StackraException}'s
  * structured metadata) makes for a much richer prompt on our own
  * exception types than a bare stack trace can offer.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Ignition;
+namespace Stackra\Exceptions\Ignition;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Support\SensitiveDataMasker;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Support\SensitiveDataMasker;
 use Illuminate\Contracts\Container\Container;
 use Spatie\Ignition\Contracts\HasSolutionsForThrowable;
 use Spatie\Ignition\Contracts\Solution;
 use Spatie\Ignition\Solutions\SuggestionSolution;
 use Throwable;
 
-final class AcademorixAiSolutionsProvider implements HasSolutionsForThrowable
+final class StackraAiSolutionsProvider implements HasSolutionsForThrowable
 {
     /**
      * Non-domain 4xx errors don't merit an AI suggestion — a
@@ -110,7 +110,7 @@ TXT;
 
         // Skip client-caused errors — the fix is on the caller's
         // side, not the codebase's.
-        if ($throwable instanceof AcademorixException && $throwable->httpStatus() < self::MIN_STATUS_FOR_SUGGESTION) {
+        if ($throwable instanceof StackraException && $throwable->httpStatus() < self::MIN_STATUS_FOR_SUGGESTION) {
             return false;
         }
 
@@ -190,7 +190,7 @@ TXT;
             'trace' => $this->masker->maskTrace(array_slice($e->getTrace(), 0, 5)),
         ];
 
-        if ($e instanceof AcademorixException) {
+        if ($e instanceof StackraException) {
             $seed['errorCode'] = $e->errorCode();
             $seed['category'] = $e->category()->value;
             $seed['severity'] = $e->severity()->value;

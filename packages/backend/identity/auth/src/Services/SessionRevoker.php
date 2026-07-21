@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Services;
+namespace Stackra\Auth\Services;
 
-use Academorix\Auth\Contracts\Services\SessionRevokerInterface;
+use Stackra\Auth\Contracts\Services\SessionRevokerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Auth\Contracts\Repositories\AuthCrossAppGrantRepositoryInterface;
+use Stackra\Auth\Contracts\Repositories\AuthCrossAppGrantRepositoryInterface;
 
 /**
  * Concrete service — SessionRevoker.

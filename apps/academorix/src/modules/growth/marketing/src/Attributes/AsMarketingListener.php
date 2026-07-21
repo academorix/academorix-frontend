@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Attributes;
+namespace Stackra\Marketing\Attributes;
 
 use Attribute;
 

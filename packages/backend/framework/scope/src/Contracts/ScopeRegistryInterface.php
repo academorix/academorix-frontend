@@ -15,12 +15,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Contracts;
+namespace Stackra\Scope\Contracts;
 
-use Academorix\Scope\Data\ScopeConsumerConfig;
-use Academorix\Scope\Exceptions\ScopeConflictException;
-use Academorix\Scope\Exceptions\ScopeValidationException;
-use Academorix\Scope\Services\ScopeRegistry;
+use Stackra\Scope\Data\ScopeConsumerConfig;
+use Stackra\Scope\Exceptions\ScopeConflictException;
+use Stackra\Scope\Exceptions\ScopeValidationException;
+use Stackra\Scope\Services\ScopeRegistry;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Singleton;
 

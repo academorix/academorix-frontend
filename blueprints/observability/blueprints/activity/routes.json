@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/activity/routes",
+  "id": "stackra://modules/activity/routes",
   "$version": 1,
   "title": "activity — HTTP routes",
-  "description": "Two route groups. Tenant serves read endpoints for the feed + CRUD for retention policies. Platform-admin serves read-only cross-tenant search for Academorix support. Writes to `Activity` do NOT go through HTTP — every activity is captured via the vendor `LogsActivity` trait on domain models.",
+  "description": "Two route groups. Tenant serves read endpoints for the feed + CRUD for retention policies. Platform-admin serves read-only cross-tenant search for Stackra support. Writes to `Activity` do NOT go through HTTP — every activity is captured via the vendor `LogsActivity` trait on domain models.",
   "prefixes": {
     "v1": "/api/v1",
     "platform": "/api/v1/platform"
@@ -24,7 +24,7 @@
           "method": "GET",
           "path": "/api/v1/activities",
           "name": "tenant.activities.index",
-          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@index",
+          "action": "Stackra\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@index",
           "policy": "ActivityPolicy@viewAny",
           "returns": "PaginatedResource<ActivityData>",
           "description": "Tenant-wide feed. Default filter: entities the caller can access. Filters: filter[log_name], filter[causer_id], filter[subject_type], filter[event], filter[from], filter[to], filter[batched_only]. Sorted DESC by created_at by default; per_page capped at 100 (config.activity.feed.max_page_size).",
@@ -52,7 +52,7 @@
           "method": "GET",
           "path": "/api/v1/activities/{activity}",
           "name": "tenant.activities.show",
-          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@show",
+          "action": "Stackra\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@show",
           "policy": "ActivityPolicy@view",
           "returns": "ActivityData",
           "includes": ["subject", "causer", "batchSiblings"],
@@ -62,7 +62,7 @@
           "method": "GET",
           "path": "/api/v1/activities/mine",
           "name": "tenant.activities.mine",
-          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@mine",
+          "action": "Stackra\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@mine",
           "policy": "ActivityPolicy@viewOwn",
           "returns": "PaginatedResource<ActivityData>",
           "description": "The caller's own activity as causer. Powers the 'My activity' panel on the tenant dashboard."
@@ -71,7 +71,7 @@
           "method": "GET",
           "path": "/api/v1/activities/by-entity/{subject_type}/{subject_id}",
           "name": "tenant.activities.by-entity",
-          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@byEntity",
+          "action": "Stackra\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@byEntity",
           "policy": "ActivityPolicy@viewByEntity",
           "returns": "PaginatedResource<ActivityData>",
           "description": "The activity stream for one entity. Requires the caller to be able to view the entity itself (checked via the resource's policy — a booking's activity is visible to anyone with `bookings.view` on it)."
@@ -80,7 +80,7 @@
           "method": "GET",
           "path": "/api/v1/activities/by-user/{user}",
           "name": "tenant.activities.by-user",
-          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@byUser",
+          "action": "Stackra\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@byUser",
           "policy": "ActivityPolicy@viewByUser",
           "returns": "PaginatedResource<ActivityData>",
           "description": "One actor's activity. Callers see only themselves unless they hold `activity.audit_any` (admin-level compliance surface)."
@@ -89,7 +89,7 @@
           "method": "GET",
           "path": "/api/v1/activities/feed",
           "name": "tenant.activities.feed",
-          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@feed",
+          "action": "Stackra\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@feed",
           "policy": "ActivityPolicy@subscribeFeed",
           "returns": "{ channels: string[], entitled: boolean, poll_interval_ms: integer|null }",
           "description": "WebSocket subscription info. Returns the channel names the caller should subscribe to (their `user.{id}.activity` channel + `tenant.{id}.activity` if entitled for tenant-wide feed). When the tenant lacks `activity_broadcast`, returns entitled=false + poll_interval_ms=15000 (the frontend falls back to polling)."
@@ -98,7 +98,7 @@
           "method": "GET",
           "path": "/api/v1/activities/export",
           "name": "tenant.activities.export",
-          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@export",
+          "action": "Stackra\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@export",
           "policy": "ActivityPolicy@export",
           "accepts": "ActivityExportRequestData",
           "returns": "{ export_id: string, status: 'queued', expires_at: datetime }",
@@ -108,7 +108,7 @@
           "method": "GET",
           "path": "/api/v1/activity-retention-policies",
           "name": "tenant.activity-retention-policies.index",
-          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\RetentionPolicyController@index",
+          "action": "Stackra\\Observability\\Activity\\Controllers\\Tenant\\RetentionPolicyController@index",
           "policy": "ActivityRetentionPolicyPolicy@viewAny",
           "returns": "PaginatedResource<ActivityRetentionPolicyData>",
           "description": "List retention policies for the tenant. Any active policy plus the effective default (from config) is surfaced."
@@ -117,7 +117,7 @@
           "method": "POST",
           "path": "/api/v1/activity-retention-policies",
           "name": "tenant.activity-retention-policies.store",
-          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\RetentionPolicyController@store",
+          "action": "Stackra\\Observability\\Activity\\Controllers\\Tenant\\RetentionPolicyController@store",
           "policy": "ActivityRetentionPolicyPolicy@create",
           "accepts": "CreateActivityRetentionPolicyData",
           "returns": "ActivityRetentionPolicyData",
@@ -127,7 +127,7 @@
           "method": "GET",
           "path": "/api/v1/activity-retention-policies/{policy}",
           "name": "tenant.activity-retention-policies.show",
-          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\RetentionPolicyController@show",
+          "action": "Stackra\\Observability\\Activity\\Controllers\\Tenant\\RetentionPolicyController@show",
           "policy": "ActivityRetentionPolicyPolicy@view",
           "returns": "ActivityRetentionPolicyData"
         },
@@ -135,7 +135,7 @@
           "method": "PATCH",
           "path": "/api/v1/activity-retention-policies/{policy}",
           "name": "tenant.activity-retention-policies.update",
-          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\RetentionPolicyController@update",
+          "action": "Stackra\\Observability\\Activity\\Controllers\\Tenant\\RetentionPolicyController@update",
           "policy": "ActivityRetentionPolicyPolicy@update",
           "accepts": "UpdateActivityRetentionPolicyData",
           "returns": "ActivityRetentionPolicyData",
@@ -145,7 +145,7 @@
           "method": "DELETE",
           "path": "/api/v1/activity-retention-policies/{policy}",
           "name": "tenant.activity-retention-policies.destroy",
-          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\RetentionPolicyController@destroy",
+          "action": "Stackra\\Observability\\Activity\\Controllers\\Tenant\\RetentionPolicyController@destroy",
           "policy": "ActivityRetentionPolicyPolicy@delete",
           "returns": "204 No Content",
           "description": "Soft-delete. Reverts the (tenant, log_name) pair back to the config default. Deleting a policy DOES trigger an immediate purge sweep if the default is more restrictive than the deleted policy."
@@ -156,13 +156,13 @@
       "id": "platform-admin",
       "host": "platform-admin",
       "middleware": ["api", "auth:sanctum", "platform.user", "api.version"],
-      "description": "Cross-tenant read for Academorix support tooling.",
+      "description": "Cross-tenant read for Stackra support tooling.",
       "routes": [
         {
           "method": "GET",
           "path": "/api/v1/platform/activities",
           "name": "platform.activities.index",
-          "action": "Academorix\\Observability\\Activity\\Controllers\\Platform\\ActivityController@index",
+          "action": "Stackra\\Observability\\Activity\\Controllers\\Platform\\ActivityController@index",
           "policy": "ActivityPolicy@viewAnyPlatform",
           "returns": "PaginatedResource<ActivityData>",
           "queryParams": [
@@ -180,7 +180,7 @@
           "method": "GET",
           "path": "/api/v1/platform/activities/{activity}",
           "name": "platform.activities.show",
-          "action": "Academorix\\Observability\\Activity\\Controllers\\Platform\\ActivityController@show",
+          "action": "Stackra\\Observability\\Activity\\Controllers\\Platform\\ActivityController@show",
           "policy": "ActivityPolicy@viewPlatform",
           "returns": "ActivityData",
           "includes": ["subject", "causer", "tenant", "application", "batchSiblings"]

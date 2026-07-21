@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Actions\Tenant;
+namespace Stackra\Payment\Actions\Tenant;
 
-use Academorix\Payment\Contracts\Repositories\PaymentMethodRepositoryInterface;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Delete;
+use Stackra\Payment\Contracts\Repositories\PaymentMethodRepositoryInterface;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Delete;
 use Illuminate\Http\Response;
 
 /**
  * `DELETE /api/v1/payment-methods/{method}` — delete action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Delete(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Payment

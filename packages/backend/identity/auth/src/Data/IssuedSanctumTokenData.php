@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Data;
+namespace Stackra\Auth\Data;
 
 use DateTimeImmutable;
 use Laravel\Sanctum\NewAccessToken;

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geography/feature-flags",
+  "id": "stackra://modules/geography/feature-flags",
   "$version": 1,
   "title": "geography \u2014 kill switches",
   "engine": "laravel/pennant",

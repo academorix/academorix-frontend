@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\OfflineSync\Contracts\Repositories;
+namespace Stackra\OfflineSync\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\OfflineSync\Models\SyncCursor}.
+ * Repository contract for {@see Stackra\OfflineSync\Models\SyncCursor}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `SyncCursorRepository`.
  *
- * @extends RepositoryInterface<\Academorix\OfflineSync\Models\SyncCursor>
+ * @extends RepositoryInterface<\Stackra\OfflineSync\Models\SyncCursor>
  *
  * @category OfflineSync
  *

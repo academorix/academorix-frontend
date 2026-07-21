@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/tenancy/contracts/tenant-provisioned.v1",
+  "id": "stackra://modules/tenancy/contracts/tenant-provisioned.v1",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "title": "tenant-provisioned event \u2014 v1 wire contract",
   "description": "FROZEN wire shape for the `tenancy::TenantProvisioned` event. Emitted AFTER the provisioning DB transaction commits (safe for external side effects: welcome-email, DNS provisioning, search-index registration). Every consumer (workflow subscribers, webhook fan-out, downstream services) reads this shape unchanged; any additive property must land in v2 while v1 continues to dispatch in parallel per the versioning policy \u2014 see `foundation/readme.md` \u00a712.",
-  "x-emitter": "Academorix\\Tenancy\\Events\\TenantProvisioned",
+  "x-emitter": "Stackra\\Tenancy\\Events\\TenantProvisioned",
   "x-owning-module": "tenants",
   "x-event-name": "tenants.tenant.provisioned",
   "x-version": "v1",
@@ -79,7 +79,7 @@
     "tenant_slug": {
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9-]{0,62}$",
-      "description": "DNS-safe tenant slug. Used to construct tenant URLs (`{slug}.academorix.app`)."
+      "description": "DNS-safe tenant slug. Used to construct tenant URLs (`{slug}.stackra.app`)."
     },
     "tenant_name": {
       "type": "string",

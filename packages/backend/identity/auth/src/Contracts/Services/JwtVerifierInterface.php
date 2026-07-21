@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Contracts\Services;
+namespace Stackra\Auth\Contracts\Services;
 
-use Academorix\Auth\Data\JwtPayloadData;
-use Academorix\Auth\Services\JwtVerifier;
+use Stackra\Auth\Data\JwtPayloadData;
+use Stackra\Auth\Services\JwtVerifier;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -46,7 +46,7 @@ interface JwtVerifierInterface
      *   an exception is the "success" signal — every failure path
      *   throws.
      *
-     * @throws \Academorix\Auth\Exceptions\JwtInvalidException
+     * @throws \Stackra\Auth\Exceptions\JwtInvalidException
      *   Whenever any of the 13 verification steps fails. The
      *   exception's `context` names the failing step but the
      *   client-visible payload is uniform to prevent enumeration.

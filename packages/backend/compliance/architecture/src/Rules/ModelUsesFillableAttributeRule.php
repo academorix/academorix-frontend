@@ -14,7 +14,7 @@
  *
  * Attributes make the mass-assignment policy visible on the
  * class declaration, integrate with reflection-based tooling,
- * and follow the same "attribute-first" convention Academorix
+ * and follow the same "attribute-first" convention Stackra
  * uses for `#[AsController]`, `#[Bind]`, and friends. The
  * $fillable / $guarded properties still work at runtime, but
  * they're invisible to attribute-driven discovery and produce
@@ -47,12 +47,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Enums\LayerType;
-use Academorix\Architecture\Support\SourceFile;
-use Academorix\Architecture\Violations\Severity;
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Enums\LayerType;
+use Stackra\Architecture\Support\SourceFile;
+use Stackra\Architecture\Violations\Severity;
+use Stackra\Architecture\Violations\Violation;
 
 /**
  * Require attribute-based fillable/guarded on Models.

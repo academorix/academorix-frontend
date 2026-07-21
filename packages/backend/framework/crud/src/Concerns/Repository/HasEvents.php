@@ -12,10 +12,10 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Crud\Concerns\Repository;
+namespace Stackra\Crud\Concerns\Repository;
 
-use Academorix\Crud\Contracts\HasRepositoryEvents;
-use Academorix\Crud\Events\RepositoryEvent;
+use Stackra\Crud\Contracts\HasRepositoryEvents;
+use Stackra\Crud\Events\RepositoryEvent;
 
 /**
  * HasEvents Trait.

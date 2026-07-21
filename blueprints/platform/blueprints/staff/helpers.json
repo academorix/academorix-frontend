@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/staff/helpers",
+  "id": "stackra://modules/staff/helpers",
   "$version": 1,
   "title": "staff — helper functions",
   "description": "Ergonomic helpers for accessing the active staff from the request context, resolving branch managers, walking the org chart, and rendering compensation with permission checks. All helpers are thin wrappers around bound services — never business logic.",
-  "namespace": "Academorix\\Staff\\Support",
+  "namespace": "Stackra\\Staff\\Support",
   "helpers": [
     {
       "signature": "active_staff(): ?Staff",

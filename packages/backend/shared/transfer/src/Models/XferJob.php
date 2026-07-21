@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Models;
+namespace Stackra\Transfer\Models;
 
-use Academorix\Activity\Concerns\HasActivityLog;
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
-use Academorix\Transfer\Contracts\Data\XferArtifactInterface;
-use Academorix\Transfer\Contracts\Data\XferJobInterface;
-use Academorix\Transfer\Contracts\Data\XferShardInterface;
-use Academorix\Transfer\Database\Factories\XferJobFactory;
-use Academorix\Transfer\Enums\ImportFormat;
-use Academorix\Transfer\Enums\ImportMode;
-use Academorix\Transfer\Enums\XferJobStatus;
-use Academorix\Transfer\Enums\XferKind;
-use Academorix\Transfer\Observers\XferJobObserver;
-use Academorix\Transfer\Policies\XferJobPolicy;
+use Stackra\Activity\Concerns\HasActivityLog;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Transfer\Contracts\Data\XferArtifactInterface;
+use Stackra\Transfer\Contracts\Data\XferJobInterface;
+use Stackra\Transfer\Contracts\Data\XferShardInterface;
+use Stackra\Transfer\Database\Factories\XferJobFactory;
+use Stackra\Transfer\Enums\ImportFormat;
+use Stackra\Transfer\Enums\ImportMode;
+use Stackra\Transfer\Enums\XferJobStatus;
+use Stackra\Transfer\Enums\XferKind;
+use Stackra\Transfer\Observers\XferJobObserver;
+use Stackra\Transfer\Policies\XferJobPolicy;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

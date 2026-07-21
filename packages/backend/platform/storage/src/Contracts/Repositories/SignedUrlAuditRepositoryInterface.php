@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Contracts\Repositories;
+namespace Stackra\Storage\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Storage\Models\SignedUrlAudit;
-use Academorix\Storage\Repositories\EloquentSignedUrlAuditRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Storage\Models\SignedUrlAudit;
+use Stackra\Storage\Repositories\EloquentSignedUrlAuditRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 
@@ -32,7 +32,7 @@ interface SignedUrlAuditRepositoryInterface extends RepositoryInterface
     /**
      * Every audit row whose `expires_at <= $now` and that has NOT
      * been revoked yet. Consumed by
-     * {@see \Academorix\Storage\Jobs\RevokeExpiredSignedUrlsJob}.
+     * {@see \Stackra\Storage\Jobs\RevokeExpiredSignedUrlsJob}.
      *
      * @return Collection<int, SignedUrlAudit>
      */

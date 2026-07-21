@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Data;
+namespace Stackra\Search\Data;
 
-use Academorix\Search\Contracts\Data\SearchSynonymInterface;
-use Academorix\Search\Models\SearchSynonym;
+use Stackra\Search\Contracts\Data\SearchSynonymInterface;
+use Stackra\Search\Models\SearchSynonym;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;

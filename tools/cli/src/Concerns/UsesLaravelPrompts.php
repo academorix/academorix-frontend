@@ -2,14 +2,14 @@
 
 /**
  * @file UsesLaravelPrompts.php
- * @module Academorix\Cli\Concerns
+ * @module Stackra\Cli\Concerns
  * @description Thin wrapper around Laravel Prompts. Every wrapper falls back
  *   to a supplied default in non-interactive terminals so CI runs don't hang.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Concerns;
+namespace Stackra\Cli\Concerns;
 
 use Laravel\Prompts\Prompt;
 
@@ -21,7 +21,7 @@ use function Laravel\Prompts\spin;
 use function Laravel\Prompts\text;
 
 /**
- * Composed by every command through {@see \Academorix\Cli\Commands\AbstractCommand}.
+ * Composed by every command through {@see \Stackra\Cli\Commands\AbstractCommand}.
  */
 trait UsesLaravelPrompts
 {

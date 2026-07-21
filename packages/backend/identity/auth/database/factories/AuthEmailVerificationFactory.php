@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Database\Factories;
+namespace Stackra\Auth\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Auth\Contracts\Data\AuthEmailVerificationInterface;
-use Academorix\Auth\Models\AuthEmailVerification;
+use Stackra\Auth\Contracts\Data\AuthEmailVerificationInterface;
+use Stackra\Auth\Models\AuthEmailVerification;
 
 /**
- * Factory for {@see \Academorix\Auth\Models\AuthEmailVerification}.
+ * Factory for {@see \Stackra\Auth\Models\AuthEmailVerification}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Auth\Models\AuthEmailVerification>
+ * @extends Factory<\Stackra\Auth\Models\AuthEmailVerification>
  *
  * @category Auth
  *

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branch\Contracts\Data;
+namespace Stackra\Branch\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Branch\Models\Branch;
+use Stackra\Branch\Models\Branch;
 
 /**
  * Table shape for the `branches` table.

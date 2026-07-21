@@ -3,11 +3,11 @@
 ## [Unreleased] — inception (Wave 1)
 
 - People module authored. CENTRAL-plane (no tenant_id). Three owned entities:
-  - `PersonIdentity` (`pin_`) — global identity carrying the Academorix ID.
+  - `PersonIdentity` (`pin_`) — global identity carrying the Stackra ID.
   - `PersonGuardianLink` (`pgl_`) — cross-tenant guardian↔minor link.
   - `TenantLinkRequest` (`tlr_`) — consent-gated request to bind a tenant
     Athlete/Staff to a PersonIdentity.
-- Academorix ID format: `AX-XXXX-YYYY` (4+4 Crockford base32) — human-shareable.
+- Stackra ID format: `AX-XXXX-YYYY` (4+4 Crockford base32) — human-shareable.
 - Enumeration-resistant lookup — `POST /people/lookup` returns
   `{ found: bool, request_url? }` with NO PII pre-consent.
 - Rate limits: 10 lookups/hour/IP, 100 lookups/day/tenant, 3-of-5 sliding-window

@@ -4,14 +4,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Progress\Actions\Tenant;
+namespace Stackra\Progress\Actions\Tenant;
 
-use Academorix\Progress\Contracts\Repositories\CoachNoteRepositoryInterface;
-use Academorix\Progress\Data\CoachNoteData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Progress\Contracts\Repositories\CoachNoteRepositoryInterface;
+use Stackra\Progress\Data\CoachNoteData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\LaravelData\PaginatedDataCollection;
@@ -20,7 +20,7 @@ use Spatie\LaravelData\PaginatedDataCollection;
  * `GET /api/v1/coach-notes` — list action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Progress
@@ -50,7 +50,7 @@ final class ListCoachNoteAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Academorix\Progress\Models\CoachNote> $page */
+        /** @var LengthAwarePaginator<int, \Stackra\Progress\Models\CoachNote> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

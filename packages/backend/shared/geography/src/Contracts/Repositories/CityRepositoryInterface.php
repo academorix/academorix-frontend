@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Contracts\Repositories;
+namespace Stackra\Geography\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Geography\Models\City;
-use Academorix\Geography\Repositories\EloquentCityRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Geography\Models\City;
+use Stackra\Geography\Repositories\EloquentCityRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 
@@ -46,7 +46,7 @@ interface CityRepositoryInterface extends RepositoryInterface
      * by the public `list` action; throws when the request has no
      * `filter[country_id]=` or `filter[state_id]=`.
      *
-     * @throws \Academorix\Geography\Exceptions\GeographyCitiesIndexUnscopedException
+     * @throws \Stackra\Geography\Exceptions\GeographyCitiesIndexUnscopedException
      */
     public function refuseUnscopedIndex(): void;
 }

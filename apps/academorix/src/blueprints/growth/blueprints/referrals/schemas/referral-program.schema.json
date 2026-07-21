@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/referrals/schemas/referral-program",
+  "id": "stackra://modules/referrals/schemas/referral-program",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ReferralProgram",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "rpg_",
     "incrementing": false,
-    "model": "Academorix\\Growth\\Referrals\\Models\\ReferralProgram",
-    "interface": "Academorix\\Growth\\Referrals\\Contracts\\Data\\ReferralProgramInterface",
-    "implements": ["Academorix\\Growth\\Referrals\\Contracts\\Data\\ReferralProgramInterface"],
+    "model": "Stackra\\Growth\\Referrals\\Models\\ReferralProgram",
+    "interface": "Stackra\\Growth\\Referrals\\Contracts\\Data\\ReferralProgramInterface",
+    "implements": ["Stackra\\Growth\\Referrals\\Contracts\\Data\\ReferralProgramInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Staff\Contracts\Repositories;
+namespace Stackra\Staff\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Staff\Models\Coach}.
+ * Repository contract for {@see Stackra\Staff\Models\Coach}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `CoachRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Staff\Models\Coach>
+ * @extends RepositoryInterface<\Stackra\Staff\Models\Coach>
  *
  * @category Staff
  *

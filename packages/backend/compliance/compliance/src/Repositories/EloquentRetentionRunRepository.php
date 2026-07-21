@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Repositories;
+namespace Stackra\Compliance\Repositories;
 
-use Academorix\Compliance\Contracts\Data\RetentionRunInterface;
-use Academorix\Compliance\Contracts\Repositories\RetentionRunRepositoryInterface;
-use Academorix\Compliance\Models\RetentionRun;
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
+use Stackra\Compliance\Contracts\Data\RetentionRunInterface;
+use Stackra\Compliance\Contracts\Repositories\RetentionRunRepositoryInterface;
+use Stackra\Compliance\Models\RetentionRun;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
 use Illuminate\Support\Collection;
 
 /**

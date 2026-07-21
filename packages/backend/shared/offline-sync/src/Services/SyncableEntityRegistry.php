@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\OfflineSync\Services;
+namespace Stackra\OfflineSync\Services;
 
-use Academorix\OfflineSync\Contracts\Services\SyncableEntityRegistryInterface;
+use Stackra\OfflineSync\Contracts\Services\SyncableEntityRegistryInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\OfflineSync\Contracts\Repositories\SyncCursorRepositoryInterface;
+use Stackra\OfflineSync\Contracts\Repositories\SyncCursorRepositoryInterface;
 
 /**
  * Concrete service — SyncableEntityRegistry.

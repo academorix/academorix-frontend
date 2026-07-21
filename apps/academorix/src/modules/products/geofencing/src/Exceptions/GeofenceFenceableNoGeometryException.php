@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Exceptions;
+namespace Stackra\Geofencing\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The fenceable model has neither geofencePolygon() nor locationPoint().
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GeofenceFenceableNoGeometryException extends AcademorixException
+final class GeofenceFenceableNoGeometryException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

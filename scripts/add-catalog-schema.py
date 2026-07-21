@@ -42,7 +42,7 @@ from typing import Any
 # Canonical schema URL — published to a GitHub Gist so IDEs (VS Code,
 # JetBrains) resolve autocomplete and validation without any local file.
 SCHEMA_URL: str = (
-    "https://gist.githubusercontent.com/academorix-user/"
+    "https://gist.githubusercontent.com/stackra-user/"
     "073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json"
 )
 

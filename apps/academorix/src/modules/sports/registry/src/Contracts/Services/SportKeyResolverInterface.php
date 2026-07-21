@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Contracts\Services;
+namespace Stackra\Registry\Contracts\Services;
 
-use Academorix\Registry\Services\SportKeyResolver;
+use Stackra\Registry\Services\SportKeyResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/analytics/relations",
+  "id": "stackra://modules/analytics/relations",
   "$version": 1,
   "title": "analytics — model relationships",
   "description": "Four owned entities with a tight internal graph. External graph is intentionally minimal — analytics is a leaf module in the growth tree. Downstream consumers (marketing, finance, referrals, notifications) subscribe to AnalyticsEvent* events; they do NOT hold foreign keys back to this module. Attribution snapshots are frozen jsonb, not FKs — attribution changes don't ripple into historical events.",

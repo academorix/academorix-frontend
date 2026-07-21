@@ -4,22 +4,22 @@
  * @file packages/exceptions/tests/Unit/ExceptionMapperTest.php
  *
  * @description
- * Unit coverage for {@see \Academorix\Exceptions\Support\ExceptionMapper}.
+ * Unit coverage for {@see \Stackra\Exceptions\Support\ExceptionMapper}.
  * The mapper is deterministic and pure — no container is booted for
  * these tests.
  */
 
 declare(strict_types=1);
 
-use Academorix\Exceptions\Auth\AuthenticationException as AcademorixAuthException;
-use Academorix\Exceptions\Auth\ForbiddenException;
-use Academorix\Exceptions\Http\ConflictException;
-use Academorix\Exceptions\Http\EntityNotFoundException;
-use Academorix\Exceptions\Http\NotFoundException;
-use Academorix\Exceptions\Http\TooManyRequestsException;
-use Academorix\Exceptions\Http\ValidationException as AcademorixValidationException;
-use Academorix\Exceptions\Support\ExceptionMapper;
-use Academorix\Exceptions\UnexpectedException;
+use Stackra\Exceptions\Auth\AuthenticationException as StackraAuthException;
+use Stackra\Exceptions\Auth\ForbiddenException;
+use Stackra\Exceptions\Http\ConflictException;
+use Stackra\Exceptions\Http\EntityNotFoundException;
+use Stackra\Exceptions\Http\NotFoundException;
+use Stackra\Exceptions\Http\TooManyRequestsException;
+use Stackra\Exceptions\Http\ValidationException as StackraValidationException;
+use Stackra\Exceptions\Support\ExceptionMapper;
+use Stackra\Exceptions\UnexpectedException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -32,7 +32,7 @@ use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 // Pass-through / fallback
 // -----------------------------------------------------------------
 
-it('passes AcademorixException through unchanged', function (): void {
+it('passes StackraException through unchanged', function (): void {
     $mapper = new ExceptionMapper;
     $original = ForbiddenException::missingRole('admin');
 
@@ -94,7 +94,7 @@ it('maps Laravel AuthenticationException with guard context', function (): void 
 
     $result = $mapper->map(new AuthenticationException('unauth', ['web', 'sanctum']));
 
-    expect($result)->toBeInstanceOf(AcademorixAuthException::class)
+    expect($result)->toBeInstanceOf(StackraAuthException::class)
         ->and($result->context())->toMatchArray(['guards' => ['web', 'sanctum']]);
 });
 
@@ -142,10 +142,10 @@ it('allows callers to register custom mappings that win over defaults', function
     $mapper = new ExceptionMapper;
     $mapper->register(
         LogicException::class,
-        static fn (Throwable $e): AcademorixValidationException => AcademorixValidationException::withErrors(['foo' => 'bar']),
+        static fn (Throwable $e): StackraValidationException => StackraValidationException::withErrors(['foo' => 'bar']),
     );
 
     $result = $mapper->map(new LogicException('x'));
 
-    expect($result)->toBeInstanceOf(AcademorixValidationException::class);
+    expect($result)->toBeInstanceOf(StackraValidationException::class);
 });

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsAwardsSdk\Resources;
+namespace Stackra\SportsAwardsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsAwardsSdk\Data\CertificateData;
-use Academorix\SportsAwardsSdk\Requests\Certificates\ShowCertificateRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsAwardsSdk\Data\CertificateData;
+use Stackra\SportsAwardsSdk\Requests\Certificates\ShowCertificateRequest;
 use Saloon\Http\Response;
 
 /**

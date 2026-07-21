@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/payment/data/providers/paddle-config",
+  "id": "stackra://modules/payment/data/providers/paddle-config",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Paddle provider config",

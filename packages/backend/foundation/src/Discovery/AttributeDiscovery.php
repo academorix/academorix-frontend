@@ -47,9 +47,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Discovery;
+namespace Stackra\Foundation\Discovery;
 
-use Academorix\Foundation\Contracts\DiscoversAttributes;
+use Stackra\Foundation\Contracts\DiscoversAttributes;
 use olvlvl\ComposerAttributeCollector\Attributes;
 use Throwable;
 

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Services;
+namespace Stackra\Foundation\Services;
 
-use Academorix\Foundation\Contracts\Services\ModuleRegistryInterface;
+use Stackra\Foundation\Contracts\Services\ModuleRegistryInterface;
 use Illuminate\Container\Attributes\Scoped;
 
 

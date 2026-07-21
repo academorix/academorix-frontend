@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FinanceDigitalPassesSdk\Requests\WalletPasses;
+namespace Stackra\FinanceDigitalPassesSdk\Requests\WalletPasses;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\FinanceDigitalPassesSdk\Data\WalletPassData;
-use Academorix\FinanceDigitalPassesSdk\Payloads\WalletPasses\CreateWalletPassPayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\FinanceDigitalPassesSdk\Data\WalletPassData;
+use Stackra\FinanceDigitalPassesSdk\Payloads\WalletPasses\CreateWalletPassPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

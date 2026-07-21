@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Contracts\Repositories;
+namespace Stackra\Geofencing\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Geofencing\Models\GeofenceCheck;
-use Academorix\Geofencing\Repositories\EloquentGeofenceCheckRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Geofencing\Models\GeofenceCheck;
+use Stackra\Geofencing\Repositories\EloquentGeofenceCheckRepository;
 use DateTimeInterface;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;

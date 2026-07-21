@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Contracts\Repositories;
+namespace Stackra\Search\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Search\Models\SearchIndex;
-use Academorix\Search\Repositories\EloquentSearchIndexRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Search\Models\SearchIndex;
+use Stackra\Search\Repositories\EloquentSearchIndexRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

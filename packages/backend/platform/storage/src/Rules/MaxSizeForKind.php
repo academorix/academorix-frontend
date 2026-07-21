@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Rules;
+namespace Stackra\Storage\Rules;
 
-use Academorix\Storage\Contracts\Services\FileKindRegistryInterface;
-use Academorix\Storage\Enums\FileKind;
+use Stackra\Storage\Contracts\Services\FileKindRegistryInterface;
+use Stackra\Storage\Enums\FileKind;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Http\UploadedFile;

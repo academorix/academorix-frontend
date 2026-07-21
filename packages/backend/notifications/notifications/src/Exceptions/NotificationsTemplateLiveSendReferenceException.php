@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Exceptions;
+namespace Stackra\Notifications\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to delete a NotificationTemplate that has Notification rows in a non-terminal state referencing it.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsTemplateLiveSendReferenceException extends AcademorixException
+final class NotificationsTemplateLiveSendReferenceException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

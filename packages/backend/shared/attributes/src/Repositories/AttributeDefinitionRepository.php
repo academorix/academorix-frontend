@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attributes\Repositories;
+namespace Stackra\Attributes\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Attributes\Contracts\Data\AttributeDefinitionInterface;
-use Academorix\Attributes\Contracts\Repositories\AttributeDefinitionRepositoryInterface;
-use Academorix\Attributes\Models\AttributeDefinition;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Attributes\Contracts\Data\AttributeDefinitionInterface;
+use Stackra\Attributes\Contracts\Repositories\AttributeDefinitionRepositoryInterface;
+use Stackra\Attributes\Models\AttributeDefinition;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Attributes\Models\AttributeDefinition}.
+ * Attribute-first Eloquent repository for {@see Stackra\Attributes\Models\AttributeDefinition}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AttributeDefinitionInterface::class)]` which resolves to
  * `AttributeDefinition` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Attributes\Models\AttributeDefinition>
+ * @extends Repository<\Stackra\Attributes\Models\AttributeDefinition>
  *
  * @category Attributes
  *

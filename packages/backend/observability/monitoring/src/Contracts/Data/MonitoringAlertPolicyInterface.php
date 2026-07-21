@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Contracts\Data;
+namespace Stackra\Monitoring\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Monitoring\Models\MonitoringAlertPolicy;
+use Stackra\Monitoring\Models\MonitoringAlertPolicy;
 
 /**
  * Table shape for the `monitoring_alert_policies` table.

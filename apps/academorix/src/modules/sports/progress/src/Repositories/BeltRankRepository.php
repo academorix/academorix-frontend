@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Progress\Repositories;
+namespace Stackra\Progress\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Progress\Contracts\Data\BeltRankInterface;
-use Academorix\Progress\Contracts\Repositories\BeltRankRepositoryInterface;
-use Academorix\Progress\Models\BeltRank;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Progress\Contracts\Data\BeltRankInterface;
+use Stackra\Progress\Contracts\Repositories\BeltRankRepositoryInterface;
+use Stackra\Progress\Models\BeltRank;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Progress\Models\BeltRank}.
+ * Attribute-first Eloquent repository for {@see Stackra\Progress\Models\BeltRank}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(BeltRankInterface::class)]` which resolves to
  * `BeltRank` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Progress\Models\BeltRank>
+ * @extends Repository<\Stackra\Progress\Models\BeltRank>
  *
  * @category Progress
  *

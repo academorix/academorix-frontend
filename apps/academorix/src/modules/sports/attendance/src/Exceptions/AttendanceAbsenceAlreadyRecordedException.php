@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attendance\Exceptions;
+namespace Stackra\Attendance\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * An absence record already exists for this athlete + session.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AttendanceAbsenceAlreadyRecordedException extends AcademorixException
+final class AttendanceAbsenceAlreadyRecordedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

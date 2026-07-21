@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Contracts\Services;
+namespace Stackra\Notifications\Sms\Contracts\Services;
 
-use Academorix\Notifications\Sms\Attributes\AsSmsProvider;
-use Academorix\Notifications\Sms\Services\SmsOptOutRegistry;
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Notifications\Sms\Attributes\AsSmsProvider;
+use Stackra\Notifications\Sms\Services\SmsOptOutRegistry;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
 use Illuminate\Container\Attributes\Bind;
 
 /**
  * Attribute-discovered registry of {@see AsSmsProvider} driver classes.
  *
  * Hydrated at boot by the framework's generic
- * {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ * {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  * pump via the {@see HydratesFrom} attribute on {@see register()}.
  *
  * @category NotificationsSms

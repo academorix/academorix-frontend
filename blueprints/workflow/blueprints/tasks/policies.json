@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/tasks/policies",
+  "id": "stackra://modules/tasks/policies",
   "$version": 1,
   "title": "tasks — authorization policies",
   "description": "Task.view scoped by assignment (assignee | collaborator | watcher | creator) UNLESS caller holds tasks.viewAll. TaskComment.update refuses beyond a 15-minute edit window. TaskAssignment.accept/decline refuses when caller is not the target user.",
   "policies": [
     {
       "model": "Task",
-      "class": "Academorix\\Workflow\\Tasks\\Policies\\TaskPolicy",
+      "class": "Stackra\\Workflow\\Tasks\\Policies\\TaskPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -35,7 +35,7 @@
     },
     {
       "model": "TaskAssignment",
-      "class": "Academorix\\Workflow\\Tasks\\Policies\\TaskAssignmentPolicy",
+      "class": "Stackra\\Workflow\\Tasks\\Policies\\TaskAssignmentPolicy",
       "abilities": [
         { "action": "create", "permission": "task-assignments.create" },
         { "action": "update", "permission": "task-assignments.update" },
@@ -54,7 +54,7 @@
     },
     {
       "model": "TaskComment",
-      "class": "Academorix\\Workflow\\Tasks\\Policies\\TaskCommentPolicy",
+      "class": "Stackra\\Workflow\\Tasks\\Policies\\TaskCommentPolicy",
       "abilities": [
         {
           "action": "create",

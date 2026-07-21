@@ -9,7 +9,7 @@
  * attribute is picked up at composer-dump time by
  * `olvlvl/composer-attribute-collector`, then registered against
  * Spatie's Health facade during application boot by the
- * {@see \Academorix\Health\Support\HealthCheckDiscoverer}.
+ * {@see \Stackra\Health\Support\HealthCheckDiscoverer}.
  *
  * ## Why an attribute (and not manual registration)
  *
@@ -45,8 +45,8 @@
  * ## Anatomy
  *
  * ```php
- * use Academorix\Health\Attributes\AsHealthCheck;
- * use Academorix\Health\Enums\HealthNotificationChannel;
+ * use Stackra\Health\Attributes\AsHealthCheck;
+ * use Stackra\Health\Enums\HealthNotificationChannel;
  * use Spatie\Health\Checks\Check;
  * use Spatie\Health\Checks\Result;
  *
@@ -95,7 +95,7 @@
  *  - **channel**: Which logical notification channel to route
  *    failures to. Packages declare a channel enum case, apps map
  *    the case → concrete Slack webhook / PagerDuty service via
- *    config (see {@see \Academorix\Health\Support\HealthNotificationConfig}).
+ *    config (see {@see \Stackra\Health\Support\HealthNotificationConfig}).
  *    Left `null` to opt out of routing (check still shows on the
  *    dashboard, just no push notification).
  *
@@ -116,16 +116,16 @@
  *  - `schedule` (if set) MUST be a valid cron expression parseable
  *    by Laravel's scheduler.
  *
- * @see \Academorix\Health\Support\HealthCheckDiscoverer  Consumes this attribute.
- * @see \Academorix\Health\Enums\HealthNotificationChannel Routing target.
+ * @see \Stackra\Health\Support\HealthCheckDiscoverer  Consumes this attribute.
+ * @see \Stackra\Health\Enums\HealthNotificationChannel Routing target.
  * @see https://spatie.be/docs/laravel-health Documentation for the base Check class.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Health\Attributes;
+namespace Stackra\Health\Attributes;
 
-use Academorix\Health\Enums\HealthNotificationChannel;
+use Stackra\Health\Enums\HealthNotificationChannel;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_CLASS)]
@@ -143,7 +143,7 @@ final readonly class AsHealthCheck
      * @param HealthNotificationChannel|null $channel Logical
      *   notification channel. Apps resolve this to a concrete
      *   notifiable via
-     *   {@see \Academorix\Health\Support\HealthNotificationConfig}.
+     *   {@see \Stackra\Health\Support\HealthNotificationConfig}.
      *   `null` = check appears on the dashboard but sends no push.
      * @param string|null $condition Name of a `public static`
      *   `bool`-returning method on the target class. Called at

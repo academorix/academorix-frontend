@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Database\Macros;
+namespace Stackra\Application\Database\Macros;
 
-use Academorix\Database\Attributes\AsDatabaseBlueprint;
+use Stackra\Database\Attributes\AsDatabaseBlueprint;
 use Illuminate\Database\Schema\Blueprint;
 
 /**
- * Migration-schema macro paired with the {@see \Academorix\Application\Concerns\BelongsToApplication}
+ * Migration-schema macro paired with the {@see \Stackra\Application\Concerns\BelongsToApplication}
  * trait. Adds `application_id` + FK + composite index to a table in one
  * call:
  *
@@ -22,7 +22,7 @@ use Illuminate\Database\Schema\Blueprint;
  * ```
  *
  * Auto-discovered at boot by
- * {@see \Academorix\Database\Providers\DatabaseServiceProvider} —
+ * {@see \Stackra\Database\Providers\DatabaseServiceProvider} —
  * `#[AsDatabaseBlueprint]` marks this class for the discovery loop,
  * which calls {@see self::register()} sorted by attribute `priority`.
  * `priority: 25` places this AFTER the core generic macros

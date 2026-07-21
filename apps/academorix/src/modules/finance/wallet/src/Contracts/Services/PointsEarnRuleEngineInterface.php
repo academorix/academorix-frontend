@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Wallet\Contracts\Services;
+namespace Stackra\Wallet\Contracts\Services;
 
-use Academorix\Wallet\Services\PointsEarnRuleEngine;
+use Stackra\Wallet\Services\PointsEarnRuleEngine;
 use Illuminate\Container\Attributes\Bind;
 
 /**

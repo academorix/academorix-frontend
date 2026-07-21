@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Models;
+namespace Stackra\Theme\Models;
 
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Theme\Contracts\Data\ThemePresetInterface;
-use Academorix\Theme\Database\Factories\ThemePresetFactory;
-use Academorix\Theme\Enums\ThemePresetCategory;
-use Academorix\Theme\Enums\ThemePresetMode;
-use Academorix\Theme\Observers\ThemePresetObserver;
-use Academorix\Theme\Policies\ThemePresetPolicy;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Theme\Contracts\Data\ThemePresetInterface;
+use Stackra\Theme\Database\Factories\ThemePresetFactory;
+use Stackra\Theme\Enums\ThemePresetCategory;
+use Stackra\Theme\Enums\ThemePresetMode;
+use Stackra\Theme\Observers\ThemePresetObserver;
+use Stackra\Theme\Policies\ThemePresetPolicy;
 use Closure;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -31,7 +31,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  *
  * Dual-source catalogue (see `.kiro/steering/enum-db-seed-dual-source.md`):
  * `is_system = true` rows mirror every non-`Custom` case of
- * {@see \Academorix\Theme\Enums\ThemePresetSlug} and are IMMUTABLE outside
+ * {@see \Stackra\Theme\Enums\ThemePresetSlug} and are IMMUTABLE outside
  * the seeder. Tenant-authored presets are `is_system = false` with a
  * non-null `tenant_id`.
  *

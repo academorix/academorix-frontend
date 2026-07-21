@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Services;
+namespace Stackra\Geofencing\Services;
 
-use Academorix\Geofencing\Contracts\Services\PolygonEvaluatorInterface;
+use Stackra\Geofencing\Contracts\Services\PolygonEvaluatorInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformUser\Contracts\Repositories;
+namespace Stackra\PlatformUser\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\PlatformUser\Models\PlatformProfile}.
+ * Repository contract for {@see Stackra\PlatformUser\Models\PlatformProfile}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `PlatformProfileRepository`.
  *
- * @extends RepositoryInterface<\Academorix\PlatformUser\Models\PlatformProfile>
+ * @extends RepositoryInterface<\Stackra\PlatformUser\Models\PlatformProfile>
  *
  * @category PlatformUser
  *

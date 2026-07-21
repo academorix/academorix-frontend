@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Policies;
+namespace Stackra\Tenancy\Policies;
 
-use Academorix\Tenancy\Contracts\Data\TenantContactInterface;
-use Academorix\Tenancy\Contracts\Repositories\TenantContactRepositoryInterface;
-use Academorix\Tenancy\Enums\TenancyPermission;
-use Academorix\Tenancy\Enums\TenantContactKind;
-use Academorix\Tenancy\Models\TenantContact;
+use Stackra\Tenancy\Contracts\Data\TenantContactInterface;
+use Stackra\Tenancy\Contracts\Repositories\TenantContactRepositoryInterface;
+use Stackra\Tenancy\Enums\TenancyPermission;
+use Stackra\Tenancy\Enums\TenantContactKind;
+use Stackra\Tenancy\Models\TenantContact;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

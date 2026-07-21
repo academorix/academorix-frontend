@@ -11,7 +11,7 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Support\Concerns;
+namespace Stackra\Support\Concerns;
 
 /**
  * Has Laravel Paths Concern.

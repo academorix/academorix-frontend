@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tasks\Exceptions;
+namespace Stackra\Tasks\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * subject_type not registered via #[AsTaskSubject].
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TaskSubjectTypeUnknownException extends AcademorixException
+final class TaskSubjectTypeUnknownException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/medical/notifications",
+  "id": "stackra://modules/medical/notifications",
   "$version": 1,
   "title": "medical — user-facing notifications",
   "description": "Laravel notifications (mail / database / broadcast / vonage / slack).",

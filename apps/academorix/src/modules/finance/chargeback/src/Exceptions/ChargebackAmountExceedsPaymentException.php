@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Exceptions;
+namespace Stackra\Chargeback\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Chargeback amount exceeds the un-refunded portion of the parent payment (payment.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ChargebackAmountExceedsPaymentException extends AcademorixException
+final class ChargebackAmountExceedsPaymentException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

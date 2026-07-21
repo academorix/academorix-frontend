@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Concerns;
+namespace Stackra\ServiceAccounts\Concerns;
 
-use Academorix\ServiceAccounts\Contracts\Data\ServiceAccountInterface;
-use Academorix\ServiceAccounts\Enums\ServiceAccountStatus;
+use Stackra\ServiceAccounts\Contracts\Data\ServiceAccountInterface;
+use Stackra\ServiceAccounts\Enums\ServiceAccountStatus;
 use DateTimeInterface;
 
 /**

@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/versioning/events",
+  "id": "stackra://modules/versioning/events",
   "$version": 1,
   "title": "versioning \u2014 published events",
   "description": "5 events. All afterCommit \u2014 downstream listeners (webhook subscription auto-upgrade, notification dispatch, tenant admin dashboard broadcast) must see the committed row.",
-  "namespace": "Academorix\\Versioning\\Events",
+  "namespace": "Stackra\\Versioning\\Events",
   "dispatchMode": "afterCommit",
   "events": [
     {
       "name": "ApiVersionReleased",
-      "class": "Academorix\\Versioning\\Events\\ApiVersionReleased",
+      "class": "Stackra\\Versioning\\Events\\ApiVersionReleased",
       "trigger": "ApiVersion state transitions draft \u2192 released. Fires once per version, ever.",
       "queue": "notifications",
       "consumers": [
@@ -26,7 +26,7 @@
     },
     {
       "name": "ApiVersionDeprecated",
-      "class": "Academorix\\Versioning\\Events\\ApiVersionDeprecated",
+      "class": "Stackra\\Versioning\\Events\\ApiVersionDeprecated",
       "trigger": "ApiVersion state transitions released \u2192 deprecated. Fires once per version.",
       "queue": "notifications-critical",
       "consumers": [
@@ -47,7 +47,7 @@
     },
     {
       "name": "ApiVersionSunset",
-      "class": "Academorix\\Versioning\\Events\\ApiVersionSunset",
+      "class": "Stackra\\Versioning\\Events\\ApiVersionSunset",
       "trigger": "ApiVersion state transitions deprecated \u2192 sunset. Fired by SunsetApiVersionJob when now() > sunset_at, or manually via endpoint.",
       "queue": "notifications-critical",
       "consumers": [
@@ -67,7 +67,7 @@
     },
     {
       "name": "DeprecationNoticePublished",
-      "class": "Academorix\\Versioning\\Events\\DeprecationNoticePublished",
+      "class": "Stackra\\Versioning\\Events\\DeprecationNoticePublished",
       "trigger": "DeprecationNotice state transitions draft \u2192 published.",
       "queue": "notifications",
       "consumers": [
@@ -89,7 +89,7 @@
     },
     {
       "name": "PayloadTransformerRegistered",
-      "class": "Academorix\\Versioning\\Events\\PayloadTransformerRegistered",
+      "class": "Stackra\\Versioning\\Events\\PayloadTransformerRegistered",
       "trigger": "Build-time compiler discovered a #[AsPayloadTransformer] class + registered it with PayloadTransformerRegistry. Fired at boot for observability, not for consumers to act on.",
       "queue": "notifications",
       "consumers": ["observability::MetricsCollector"],

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invoice\Events;
+namespace Stackra\Invoice\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog (retention: 7 years — financial record per SOX §404)
  * - activity::WriteToActivityLog (staff-visible feed)
- * - monitoring::MetricsCollector (increments academorix.invoice.created_total)
+ * - monitoring::MetricsCollector (increments stackra.invoice.created_total)
  * - notifications::DispatchInvoiceCreatedNotification (customer receipt-style when auto_send=true, else silent)
  *
  * @category Invoice

@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/access/requests/middleware",
+  "id": "stackra://modules/access/requests/middleware",
   "$version": 1,
   "title": "requests \u2014 HTTP middleware",
   "description": "Middleware this module contributes. Registered by `AccessRequestServiceProvider::boot()` via `Router::aliasMiddleware()`. Only `access.request_hint_on_denial` is access-request-specific; framework + tenancy + throttle middleware come from their own modules.",
   "middleware": [
     {
       "alias": "access.request_hint_on_denial",
-      "class": "Academorix\\AccessRequest\\Http\\Middleware\\EnrichAccessDeniedResponseWithRequestHint",
+      "class": "Stackra\\AccessRequest\\Http\\Middleware\\EnrichAccessDeniedResponseWithRequestHint",
       "priority": 200,
       "description": "POST-response decorator. Runs AFTER the RBAC `permission` middleware (from access/rbac) refused with 403. Inspects the outgoing response body \u2014 if `code === 'access_denied'` AND the route's resolved model class is registered in `AccessRequestableRegistry`, appends the four `request_*` fields (`request_url`, `request_payload_template`, `resource`, `permissions_wanted`) and rewrites `code === 'access_denied.can_request'`. If any check fails, the response is left untouched (no `request_url`, no shape change). This is the Google-Docs 'you don't have access, would you like to request it?' hint.",
       "sideEffects": [

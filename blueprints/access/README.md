@@ -5,8 +5,8 @@ invitations. Answers _"may this caller do this thing, in this context?"_ Zero
 business logic — domain modules ask this service (or its JWT claims) whether an
 actor may act; they never embed their own RBAC.
 
-Deploys to `academorix-backend/apps/access-service/` (see
-[`apps/access-service/README.md`](../../../academorix/academorix-backend/apps/access-service/README.md)).
+Deploys to `stackra-backend/apps/access-service/` (see
+[`apps/access-service/README.md`](../../../stackra/stackra-backend/apps/access-service/README.md)).
 
 ## Modules — on disk
 

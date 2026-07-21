@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/mfa/entitlements",
+  "id": "stackra://modules/mfa/entitlements",
   "$version": 1,
   "title": "mfa — declared entitlements",
-  "description": "Five entitlement keys. TOTP + recovery codes are baseline (every tier — this is the security floor Academorix enforces). WebAuthn, multiple devices, and step-up are progressive tier upgrades. Entitlements are enforced at the HTTP surface by `entitlement.enforce:<key>` middleware; declared here because they are properties of the CHALLENGE / ENROLMENT protocols this module owns. Some overlap with identity/identity's `mfa_totp` / `mfa_webauthn` / `mfa_recovery_codes` — those are declared on identity/identity because they gate SECRET STORAGE (can the Identity carry an encrypted secret at rest); the keys below are declared here because they gate PROTOCOL ACCESS (can the caller invoke the enrolment / verification / recovery endpoints).",
+  "description": "Five entitlement keys. TOTP + recovery codes are baseline (every tier — this is the security floor Stackra enforces). WebAuthn, multiple devices, and step-up are progressive tier upgrades. Entitlements are enforced at the HTTP surface by `entitlement.enforce:<key>` middleware; declared here because they are properties of the CHALLENGE / ENROLMENT protocols this module owns. Some overlap with identity/identity's `mfa_totp` / `mfa_webauthn` / `mfa_recovery_codes` — those are declared on identity/identity because they gate SECRET STORAGE (can the Identity carry an encrypted secret at rest); the keys below are declared here because they gate PROTOCOL ACCESS (can the caller invoke the enrolment / verification / recovery endpoints).",
   "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
   "kinds": [{ "kind": "boolean" }],
   "entitlements": [

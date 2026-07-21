@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Contracts\Services;
+namespace Stackra\Facility\Contracts\Services;
 
-use Academorix\Facility\Services\DayPassIssuer;
+use Stackra\Facility\Services\DayPassIssuer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

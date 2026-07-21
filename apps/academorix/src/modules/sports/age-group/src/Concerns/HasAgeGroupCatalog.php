@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Concerns;
+namespace Stackra\AgeGroup\Concerns;
 
 /**
  * Trait — HasAgeGroupCatalog.

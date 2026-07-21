@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transaction\Contracts\Services;
+namespace Stackra\Transaction\Contracts\Services;
 
-use Academorix\Transaction\Services\TransactionReverser;
+use Stackra\Transaction\Services\TransactionReverser;
 use Illuminate\Container\Attributes\Bind;
 
 /**

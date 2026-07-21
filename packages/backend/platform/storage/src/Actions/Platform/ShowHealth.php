@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Actions\Platform;
+namespace Stackra\Storage\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Storage\Contracts\Data\ChunkedUploadInterface;
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Enums\ChunkedUploadState;
-use Academorix\Storage\Enums\StoragePermission;
-use Academorix\Storage\Enums\VirusScanState;
-use Academorix\Storage\Models\ChunkedUpload;
-use Academorix\Storage\Models\File;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Storage\Contracts\Data\ChunkedUploadInterface;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Enums\ChunkedUploadState;
+use Stackra\Storage\Enums\StoragePermission;
+use Stackra\Storage\Enums\VirusScanState;
+use Stackra\Storage\Models\ChunkedUpload;
+use Stackra\Storage\Models\File;
 use Illuminate\Http\JsonResponse;
 
 /**

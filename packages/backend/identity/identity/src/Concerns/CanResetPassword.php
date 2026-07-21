@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Identity\Concerns;
+namespace Stackra\Identity\Concerns;
 
-use Academorix\Identity\Contracts\Data\IdentityInterface;
+use Stackra\Identity\Contracts\Data\IdentityInterface;
 
 /**
- * Password-reset contract for {@see \Academorix\Identity\Models\Identity}.
+ * Password-reset contract for {@see \Stackra\Identity\Models\Identity}.
  *
  * Bridges Laravel's `Illuminate\Contracts\Auth\CanResetPassword`
- * shape to the Academorix column contract — the interface expects
+ * shape to the Stackra column contract — the interface expects
  * `getEmailForPasswordReset()` + `sendPasswordResetNotification()`,
  * both of which read the `email` column via the interface constant.
  *

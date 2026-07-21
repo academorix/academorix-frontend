@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Database\Factories;
+namespace Stackra\Compliance\Database\Factories;
 
-use Academorix\Compliance\Contracts\Data\SubprocessorInterface;
-use Academorix\Compliance\Enums\SubprocessorRole;
-use Academorix\Compliance\Models\Subprocessor;
+use Stackra\Compliance\Contracts\Data\SubprocessorInterface;
+use Stackra\Compliance\Enums\SubprocessorRole;
+use Stackra\Compliance\Models\Subprocessor;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

@@ -1,85 +1,85 @@
 {
-  "id": "academorix://modules/staff/listeners",
+  "id": "stackra://modules/staff/listeners",
   "$version": 1,
   "title": "staff — subscribed events",
   "listeners": [
     {
       "event": "branch::BranchArchived",
-      "listener": "Academorix\\Staff\\Listeners\\PreventStaffOrphansOnBranchArchived",
+      "listener": "Stackra\\Staff\\Listeners\\PreventStaffOrphansOnBranchArchived",
       "queue": "staff",
       "purpose": "Refuses the Branch archive when any active Staff still references it. Fires a domain-level refusal event; the branch module surfaces the error as BRANCH_HAS_ACTIVE_STAFF (409). Same-shape as the facility module's PreventFacilityOrphansOnBranchArchived — the branch cannot archive while ANY module has active references."
     },
     {
       "event": "user::UserSoftDeleted",
-      "listener": "Academorix\\Staff\\Listeners\\PreventUserArchiveWithActiveStaff",
+      "listener": "Stackra\\Staff\\Listeners\\PreventUserArchiveWithActiveStaff",
       "queue": "staff",
       "priority": 40,
       "purpose": "Pre-write hook: refuses the User soft-delete when the User has an active Staff row in ANY tenant. Same RESTRICT-in-domain-logic pattern as the FK RESTRICT, but surfaces a clearer error (USER_HAS_ACTIVE_STAFF with the specific staff_id + tenant_id vs the FK's generic constraint violation)."
     },
     {
       "event": "staff::StaffPutOnLeave",
-      "listener": "Academorix\\Staff\\Listeners\\CascadeCoachStatusOnStaffOffboarding",
+      "listener": "Stackra\\Staff\\Listeners\\CascadeCoachStatusOnStaffOffboarding",
       "queue": "staff",
       "priority": 40,
       "purpose": "When the Staff transitions to on_leave, pauses the linked Coach (if any). Coach transitions to status='paused' — future team assignments are paused (Wave 3+)."
     },
     {
       "event": "staff::StaffSuspended",
-      "listener": "Academorix\\Staff\\Listeners\\CascadeCoachStatusOnStaffOffboarding",
+      "listener": "Stackra\\Staff\\Listeners\\CascadeCoachStatusOnStaffOffboarding",
       "queue": "staff",
       "priority": 40,
       "purpose": "Same-shape as leave — coach transitions to paused."
     },
     {
       "event": "staff::StaffOffboardingStarted",
-      "listener": "Academorix\\Staff\\Listeners\\CascadeCoachStatusOnStaffOffboarding",
+      "listener": "Stackra\\Staff\\Listeners\\CascadeCoachStatusOnStaffOffboarding",
       "queue": "staff",
       "priority": 40,
       "purpose": "During offboarding, the coach is paused (pending final archival on offboarding→offboarded)."
     },
     {
       "event": "staff::StaffOffboarded",
-      "listener": "Academorix\\Staff\\Listeners\\CascadeCoachStatusOnStaffOffboarding",
+      "listener": "Stackra\\Staff\\Listeners\\CascadeCoachStatusOnStaffOffboarding",
       "queue": "staff",
       "priority": 40,
       "purpose": "Terminal cascade — coach transitions to archived + coach_ended_at is set."
     },
     {
       "event": "staff::StaffReturnedFromLeave",
-      "listener": "Academorix\\Staff\\Listeners\\ResumeCoachFromLeave",
+      "listener": "Stackra\\Staff\\Listeners\\ResumeCoachFromLeave",
       "queue": "staff",
       "priority": 40,
       "purpose": "Reverses the leave-side cascade: coach transitions paused → active. ONLY when the coach's paused state was caused by the leave (checks metadata.paused_by='staff_leave'); avoids resuming a coach that was manually paused."
     },
     {
       "event": "staff::StaffReinstated",
-      "listener": "Academorix\\Staff\\Listeners\\ResumeCoachFromSuspension",
+      "listener": "Stackra\\Staff\\Listeners\\ResumeCoachFromSuspension",
       "queue": "staff",
       "priority": 40,
       "purpose": "Reverses the suspend-side cascade. Same pattern as ResumeCoachFromLeave."
     },
     {
       "event": "staff::StaffOffboarded",
-      "listener": "Academorix\\Staff\\Listeners\\UnblockUserArchiveWhenLastStaffOffboarded",
+      "listener": "Stackra\\Staff\\Listeners\\UnblockUserArchiveWhenLastStaffOffboarded",
       "queue": "staff",
       "priority": 50,
       "purpose": "Reverses PreventUserArchiveWithActiveStaff. When the User has zero remaining active Staff rows across all tenants, clears the block flag so a subsequent User archive succeeds."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Staff\\Listeners\\PurgeStaffDataForErasedTenant",
+      "listener": "Stackra\\Staff\\Listeners\\PurgeStaffDataForErasedTenant",
       "queue": "staff",
       "purpose": "Cascade delete via FK; this listener writes compliance audit + migrates compensation_history rows to the compliance-archive table (they outlive the tenant per 7-year financial retention)."
     },
     {
       "event": "branch::BranchStatusChanged",
-      "listener": "Academorix\\Staff\\Listeners\\CheckBranchManagerStillPresent",
+      "listener": "Stackra\\Staff\\Listeners\\CheckBranchManagerStillPresent",
       "queue": "staff",
       "purpose": "When a branch transitions to inactive/closed, verify the branch manager (if any) is still in a coherent state. Fires a diagnostic event when the branch has no manager AND is not closed/archived (a manager-less operating branch is a compliance-adjacent signal)."
     },
     {
       "event": "user::UserActivated",
-      "listener": "Academorix\\Staff\\Listeners\\NotifyPendingStaffOnUserActivation",
+      "listener": "Stackra\\Staff\\Listeners\\NotifyPendingStaffOnUserActivation",
       "queue": "staff",
       "purpose": "When the underlying User activates (e.g. email verification completes), transitions any Staff rows with employment_status='pre_hire' AND user_id=this to 'active'. Fires StaffHired per row. This is the common flow: HR creates the pre_hire Staff row, then invites the User; when the User verifies, they're auto-activated as staff."
     }

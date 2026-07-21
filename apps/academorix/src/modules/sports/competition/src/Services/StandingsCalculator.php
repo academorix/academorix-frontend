@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Competition\Services;
+namespace Stackra\Competition\Services;
 
-use Academorix\Competition\Contracts\Services\StandingsCalculatorInterface;
+use Stackra\Competition\Contracts\Services\StandingsCalculatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Competition\Contracts\Repositories\BracketNodeRepositoryInterface;
+use Stackra\Competition\Contracts\Repositories\BracketNodeRepositoryInterface;
 
 /**
  * Concrete service — StandingsCalculator.

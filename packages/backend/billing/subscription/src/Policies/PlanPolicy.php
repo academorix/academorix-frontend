@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Policies;
+namespace Stackra\Subscription\Policies;
 
-use Academorix\Subscription\Contracts\Data\PlanInterface;
-use Academorix\Subscription\Enums\SubscriptionPermission;
-use Academorix\Subscription\Models\Plan;
+use Stackra\Subscription\Contracts\Data\PlanInterface;
+use Stackra\Subscription\Enums\SubscriptionPermission;
+use Stackra\Subscription\Models\Plan;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

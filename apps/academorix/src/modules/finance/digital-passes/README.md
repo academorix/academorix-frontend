@@ -1,4 +1,4 @@
-# academorix/digital-passes
+# stackra/digital-passes
 
 Server-side Laravel package for the `digital-passes` module. Auto-generated from
 the blueprint at `modules/finance/blueprints/digital-passes/`.
@@ -43,6 +43,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-finance/digital-passes-sdk` under `sdk/finance-digital-passes-sdk/`.
+`stackra-finance/digital-passes-sdk` under `sdk/finance-digital-passes-sdk/`.
 Consumers cross the service boundary through the SDK; this package is the
 SERVER-side owner of the domain.

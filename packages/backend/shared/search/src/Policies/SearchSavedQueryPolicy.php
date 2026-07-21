@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Policies;
+namespace Stackra\Search\Policies;
 
-use Academorix\Search\Contracts\Data\SearchSavedQueryInterface;
-use Academorix\Search\Enums\SearchPermission;
-use Academorix\Search\Models\SearchSavedQuery;
+use Stackra\Search\Contracts\Data\SearchSavedQueryInterface;
+use Stackra\Search\Enums\SearchPermission;
+use Stackra\Search\Models\SearchSavedQuery;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Auth\User;
 

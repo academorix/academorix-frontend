@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Enums;
+namespace Stackra\Compliance\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `legal_basis` on `subprocessor`.

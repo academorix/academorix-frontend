@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Events;
+namespace Stackra\Chargeback\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -17,7 +17,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - audit::WriteToAuditLog
  * - activity::WriteToActivityLog
  * - notifications::DispatchChargebackEvidenceOverdueNotification (admin — escalating cadence with days_remaining)
- * - observability::MetricsCollector (academorix.chargeback.evidence_overdue_total labelled by days_remaining)
+ * - observability::MetricsCollector (stackra.chargeback.evidence_overdue_total labelled by days_remaining)
  *
  * @category Chargeback
  *

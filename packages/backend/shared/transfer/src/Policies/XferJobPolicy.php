@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Policies;
+namespace Stackra\Transfer\Policies;
 
-use Academorix\Transfer\Contracts\Data\XferJobInterface;
-use Academorix\Transfer\Enums\TransferPermission;
-use Academorix\Transfer\Enums\XferJobStatus;
-use Academorix\Transfer\Models\XferJob;
+use Stackra\Transfer\Contracts\Data\XferJobInterface;
+use Stackra\Transfer\Enums\TransferPermission;
+use Stackra\Transfer\Enums\XferJobStatus;
+use Stackra\Transfer\Models\XferJob;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

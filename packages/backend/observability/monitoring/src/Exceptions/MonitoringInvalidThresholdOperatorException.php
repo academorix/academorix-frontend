@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Exceptions;
+namespace Stackra\Monitoring\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * threshold_operator not in {greater_than, less_than, equals, not_equals}.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MonitoringInvalidThresholdOperatorException extends AcademorixException
+final class MonitoringInvalidThresholdOperatorException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

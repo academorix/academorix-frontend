@@ -1,54 +1,54 @@
 {
-  "id": "academorix://modules/storage/listeners",
+  "id": "stackra://modules/storage/listeners",
   "$version": 1,
   "title": "storage \u2014 subscribed events",
   "description": "Cross-module reactions this module handles. Internal reactions (own events consumed by own listeners) are documented in events.json under `consumers`.",
   "listeners": [
     {
       "event": "foundation::ApplicationBooted",
-      "listener": "Academorix\\Storage\\Listeners\\CompileFileKindRegistry",
+      "listener": "Stackra\\Storage\\Listeners\\CompileFileKindRegistry",
       "queue": null,
       "purpose": "Discover every #[FileKind] class + #[Attachable] property across every module. Compile into FileKindRegistry (Redis-backed) so runtime enforcement is a hash-map lookup."
     },
     {
       "event": "tenancy::TenantProvisioning",
-      "listener": "Academorix\\Storage\\Listeners\\ReserveDefaultStorageDisk",
+      "listener": "Stackra\\Storage\\Listeners\\ReserveDefaultStorageDisk",
       "queue": null,
       "purpose": "Fires INSIDE the tenant-provisioning transaction. Reserves the tenant's storage disk assignment (S3 region + bucket path prefix). Does not upload anything \u2014 just sets the routing metadata so subsequent uploads know where to land."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Storage\\Listeners\\CascadeStorageErasure",
+      "listener": "Stackra\\Storage\\Listeners\\CascadeStorageErasure",
       "queue": "notifications-critical",
       "purpose": "Cascade-erase every File belonging to the erased tenant. Runs as a batched job because a tenant can have many thousands of files. Decrements each blob's refcount (may leave shared blobs untouched when other tenants still reference them). Emits one FileErased per File with erasure_reason=tenant_erased."
     },
     {
       "event": "user::UserDeleted",
-      "listener": "Academorix\\Storage\\Listeners\\OrphanUserOwnedFiles",
+      "listener": "Stackra\\Storage\\Listeners\\OrphanUserOwnedFiles",
       "queue": "notifications",
       "purpose": "When a user is deleted, their owner_id becomes null on every File they uploaded (Postgres FK onDelete=set null). This listener writes an audit trail entry per orphaned file + emits FileArchived on files with `#[Attachable(on_replace: 'archive')]` where the user was also the fileable owner."
     },
     {
       "event": "auth::UserPasswordChanged",
-      "listener": "Academorix\\Storage\\Listeners\\RevokeSignedUrlsForUser",
+      "listener": "Stackra\\Storage\\Listeners\\RevokeSignedUrlsForUser",
       "queue": "notifications",
       "purpose": "Security response: on password change, revoke every active signed URL user_lock'd to that user's ULID. Prevents a compromised-and-shared link from surviving a password rotation."
     },
     {
       "event": "compliance::DsarErasureRequested (future)",
-      "listener": "Academorix\\Storage\\Listeners\\HandleDsarErasureForSubject",
+      "listener": "Stackra\\Storage\\Listeners\\HandleDsarErasureForSubject",
       "queue": "notifications-critical",
       "purpose": "When compliance module fires an erasure DSAR for a subject, iterate every File where the subject appears in owner_id, issued_to_user_id (via signed URLs), or metadata references. Emit FileErased with erasure_reason=dsar_erasure. Compliance module reads audit trail to build the DSAR completion report."
     },
     {
       "event": "compliance::DsarExportRequested (future)",
-      "listener": "Academorix\\Storage\\Listeners\\ExportFileMetadataForSubject",
+      "listener": "Stackra\\Storage\\Listeners\\ExportFileMetadataForSubject",
       "queue": "notifications",
       "purpose": "Aggregate the metadata of every File referencing the subject into the DSAR export ZIP. Physical byte export requires an additional tenant-admin approval + is handled by a separate ExportFileBytesForSubject action."
     },
     {
       "event": "subscription::PlanSwapped (future)",
-      "listener": "Academorix\\Storage\\Listeners\\SyncPlanTierSignedUrlLimits",
+      "listener": "Stackra\\Storage\\Listeners\\SyncPlanTierSignedUrlLimits",
       "queue": "notifications",
       "purpose": "On plan tier change, update the tenant's signed-URL TTL caps + max_per_hour rate limits. Existing signed URLs are not retroactively revoked."
     }

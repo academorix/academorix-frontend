@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/auth/policies",
+  "id": "stackra://modules/auth/policies",
   "$version": 1,
   "title": "auth \u2014 authorization policies",
   "description": "Three policies. `AuthPolicy` covers rare auth-surface abilities that need policy gates (most auth flows are self-service and don't policy-check). `SessionPolicy` covers session-management surface \u2014 tenant users can view + revoke their own sessions; platform admins can view + revoke any session. `CrossAppGrantPolicy` covers grant issuance + exchange \u2014 always self-scoped (the caller's own Identity).",
   "policies": [
     {
       "model": "AuthAction",
-      "class": "Academorix\\Auth\\Policies\\AuthPolicy",
+      "class": "Stackra\\Auth\\Policies\\AuthPolicy",
       "guard": "sanctum",
       "abilities": [
         {
@@ -23,7 +23,7 @@
     },
     {
       "model": "Session (PersonalAccessToken)",
-      "class": "Academorix\\Auth\\Policies\\SessionPolicy",
+      "class": "Stackra\\Auth\\Policies\\SessionPolicy",
       "guard": "sanctum",
       "abilities": [
         {
@@ -45,7 +45,7 @@
     },
     {
       "model": "Session (PersonalAccessToken) \u2014 platform_admin guard",
-      "class": "Academorix\\Auth\\Policies\\SessionPolicy",
+      "class": "Stackra\\Auth\\Policies\\SessionPolicy",
       "guard": "platform_admin",
       "abilities": [
         {
@@ -68,7 +68,7 @@
     },
     {
       "model": "CrossAppGrant",
-      "class": "Academorix\\Auth\\Policies\\CrossAppGrantPolicy",
+      "class": "Stackra\\Auth\\Policies\\CrossAppGrantPolicy",
       "guard": "sanctum",
       "abilities": [
         {

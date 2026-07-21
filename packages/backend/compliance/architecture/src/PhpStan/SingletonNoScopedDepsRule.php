@@ -24,7 +24,7 @@
  * ## Scope-aware advantage
  *
  * The regex sibling
- * ({@see \Academorix\Architecture\Rules\NoSingletonOnScopedDepsRule})
+ * ({@see \Stackra\Architecture\Rules\NoSingletonOnScopedDepsRule})
  * looks for `#[Singleton]` and a scoped-attribute short name in
  * the SAME file. That misses e.g. attribute imports aliased
  * under a different local name. The PHPStan version walks the
@@ -54,7 +54,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\PhpStan;
+namespace Stackra\Architecture\PhpStan;
 
 use PhpParser\Node;
 use PhpParser\Node\AttributeGroup;

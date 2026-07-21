@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-mail/feature-flags",
+  "id": "stackra://modules/notifications-mail/feature-flags",
   "$version": 1,
   "title": "notifications-mail \u2014 kill switches + rollout controls",
   "description": "Per-provider kill switches let ops flip a bad provider off in seconds without a redeploy. All kill switches default ON.",

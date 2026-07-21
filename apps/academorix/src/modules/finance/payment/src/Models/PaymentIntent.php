@@ -4,26 +4,26 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Models;
+namespace Stackra\Payment\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Payment\Contracts\Data\PaymentIntentInterface;
-use Academorix\Payment\Database\Factories\PaymentIntentFactory;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Invoice\Concerns\BelongsToInvoice;
-use Academorix\Payment\Enums\PaymentIntentCaptureMethod;
-use Academorix\Payment\Enums\PaymentIntentConfirmationMethod;
-use Academorix\Payment\Enums\PaymentIntentLastErrorType;
-use Academorix\Payment\Enums\PaymentIntentNextActionType;
-use Academorix\Payment\Enums\PaymentIntentStatus;
-use Academorix\Payment\Enums\PaymentProvider;
-use Academorix\Payment\Policies\PaymentIntentPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Payment\Contracts\Data\PaymentIntentInterface;
+use Stackra\Payment\Database\Factories\PaymentIntentFactory;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Invoice\Concerns\BelongsToInvoice;
+use Stackra\Payment\Enums\PaymentIntentCaptureMethod;
+use Stackra\Payment\Enums\PaymentIntentConfirmationMethod;
+use Stackra\Payment\Enums\PaymentIntentLastErrorType;
+use Stackra\Payment\Enums\PaymentIntentNextActionType;
+use Stackra\Payment\Enums\PaymentIntentStatus;
+use Stackra\Payment\Enums\PaymentProvider;
+use Stackra\Payment\Policies\PaymentIntentPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

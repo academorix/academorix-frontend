@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attendance\Models;
+namespace Stackra\Attendance\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Attendance\Contracts\Data\LateArrivalInterface;
-use Academorix\Attendance\Database\Factories\LateArrivalFactory;
-use Academorix\Athlete\Concerns\BelongsToAthlete;
-use Academorix\Attendance\Policies\LateArrivalPolicy;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Session\Concerns\BelongsToSession;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Attendance\Contracts\Data\LateArrivalInterface;
+use Stackra\Attendance\Database\Factories\LateArrivalFactory;
+use Stackra\Athlete\Concerns\BelongsToAthlete;
+use Stackra\Attendance\Policies\LateArrivalPolicy;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Session\Concerns\BelongsToSession;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;

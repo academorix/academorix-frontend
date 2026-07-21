@@ -1,20 +1,20 @@
 {
-  "id": "academorix://modules/service-accounts/attributes",
+  "id": "stackra://modules/service-accounts/attributes",
   "$version": 1,
   "title": "service-accounts \u2014 PHP attribute contracts",
   "description": "One attribute. #[AsServiceAccountListener] marks a class as a subscriber to service-account lifecycle events (created, rotated, expired, dormant, disabled, suspicious). Discovered at boot by the ServiceAccountServiceProvider so services under `auth/`, `notifications/`, `activity/`, and `observability/` can react without explicit event bindings.",
-  "namespace": "Academorix\\ServiceAccount\\Attributes",
+  "namespace": "Stackra\\ServiceAccount\\Attributes",
   "attributes": [
     {
       "name": "AsServiceAccountListener",
-      "class": "Academorix\\ServiceAccount\\Attributes\\AsServiceAccountListener",
+      "class": "Stackra\\ServiceAccount\\Attributes\\AsServiceAccountListener",
       "targets": ["class"],
       "params": [
         {
           "name": "events",
           "type": "array<string>",
           "default": ["*"],
-          "description": "Which service-account events this class reacts to. Wildcard `*` = every event under `Academorix\\ServiceAccount\\Events\\*`. Specific list e.g. `['ServiceAccountSecretRotated', 'ServiceAccountExpired']` subscribes to those only. Validated against the events map at boot; typos abort application boot with a clear error naming the unknown event."
+          "description": "Which service-account events this class reacts to. Wildcard `*` = every event under `Stackra\\ServiceAccount\\Events\\*`. Specific list e.g. `['ServiceAccountSecretRotated', 'ServiceAccountExpired']` subscribes to those only. Validated against the events map at boot; typos abort application boot with a clear error naming the unknown event."
         },
         {
           "name": "queue",

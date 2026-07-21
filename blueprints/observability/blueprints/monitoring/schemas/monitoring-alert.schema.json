@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/monitoring/schemas/monitoring-alert",
+  "id": "stackra://modules/monitoring/schemas/monitoring-alert",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "MonitoringAlert",
@@ -13,10 +13,10 @@
     "keyType": "string",
     "keyPrefix": "mal_",
     "incrementing": false,
-    "model": "Academorix\\Observability\\Monitoring\\Models\\MonitoringAlert",
-    "interface": "Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringAlertInterface",
+    "model": "Stackra\\Observability\\Monitoring\\Models\\MonitoringAlert",
+    "interface": "Stackra\\Observability\\Monitoring\\Contracts\\Data\\MonitoringAlertInterface",
     "implements": [
-      "Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringAlertInterface"
+      "Stackra\\Observability\\Monitoring\\Contracts\\Data\\MonitoringAlertInterface"
     ],
     "traits": [
       "HasFactory",

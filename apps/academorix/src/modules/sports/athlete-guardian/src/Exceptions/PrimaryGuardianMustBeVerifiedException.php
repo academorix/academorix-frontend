@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AthleteGuardian\Exceptions;
+namespace Stackra\AthleteGuardian\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Only verified guardians can be set as primary.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PrimaryGuardianMustBeVerifiedException extends AcademorixException
+final class PrimaryGuardianMustBeVerifiedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

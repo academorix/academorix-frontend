@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Contracts\Services;
+namespace Stackra\Tenancy\Contracts\Services;
 
-use Academorix\Tenancy\Models\Tenant;
-use Academorix\Tenancy\Services\TenantContextResolver;
+use Stackra\Tenancy\Models\Tenant;
+use Stackra\Tenancy\Services\TenantContextResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -46,7 +46,7 @@ interface TenantContextInterface
      * Assert a tenant context is bound. Throws when none — used by
      * actions that must not run on central / platform-admin hosts.
      *
-     * @throws \Academorix\Tenancy\Exceptions\TenantNotResolvedException
+     * @throws \Stackra\Tenancy\Exceptions\TenantNotResolvedException
      */
     public function currentOrFail(): Tenant;
 

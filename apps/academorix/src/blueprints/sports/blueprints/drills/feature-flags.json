@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/drills/feature-flags",
+  "id": "stackra://modules/drills/feature-flags",
   "$version": 1,
   "title": "drills — feature flags",
   "description": "Kill switches + gradual-rollout flags this module publishes.",

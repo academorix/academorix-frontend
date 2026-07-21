@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/safeguarding/events",
+  "id": "stackra://modules/safeguarding/events",
   "$version": 1,
   "title": "safeguarding — published events",
-  "namespace": "Academorix\\Platform\\Safeguarding\\Events",
+  "namespace": "Stackra\\Platform\\Safeguarding\\Events",
   "dispatchMode": "afterCommit",
   "description": "K-12 + child-protection compliance. Every event is retained 7yr under legal-hold exception. StaffCheckExpiring feeds the monthly compliance dashboard.",
   "events": [

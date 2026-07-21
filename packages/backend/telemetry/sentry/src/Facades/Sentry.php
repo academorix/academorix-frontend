@@ -14,11 +14,11 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Sentry\Facades;
+namespace Stackra\Sentry\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use Academorix\Sentry\Contracts\SentryContext;
-use Academorix\Sentry\Services\SentryContextRegistry;
+use Stackra\Sentry\Contracts\SentryContext;
+use Stackra\Sentry\Services\SentryContextRegistry;
 use Sentry\State\Scope;
 
 /**
@@ -31,7 +31,7 @@ use Sentry\State\Scope;
  *
  * ### Register Custom Context:
  * ```php
- * use Academorix\Sentry\Facades\Sentry;
+ * use Stackra\Sentry\Facades\Sentry;
  *
  * Sentry::register(new TenantContext());
  * ```

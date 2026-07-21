@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Realtime\Tests;
+namespace Stackra\Realtime\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/realtime.
+ * Base test case for stackra/realtime.
  *
  * @category Realtime
  *

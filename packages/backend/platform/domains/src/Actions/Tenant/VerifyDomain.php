@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Actions\Tenant;
+namespace Stackra\Domains\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Domains\Data\DomainData;
-use Academorix\Domains\Enums\DomainsPermission;
-use Academorix\Domains\Jobs\VerifyDomainDnsJob;
-use Academorix\Domains\Models\Domain;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Attributes\WhereUlid;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Domains\Data\DomainData;
+use Stackra\Domains\Enums\DomainsPermission;
+use Stackra\Domains\Jobs\VerifyDomainDnsJob;
+use Stackra\Domains\Models\Domain;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Attributes\WhereUlid;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `POST /api/v1/tenant/domains/{domain}/verify` — manually re-trigger

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/people/metrics",
+  "id": "stackra://modules/people/metrics",
   "$version": 1,
   "title": "people — OpenTelemetry metrics",
   "description": "OTel / Prometheus metrics this module emits.",

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Models;
+namespace Stackra\Localization\Models;
 
-use Academorix\Database\Concerns\Model\HasUserStamp;
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Geography\Models\Country as GeographyCountry;
-use Academorix\Geography\Models\Language as GeographyLanguage;
-use Academorix\Localization\Contracts\Data\PlatformLanguageInterface;
-use Academorix\Localization\Database\Factories\PlatformLanguageFactory;
-use Academorix\Localization\Enums\TextDirection;
-use Academorix\Localization\Observers\PlatformLanguageObserver;
-use Academorix\Localization\Policies\PlatformLanguagePolicy;
+use Stackra\Database\Concerns\Model\HasUserStamp;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Geography\Models\Country as GeographyCountry;
+use Stackra\Geography\Models\Language as GeographyLanguage;
+use Stackra\Localization\Contracts\Data\PlatformLanguageInterface;
+use Stackra\Localization\Database\Factories\PlatformLanguageFactory;
+use Stackra\Localization\Enums\TextDirection;
+use Stackra\Localization\Observers\PlatformLanguageObserver;
+use Stackra\Localization\Policies\PlatformLanguagePolicy;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

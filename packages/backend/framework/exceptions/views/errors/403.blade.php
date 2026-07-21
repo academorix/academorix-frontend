@@ -39,7 +39,7 @@
 * @extends foundation::layouts.app
 * @section title - Page title for browser tab
 * @section content - Main error page content
-* @package Academorix\Foundation
+* @package Stackra\Foundation
 */
 --}}
 @extends('foundation::layouts.app')

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-mail/compliance",
+  "id": "stackra://modules/notifications-mail/compliance",
   "$version": 1,
   "title": "notifications-mail \u2014 compliance evidence",
   "description": "Primary control point for CAN-SPAM (postal address footer + one-click unsubscribe), CASL (express consent tracking for CA), and GDPR Art. 6/7/21 (mail-specific enforcement).",

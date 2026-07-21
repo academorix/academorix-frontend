@@ -13,12 +13,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Services;
+namespace Stackra\Scope\Services;
 
-use Academorix\Scope\Contracts\ScopeRegistryInterface;
-use Academorix\Scope\Data\ScopeConsumerConfig;
-use Academorix\Scope\Exceptions\ScopeConflictException;
-use Academorix\Scope\Exceptions\ScopeValidationException;
+use Stackra\Scope\Contracts\ScopeRegistryInterface;
+use Stackra\Scope\Data\ScopeConsumerConfig;
+use Stackra\Scope\Exceptions\ScopeConflictException;
+use Stackra\Scope\Exceptions\ScopeValidationException;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 
 /**

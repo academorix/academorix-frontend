@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Exceptions;
+namespace Stackra\Registry\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * A tenant custom Discipline (or Position) references a parent row that belongs to a different tenant.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CrossTenantRegistryReferenceException extends AcademorixException
+final class CrossTenantRegistryReferenceException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

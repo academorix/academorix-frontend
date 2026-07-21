@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/webhook/compliance",
+  "id": "stackra://modules/webhook/compliance",
   "$version": 1,
   "title": "webhook \u2014 compliance evidence",
   "description": "Webhook signing is the primary integrity control (proves the request came from us, not a spoofer). Rotation grace is the primary availability control for secret changes. Auto-disable + probes are operational reliability. Audit trail covers SOC 2 + ISO 27001 + GDPR Art. 30 records-of-processing.",

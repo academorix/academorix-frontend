@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transaction\Concerns;
+namespace Stackra\Transaction\Concerns;
 
 /**
  * Trait — HasLedgerEntries.

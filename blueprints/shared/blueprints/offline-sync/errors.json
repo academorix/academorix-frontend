@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/offline-sync/errors",
+  "id": "stackra://modules/offline-sync/errors",
   "$version": 1,
   "title": "offline-sync — error catalogue",
   "description": "Domain exception classes + HTTP status + translation keys.",

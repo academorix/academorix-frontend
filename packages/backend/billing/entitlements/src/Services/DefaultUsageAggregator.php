@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Services;
+namespace Stackra\Entitlements\Services;
 
-use Academorix\Entitlements\Contracts\Repositories\EntitlementRepositoryInterface;
-use Academorix\Entitlements\Contracts\Repositories\EntitlementUsageRepositoryInterface;
-use Academorix\Entitlements\Contracts\Services\UsageAggregatorInterface;
+use Stackra\Entitlements\Contracts\Repositories\EntitlementRepositoryInterface;
+use Stackra\Entitlements\Contracts\Repositories\EntitlementUsageRepositoryInterface;
+use Stackra\Entitlements\Contracts\Services\UsageAggregatorInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

@@ -4,9 +4,9 @@
  * @file packages/architecture/config/architecture.php
  *
  * @description
- * Publishable configuration for `academorix/architecture`. Merged
+ * Publishable configuration for `stackra/architecture`. Merged
  * into the host app under the `architecture.*` key by
- * {@see \Academorix\Architecture\Providers\ArchitectureServiceProvider}.
+ * {@see \Stackra\Architecture\Providers\ArchitectureServiceProvider}.
  *
  * ## Sections
  *
@@ -16,7 +16,7 @@
  *     (relative names, applied recursively — Symfony Finder
  *     handles the pattern semantics).
  *   - `namespaces` — canonical namespace prefixes for each
- *     layer, keyed by {@see \Academorix\Architecture\Enums\LayerType}
+ *     layer, keyed by {@see \Stackra\Architecture\Enums\LayerType}
  *     `->value`. Prefix comparison is done on the FQCN — every
  *     entry MUST end with a trailing backslash to avoid greedy
  *     matches (`App\Model` vs `App\ModelSomething`).
@@ -49,7 +49,7 @@ return [
     |
     | Absolute directory paths the scanner walks. Defaults cover the
     | conventional apps -> app src + database layout used across
-    | Academorix backends. Add extra paths in per-env config when
+    | Stackra backends. Add extra paths in per-env config when
     | needed.
     */
 
@@ -86,7 +86,7 @@ return [
     | matter (first hit wins).
     |
     | Add app-specific namespaces here rather than modifying the
-    | resolver — the defaults cover the Laravel + Academorix conventions.
+    | resolver — the defaults cover the Laravel + Stackra conventions.
     */
 
     'namespaces' => [
@@ -254,11 +254,11 @@ return [
             'allowed_facades' => [],
         ],
 
-        // Controllers must extend Academorix\Routing\BaseController,
+        // Controllers must extend Stackra\Routing\BaseController,
         // not Illuminate\Routing\Controller directly.
         'controller_extends_base' => [
             'severity' => 'error',
-            'required_base' => 'Academorix\\Routing\\BaseController',
+            'required_base' => 'Stackra\\Routing\\BaseController',
             'forbidden_bases' => [
                 'Illuminate\\Routing\\Controller',
             ],
@@ -269,7 +269,7 @@ return [
         // registers.
         'controller_needs_as_controller' => [
             'severity' => 'error',
-            'required_attribute' => 'Academorix\\Routing\\Attributes\\AsController',
+            'required_attribute' => 'Stackra\\Routing\\Attributes\\AsController',
         ],
 
         // Every concrete Repository must carry #[Bind] so the
@@ -283,7 +283,7 @@ return [
         // Routing's discovery picks it up.
         'middleware_needs_as_middleware' => [
             'severity' => 'error',
-            'required_attribute' => 'Academorix\\Routing\\Attributes\\AsMiddleware',
+            'required_attribute' => 'Stackra\\Routing\\Attributes\\AsMiddleware',
             'middleware_namespaces' => [
                 'App\\Http\\Middleware\\',
             ],

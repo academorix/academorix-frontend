@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Contracts\Services;
+namespace Stackra\Forms\Contracts\Services;
 
-use Academorix\Forms\Services\HandoffRegistry;
+use Stackra\Forms\Services\HandoffRegistry;
 use Illuminate\Container\Attributes\Bind;
 
 /**

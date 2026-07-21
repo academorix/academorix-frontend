@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Refund\Attributes;
+namespace Stackra\Refund\Attributes;
 
 use Attribute;
 

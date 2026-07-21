@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/identity/commands",
+  "id": "stackra://modules/identity/commands",
   "$version": 1,
   "title": "identity \u2014 Artisan commands",
   "commands": [
     {
       "signature": "identity:list {--email=} {--locked} {--unverified} {--erased} {--per-page=25}",
-      "class": "Academorix\\Identity\\Console\\Commands\\ListIdentitiesCommand",
+      "class": "Stackra\\Identity\\Console\\Commands\\ListIdentitiesCommand",
       "purpose": "List identities matching the filters. Every row is REDACTED (email fingerprint, no dob, no credentials). Use --email=<pattern> with a fingerprint prefix to look up a specific row.",
       "usage_examples": [
         "php artisan identity:list --locked",
@@ -15,7 +15,7 @@
     },
     {
       "signature": "identity:describe {id : Identity ULID (idn_...)} {--reveal-pii}",
-      "class": "Academorix\\Identity\\Console\\Commands\\DescribeIdentityCommand",
+      "class": "Stackra\\Identity\\Console\\Commands\\DescribeIdentityCommand",
       "purpose": "Print the full detail (redacted by default). --reveal-pii unmutes email + dob for the current invocation and writes an audit-log entry keyed to the operator. Never reveals regulated_secret fields.",
       "usage_examples": [
         "php artisan identity:describe idn_01H2K3M4N5P6Q7R8S9TAVBWCXDY",
@@ -24,7 +24,7 @@
     },
     {
       "signature": "identity:unlock {id : Identity ULID} {--reason=}",
-      "class": "Academorix\\Identity\\Console\\Commands\\UnlockIdentityCommand",
+      "class": "Stackra\\Identity\\Console\\Commands\\UnlockIdentityCommand",
       "purpose": "Clear `locked_until` + reset `failed_attempts_count`. Fires IdentityUnlocked(trigger=admin_action). --reason is written to the audit log; required in production (config('identity.commands.require_reason')).",
       "usage_examples": [
         "php artisan identity:unlock idn_01H... --reason='Support ticket #12345, verified user identity'"
@@ -32,7 +32,7 @@
     },
     {
       "signature": "identity:force-password-reset {id : Identity ULID} {--reason=} {--no-email}",
-      "class": "Academorix\\Identity\\Console\\Commands\\ForcePasswordResetCommand",
+      "class": "Stackra\\Identity\\Console\\Commands\\ForcePasswordResetCommand",
       "purpose": "Invalidate the current password (sets a random unusable hash), revokes every active session for the referencing Users, issues a fresh PasswordResetToken (15min TTL), sends the reset email unless --no-email. Fires PasswordChanged(trigger=admin_reset).",
       "usage_examples": [
         "php artisan identity:force-password-reset idn_01H... --reason='Compromised credentials in customer report'"
@@ -40,7 +40,7 @@
     },
     {
       "signature": "identity:erase {id : Identity ULID} {--reason=} {--confirm}",
-      "class": "Academorix\\Identity\\Console\\Commands\\EraseIdentityCommand",
+      "class": "Stackra\\Identity\\Console\\Commands\\EraseIdentityCommand",
       "purpose": "Compliance-driven erasure (GDPR Art. 17). Soft-deletes the Identity, refuses if any inbound User / PlatformUser is not also queued for erasure. Actual hard delete is automated via PurgeSoftDeletedIdentitiesJob after the hold period elapses. --confirm required in production; --reason is mandatory + written to the compliance audit log.",
       "usage_examples": [
         "php artisan identity:erase idn_01H... --reason='DSAR-2026-00042 GDPR erasure request' --confirm"
@@ -48,7 +48,7 @@
     },
     {
       "signature": "identity:rotate-mfa-secret {id : Identity ULID} {--reason=}",
-      "class": "Academorix\\Identity\\Console\\Commands\\RotateMfaSecretCommand",
+      "class": "Stackra\\Identity\\Console\\Commands\\RotateMfaSecretCommand",
       "purpose": "Re-encrypt Identity.mfa_secret_encrypted with the current KMS data key. Used during KMS key-rotation events (annual + on suspected compromise). The TOTP secret plaintext is NEVER exposed \u2014 the operation decrypts under the previous key inside a hardware-isolated enclave and re-encrypts under the current key. Fires no domain event (this is a cryptographic maintenance operation).",
       "usage_examples": [
         "php artisan identity:rotate-mfa-secret idn_01H... --reason='Scheduled annual KMS key rotation'"
@@ -56,7 +56,7 @@
     },
     {
       "signature": "identity:purge-expired-tokens {--dry-run}",
-      "class": "Academorix\\Identity\\Console\\Commands\\PurgeExpiredTokensCommand",
+      "class": "Stackra\\Identity\\Console\\Commands\\PurgeExpiredTokensCommand",
       "purpose": "Run PurgeExpiredResetTokensJob synchronously. --dry-run reports counts without deleting. Useful for offline environments where the scheduler isn't running.",
       "usage_examples": [
         "php artisan identity:purge-expired-tokens",

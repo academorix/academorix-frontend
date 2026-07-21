@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Ai\Policies;
+namespace Stackra\Ai\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Ai\Models\AiToolCall;
+use Stackra\User\Models\User;
+use Stackra\Ai\Models\AiToolCall;
 
 /**
- * Authorization policy for {@see \Academorix\Ai\Models\AiToolCall}.
+ * Authorization policy for {@see \Stackra\Ai\Models\AiToolCall}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

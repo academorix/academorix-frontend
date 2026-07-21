@@ -1,22 +1,22 @@
 {
-  "id": "academorix://modules/age-group/hooks",
+  "id": "stackra://modules/age-group/hooks",
   "$version": 1,
   "title": "age-group — tenancy hooks",
   "description": "This module IS tenant-aware. It participates in tenancy lifecycle via two hooks. Distinct from `listeners.json` (domain-event listeners) — tenancy hooks fire at specific tenancy lifecycle points (provisioning / erasure) and participate in the tenancy transaction where relevant.",
   "reference": {
-    "contract": "academorix://modules/tenancy/hooks",
+    "contract": "stackra://modules/tenancy/hooks",
     "hierarchy_note": "See `hierarchy.md` §12 + `tenancy-columns.md` for the tenant plane the age-group module lives on."
   },
   "hooks": [
     {
-      "class": "Academorix\\Sports\\AgeGroup\\Hooks\\SeedDefaultAgeGroupsOnTenantProvisioned",
+      "class": "Stackra\\Sports\\AgeGroup\\Hooks\\SeedDefaultAgeGroupsOnTenantProvisioned",
       "event": "tenancy::TenantProvisioned",
       "lifecycle_phase": "after_commit",
       "queue": "notifications",
       "purpose": "When a new Tenant is provisioned, dispatch SeedDefaultAgeGroupsForTenantJob (or run AgeGroupCatalogSeeder synchronously per `age_group.provisioning.async` config). This is the tenancy-hook counterpart of the listener in `listeners.json` — the hook variant lets the tenancy module orchestrate a transaction across every registered module. Skipped when the tenant already has a seeded catalog (idempotent)."
     },
     {
-      "class": "Academorix\\Sports\\AgeGroup\\Hooks\\PreventAgeGroupOrphansOnTenantErased",
+      "class": "Stackra\\Sports\\AgeGroup\\Hooks\\PreventAgeGroupOrphansOnTenantErased",
       "event": "tenancy::TenantErased",
       "lifecycle_phase": "before_cascade",
       "queue": null,

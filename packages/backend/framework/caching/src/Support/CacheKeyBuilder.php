@@ -35,13 +35,13 @@
  * runtimes — the `xxh128` implementation is part of the PHP
  * `hash_algos()` set and is stable.
  *
- * @see \Academorix\Caching\Attributes\CacheKey Template placement.
- * @see \Academorix\Caching\Contracts\CacheKeyGenerator Custom-strategy hook.
+ * @see \Stackra\Caching\Attributes\CacheKey Template placement.
+ * @see \Stackra\Caching\Contracts\CacheKeyGenerator Custom-strategy hook.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Caching\Support;
+namespace Stackra\Caching\Support;
 
 use BackedEnum;
 use UnitEnum;

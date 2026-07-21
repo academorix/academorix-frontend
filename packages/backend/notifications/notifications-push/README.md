@@ -1,6 +1,6 @@
-# `academorix/notifications-push`
+# `stackra/notifications-push`
 
-Push notification channel for Academorix — Firebase Cloud Messaging (Android +
+Push notification channel for Stackra — Firebase Cloud Messaging (Android +
 Web), Apple Push Notification service (iOS), Expo (React Native), and OneSignal
 (enterprise). Enterprise-day-1 shape: attribute-first DI, `#[Bind]` on
 interfaces, `#[UseModel]` on repositories, `#[Cacheable]` + `#[Filterable]`
@@ -24,8 +24,8 @@ config, `SeedsPermissionEnum` trait, and no property arrays on the provider.
 ## Non-goals
 
 - Push notification content templating — that lives in
-  `academorix/notifications` (the core module).
-- Inbound webhook receiver — delegated to `academorix/webhook`. This module
+  `stackra/notifications` (the core module).
+- Inbound webhook receiver — delegated to `stackra/webhook`. This module
   ships only the per-provider signature strategies.
 - Cross-channel dispatch orchestration — the core notifications module fans out
   to enabled channels via the `NotificationChannelRegistry`.

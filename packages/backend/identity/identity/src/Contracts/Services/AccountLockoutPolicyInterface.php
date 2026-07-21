@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Identity\Contracts\Services;
+namespace Stackra\Identity\Contracts\Services;
 
-use Academorix\Identity\Services\AccountLockoutPolicy;
+use Stackra\Identity\Services\AccountLockoutPolicy;
 use Illuminate\Container\Attributes\Bind;
 
 /**

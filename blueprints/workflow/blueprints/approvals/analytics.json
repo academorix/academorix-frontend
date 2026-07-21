@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/analytics",
+  "id": "stackra://modules/workflow/approvals/analytics",
   "$version": 1,
   "title": "approvals — product analytics",
   "sink": "segment",

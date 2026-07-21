@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformUser\Console;
+namespace Stackra\PlatformUser\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan platform-user:list` — List every platform user row.

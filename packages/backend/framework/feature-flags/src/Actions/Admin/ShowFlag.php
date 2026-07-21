@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Actions\Admin;
+namespace Stackra\FeatureFlags\Actions\Admin;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureRepositoryInterface;
-use Academorix\FeatureFlags\Data\FeatureFlagData;
-use Academorix\FeatureFlags\Exceptions\UnknownFeatureFlagException;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureRepositoryInterface;
+use Stackra\FeatureFlags\Data\FeatureFlagData;
+use Stackra\FeatureFlags\Exceptions\UnknownFeatureFlagException;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
 
 /**
  * `GET /api/v1/feature-flags/{name}` — show a single registered flag.

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Services;
+namespace Stackra\Entitlements\Services;
 
-use Academorix\Entitlements\Attributes\ConsumesEntitlement;
-use Academorix\Entitlements\Contracts\Services\EntitlementRegistryInterface;
-use Academorix\Entitlements\Enums\EntitlementKind;
-use Academorix\Entitlements\Enums\EntitlementPeriod;
+use Stackra\Entitlements\Attributes\ConsumesEntitlement;
+use Stackra\Entitlements\Contracts\Services\EntitlementRegistryInterface;
+use Stackra\Entitlements\Enums\EntitlementKind;
+use Stackra\Entitlements\Enums\EntitlementPeriod;
 use Illuminate\Container\Attributes\Singleton;
 
 /**
  * In-memory registry of every `#[ConsumesEntitlement]`-declared key.
  *
  * Hydrated at boot by the framework's generic hydration pump
- * ({@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper})
+ * ({@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper})
  * via the `#[HydratesFrom]` declaration on
  * {@see EntitlementRegistryInterface::register()}.
  *

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/public-site/config",
+  "id": "stackra://modules/public-site/config",
   "$version": 1,
   "title": "public-site — config keys",
   "description": "config/<module>.php shape + defaults.",

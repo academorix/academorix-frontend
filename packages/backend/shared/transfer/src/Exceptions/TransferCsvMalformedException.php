@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Exceptions;
+namespace Stackra\Transfer\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a CSV file has non-UTF8 bytes, unmatched quoting, or
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TransferCsvMalformedException extends AcademorixException
+final class TransferCsvMalformedException extends StackraException
 {
     public const CODE = 'TRANSFER_CSV_MALFORMED';
 

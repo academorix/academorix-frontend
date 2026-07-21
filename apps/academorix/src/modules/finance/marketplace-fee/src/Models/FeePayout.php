@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\MarketplaceFee\Models;
+namespace Stackra\MarketplaceFee\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\MarketplaceFee\Contracts\Data\FeePayoutInterface;
-use Academorix\MarketplaceFee\Database\Factories\FeePayoutFactory;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\MarketplaceFee\Enums\FeePayoutStatus;
-use Academorix\MarketplaceFee\Policies\FeePayoutPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\MarketplaceFee\Contracts\Data\FeePayoutInterface;
+use Stackra\MarketplaceFee\Database\Factories\FeePayoutFactory;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\MarketplaceFee\Enums\FeePayoutStatus;
+use Stackra\MarketplaceFee\Policies\FeePayoutPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,7 +27,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 /**
  * Eloquent model for a FeePayout.
  *
- * Academorix-facing payout of fees to the platform account.
+ * Stackra-facing payout of fees to the platform account.
  *
  * @category MarketplaceFee
  *

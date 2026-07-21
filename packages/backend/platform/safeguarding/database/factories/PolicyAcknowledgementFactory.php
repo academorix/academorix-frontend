@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Safeguarding\Database\Factories;
+namespace Stackra\Safeguarding\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Safeguarding\Contracts\Data\PolicyAcknowledgementInterface;
-use Academorix\Safeguarding\Models\PolicyAcknowledgement;
+use Stackra\Safeguarding\Contracts\Data\PolicyAcknowledgementInterface;
+use Stackra\Safeguarding\Models\PolicyAcknowledgement;
 
 /**
- * Factory for {@see \Academorix\Safeguarding\Models\PolicyAcknowledgement}.
+ * Factory for {@see \Stackra\Safeguarding\Models\PolicyAcknowledgement}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Safeguarding\Models\PolicyAcknowledgement>
+ * @extends Factory<\Stackra\Safeguarding\Models\PolicyAcknowledgement>
  *
  * @category Safeguarding
  *

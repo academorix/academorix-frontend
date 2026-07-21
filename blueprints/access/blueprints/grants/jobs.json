@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/grants/jobs",
+  "id": "stackra://modules/grants/jobs",
   "$version": 1,
   "title": "grants — queued jobs",
   "description": "Six queued jobs. Retention + reconciliation live on the `retention` queue (off-peak, batched). Notification + cache invalidation live on `notifications` (near-real-time). Bulk provisioning on `bulk` (isolated so a large upload cannot starve other work).",
@@ -7,7 +7,7 @@
   "defaultConnection": "redis",
   "jobs": [
     {
-      "class": "Academorix\\Grant\\Jobs\\PurgeExpiredGrantsJob",
+      "class": "Stackra\\Grant\\Jobs\\PurgeExpiredGrantsJob",
       "description": "Sweeps grants where expires_at <= now() AND revoked_at IS NULL. For each: set revoked_at = expires_at, revoked_by = null, revoked_reason = 'expired'. Dispatches GrantExpired per row (afterCommit). Batched — max 500 per run to avoid blocking the queue.",
       "queue": "retention",
       "tries": 3,
@@ -21,7 +21,7 @@
       }
     },
     {
-      "class": "Academorix\\Grant\\Jobs\\NotifyGrantExpiringJob",
+      "class": "Stackra\\Grant\\Jobs\\NotifyGrantExpiringJob",
       "description": "Sweeps grants where expires_at BETWEEN now() AND now() + 24 hours AND revoked_at IS NULL AND metadata->'expiring_notification_sent' IS NULL. Dispatches GrantExpiringSoonNotification to subject + grantor. Marks metadata.expiring_notification_sent = now() to prevent double-send. Runs daily; picks up any grant that will expire within 24h.",
       "queue": "notifications",
       "tries": 3,
@@ -32,7 +32,7 @@
       "implements": ["ShouldQueue", "ShouldBeUnique"]
     },
     {
-      "class": "Academorix\\Grant\\Jobs\\PurgeRevokedGrantsJob",
+      "class": "Stackra\\Grant\\Jobs\\PurgeRevokedGrantsJob",
       "description": "Hard-deletes grants where revoked_at < now() - 90 days AND decision='allow'. Deny grants are retained INDEFINITELY (design decision: an inviolable block that was ever issued is compliance-worthy even after revoke — someone might need to know 'this user was once explicitly blocked from this resource'). Batched; runs daily 04:00 UTC per schedule.",
       "queue": "retention",
       "tries": 3,
@@ -47,7 +47,7 @@
       }
     },
     {
-      "class": "Academorix\\Grant\\Jobs\\ReconcileOrphanedGrantsJob",
+      "class": "Stackra\\Grant\\Jobs\\ReconcileOrphanedGrantsJob",
       "description": "Sweeps active grants (revoked_at IS NULL) and verifies the resource_type + resource_id still resolves to a live row. When the resource has been hard-deleted out-of-band (should be rare — tenant cascade covers most cases), revoke the grant with revoked_reason='orphaned_resource' + fire GrantResourceOrphaned. Runs weekly. Batched — sweeps up to 10000 grants per run.",
       "queue": "retention",
       "tries": 2,
@@ -62,7 +62,7 @@
       }
     },
     {
-      "class": "Academorix\\Grant\\Jobs\\BulkGrantIssueJob",
+      "class": "Stackra\\Grant\\Jobs\\BulkGrantIssueJob",
       "description": "Processes a bulk-provision CSV batch. Reads uploaded CSV row-by-row, calls GrantIssuer::issue() for each; captures per-row success + failure into a batch report. Fires BulkGrantIssued once when finished. Isolated queue so a slow bulk upload does not stall other grant activity.",
       "queue": "bulk",
       "tries": 2,
@@ -79,7 +79,7 @@
       }
     },
     {
-      "class": "Academorix\\Grant\\Jobs\\InvalidateGrantCacheJob",
+      "class": "Stackra\\Grant\\Jobs\\InvalidateGrantCacheJob",
       "description": "Fired by grant lifecycle events (Issued / Updated / Revoked / Expired) to invalidate the L1 in-process cache (per-worker) + L2 Redis cache entries for the affected (tenant, subject_type, subject_id) tuple. Also invalidates any (tenant, resource_type, resource_id) reverse-cached entries. Rate-limited per (subject_id) to 1 invalidation per 100ms so a burst of grant changes doesn't thrash the cache.",
       "queue": "notifications",
       "tries": 5,

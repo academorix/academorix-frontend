@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AthleteEnrollment\Services;
+namespace Stackra\AthleteEnrollment\Services;
 
-use Academorix\AthleteEnrollment\Contracts\Services\WaitlistPositionResolverInterface;
+use Stackra\AthleteEnrollment\Contracts\Services\WaitlistPositionResolverInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\AthleteEnrollment\Contracts\Repositories\AthleteEnrollmentRepositoryInterface;
+use Stackra\AthleteEnrollment\Contracts\Repositories\AthleteEnrollmentRepositoryInterface;
 
 /**
  * Concrete service — WaitlistPositionResolver.

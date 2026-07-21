@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/mfa/jobs",
+  "id": "stackra://modules/mfa/jobs",
   "$version": 1,
   "title": "mfa — background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Mfa\\Jobs\\PurgeUnconfirmedEnrollmentsJob",
+      "class": "Stackra\\Mfa\\Jobs\\PurgeUnconfirmedEnrollmentsJob",
       "queue": "notifications",
       "purpose": "Evict TOTP enrolment previews from Redis that were issued but never confirmed within their 5-minute window. Also purges any orphaned WebAuthn registration-options challenges that the browser never returned an attestation for. Ephemeral state — the durable Identity row is unaffected.",
       "steps": [
@@ -12,7 +12,7 @@
         "For each expired key: emit a MfaEnrollmentFailed event with reason='preview_expired', delete the key.",
         "SCAN Redis for keys matching `mfa:webauthn:register:challenge:*` older than 5 minutes.",
         "For each expired key: emit a MfaEnrollmentFailed event with reason='preview_expired' + method='webauthn', delete the key.",
-        "Emit `academorix.mfa.enrollment.previews_purged` metric (labels: method, count)."
+        "Emit `stackra.mfa.enrollment.previews_purged` metric (labels: method, count)."
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -24,14 +24,14 @@
       "cadence_note": "Scheduled every 5 minutes (see schedule.json). The 5-minute cadence matches the preview TTL so a preview stays no more than ~5 extra minutes past expiry before eviction; the durable state (Identity.mfa_secret_encrypted) is never affected by this job."
     },
     {
-      "class": "Academorix\\Mfa\\Jobs\\NotifyLowRecoveryCodesJob",
+      "class": "Stackra\\Mfa\\Jobs\\NotifyLowRecoveryCodesJob",
       "queue": "notifications",
       "purpose": "Nightly scan for Identities whose remaining recovery-code count is below the low-water threshold (default 3) AND who haven't been notified in the last 30 days. Dispatches LowRecoveryCodesRemainingNotification. Complements the per-consumption debounced MfaBackupCodeCountLow event with a periodic reminder for users who consumed codes but never restocked.",
       "steps": [
         "SELECT identity_id, remaining recovery-code count FROM identities WHERE mfa_recovery_codes_hashed IS NOT NULL AND json_array_length(mfa_recovery_codes_hashed) < config('mfa.recovery_codes.low_water_threshold').",
         "LEFT JOIN activity_log to filter out Identities notified within the last 30 days.",
         "For each qualifying row: dispatch LowRecoveryCodesRemainingNotification.",
-        "Emit `academorix.mfa.recovery_codes.low_notifications_dispatched` metric."
+        "Emit `stackra.mfa.recovery_codes.low_notifications_dispatched` metric."
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -43,7 +43,7 @@
       "cadence_note": "Scheduled nightly at 09:00 UTC (business-hours delivery for the most common user timezone bands). Batches 500 Identities per iteration to keep memory bounded."
     },
     {
-      "class": "Academorix\\Mfa\\Jobs\\CleanupDisabledWebauthnCredentialsJob",
+      "class": "Stackra\\Mfa\\Jobs\\CleanupDisabledWebauthnCredentialsJob",
       "queue": "notifications",
       "purpose": "Hard-delete WebauthnCredential rows whose `disabled_at + 90 days < now()`. Retains the disabled row for the retention window so audit queries can resolve historical assertions; hard-deletes past the window per data-minimisation policy.",
       "steps": [
@@ -51,7 +51,7 @@
         "For each: emit WebauthnCredentialDeleted event with trigger='retention_purge'.",
         "DELETE the batch inside a transaction.",
         "Recurse until fewer than 500 rows returned in a scan.",
-        "Emit `academorix.mfa.webauthn_credentials.retention_purged` metric."
+        "Emit `stackra.mfa.webauthn_credentials.retention_purged` metric."
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Events;
+namespace Stackra\Chargeback\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,8 +16,8 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog (retention: 7 years)
  * - activity::WriteToActivityLog
- * - notifications::DispatchChargebackRateThresholdExceededNotification (P1 admin + Academorix platform ops)
- * - observability::MetricsCollector (academorix.chargeback.rate_threshold_exceeded_total labelled by network)
+ * - notifications::DispatchChargebackRateThresholdExceededNotification (P1 admin + Stackra platform ops)
+ * - observability::MetricsCollector (stackra.chargeback.rate_threshold_exceeded_total labelled by network)
  *
  * @category Chargeback
  *

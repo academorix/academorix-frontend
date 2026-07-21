@@ -1,26 +1,26 @@
 {
-  "id": "academorix://modules/audit/observers",
+  "id": "stackra://modules/audit/observers",
   "$version": 1,
   "title": "audit — Eloquent observers",
   "description": "Two observers — one per owned entity. AuditObserver is the heavyweight — it enforces the four immutability invariants (require tenant_id, refuse update, refuse delete outside purge, populate application_id from request context). AuditRetentionPolicyObserver enforces the Enterprise-only entitlement gate + retention_years cap + date-range shape.",
   "observers": [
     {
       "model": "Audit",
-      "observer": "Academorix\\Observability\\Audit\\Observers\\AuditObserver",
+      "observer": "Stackra\\Observability\\Audit\\Observers\\AuditObserver",
       "handles": [
         "creating — refuse when tenant_id IS NULL (defense-in-depth against vendor drift; the vendor observer does not know about our tenant_id column). Throws NOTIFICATIONS_AUDIT_TENANT_ID_MISSING with 500 status (this is an internal invariant violation, not a user error).",
         "creating — when application_id IS NULL AND request context has an application (via X-Application-Id middleware), populate application_id from the resolved application. When request context has no application (platform-plane audit) leave application_id NULL.",
         "creating — validate `event` against the closed set: vendor-defined ('created', 'updated', 'deleted', 'restored') + our registered custom events (loaded from data/audited-events-catalog.json at boot). Refuse unknown events with NOTIFICATIONS_AUDIT_UNKNOWN_EVENT_TYPE.",
         "creating — if config.audit.compliance.redact_pii_in_old_new_values is true (tenant opt-in), run the registered PiiRedactor over old_values + new_values before persistence. Default is false — regulators need full context.",
         "created — fire AuditRecorded event afterCommit. Payload is intentionally narrow (audit_id + tenant_id + application_id + event + auditable_type + auditable_id + user info + created_at) — NO diff blobs to prevent leaking PII into event queues.",
-        "created — write monitoring metric increment: `academorix.audit.records_total{tenant_id, event, auditable_type}`. Counter, not gauge — cumulative record count.",
+        "created — write monitoring metric increment: `stackra.audit.records_total{tenant_id, event, auditable_type}`. Counter, not gauge — cumulative record count.",
         "updating — REFUSE ALL when config.audit.immutability.forbid_update is true (default). Throws NOTIFICATIONS_AUDIT_ROW_IMMUTABLE (422). Audit rows are immutable after write. Test-env override: config.audit.test.forbid_update_relaxed can relax this for unit tests that fabricate specific states.",
         "deleting — REFUSE unless the caller is the PurgeExpiredAuditsJob service account. The check is: (a) config.audit.immutability.forbid_delete_outside_purge is true (default) AND (b) request context is a queued job AND (c) the job class matches PurgeExpiredAuditsJob::class. Throws NOTIFICATIONS_AUDIT_ROW_DELETE_FORBIDDEN (403) otherwise."
       ]
     },
     {
       "model": "AuditRetentionPolicy",
-      "observer": "Academorix\\Observability\\Audit\\Observers\\AuditRetentionPolicyObserver",
+      "observer": "Stackra\\Observability\\Audit\\Observers\\AuditRetentionPolicyObserver",
       "handles": [
         "creating — refuse when tenant lacks audit_retention_extended entitlement (Enterprise-only). Throws NOTIFICATIONS_AUDIT_RETENTION_NOT_ENTITLED (403).",
         "creating — refuse when tenant already has an active policy (deleted_at IS NULL). Throws NOTIFICATIONS_AUDIT_RETENTION_POLICY_ALREADY_ACTIVE (409). Caller must PATCH the existing policy instead of POSTing a second one.",

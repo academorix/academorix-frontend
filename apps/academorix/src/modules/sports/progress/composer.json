@@ -1,10 +1,10 @@
 {
-  "name": "academorix/progress",
+  "name": "stackra/progress",
   "type": "library",
-  "description": "Academorix Progress module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/progress/`. Complements the wire SDK at `academorix-sports/progress-sdk`.",
+  "description": "Stackra Progress module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/progress/`. Complements the wire SDK at `stackra-sports/progress-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "sports",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-sports/progress-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-sports/progress-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Progress\\": "src/"
+      "Stackra\\Progress\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Progress\\Tests\\": "tests/"
+      "Stackra\\Progress\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Progress\\Providers\\ProgressServiceProvider"
+        "Stackra\\Progress\\Providers\\ProgressServiceProvider"
       ],
       "aliases": {}
     }

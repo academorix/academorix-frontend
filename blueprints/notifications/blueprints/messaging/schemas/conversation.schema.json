@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/messaging/schemas/conversation",
+  "id": "stackra://modules/messaging/schemas/conversation",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Conversation",

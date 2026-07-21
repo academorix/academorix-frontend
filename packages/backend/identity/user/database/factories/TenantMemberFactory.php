@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\User\Database\Factories;
+namespace Stackra\User\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\User\Contracts\Data\TenantMemberInterface;
-use Academorix\User\Models\TenantMember;
+use Stackra\User\Contracts\Data\TenantMemberInterface;
+use Stackra\User\Models\TenantMember;
 
 /**
- * Factory for {@see \Academorix\User\Models\TenantMember}.
+ * Factory for {@see \Stackra\User\Models\TenantMember}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\User\Models\TenantMember>
+ * @extends Factory<\Stackra\User\Models\TenantMember>
  *
  * @category User
  *

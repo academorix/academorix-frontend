@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Exceptions;
+namespace Stackra\Geography\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the cities index is called without a `country_id` or
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GeographyCitiesIndexUnscopedException extends AcademorixException
+final class GeographyCitiesIndexUnscopedException extends StackraException
 {
     public const CODE = 'GEOGRAPHY_CITIES_INDEX_UNSCOPED';
 

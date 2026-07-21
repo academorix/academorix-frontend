@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invoice\Services;
+namespace Stackra\Invoice\Services;
 
-use Academorix\Invoice\Contracts\Services\DunningSchedulerInterface;
+use Stackra\Invoice\Contracts\Services\DunningSchedulerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Invoice\Contracts\Repositories\CreditNoteRepositoryInterface;
+use Stackra\Invoice\Contracts\Repositories\CreditNoteRepositoryInterface;
 
 /**
  * Concrete service — DunningScheduler.

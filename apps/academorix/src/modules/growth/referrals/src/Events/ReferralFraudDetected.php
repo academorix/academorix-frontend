@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Events;
+namespace Stackra\Referrals\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -17,7 +17,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - audit::WriteToAuditLog (retention: 7 years — fraud audit trail)
  * - activity::WriteToActivityLog
  * - notifications::DispatchReferralFraudFlaggedNotification (to admin — cannot-opt-out for critical severity)
- * - observability::MetricsCollector (academorix.referrals.fraud_flags_created_total labelled by flag_type + severity)
+ * - observability::MetricsCollector (stackra.referrals.fraud_flags_created_total labelled by flag_type + severity)
  *
  * @category Referrals
  *

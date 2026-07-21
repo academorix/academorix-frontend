@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Exceptions;
+namespace Stackra\Marketing\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to mutate attribution or consent_snapshot after event creation.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MarketingSnapshotImmutableException extends AcademorixException
+final class MarketingSnapshotImmutableException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

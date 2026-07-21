@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Staff\Actions\Tenant;
+namespace Stackra\Staff\Actions\Tenant;
 
-use Academorix\Staff\Contracts\Repositories\CoachRepositoryInterface;
-use Academorix\Staff\Data\CoachData;
-use Academorix\Staff\Data\Requests\CreateCoachRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Staff\Contracts\Repositories\CoachRepositoryInterface;
+use Stackra\Staff\Data\CoachData;
+use Stackra\Staff\Data\Requests\CreateCoachRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/coaches` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Staff

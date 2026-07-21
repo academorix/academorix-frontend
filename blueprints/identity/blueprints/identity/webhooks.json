@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/identity/webhooks",
+  "id": "stackra://modules/identity/webhooks",
   "$version": 1,
   "title": "identity \u2014 outbound webhooks",
   "description": "Identity DISPATCHES no outbound webhooks. It is a security substrate \u2014 exposing identity lifecycle events to tenant-configurable webhook endpoints would leak PII to third parties. Tenants that need identity-lifecycle callbacks can subscribe via `platform/webhook` to events published by higher-tier modules (`identity/user::UserProvisioned`, `identity/auth::LoginSucceeded`) which are redacted before dispatch.",
@@ -9,7 +9,7 @@
       "name": "kms.key.rotated",
       "description": "Optional AWS EventBridge integration \u2014 KMS notifies the app when the key backing MFA-secret encryption rotates. Received event triggers the `ScheduleMfaSecretRotation` listener (see listeners.json) which runs a bulk re-encryption sweep.",
       "provider": "aws-kms",
-      "handler": "Academorix\\Identity\\Listeners\\ScheduleMfaSecretRotation",
+      "handler": "Stackra\\Identity\\Listeners\\ScheduleMfaSecretRotation",
       "required": false,
       "notes": "Best-effort. Missing the event is not catastrophic \u2014 the rotation sweep also runs via `identity:rotate-mfa-secret` cron entry per environment policy."
     }

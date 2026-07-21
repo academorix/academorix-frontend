@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/athlete-guardian/middleware",
+  "id": "stackra://modules/athlete-guardian/middleware",
   "$version": 1,
   "title": "athlete-guardian — HTTP middleware",
   "middleware": [
     {
       "alias": "athlete_guardian.enforce_verified",
-      "class": "Academorix\\Sports\\AthleteGuardian\\Http\\Middleware\\EnforceGuardianVerified",
+      "class": "Stackra\\Sports\\AthleteGuardian\\Http\\Middleware\\EnforceGuardianVerified",
       "priority": 44,
       "description": "Refuses actions that require a verified guardianship. Applied to routes that touch a guardian who must be verified (e.g. set-primary — only verified guardians can be promoted). Returns 422 `PRIMARY_GUARDIAN_MUST_BE_VERIFIED` on unverified target. Distinct from the observer refusal — the middleware fails fast at the route boundary.",
       "auto_applied": false,

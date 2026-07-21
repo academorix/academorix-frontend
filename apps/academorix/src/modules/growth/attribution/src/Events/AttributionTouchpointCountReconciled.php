@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Events;
+namespace Stackra\Attribution\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -15,7 +15,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * ## Consumers
  *
  * - audit::WriteToAuditLog
- * - observability::MetricsCollector (increments academorix.attribution.count_drift_corrections)
+ * - observability::MetricsCollector (increments stackra.attribution.count_drift_corrections)
  *
  * @category Attribution
  *

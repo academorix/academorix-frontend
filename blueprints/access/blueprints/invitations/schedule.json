@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invitations/schedule",
+  "id": "stackra://modules/invitations/schedule",
   "$version": 1,
   "title": "invitations — scheduled tasks",
   "description": "Cron entries registered by `InvitationsServiceProvider::schedule()`. UTC throughout. `runOnOneServer` on every entry so multi-node worker pools do not duplicate work. `withoutOverlapping` where windows may exceed the interval.",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geography/entitlements",
+  "id": "stackra://modules/geography/entitlements",
   "$version": 1,
   "title": "geography \u2014 declared entitlements",
   "description": "One pool for /geolocate usage \u2014 free tier gets a small monthly allowance because each miss triggers outbound ip-api.com traffic.",

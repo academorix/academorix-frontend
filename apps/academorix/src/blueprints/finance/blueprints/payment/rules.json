@@ -1,104 +1,104 @@
 {
-  "id": "academorix://modules/payment/rules",
+  "id": "stackra://modules/payment/rules",
   "$version": 1,
   "title": "payment — validation rules",
   "description": "Custom Laravel validation rules published by PaymentServiceProvider::boot(). All rules are used both by the observer chain (for authoritative refusal on write) AND by FormRequest data classes (for early request-time validation with clear error surfaces).",
-  "namespace": "Academorix\\Finance\\Payment\\Rules",
+  "namespace": "Stackra\\Finance\\Payment\\Rules",
   "rules": [
     {
       "name": "valid_provider",
-      "class": "Academorix\\Finance\\Payment\\Rules\\ValidProvider",
+      "class": "Stackra\\Finance\\Payment\\Rules\\ValidProvider",
       "signature": "valid_provider",
       "description": "Value is one of the 6 supported provider slugs: stripe / paddle / adyen / square / paypal / custom_webhook. Backed by the PaymentProvider enum cast.",
       "default_message": "The :attribute must be one of: stripe, paddle, adyen, square, paypal, custom_webhook."
     },
     {
       "name": "valid_currency",
-      "class": "Academorix\\Finance\\Payment\\Rules\\ValidCurrency",
+      "class": "Stackra\\Finance\\Payment\\Rules\\ValidCurrency",
       "signature": "valid_currency",
       "description": "ISO 4217 3-letter uppercase currency code. Must be one of the supported currency codes shipped in data/three-ds-version-catalog.json → supported_currencies (all major currencies).",
       "default_message": "The :attribute must be a valid ISO 4217 currency code (e.g. USD, EUR, GBP, JPY)."
     },
     {
       "name": "valid_positive_amount",
-      "class": "Academorix\\Finance\\Payment\\Rules\\ValidPositiveAmount",
+      "class": "Stackra\\Finance\\Payment\\Rules\\ValidPositiveAmount",
       "signature": "valid_positive_amount",
       "description": "amount_cents is a positive integer. Zero-amount payments are refused (creates a Payment row that fails downstream reconciliation with Invoice.mark_paid).",
       "default_message": "The :attribute must be a positive integer (> 0)."
     },
     {
       "name": "valid_capture_method",
-      "class": "Academorix\\Finance\\Payment\\Rules\\ValidCaptureMethod",
+      "class": "Stackra\\Finance\\Payment\\Rules\\ValidCaptureMethod",
       "signature": "valid_capture_method",
       "description": "Enum: automatic (default) / manual. manual requires `payment_manual_capture` entitlement (Medium+).",
       "default_message": "The :attribute must be 'automatic' or 'manual'."
     },
     {
       "name": "valid_confirmation_method",
-      "class": "Academorix\\Finance\\Payment\\Rules\\ValidConfirmationMethod",
+      "class": "Stackra\\Finance\\Payment\\Rules\\ValidConfirmationMethod",
       "signature": "valid_confirmation_method",
       "description": "Enum: automatic (default; provider auto-confirms) / manual (customer explicitly confirms via SDK, required for 3DS2).",
       "default_message": "The :attribute must be 'automatic' or 'manual'."
     },
     {
       "name": "valid_next_action_type",
-      "class": "Academorix\\Finance\\Payment\\Rules\\ValidNextActionType",
+      "class": "Stackra\\Finance\\Payment\\Rules\\ValidNextActionType",
       "signature": "valid_next_action_type",
       "description": "Enum: redirect_to_url / use_stripe_sdk / three_d_secure_redirect / verify_with_micro_deposits / oxxo_display_details. Only used when status='requires_action'.",
       "default_message": "The :attribute is not a recognized next-action type."
     },
     {
       "name": "valid_dispute_reason",
-      "class": "Academorix\\Finance\\Payment\\Rules\\ValidDisputeReason",
+      "class": "Stackra\\Finance\\Payment\\Rules\\ValidDisputeReason",
       "signature": "valid_dispute_reason",
       "description": "Enum: fraudulent / duplicate / product_not_received / product_unacceptable / subscription_canceled / credit_not_processed / general / customer_initiated / unrecognized. Backed by data/dispute-reason-catalog.json (source of truth).",
       "default_message": "The :attribute must be one of the 9 supported dispute reasons. See data/dispute-reason-catalog.json."
     },
     {
       "name": "valid_dispute_status",
-      "class": "Academorix\\Finance\\Payment\\Rules\\ValidDisputeStatus",
+      "class": "Stackra\\Finance\\Payment\\Rules\\ValidDisputeStatus",
       "signature": "valid_dispute_status",
       "description": "Enum: warning_needs_response / warning_under_review / warning_closed / needs_response / under_review / charge_refunded / won / lost. Warning states = provider early-warning; full states = funds provisionally withdrawn.",
       "default_message": "The :attribute is not a valid dispute status."
     },
     {
       "name": "valid_evidence_shape",
-      "class": "Academorix\\Finance\\Payment\\Rules\\ValidEvidenceShape",
+      "class": "Stackra\\Finance\\Payment\\Rules\\ValidEvidenceShape",
       "signature": "valid_evidence_shape",
       "description": "evidence jsonb matches the shape: { customer_signature?, receipt?, service_documentation?, product_description?, refund_policy?, communication_log?, uncategorized_text? }. At least one field non-null on submit.",
       "default_message": "The :attribute must contain at least one evidence field. Valid fields: customer_signature, receipt, service_documentation, product_description, refund_policy, communication_log, uncategorized_text."
     },
     {
       "name": "valid_provider_reference_format",
-      "class": "Academorix\\Finance\\Payment\\Rules\\ValidProviderReferenceFormat",
+      "class": "Stackra\\Finance\\Payment\\Rules\\ValidProviderReferenceFormat",
       "signature": "valid_provider_reference_format",
       "description": "provider_reference_id validates against a per-provider format regex: Stripe pm_[A-Za-z0-9]{16,}, Paddle payment_method_id (opaque UUID-ish), Adyen storedPaymentMethodId (alphanumeric), Square CARD_NONCE-*, PayPal payment_method (alphanumeric), custom_webhook (caller-defined, at least 8 characters).",
       "default_message": "The :attribute does not match the expected format for the ':provider' provider."
     },
     {
       "name": "valid_last4",
-      "class": "Academorix\\Finance\\Payment\\Rules\\ValidLast4",
+      "class": "Stackra\\Finance\\Payment\\Rules\\ValidLast4",
       "signature": "valid_last4",
       "description": "String of exactly 4 numeric characters. NEVER the full PAN (PCI-DSS Level 1).",
       "default_message": "The :attribute must be exactly 4 digits (last4 of the card / bank account, never the full number)."
     },
     {
       "name": "valid_exp_month_year",
-      "class": "Academorix\\Finance\\Payment\\Rules\\ValidExpMonthYear",
+      "class": "Stackra\\Finance\\Payment\\Rules\\ValidExpMonthYear",
       "signature": "valid_exp_month_year",
       "description": "exp_month IN [1, 12] + exp_year IN [current_year, current_year + 20]. Applied cross-field (validates the pair).",
       "default_message": "The :attribute must be a valid card expiry (month 1-12, year within 20 years of today)."
     },
     {
       "name": "valid_state_transition",
-      "class": "Academorix\\Finance\\Payment\\Rules\\ValidStateTransition",
+      "class": "Stackra\\Finance\\Payment\\Rules\\ValidStateTransition",
       "signature": "valid_state_transition",
       "description": "For PaymentIntent + PaymentDispute state transitions. Enforces one-way state machines (see observers.json for the full transition tables). Any invalid transition returns validation error with the allowed target states.",
       "default_message": "The transition from ':from' to ':to' is not allowed. Allowed targets: :allowed."
     },
     {
       "name": "valid_provider_webhook_signature",
-      "class": "Academorix\\Finance\\Payment\\Rules\\ValidProviderWebhookSignature",
+      "class": "Stackra\\Finance\\Payment\\Rules\\ValidProviderWebhookSignature",
       "signature": "valid_provider_webhook_signature",
       "description": "Called by the payment.webhook_verify middleware. Verifies HMAC-SHA256 signature per provider signing scheme: Stripe (t=timestamp,v1=signature), Paddle (Paddle-Signature), Adyen (HmacSignature over notification payload), Square (Square-Signature), PayPal (Paypal-Transmission-Sig with certificate verification), custom_webhook (X-Payment-Signature = hex(HMAC-SHA256(secret, timestamp+body))).",
       "default_message": "The webhook signature is invalid for the ':provider' provider."

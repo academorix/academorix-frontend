@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/reporting/retention",
+  "id": "stackra://modules/reporting/retention",
   "$version": 1,
   "title": "reporting — data retention windows",
   "description": "Reports themselves are DERIVED DATA — regenerable from source modules. Purge is safe once the underlying data is available. However, EXPORT AUDIT ENTRIES (who exported which PII when) are retained for the full compliance window.",

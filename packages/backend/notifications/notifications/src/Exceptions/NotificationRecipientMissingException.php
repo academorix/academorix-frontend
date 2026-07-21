@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Exceptions;
+namespace Stackra\Notifications\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the dispatch call did not provide a recipient and one
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationRecipientMissingException extends AcademorixException
+final class NotificationRecipientMissingException extends StackraException
 {
     public const CODE = 'NOTIFICATIONS_RECIPIENT_MISSING';
 

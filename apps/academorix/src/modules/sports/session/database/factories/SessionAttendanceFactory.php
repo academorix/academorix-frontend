@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Session\Database\Factories;
+namespace Stackra\Session\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Session\Contracts\Data\SessionAttendanceInterface;
-use Academorix\Session\Models\SessionAttendance;
+use Stackra\Session\Contracts\Data\SessionAttendanceInterface;
+use Stackra\Session\Models\SessionAttendance;
 
 /**
- * Factory for {@see \Academorix\Session\Models\SessionAttendance}.
+ * Factory for {@see \Stackra\Session\Models\SessionAttendance}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Session\Models\SessionAttendance>
+ * @extends Factory<\Stackra\Session\Models\SessionAttendance>
  *
  * @category Session
  *

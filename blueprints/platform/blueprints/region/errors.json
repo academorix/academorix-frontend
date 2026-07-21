@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/region/errors",
+  "id": "stackra://modules/region/errors",
   "$version": 1,
   "title": "region — error codes",
   "namespace": "region",

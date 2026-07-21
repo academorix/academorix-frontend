@@ -4,15 +4,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Delegation\Contracts\Data;
+namespace Stackra\Delegation\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Delegation\Models\ImpersonationSession;
+use Stackra\Delegation\Models\ImpersonationSession;
 
 /**
  * Table shape for the `impersonation_sessions` table.
  *
- * One row per act-as session started by a PlatformUser (Academorix staff) against a tenant User for support / debug purposes.
+ * One row per act-as session started by a PlatformUser (Stackra staff) against a tenant User for support / debug purposes.
  *
  * @category Delegation
  *

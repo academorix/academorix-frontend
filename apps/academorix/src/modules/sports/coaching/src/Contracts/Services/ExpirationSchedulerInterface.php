@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Contracts\Services;
+namespace Stackra\Coaching\Contracts\Services;
 
-use Academorix\Coaching\Services\ExpirationScheduler;
+use Stackra\Coaching\Services\ExpirationScheduler;
 use Illuminate\Container\Attributes\Bind;
 
 /**

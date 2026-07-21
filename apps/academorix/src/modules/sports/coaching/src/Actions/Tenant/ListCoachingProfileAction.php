@@ -4,14 +4,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Actions\Tenant;
+namespace Stackra\Coaching\Actions\Tenant;
 
-use Academorix\Coaching\Contracts\Repositories\CoachingProfileRepositoryInterface;
-use Academorix\Coaching\Data\CoachingProfileData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Coaching\Contracts\Repositories\CoachingProfileRepositoryInterface;
+use Stackra\Coaching\Data\CoachingProfileData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\LaravelData\PaginatedDataCollection;
@@ -20,7 +20,7 @@ use Spatie\LaravelData\PaginatedDataCollection;
  * `GET /api/v1/coaching-profiles` — list action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Coaching
@@ -50,7 +50,7 @@ final class ListCoachingProfileAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Academorix\Coaching\Models\CoachingProfile> $page */
+        /** @var LengthAwarePaginator<int, \Stackra\Coaching\Models\CoachingProfile> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

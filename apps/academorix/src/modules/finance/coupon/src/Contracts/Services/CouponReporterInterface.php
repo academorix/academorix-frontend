@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Contracts\Services;
+namespace Stackra\Coupon\Contracts\Services;
 
-use Academorix\Coupon\Services\CouponReporter;
+use Stackra\Coupon\Services\CouponReporter;
 use Illuminate\Container\Attributes\Bind;
 
 /**

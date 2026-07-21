@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Exceptions;
+namespace Stackra\Coupon\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * applicability + applicable_plan_ids + minimum_order_amount inconsistent.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CouponInvalidApplicabilityException extends AcademorixException
+final class CouponInvalidApplicabilityException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

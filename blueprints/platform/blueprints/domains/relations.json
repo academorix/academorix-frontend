@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/domains/relations",
+  "id": "stackra://modules/domains/relations",
   "$version": 1,
   "title": "domains — model relationships",
   "description": "Domain belongs to a Tenant (tenant scope) + an Application (product boundary). DomainRecord belongs to a Domain, and tenant_id cascades through the parent.",

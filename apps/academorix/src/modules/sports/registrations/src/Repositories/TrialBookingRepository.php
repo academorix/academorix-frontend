@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registrations\Repositories;
+namespace Stackra\Registrations\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Registrations\Contracts\Data\TrialBookingInterface;
-use Academorix\Registrations\Contracts\Repositories\TrialBookingRepositoryInterface;
-use Academorix\Registrations\Models\TrialBooking;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Registrations\Contracts\Data\TrialBookingInterface;
+use Stackra\Registrations\Contracts\Repositories\TrialBookingRepositoryInterface;
+use Stackra\Registrations\Models\TrialBooking;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Registrations\Models\TrialBooking}.
+ * Attribute-first Eloquent repository for {@see Stackra\Registrations\Models\TrialBooking}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(TrialBookingInterface::class)]` which resolves to
  * `TrialBooking` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Registrations\Models\TrialBooking>
+ * @extends Repository<\Stackra\Registrations\Models\TrialBooking>
  *
  * @category Registrations
  *

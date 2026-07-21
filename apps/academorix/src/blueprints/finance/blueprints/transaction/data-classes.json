@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transaction/data-classes",
+  "id": "stackra://modules/transaction/data-classes",
   "$version": 1,
   "title": "transaction — field classification",
   "description": "Transactions carry no PII directly — subjects are referenced via (reference_type, reference_id) chains to source entities (Invoice / Payment / Refund / Chargeback / CouponRedemption). Amounts are confidential (competitor tenant cross-inference risk). The ledger entries are the audit-critical row-level record. No card data (day-pass modeling's payment_method is a category on facility side; payment tokens live in the payment module — not here).",

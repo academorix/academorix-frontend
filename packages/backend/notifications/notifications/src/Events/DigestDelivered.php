@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Events;
+namespace Stackra\Notifications\Events;
 
-use Academorix\Events\Attributes\AsEvent;
-use Academorix\Notifications\Models\NotificationDigest;
+use Stackra\Events\Attributes\AsEvent;
+use Stackra\Notifications\Models\NotificationDigest;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 

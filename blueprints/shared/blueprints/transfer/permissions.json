@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/transfer/permissions",
+  "id": "stackra://modules/transfer/permissions",
   "$version": 1,
   "title": "transfer \u2014 permissions",
-  "seeder": "Academorix\\Transfer\\Database\\Seeders\\TransferPermissionSeeder",
+  "seeder": "Stackra\\Transfer\\Database\\Seeders\\TransferPermissionSeeder",
   "isSystem": true,
   "description": "Operational permissions on the transfer surface itself. Per-ENTITY import / export permissions (e.g. `athletes.import`) are declared by each domain module \u2014 they compose with these via `requiredPermission` on the #[Importable] / #[Exportable] attribute.",
   "permissions": [

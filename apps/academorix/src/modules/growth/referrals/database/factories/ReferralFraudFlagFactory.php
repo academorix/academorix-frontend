@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Database\Factories;
+namespace Stackra\Referrals\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Referrals\Contracts\Data\ReferralFraudFlagInterface;
-use Academorix\Referrals\Models\ReferralFraudFlag;
+use Stackra\Referrals\Contracts\Data\ReferralFraudFlagInterface;
+use Stackra\Referrals\Models\ReferralFraudFlag;
 
 /**
- * Factory for {@see \Academorix\Referrals\Models\ReferralFraudFlag}.
+ * Factory for {@see \Stackra\Referrals\Models\ReferralFraudFlag}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Referrals\Models\ReferralFraudFlag>
+ * @extends Factory<\Stackra\Referrals\Models\ReferralFraudFlag>
  *
  * @category Referrals
  *

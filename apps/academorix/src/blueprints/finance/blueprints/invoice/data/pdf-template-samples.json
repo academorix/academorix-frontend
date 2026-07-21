@@ -4,13 +4,13 @@
   "description": "The 4 template families shipped day-1. Each declares its use case, entitlement requirement, and the field layout summary. Templates are Blade views under resources/views/invoice/pdf/{slug}.blade.php. The InvoicePDFRenderer picks the template based on tenant entitlement + settings.invoice.pdf_template.",
   "templates": [
     {
-      "slug": "academorix-default",
-      "display_name": "Academorix default",
-      "description": "The default template for Small-tier tenants (no branding entitlement). Simple, clean, Academorix-branded footer with 'Powered by Academorix' + tenant name in header + billing_address in top-left + invoice details in top-right + line-item table + totals summary at bottom.",
+      "slug": "stackra-default",
+      "display_name": "Stackra default",
+      "description": "The default template for Small-tier tenants (no branding entitlement). Simple, clean, Stackra-branded footer with 'Powered by Stackra' + tenant name in header + billing_address in top-left + invoice details in top-right + line-item table + totals summary at bottom.",
       "requires_entitlement": null,
       "paper_size": "A4",
       "layout_summary": {
-        "header": "Academorix logo (small) + 'Powered by Academorix' text",
+        "header": "Stackra logo (small) + 'Powered by Stackra' text",
         "tenant_block": "Tenant name + address (from tenant.branding.address if set)",
         "billing_address_block": "Frozen customer billing_address",
         "invoice_details_block": "Invoice #, issue_date, due_date, payment_terms",
@@ -21,7 +21,7 @@
     {
       "slug": "tenant-branded",
       "display_name": "Tenant branded",
-      "description": "For Medium+ tenants with invoice_tenant_branded_pdf entitlement. Replaces Academorix branding with tenant logo + colors + footer. All other layout mirrors academorix-default.",
+      "description": "For Medium+ tenants with invoice_tenant_branded_pdf entitlement. Replaces Stackra branding with tenant logo + colors + footer. All other layout mirrors stackra-default.",
       "requires_entitlement": "invoice_tenant_branded_pdf",
       "paper_size": "A4",
       "layout_summary": {

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FinanceDigitalPassesSdk\Resources;
+namespace Stackra\FinanceDigitalPassesSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\FinanceDigitalPassesSdk\Data\WalletPassData;
-use Academorix\FinanceDigitalPassesSdk\Requests\WalletPasses\CreateWalletPassRequest;
-use Academorix\FinanceDigitalPassesSdk\Requests\WalletPasses\ListWalletPassesRequest;
-use Academorix\FinanceDigitalPassesSdk\Requests\WalletPasses\ShowWalletPassRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\FinanceDigitalPassesSdk\Data\WalletPassData;
+use Stackra\FinanceDigitalPassesSdk\Requests\WalletPasses\CreateWalletPassRequest;
+use Stackra\FinanceDigitalPassesSdk\Requests\WalletPasses\ListWalletPassesRequest;
+use Stackra\FinanceDigitalPassesSdk\Requests\WalletPasses\ShowWalletPassRequest;
 use Saloon\Http\Response;
 
 /**
@@ -56,7 +56,7 @@ final readonly class WalletPassesResource
      *
      * @return WalletPassData
      */
-    public function create(\Academorix\FinanceDigitalPassesSdk\Payloads\WalletPasses\CreateWalletPassPayload $payload, ?string $idempotencyKey = null): WalletPassData
+    public function create(\Stackra\FinanceDigitalPassesSdk\Payloads\WalletPasses\CreateWalletPassPayload $payload, ?string $idempotencyKey = null): WalletPassData
     {
         return $this->connector->send(new CreateWalletPassRequest($payload, $idempotencyKey))->dto();
     }

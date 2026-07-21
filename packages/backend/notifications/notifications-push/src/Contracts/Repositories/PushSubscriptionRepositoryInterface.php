@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Contracts\Repositories;
+namespace Stackra\Notifications\Push\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Notifications\Push\Models\PushSubscription;
-use Academorix\Notifications\Push\Repositories\EloquentPushSubscriptionRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Notifications\Push\Models\PushSubscription;
+use Stackra\Notifications\Push\Repositories\EloquentPushSubscriptionRepository;
 use DateTimeInterface;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;

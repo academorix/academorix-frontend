@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Exceptions;
+namespace Stackra\Activity\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * retention_days outside 30.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ActivityRetentionOutOfRangeException extends AcademorixException
+final class ActivityRetentionOutOfRangeException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

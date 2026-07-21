@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Actions\Platform\Cities;
+namespace Stackra\Geography\Actions\Platform\Cities;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Geography\Contracts\Repositories\CityRepositoryInterface;
-use Academorix\Geography\Data\Requests\UpdateCityRequestData;
-use Academorix\Geography\Data\Resources\CityResourceData;
-use Academorix\Geography\Enums\GeographyPermission;
-use Academorix\Geography\Models\City;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Patch;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Geography\Contracts\Repositories\CityRepositoryInterface;
+use Stackra\Geography\Data\Requests\UpdateCityRequestData;
+use Stackra\Geography\Data\Resources\CityResourceData;
+use Stackra\Geography\Enums\GeographyPermission;
+use Stackra\Geography\Models\City;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Patch;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `PATCH /api/v1/platform/geography/cities/{city}` — platform admin

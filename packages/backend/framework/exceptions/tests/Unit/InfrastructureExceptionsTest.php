@@ -6,15 +6,15 @@
  * @description
  * Unit coverage for the infrastructure exception family:
  *
- *   - {@see \Academorix\Exceptions\Infrastructure\IntegrationException}
+ *   - {@see \Stackra\Exceptions\Infrastructure\IntegrationException}
  *     — third-party service returned an error / bad payload.
- *   - {@see \Academorix\Exceptions\Infrastructure\TimeoutException}
+ *   - {@see \Stackra\Exceptions\Infrastructure\TimeoutException}
  *     — upstream call exceeded its time budget.
- *   - {@see \Academorix\Exceptions\Infrastructure\ServiceUnavailableException}
+ *   - {@see \Stackra\Exceptions\Infrastructure\ServiceUnavailableException}
  *     — an internal dependency (DB, cache, queue) is down.
- *   - {@see \Academorix\Exceptions\Infrastructure\MaintenanceModeException}
+ *   - {@see \Stackra\Exceptions\Infrastructure\MaintenanceModeException}
  *     — planned downtime.
- *   - {@see \Academorix\Exceptions\Infrastructure\ConfigurationException}
+ *   - {@see \Stackra\Exceptions\Infrastructure\ConfigurationException}
  *     — the app can't boot because config is missing / invalid.
  *
  * ## What each test locks in
@@ -34,14 +34,14 @@
 
 declare(strict_types=1);
 
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
-use Academorix\Exceptions\Infrastructure\ConfigurationException;
-use Academorix\Exceptions\Infrastructure\IntegrationException;
-use Academorix\Exceptions\Infrastructure\MaintenanceModeException;
-use Academorix\Exceptions\Infrastructure\ServiceUnavailableException;
-use Academorix\Exceptions\Infrastructure\TimeoutException;
-use Academorix\Foundation\Support\CorrelationId;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\Infrastructure\ConfigurationException;
+use Stackra\Exceptions\Infrastructure\IntegrationException;
+use Stackra\Exceptions\Infrastructure\MaintenanceModeException;
+use Stackra\Exceptions\Infrastructure\ServiceUnavailableException;
+use Stackra\Exceptions\Infrastructure\TimeoutException;
+use Stackra\Foundation\Support\CorrelationId;
 
 afterEach(function (): void {
     CorrelationId::forget();

@@ -6,7 +6,7 @@ declare(strict_types=1);
  * @file packages/foundation/src/Support/helpers.php
  *
  * @description
- * Global helper functions exposed by `academorix/foundation`. Loaded
+ * Global helper functions exposed by `stackra/foundation`. Loaded
  * via `composer.json`'s `autoload.files` entry so every consuming app
  * picks them up automatically.
  *
@@ -20,7 +20,7 @@ declare(strict_types=1);
  * Anything larger belongs in a class under `Support/`.
  */
 
-use Academorix\Foundation\Support\CorrelationId;
+use Stackra\Foundation\Support\CorrelationId;
 
 if (! function_exists('localize_number')) {
     /**

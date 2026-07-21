@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Models;
+namespace Stackra\Domains\Models;
 
-use Academorix\Application\Concerns\BelongsToApplication;
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Domains\Contracts\Data\DomainInterface;
-use Academorix\Domains\Database\Factories\DomainFactory;
-use Academorix\Domains\Enums\DomainKind;
-use Academorix\Domains\Enums\DomainVerificationMethod;
-use Academorix\Domains\Enums\SslStatus;
-use Academorix\Domains\Observers\DomainObserver;
-use Academorix\Domains\Policies\DomainPolicy;
-use Academorix\Retention\Attributes\AsRetentionPolicy;
-use Academorix\Retention\Enums\RetentionAction;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Application\Concerns\BelongsToApplication;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Domains\Contracts\Data\DomainInterface;
+use Stackra\Domains\Database\Factories\DomainFactory;
+use Stackra\Domains\Enums\DomainKind;
+use Stackra\Domains\Enums\DomainVerificationMethod;
+use Stackra\Domains\Enums\SslStatus;
+use Stackra\Domains\Observers\DomainObserver;
+use Stackra\Domains\Policies\DomainPolicy;
+use Stackra\Retention\Attributes\AsRetentionPolicy;
+use Stackra\Retention\Enums\RetentionAction;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

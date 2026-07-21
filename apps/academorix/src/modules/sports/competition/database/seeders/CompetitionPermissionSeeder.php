@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Competition\Database\Seeders;
+namespace Stackra\Competition\Database\Seeders;
 
-use Academorix\Competition\Enums\CompetitionPermission;
-use Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
-use Academorix\ServiceProvider\Attributes\AsSeeder;
+use Stackra\Competition\Enums\CompetitionPermission;
+use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;
 
 /**

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Contracts\Services;
+namespace Stackra\Versioning\Contracts\Services;
 
 /**
  * Contract every version-scheme adapter implements.

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Repositories;
+namespace Stackra\Search\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Search\Contracts\Data\SearchIndexInterface;
-use Academorix\Search\Contracts\Repositories\SearchIndexRepositoryInterface;
-use Academorix\Search\Models\SearchIndex;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Search\Contracts\Data\SearchIndexInterface;
+use Stackra\Search\Contracts\Repositories\SearchIndexRepositoryInterface;
+use Stackra\Search\Models\SearchIndex;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Search\Models\SearchIndex}.
+ * Attribute-first Eloquent repository for {@see Stackra\Search\Models\SearchIndex}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(SearchIndexInterface::class)]` which resolves to
  * `SearchIndex` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Search\Models\SearchIndex>
+ * @extends Repository<\Stackra\Search\Models\SearchIndex>
  *
  * @category Search
  *

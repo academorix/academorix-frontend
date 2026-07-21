@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Data;
+namespace Stackra\Transfer\Data;
 
-use Academorix\Transfer\Contracts\Data\XferArtifactInterface;
-use Academorix\Transfer\Models\XferArtifact;
+use Stackra\Transfer\Contracts\Data\XferArtifactInterface;
+use Stackra\Transfer\Models\XferArtifact;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;

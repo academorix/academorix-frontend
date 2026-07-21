@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Development\Database\Factories;
+namespace Stackra\Development\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Development\Contracts\Data\TalentFlagInterface;
-use Academorix\Development\Models\TalentFlag;
+use Stackra\Development\Contracts\Data\TalentFlagInterface;
+use Stackra\Development\Models\TalentFlag;
 
 /**
- * Factory for {@see \Academorix\Development\Models\TalentFlag}.
+ * Factory for {@see \Stackra\Development\Models\TalentFlag}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Development\Models\TalentFlag>
+ * @extends Factory<\Stackra\Development\Models\TalentFlag>
  *
  * @category Development
  *

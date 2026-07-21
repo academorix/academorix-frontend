@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Contracts\Data;
+namespace Stackra\Notifications\Push\Contracts\Data;
 
-use Academorix\Notifications\Push\Models\PushSubscription;
+use Stackra\Notifications\Push\Models\PushSubscription;
 use Illuminate\Container\Attributes\Bind;
 
 /**

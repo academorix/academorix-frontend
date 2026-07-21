@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Observers;
+namespace Stackra\Domains\Observers;
 
-use Academorix\Domains\Events\DomainRecordCreated;
-use Academorix\Domains\Events\DomainRecordRemoved;
-use Academorix\Domains\Events\DomainRecordUpdated;
-use Academorix\Domains\Models\DomainRecord;
+use Stackra\Domains\Events\DomainRecordCreated;
+use Stackra\Domains\Events\DomainRecordRemoved;
+use Stackra\Domains\Events\DomainRecordUpdated;
+use Stackra\Domains\Models\DomainRecord;
 
 /**
  * Lifecycle side effects on {@see DomainRecord}.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\RateLimiters;
+namespace Stackra\Geography\RateLimiters;
 
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;

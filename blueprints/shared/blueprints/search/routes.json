@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/search/routes",
+  "id": "stackra://modules/search/routes",
   "$version": 1,
   "title": "search \u2014 HTTP routes",
   "description": "Seven tenant groups + one platform-admin group. Query + suggest are high-frequency reads with per-user rate limits. Sync-job + synonym + saved-query mutations are audit-heavy but low frequency. Analytics is read-only aggregate. Click-through record is a POST with no result body (fire-and-forget analytics).",
@@ -24,14 +24,14 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\QueryController@index",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\QueryController@index",
           "permission": "search.query",
           "description": "Unified query. Query params: q, index (optional array), filter (spatie grammar), facets (array), sort, page, per_page, highlight (bool), boost (per-entity overrides), language."
         },
         {
           "method": "GET",
           "path": "/suggest",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SuggestController@index",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\SuggestController@index",
           "permission": "search.suggest",
           "middleware_extras": ["throttle:search-suggest"],
           "description": "Autocomplete. Prefix-matched against #[SearchField(prefix: true)] fields. Cached per (tenant, index, query-prefix) for search.suggest.ttl_seconds."
@@ -39,7 +39,7 @@
         {
           "method": "POST",
           "path": "/click",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\ClickController@store",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\ClickController@store",
           "permission": "search.click.record",
           "description": "Record a click-through analytics event. Body: search_session_id, clicked_result_type, clicked_result_id, clicked_position. Returns 202."
         }
@@ -63,21 +63,21 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\AnalyticsController@summary",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\AnalyticsController@summary",
           "permission": "search.analytics.view",
           "description": "Summary: query volume + avg took_ms + no-results rate + click-through rate. Filter[from], filter[to]."
         },
         {
           "method": "GET",
           "path": "/top-queries",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\AnalyticsController@topQueries",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\AnalyticsController@topQueries",
           "permission": "search.analytics.view",
           "description": "Top queries by count (grouped on query_hash). Filter by index."
         },
         {
           "method": "GET",
           "path": "/no-results",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\AnalyticsController@noResults",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\AnalyticsController@noResults",
           "permission": "search.analytics.view",
           "description": "No-result queries admins should watch (indicates index gaps or synonym gaps)."
         }
@@ -101,14 +101,14 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\IndexController@index",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\IndexController@index",
           "permission": "search.indexes.viewAny",
           "description": "List indexes visible to this tenant. Includes document_count, status, needs_reindex flag."
         },
         {
           "method": "GET",
           "path": "/{index}",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\IndexController@show",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\IndexController@show",
           "permission": "search.indexes.view",
           "description": "Detail: field_specs + facet_specs + boost_specs + last_swap_at + current_version."
         }
@@ -132,19 +132,19 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SyncJobController@index",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\SyncJobController@index",
           "permission": "search.sync-jobs.viewAny"
         },
         {
           "method": "GET",
           "path": "/{jobId}",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SyncJobController@show",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\SyncJobController@show",
           "permission": "search.sync-jobs.view"
         },
         {
           "method": "POST",
           "path": "/{jobId}/cancel",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SyncJobController@cancel",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\SyncJobController@cancel",
           "permission": "search.sync-jobs.cancel",
           "middleware_extras": ["search.owned-sync-job"]
         }
@@ -168,31 +168,31 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SynonymController@index",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\SynonymController@index",
           "permission": "search.synonyms.viewAny"
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SynonymController@store",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\SynonymController@store",
           "permission": "search.synonyms.create"
         },
         {
           "method": "GET",
           "path": "/{synonym}",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SynonymController@show",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\SynonymController@show",
           "permission": "search.synonyms.view"
         },
         {
           "method": "PATCH",
           "path": "/{synonym}",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SynonymController@update",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\SynonymController@update",
           "permission": "search.synonyms.update"
         },
         {
           "method": "DELETE",
           "path": "/{synonym}",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SynonymController@destroy",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\SynonymController@destroy",
           "permission": "search.synonyms.delete"
         }
       ]
@@ -215,37 +215,37 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SavedQueryController@index",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\SavedQueryController@index",
           "permission": "search.saved-queries.viewAny"
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SavedQueryController@store",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\SavedQueryController@store",
           "permission": "search.saved-queries.create"
         },
         {
           "method": "GET",
           "path": "/{query}",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SavedQueryController@show",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\SavedQueryController@show",
           "permission": "search.saved-queries.view"
         },
         {
           "method": "PATCH",
           "path": "/{query}",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SavedQueryController@update",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\SavedQueryController@update",
           "permission": "search.saved-queries.update"
         },
         {
           "method": "DELETE",
           "path": "/{query}",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SavedQueryController@destroy",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\SavedQueryController@destroy",
           "permission": "search.saved-queries.delete"
         },
         {
           "method": "POST",
           "path": "/{query}/run",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SavedQueryController@run",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Tenant\\SavedQueryController@run",
           "permission": "search.saved-queries.view",
           "description": "Execute a saved query + record analytics with was_from_saved_query=true. Same result envelope as GET /search/."
         }
@@ -268,58 +268,58 @@
         {
           "method": "GET",
           "path": "/indexes",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Platform\\IndexController@index",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Platform\\IndexController@index",
           "permission": "platform.search.indexes.viewAny"
         },
         {
           "method": "GET",
           "path": "/indexes/{index}",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Platform\\IndexController@show",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Platform\\IndexController@show",
           "permission": "platform.search.indexes.view"
         },
         {
           "method": "POST",
           "path": "/indexes/{index}/reindex",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Platform\\IndexController@reindex",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Platform\\IndexController@reindex",
           "permission": "platform.search.indexes.reindex",
           "description": "Trigger a zero-downtime reindex. Creates a SearchSyncJob (kind=reindex) and returns 202 with the job id."
         },
         {
           "method": "POST",
           "path": "/indexes/{index}/flush",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Platform\\IndexController@flush",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Platform\\IndexController@flush",
           "permission": "platform.search.indexes.flush",
           "description": "Drop an index. Destructive \u2014 requires confirmation payload with the index name."
         },
         {
           "method": "GET",
           "path": "/sync-jobs",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Platform\\SyncJobController@index",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Platform\\SyncJobController@index",
           "permission": "platform.search.sync-jobs.viewAny"
         },
         {
           "method": "GET",
           "path": "/sync-jobs/{jobId}",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Platform\\SyncJobController@show",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Platform\\SyncJobController@show",
           "permission": "platform.search.sync-jobs.view"
         },
         {
           "method": "POST",
           "path": "/sync-jobs/{jobId}/cancel",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Platform\\SyncJobController@cancel",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Platform\\SyncJobController@cancel",
           "permission": "platform.search.sync-jobs.cancel"
         },
         {
           "method": "GET",
           "path": "/analytics",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Platform\\AnalyticsController@index",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Platform\\AnalyticsController@index",
           "permission": "platform.search.analytics.view",
           "description": "Cross-tenant analytics for capacity + support triage."
         },
         {
           "method": "GET",
           "path": "/engines/health",
-          "controller": "Academorix\\Search\\Http\\Controllers\\Platform\\EnginesController@health",
+          "controller": "Stackra\\Search\\Http\\Controllers\\Platform\\EnginesController@health",
           "permission": "platform.search.engines.view",
           "description": "Live reachability + latency for every configured engine."
         }

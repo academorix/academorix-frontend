@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Exceptions;
+namespace Stackra\Geofencing\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The submitted subject_type is not in the morph map.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GeofenceSubjectTypeUnregisteredException extends AcademorixException
+final class GeofenceSubjectTypeUnregisteredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

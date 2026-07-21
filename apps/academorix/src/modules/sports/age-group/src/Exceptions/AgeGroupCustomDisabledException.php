@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Exceptions;
+namespace Stackra\AgeGroup\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Tenant does not carry the `age_group_custom` entitlement (Small tier).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AgeGroupCustomDisabledException extends AcademorixException
+final class AgeGroupCustomDisabledException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

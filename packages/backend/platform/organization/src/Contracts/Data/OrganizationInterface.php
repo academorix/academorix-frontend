@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Organization\Contracts\Data;
+namespace Stackra\Organization\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Organization\Models\Organization;
+use Stackra\Organization\Models\Organization;
 
 /**
  * Table shape for the `organizations` table.

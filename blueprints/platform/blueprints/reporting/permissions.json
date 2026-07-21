@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/reporting/permissions",
+  "id": "stackra://modules/reporting/permissions",
   "$version": 1,
   "title": "reporting — permissions",
-  "seeder": "Academorix\\Platform\\Reporting\\Database\\Seeders\\ReportingPermissionSeeder",
+  "seeder": "Stackra\\Platform\\Reporting\\Database\\Seeders\\ReportingPermissionSeeder",
   "isSystem": true,
   "description": "Reporting permissions gate the reporting SURFACE. Each report/dashboard widget re-checks the underlying module's permission at render time — so a coach with reporting.dashboards.view but without athletes.viewAny still cannot see athlete data through a dashboard widget.",
   "permissions": [

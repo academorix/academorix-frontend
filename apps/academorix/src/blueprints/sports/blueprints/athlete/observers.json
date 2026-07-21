@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/athlete/observers",
+  "id": "stackra://modules/athlete/observers",
   "$version": 1,
   "title": "athlete — Eloquent observers",
   "description": "One observer enforces the module's write-time invariants: entitlement consumption, cross-tenant defense-in-depth, DOB immutability, medical + emergency-contact permission gating, age-group snapshot resolution, and status-machine transitions. The medical write path additionally consults the MedicalDisclosureGate binding — the observer only knows *whether* the caller carries the permission; the gate encapsulates *how* the check runs (permission + entitlement + optional guardian-consent verification for minors when consent_medical_disclosure is false).",
   "observers": [
     {
       "model": "Athlete",
-      "observer": "Academorix\\Sports\\Athlete\\Observers\\AthleteObserver",
+      "observer": "Stackra\\Sports\\Athlete\\Observers\\AthleteObserver",
       "handles": [
         "creating → populate ULID prefix `ath_`",
         "creating → refuse when tenant does NOT hold `athlete.core` feature (defense-in-depth; all tiers have this, but the check exists in case a kill-switch flips)",

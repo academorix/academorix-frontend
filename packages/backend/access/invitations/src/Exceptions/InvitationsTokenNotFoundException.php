@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Exceptions;
+namespace Stackra\Invitations\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Raised when the domain rule `INVITATIONS_TOKEN_NOT_FOUND` fires.

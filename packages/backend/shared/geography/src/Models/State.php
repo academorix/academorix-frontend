@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Models;
+namespace Stackra\Geography\Models;
 
-use Academorix\Geography\Contracts\Data\StateInterface;
-use Academorix\Geography\Database\Factories\StateFactory;
-use Academorix\Geography\Observers\StateObserver;
-use Academorix\Geography\Policies\StatePolicy;
+use Stackra\Geography\Contracts\Data\StateInterface;
+use Stackra\Geography\Database\Factories\StateFactory;
+use Stackra\Geography\Observers\StateObserver;
+use Stackra\Geography\Policies\StatePolicy;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -22,7 +22,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * SUBCLASSES vendor `Nnjeim\World\Models\State`. Vendor uses integer
  * PKs + `$timestamps = false` — we do NOT override either. Vendor
  * ships no translations for state names, so this model does NOT
- * compose {@see \Academorix\Geography\Concerns\HasWorldLocalizedName}.
+ * compose {@see \Stackra\Geography\Concerns\HasWorldLocalizedName}.
  *
  * @category Geography
  *

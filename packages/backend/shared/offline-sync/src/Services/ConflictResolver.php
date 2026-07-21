@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\OfflineSync\Services;
+namespace Stackra\OfflineSync\Services;
 
-use Academorix\OfflineSync\Contracts\Services\ConflictResolverInterface;
+use Stackra\OfflineSync\Contracts\Services\ConflictResolverInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\OfflineSync\Contracts\Repositories\SyncCursorRepositoryInterface;
+use Stackra\OfflineSync\Contracts\Repositories\SyncCursorRepositoryInterface;
 
 /**
  * Concrete service — ConflictResolver.

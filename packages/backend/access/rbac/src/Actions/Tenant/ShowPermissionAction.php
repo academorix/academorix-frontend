@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Actions\Tenant;
+namespace Stackra\Rbac\Actions\Tenant;
 
-use Academorix\Rbac\Contracts\Repositories\PermissionRepositoryInterface;
-use Academorix\Rbac\Data\PermissionData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Rbac\Contracts\Repositories\PermissionRepositoryInterface;
+use Stackra\Rbac\Data\PermissionData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 
 /**
  * `GET /api/v1/rbac/permissions/{permission}` — show action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Rbac

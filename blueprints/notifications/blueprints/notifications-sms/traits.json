@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-sms/traits",
+  "id": "stackra://modules/notifications-sms/traits",
   "$version": 1,
   "title": "notifications-sms \u2014 trait composition",
   "description": "One entity: SmsOptOut.",
@@ -11,19 +11,19 @@
       { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasSystemFlag" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasAuditable",
+        "trait": "Stackra\\Foundation\\Concerns\\HasAuditable",
         "reason": "TCPA + CASL evidence \u2014 every opt-out audit-logged."
       },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
     "tenants": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenantOptional",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenantOptional",
         "reason": "tenant_id NULL = platform-wide opt-out (known bad numbers, spam-trap short codes). tenant_id set = tenant-specific."
       }
     ]

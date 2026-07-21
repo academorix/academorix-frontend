@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Console;
+namespace Stackra\Domains\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Domains\Contracts\Repositories\DomainRepositoryInterface;
-use Academorix\Domains\Jobs\RotateCertificateJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Domains\Contracts\Repositories\DomainRepositoryInterface;
+use Stackra\Domains\Jobs\RotateCertificateJob;
 use Carbon\CarbonImmutable;
 
 /**

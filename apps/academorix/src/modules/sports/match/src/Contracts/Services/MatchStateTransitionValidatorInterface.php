@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Contracts\Services;
+namespace Stackra\Match\Contracts\Services;
 
-use Academorix\Match\Services\MatchStateTransitionValidator;
+use Stackra\Match\Services\MatchStateTransitionValidator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

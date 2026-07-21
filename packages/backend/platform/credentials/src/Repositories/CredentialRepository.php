@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Credentials\Repositories;
+namespace Stackra\Credentials\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Credentials\Contracts\Data\CredentialInterface;
-use Academorix\Credentials\Contracts\Repositories\CredentialRepositoryInterface;
-use Academorix\Credentials\Models\Credential;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Credentials\Contracts\Data\CredentialInterface;
+use Stackra\Credentials\Contracts\Repositories\CredentialRepositoryInterface;
+use Stackra\Credentials\Models\Credential;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Credentials\Models\Credential}.
+ * Attribute-first Eloquent repository for {@see Stackra\Credentials\Models\Credential}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(CredentialInterface::class)]` which resolves to
  * `Credential` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Credentials\Models\Credential>
+ * @extends Repository<\Stackra\Credentials\Models\Credential>
  *
  * @category Credentials
  *

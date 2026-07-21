@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Data;
+namespace Stackra\Localization\Data;
 
-use Academorix\Localization\Enums\LocaleResolutionSource;
+use Stackra\Localization\Enums\LocaleResolutionSource;
 use Spatie\LaravelData\Data;
 
 /**
  * Result of one
- * {@see \Academorix\Localization\Contracts\Services\LocaleResolverInterface::resolve()}
+ * {@see \Stackra\Localization\Contracts\Services\LocaleResolverInterface::resolve()}
  * call — the winning locale + the strategy that produced it.
  *
  * @category Localization

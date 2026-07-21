@@ -1,10 +1,10 @@
 {
-  "name": "academorix/compliance-sdk",
+  "name": "stackra/compliance-sdk",
   "type": "library",
   "description": "Typed Saloon SDK for the Compliance service — DSAR, consent, retention, legal holds, subprocessors, safeguarding.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "sdk",
     "saloon",
     "api-client",
@@ -12,10 +12,10 @@
   ],
   "require": {
     "php": "^8.3",
-    "academorix/api-sdk": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
-    "academorix/service-provider": "@dev",
+    "stackra/api-sdk": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/service-provider": "@dev",
     "illuminate/contracts": "^13.0",
     "illuminate/support": "^13.0",
     "saloonphp/saloon": "^3.10",
@@ -30,18 +30,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\ComplianceSdk\\": "src/"
+      "Stackra\\ComplianceSdk\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\ComplianceSdk\\Tests\\": "tests/"
+      "Stackra\\ComplianceSdk\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\ComplianceSdk\\Providers\\ComplianceSdkServiceProvider"
+        "Stackra\\ComplianceSdk\\Providers\\ComplianceSdkServiceProvider"
       ],
       "aliases": {}
     }

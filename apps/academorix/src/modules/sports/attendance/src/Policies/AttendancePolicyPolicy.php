@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attendance\Policies;
+namespace Stackra\Attendance\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Attendance\Models\AttendancePolicy;
+use Stackra\User\Models\User;
+use Stackra\Attendance\Models\AttendancePolicy;
 
 /**
- * Authorization policy for {@see \Academorix\Attendance\Models\AttendancePolicy}.
+ * Authorization policy for {@see \Stackra\Attendance\Models\AttendancePolicy}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

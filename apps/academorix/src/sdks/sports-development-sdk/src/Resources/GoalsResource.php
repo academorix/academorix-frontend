@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDevelopmentSdk\Resources;
+namespace Stackra\SportsDevelopmentSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsDevelopmentSdk\Data\GoalData;
-use Academorix\SportsDevelopmentSdk\Requests\Goals\CreateGoalRequest;
-use Academorix\SportsDevelopmentSdk\Requests\Goals\GoalsGoalRequest;
-use Academorix\SportsDevelopmentSdk\Requests\Goals\UpdateGoalRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsDevelopmentSdk\Data\GoalData;
+use Stackra\SportsDevelopmentSdk\Requests\Goals\CreateGoalRequest;
+use Stackra\SportsDevelopmentSdk\Requests\Goals\GoalsGoalRequest;
+use Stackra\SportsDevelopmentSdk\Requests\Goals\UpdateGoalRequest;
 use Saloon\Http\Response;
 
 /**
@@ -55,7 +55,7 @@ final readonly class GoalsResource
      *
      * @return GoalData
      */
-    public function create(\Academorix\SportsDevelopmentSdk\Payloads\Goals\CreateGoalPayload $payload, ?string $idempotencyKey = null): GoalData
+    public function create(\Stackra\SportsDevelopmentSdk\Payloads\Goals\CreateGoalPayload $payload, ?string $idempotencyKey = null): GoalData
     {
         return $this->connector->send(new CreateGoalRequest($payload, $idempotencyKey))->dto();
     }
@@ -70,7 +70,7 @@ final readonly class GoalsResource
      *
      * @return GoalData
      */
-    public function update(string $goal, \Academorix\SportsDevelopmentSdk\Payloads\Goals\UpdateGoalPayload $payload, ?string $idempotencyKey = null): GoalData
+    public function update(string $goal, \Stackra\SportsDevelopmentSdk\Payloads\Goals\UpdateGoalPayload $payload, ?string $idempotencyKey = null): GoalData
     {
         return $this->connector->send(new UpdateGoalRequest($goal, $payload, $idempotencyKey))->dto();
     }

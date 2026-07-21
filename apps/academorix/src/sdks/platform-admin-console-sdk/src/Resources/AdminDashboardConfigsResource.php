@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformAdminConsoleSdk\Resources;
+namespace Stackra\PlatformAdminConsoleSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\PlatformAdminConsoleSdk\Data\AdminDashboardConfigData;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\PlatformAdminConsoleSdk\Data\AdminDashboardConfigData;
 use Saloon\Http\Response;
 
 /**

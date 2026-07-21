@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/payment/hooks",
+  "id": "stackra://modules/payment/hooks",
   "$version": 1,
   "title": "payment — TenancyHook + lifecycle hooks",
   "description": "Cross-module hook implementations. TenancyHooks are the tenancy module's contract for reacting to tenant-lifecycle events (provision / suspend / erase). Payment registers hooks for tenant erasure cascade + user erasure redaction + tenant suspension cascade + invoice-driven intent creation + payment-captured side effects + dispute escalation. No bootstrapper — payment does not need per-request tenant hydration.",
-  "namespace": "Academorix\\Finance\\Payment\\Hooks",
+  "namespace": "Stackra\\Finance\\Payment\\Hooks",
   "hooks": [
     {
       "name": "PurgePaymentDataForErasedTenant",
-      "class": "Academorix\\Finance\\Payment\\Hooks\\PurgePaymentDataForErasedTenant",
+      "class": "Stackra\\Finance\\Payment\\Hooks\\PurgePaymentDataForErasedTenant",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErased",
       "purpose": "Cascade delete via FK CASCADE across the four payment tables. Writes the compliance audit trail entry + emits count metrics per entity family (payments / payment_methods / payment_intents / payment_disputes purged) + fires best-effort provider-side deletion requests (Stripe Customer.delete, Paddle customer deletion, Adyen shopper deletion, Square customer deletion, PayPal customer deletion) so the propagation is transparent to auditors.",
@@ -15,7 +15,7 @@
     },
     {
       "name": "ArchivePaymentFinancialRecordsOnTenantErasure",
-      "class": "Academorix\\Finance\\Payment\\Hooks\\ArchivePaymentFinancialRecordsOnTenantErasure",
+      "class": "Stackra\\Finance\\Payment\\Hooks\\ArchivePaymentFinancialRecordsOnTenantErasure",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErased",
       "priority": 90,
@@ -24,7 +24,7 @@
     },
     {
       "name": "RedactCustomerFromPaymentsOnUserErased",
-      "class": "Academorix\\Finance\\Payment\\Hooks\\RedactCustomerFromPaymentsOnUserErased",
+      "class": "Stackra\\Finance\\Payment\\Hooks\\RedactCustomerFromPaymentsOnUserErased",
       "kind": "user_erasure",
       "listens_to": "user::UserErased",
       "purpose": "Individual GDPR Art. 17. Nulls billing_details_snapshot.name + email + phone on payments where the customer resolved to the erased user. Also nulls PaymentMethod.customer_id on methods owned by the user. Payment rows themselves survive (financial retention).",
@@ -32,14 +32,14 @@
     },
     {
       "name": "DeactivatePaymentMethodsOnUserErased",
-      "class": "Academorix\\Finance\\Payment\\Hooks\\DeactivatePaymentMethodsOnUserErased",
+      "class": "Stackra\\Finance\\Payment\\Hooks\\DeactivatePaymentMethodsOnUserErased",
       "kind": "user_erasure",
       "listens_to": "user::UserErased",
       "purpose": "Soft-deletes every PaymentMethod owned by the erased user. Dispatches provider-side detach. Prevents future captures against the erased user's stored tokens."
     },
     {
       "name": "CreatePaymentIntentOnInvoiceFinalized",
-      "class": "Academorix\\Finance\\Payment\\Hooks\\CreatePaymentIntentOnInvoiceFinalized",
+      "class": "Stackra\\Finance\\Payment\\Hooks\\CreatePaymentIntentOnInvoiceFinalized",
       "kind": "bridge",
       "listens_to": "invoice::InvoiceFinalized",
       "priority": 100,
@@ -47,7 +47,7 @@
     },
     {
       "name": "MarkInvoicePaidOnPaymentCaptured",
-      "class": "Academorix\\Finance\\Payment\\Hooks\\MarkInvoicePaidOnPaymentCaptured",
+      "class": "Stackra\\Finance\\Payment\\Hooks\\MarkInvoicePaidOnPaymentCaptured",
       "kind": "atomic_side_effect",
       "listens_to": "PaymentCaptured",
       "priority": 90,
@@ -56,7 +56,7 @@
     },
     {
       "name": "RecordTransactionOnPaymentCaptured",
-      "class": "Academorix\\Finance\\Payment\\Hooks\\RecordTransactionOnPaymentCaptured",
+      "class": "Stackra\\Finance\\Payment\\Hooks\\RecordTransactionOnPaymentCaptured",
       "kind": "atomic_side_effect",
       "listens_to": "PaymentCaptured",
       "priority": 80,
@@ -65,7 +65,7 @@
     },
     {
       "name": "FireMarketingCaptureOnPaymentCaptured",
-      "class": "Academorix\\Finance\\Payment\\Hooks\\FireMarketingCaptureOnPaymentCaptured",
+      "class": "Stackra\\Finance\\Payment\\Hooks\\FireMarketingCaptureOnPaymentCaptured",
       "kind": "attribution",
       "listens_to": "PaymentCaptured",
       "priority": 20,
@@ -73,14 +73,14 @@
     },
     {
       "name": "EscalateDisputeToChargebackOnLost",
-      "class": "Academorix\\Finance\\Payment\\Hooks\\EscalateDisputeToChargebackOnLost",
+      "class": "Stackra\\Finance\\Payment\\Hooks\\EscalateDisputeToChargebackOnLost",
       "kind": "escalation",
       "listens_to": "PaymentDisputeLost",
       "purpose": "Fires when a PaymentDispute transitions to status='lost'. Dispatches EscalateDisputeToChargebackJob → creates a Chargeback row via the chargeback module + sets dispute.chargeback_id. This is the bridge from the pre-chargeback dispute lifecycle to the regulator-facing chargeback lifecycle."
     },
     {
       "name": "DetachPaymentMethodsOnTenantSuspended",
-      "class": "Academorix\\Finance\\Payment\\Hooks\\DetachPaymentMethodsOnTenantSuspended",
+      "class": "Stackra\\Finance\\Payment\\Hooks\\DetachPaymentMethodsOnTenantSuspended",
       "kind": "cascade",
       "listens_to": "tenancy::TenantSuspended",
       "purpose": "Soft-deletes every payment_method for the suspended tenant with deactivated_reason='tenant_suspended'. Dispatches provider-side detach (best-effort). Cancels in-flight intents. Prevents captures during the suspension window.",

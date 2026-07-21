@@ -4,7 +4,7 @@
  * @file modules/shared/audit/lang/en/audit.php
  *
  * @description
- * English translations for the `academorix/audit` module.
+ * English translations for the `stackra/audit` module.
  */
 
 declare(strict_types=1);

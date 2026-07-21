@@ -6,9 +6,9 @@
  * @description
  * Marker attribute: this class is a REPOSITORY — the data-access
  * layer. Only classes marked with this attribute (or implementing
- * {@see \Academorix\Architecture\Contracts\Repository}) are allowed
+ * {@see \Stackra\Architecture\Contracts\Repository}) are allowed
  * to import domain Model classes; every other class layer is
- * subject to the {@see \Academorix\Architecture\Rules\NoDirectModelAccessRule}.
+ * subject to the {@see \Stackra\Architecture\Rules\NoDirectModelAccessRule}.
  *
  * ## Placement
  *
@@ -18,7 +18,7 @@
  * ## Usage
  *
  * ```php
- * use Academorix\Architecture\Attributes\Repository;
+ * use Stackra\Architecture\Attributes\Repository;
  *
  * #[Repository]
  * final class UserRepository
@@ -33,17 +33,17 @@
  * ## Interface alternative
  *
  * If you prefer marker interfaces to attributes, implement
- * {@see \Academorix\Architecture\Contracts\Repository} — the
+ * {@see \Stackra\Architecture\Contracts\Repository} — the
  * resolver accepts either. In practice attributes read better on
  * `final` classes and interfaces are more useful when you also
  * need `instanceof` at runtime; the two are equally valid.
  *
- * @see \Academorix\Architecture\Contracts\Repository Interface alternative.
+ * @see \Stackra\Architecture\Contracts\Repository Interface alternative.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Attributes;
+namespace Stackra\Architecture\Attributes;
 
 use Attribute;
 

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Exceptions;
+namespace Stackra\Match\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to publish a lineup with fewer than 1 starter, or with a starter whose enrollment does not match the match's season.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MatchLineupNotReadyException extends AcademorixException
+final class MatchLineupNotReadyException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

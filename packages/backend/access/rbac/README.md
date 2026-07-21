@@ -1,4 +1,4 @@
-# academorix/rbac
+# stackra/rbac
 
 Server-side Laravel package for the `rbac` module. Auto-generated from the
 blueprint at `modules/access/blueprints/rbac/`.
@@ -10,13 +10,13 @@ blueprint at `modules/access/blueprints/rbac/`.
 - **ModelHasRoles** (`...`) — Spatie's shipped `model_has_roles` polymorphic
   pivot augmented with denormalised (application_id, tenant_id) + `assigned...
 - **Permission** (`per_...`) — Spatie's `permissions` table augmented with
-  Academorix scope columns (application_id, tenant_id, is_system,
+  Stackra scope columns (application_id, tenant_id, is_system,
   description,...
-- **RoleDefinition** (`rdf_...`) — Academorix metadata layer FK-linked to system
+- **RoleDefinition** (`rdf_...`) — Stackra metadata layer FK-linked to system
   roles.
 - **RoleHasPermissions** (`...`) — Spatie's shipped `role_has_permissions` pivot
   table augmented with denormalised `application_id` + `tenant_id` for query...
-- **Role** (`rol_...`) — Spatie's `roles` table augmented with Academorix scope
+- **Role** (`rol_...`) — Spatie's `roles` table augmented with Stackra scope
   columns (application_id, tenant_id, is_system, description, sort_...
 
 ## Layout
@@ -55,6 +55,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-access/rbac-sdk` under `sdk/access-rbac-sdk/`. Consumers cross the
+`stackra-access/rbac-sdk` under `sdk/access-rbac-sdk/`. Consumers cross the
 service boundary through the SDK; this package is the SERVER-side owner of the
 domain.

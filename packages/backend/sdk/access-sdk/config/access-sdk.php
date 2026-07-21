@@ -4,7 +4,7 @@
  * @file config/access-sdk.php
  *
  * @description
- * Runtime configuration for `academorix/access-sdk`. Mirrors the shape of
+ * Runtime configuration for `stackra/access-sdk`. Mirrors the shape of
  * the kernel's `sdk.api.*` bag but under the `sdk.access.*` namespace, so
  * `config('sdk')` stays enumerable across every per-service SDK. Every value
  * is env-driven (`SDK_ACCESS_*`).
@@ -12,8 +12,8 @@
 
 declare(strict_types=1);
 
-use Academorix\ApiSdk\Enums\AuthStrategy;
-use Academorix\ApiSdk\Enums\LogLevel;
+use Stackra\ApiSdk\Enums\AuthStrategy;
+use Stackra\ApiSdk\Enums\LogLevel;
 
 return [
 
@@ -22,7 +22,7 @@ return [
     | Base URL — the Access service HTTP surface.
     |----------------------------------------------------------------
     */
-    'base_url' => env('SDK_ACCESS_BASE_URL', 'https://access.academorix.test'),
+    'base_url' => env('SDK_ACCESS_BASE_URL', 'https://access.stackra.test'),
 
     /*
     |----------------------------------------------------------------
@@ -98,7 +98,7 @@ return [
     'headers' => [
         'Accept'       => 'application/json',
         'Content-Type' => 'application/json',
-        'User-Agent'   => env('SDK_ACCESS_USER_AGENT', 'academorix-access-sdk/1.0'),
+        'User-Agent'   => env('SDK_ACCESS_USER_AGENT', 'stackra-access-sdk/1.0'),
     ],
 
     /*

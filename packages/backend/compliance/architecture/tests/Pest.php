@@ -4,7 +4,7 @@
  * @file packages/architecture/tests/Pest.php
  *
  * @description
- * Pest bootstrap for the `academorix/architecture` package.
+ * Pest bootstrap for the `stackra/architecture` package.
  *
  * The package has no `vendor/` of its own — it's installed inside
  * consumer applications. To keep the test-suite runnable in every
@@ -12,7 +12,7 @@
  * install, package installed under a consumer app) this bootstrap
  * hunts for a vendor autoloader in a small list of well-known
  * locations, then falls back to a hand-rolled PSR-4 autoloader for
- * the `Academorix\Architecture\` namespace.
+ * the `Stackra\Architecture\` namespace.
  *
  * The manual autoloader is the same pattern used by
  * {@see \packages\architecture\tests\scan-template.php} — kept in
@@ -53,7 +53,7 @@ foreach ($vendorCandidates as $vendorPath) {
 
 // -----------------------------------------------------------------
 // 2) Even when a vendor autoloader is present it might not know
-//    about the `Academorix\Architecture\` namespace (fresh clones,
+//    about the `Stackra\Architecture\` namespace (fresh clones,
 //    partial installs). Register a defensive PSR-4 shim regardless
 //    — Composer's autoloader is tried first, ours is a fallback,
 //    so double-registration is safe.
@@ -61,12 +61,12 @@ foreach ($vendorCandidates as $vendorPath) {
 spl_autoload_register(function (string $class): void {
     // Only handle this package's own namespace. Every other request
     // falls through to whatever else is registered.
-    $prefix = 'Academorix\\Architecture\\';
+    $prefix = 'Stackra\\Architecture\\';
     if (! str_starts_with($class, $prefix)) {
         return;
     }
 
-    // Translate `Academorix\Architecture\Support\SourceFile` →
+    // Translate `Stackra\Architecture\Support\SourceFile` →
     // `packages/architecture/src/Support/SourceFile.php`.
     $relative = substr($class, strlen($prefix));
     $path = __DIR__ . '/../src/' . str_replace('\\', '/', $relative) . '.php';

@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/entitlements/middleware",
+  "id": "stackra://modules/entitlements/middleware",
   "$version": 1,
   "title": "entitlements \u2014 HTTP middleware",
   "description": "Owns `entitlement.enforce:<key>` route-parameterised middleware. Consumer modules attach it to routes that trigger metered features so the check runs BEFORE the controller body \u2014 saves work when quota exceeded.",
   "middleware": [
     {
       "alias": "entitlement.enforce",
-      "class": "Academorix\\Entitlements\\Http\\Middleware\\EnforceEntitlement",
+      "class": "Stackra\\Entitlements\\Http\\Middleware\\EnforceEntitlement",
       "priority": 55,
       "description": "Route middleware: `entitlement.enforce:webhook.subscriptions.count`. Runs Enforcer::enforce($key) on the resolved tenant. Throws QuotaExceeded (HTTP 402) with upgrade path in body when cap reached. Runs AFTER auth:sanctum + tenant.resolve so both are already bound.",
       "usage_example": "Route::post('/webhooks/subscriptions', ...)->middleware('entitlement.enforce:webhook.subscriptions.count');"

@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Database\Factories;
+namespace Stackra\Approvals\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Approvals\Contracts\Data\ApprovalInstanceInterface;
-use Academorix\Approvals\Models\ApprovalInstance;
+use Stackra\Approvals\Contracts\Data\ApprovalInstanceInterface;
+use Stackra\Approvals\Models\ApprovalInstance;
 
 /**
- * Factory for {@see \Academorix\Approvals\Models\ApprovalInstance}.
+ * Factory for {@see \Stackra\Approvals\Models\ApprovalInstance}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Approvals\Models\ApprovalInstance>
+ * @extends Factory<\Stackra\Approvals\Models\ApprovalInstance>
  *
  * @category Approvals
  *

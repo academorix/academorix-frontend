@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/membership/features",
+  "id": "stackra://modules/membership/features",
   "$version": 1,
   "title": "membership — feature keys",
   "reference": {

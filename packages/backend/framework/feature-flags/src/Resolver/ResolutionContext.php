@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Resolver;
+namespace Stackra\FeatureFlags\Resolver;
 
-use Academorix\FeatureFlags\Registry\FeatureDefinition;
-use Academorix\FeatureFlags\Support\ScopePath;
-use Academorix\Tenancy\Models\Tenant;
-use Academorix\User\Models\User;
+use Stackra\FeatureFlags\Registry\FeatureDefinition;
+use Stackra\FeatureFlags\Support\ScopePath;
+use Stackra\Tenancy\Models\Tenant;
+use Stackra\User\Models\User;
 
 /**
  * Immutable bundle of every input a `ResolverLayer::apply()` reads.

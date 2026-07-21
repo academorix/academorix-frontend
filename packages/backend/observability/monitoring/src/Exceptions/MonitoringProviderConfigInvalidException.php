@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Exceptions;
+namespace Stackra\Monitoring\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * config jsonb does not match the per-provider JSON Schema.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MonitoringProviderConfigInvalidException extends AcademorixException
+final class MonitoringProviderConfigInvalidException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

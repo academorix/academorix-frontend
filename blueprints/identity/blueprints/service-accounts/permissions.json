@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/service-accounts/permissions",
+  "id": "stackra://modules/service-accounts/permissions",
   "$version": 1,
   "title": "service-accounts \u2014 permissions",
-  "seeder": "Academorix\\ServiceAccount\\Database\\Seeders\\ServiceAccountPermissionSeeder",
+  "seeder": "Stackra\\ServiceAccount\\Database\\Seeders\\ServiceAccountPermissionSeeder",
   "isSystem": true,
   "description": "Every permission on this table is scoped to the `platform_admin` guard. The tenant-audience `sanctum` guard NEVER interacts with SA rows directly. See policies.json for the enforcement layer + boundary_note. Seeded roles reuse the platform-user baseline (super_admin, security, ops, dpo) \u2014 no new roles introduced here.",
   "permissions": [

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Teams\Contracts\Services;
+namespace Stackra\Teams\Contracts\Services;
 
-use Academorix\Teams\Services\GenderEligibilityGate;
+use Stackra\Teams\Services\GenderEligibilityGate;
 use Illuminate\Container\Attributes\Bind;
 
 /**

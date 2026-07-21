@@ -4,7 +4,7 @@
  * @file modules/platform/domains/config/domains.php
  *
  * @description
- * Runtime knobs for the `academorix/domains` module. Merged under the
+ * Runtime knobs for the `stackra/domains` module. Merged under the
  * `domains.*` key by the base ServiceProvider's LoadsResources concern.
  */
 
@@ -19,7 +19,7 @@ return [
     | The host we point customer CNAMEs at. When the observer seeds the
     | expected CNAME record, this is the value written to `expected_value`.
     */
-    'platform_host' => env('DOMAINS_PLATFORM_HOST', 'edge.academorix.app'),
+    'platform_host' => env('DOMAINS_PLATFORM_HOST', 'edge.stackra.app'),
 
     /*
     |--------------------------------------------------------------------------

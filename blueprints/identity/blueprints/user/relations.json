@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/user/relations",
+  "id": "stackra://modules/user/relations",
   "$version": 1,
   "title": "user \u2014 model relationships",
   "description": "User is the aggregate root. Profile is a 1:1 satellite (owns_one). TenantMember is a many-to-many pivot between User and Tenant. Every FK is enforced at the DB layer; onDelete policy per row balances audit-preserving RESTRICT (to identities + applications + profiles) with tenant-scoped CASCADE (to tenants + roles + users when the parent goes away).",

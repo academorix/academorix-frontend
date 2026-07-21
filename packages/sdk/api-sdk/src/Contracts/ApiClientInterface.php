@@ -11,7 +11,7 @@
  *
  * Consumers depend on this interface (never on the concrete
  * `ApiClient` class) so tests can bind
- * {@see \Academorix\ApiSdk\Testing\ApiFake} in its place without
+ * {@see \Stackra\ApiSdk\Testing\ApiFake} in its place without
  * subclass gymnastics.
  *
  * ## Dispatching resources
@@ -24,14 +24,14 @@
  * `@method` line here when its resource registers with
  * `#[AsSdkResource]`.
  *
- * @method \Academorix\ApiTenancySdk\TenancySdkResource tenancy() Access the tenancy resource (tenant lookups, memberships, domains, settings, branding).
+ * @method \Stackra\ApiTenancySdk\TenancySdkResource tenancy() Access the tenancy resource (tenant lookups, memberships, domains, settings, branding).
  */
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Contracts;
+namespace Stackra\ApiSdk\Contracts;
 
-use Academorix\ApiSdk\Registry\SdkResourceRegistry;
+use Stackra\ApiSdk\Registry\SdkResourceRegistry;
 
 interface ApiClientInterface
 {
@@ -42,13 +42,13 @@ interface ApiClientInterface
      * plugin-style consumers) where the name isn't known at
      * compile time.
      *
-     * @throws \Academorix\ApiSdk\Exceptions\ResourceNotFoundException When no resource is registered under `$name`.
+     * @throws \Stackra\ApiSdk\Exceptions\ResourceNotFoundException When no resource is registered under `$name`.
      */
     public function resource(string $name): SdkResource;
 
     /**
      * Return every registered resource. Useful for diagnostic
-     * commands (`php artisan academorix:sdk-api:describe`) and
+     * commands (`php artisan stackra:sdk-api:describe`) and
      * generating IDE meta-files.
      */
     public function registry(): SdkResourceRegistry;

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transaction\Events;
+namespace Stackra\Transaction\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -17,7 +17,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - audit::WriteToAuditLog (retention: 7 years — REQUIRED for manual overrides per SOX 404)
  * - activity::WriteToActivityLog
  * - notifications::DispatchTransactionAmendmentAppliedNotification (cannot-opt-out — pages finance + admin)
- * - monitoring::MetricsCollector (increments academorix.transaction.amendment_requested_total; any non-zero rate is a signal to investigate)
+ * - monitoring::MetricsCollector (increments stackra.transaction.amendment_requested_total; any non-zero rate is a signal to investigate)
  *
  * @category Transaction
  *

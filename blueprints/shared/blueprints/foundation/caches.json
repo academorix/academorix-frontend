@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/foundation/caches",
+  "id": "stackra://modules/foundation/caches",
   "$version": 1,
   "title": "foundation — cache tag namespaces + base keys",
   "description": "Foundation reserves two cache tag namespaces (`platform`, `foundation`) so no two modules collide. Downstream modules use their own module-name tags (`tenants`, `invitations`, ...). Every cache entry in every module MUST be tagged; untagged writes are refused by the base repository.",

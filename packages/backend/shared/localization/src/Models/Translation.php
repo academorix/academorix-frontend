@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Models;
+namespace Stackra\Localization\Models;
 
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Database\Concerns\Model\HasUserStamp;
-use Academorix\Localization\Contracts\Data\TranslationInterface;
-use Academorix\Localization\Database\Factories\TranslationFactory;
-use Academorix\Localization\Enums\TranslationSource;
-use Academorix\Localization\Observers\TranslationObserver;
-use Academorix\Localization\Policies\TranslationPolicy;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Database\Concerns\Model\HasUserStamp;
+use Stackra\Localization\Contracts\Data\TranslationInterface;
+use Stackra\Localization\Database\Factories\TranslationFactory;
+use Stackra\Localization\Enums\TranslationSource;
+use Stackra\Localization\Observers\TranslationObserver;
+use Stackra\Localization\Policies\TranslationPolicy;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -27,7 +27,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * Eloquent model for a {@see TranslationInterface}.
  *
  * The DB cache the decorated Translator consults before the
- * filesystem. `tenant_id NULL` = platform default (Academorix-shipped);
+ * filesystem. `tenant_id NULL` = platform default (Stackra-shipped);
  * non-null = tenant override.
  *
  * NOT composing `BelongsToTenant` — the trait presumes non-null

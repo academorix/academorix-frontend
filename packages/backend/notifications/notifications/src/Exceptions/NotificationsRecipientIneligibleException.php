@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Exceptions;
+namespace Stackra\Notifications\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Recipient's consent_age_gate blocks the category (e.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsRecipientIneligibleException extends AcademorixException
+final class NotificationsRecipientIneligibleException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

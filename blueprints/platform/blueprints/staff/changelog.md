@@ -26,7 +26,7 @@
 - Load-bearing invariant: exactly one active `is_branch_manager=true` Staff per
   branch. Enforced by partial unique index + StaffObserver +
   ReconcileBranchManagerInvariantJob (nightly audit).
-  `academorix.staff.branch_manager.invariant_violations` counter must stay at 0.
+  `stackra.staff.branch_manager.invariant_violations` counter must stay at 0.
 - Cascade paths: `BranchArchived` → PreventStaffOrphansOnBranchArchived;
   `UserSoftDeleted` → PreventUserArchiveWithActiveStaff; `StaffOffboarded`
   cascades to Coach + unblocks User archive; `TenantErased` →

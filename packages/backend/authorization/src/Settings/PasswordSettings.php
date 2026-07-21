@@ -6,7 +6,7 @@
  * @description
  * Password-policy floor. Ported from the `MIN_LENGTH_FLOOR`
  * constant + the `PASSWORD_MIN_LENGTH` env read in the old
- * `Academorix\User\Support\PasswordPolicy::rules()`. The policy
+ * `Stackra\User\Support\PasswordPolicy::rules()`. The policy
  * lifted the effective floor to `max(env, 12)`, so any operator
  * misconfiguring the env below 12 was silently ignored. Moved
  * here so the value is visible in the admin UI and audited on
@@ -25,12 +25,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Authorization\Settings;
+namespace Stackra\Authorization\Settings;
 
-use Academorix\Settings\Attributes\AsSetting;
-use Academorix\Settings\Attributes\SettingField;
-use Academorix\Settings\Enums\ControlType;
-use Academorix\Settings\Enums\SettingScope;
+use Stackra\Settings\Attributes\AsSetting;
+use Stackra\Settings\Attributes\SettingField;
+use Stackra\Settings\Enums\ControlType;
+use Stackra\Settings\Enums\SettingScope;
 
 /**
  * Password strength policy.

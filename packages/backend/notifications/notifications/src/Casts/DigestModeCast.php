@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Casts;
+namespace Stackra\Notifications\Casts;
 
-use Academorix\Notifications\Enums\DigestMode;
+use Stackra\Notifications\Enums\DigestMode;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 

@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/webhook/middleware",
+  "id": "stackra://modules/webhook/middleware",
   "$version": 1,
   "title": "webhook \u2014 HTTP middleware",
   "description": "One middleware: `webhooks.verify` \u2014 parameterised signature verification for inbound webhooks. Loads two secret config keys for rotation grace on the inbound side (primary + previous). Refuses with 401 on mismatch.",
   "middleware": [
     {
       "alias": "webhooks.verify",
-      "class": "Academorix\\Webhook\\Http\\Middleware\\VerifyWebhookSignature",
+      "class": "Stackra\\Webhook\\Http\\Middleware\\VerifyWebhookSignature",
       "priority": 15,
       "description": "Parameterised: `webhooks.verify:cfg.key.primary,cfg.key.previous`. Reads inbound signature per provider convention (HMAC-SHA256 via X-Webhook-Signature by default; strategies pluggable per provider). Verifies against config('cfg.key.primary') OR config('cfg.key.previous') to allow rotation grace. Refuses with 401 on mismatch \u2014 no auth ticket, no controller.",
       "sideEffects": [

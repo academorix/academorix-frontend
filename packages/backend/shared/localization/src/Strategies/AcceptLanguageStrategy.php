@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Strategies;
+namespace Stackra\Localization\Strategies;
 
-use Academorix\Localization\Attributes\AsLocaleResolutionStrategy;
-use Academorix\Localization\Contracts\Repositories\PlatformLanguageRepositoryInterface;
-use Academorix\Localization\Contracts\Services\LocaleResolutionStrategyInterface;
+use Stackra\Localization\Attributes\AsLocaleResolutionStrategy;
+use Stackra\Localization\Contracts\Repositories\PlatformLanguageRepositoryInterface;
+use Stackra\Localization\Contracts\Services\LocaleResolutionStrategyInterface;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Http\Request;
 

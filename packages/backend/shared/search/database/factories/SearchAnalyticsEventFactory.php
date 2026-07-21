@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Database\Factories;
+namespace Stackra\Search\Database\Factories;
 
-use Academorix\Search\Contracts\Data\SearchAnalyticsEventInterface;
-use Academorix\Search\Enums\AnalyticsEventKind;
-use Academorix\Search\Enums\SearchEngine;
-use Academorix\Search\Models\SearchAnalyticsEvent;
+use Stackra\Search\Contracts\Data\SearchAnalyticsEventInterface;
+use Stackra\Search\Enums\AnalyticsEventKind;
+use Stackra\Search\Enums\SearchEngine;
+use Stackra\Search\Models\SearchAnalyticsEvent;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/subscription/schemas/subscription",
+  "id": "stackra://modules/subscription/schemas/subscription",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Subscription",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "sub_",
     "incrementing": false,
-    "model": "Academorix\\Subscription\\Models\\Subscription",
-    "interface": "Academorix\\Subscription\\Contracts\\Data\\SubscriptionInterface",
-    "implements": ["Academorix\\Subscription\\Contracts\\Data\\SubscriptionInterface"],
+    "model": "Stackra\\Subscription\\Models\\Subscription",
+    "interface": "Stackra\\Subscription\\Contracts\\Data\\SubscriptionInterface",
+    "implements": ["Stackra\\Subscription\\Contracts\\Data\\SubscriptionInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

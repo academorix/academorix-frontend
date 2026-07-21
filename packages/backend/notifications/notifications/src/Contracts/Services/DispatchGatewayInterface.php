@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Contracts\Services;
+namespace Stackra\Notifications\Contracts\Services;
 
-use Academorix\Notifications\Models\Notification;
-use Academorix\Notifications\Services\DefaultDispatchGateway;
-use Academorix\Notifications\Support\NotificationDispatchRequest;
+use Stackra\Notifications\Models\Notification;
+use Stackra\Notifications\Services\DefaultDispatchGateway;
+use Stackra\Notifications\Support\NotificationDispatchRequest;
 use Illuminate\Container\Attributes\Bind;
 
 /**

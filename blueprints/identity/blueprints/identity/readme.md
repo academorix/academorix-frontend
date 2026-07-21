@@ -1,6 +1,6 @@
 # identity
 
-Global credential substrate — one row per real human across every Academorix
+Global credential substrate — one row per real human across every Stackra
 Application. Wave 1a security-tier infrastructure, priority 15.
 
 ## 1. What this module owns
@@ -187,7 +187,7 @@ The correct cascade for a full-lifecycle erasure:
 5. **Identity** — hard-deleted last, after every inbound row is gone.
 
 If step 5 refuses (inbound row remained), `PurgeSoftDeletedIdentitiesJob` emits
-`academorix.identity.erasure.blocked` and writes a compliance-alert audit entry
+`stackra.identity.erasure.blocked` and writes a compliance-alert audit entry
 naming the blocker. Ops investigates the cascade path.
 
 ## 7. MFA — how the secret becomes durable

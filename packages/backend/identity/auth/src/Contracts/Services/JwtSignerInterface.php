@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Contracts\Services;
+namespace Stackra\Auth\Contracts\Services;
 
-use Academorix\Auth\Data\JwtPayloadData;
-use Academorix\Auth\Data\SignedJwtData;
-use Academorix\Auth\Services\JwtSigner;
+use Stackra\Auth\Data\JwtPayloadData;
+use Stackra\Auth\Data\SignedJwtData;
+use Stackra\Auth\Services\JwtSigner;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -41,7 +41,7 @@ interface JwtSignerInterface
      *   straight to a client; the `jti` echoed back is what the
      *   deny-list manager keys off during revocation.
      *
-     * @throws \Academorix\Auth\Exceptions\JwtSigningKeyUnavailableException
+     * @throws \Stackra\Auth\Exceptions\JwtSigningKeyUnavailableException
      *   When no active signing key exists for the payload's `app`
      *   claim AND the `SERVICE_JWT_SECRET` boot secret is unset.
      */

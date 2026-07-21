@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsSms\Exceptions;
+namespace Stackra\NotificationsSms\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Failed to record STOP opt-out.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsSmsStopKeywordProcessingFailedException extends AcademorixException
+final class NotificationsSmsStopKeywordProcessingFailedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

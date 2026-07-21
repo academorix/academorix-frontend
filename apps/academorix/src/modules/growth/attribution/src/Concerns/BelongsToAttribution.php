@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Concerns;
+namespace Stackra\Attribution\Concerns;
 
 /**
  * Trait — BelongsToAttribution.

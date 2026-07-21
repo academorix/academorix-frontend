@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Observers;
+namespace Stackra\Domains\Observers;
 
-use Academorix\Domains\Contracts\Data\DomainInterface;
-use Academorix\Domains\Contracts\Data\DomainRecordInterface;
-use Academorix\Domains\Enums\DnsRecordStatus;
-use Academorix\Domains\Enums\DnsRecordType;
-use Academorix\Domains\Enums\DomainKind;
-use Academorix\Domains\Enums\DomainVerificationMethod;
-use Academorix\Domains\Enums\SslStatus;
-use Academorix\Domains\Events\DomainAdded;
-use Academorix\Domains\Events\DomainRemoved;
-use Academorix\Domains\Jobs\VerifyDomainDnsJob;
-use Academorix\Domains\Models\Domain;
-use Academorix\Domains\Models\DomainRecord;
+use Stackra\Domains\Contracts\Data\DomainInterface;
+use Stackra\Domains\Contracts\Data\DomainRecordInterface;
+use Stackra\Domains\Enums\DnsRecordStatus;
+use Stackra\Domains\Enums\DnsRecordType;
+use Stackra\Domains\Enums\DomainKind;
+use Stackra\Domains\Enums\DomainVerificationMethod;
+use Stackra\Domains\Enums\SslStatus;
+use Stackra\Domains\Events\DomainAdded;
+use Stackra\Domains\Events\DomainRemoved;
+use Stackra\Domains\Jobs\VerifyDomainDnsJob;
+use Stackra\Domains\Models\Domain;
+use Stackra\Domains\Models\DomainRecord;
 use Illuminate\Support\Str;
 
 /**
@@ -127,14 +127,14 @@ final class DomainObserver
         $token = (string) $domain->{DomainInterface::ATTR_VERIFICATION_TOKEN};
 
         // The public host we point CNAMEs at — configured per deploy.
-        $platformHost = (string) \config('domains.platform_host', 'edge.academorix.app');
+        $platformHost = (string) \config('domains.platform_host', 'edge.stackra.app');
 
-        // TXT verification record — expected at `_academorix.{host}`.
+        // TXT verification record — expected at `_stackra.{host}`.
         $this->createRecord(
             $domain,
             DnsRecordType::Txt,
-            '_academorix.' . $host,
-            \sprintf('academorix-verification=%s', $token),
+            '_stackra.' . $host,
+            \sprintf('stackra-verification=%s', $token),
         );
 
         // CNAME to our edge — the record that actually routes traffic.

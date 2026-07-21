@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/facility/compliance",
+  "id": "stackra://modules/facility/compliance",
   "$version": 1,
   "title": "facility — compliance evidence",
   "description": "Facility module is financial-record-adjacent. Every booking, day-pass, and pass write is a compliance-relevant financial event. SOC 2 CC6.3 (approval + segregation of duties), PCI-DSS scope (never store CVV / PAN; payment_method categories only; payment references upstream Finance module records), GDPR data-minimisation (anonymous walk-in redaction at 90 days), and WCAG 2.2 AA on the booking widget.",
@@ -50,7 +50,7 @@
         {
           "criterion": "CC7.2",
           "principle": "system monitoring",
-          "evidence": "BookingOverlapDetected event is a P1 signal + tracked via academorix.facility.overlaps.detected counter (should stay at 0). The reconciler jobs run weekly + emit findings to the alerting pipeline."
+          "evidence": "BookingOverlapDetected event is a P1 signal + tracked via stackra.facility.overlaps.detected counter (should stay at 0). The reconciler jobs run weekly + emit findings to the alerting pipeline."
         },
         {
           "criterion": "CC9.1",

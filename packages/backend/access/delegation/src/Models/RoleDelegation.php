@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Delegation\Models;
+namespace Stackra\Delegation\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Delegation\Contracts\Data\RoleDelegationInterface;
-use Academorix\Delegation\Database\Factories\RoleDelegationFactory;
-use Academorix\Application\Concerns\BelongsToApplication;
-use Academorix\Delegation\Policies\RoleDelegationPolicy;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Delegation\Contracts\Data\RoleDelegationInterface;
+use Stackra\Delegation\Database\Factories\RoleDelegationFactory;
+use Stackra\Application\Concerns\BelongsToApplication;
+use Stackra\Delegation\Policies\RoleDelegationPolicy;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

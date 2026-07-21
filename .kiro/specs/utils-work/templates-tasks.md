@@ -51,10 +51,10 @@ HeroUI Pro tokens, other workspace-wide values.
 
 ```yaml
 setup:
-  project: academorix-monorepo
+  project: stackra-monorepo
   config: dev_monorepo
 
-# This file pins the workspace root to Doppler's academorix-monorepo project.
+# This file pins the workspace root to Doppler's stackra-monorepo project.
 # Doppler CLI: `doppler run -- pnpm turbo run build` — all scripts wrapped at root
 # pull secrets from THIS project's dev_monorepo config.
 #
@@ -106,7 +106,7 @@ before; files marked `EDIT` need targeted changes.
 
 ```yaml
 setup:
-  project: academorix-laravel-template
+  project: stackra-laravel-template
   config: dev_laravel_template
 ```
 
@@ -164,7 +164,7 @@ Already ships with `laravel-boost` MCP. Do not touch.
 
 ```yaml
 setup:
-  project: academorix-vite-template
+  project: stackra-vite-template
   config: dev_vite_template
 ```
 
@@ -174,7 +174,7 @@ setup:
 # --------------------------------------------------------------------
 # Vite (VITE_ prefix required to expose to the client bundle)
 # --------------------------------------------------------------------
-VITE_APP_NAME="Academorix"
+VITE_APP_NAME="Stackra"
 VITE_API_BASE_URL="http://localhost:8000/api"
 
 # --------------------------------------------------------------------
@@ -234,7 +234,7 @@ different server. Vite/RN don't.
 
 ```yaml
 setup:
-  project: academorix-react-native-template
+  project: stackra-react-native-template
   config: dev_react_native_template
 ```
 
@@ -340,7 +340,7 @@ in parallel — no file-tree overlap.
 ```sh
 # 1. Root .doppler.yaml exists and pins the workspace project
 cat .doppler.yaml | grep -E 'project:|config:'
-# → project: academorix-monorepo
+# → project: stackra-monorepo
 # → config: dev_monorepo
 
 # 2. Nested .git in RN template is gone
@@ -381,10 +381,10 @@ for the `.doppler.yaml` files to be authored. Actual project provisioning is a
 follow-up when the templates are first used:
 
 ```sh
-doppler projects create academorix-monorepo
-doppler projects create academorix-laravel-template
-doppler projects create academorix-vite-template
-doppler projects create academorix-react-native-template
+doppler projects create stackra-monorepo
+doppler projects create stackra-laravel-template
+doppler projects create stackra-vite-template
+doppler projects create stackra-react-native-template
 
 # Then, in each app dir:
 cd apps/laravel-template && doppler setup   # picks up .doppler.yaml

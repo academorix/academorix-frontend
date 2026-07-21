@@ -2,15 +2,15 @@
 
 /**
  * @file MakeModelCommand.php
- * @module Academorix\Cli\Commands
- * @description `academorix make:model <ClassName> --module=<tier/name>` —
+ * @module Stackra\Cli\Commands
+ * @description `stackra make:model <ClassName> --module=<tier/name>` —
  *   v0.1 placeholder. v0.2 emits the 4-file quartet: Interface + Model +
  *   Migration + Factory, wired to the module's ServiceProvider.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Commands;
+namespace Stackra\Cli\Commands;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -39,7 +39,7 @@ final class MakeModelCommand extends AbstractCommand
             [
                 'v0.2 emits four files: Contracts/Data/<Name>Interface, Models/<Name>, database/migrations/*, database/factories/<Name>Factory.',
                 'Every persisted row inherits the three-axis attribution automatically.',
-                'For now, use `academorix make:action` and hand-scaffold the model quartet from the php.* stubs.',
+                'For now, use `stackra make:action` and hand-scaffold the model quartet from the php.* stubs.',
             ],
         );
 

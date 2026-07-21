@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Data\Resources;
+namespace Stackra\Geography\Data\Resources;
 
-use Academorix\Geography\Contracts\Data\TimezoneInterface;
-use Academorix\Geography\Models\Timezone;
+use Stackra\Geography\Contracts\Data\TimezoneInterface;
+use Stackra\Geography\Models\Timezone;
 use DateTimeImmutable;
 use DateTimeZone;
 use Spatie\LaravelData\Attributes\MapOutputName;

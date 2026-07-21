@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "entitlements",
   "alias": "entitlements",
-  "namespace": "Academorix\\Entitlements",
+  "namespace": "Stackra\\Entitlements",
   "description": "Per-tenant quota + usage tracking substrate consumed by every metered feature (webhook, notifications, storage, newsletter, search, etc). Owns two entities — Entitlement (the resolved cap for a (tenant, key) tuple) and EntitlementUsage (audit rows for consumption events). Ships four entitlement kinds: `slot` (hard cap on concurrent count), `pool` (periodic quota with reset), `boolean` (feature toggle), `unlimited` (enterprise). Redis-backed hot-path consume() with Postgres source-of-truth. Monthly + anniversary + lifetime reset windows. Manual per-tenant overrides for enterprise negotiations. Publishes `HasEntitlements` (mixed into Tenant) + `MetersUsage` trait for models that consume metered features. Exports usage to Stripe/Paddle at billing period end for usage-based tiers.",
   "keywords": [
     "entitlements",
@@ -18,7 +18,7 @@
     "feature-flags"
   ],
   "priority": 22,
-  "providers": ["Academorix\\Entitlements\\Providers\\EntitlementsServiceProvider"],
+  "providers": ["Stackra\\Entitlements\\Providers\\EntitlementsServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "activity", "audit"],
   "extendedBy": [

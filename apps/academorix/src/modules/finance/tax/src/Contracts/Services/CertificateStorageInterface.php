@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Contracts\Services;
+namespace Stackra\Tax\Contracts\Services;
 
-use Academorix\Tax\Services\CertificateStorage;
+use Stackra\Tax\Services\CertificateStorage;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Development\Contracts\Repositories;
+namespace Stackra\Development\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Development\Models\ScoutingReport}.
+ * Repository contract for {@see Stackra\Development\Models\ScoutingReport}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `ScoutingReportRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Development\Models\ScoutingReport>
+ * @extends RepositoryInterface<\Stackra\Development\Models\ScoutingReport>
  *
  * @category Development
  *

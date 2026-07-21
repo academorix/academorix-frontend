@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "development",
   "alias": "development",
-  "namespace": "Academorix\\Sports\\Development",
+  "namespace": "Stackra\\Sports\\Development",
   "description": "Talent pathways + scouting + IDP per blueprint §14.4. Ships FIVE owned entities: `DevelopmentPathway` (Foundation → Youth Development → Youth Team → Senior; sport-scoped), `PathwayStage` (ordered stage in a pathway; promotion_criteria JSONB validated against active AttributeSet; feeds progress+performance readings), `ScoutingReport` (coach/scout observation on trialist or existing athlete — narrative + rating + tags; distinct from ProgressAssessment which is attribute-structured), `TalentFlag` (talent identification signal — flagged_by_user + reason + flagged_at; feeds pathway promotion queue), `Goal` (Individual Development Plan goal — description + target_date + status; reviewable each term). Promotion criteria read Progress + Performance results — attribute-driven so pathways stay sport-agnostic.",
   "keywords": [
     "development",
@@ -15,7 +15,7 @@
     "wave-3"
   ],
   "priority": 82,
-  "providers": ["Academorix\\Sports\\Development\\Providers\\DevelopmentServiceProvider"],
+  "providers": ["Stackra\\Sports\\Development\\Providers\\DevelopmentServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

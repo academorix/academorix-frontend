@@ -4,7 +4,7 @@
  * @file modules/compliance/compliance/lang/en/compliance.php
  *
  * @description
- * English translations for the `academorix/compliance` module.
+ * English translations for the `stackra/compliance` module.
  */
 
 declare(strict_types=1);

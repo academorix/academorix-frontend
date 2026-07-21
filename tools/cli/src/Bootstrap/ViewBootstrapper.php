@@ -2,7 +2,7 @@
 
 /**
  * @file ViewBootstrapper.php
- * @module Academorix\Cli\Bootstrap
+ * @module Stackra\Cli\Bootstrap
  * @description Boots an Illuminate View factory onto the CLI container.
  *   Registers a namespace for the `omniterm::` view prefix so
  *   `view('omniterm::status.success')` (or whatever the omniterm views
@@ -15,9 +15,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Bootstrap;
+namespace Stackra\Cli\Bootstrap;
 
-use Academorix\Cli\Container;
+use Stackra\Cli\Container;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
@@ -48,7 +48,7 @@ final class ViewBootstrapper
 
         // Compiler cache lives in the system temp dir — the CLI is
         // process-local so there is no long-lived cache concern.
-        $compilePath = sys_get_temp_dir().'/academorix-cli-views';
+        $compilePath = sys_get_temp_dir().'/stackra-cli-views';
         $filesystem->ensureDirectoryExists($compilePath);
 
         $bladeCompiler = new \Illuminate\View\Compilers\BladeCompiler($filesystem, $compilePath);

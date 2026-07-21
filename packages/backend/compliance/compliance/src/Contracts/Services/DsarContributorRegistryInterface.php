@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Contracts\Services;
+namespace Stackra\Compliance\Contracts\Services;
 
-use Academorix\Compliance\Attributes\DsarExportable;
-use Academorix\Compliance\Services\DefaultDsarContributorRegistry;
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Compliance\Attributes\DsarExportable;
+use Stackra\Compliance\Services\DefaultDsarContributorRegistry;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -45,7 +45,7 @@ class ComposerStaticInit774a4a765e7211dda8d7d14a4d2437ed
         '493c6aea52f6009bab023b26c21a386a' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/functions.php',
         '58571171fd5812e6e447dce228f52f4d' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/helpers.php',
         'a1cfe24d14977df6878b9bf804af2d1c' => __DIR__ . '/..' . '/nunomaduro/collision/src/Adapters/Phpunit/Autoload.php',
-        '1456eef5152ef61ba5cc39c51a6d8276' => __DIR__ . '/..' . '/academorix/foundation/src/Support/helpers.php',
+        '1456eef5152ef61ba5cc39c51a6d8276' => __DIR__ . '/..' . '/stackra/foundation/src/Support/helpers.php',
         '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
         'aadac1114cab8dc19489a7f6dc24c003' => __DIR__ . '/..' . '/pestphp/pest-plugin-arch/src/Autoload.php',
         'c72349b1fe8d0deeedd3a52e8aa814d8' => __DIR__ . '/..' . '/mockery/mockery/library/helpers.php',
@@ -226,16 +226,16 @@ class ComposerStaticInit774a4a765e7211dda8d7d14a4d2437ed
         'A' =>
         array (
             'App\\' => 4,
-            'Academorix\\ServiceProvider\\' => 27,
-            'Academorix\\Scope\\Tests\\' => 23,
-            'Academorix\\Scope\\Database\\Seeders\\' => 34,
-            'Academorix\\Scope\\Database\\Factories\\' => 36,
-            'Academorix\\Scope\\' => 17,
-            'Academorix\\Foundation\\' => 22,
-            'Academorix\\Exceptions\\' => 22,
-            'Academorix\\Enum\\' => 16,
-            'Academorix\\Database\\' => 20,
-            'Academorix\\Caching\\' => 19,
+            'Stackra\\ServiceProvider\\' => 27,
+            'Stackra\\Scope\\Tests\\' => 23,
+            'Stackra\\Scope\\Database\\Seeders\\' => 34,
+            'Stackra\\Scope\\Database\\Factories\\' => 36,
+            'Stackra\\Scope\\' => 17,
+            'Stackra\\Foundation\\' => 22,
+            'Stackra\\Exceptions\\' => 22,
+            'Stackra\\Enum\\' => 16,
+            'Stackra\\Database\\' => 20,
+            'Stackra\\Caching\\' => 19,
         ),
     );
 
@@ -676,45 +676,45 @@ class ComposerStaticInit774a4a765e7211dda8d7d14a4d2437ed
         array (
             0 => __DIR__ . '/..' . '/laravel/pint/app',
         ),
-        'Academorix\\ServiceProvider\\' =>
+        'Stackra\\ServiceProvider\\' =>
         array (
-            0 => __DIR__ . '/..' . '/academorix/service-provider/src',
+            0 => __DIR__ . '/..' . '/stackra/service-provider/src',
         ),
-        'Academorix\\Scope\\Tests\\' =>
+        'Stackra\\Scope\\Tests\\' =>
         array (
             0 => __DIR__ . '/../..' . '/tests',
         ),
-        'Academorix\\Scope\\Database\\Seeders\\' =>
+        'Stackra\\Scope\\Database\\Seeders\\' =>
         array (
             0 => __DIR__ . '/../..' . '/database/seeders',
         ),
-        'Academorix\\Scope\\Database\\Factories\\' =>
+        'Stackra\\Scope\\Database\\Factories\\' =>
         array (
             0 => __DIR__ . '/../..' . '/database/factories',
         ),
-        'Academorix\\Scope\\' =>
+        'Stackra\\Scope\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),
-        'Academorix\\Foundation\\' =>
+        'Stackra\\Foundation\\' =>
         array (
-            0 => __DIR__ . '/..' . '/academorix/foundation/src',
+            0 => __DIR__ . '/..' . '/stackra/foundation/src',
         ),
-        'Academorix\\Exceptions\\' =>
+        'Stackra\\Exceptions\\' =>
         array (
-            0 => __DIR__ . '/..' . '/academorix/exceptions/src',
+            0 => __DIR__ . '/..' . '/stackra/exceptions/src',
         ),
-        'Academorix\\Enum\\' =>
+        'Stackra\\Enum\\' =>
         array (
-            0 => __DIR__ . '/..' . '/academorix/enum/src',
+            0 => __DIR__ . '/..' . '/stackra/enum/src',
         ),
-        'Academorix\\Database\\' =>
+        'Stackra\\Database\\' =>
         array (
-            0 => __DIR__ . '/..' . '/academorix/database/src',
+            0 => __DIR__ . '/..' . '/stackra/database/src',
         ),
-        'Academorix\\Caching\\' =>
+        'Stackra\\Caching\\' =>
         array (
-            0 => __DIR__ . '/..' . '/academorix/caching/src',
+            0 => __DIR__ . '/..' . '/stackra/caching/src',
         ),
     );
 

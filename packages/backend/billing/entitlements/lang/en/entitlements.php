@@ -4,7 +4,7 @@
  * @file modules/billing/entitlements/lang/en/entitlements.php
  *
  * @description
- * English translations for the `academorix/entitlements` module.
+ * English translations for the `stackra/entitlements` module.
  */
 
 declare(strict_types=1);

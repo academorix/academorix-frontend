@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Policies;
+namespace Stackra\Search\Policies;
 
-use Academorix\Search\Enums\SearchPermission;
+use Stackra\Search\Enums\SearchPermission;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Auth\User;
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Jobs;
+namespace Stackra\Localization\Jobs;
 
-use Academorix\Localization\Contracts\Repositories\TranslationRepositoryInterface;
+use Stackra\Localization\Contracts\Repositories\TranslationRepositoryInterface;
 use Carbon\CarbonImmutable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

@@ -5,7 +5,7 @@
  *
  * @description
  * Behaviour tests for
- * {@see \Academorix\Architecture\Rules\NoFormRequestRule}.
+ * {@see \Stackra\Architecture\Rules\NoFormRequestRule}.
  *
  * The rule bans Laravel's `FormRequest`. It fires on:
  *
@@ -23,10 +23,10 @@
 
 declare(strict_types=1);
 
-use Academorix\Architecture\Rules\NoFormRequestRule;
-use Academorix\Architecture\Support\LayerResolver;
-use Academorix\Architecture\Support\SourceFileParser;
-use Academorix\Architecture\Violations\Severity;
+use Stackra\Architecture\Rules\NoFormRequestRule;
+use Stackra\Architecture\Support\LayerResolver;
+use Stackra\Architecture\Support\SourceFileParser;
+use Stackra\Architecture\Violations\Severity;
 
 /**
  * Build a fresh rule with the shipped config defaults. The

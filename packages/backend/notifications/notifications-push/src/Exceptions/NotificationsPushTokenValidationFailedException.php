@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsPush\Exceptions;
+namespace Stackra\NotificationsPush\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Provider rejected the token on dry-run at registration.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsPushTokenValidationFailedException extends AcademorixException
+final class NotificationsPushTokenValidationFailedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

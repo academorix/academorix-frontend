@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Repositories;
+namespace Stackra\Search\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Search\Contracts\Data\SearchAnalyticsEventInterface;
-use Academorix\Search\Contracts\Repositories\SearchAnalyticsEventRepositoryInterface;
-use Academorix\Search\Models\SearchAnalyticsEvent;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Search\Contracts\Data\SearchAnalyticsEventInterface;
+use Stackra\Search\Contracts\Repositories\SearchAnalyticsEventRepositoryInterface;
+use Stackra\Search\Models\SearchAnalyticsEvent;
 use DateTimeInterface;
 use Illuminate\Support\Collection;
 

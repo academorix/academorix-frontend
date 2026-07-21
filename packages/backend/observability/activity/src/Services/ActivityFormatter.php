@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Services;
+namespace Stackra\Activity\Services;
 
-use Academorix\Activity\Contracts\Services\ActivityFormatterInterface;
+use Stackra\Activity\Contracts\Services\ActivityFormatterInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Activity\Contracts\Repositories\ActivityRetentionPolicyRepositoryInterface;
+use Stackra\Activity\Contracts\Repositories\ActivityRetentionPolicyRepositoryInterface;
 
 /**
  * Concrete service — ActivityFormatter.

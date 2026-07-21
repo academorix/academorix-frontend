@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "requests",
   "alias": "requests",
-  "namespace": "Academorix\\AccessRequest",
+  "namespace": "Stackra\\AccessRequest",
   "description": "Google-Docs-style access request workflow. When a User hits a resource they lack permissions for, the middleware layer returns 403 with a `request_url`; the SPA renders a `Request access` affordance. Clicking it POSTs to `/access-requests` which creates an `approval_instance` under the hood via `workflow/approvals` with `subject_type='access_request'` and `action_key='access.grants.create'`. Once the approvers approve, an `ApprovalExecutedListener` bridges to `access/grants::GrantIssuer` and materialises the entitlement row — full circle. This module is DELIBERATELY THIN: it holds NO state of its own (the request state lives in `workflow/approvals.approval_instances` rows and the resulting grant lives in `access/grants.access_grants`). It ships the HTTP surface, the CreateAccessRequestAction (marked `#[AsApprovableAction('access.grants.create')]`), the listener bridge to `access/grants`, the 403-response enrichment middleware, and the AccessRequest DTO abstraction over the underlying approval instance. Every access request is tenant-scoped — never cross-tenant — a User can only request access to resources in tenants they're already a member of via TenantMember.",
   "keywords": [
     "access-request",
@@ -17,7 +17,7 @@
     "requestable-resources"
   ],
   "priority": 35,
-  "providers": ["Academorix\\AccessRequest\\Providers\\AccessRequestServiceProvider"],
+  "providers": ["Stackra\\AccessRequest\\Providers\\AccessRequestServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",
@@ -129,7 +129,7 @@
       ]
     },
     "platform-admin": {
-      "description": "Cross-tenant read + compliance report for Academorix staff. Never mutates — approve/reject flow the tenant plane.",
+      "description": "Cross-tenant read + compliance report for Stackra staff. Never mutates — approve/reject flow the tenant plane.",
       "routes": [
         "GET /api/v1/platform/access-requests",
         "GET /api/v1/platform/access-requests/{id}",

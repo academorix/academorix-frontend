@@ -246,7 +246,7 @@ snapshot).
 ## 10. Tier gating
 
 - **Small** — Basic invoicing. Cap: 100 invoices/month. 'INV' series only.
-  Tenant's default currency only. Default Academorix-branded PDF template.
+  Tenant's default currency only. Default Stackra-branded PDF template.
   Default dunning cadence. Credit notes enabled.
 - **Medium** — 1000 invoices/month. Custom series. Multi-currency. Tenant-
   branded PDFs. Default dunning cadence.

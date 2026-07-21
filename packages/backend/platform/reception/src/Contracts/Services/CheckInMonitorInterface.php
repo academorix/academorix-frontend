@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Reception\Contracts\Services;
+namespace Stackra\Reception\Contracts\Services;
 
-use Academorix\Reception\Services\CheckInMonitor;
+use Stackra\Reception\Services\CheckInMonitor;
 use Illuminate\Container\Attributes\Bind;
 
 /**

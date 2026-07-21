@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/athlete-enrollment/hooks",
+  "id": "stackra://modules/athlete-enrollment/hooks",
   "$version": 1,
   "title": "athlete-enrollment — TenancyHook + lifecycle hooks",
   "description": "Six cascade hooks: three archive-prevention (athlete / team / season), tenant-erasure cascade, atomic conversion coordinator, age-group snapshot resolver.",
-  "namespace": "Academorix\\Sports\\AthleteEnrollment\\Hooks",
+  "namespace": "Stackra\\Sports\\AthleteEnrollment\\Hooks",
   "hooks": [
     {
       "name": "PreventEnrollmentOrphansOnAthleteArchived",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Hooks\\PreventEnrollmentOrphansOnAthleteArchived",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Hooks\\PreventEnrollmentOrphansOnAthleteArchived",
       "kind": "cascade_prevention",
       "listens_to": "athlete::AthleteArchived (pre-write)",
       "purpose": "Refuse the athlete archive when active enrollments (status IN 'submitted', 'payment_pending', 'consent_pending', 'confirmed', 'active', 'waitlisted') reference the athlete. cascade=true on the athlete archive route bypasses this + cancels enrollments in one transaction.",
@@ -16,7 +16,7 @@
     },
     {
       "name": "PreventEnrollmentOrphansOnTeamArchived",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Hooks\\PreventEnrollmentOrphansOnTeamArchived",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Hooks\\PreventEnrollmentOrphansOnTeamArchived",
       "kind": "cascade_prevention",
       "listens_to": "teams::TeamArchived (pre-write)",
       "purpose": "Refuse the team archive when active enrollments reference it.",
@@ -25,7 +25,7 @@
     },
     {
       "name": "PreventEnrollmentOrphansOnSeasonArchived",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Hooks\\PreventEnrollmentOrphansOnSeasonArchived",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Hooks\\PreventEnrollmentOrphansOnSeasonArchived",
       "kind": "cascade_prevention",
       "listens_to": "season::SeasonArchived (pre-write)",
       "purpose": "Refuse the season archive when active enrollments reference it. cascade=true on the season archive route bypasses + completes enrollments as if the season ended.",
@@ -34,14 +34,14 @@
     },
     {
       "name": "PurgeAthleteEnrollmentDataForErasedTenant",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Hooks\\PurgeAthleteEnrollmentDataForErasedTenant",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Hooks\\PurgeAthleteEnrollmentDataForErasedTenant",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErased",
       "purpose": "Cascade delete via FK. Writes compliance audit + emits count metrics per status."
     },
     {
       "name": "ConvertEnrollmentToTeamMemberAtomically",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Hooks\\ConvertEnrollmentToTeamMemberAtomically",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Hooks\\ConvertEnrollmentToTeamMemberAtomically",
       "kind": "atomic_conversion",
       "listens_to": "athlete-enrollment::EnrollmentActivated (pre-commit)",
       "purpose": "P1 hook. Opens a DB transaction, SELECT ... FOR UPDATE on the enrollment row + team_members table for the team, CREATE teams::TeamMember row with (tenant_id, team_id, member_type='athlete', member_id=enrollment.athlete_id, role_on_team='player', status='active', joined_at=now(), jersey_number=enrollment.jersey_number_assigned), SETS enrollment.team_member_id = new_team_member.id, COMMITS. On any failure, rolls back both writes + fires EnrollmentAtomicityFailed. THIS IS THE LOAD-BEARING ATOMICITY GUARANTEE — the reconciler job cross-checks + surfaces any drift.",
@@ -50,7 +50,7 @@
     },
     {
       "name": "SnapshotAgeGroupOnEnrollmentSubmitted",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Hooks\\SnapshotAgeGroupOnEnrollmentSubmitted",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Hooks\\SnapshotAgeGroupOnEnrollmentSubmitted",
       "kind": "cascade",
       "listens_to": "athlete-enrollment::EnrollmentSubmitted",
       "purpose": "In-band snapshot of Athlete.current_age_group_id → Enrollment.age_group_snapshot_id. Fires EnrollmentAgeGroupSnapshotSet. Also runs the age_group_snapshot_matches_team_age_group rule as a SOFT-WARN (fires EnrollmentAgeGroupSnapshotMismatched but does NOT block the enrollment).",

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsPerformanceSdk\Enums;
+namespace Stackra\SportsPerformanceSdk\Enums;
 
 /**
  * Wire-visible backed enum for `performance-test.better_direction`.

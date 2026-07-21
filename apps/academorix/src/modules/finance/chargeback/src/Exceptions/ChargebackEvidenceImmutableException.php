@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Exceptions;
+namespace Stackra\Chargeback\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Evidence rows are immutable append-only audit.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ChargebackEvidenceImmutableException extends AcademorixException
+final class ChargebackEvidenceImmutableException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/search/metrics",
+  "id": "stackra://modules/search/metrics",
   "$version": 1,
   "title": "search \u2014 OpenTelemetry metrics",
   "instrumentation": "open-telemetry/sdk",
-  "namespace": "academorix.search",
+  "namespace": "stackra.search",
   "labelConventions": {
     "always": ["tenant_id"],
     "commonlyAvailable": ["engine", "index_name", "language", "kind", "outcome"],
@@ -18,14 +18,14 @@
   },
   "metrics": [
     {
-      "name": "academorix.search.query.count",
+      "name": "stackra.search.query.count",
       "kind": "counter",
       "unit": "queries",
       "labels": ["tenant_id", "engine", "index_name", "language", "had_typo_correction"],
       "description": "GET /search queries served."
     },
     {
-      "name": "academorix.search.query.latency_ms",
+      "name": "stackra.search.query.latency_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [5, 10, 25, 50, 100, 250, 500, 1000, 5000],
@@ -33,20 +33,20 @@
       "description": "Server-side query latency."
     },
     {
-      "name": "academorix.search.query.no_results.count",
+      "name": "stackra.search.query.no_results.count",
       "kind": "counter",
       "unit": "queries",
       "labels": ["tenant_id", "engine", "index_name"],
       "description": "Zero-result queries. Rate signals index gaps or synonym gaps."
     },
     {
-      "name": "academorix.search.query.click_through.count",
+      "name": "stackra.search.query.click_through.count",
       "kind": "counter",
       "unit": "clicks",
       "labels": ["tenant_id", "engine", "clicked_result_type"]
     },
     {
-      "name": "academorix.search.query.click_through_position",
+      "name": "stackra.search.query.click_through_position",
       "kind": "histogram",
       "unit": "position",
       "buckets": [1, 2, 3, 5, 10, 20, 50, 100],
@@ -54,122 +54,122 @@
       "description": "Distribution of clicked positions. High tail = weak ranking."
     },
     {
-      "name": "academorix.search.suggest.count",
+      "name": "stackra.search.suggest.count",
       "kind": "counter",
       "unit": "suggests",
       "labels": ["tenant_id", "engine", "index_name"]
     },
     {
-      "name": "academorix.search.suggest.latency_ms",
+      "name": "stackra.search.suggest.latency_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1, 5, 10, 25, 50, 100, 250],
       "labels": ["tenant_id", "engine"]
     },
     {
-      "name": "academorix.search.suggest.cache_hit_ratio",
+      "name": "stackra.search.suggest.cache_hit_ratio",
       "kind": "gauge",
       "unit": "ratio",
       "labels": ["tenant_id"]
     },
     {
-      "name": "academorix.search.sync_jobs.created.count",
+      "name": "stackra.search.sync_jobs.created.count",
       "kind": "counter",
       "unit": "jobs",
       "labels": ["tenant_id", "kind", "engine", "source"],
       "description": "SearchSyncJobs entered queued state."
     },
     {
-      "name": "academorix.search.sync_jobs.terminal.count",
+      "name": "stackra.search.sync_jobs.terminal.count",
       "kind": "counter",
       "unit": "jobs",
       "labels": ["tenant_id", "kind", "engine", "outcome"],
       "description": "SyncJobs entered any terminal state. outcome = succeeded / partially_succeeded / failed / cancelled."
     },
     {
-      "name": "academorix.search.sync_jobs.duration_seconds",
+      "name": "stackra.search.sync_jobs.duration_seconds",
       "kind": "histogram",
       "unit": "seconds",
       "buckets": [10, 60, 300, 900, 3600, 21600],
       "labels": ["tenant_id", "kind", "engine", "outcome"]
     },
     {
-      "name": "academorix.search.sync_jobs.shard_duration_seconds",
+      "name": "stackra.search.sync_jobs.shard_duration_seconds",
       "kind": "histogram",
       "unit": "seconds",
       "buckets": [5, 30, 120, 600, 3600],
       "labels": ["tenant_id", "engine"]
     },
     {
-      "name": "academorix.search.sync_jobs.queue_wait_seconds",
+      "name": "stackra.search.sync_jobs.queue_wait_seconds",
       "kind": "histogram",
       "unit": "seconds",
       "buckets": [1, 5, 30, 120, 600, 3600],
       "labels": ["tenant_id"]
     },
     {
-      "name": "academorix.search.index.document_count",
+      "name": "stackra.search.index.document_count",
       "kind": "gauge",
       "unit": "documents",
       "labels": ["tenant_id", "engine", "index_name"],
       "description": "Sampled every 5 min. Live index doc count."
     },
     {
-      "name": "academorix.search.index.size_bytes",
+      "name": "stackra.search.index.size_bytes",
       "kind": "gauge",
       "unit": "bytes",
       "labels": ["tenant_id", "engine", "index_name"]
     },
     {
-      "name": "academorix.search.engines.reachable",
+      "name": "stackra.search.engines.reachable",
       "kind": "gauge",
       "unit": "boolean_0_or_1",
       "labels": ["engine"],
       "description": "0 = unreachable. Sampled every 30s."
     },
     {
-      "name": "academorix.search.engines.ping_ms",
+      "name": "stackra.search.engines.ping_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1, 5, 25, 100, 500, 2000],
       "labels": ["engine"]
     },
     {
-      "name": "academorix.search.concurrent_jobs",
+      "name": "stackra.search.concurrent_jobs",
       "kind": "gauge",
       "unit": "jobs",
       "labels": ["tenant_id"],
       "description": "Sampled every 30s. In-flight sync jobs per tenant. Feeds concurrency-limit health probe."
     },
     {
-      "name": "academorix.search.stalled_jobs",
+      "name": "stackra.search.stalled_jobs",
       "kind": "gauge",
       "unit": "jobs",
       "labels": ["tenant_id"],
       "description": "Sampled every 15min. SyncJobs in running with last_progress_at > stale threshold."
     },
     {
-      "name": "academorix.search.alias_swaps.count",
+      "name": "stackra.search.alias_swaps.count",
       "kind": "counter",
       "unit": "swaps",
       "labels": ["tenant_id", "engine", "outcome"],
       "description": "Alias swaps performed. outcome = success / failed."
     },
     {
-      "name": "academorix.search.synonyms.count",
+      "name": "stackra.search.synonyms.count",
       "kind": "gauge",
       "unit": "rows",
       "labels": ["tenant_id", "language"],
       "description": "Sampled hourly. Active synonym rows per (tenant, language)."
     },
     {
-      "name": "academorix.search.notifications_sent.count",
+      "name": "stackra.search.notifications_sent.count",
       "kind": "counter",
       "unit": "notifications",
       "labels": ["tenant_id", "category", "channel", "outcome"]
     },
     {
-      "name": "academorix.search.config_drift.detected.count",
+      "name": "stackra.search.config_drift.detected.count",
       "kind": "counter",
       "unit": "indexes",
       "labels": ["tenant_id"],

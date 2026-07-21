@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Wallet\Contracts\Services;
+namespace Stackra\Wallet\Contracts\Services;
 
-use Academorix\Wallet\Services\WalletReconciler;
+use Stackra\Wallet\Services\WalletReconciler;
 use Illuminate\Container\Attributes\Bind;
 
 /**

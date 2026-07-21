@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Dunning\Services;
+namespace Stackra\Dunning\Services;
 
-use Academorix\Dunning\Contracts\Services\RetrySchedulerInterface;
+use Stackra\Dunning\Contracts\Services\RetrySchedulerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Dunning\Contracts\Repositories\DunningEventRepositoryInterface;
+use Stackra\Dunning\Contracts\Repositories\DunningEventRepositoryInterface;
 
 /**
  * Concrete service — RetryScheduler.

@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/access/requests/notifications",
+  "id": "stackra://modules/access/requests/notifications",
   "$version": 1,
   "title": "requests \u2014 Laravel notifications",
-  "description": "Five notifications this module owns. All classified `transactional` (essential) \u2014 access requests are directly-solicited communications tied to the platform's authorization loop, so opt-out does not apply to the request itself. Long-form marketing / product communications from Academorix require explicit consent captured on user provisioning, which pre-dates every access request.",
-  "namespace": "Academorix\\AccessRequest\\Notifications",
+  "description": "Five notifications this module owns. All classified `transactional` (essential) \u2014 access requests are directly-solicited communications tied to the platform's authorization loop, so opt-out does not apply to the request itself. Long-form marketing / product communications from Stackra require explicit consent captured on user provisioning, which pre-dates every access request.",
+  "namespace": "Stackra\\AccessRequest\\Notifications",
   "notifications": [
     {
-      "class": "Academorix\\AccessRequest\\Notifications\\AccessRequestSubmittedNotification",
+      "class": "Stackra\\AccessRequest\\Notifications\\AccessRequestSubmittedNotification",
       "channels": ["mail", "database", "broadcast"],
       "consentTier": "transactional",
       "targets": ["User (each resolved approver)"],
@@ -19,7 +19,7 @@
       "description": "Sent to each approver when a request is submitted. Body: requester name + email, resource type + display_name, permissions_wanted (rendered as human-readable labels via `access/rbac::PermissionLabels`), the requester's reason (verbatim), CTA button linking to `/tenant/access-requests/{id}` for the approve/reject decision. The mail body includes a 'you can approve directly from this email' fallback link (deep-link that opens the SPA approver decision panel). Localised to the approver's preferred locale."
     },
     {
-      "class": "Academorix\\AccessRequest\\Notifications\\AccessRequestApprovedNotification",
+      "class": "Stackra\\AccessRequest\\Notifications\\AccessRequestApprovedNotification",
       "channels": ["mail", "database", "broadcast"],
       "consentTier": "transactional",
       "targets": ["User (the requester)"],
@@ -32,7 +32,7 @@
       "description": "Sent to the requester when their request is approved. Body: 'Your access to X was approved by Y'. Includes a CTA button linking BACK to the original resource URL that emitted the 403 that started the whole flow \u2014 the requester's typical action is to retry the resource fetch. Also mentions the grant's TTL ('This access expires on <date>')."
     },
     {
-      "class": "Academorix\\AccessRequest\\Notifications\\AccessRequestRejectedNotification",
+      "class": "Stackra\\AccessRequest\\Notifications\\AccessRequestRejectedNotification",
       "channels": ["mail", "database"],
       "consentTier": "transactional",
       "targets": ["User (the requester)"],
@@ -44,7 +44,7 @@
       "description": "Sent when the request is rejected. Body includes the rejecting approver's comment verbatim (SOC 2 requires a rationale on every reject, so the comment is always present). Suggests next steps: 'if you still need this access, please reach out to your admin directly'. No CTA button \u2014 the flow is terminal."
     },
     {
-      "class": "Academorix\\AccessRequest\\Notifications\\AccessRequestExpiredNotification",
+      "class": "Stackra\\AccessRequest\\Notifications\\AccessRequestExpiredNotification",
       "channels": ["mail", "database"],
       "consentTier": "transactional",
       "targets": ["User (the requester)"],
@@ -56,7 +56,7 @@
       "description": "Sent when a pending request expires without decision. Body: 'Your request for X received no decision within N hours and has expired.' CTA button: 'Submit a new request' (pre-fills the form with the same payload as the original). Also suggests reaching out to the admin directly \u2014 an expired request often signals an unresponsive approver group and the requester needs a human intervention."
     },
     {
-      "class": "Academorix\\AccessRequest\\Notifications\\AccessRequestReminderNotification",
+      "class": "Stackra\\AccessRequest\\Notifications\\AccessRequestReminderNotification",
       "channels": ["mail", "database"],
       "consentTier": "transactional",
       "targets": ["User (each pending approver of an old request)"],

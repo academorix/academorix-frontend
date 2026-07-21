@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Medical\Contracts\Data;
+namespace Stackra\Medical\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Medical\Models\Treatment;
+use Stackra\Medical\Models\Treatment;
 
 /**
  * Table shape for the `treatments` table.

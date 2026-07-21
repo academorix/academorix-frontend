@@ -1,4 +1,4 @@
-# academorix/approvals
+# stackra/approvals
 
 Server-side Laravel package for the `approvals` module. Auto-generated from the
 blueprint at `modules/workflow/blueprints/approvals/`.
@@ -52,6 +52,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-workflow/approvals-sdk` under `sdk/workflow-approvals-sdk/`.
+`stackra-workflow/approvals-sdk` under `sdk/workflow-approvals-sdk/`.
 Consumers cross the service boundary through the SDK; this package is the
 SERVER-side owner of the domain.

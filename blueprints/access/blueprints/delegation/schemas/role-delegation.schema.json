@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/delegation/schemas/role-delegation",
+  "id": "stackra://modules/delegation/schemas/role-delegation",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "RoleDelegation",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "dlg_",
     "incrementing": false,
-    "model": "Academorix\\Delegation\\Models\\RoleDelegation",
-    "interface": "Academorix\\Delegation\\Contracts\\Data\\RoleDelegationInterface",
-    "implements": ["Academorix\\Delegation\\Contracts\\Data\\RoleDelegationInterface"],
+    "model": "Stackra\\Delegation\\Models\\RoleDelegation",
+    "interface": "Stackra\\Delegation\\Contracts\\Data\\RoleDelegationInterface",
+    "implements": ["Stackra\\Delegation\\Contracts\\Data\\RoleDelegationInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

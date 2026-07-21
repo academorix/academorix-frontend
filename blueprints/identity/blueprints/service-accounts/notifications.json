@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/service-accounts/notifications",
+  "id": "stackra://modules/service-accounts/notifications",
   "$version": 1,
   "title": "service-accounts \u2014 notification classes + categories",
-  "namespace": "Academorix\\ServiceAccount\\Notifications",
+  "namespace": "Stackra\\ServiceAccount\\Notifications",
   "description": "Five notifications. All are transactional-required with no tenant opt-out \u2014 SA lifecycle events are security-critical operational signals, not marketing content. Recipients are ALWAYS PlatformUsers (Application owners + security-mailing-list); SAs themselves have no inbox.",
   "notifications": [
     "ServiceAccountCreatedNotification",

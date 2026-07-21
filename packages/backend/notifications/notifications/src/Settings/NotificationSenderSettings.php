@@ -4,12 +4,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Settings;
+namespace Stackra\Notifications\Settings;
 
-use Academorix\Settings\Attributes\AsSetting;
-use Academorix\Settings\Attributes\SettingField;
-use Academorix\Settings\Attributes\SettingGroup;
-use Academorix\Settings\Enums\ControlType;
+use Stackra\Settings\Attributes\AsSetting;
+use Stackra\Settings\Attributes\SettingField;
+use Stackra\Settings\Attributes\SettingGroup;
+use Stackra\Settings\Enums\ControlType;
 use Spatie\LaravelSettings\Settings;
 
 /**
@@ -41,16 +41,16 @@ class NotificationSenderSettings extends Settings
     // ── Sender identity ──────────────────────────────────
     #[SettingGroup(label: 'Sender identity', description: 'Overrides platform default. Per-channel overrides in the respective channel module (mail / sms).', icon: 'envelope', sortOrder: 1)]
     #[SettingField(controlType: ControlType::Text, label: 'From display name', validation: ['required', 'string', 'max:40'], group: 'Sender identity', sortOrder: 1, helpText: 'Kept short (< 40 chars) for provider compatibility.')]
-    public string $display_name = 'Academorix';
+    public string $display_name = 'Stackra';
 
     #[SettingField(controlType: ControlType::Email, label: 'From email', validation: ['required', 'email', 'max:254'], group: 'Sender identity', sortOrder: 2, helpText: 'Must match a verified sender identity on the mail provider (validated at save time).')]
-    public string $from_email = 'no-reply@academorix.app';
+    public string $from_email = 'no-reply@stackra.app';
 
     #[SettingField(controlType: ControlType::Email, label: 'Reply-to email', validation: ['nullable', 'email', 'max:254'], group: 'Sender identity', sortOrder: 3, helpText: 'Empty = use From address.')]
     public ?string $reply_to_email = null;
 
     #[SettingField(controlType: ControlType::Textarea, label: 'Postal address', validation: ['required', 'string', 'max:500'], group: 'Sender identity', sortOrder: 4, helpText: 'Required for CAN-SPAM footer. Rendered into email footer as-is.')]
-    public string $postal_address = 'Academorix Ltd, 123 Placeholder St, City, Country';
+    public string $postal_address = 'Stackra Ltd, 123 Placeholder St, City, Country';
 
 
     // ── Notification branding ──────────────────────────────────

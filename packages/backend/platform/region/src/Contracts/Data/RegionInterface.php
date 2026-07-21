@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Region\Contracts\Data;
+namespace Stackra\Region\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Region\Models\Region;
+use Stackra\Region\Models\Region;
 
 /**
  * Table shape for the `regions` table.

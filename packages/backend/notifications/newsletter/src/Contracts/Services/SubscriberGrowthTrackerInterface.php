@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Contracts\Services;
+namespace Stackra\Newsletter\Contracts\Services;
 
-use Academorix\Newsletter\Services\DefaultSubscriberGrowthTracker;
+use Stackra\Newsletter\Services\DefaultSubscriberGrowthTracker;
 use DateTimeInterface;
 use Illuminate\Container\Attributes\Bind;
 

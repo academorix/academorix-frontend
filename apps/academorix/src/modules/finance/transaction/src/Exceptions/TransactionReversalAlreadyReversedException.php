@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transaction\Exceptions;
+namespace Stackra\Transaction\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to reverse a transaction that already has a reversal in this direction.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TransactionReversalAlreadyReversedException extends AcademorixException
+final class TransactionReversalAlreadyReversedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

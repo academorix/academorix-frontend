@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\OfflineSync\Database\Seeders;
+namespace Stackra\OfflineSync\Database\Seeders;
 
-use Academorix\OfflineSync\Enums\OfflineSyncPermission;
-use Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
-use Academorix\ServiceProvider\Attributes\AsSeeder;
+use Stackra\OfflineSync\Enums\OfflineSyncPermission;
+use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;
 
 /**

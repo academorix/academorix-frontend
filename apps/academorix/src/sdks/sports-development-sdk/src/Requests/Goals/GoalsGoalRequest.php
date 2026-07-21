@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDevelopmentSdk\Requests\Goals;
+namespace Stackra\SportsDevelopmentSdk\Requests\Goals;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsDevelopmentSdk\Data\GoalData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsDevelopmentSdk\Data\GoalData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

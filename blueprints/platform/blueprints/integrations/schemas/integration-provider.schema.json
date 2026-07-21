@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/integrations/schemas/integration-provider",
+  "id": "stackra://modules/integrations/schemas/integration-provider",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "IntegrationProvider",
-  "description": "Allowlist catalog of every provider Academorix supports (stripe / paddle / pipedrive / hubspot / twilio / zoom / apple_wallet / google_wallet / mailchimp / xero / etc). System rows only — added via #[AsIntegrationProvider] discovery + upsert seeder. Adding a provider is a code deploy. Tenants configure a provider by creating a TenantIntegration that points at an IntegrationProvider row.",
+  "description": "Allowlist catalog of every provider Stackra supports (stripe / paddle / pipedrive / hubspot / twilio / zoom / apple_wallet / google_wallet / mailchimp / xero / etc). System rows only — added via #[AsIntegrationProvider] discovery + upsert seeder. Adding a provider is a code deploy. Tenants configure a provider by creating a TenantIntegration that points at an IntegrationProvider row.",
   "type": "object",
   "x-module": "integrations",
   "x-eloquent": {

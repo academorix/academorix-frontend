@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/safeguarding/jobs",
+  "id": "stackra://modules/safeguarding/jobs",
   "$version": 1,
   "title": "safeguarding — queued jobs",
   "description": "Queued jobs this module dispatches.",

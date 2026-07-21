@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\User\Contracts\Services;
+namespace Stackra\User\Contracts\Services;
 
-use Academorix\User\Services\UserProvisioner;
+use Stackra\User\Services\UserProvisioner;
 use Illuminate\Container\Attributes\Bind;
 
 /**

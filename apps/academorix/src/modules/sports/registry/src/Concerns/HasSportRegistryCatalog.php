@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Concerns;
+namespace Stackra\Registry\Concerns;
 
 /**
  * Trait — HasSportRegistryCatalog.

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/membership/schemas/pass",
+  "id": "stackra://modules/membership/schemas/pass",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Pass",
@@ -13,8 +13,8 @@
     "keyType": "string",
     "keyPrefix": "pss_",
     "incrementing": false,
-    "model": "Academorix\\Finance\\Membership\\Models\\Pass",
-    "interface": "Academorix\\Finance\\Membership\\Contracts\\Data\\PassInterface",
+    "model": "Stackra\\Finance\\Membership\\Models\\Pass",
+    "interface": "Stackra\\Finance\\Membership\\Contracts\\Data\\PassInterface",
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",

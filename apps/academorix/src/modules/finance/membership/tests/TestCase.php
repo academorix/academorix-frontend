@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Membership\Tests;
+namespace Stackra\Membership\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/membership.
+ * Base test case for stackra/membership.
  *
  * @category Membership
  *

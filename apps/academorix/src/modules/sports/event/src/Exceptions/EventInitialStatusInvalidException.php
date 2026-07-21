@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Event\Exceptions;
+namespace Stackra\Event\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to create Event directly with status IN (registration_open, in_progress, completed, cancelled, archived).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class EventInitialStatusInvalidException extends AcademorixException
+final class EventInitialStatusInvalidException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsMail\Tests;
+namespace Stackra\NotificationsMail\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/notifications-mail.
+ * Base test case for stackra/notifications-mail.
  *
  * @category NotificationsMail
  *

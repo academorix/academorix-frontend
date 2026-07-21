@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/storage/data-classes",
+  "id": "stackra://modules/storage/data-classes",
   "$version": 1,
   "title": "storage \u2014 field classification",
   "description": "Every column across the four owned entities classified per foundation's five-tier taxonomy. File bytes themselves are treated as `restricted` by default \u2014 their content is user-supplied and can contain any tier of PII.",
@@ -62,7 +62,7 @@
       "SignedUrlAudit.user_lock (leaks intended-reader user id)"
     ],
     "regulated_minor": [
-      "Any File where owner_id resolves to a minor (via user::User.age_gate=minor_under_consent_age). Files inherit their owner's regulatory context. Also captures Files fileable_type=Academorix\\User\\Models\\Minor when that submodel exists."
+      "Any File where owner_id resolves to a minor (via user::User.age_gate=minor_under_consent_age). Files inherit their owner's regulatory context. Also captures Files fileable_type=Stackra\\User\\Models\\Minor when that submodel exists."
     ],
     "regulated_health": [
       "Files uploaded to a health-classified fileable (e.g. medical_record kinds when we implement HIPAA support). Not currently applicable; reserved."

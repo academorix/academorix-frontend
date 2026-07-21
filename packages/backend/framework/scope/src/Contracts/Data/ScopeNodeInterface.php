@@ -4,7 +4,7 @@
  * @file src/Contracts/Data/ScopeNodeInterface.php
  *
  * @description
- * Column metadata for {@see \Academorix\Scope\Models\ScopeNode}.
+ * Column metadata for {@see \Stackra\Scope\Models\ScopeNode}.
  * Nodes are the "concrete instances" of a scope level — each row
  * maps a scope_definition slug to a real entity id (a tenant UUID,
  * an academy UUID, a venue UUID) and carries the full ancestor
@@ -13,7 +13,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Contracts\Data;
+namespace Stackra\Scope\Contracts\Data;
 
 /**
  * Table shape for the `scope_nodes` table.

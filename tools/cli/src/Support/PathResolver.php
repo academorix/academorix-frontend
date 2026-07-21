@@ -2,7 +2,7 @@
 
 /**
  * @file PathResolver.php
- * @module Academorix\Cli\Support
+ * @module Stackra\Cli\Support
  * @description Locates key workspace paths by walking upward from the
  *   current working directory. Every CLI command that reads catalogue
  *   entries or clones a template goes through here.
@@ -10,9 +10,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Support;
+namespace Stackra\Cli\Support;
 
-use Academorix\Cli\Exceptions\CliException;
+use Stackra\Cli\Exceptions\CliException;
 
 /**
  * Static-ish resolver. Instance-based so it can be mocked in tests.

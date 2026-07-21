@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/service-accounts/compliance",
+  "id": "stackra://modules/service-accounts/compliance",
   "$version": 1,
   "title": "service-accounts \u2014 compliance evidence",
   "description": "Service accounts are the primary machine-credential surface \u2014 SOC 2 (CC6.1, CC6.7, CC7.2, CC7.3), NIST SP 800-131A (approved cryptographic algorithms), OWASP ASVS V6 (stored cryptography + access control), and PCI-DSS 8.6 (service-account authentication) all apply. Every enforcement is codified as CODE + AUDIT rather than a policy document; the compliance officer verifies via automated checks against the entries below.",
@@ -25,7 +25,7 @@
         {
           "criterion": "CC7.2",
           "principle": "system monitoring",
-          "evidence": "DetectDormantServiceAccountJob (weekly) reports SAs unused > 30d. `academorix.service_account.dormant_count` gauge feeds monitoring pipeline. First-request-after-dormancy fires `ServiceAccountUsageDetected` (distinct signal for compromise-adjacent wake-ups). Suspicious-activity fingerprint detection covered under CC6.6."
+          "evidence": "DetectDormantServiceAccountJob (weekly) reports SAs unused > 30d. `stackra.service_account.dormant_count` gauge feeds monitoring pipeline. First-request-after-dormancy fires `ServiceAccountUsageDetected` (distinct signal for compromise-adjacent wake-ups). Suspicious-activity fingerprint detection covered under CC6.6."
         },
         {
           "criterion": "CC7.3",

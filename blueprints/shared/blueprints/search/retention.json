@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/search/retention",
+  "id": "stackra://modules/search/retention",
   "$version": 1,
   "title": "search \u2014 retention windows",
   "description": "Four independent retention concerns. Sync jobs + analytics events are tier-based per plan. Indexes + synonyms + saved queries are tenant-managed \u2014 no auto-purge (they represent live configuration, not history). Analytics events are high-cardinality + hot-purged aggressively. Physical index versions retained for a grace window after alias swap.",

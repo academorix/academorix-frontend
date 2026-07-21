@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Tests;
+namespace Stackra\Compliance\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/compliance.
+ * Base test case for stackra/compliance.
  *
  * @category Compliance
  *

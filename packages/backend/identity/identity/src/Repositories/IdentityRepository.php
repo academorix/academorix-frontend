@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Identity\Repositories;
+namespace Stackra\Identity\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Identity\Contracts\Data\IdentityInterface;
-use Academorix\Identity\Contracts\Repositories\IdentityRepositoryInterface;
-use Academorix\Identity\Models\Identity;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Identity\Contracts\Data\IdentityInterface;
+use Stackra\Identity\Contracts\Repositories\IdentityRepositoryInterface;
+use Stackra\Identity\Models\Identity;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Identity\Models\Identity}.
+ * Attribute-first Eloquent repository for {@see Stackra\Identity\Models\Identity}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(IdentityInterface::class)]` which resolves to
  * `Identity` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Identity\Models\Identity>
+ * @extends Repository<\Stackra\Identity\Models\Identity>
  *
  * @category Identity
  *

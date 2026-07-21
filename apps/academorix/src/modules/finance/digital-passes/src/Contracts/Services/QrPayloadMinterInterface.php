@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\DigitalPasses\Contracts\Services;
+namespace Stackra\DigitalPasses\Contracts\Services;
 
-use Academorix\DigitalPasses\Services\QrPayloadMinter;
+use Stackra\DigitalPasses\Services\QrPayloadMinter;
 use Illuminate\Container\Attributes\Bind;
 
 /**

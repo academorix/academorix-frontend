@@ -1,13 +1,13 @@
 # Scope integration
 
-`academorix/feature-flags` does not carry its own hierarchy enum. Every place
+`stackra/feature-flags` does not carry its own hierarchy enum. Every place
 where the package targets a subset of the world — an override row, a rollout
 row, a kill-switch row, a resolver-layer lookup — expresses that target through
-the shared `(scope_level, scope_value)` pair defined by `academorix/scope`. The
+the shared `(scope_level, scope_value)` pair defined by `stackra/scope`. The
 scope framework owns the platform's canonical hierarchy source of truth;
 feature-flags is a **consumer** of that contract.
 
-## Why depend on `academorix/scope`
+## Why depend on `stackra/scope`
 
 Requirements 3.3, 3.4, 13.3, and 13.4 mandate that overrides, rollouts, and kill
 switches target **any** level the current owner declares — `tenant`, `region`,
@@ -22,31 +22,31 @@ Consequences:
   `scope_definitions` table (one row per level, one owner per row set) is
   already the platform's canonical answer to that problem.
 - **One resolver contract for the whole request.** Middleware in
-  `academorix/scope` runs once per request, establishes the caller's active
+  `stackra/scope` runs once per request, establishes the caller's active
   `ScopeContextData`, and binds it into a request-scoped container slot. Every
   downstream consumer — feature-flags included — reads that same context, so
   cross-package decisions stay in sync.
 
 ## The `ScopePath` synthesis
 
-The design document uses `Academorix\Scope\Contracts\ScopePath` as shorthand for
+The design document uses `Stackra\Scope\Contracts\ScopePath` as shorthand for
 the caller's active scope chain. **That class does not ship in
-`academorix/scope` today.** The `valueAt()` / `deepestLevel()` /
+`stackra/scope` today.** The `valueAt()` / `deepestLevel()` /
 `sortedLevels()` accessors the resolver layers need are synthesised inside
 feature-flags from the concrete scope-framework classes that DO ship:
 
 | Symbol                                             | Kind              | Role                                                                                                                                               |
 | -------------------------------------------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Academorix\Scope\Contracts\ScopeContextInterface` | Interface         | Request-scoped holder. `#[Bind]` + `#[Scoped]`. Exposes `get()`, `getOrFail()`, plus a `push`/`pop` override stack the emulator uses.              |
-| `Academorix\Scope\Services\ScopeContext`           | Class             | Concrete implementation bound behind the interface above.                                                                                          |
-| `Academorix\Scope\Data\ScopeContextData`           | Final readonly VO | The active scope snapshot. Fields: `nodeId`, `ownerId`, `scopeSlug`, `materialisedPath`, `depth`, `?node`. Provides `ancestorIds(): list<string>`. |
-| `Academorix\Scope\Models\ScopeDefinition`          | Eloquent model    | One row per hierarchy level per owner in `scope_definitions`. `sort_order` is what "deepest wins" precedence sorts on.                             |
-| `Academorix\Scope\Models\ScopeNode`                | Eloquent model    | One row per concrete node in `scope_nodes`. Two helpers matter: `ancestorIds()` and `isAncestorOf()`.                                              |
+| `Stackra\Scope\Contracts\ScopeContextInterface` | Interface         | Request-scoped holder. `#[Bind]` + `#[Scoped]`. Exposes `get()`, `getOrFail()`, plus a `push`/`pop` override stack the emulator uses.              |
+| `Stackra\Scope\Services\ScopeContext`           | Class             | Concrete implementation bound behind the interface above.                                                                                          |
+| `Stackra\Scope\Data\ScopeContextData`           | Final readonly VO | The active scope snapshot. Fields: `nodeId`, `ownerId`, `scopeSlug`, `materialisedPath`, `depth`, `?node`. Provides `ancestorIds(): list<string>`. |
+| `Stackra\Scope\Models\ScopeDefinition`          | Eloquent model    | One row per hierarchy level per owner in `scope_definitions`. `sort_order` is what "deepest wins" precedence sorts on.                             |
+| `Stackra\Scope\Models\ScopeNode`                | Eloquent model    | One row per concrete node in `scope_nodes`. Two helpers matter: `ancestorIds()` and `isAncestorOf()`.                                              |
 
-The local synthesis lives in `Academorix\FeatureFlags\Support\ScopePath` (see
+The local synthesis lives in `Stackra\FeatureFlags\Support\ScopePath` (see
 `src/Support/ScopePath.php`). The class exposes exactly the accessors the
 resolver layers need, hydrated once per evaluation via
-`ScopePath::fromScopeContext($ctx)`. When `academorix/scope` eventually ships a
+`ScopePath::fromScopeContext($ctx)`. When `stackra/scope` eventually ships a
 first-class `ScopePath` VO with the same shape, migration is a single-import
 rewrite — no query or column change.
 
@@ -60,7 +60,7 @@ Keep the distinction:
   Holds the concrete entity id at `scope_level`. Example:
   `scope_level = 'venue'`, `scope_value = '01HW5Z…VENUE_UUID'`. Matches
   `ScopeNode::$entity_id`.
-- **`Academorix\Scope\Models\ScopeValue`** — an Eloquent model backing the
+- **`Stackra\Scope\Models\ScopeValue`** — an Eloquent model backing the
   `scope_values` table. A namespaced key-value store used by cascading
   settings/permissions. Feature-flags does NOT read or write this table.
 
@@ -212,5 +212,5 @@ Evaluating `Feature::active('coach.beta_toolbelt')`:
   tenant resolved from the same `ScopeContextData->ownerId`.
 
 The scope framework does the routing once, at request bootstrap; feature-flags
-reads the resulting `ScopeContextData` the same way `academorix/settings` and
-`academorix/permissions` do.
+reads the resulting `ScopeContextData` the same way `stackra/settings` and
+`stackra/permissions` do.

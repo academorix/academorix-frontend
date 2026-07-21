@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/audit/policies",
+  "id": "stackra://modules/audit/policies",
   "$version": 1,
   "title": "audit — authorization policies",
   "description": "Two policies. AuditPolicy is READ-only over HTTP — create/update/delete are all refused at the policy level (vendor observer is the only capture path; purge job is the only deletion path). AuditRetentionPolicyPolicy has full CRUD gated by the audit_retention_extended entitlement (Enterprise-only).",
   "policies": [
     {
       "model": "Audit",
-      "class": "Academorix\\Observability\\Audit\\Policies\\AuditPolicy",
+      "class": "Stackra\\Observability\\Audit\\Policies\\AuditPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -57,7 +57,7 @@
     },
     {
       "model": "AuditRetentionPolicy",
-      "class": "Academorix\\Observability\\Audit\\Policies\\AuditRetentionPolicyPolicy",
+      "class": "Stackra\\Observability\\Audit\\Policies\\AuditRetentionPolicyPolicy",
       "abilities": [
         {
           "action": "viewAny",

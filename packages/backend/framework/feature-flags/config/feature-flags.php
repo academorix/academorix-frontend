@@ -4,7 +4,7 @@
  * @file config/feature-flags.php
  *
  * @description
- * Runtime knobs for the `academorix/feature-flags` package.
+ * Runtime knobs for the `stackra/feature-flags` package.
  * Consumer apps publish this via
  * `php artisan vendor:publish --tag=feature-flags-config` and
  * override individual keys via environment. Every value here is

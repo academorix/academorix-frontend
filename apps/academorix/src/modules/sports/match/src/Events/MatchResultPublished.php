@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Events;
+namespace Stackra\Match\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -17,7 +17,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - audit::WriteToAuditLog
  * - match::RecomputeStandingsOnMatchResultPublished (dispatches RecomputeStandingsJob when competition_id IS NOT NULL)
  * - notifications::DispatchMatchResultPublishedNotification (families + squad + public site)
- * - monitoring::MetricsCollector (increments academorix.matches.result_published_total)
+ * - monitoring::MetricsCollector (increments stackra.matches.result_published_total)
  *
  * @category Match
  *

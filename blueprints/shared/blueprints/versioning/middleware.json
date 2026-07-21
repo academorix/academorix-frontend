@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/versioning/middleware",
+  "id": "stackra://modules/versioning/middleware",
   "$version": 1,
   "title": "versioning \u2014 HTTP middleware",
   "description": "One middleware: `versioning.resolve`. Runs the resolver chain, populates request state, emits response headers (X-API-Version, Deprecation, Sunset, Link: rel=successor-version). Registered at priority 30 in foundation's canonical order \u2014 was foundation's `api.version` slot.",
   "middleware": [
     {
       "alias": "versioning.resolve",
-      "class": "Academorix\\Versioning\\Http\\Middleware\\ResolveVersion",
+      "class": "Stackra\\Versioning\\Http\\Middleware\\ResolveVersion",
       "priority": 30,
       "description": "Runs the VersionResolverChain in configured order (default: url, header, query, webhook, graphql). First resolver returning a non-null result wins. Populates request-scoped bindings so controllers + Data classes can vary payload shape by version. Emits response headers per RFC 8594 for deprecated/sunset versions.",
       "sideEffects": [

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file apps/academorix/src/sdks/platform-application-sdk/tests/Feature/Data/BusinessTypeDataTest.php
+ * @file apps/stackra/src/sdks/platform-application-sdk/tests/Feature/Data/BusinessTypeDataTest.php
  *
  * @description
  * Hydration + shape tests for {@see BusinessTypeData}. Verifies
@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-use Academorix\PlatformApplicationSdk\Data\BusinessTypeData;
+use Stackra\PlatformApplicationSdk\Data\BusinessTypeData;
 
 describe('BusinessTypeData', function (): void {
     it('hydrates the full catalogue entry with defaults', function (): void {
@@ -30,7 +30,7 @@ describe('BusinessTypeData', function (): void {
                 'sports' => ['football', 'basketball'],
             ],
             'icon' => 'academic-cap',
-            'hero_image_url' => 'https://cdn.academorix.app/academy.jpg',
+            'hero_image_url' => 'https://cdn.stackra.app/academy.jpg',
             'priority' => 10,
             'is_visible' => true,
         ];
@@ -42,7 +42,7 @@ describe('BusinessTypeData', function (): void {
             ->and($data->description)->toBe('Education-first sports academy.')
             ->and($data->defaultConfig)->toBe($row['default_config'])
             ->and($data->icon)->toBe('academic-cap')
-            ->and($data->heroImageUrl)->toBe('https://cdn.academorix.app/academy.jpg')
+            ->and($data->heroImageUrl)->toBe('https://cdn.stackra.app/academy.jpg')
             ->and($data->priority)->toBe(10)
             ->and($data->isVisible)->toBeTrue()
             ->and($data->translations)->toBeNull()

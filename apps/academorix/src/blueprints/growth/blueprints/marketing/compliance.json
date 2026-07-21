@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/marketing/compliance",
+  "id": "stackra://modules/marketing/compliance",
   "$version": 1,
   "title": "marketing — compliance evidence",
   "description": "Marketing is financial-record-adjacent AND privacy-critical. Every dispatched event carries user identifiers (email hashed / phone hashed / click IDs) to third-party ad networks — GDPR Art. 6(1)(a) explicit consent, GDPR Art. 17 erasure, CCPA §1798.135 Do Not Sell honoring, iOS ATT Framework mitigation, PCI-DSS scope (never card data). SOC 2 CC7.2 monitoring on the delivery ledger.",
@@ -25,7 +25,7 @@
         {
           "article": "Art. 15",
           "principle": "right of access",
-          "evidence": "Users request their marketing event history via the compliance/data-subject-rights surface. The export includes: event list (event_type, captured_at, value_amount, subject_id), delivery list per event (provider, status, dispatched_at), and consent snapshots. Provider-side data is out of scope of Academorix — the export includes the identity fields dispatched to each provider so the user can invoke their rights directly with the provider."
+          "evidence": "Users request their marketing event history via the compliance/data-subject-rights surface. The export includes: event list (event_type, captured_at, value_amount, subject_id), delivery list per event (provider, status, dispatched_at), and consent snapshots. Provider-side data is out of scope of Stackra — the export includes the identity fields dispatched to each provider so the user can invoke their rights directly with the provider."
         },
         {
           "article": "Art. 17",
@@ -75,7 +75,7 @@
         {
           "criterion": "CC7.2",
           "principle": "system monitoring",
-          "evidence": "The BookingOverlapDetected pattern applies here: MarketingProviderCircuitBreakerOpened + MarketingDeadLetterCreated are P1 signals. Every fire pages the on-call. The academorix.marketing.dead_letters.created_total counter is tracked; a spike is a compliance-relevant financial-loss signal."
+          "evidence": "The BookingOverlapDetected pattern applies here: MarketingProviderCircuitBreakerOpened + MarketingDeadLetterCreated are P1 signals. Every fire pages the on-call. The stackra.marketing.dead_letters.created_total counter is tracked; a spike is a compliance-relevant financial-loss signal."
         },
         {
           "criterion": "CC9.1",

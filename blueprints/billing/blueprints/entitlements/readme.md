@@ -1,6 +1,6 @@
-# academorix/entitlements
+# stackra/entitlements
 
-Per-tenant quota + usage tracking substrate for Academorix. Consumed by every
+Per-tenant quota + usage tracking substrate for Stackra. Consumed by every
 metered feature module (webhook, notifications, storage, newsletter, search).
 
 ## Aggregates
@@ -22,7 +22,7 @@ metered feature module (webhook, notifications, storage, newsletter, search).
 ## Install
 
 ```bash
-composer require academorix/entitlements
+composer require stackra/entitlements
 ```
 
 ## Contributes

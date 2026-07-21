@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "branch",
   "alias": "branch",
-  "namespace": "Academorix\\Branch",
+  "namespace": "Stackra\\Branch",
   "description": "Physical venue — the concrete place where a Tenant's activities happen. Answers 'where does this happen?'. Every Branch belongs to one Organization (structural sub-brand — 'Elite Sports Academy') AND one Region (commercial/regulatory zone — 'US-CA', 'AE-DU'). These two orthogonal axes converge here. Cascades through Organization + Region for reporting; no shortcut FKs on downstream tables — Facility, Team, Athlete, Staff, Coach, Membership, Session all reach Region + Organization by joining through `branches`. Ships: Branch model + branch CRUD HTTP surface, structured-address column (jsonb), geolocation as structured coordinates (jsonb: lat/lng/accuracy_m/source) for future geofencing (Wave 3), opening_hours per-day (jsonb, multi-period days + tz-aware exceptions), capacity for booking calculations, status lifecycle (active/paused/closed), business-hours-open() runtime helper, and ships NOTHING on TenantProvisioned — Branches are explicit tenant admin actions. Slot-gated via `branch_slot` entitlement (Small=3, Medium=25, Enterprise=unlimited). Geocoding is optional (subprocessor: Google Maps / Mapbox / Nominatim) gated by `branch_geocoding` entitlement. This is the FK-central module of the whole platform — every downstream domain module (facility, team, staff, coach, athlete, invoice, session, booking) references `branch_id`.",
   "keywords": [
     "branch",
@@ -24,7 +24,7 @@
     "geocoding"
   ],
   "priority": 45,
-  "providers": ["Academorix\\Branch\\Providers\\BranchServiceProvider"],
+  "providers": ["Stackra\\Branch\\Providers\\BranchServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

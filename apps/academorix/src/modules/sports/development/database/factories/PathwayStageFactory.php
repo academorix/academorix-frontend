@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Development\Database\Factories;
+namespace Stackra\Development\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Development\Contracts\Data\PathwayStageInterface;
-use Academorix\Development\Models\PathwayStage;
+use Stackra\Development\Contracts\Data\PathwayStageInterface;
+use Stackra\Development\Models\PathwayStage;
 
 /**
- * Factory for {@see \Academorix\Development\Models\PathwayStage}.
+ * Factory for {@see \Stackra\Development\Models\PathwayStage}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Development\Models\PathwayStage>
+ * @extends Factory<\Stackra\Development\Models\PathwayStage>
  *
  * @category Development
  *

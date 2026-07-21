@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Concerns;
+namespace Stackra\Mfa\Concerns;
 
 /**
  * Trait — HasMfa.

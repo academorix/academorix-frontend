@@ -1,18 +1,18 @@
 {
-  "id": "academorix://modules/platform-user/policies",
+  "id": "stackra://modules/platform-user/policies",
   "$version": 1,
   "title": "platform-user \u2014 authorization policies",
   "description": "Two policies. Both are gated EXCLUSIVELY behind the `platform_admin` guard \u2014 the tenant-audience `sanctum` guard NEVER interacts with PlatformUser or PlatformProfile rows. `PlatformUserPolicy` gates the CRUD + lifecycle transitions (view, hire, suspend, restore, offboard). `PlatformProfilePolicy` gates the PII satellite (self-service `me` endpoints + admin views). Every policy ability that mutates state OR unmutes PII writes a fresh audit row (meta-audit) with the caller's actor id + the specific ability invoked \u2014 SOC2 CC6.1 evidence for who saw what.",
   "policies": [
     {
       "model": "PlatformUser",
-      "class": "Academorix\\PlatformUser\\Policies\\PlatformUserPolicy",
+      "class": "Stackra\\PlatformUser\\Policies\\PlatformUserPolicy",
       "guard": "platform_admin",
       "abilities": [
         {
           "action": "viewAny",
           "permission": "platform.platform_users.viewAny",
-          "scope": "Any Academorix staffer with the ops or product baseline role can list. Redacted list (email hash-fingerprint + display_name + department; no PII).",
+          "scope": "Any Stackra staffer with the ops or product baseline role can list. Redacted list (email hash-fingerprint + display_name + department; no PII).",
           "seededOn": ["super_admin", "ops", "product", "security"]
         },
         {
@@ -86,7 +86,7 @@
     },
     {
       "model": "PlatformProfile",
-      "class": "Academorix\\PlatformUser\\Policies\\PlatformProfilePolicy",
+      "class": "Stackra\\PlatformUser\\Policies\\PlatformProfilePolicy",
       "guard": "platform_admin",
       "abilities": [
         {

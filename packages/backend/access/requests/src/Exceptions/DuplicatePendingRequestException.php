@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Requests\Exceptions;
+namespace Stackra\Requests\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * The caller already has a pending request for the same (resource_type, resource_id, permissions_wanted) tuple.

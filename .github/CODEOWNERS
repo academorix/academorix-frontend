@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------------
 # @file        .github/CODEOWNERS
-# @description Auto-review-assignment table for the Academorix frontend
+# @description Auto-review-assignment table for the Stackra frontend
 #              monorepo. GitHub reads this file when a pull request is opened
 #              and requests review from the LAST matching pattern for every
 #              changed path. First non-matching commit gets no assignment.
@@ -11,7 +11,7 @@
 #   * `/foo/` matches only at the repo root; `foo/` matches anywhere.
 #   * Team handles use `@org/team-slug`. GitHub silently drops patterns that
 #     reference a non-existent user/team, which is why the placeholder team
-#     `@academorix/platform-team` is documented — adjust the handle when the
+#     `@stackra/platform-team` is documented — adjust the handle when the
 #     GitHub organization + team are actually created.
 #   * Branch-protection rules can require review from code owners; that is
 #     what turns this file from documentation into an enforced gate.
@@ -19,10 +19,10 @@
 
 # -----------------------------------------------------------------------------
 # Default owner — every path not matched by a later rule falls back here.
-# Replace @academorix/platform-team with the real team slug once the
+# Replace @stackra/platform-team with the real team slug once the
 # GitHub org / team is provisioned.
 # -----------------------------------------------------------------------------
-*   @academorix/platform-team
+*   @stackra/platform-team
 
 # -----------------------------------------------------------------------------
 # Workspace root — turbo pipeline, pnpm workspace map, lockfile, top-level
@@ -30,20 +30,20 @@
 # Changes here alter how the entire monorepo builds, tests, and ships, so
 # they always land on the platform team.
 # -----------------------------------------------------------------------------
-/turbo.json                @academorix/platform-team
-/pnpm-workspace.yaml       @academorix/platform-team
-/pnpm-lock.yaml            @academorix/platform-team
-/package.json              @academorix/platform-team
-/tsconfig.json             @academorix/platform-team
-/.github/                  @academorix/platform-team
-/.kiro/                    @academorix/platform-team
+/turbo.json                @stackra/platform-team
+/pnpm-workspace.yaml       @stackra/platform-team
+/pnpm-lock.yaml            @stackra/platform-team
+/package.json              @stackra/platform-team
+/tsconfig.json             @stackra/platform-team
+/.github/                  @stackra/platform-team
+/.kiro/                    @stackra/platform-team
 
 # -----------------------------------------------------------------------------
 # Applications — user-facing surfaces. Product-behaviour changes flow
 # through the platform team until product-vertical teams exist.
 # -----------------------------------------------------------------------------
-/apps/dashboard/           @academorix/platform-team
-/apps/landing-page/        @academorix/platform-team
+/apps/dashboard/           @stackra/platform-team
+/apps/landing-page/        @stackra/platform-team
 
 # -----------------------------------------------------------------------------
 # Shared packages — every change to a package.json under packages/ affects
@@ -51,19 +51,19 @@
 # even though it duplicates the default. This makes the intent readable
 # to anyone browsing the file.
 # -----------------------------------------------------------------------------
-/packages/analytics/          @academorix/platform-team
-/packages/api-types/          @academorix/platform-team
-/packages/core/               @academorix/platform-team
-/packages/eslint-config/      @academorix/platform-team
-/packages/feature-flags/      @academorix/platform-team
-/packages/http/               @academorix/platform-team
-/packages/i18n/               @academorix/platform-team
-/packages/notifications/      @academorix/platform-team
-/packages/pwa/                @academorix/platform-team
-/packages/query/              @academorix/platform-team
-/packages/realtime/           @academorix/platform-team
-/packages/typescript-config/  @academorix/platform-team
-/packages/ui/                 @academorix/platform-team
+/packages/analytics/          @stackra/platform-team
+/packages/api-types/          @stackra/platform-team
+/packages/core/               @stackra/platform-team
+/packages/eslint-config/      @stackra/platform-team
+/packages/feature-flags/      @stackra/platform-team
+/packages/http/               @stackra/platform-team
+/packages/i18n/               @stackra/platform-team
+/packages/notifications/      @stackra/platform-team
+/packages/pwa/                @stackra/platform-team
+/packages/query/              @stackra/platform-team
+/packages/realtime/           @stackra/platform-team
+/packages/typescript-config/  @stackra/platform-team
+/packages/ui/                 @stackra/platform-team
 
 # -----------------------------------------------------------------------------
 # Deployment surfaces — vercel.json per-app plus the workspace-level
@@ -71,5 +71,5 @@
 # rewrite / header rule here can silently break production, so keep the
 # gate explicit even though it is covered by the default.
 # -----------------------------------------------------------------------------
-/apps/*/vercel.json        @academorix/platform-team
-/.vercel/                  @academorix/platform-team
+/apps/*/vercel.json        @stackra/platform-team
+/.vercel/                  @stackra/platform-team

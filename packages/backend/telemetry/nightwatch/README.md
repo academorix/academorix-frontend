@@ -1,7 +1,7 @@
-# Academorix Nightwatch
+# Stackra Nightwatch
 
 Laravel Nightwatch production monitoring integration with attribute-driven
-context discovery, sampling, filtering, and redaction for Academorix
+context discovery, sampling, filtering, and redaction for Stackra
 applications.
 
 ## Features

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/telemetry/retention",
+  "id": "stackra://modules/telemetry/retention",
   "$version": 1,
   "title": "telemetry \u2014 retention windows",
   "description": "This module has no data store \u2014 spans + metrics are pushed to the OTLP collector; log records are pushed to the configured Monolog sink. The upstream backend (Grafana Tempo/Mimir/Loki, DataDog, Honeycomb, file rotation, etc) enforces retention windows.",

@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/athlete-enrollment/events",
+  "id": "stackra://modules/athlete-enrollment/events",
   "$version": 1,
   "title": "athlete-enrollment — published events",
-  "namespace": "Academorix\\Sports\\AthleteEnrollment\\Events",
+  "namespace": "Stackra\\Sports\\AthleteEnrollment\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit`. Lifecycle events (submit / confirm / activate / complete / withdraw / expel) fan out to notifications + activity + audit. EnrollmentAtomicityFailed is a P1 event fired when the atomic conversion to TeamMember fails — every occurrence requires investigation.",
   "events": [
     {
       "name": "EnrollmentSubmitted",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentSubmitted",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Events\\EnrollmentSubmitted",
       "trigger": "AthleteEnrollmentProvisioner committed. Consumes 1 unit of athlete_enrollment_slot on the tenant's active per-season entitlement.",
       "queue": "notifications",
       "consumers": [
@@ -36,7 +36,7 @@
     },
     {
       "name": "EnrollmentAgeGroupSnapshotSet",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentAgeGroupSnapshotSet",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Events\\EnrollmentAgeGroupSnapshotSet",
       "trigger": "SnapshotAgeGroupOnEnrollmentSubmitted hook set the initial age_group_snapshot_id. Fires immediately after EnrollmentSubmitted.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog"],
@@ -50,7 +50,7 @@
     },
     {
       "name": "EnrollmentAgeGroupSnapshotMismatched",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentAgeGroupSnapshotMismatched",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Events\\EnrollmentAgeGroupSnapshotMismatched",
       "trigger": "The age_group_snapshot_matches_team_age_group rule fires as a SOFT-WARN — the snapshot doesn't match the team's declared age_group_id. Non-fatal, but flagged for admin review. Common cases: an under-age athlete playing up (allowed with note), an over-age athlete playing down (typically disallowed).",
       "queue": "notifications",
       "consumers": [
@@ -68,7 +68,7 @@
     },
     {
       "name": "EnrollmentConfirmed",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentConfirmed",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Events\\EnrollmentConfirmed",
       "trigger": "Status transitioned {submitted, payment_pending, consent_pending} → confirmed. All preconditions (payment + consent) met. Consent snapshot captured at this transition.",
       "queue": "notifications",
       "consumers": [
@@ -88,7 +88,7 @@
     },
     {
       "name": "EnrollmentActivated",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentActivated",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Events\\EnrollmentActivated",
       "trigger": "Status transitioned confirmed → active. Season started + athlete is on the live roster. Fires alongside EnrollmentTeamMemberCreated in the same transaction.",
       "queue": "notifications",
       "consumers": [
@@ -107,7 +107,7 @@
     },
     {
       "name": "EnrollmentTeamMemberCreated",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentTeamMemberCreated",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Events\\EnrollmentTeamMemberCreated",
       "trigger": "In the same transaction as EnrollmentActivated, the ConvertEnrollmentToTeamMemberAtomically hook created a teams::TeamMember row. Fires alongside teams::TeamMemberJoined so downstream consumers see both.",
       "queue": "notifications",
       "consumers": [
@@ -126,7 +126,7 @@
     },
     {
       "name": "EnrollmentAtomicityFailed",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentAtomicityFailed",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Events\\EnrollmentAtomicityFailed",
       "trigger": "P1 event. The ConvertEnrollmentToTeamMemberAtomically hook rolled back the DB transaction — either the enrollment update OR the TeamMember create failed. The enrollment stays in confirmed state; ActivateConfirmedEnrollmentsJob will retry on the next cycle. Every fire is a compliance-critical signal.",
       "queue": "notifications-critical",
       "consumers": [
@@ -142,7 +142,7 @@
     },
     {
       "name": "EnrollmentCompleted",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentCompleted",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Events\\EnrollmentCompleted",
       "trigger": "Status transitioned active → completed. Terminal happy path. Season ended — athlete completed the enrollment. Also fires via season::SeasonCompleted cascade.",
       "queue": "notifications",
       "consumers": [
@@ -162,7 +162,7 @@
     },
     {
       "name": "EnrollmentWithdrawn",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentWithdrawn",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Events\\EnrollmentWithdrawn",
       "trigger": "Status transitioned active/confirmed → withdrawn. Terminal (parent-initiated exit). Cascades: soft-deletes the linked TeamMember.",
       "queue": "notifications-critical",
       "consumers": [
@@ -183,7 +183,7 @@
     },
     {
       "name": "EnrollmentExpelled",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentExpelled",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Events\\EnrollmentExpelled",
       "trigger": "Status transitioned active → expelled. Terminal (disciplinary termination). Audit-critical.",
       "queue": "notifications-critical",
       "consumers": [
@@ -203,7 +203,7 @@
     },
     {
       "name": "EnrollmentExpired",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentExpired",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Events\\EnrollmentExpired",
       "trigger": "ExpireExpiredProvisionalEnrollmentsJob detected an enrollment past registration_closes_at + expiry_ttl_days without reaching confirmed. Fires per expired enrollment. Releases 1 unit of athlete_enrollment_slot.",
       "queue": "notifications",
       "consumers": [
@@ -221,7 +221,7 @@
     },
     {
       "name": "EnrollmentWaitlisted",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentWaitlisted",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Events\\EnrollmentWaitlisted",
       "trigger": "Status transitioned submitted → waitlisted. Team at capacity at submit time; waitlist workflow enabled. Fires with waitlist_position (queue rank).",
       "queue": "notifications",
       "consumers": [
@@ -240,7 +240,7 @@
     },
     {
       "name": "EnrollmentPromotedFromWaitlist",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentPromotedFromWaitlist",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Events\\EnrollmentPromotedFromWaitlist",
       "trigger": "PromoteWaitlistedEnrollmentsJob picked the earliest-waitlisted enrollment when team capacity opened. Status transitions waitlisted → submitted (or directly to confirmed if all other preconditions already met).",
       "queue": "notifications-critical",
       "consumers": [
@@ -259,7 +259,7 @@
     },
     {
       "name": "EnrollmentCapacityExceeded",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentCapacityExceeded",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Events\\EnrollmentCapacityExceeded",
       "trigger": "Recoverable event. Fires when an enrollment is submitted for a team at capacity + waitlist entitlement is on — the observer moves the enrollment to waitlisted. When waitlist entitlement is off (Small tier), the observer refuses the submit with TEAM_AT_CAPACITY error and this event doesn't fire.",
       "queue": "notifications",
       "consumers": [
@@ -276,7 +276,7 @@
     },
     {
       "name": "EnrollmentProvisionalCreated",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentProvisionalCreated",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Events\\EnrollmentProvisionalCreated",
       "trigger": "Enterprise-only. Enrollment created with enrollment_type='provisional' — pending guardian consent past the deadline. The enrollment consumes a slot + holds the roster position while consent is chased.",
       "queue": "notifications",
       "consumers": [
@@ -294,7 +294,7 @@
     },
     {
       "name": "EnrollmentConsentReceived",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentConsentReceived",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Events\\EnrollmentConsentReceived",
       "trigger": "Consent snapshot updated from a prior state where required consents were missing to a state where they're recorded. Distinct from athlete::AthleteConsentRecorded because the enrollment observes it in its own context.",
       "queue": "notifications",
       "consumers": [
@@ -311,7 +311,7 @@
     },
     {
       "name": "EnrollmentConsentSnapshotUpdated",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentConsentSnapshotUpdated",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Events\\EnrollmentConsentSnapshotUpdated",
       "trigger": "consent_snapshot JSONB mutated on an existing enrollment (rare — usually consent_snapshot is captured at confirm-time + never touched again unless the parent athlete's consent state materially changes).",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog"],
@@ -324,7 +324,7 @@
     },
     {
       "name": "EnrollmentPaymentStatusChanged",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentPaymentStatusChanged",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Events\\EnrollmentPaymentStatusChanged",
       "trigger": "payment_status mutated. Wave 4 Finance module fires this — currently a placeholder for the payment_status transitions (none → pending → paid).",
       "queue": "notifications",
       "consumers": [
@@ -343,7 +343,7 @@
     },
     {
       "name": "EnrollmentPositionAssigned",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentPositionAssigned",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Events\\EnrollmentPositionAssigned",
       "trigger": "position_assigned mutated (coach assigns a position). Fires once per assignment.",
       "queue": "notifications",
       "consumers": [
@@ -361,7 +361,7 @@
     },
     {
       "name": "EnrollmentJerseyAssigned",
-      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentJerseyAssigned",
+      "class": "Stackra\\Sports\\AthleteEnrollment\\Events\\EnrollmentJerseyAssigned",
       "trigger": "jersey_number_assigned mutated. Enforced unique per team via partial unique index.",
       "queue": "notifications",
       "consumers": [

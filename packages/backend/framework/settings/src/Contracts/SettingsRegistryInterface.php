@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Settings\Contracts;
+namespace Stackra\Settings\Contracts;
 
-use Academorix\Settings\Data\SettingDefinitionData;
-use Academorix\Settings\Registry\SettingsRegistry;
+use Stackra\Settings\Data\SettingDefinitionData;
+use Stackra\Settings\Registry\SettingsRegistry;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Scoped;
 
@@ -13,7 +13,7 @@ use Illuminate\Container\Attributes\Scoped;
  * Contract for the central settings-definition registry.
  *
  * Hydrated at boot by
- * {@see \Academorix\Settings\Bootstrappers\SettingsBootstrapper}
+ * {@see \Stackra\Settings\Bootstrappers\SettingsBootstrapper}
  * from every class carrying `#[AsSetting]`, then consumed at
  * runtime by the {@see SettingsServiceInterface}, the settings
  * actions, and the schema endpoint.

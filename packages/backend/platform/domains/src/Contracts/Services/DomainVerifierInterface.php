@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Contracts\Services;
+namespace Stackra\Domains\Contracts\Services;
 
-use Academorix\Domains\Models\DomainRecord;
-use Academorix\Domains\Services\NullDomainVerifier;
+use Stackra\Domains\Models\DomainRecord;
+use Stackra\Domains\Services\NullDomainVerifier;
 use Illuminate\Container\Attributes\Bind;
 
 /**

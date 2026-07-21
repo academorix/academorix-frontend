@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-sms/webhooks",
+  "id": "stackra://modules/notifications-sms/webhooks",
   "$version": 1,
   "title": "notifications-sms \u2014 webhook namespaces",
   "description": "This module handles two INBOUND webhook types via webhook module: delivery receipts AND inbound SMS (for STOP-keyword processing). Outbound SMS-scoped events published via notifications CORE.",
@@ -13,7 +13,7 @@
     {
       "provider": "twilio",
       "config_key": "notifications-sms.webhook_secrets.twilio",
-      "signature_strategy": "Academorix\\Notifications\\Sms\\Signatures\\TwilioSignatureStrategy",
+      "signature_strategy": "Stackra\\Notifications\\Sms\\Signatures\\TwilioSignatureStrategy",
       "expected_events": [
         "MessageStatus (delivered/failed/undelivered)",
         "Inbound message (for STOP)"
@@ -23,25 +23,25 @@
     {
       "provider": "messagebird",
       "config_key": "notifications-sms.webhook_secrets.messagebird",
-      "signature_strategy": "Academorix\\Notifications\\Sms\\Signatures\\MessageBirdSignatureStrategy",
+      "signature_strategy": "Stackra\\Notifications\\Sms\\Signatures\\MessageBirdSignatureStrategy",
       "expected_events": ["message.status (delivered/failed)", "message.inbound"]
     },
     {
       "provider": "vonage",
       "config_key": "notifications-sms.webhook_secrets.vonage",
-      "signature_strategy": "Academorix\\Notifications\\Sms\\Signatures\\VonageSignatureStrategy",
+      "signature_strategy": "Stackra\\Notifications\\Sms\\Signatures\\VonageSignatureStrategy",
       "expected_events": ["Delivery Receipt", "Inbound SMS"]
     },
     {
       "provider": "plivo",
       "config_key": "notifications-sms.webhook_secrets.plivo",
-      "signature_strategy": "Academorix\\Notifications\\Sms\\Signatures\\PlivoSignatureStrategy",
+      "signature_strategy": "Stackra\\Notifications\\Sms\\Signatures\\PlivoSignatureStrategy",
       "expected_events": ["message.delivered", "message.failed", "message.inbound"]
     },
     {
       "provider": "aws-sns",
       "config_key": "notifications-sms.webhook_secrets.aws-sns",
-      "signature_strategy": "Academorix\\Notifications\\Sms\\Signatures\\AwsSnsSignatureStrategy",
+      "signature_strategy": "Stackra\\Notifications\\Sms\\Signatures\\AwsSnsSignatureStrategy",
       "expected_events": ["Delivery via SNS \u2014 receipts via CloudWatch or SNS topic"],
       "note": "AWS SNS delivery reporting is via CloudWatch (not direct webhooks). Inbound SMS requires AWS End User Messaging setup."
     }

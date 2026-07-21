@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Telemetry\Contracts\Services;
+namespace Stackra\Telemetry\Contracts\Services;
 
-use Academorix\Telemetry\Services\ChannelResolver;
+use Stackra\Telemetry\Services\ChannelResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

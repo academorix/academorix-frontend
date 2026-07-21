@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Models;
+namespace Stackra\FeatureFlags\Models;
 
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\FeatureFlags\Contracts\Data\FeatureKillSwitchInterface;
-use Academorix\FeatureFlags\Database\Factories\FeatureKillSwitchFactory;
-use Academorix\FeatureFlags\Observers\FeatureKillSwitchObserver;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\FeatureFlags\Contracts\Data\FeatureKillSwitchInterface;
+use Stackra\FeatureFlags\Database\Factories\FeatureKillSwitchFactory;
+use Stackra\FeatureFlags\Observers\FeatureKillSwitchObserver;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

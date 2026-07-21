@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-in-app/features",
+  "id": "stackra://modules/notifications-in-app/features",
   "$version": 1,
   "title": "notifications-in-app \u2014 feature keys",
   "description": "None declared. The parent `notifications` module publishes `notifications.in_app_enabled` \u2014 that flag gates whether this transport participates in delivery fan-out. Duplicating it here would create two flags that must stay in sync. Marker file with an explanation.",

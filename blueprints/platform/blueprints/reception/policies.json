@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/reception/policies",
+  "id": "stackra://modules/reception/policies",
   "$version": 1,
   "title": "reception — authorization policies",
   "description": "Reception is a THIN orchestration layer over other modules (credentials + facility/DayPass + registrations + finance). Its policies gate the front-desk UI; the underlying modules enforce their own policies on the actions reception dispatches.",
   "policies": [
     {
       "model": "Visitor",
-      "class": "Academorix\\Platform\\Reception\\Policies\\VisitorPolicy",
+      "class": "Stackra\\Platform\\Reception\\Policies\\VisitorPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -25,7 +25,7 @@
     },
     {
       "model": "FrontDeskShift",
-      "class": "Academorix\\Platform\\Reception\\Policies\\FrontDeskShiftPolicy",
+      "class": "Stackra\\Platform\\Reception\\Policies\\FrontDeskShiftPolicy",
       "abilities": [
         {
           "action": "viewAny",

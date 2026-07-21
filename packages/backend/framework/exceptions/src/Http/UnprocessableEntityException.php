@@ -20,21 +20,21 @@
  *
  *   exceptions::http.unprocessable
  *
- * @see \Academorix\Exceptions\AcademorixException  Base class.
+ * @see \Stackra\Exceptions\StackraException  Base class.
  * @see ValidationException  Sibling class for field-level 422s.
- * @see \Academorix\Exceptions\Domain\BusinessRuleException  Preferred when the failure has a stable rule identifier.
+ * @see \Stackra\Exceptions\Domain\BusinessRuleException  Preferred when the failure has a stable rule identifier.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Http;
+namespace Stackra\Exceptions\Http;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class UnprocessableEntityException extends AcademorixException
+class UnprocessableEntityException extends StackraException
 {
     /**
      * Machine-readable code — clients that need to distinguish

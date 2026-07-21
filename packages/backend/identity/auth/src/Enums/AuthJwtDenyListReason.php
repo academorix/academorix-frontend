@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Enums;
+namespace Stackra\Auth\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `reason` on `auth-jwt-deny-list`.

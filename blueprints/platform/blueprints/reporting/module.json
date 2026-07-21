@@ -2,11 +2,11 @@
   "$version": 1,
   "name": "reporting",
   "alias": "reporting",
-  "namespace": "Academorix\\Reporting",
+  "namespace": "Stackra\\Reporting",
   "description": "Cross-module analytics + dashboards per blueprint §16.7. Ships FOUR owned entities: `ReportDefinition` (analytics definition — kind IN attendance/revenue/retention/roster + parameters + refresh_cadence + audience_scope), `SavedReport` (user-saved parameterization — filters + column selection + delivery schedule), `ReportRun` (one materialized output — output_document_id + rows_count + run_started/completed; retention 90d unless attached to Dashboard), `Dashboard` (widget-composed dashboard — role-scoped + layout JSONB; widgets reference SavedReports). Cross-region roll-up via reporting_currency FX conversion. Role-scoped visibility (owner sees all; branch_manager sees own branch). Scheduled + on-demand exports to CSV/Excel/PDF via storage.",
   "keywords": ["reporting", "dashboard", "kpi", "cross-module-analytics", "export", "wave-3"],
   "priority": 87,
-  "providers": ["Academorix\\Reporting\\Providers\\ReportingServiceProvider"],
+  "providers": ["Stackra\\Reporting\\Providers\\ReportingServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

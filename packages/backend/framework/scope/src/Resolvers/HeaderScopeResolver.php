@@ -13,13 +13,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Resolvers;
+namespace Stackra\Scope\Resolvers;
 
-use Academorix\Scope\Attributes\AsScopeResolver;
-use Academorix\Scope\Contracts\ScopeResolverInterface;
-use Academorix\Scope\Data\ScopeContextData;
-use Academorix\Scope\Enums\ScopeResolverPriority;
-use Academorix\Scope\Models\ScopeNode;
+use Stackra\Scope\Attributes\AsScopeResolver;
+use Stackra\Scope\Contracts\ScopeResolverInterface;
+use Stackra\Scope\Data\ScopeContextData;
+use Stackra\Scope\Enums\ScopeResolverPriority;
+use Stackra\Scope\Models\ScopeNode;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Http\Request;
 

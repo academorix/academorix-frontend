@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/delegation/policies",
+  "id": "stackra://modules/delegation/policies",
   "$version": 1,
   "title": "delegation — authorization policies",
   "policies": [
     {
       "model": "RoleDelegation",
-      "class": "Academorix\\Delegation\\Policies\\RoleDelegationPolicy",
+      "class": "Stackra\\Delegation\\Policies\\RoleDelegationPolicy",
       "guard": "sanctum",
       "abilities": [
         {
@@ -37,7 +37,7 @@
     },
     {
       "model": "ImpersonationSession",
-      "class": "Academorix\\Delegation\\Policies\\ImpersonationSessionPolicy",
+      "class": "Stackra\\Delegation\\Policies\\ImpersonationSessionPolicy",
       "guard": "platform_admin",
       "abilities": [
         {

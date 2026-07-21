@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformCredentialsSdk\Requests\Credentials;
+namespace Stackra\PlatformCredentialsSdk\Requests\Credentials;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\PlatformCredentialsSdk\Data\CredentialData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\PlatformCredentialsSdk\Data\CredentialData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

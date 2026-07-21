@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Actions\Platform;
+namespace Stackra\Activity\Actions\Platform;
 
-use Academorix\Activity\Contracts\Repositories\ActivityRepositoryInterface;
-use Academorix\Activity\Data\ActivityData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Activity\Contracts\Repositories\ActivityRepositoryInterface;
+use Stackra\Activity\Data\ActivityData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 
 /**
  * `GET /api/v1/platform/activities/{activity}` — show action (platform-admin audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Activity

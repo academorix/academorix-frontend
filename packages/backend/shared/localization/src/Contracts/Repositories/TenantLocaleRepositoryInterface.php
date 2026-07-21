@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Contracts\Repositories;
+namespace Stackra\Localization\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Localization\Models\TenantLocale;
-use Academorix\Localization\Repositories\EloquentTenantLocaleRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Localization\Models\TenantLocale;
+use Stackra\Localization\Repositories\EloquentTenantLocaleRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\DigitalPasses\Contracts\Services;
+namespace Stackra\DigitalPasses\Contracts\Services;
 
-use Academorix\DigitalPasses\Services\GoogleWalletProvider;
+use Stackra\DigitalPasses\Services\GoogleWalletProvider;
 use Illuminate\Container\Attributes\Bind;
 
 /**

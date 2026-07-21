@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Models;
+namespace Stackra\Webhook\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
-use Academorix\Webhook\Casts\BackoffConfigCast;
-use Academorix\Webhook\Casts\DestinationConfigCast;
-use Academorix\Webhook\Contracts\Data\WebhookSubscriptionInterface;
-use Academorix\Webhook\Database\Factories\WebhookSubscriptionFactory;
-use Academorix\Webhook\Enums\WebhookProbeStatus;
-use Academorix\Webhook\Enums\WebhookSubscriptionStatus;
-use Academorix\Webhook\Observers\WebhookSubscriptionObserver;
-use Academorix\Webhook\Policies\WebhookSubscriptionPolicy;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Webhook\Casts\BackoffConfigCast;
+use Stackra\Webhook\Casts\DestinationConfigCast;
+use Stackra\Webhook\Contracts\Data\WebhookSubscriptionInterface;
+use Stackra\Webhook\Database\Factories\WebhookSubscriptionFactory;
+use Stackra\Webhook\Enums\WebhookProbeStatus;
+use Stackra\Webhook\Enums\WebhookSubscriptionStatus;
+use Stackra\Webhook\Observers\WebhookSubscriptionObserver;
+use Stackra\Webhook\Policies\WebhookSubscriptionPolicy;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -122,7 +122,7 @@ final class WebhookSubscription extends Model implements AuditableContract, Webh
     {
         return $this->hasMany(
             WebhookDelivery::class,
-            \Academorix\Webhook\Contracts\Data\WebhookDeliveryInterface::ATTR_SUBSCRIPTION_ID,
+            \Stackra\Webhook\Contracts\Data\WebhookDeliveryInterface::ATTR_SUBSCRIPTION_ID,
         );
     }
 

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Repositories;
+namespace Stackra\Entitlements\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Entitlements\Contracts\Data\EntitlementUsageInterface;
-use Academorix\Entitlements\Contracts\Repositories\EntitlementUsageRepositoryInterface;
-use Academorix\Entitlements\Models\EntitlementUsage;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Entitlements\Contracts\Data\EntitlementUsageInterface;
+use Stackra\Entitlements\Contracts\Repositories\EntitlementUsageRepositoryInterface;
+use Stackra\Entitlements\Models\EntitlementUsage;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Entitlements\Models\EntitlementUsage}.
+ * Attribute-first Eloquent repository for {@see Stackra\Entitlements\Models\EntitlementUsage}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(EntitlementUsageInterface::class)]` which resolves to
  * `EntitlementUsage` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Entitlements\Models\EntitlementUsage>
+ * @extends Repository<\Stackra\Entitlements\Models\EntitlementUsage>
  *
  * @category Entitlements
  *

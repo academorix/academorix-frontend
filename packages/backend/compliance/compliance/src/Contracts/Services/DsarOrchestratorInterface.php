@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Contracts\Services;
+namespace Stackra\Compliance\Contracts\Services;
 
-use Academorix\Compliance\Models\Dsar;
-use Academorix\Compliance\Services\DefaultDsarOrchestrator;
+use Stackra\Compliance\Models\Dsar;
+use Stackra\Compliance\Services\DefaultDsarOrchestrator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

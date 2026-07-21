@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Attributes;
+namespace Stackra\Storage\Attributes;
 
 use Attribute;
 
@@ -12,11 +12,11 @@ use Attribute;
  * Applied on a class or property that declares an attachment,
  * `#[GeneratesVariants(['thumbnail', 'medium', 'hero'])]` dispatches
  * one
- * {@see \Academorix\Storage\Jobs\GenerateFileVariantsJob} per key
+ * {@see \Stackra\Storage\Jobs\GenerateFileVariantsJob} per key
  * on successful upload.
  *
  * The variant keys resolve against variant recipes registered on
- * {@see \Academorix\Storage\Contracts\Services\VariantGeneratorInterface}.
+ * {@see \Stackra\Storage\Contracts\Services\VariantGeneratorInterface}.
  *
  * @category Storage
  *

@@ -5,8 +5,8 @@
  *
  * @description
  * Contract every architectural rule implements. Rules receive a
- * parsed {@see \Academorix\Architecture\Support\SourceFile} and
- * return a list of {@see \Academorix\Architecture\Violations\Violation}
+ * parsed {@see \Stackra\Architecture\Support\SourceFile} and
+ * return a list of {@see \Stackra\Architecture\Violations\Violation}
  * — never mutate the source file, never touch the filesystem,
  * never fetch remote resources.
  *
@@ -24,21 +24,21 @@
  *
  * ## Adding a new rule
  *
- * 1. Extend {@see \Academorix\Architecture\Rules\AbstractRule}
+ * 1. Extend {@see \Stackra\Architecture\Rules\AbstractRule}
  *    (which handles the `id()` / `severity()` boilerplate).
  * 2. Implement `check(SourceFile $file): array<Violation>`.
  * 3. Register the rule in
- *    {@see \Academorix\Architecture\Providers\ArchitectureServiceProvider}'s
+ *    {@see \Stackra\Architecture\Providers\ArchitectureServiceProvider}'s
  *    tagged binding.
  * 4. Add a config toggle under `architecture.rules.<rule_id>`.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Contracts;
+namespace Stackra\Architecture\Contracts;
 
-use Academorix\Architecture\Support\SourceFile;
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Support\SourceFile;
+use Stackra\Architecture\Violations\Violation;
 
 /**
  * Every architectural rule implements this shape.

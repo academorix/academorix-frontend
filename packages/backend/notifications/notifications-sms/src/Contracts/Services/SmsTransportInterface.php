@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Contracts\Services;
+namespace Stackra\Notifications\Sms\Contracts\Services;
 
-use Academorix\Notifications\Sms\Data\SmsEnvelope;
-use Academorix\Notifications\Sms\Data\SmsSendResult;
+use Stackra\Notifications\Sms\Data\SmsEnvelope;
+use Stackra\Notifications\Sms\Data\SmsSendResult;
 
 /**
  * Contract every SMS transport driver implements.

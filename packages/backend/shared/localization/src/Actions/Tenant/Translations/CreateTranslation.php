@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Actions\Tenant\Translations;
+namespace Stackra\Localization\Actions\Tenant\Translations;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Localization\Contracts\Data\TranslationInterface;
-use Academorix\Localization\Contracts\Repositories\TranslationRepositoryInterface;
-use Academorix\Localization\Data\Requests\CreateTranslationRequestData;
-use Academorix\Localization\Data\Resources\TranslationData;
-use Academorix\Localization\Enums\LocalizationPermission;
-use Academorix\Localization\Enums\TranslationSource;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Localization\Contracts\Data\TranslationInterface;
+use Stackra\Localization\Contracts\Repositories\TranslationRepositoryInterface;
+use Stackra\Localization\Data\Requests\CreateTranslationRequestData;
+use Stackra\Localization\Data\Resources\TranslationData;
+use Stackra\Localization\Enums\LocalizationPermission;
+use Stackra\Localization\Enums\TranslationSource;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 
 /**
  * `POST /api/v1/translations` — tenant admin creates a hand-authored

@@ -20,17 +20,17 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  *
- * @see \Academorix\Nightwatch\Contracts\NightwatchSampler
+ * @see \Stackra\Nightwatch\Contracts\NightwatchSampler
  */
 
-namespace Academorix\Nightwatch\Middleware;
+namespace Stackra\Nightwatch\Middleware;
 
 use Closure;
 use Illuminate\Container\Attributes\Tag;
 use Illuminate\Http\Request;
 use Laravel\Nightwatch\Facades\Nightwatch;
-use Academorix\Nightwatch\Contracts\NightwatchSampler;
-use Academorix\Routing\Attributes\AsMiddleware;
+use Stackra\Nightwatch\Contracts\NightwatchSampler;
+use Stackra\Routing\Attributes\AsMiddleware;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

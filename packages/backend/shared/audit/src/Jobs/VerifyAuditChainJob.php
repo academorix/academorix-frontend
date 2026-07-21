@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Jobs;
+namespace Stackra\Audit\Jobs;
 
-use Academorix\Audit\Contracts\Services\AuditChainVerifierInterface;
+use Stackra\Audit\Contracts\Services\AuditChainVerifierInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -16,8 +16,8 @@ use Illuminate\Queue\SerializesModels;
 
 /**
  * Walk the audit chain and emit
- * {@see \Academorix\Audit\Events\AuditChainVerified} plus (on first
- * break) {@see \Academorix\Audit\Events\AuditChainBroken}.
+ * {@see \Stackra\Audit\Events\AuditChainVerified} plus (on first
+ * break) {@see \Stackra\Audit\Events\AuditChainBroken}.
  *
  * ## Retry stance
  *

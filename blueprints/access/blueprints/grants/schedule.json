@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/grants/schedule",
+  "id": "stackra://modules/grants/schedule",
   "$version": 1,
   "title": "grants — scheduled tasks",
   "description": "Cron entries registered by `GrantServiceProvider::schedule()`. UTC throughout. `runOnOneServer` on every entry so multi-node worker pools do not duplicate work. `withoutOverlapping` where windows may exceed the interval.",

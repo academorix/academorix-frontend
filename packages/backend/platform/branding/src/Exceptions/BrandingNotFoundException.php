@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Exceptions;
+namespace Stackra\Branding\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a lookup expects a branding profile but none is bound
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class BrandingNotFoundException extends AcademorixException
+final class BrandingNotFoundException extends StackraException
 {
     public const CODE = 'branding.not_found';
 

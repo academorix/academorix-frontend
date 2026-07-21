@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Models;
+namespace Stackra\Invitations\Models;
 
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Invitations\Contracts\Data\InvitationEventInterface;
-use Academorix\Invitations\Contracts\Data\InvitationInterface;
-use Academorix\Invitations\Database\Factories\InvitationEventFactory;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Invitations\Contracts\Data\InvitationEventInterface;
+use Stackra\Invitations\Contracts\Data\InvitationInterface;
+use Stackra\Invitations\Database\Factories\InvitationEventFactory;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -25,8 +25,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * transport signal (`sent`, `delivered`, `opened`, `clicked`,
  * `accepted`, `declined`, `expired`, `revoked`, `bounced`,
  * `resent`, `preflight_failed`). Written by the
- * {@see \Academorix\Invitations\Observers\InvitationObserver} and
- * the {@see \Academorix\Invitations\Jobs\RecordInboundEventJob}.
+ * {@see \Stackra\Invitations\Observers\InvitationObserver} and
+ * the {@see \Stackra\Invitations\Jobs\RecordInboundEventJob}.
  *
  * `SoftDeletes` is intentionally NOT applied — events are deleted
  * only by the retention purge, never by user action.

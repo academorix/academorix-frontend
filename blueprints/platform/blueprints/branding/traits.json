@@ -1,20 +1,20 @@
 {
-  "id": "academorix://modules/branding/traits",
+  "id": "stackra://modules/branding/traits",
   "$version": 1,
   "title": "branding — model traits",
   "description": "No owned traits. Branding is a single-entity module consuming BelongsToTenant + the standard foundation trait stack.",
   "owned": [],
   "consumed": [
     {
-      "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+      "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
       "source": "tenants",
       "usedBy": ["Branding"]
     },
     { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory", "source": "framework" },
     { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids", "source": "framework" },
-    { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata", "source": "foundation" },
-    { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps", "source": "foundation" },
-    { "trait": "Academorix\\Foundation\\Concerns\\HasAuditable", "source": "foundation" },
+    { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata", "source": "foundation" },
+    { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps", "source": "foundation" },
+    { "trait": "Stackra\\Foundation\\Concerns\\HasAuditable", "source": "foundation" },
     { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes", "source": "framework" }
   ],
   "composition_example": {

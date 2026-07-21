@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Casts;
+namespace Stackra\Invitations\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  *   - `user`             — an authenticated tenant user.
  *   - `service_account`  — a machine credential (SDK / integration).
- *   - `system`           — platform-initiated (Academorix ops).
+ *   - `system`           — platform-initiated (Stackra ops).
  *
  * When the stored value is a fully-qualified class name (legacy
  * writes), fall back to the trailing segment lowercased so the JSON

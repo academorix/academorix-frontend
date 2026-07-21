@@ -6,7 +6,7 @@ declare(strict_types=1);
  * @file packages/service-provider/src/Providers/ServiceProvider.php
  *
  * @description
- * Abstract base class every Academorix module service provider
+ * Abstract base class every Stackra module service provider
  * extends. Composes the full attribute-driven lifecycle via the
  * {@see AsModuleProvider} trait and wires it into Laravel's own
  * `register()` / `boot()` sequence so concrete providers get the
@@ -129,14 +129,14 @@ declare(strict_types=1);
  * @see ServiceProviderInterface The contract this class satisfies.
  */
 
-namespace Academorix\ServiceProvider\Providers;
+namespace Stackra\ServiceProvider\Providers;
 
-use Academorix\ServiceProvider\Concerns\AsModuleProvider;
-use Academorix\ServiceProvider\Contracts\ServiceProviderInterface;
+use Stackra\ServiceProvider\Concerns\AsModuleProvider;
+use Stackra\ServiceProvider\Contracts\ServiceProviderInterface;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 /**
- * Abstract module service provider driving Academorix's attribute-first
+ * Abstract module service provider driving Stackra's attribute-first
  * boot lifecycle.
  *
  * Concrete subclasses declare their surface via `#[AsModule]`,

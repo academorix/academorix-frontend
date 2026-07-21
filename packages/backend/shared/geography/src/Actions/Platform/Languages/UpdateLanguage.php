@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Actions\Platform\Languages;
+namespace Stackra\Geography\Actions\Platform\Languages;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Geography\Contracts\Repositories\LanguageRepositoryInterface;
-use Academorix\Geography\Data\Requests\UpdateLanguageRequestData;
-use Academorix\Geography\Data\Resources\LanguageResourceData;
-use Academorix\Geography\Enums\GeographyPermission;
-use Academorix\Geography\Models\Language;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Patch;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Geography\Contracts\Repositories\LanguageRepositoryInterface;
+use Stackra\Geography\Data\Requests\UpdateLanguageRequestData;
+use Stackra\Geography\Data\Resources\LanguageResourceData;
+use Stackra\Geography\Enums\GeographyPermission;
+use Stackra\Geography\Models\Language;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Patch;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `PATCH /api/v1/platform/geography/languages/{language}` — platform

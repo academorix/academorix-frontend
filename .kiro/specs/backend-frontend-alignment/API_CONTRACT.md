@@ -1,4 +1,4 @@
-# Academorix — Auth / User / Tenant API contract
+# Stackra — Auth / User / Tenant API contract
 
 The definitive list of what the backend must return + support to align with the
 frontend. Grounded in a direct scan of `apps/web/src/**` (what the SPA actually
@@ -213,7 +213,7 @@ different body:
 ```jsonc
 {
   "data": {
-    "user": { "id": 42, "email": "admin@academorix.staff", … },
+    "user": { "id": 42, "email": "admin@stackra.staff", … },
     "profile": { "first_name": "Dana", "last_name": "Whitfield", … },
     "roles": ["super_admin"],
     "permissions": ["*"],
@@ -314,7 +314,7 @@ All implemented. Frontend consumes:
   "impersonator": {
     "id": 42,
     "name": "Dana Whitfield",
-    "email": "admin@academorix.staff"
+    "email": "admin@stackra.staff"
   }
 }
 ```
@@ -518,10 +518,10 @@ page.
 
 Set `CORS_ALLOWED_ORIGINS` env to include:
 
-- `https://academorix.app`
-- `https://*.academorix.app` (wildcard — use `allowed_origins_patterns` since
+- `https://stackra.app`
+- `https://*.stackra.app` (wildcard — use `allowed_origins_patterns` since
   Laravel's `allowed_origins` doesn't support wildcards)
-- `https://academorix.vercel.app` (current prod frontend)
+- `https://stackra.vercel.app` (current prod frontend)
 - `http://localhost:3000`, `http://127.0.0.1:3000` (dev)
 
 Add to `config/cors.php`:
@@ -535,7 +535,7 @@ Add to `config/cors.php`:
 Foundation middleware reads and logs (does not require) on every authenticated
 request:
 
-- `X-Client` — SPA version string (e.g. `academorix-web/2.4.1`)
+- `X-Client` — SPA version string (e.g. `stackra-web/2.4.1`)
 - `X-Device-Id` — stable UUID per browser install
 - `X-Device-Name` — human-readable ("Chrome on macOS 15.0")
 - `X-Device-Platform`, `X-Device-Type` (`desktop|mobile|tablet`)

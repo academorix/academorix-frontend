@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Observers;
+namespace Stackra\Notifications\Observers;
 
-use Academorix\Notifications\Contracts\Data\NotificationTemplateInterface;
-use Academorix\Notifications\Enums\TemplateState;
-use Academorix\Notifications\Events\TemplatePublished;
-use Academorix\Notifications\Models\NotificationTemplate;
+use Stackra\Notifications\Contracts\Data\NotificationTemplateInterface;
+use Stackra\Notifications\Enums\TemplateState;
+use Stackra\Notifications\Events\TemplatePublished;
+use Stackra\Notifications\Models\NotificationTemplate;
 
 /**
  * Lifecycle side effects on {@see NotificationTemplate}.

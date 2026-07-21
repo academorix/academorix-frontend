@@ -9,7 +9,7 @@
  *
  * ## Why
  *
- * Academorix routing is handled entirely by the `Routing`
+ * Stackra routing is handled entirely by the `Routing`
  * package: controllers carry `#[AsController]` + verb attributes
  * (`#[Get]`, `#[Post]`, …) and the package's discovery pass
  * registers every URL at boot. There is no `routes/*.php`, no
@@ -40,9 +40,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Violations\Violation;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -78,7 +78,7 @@ final class NoRouteServiceProviderRule extends AbstractPathRule
      */
     public function description(): string
     {
-        return 'RouteServiceProvider is forbidden — Academorix Routing discovers controllers via #[AsController].';
+        return 'RouteServiceProvider is forbidden — Stackra Routing discovers controllers via #[AsController].';
     }
 
     /**
@@ -131,11 +131,11 @@ final class NoRouteServiceProviderRule extends AbstractPathRule
                 filePath: $file->getPathname(),
                 offender: $file->getFilename(),
                 message: sprintf(
-                    'Forbidden file "%s" exists at %s — Academorix does not use a RouteServiceProvider.',
+                    'Forbidden file "%s" exists at %s — Stackra does not use a RouteServiceProvider.',
                     $file->getFilename(),
                     $file->getPathname(),
                 ),
-                hint: 'Routing is handled by the Academorix Routing package via #[AsController] discovery. No RouteServiceProvider needed.',
+                hint: 'Routing is handled by the Stackra Routing package via #[AsController] discovery. No RouteServiceProvider needed.',
             );
         }
 

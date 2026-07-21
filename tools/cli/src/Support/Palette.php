@@ -2,15 +2,15 @@
 
 /**
  * @file Palette.php
- * @module Academorix\Cli\Support
- * @description Eleven gradient palettes for the ACADEMORIX banner. Each is
+ * @module Stackra\Cli\Support
+ * @description Eleven gradient palettes for the STACKRA banner. Each is
  *   six ANSI 256-color values chosen to look right on the 6-line block-
- *   figlet banner rendered by {@see \Academorix\Cli\Concerns\RendersBrandArt}.
+ *   figlet banner rendered by {@see \Stackra\Cli\Concerns\RendersBrandArt}.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Support;
+namespace Stackra\Cli\Support;
 
 /**
  * Static palette catalogue. Everything is `readonly` and immutable.

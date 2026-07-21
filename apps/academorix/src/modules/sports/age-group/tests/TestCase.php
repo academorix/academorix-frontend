@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Tests;
+namespace Stackra\AgeGroup\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/age-group.
+ * Base test case for stackra/age-group.
  *
  * @category AgeGroup
  *

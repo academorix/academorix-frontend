@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/rbac/drivers",
+  "id": "stackra://modules/rbac/drivers",
   "$version": 1,
   "title": "rbac \u2014 resolver + cache driver specifications",
   "description": "RBAC has two driver-shaped extension points: (a) the `PermissionResolver` composes a chain of ResolverStrategyInterface implementations at runtime; (b) the `PermissionCacheManager` writes through a CacheDriverInterface. Both are set-once bindings on the container \u2014 there is NO tenant-configurable driver override (unlike localization's translator drivers). This file exists to document the extension surface for future modules that legitimately need to plug in an alternate resolver strategy (e.g. an OPA-backed strategy in Wave 3 when we consider policy-as-code).",
   "contracts": {
     "resolver_strategy": {
-      "interface": "Academorix\\Rbac\\Contracts\\ResolverStrategyInterface",
+      "interface": "Stackra\\Rbac\\Contracts\\ResolverStrategyInterface",
       "purpose": "One step of the composite resolver algorithm. Called in a fixed order by PermissionResolver::resolve().",
       "methods": [
         {
@@ -19,7 +19,7 @@
       ]
     },
     "cache_driver": {
-      "interface": "Academorix\\Rbac\\Contracts\\PermissionCacheDriverInterface",
+      "interface": "Stackra\\Rbac\\Contracts\\PermissionCacheDriverInterface",
       "purpose": "The write-through cache for ResolvedPermissionSet. Set-once at boot from config('rbac.cache.store').",
       "methods": [
         { "signature": "get(string $key): ?ResolvedPermissionSet" },
@@ -35,7 +35,7 @@
   "framework_strategies": [
     {
       "name": "DenyGrantStrategy",
-      "class": "Academorix\\Rbac\\Resolver\\Strategies\\DenyGrantStrategy",
+      "class": "Stackra\\Rbac\\Resolver\\Strategies\\DenyGrantStrategy",
       "priority": 1,
       "purpose": "Step 1 of the algorithm: explicit DENY grants win. Consults `access/grants::GrantResolverInterface`. Returns `deny` on match; `abstain` otherwise.",
       "requires_module": "access/grants",
@@ -43,26 +43,26 @@
     },
     {
       "name": "AllowGrantStrategy",
-      "class": "Academorix\\Rbac\\Resolver\\Strategies\\AllowGrantStrategy",
+      "class": "Stackra\\Rbac\\Resolver\\Strategies\\AllowGrantStrategy",
       "priority": 5,
       "purpose": "Step 2: explicit ALLOW grants. Same consultation as DenyGrantStrategy but returns `allow` on match.",
       "requires_module": "access/grants"
     },
     {
       "name": "RbacRoleStrategy",
-      "class": "Academorix\\Rbac\\Resolver\\Strategies\\RbacRoleStrategy",
+      "class": "Stackra\\Rbac\\Resolver\\Strategies\\RbacRoleStrategy",
       "priority": 10,
       "purpose": "Step 3a: walk `model_has_roles` to enumerate the principal's roles, then walk `role_has_permissions` to enumerate the permissions. THE hot path \u2014 optimised for the resolved-permission cache."
     },
     {
       "name": "RbacDirectPermissionStrategy",
-      "class": "Academorix\\Rbac\\Resolver\\Strategies\\RbacDirectPermissionStrategy",
+      "class": "Stackra\\Rbac\\Resolver\\Strategies\\RbacDirectPermissionStrategy",
       "priority": 12,
       "purpose": "Step 3b: `model_has_permissions` direct grants (rare \u2014 usually roles carry perms). Merged with role-walked permissions."
     },
     {
       "name": "DelegationStrategy",
-      "class": "Academorix\\Rbac\\Resolver\\Strategies\\DelegationStrategy",
+      "class": "Stackra\\Rbac\\Resolver\\Strategies\\DelegationStrategy",
       "priority": 15,
       "purpose": "Step 4: if the principal is a delegate for the current tenant + role, evaluate as the delegator. Recursion-safe (max delegation depth 3 to guard against pathological chains).",
       "requires_module": "access/delegation"

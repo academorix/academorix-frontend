@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Data\Requests;
+namespace Stackra\Geofencing\Data\Requests;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Max;
@@ -16,7 +16,7 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
  * Validated payload for `POST /api/v1/geofence/overrides`.
  *
  * `reason` MUST be at least 10 characters — enforced both here (attribute)
- * and inside {@see \Academorix\Geofencing\Services\GeofenceOverrideService}
+ * and inside {@see \Stackra\Geofencing\Services\GeofenceOverrideService}
  * (belt + suspenders) since the service can be called from console + jobs
  * without HTTP validation.
  *

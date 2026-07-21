@@ -1,4 +1,4 @@
-# academorix/region
+# stackra/region
 
 Server-side Laravel package for the `region` module. Auto-generated from the
 blueprint at `modules/platform/blueprints/region/`.
@@ -43,6 +43,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-platform/region-sdk` under `sdk/platform-region-sdk/`. Consumers
+`stackra-platform/region-sdk` under `sdk/platform-region-sdk/`. Consumers
 cross the service boundary through the SDK; this package is the SERVER-side
 owner of the domain.

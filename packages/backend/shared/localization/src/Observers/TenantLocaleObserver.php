@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Observers;
+namespace Stackra\Localization\Observers;
 
-use Academorix\Localization\Contracts\Data\TenantLocaleInterface;
-use Academorix\Localization\Events\LanguageDisabledForTenant;
-use Academorix\Localization\Events\LanguageEnabledForTenant;
-use Academorix\Localization\Exceptions\TenantLocaleDefaultRequiredException;
-use Academorix\Localization\Models\TenantLocale;
+use Stackra\Localization\Contracts\Data\TenantLocaleInterface;
+use Stackra\Localization\Events\LanguageDisabledForTenant;
+use Stackra\Localization\Events\LanguageEnabledForTenant;
+use Stackra\Localization\Exceptions\TenantLocaleDefaultRequiredException;
+use Stackra\Localization\Models\TenantLocale;
 
 /**
  * Lifecycle side effects for {@see TenantLocale}.

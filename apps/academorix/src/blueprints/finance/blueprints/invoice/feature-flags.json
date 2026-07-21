@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invoice/feature-flags",
+  "id": "stackra://modules/invoice/feature-flags",
   "$version": 1,
   "title": "invoice — kill switches",
   "engine": "laravel/pennant",
@@ -81,7 +81,7 @@
       "key": "invoice.tenant_branded_pdf",
       "kind": "kill-switch",
       "default": "on",
-      "description": "Off = every PDF uses the 'academorix-default' template regardless of entitlement. Used when tenant branding pipeline is degraded to avoid producing malformed PDFs."
+      "description": "Off = every PDF uses the 'stackra-default' template regardless of entitlement. Used when tenant branding pipeline is degraded to avoid producing malformed PDFs."
     },
     {
       "key": "invoice.pdf_encryption",

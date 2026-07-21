@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-in-app/relations",
+  "id": "stackra://modules/notifications-in-app/relations",
   "$version": 1,
   "title": "notifications-in-app \u2014 model relationships",
   "description": "This module is a THIN transport binding on top of `notifications`. It contributes an in-app-channel driver + a small `InAppReadReceipt` companion for tracking read state. All notification content, categories, templates, deliveries, and preferences live on the parent `notifications` module \u2014 this module OWNS no primary domain entity.",

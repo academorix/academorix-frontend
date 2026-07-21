@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/coaching/helpers",
+  "id": "stackra://modules/coaching/helpers",
   "$version": 1,
   "title": "coaching — helper functions",
   "description": "Ergonomic helpers for resolving a Staff's coaching profile, listing active assignments, computing availability, and gating on tier entitlements.",
-  "namespace": "Academorix\\Sports\\Coaching\\Support",
+  "namespace": "Stackra\\Sports\\Coaching\\Support",
   "helpers": [
     {
       "signature": "coaching_profile_for(Staff $staff): ?CoachingProfile",

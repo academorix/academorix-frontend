@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Membership\Exceptions;
+namespace Stackra\Membership\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Coupon expired, exhausted, or not applicable to this plan.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MembershipCouponInvalidException extends AcademorixException
+final class MembershipCouponInvalidException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

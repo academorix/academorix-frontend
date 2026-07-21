@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transaction\Events;
+namespace Stackra\Transaction\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -15,7 +15,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * ## Consumers
  *
  * - audit::WriteToAuditLog (retention: 7 years)
- * - monitoring::MetricsCollector (increments academorix.ledger.entries_recorded_total; labels: account, side)
+ * - monitoring::MetricsCollector (increments stackra.ledger.entries_recorded_total; labels: account, side)
  * - cache::InvalidateAccountBalanceCache (invalidates the specific account's balance cache)
  *
  * @category Transaction

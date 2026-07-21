@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Drills\Policies;
+namespace Stackra\Drills\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Drills\Models\Drill;
+use Stackra\User\Models\User;
+use Stackra\Drills\Models\Drill;
 
 /**
- * Authorization policy for {@see \Academorix\Drills\Models\Drill}.
+ * Authorization policy for {@see \Stackra\Drills\Models\Drill}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

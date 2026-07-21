@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Events;
+namespace Stackra\Payment\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -19,7 +19,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - invoice::MarkInvoicePaidOnPaymentCaptured (state update: paid or partially_paid — same DB txn)
  * - growth::marketing::CaptureMembershipPurchasedMarketingEvent (attribution — via #[AsDomainEventMapper] when invoice.membership_id is set)
  * - notifications::DispatchPaymentSucceededNotification (customer + admin — receipt)
- * - monitoring::MetricsCollector (increments academorix.payment.captured_total)
+ * - monitoring::MetricsCollector (increments stackra.payment.captured_total)
  *
  * @category Payment
  *

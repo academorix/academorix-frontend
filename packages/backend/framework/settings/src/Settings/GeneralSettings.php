@@ -26,19 +26,19 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  *
- * @see \Academorix\Settings\Attributes\AsSetting
- * @see \Academorix\Settings\Attributes\SettingField
- * @see \Academorix\Settings\Attributes\SettingGroup
+ * @see \Stackra\Settings\Attributes\AsSetting
+ * @see \Stackra\Settings\Attributes\SettingField
+ * @see \Stackra\Settings\Attributes\SettingGroup
  */
 
-namespace Academorix\Settings\Settings;
+namespace Stackra\Settings\Settings;
 
 use Spatie\LaravelSettings\Settings;
-use Academorix\Settings\Attributes\AsSetting;
-use Academorix\Settings\Attributes\SettingField;
-use Academorix\Settings\Attributes\SettingGroup;
-use Academorix\Settings\Enums\ControlType;
-use Academorix\Settings\Enums\CurrencyPosition;
+use Stackra\Settings\Attributes\AsSetting;
+use Stackra\Settings\Attributes\SettingField;
+use Stackra\Settings\Attributes\SettingGroup;
+use Stackra\Settings\Enums\ControlType;
+use Stackra\Settings\Enums\CurrencyPosition;
 
 /**
  * General Application Settings.
@@ -87,7 +87,7 @@ class GeneralSettings extends Settings
      */
     #[SettingGroup(label: 'Application', description: 'Core application identity and timezone.', icon: 'app-window', sortOrder: 1)]
     #[SettingField(controlType: ControlType::Text, label: 'App Name', validation: ['nullable', 'string', 'max:100'], sortOrder: 1, group: 'Application')]
-    public string $app_name = 'Academorix';
+    public string $app_name = 'Stackra';
 
     /**
      * Application base URL.

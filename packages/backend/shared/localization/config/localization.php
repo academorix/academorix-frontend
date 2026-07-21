@@ -4,7 +4,7 @@
  * @file modules/shared/localization/config/localization.php
  *
  * @description
- * Runtime knobs for the `academorix/localization` module. Merged under the
+ * Runtime knobs for the `stackra/localization` module. Merged under the
  * `localization.*` key by the base ServiceProvider's LoadsResources concern.
  * Downstream modules read via `config('localization.*')` (never `env()` outside
  * this file per Octane-first rules).

@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Enums;
+namespace Stackra\Newsletter\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
- * Lifecycle state of a {@see \Academorix\Newsletter\Models\NewsletterIssue}.
+ * Lifecycle state of a {@see \Stackra\Newsletter\Models\NewsletterIssue}.
  *
  * ## Cases
  *
  *  * {@see self::Draft}     — editorial in progress; not yet scheduled.
  *  * {@see self::Scheduled} — scheduled for send at a specific time; the
- *    matching {@see \Academorix\Newsletter\Models\NewsletterCampaign} has
+ *    matching {@see \Stackra\Newsletter\Models\NewsletterCampaign} has
  *    been created.
  *  * {@see self::Sending}   — the campaign job is dispatching batches.
  *  * {@see self::Sent}      — the campaign completed successfully; the

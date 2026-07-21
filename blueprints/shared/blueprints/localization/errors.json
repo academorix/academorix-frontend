@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/localization/errors",
+  "id": "stackra://modules/localization/errors",
   "$version": 1,
   "title": "localization \u2014 error codes",
   "namespace": "localization",

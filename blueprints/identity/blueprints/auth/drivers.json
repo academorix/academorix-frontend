@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/auth/drivers",
+  "id": "stackra://modules/auth/drivers",
   "$version": 1,
   "title": "auth \u2014 driver specifications",
   "description": "Two driver contracts. JwtSigner drivers wrap the HS256 signing pipeline (KMS-decrypt secret \u2192 firebase/php-jwt sign). RegistrationPolicy drivers implement the domain-specific policy strategy pattern.",
   "contracts": [
     {
-      "interface": "Academorix\\Auth\\Contracts\\JwtSignerInterface",
+      "interface": "Stackra\\Auth\\Contracts\\JwtSignerInterface",
       "methods": [
         {
           "signature": "sign(JwtPayload $payload, string $applicationId): string",
@@ -22,7 +22,7 @@
       ]
     },
     {
-      "interface": "Academorix\\Auth\\Contracts\\RegistrationPolicyInterface",
+      "interface": "Stackra\\Auth\\Contracts\\RegistrationPolicyInterface",
       "methods": [
         {
           "signature": "evaluate(RegistrationContext $context): RegistrationDecision",
@@ -35,7 +35,7 @@
       ]
     },
     {
-      "interface": "Academorix\\Auth\\Contracts\\SessionRevokerInterface",
+      "interface": "Stackra\\Auth\\Contracts\\SessionRevokerInterface",
       "methods": [
         {
           "signature": "revokeSingle(string $tokenId, SessionRevocationReason $reason, ?string $actorId): void",
@@ -52,7 +52,7 @@
       ]
     },
     {
-      "interface": "Academorix\\Auth\\Contracts\\ScopeSuffixResolverInterface",
+      "interface": "Stackra\\Auth\\Contracts\\ScopeSuffixResolverInterface",
       "methods": [
         {
           "signature": "resolve(User|PlatformUser $principal, string $permission): ScopeFilterClause",
@@ -61,7 +61,7 @@
       ]
     },
     {
-      "interface": "Academorix\\Auth\\Contracts\\CompliantAgePolicyInterface",
+      "interface": "Stackra\\Auth\\Contracts\\CompliantAgePolicyInterface",
       "methods": [
         {
           "signature": "resolveFloor(string $regionCountryCode, ?string $tenantId): int",
@@ -77,7 +77,7 @@
   "jwt_signer_drivers": [
     {
       "name": "hs256-kms",
-      "class": "Academorix\\Auth\\Drivers\\Hs256KmsJwtSigner",
+      "class": "Stackra\\Auth\\Drivers\\Hs256KmsJwtSigner",
       "underlying_package": "firebase/php-jwt + aws/aws-sdk-php",
       "strengths": [
         "KMS-managed key rotation via built-in KMS rotation policy",
@@ -89,7 +89,7 @@
     },
     {
       "name": "hs256-vault",
-      "class": "Academorix\\Auth\\Drivers\\Hs256VaultJwtSigner",
+      "class": "Stackra\\Auth\\Drivers\\Hs256VaultJwtSigner",
       "underlying_package": "firebase/php-jwt + hashicorp/vault-php",
       "strengths": ["Self-hosted", "Cross-cloud portable"],
       "weaknesses": ["Additional operational surface"],
@@ -99,7 +99,7 @@
   "registration_policy_drivers": [
     {
       "name": "generic",
-      "class": "Academorix\\Auth\\Drivers\\GenericRegistrationPolicy",
+      "class": "Stackra\\Auth\\Drivers\\GenericRegistrationPolicy",
       "attribute": "#[RegistrationPolicy(contextType: GenericRegistrationContext::class, priority: 1000)]",
       "purpose": "Framework default. Composes CompliantAgePolicy + auth.principal.require_email_verification + user.registration.requires_invitation. Domain-specific policies (athletes, coaches, etc.) OVERRIDE by registering at lower priority.",
       "checks": [

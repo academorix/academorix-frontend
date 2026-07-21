@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Console;
+namespace Stackra\Compliance\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan compliance:legal-hold-release` — Legal hold release — compliance command.

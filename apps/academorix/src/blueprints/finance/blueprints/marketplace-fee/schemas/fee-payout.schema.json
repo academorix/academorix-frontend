@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/marketplace-fee/schemas/fee-payout",
+  "id": "stackra://modules/marketplace-fee/schemas/fee-payout",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "FeePayout",
-  "description": "Academorix-facing payout of fees to the platform account. Roll-up over fee_applications in a period. Belongs to Tenant (cascade). Application cascades through tenant_id → tenants.application_id per the tenancy-columns.md §2 mandate (fee_payouts is NOT one of the 8 rows that may carry application_id directly). NEVER carries application_id, organization_id, region_id, or scope_node_id.",
+  "description": "Stackra-facing payout of fees to the platform account. Roll-up over fee_applications in a period. Belongs to Tenant (cascade). Application cascades through tenant_id → tenants.application_id per the tenancy-columns.md §2 mandate (fee_payouts is NOT one of the 8 rows that may carry application_id directly). NEVER carries application_id, organization_id, region_id, or scope_node_id.",
   "type": "object",
   "x-module": "marketplace-fee",
   "x-eloquent": {
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "fpo_",
     "incrementing": false,
-    "model": "Academorix\\Finance\\MarketplaceFee\\Models\\FeePayout",
-    "interface": "Academorix\\Finance\\MarketplaceFee\\Contracts\\Data\\FeePayoutInterface",
-    "implements": ["Academorix\\Finance\\MarketplaceFee\\Contracts\\Data\\FeePayoutInterface"],
+    "model": "Stackra\\Finance\\MarketplaceFee\\Models\\FeePayout",
+    "interface": "Stackra\\Finance\\MarketplaceFee\\Contracts\\Data\\FeePayoutInterface",
+    "implements": ["Stackra\\Finance\\MarketplaceFee\\Contracts\\Data\\FeePayoutInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

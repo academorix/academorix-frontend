@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/event/middleware",
+  "id": "stackra://modules/event/middleware",
   "$version": 1,
   "title": "event — HTTP middleware",
   "middleware": [
     {
       "alias": "event.resolve_active",
-      "class": "Academorix\\Sports\\Event\\Http\\Middleware\\ResolveActiveEvent",
+      "class": "Stackra\\Sports\\Event\\Http\\Middleware\\ResolveActiveEvent",
       "priority": 55,
       "description": "Resolves the caller's active Event when a route depends on one. Reads `X-Event-Id` header when the caller's active tenant has a matching Event on that slug or ULID AND the Event is not archived. Sets `Request::activeEvent()` + writes to `RequestContext.event_id` slot. Runs AFTER `season.resolve_active`.",
       "auto_applied": true,
@@ -35,7 +35,7 @@
     },
     {
       "alias": "event.enforce_registration_open",
-      "class": "Academorix\\Sports\\Event\\Http\\Middleware\\EnforceRegistrationOpen",
+      "class": "Stackra\\Sports\\Event\\Http\\Middleware\\EnforceRegistrationOpen",
       "priority": 60,
       "description": "Guards registration-adjacent write routes (Wave 3+ athlete-enrollment for events surface). Refuses when Event.status is not in a registration-accepting state. Not auto-applied — Wave 3 enrollment routes attach it explicitly.",
       "auto_applied": false,

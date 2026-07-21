@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Events;
+namespace Stackra\Leads\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -18,7 +18,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - leads::MaterialiseAthletesOnLeadConverted (creates athlete + guardian rows via sports::registrations)
  * - marketing::MarketingEventCapturer (maps to marketing_events.event_type='signup' for ad-network fan-out)
  * - notifications::DispatchLeadConvertedNotification (owner + admin — celebrate + kick off onboarding)
- * - monitoring::MetricsCollector (increments academorix.leads.converted_total; feeds funnel-conversion dashboard)
+ * - monitoring::MetricsCollector (increments stackra.leads.converted_total; feeds funnel-conversion dashboard)
  *
  * @category Leads
  *

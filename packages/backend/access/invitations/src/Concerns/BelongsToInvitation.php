@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Concerns;
+namespace Stackra\Invitations\Concerns;
 
-use Academorix\Invitations\Contracts\Data\InvitationInterface;
-use Academorix\Invitations\Models\Invitation;
+use Stackra\Invitations\Contracts\Data\InvitationInterface;
+use Stackra\Invitations\Models\Invitation;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**

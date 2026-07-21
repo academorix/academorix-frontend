@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Contracts\Repositories;
+namespace Stackra\Transfer\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Transfer\Models\XferShard;
-use Academorix\Transfer\Repositories\EloquentXferShardRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Transfer\Models\XferShard;
+use Stackra\Transfer\Repositories\EloquentXferShardRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

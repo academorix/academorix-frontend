@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "realtime",
   "alias": "realtime",
-  "namespace": "Academorix\\Realtime",
+  "namespace": "Stackra\\Realtime",
   "description": "The WebSocket transport substrate — wraps Laravel Reverb behind attribute-driven channel registration. Ships THREE owned entities: `BroadcastChannel` (registered namespace + type IN public/private/presence + authorization_callback FQCN — discovered at boot via `#[AsBroadcastChannel]`), `BroadcastSubscription` (active WS subscription of a User to a channel; state machine pending_auth → active → disconnected; auto-purge on disconnected+last_seen>15m), `Presence` (ephemeral Redis-backed row per (channel, user) tracking who's online with periodic snapshot). Every tenant broadcasts on `tenant.{id}.*` prefix — cross-tenant channel names refused at broadcast time by TenantBoundaryEnforcer middleware. Publish contract: domain modules emit typed events, the compiler discovers `implements ShouldBroadcast` at boot, and each event auto-registers on its declared channel. Consumer contract: frontend `useSubscribe(channelName, handler)` hooks in the `@stackra/realtime` package handle authentication + reconnect + presence roster. Auth flow: sanctum token exchanged for Reverb channel signed URL at `POST /broadcasting/auth` (bundled). NOT a message bus — for ephemeral live updates only (RSVP counts, live attendance, standings). Durable messaging → notifications; audit trail → activity/audit.",
   "keywords": [
     "realtime",
@@ -18,7 +18,7 @@
     "wave-0"
   ],
   "priority": 26,
-  "providers": ["Academorix\\Realtime\\Providers\\RealtimeServiceProvider"],
+  "providers": ["Stackra\\Realtime\\Providers\\RealtimeServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "application", "auth"],
   "extendedBy": [],

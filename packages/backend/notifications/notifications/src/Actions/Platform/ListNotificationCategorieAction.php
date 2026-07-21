@@ -4,14 +4,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Actions\Platform;
+namespace Stackra\Notifications\Actions\Platform;
 
-use Academorix\Notifications\Contracts\Repositories\NotificationCategoryRepositoryInterface;
-use Academorix\Notifications\Data\NotificationCategoryData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Notifications\Contracts\Repositories\NotificationCategoryRepositoryInterface;
+use Stackra\Notifications\Data\NotificationCategoryData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\LaravelData\PaginatedDataCollection;
@@ -20,7 +20,7 @@ use Spatie\LaravelData\PaginatedDataCollection;
  * `GET /api/v1/platform/notification-categories` — list action (platform-admin audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Notifications
@@ -50,7 +50,7 @@ final class ListNotificationCategorieAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Academorix\Notifications\Models\NotificationCategory> $page */
+        /** @var LengthAwarePaginator<int, \Stackra\Notifications\Models\NotificationCategory> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

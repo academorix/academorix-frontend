@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/localization/entitlements",
+  "id": "stackra://modules/localization/entitlements",
   "$version": 1,
   "title": "localization \u2014 declared entitlements",
   "description": "Three entitlement keys. Locale count is a slot (concurrent limit). AI translations are a pool (per-month quota). Auto-translate is a boolean gate.",

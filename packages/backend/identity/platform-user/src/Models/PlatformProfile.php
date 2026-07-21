@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformUser\Models;
+namespace Stackra\PlatformUser\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\PlatformUser\Contracts\Data\PlatformProfileInterface;
-use Academorix\PlatformUser\Database\Factories\PlatformProfileFactory;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\PlatformUser\Policies\PlatformProfilePolicy;
+use Stackra\PlatformUser\Contracts\Data\PlatformProfileInterface;
+use Stackra\PlatformUser\Database\Factories\PlatformProfileFactory;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\PlatformUser\Policies\PlatformProfilePolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

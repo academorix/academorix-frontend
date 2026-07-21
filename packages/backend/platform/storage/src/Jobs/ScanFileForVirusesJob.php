@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Jobs;
+namespace Stackra\Storage\Jobs;
 
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Contracts\Repositories\FileRepositoryInterface;
-use Academorix\Storage\Contracts\Services\AntivirusScannerInterface;
-use Academorix\Storage\Enums\VirusScanState;
-use Academorix\Storage\Events\FileScanned;
-use Academorix\Storage\Events\FileVirusFound;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Contracts\Repositories\FileRepositoryInterface;
+use Stackra\Storage\Contracts\Services\AntivirusScannerInterface;
+use Stackra\Storage\Enums\VirusScanState;
+use Stackra\Storage\Events\FileScanned;
+use Stackra\Storage\Events\FileVirusFound;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -21,7 +21,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 /**
- * Antivirus scan for one {@see \Academorix\Storage\Models\File}.
+ * Antivirus scan for one {@see \Stackra\Storage\Models\File}.
  *
  * Delegates to the bound {@see AntivirusScannerInterface}. Retries
  * with exponential backoff — a scanner that's temporarily down

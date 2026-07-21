@@ -12,9 +12,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Caching\Enums;
+namespace Stackra\Caching\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Cache read/write strategies applied by `#[Cacheable]` and

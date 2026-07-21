@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\User\Exceptions;
+namespace Stackra\User\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Upload exceeded the resolved cap (min of tenant setting + tier cap + `user.

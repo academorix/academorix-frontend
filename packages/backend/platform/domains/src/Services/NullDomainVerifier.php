@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Services;
+namespace Stackra\Domains\Services;
 
-use Academorix\Domains\Contracts\Services\DomainVerifierInterface;
-use Academorix\Domains\Enums\DnsRecordStatus;
-use Academorix\Domains\Models\DomainRecord;
+use Stackra\Domains\Contracts\Services\DomainVerifierInterface;
+use Stackra\Domains\Enums\DnsRecordStatus;
+use Stackra\Domains\Models\DomainRecord;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

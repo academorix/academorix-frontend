@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Contracts\Services;
+namespace Stackra\Attribution\Contracts\Services;
 
-use Academorix\Attribution\Services\ClickIdExtractor;
+use Stackra\Attribution\Services\ClickIdExtractor;
 use Illuminate\Container\Attributes\Bind;
 
 /**

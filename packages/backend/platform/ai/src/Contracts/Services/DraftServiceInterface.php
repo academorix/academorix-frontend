@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Ai\Contracts\Services;
+namespace Stackra\Ai\Contracts\Services;
 
-use Academorix\Ai\Services\DraftService;
+use Stackra\Ai\Services\DraftService;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -13,12 +13,12 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Nightwatch\Facades;
+namespace Stackra\Nightwatch\Facades;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Facade;
-use Academorix\Nightwatch\Contracts\NightwatchContext;
-use Academorix\Nightwatch\Registry\NightwatchContextRegistry;
+use Stackra\Nightwatch\Contracts\NightwatchContext;
+use Stackra\Nightwatch\Registry\NightwatchContextRegistry;
 
 /**
  * Nightwatch Facade.

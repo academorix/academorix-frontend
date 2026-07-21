@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/localization/compliance",
+  "id": "stackra://modules/localization/compliance",
   "$version": 1,
   "title": "localization \u2014 compliance evidence",
   "description": "Machine-translation providers are subprocessors under GDPR Art. 28. Source strings often contain UI copy (public) but occasionally domain data \u2014 tenant admins are responsible for ensuring no PII passes through auto-translate.",

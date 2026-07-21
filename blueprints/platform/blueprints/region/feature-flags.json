@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/region/feature-flags",
+  "id": "stackra://modules/region/feature-flags",
   "$version": 1,
   "title": "region — kill switches",
   "engine": "laravel/pennant",

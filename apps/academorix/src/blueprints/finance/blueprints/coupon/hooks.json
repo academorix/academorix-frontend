@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/coupon/hooks",
+  "id": "stackra://modules/coupon/hooks",
   "$version": 1,
   "title": "coupon — TenancyHook + lifecycle hooks",
   "description": "Cross-module hook implementations. TenancyHooks are the tenancy module's contract for reacting to tenant-lifecycle events (provision / suspend / erase). Coupons does not register a bootstrapper (nothing to hydrate at tenant-boot — the module resolves per-request), but registers five cascade hooks: refund-cascade clawback, referral-reward-vested issuance, plan-archived cascade, tenant-erasure purge, user-erasure redaction.",
-  "namespace": "Academorix\\Finance\\Coupon\\Hooks",
+  "namespace": "Stackra\\Finance\\Coupon\\Hooks",
   "hooks": [
     {
       "name": "ProcessCouponClawbackOnInvoiceRefunded",
-      "class": "Academorix\\Finance\\Coupon\\Hooks\\ProcessCouponClawbackOnInvoiceRefunded",
+      "class": "Stackra\\Finance\\Coupon\\Hooks\\ProcessCouponClawbackOnInvoiceRefunded",
       "kind": "cascade",
       "listens_to": "finance::RefundIssued",
       "purpose": "Cascades: dispatches ProcessCouponClawbackJob for the refunded invoice. Reverses any CouponRedemption where applied_to_type='invoice' AND applied_to_id = refund.invoice_id. Sets reversed_at + clawback_reason='refund' + decrements coupon.usage_count. Also handles finance::ChargebackFiled (same shape, clawback_reason='chargeback').",
@@ -15,7 +15,7 @@
     },
     {
       "name": "IssueCouponOnReferralRewardVested",
-      "class": "Academorix\\Finance\\Coupon\\Hooks\\IssueCouponOnReferralRewardVested",
+      "class": "Stackra\\Finance\\Coupon\\Hooks\\IssueCouponOnReferralRewardVested",
       "kind": "domain_event",
       "listens_to": "referrals::ReferralVested",
       "purpose": "When a ReferralReward.status transitions to vested AND its reward_type IN ('percent_discount', 'fixed_amount'): call CouponIssuer::issueForReferral() to produce a redeemable coupon code. Sets issuance_source='referral' + issuance_context={ referral_program_id, referral_id, referral_reward_id }. Fires CouponIssuedByReferralProgram. Runs at priority 40 (after the vested atomic reward-create transaction commits, before other referral-side listeners).",
@@ -23,7 +23,7 @@
     },
     {
       "name": "CascadeCouponsOnMembershipPlanArchived",
-      "class": "Academorix\\Finance\\Coupon\\Hooks\\CascadeCouponsOnMembershipPlanArchived",
+      "class": "Stackra\\Finance\\Coupon\\Hooks\\CascadeCouponsOnMembershipPlanArchived",
       "kind": "cascade",
       "listens_to": "membership::PlanArchived",
       "purpose": "When a MembershipPlan is archived: find every Coupon where applicability='specific_membership_plans' AND applicable_plan_ids includes the archived plan.id. Remove the archived plan from applicable_plan_ids. If applicable_plan_ids becomes empty: transition the coupon to is_active=false + fire CouponDeactivated with reason='applicable_plan_archived'. Runs at priority 50.",
@@ -31,14 +31,14 @@
     },
     {
       "name": "PurgeCouponDataForErasedTenant",
-      "class": "Academorix\\Finance\\Coupon\\Hooks\\PurgeCouponDataForErasedTenant",
+      "class": "Stackra\\Finance\\Coupon\\Hooks\\PurgeCouponDataForErasedTenant",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErased",
       "purpose": "Cascade delete via FK; writes compliance audit trail entry + emits count metrics per entity family (coupons / coupon_redemptions purged). Invoice-linked redemptions migrate to compliance_archive.coupon_redemptions prior to cascade (financial-obligation retention). Audit rows outlive the source rows per financial retention."
     },
     {
       "name": "RedactCouponRedemptionsOnUserErasure",
-      "class": "Academorix\\Finance\\Coupon\\Hooks\\RedactCouponRedemptionsOnUserErasure",
+      "class": "Stackra\\Finance\\Coupon\\Hooks\\RedactCouponRedemptionsOnUserErasure",
       "kind": "cascade",
       "listens_to": "user::UserErased",
       "purpose": "GDPR minimisation. When a user is erased as the customer on any CouponRedemption: 90 days post-erasure, redact customer_id + customer_type on the redemption. Retention window unchanged; only PII fields redact. The redemption row stays for the 7-year financial audit trail."

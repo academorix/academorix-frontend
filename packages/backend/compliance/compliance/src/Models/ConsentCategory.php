@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Models;
+namespace Stackra\Compliance\Models;
 
-use Academorix\Compliance\Contracts\Data\ConsentCategoryInterface;
-use Academorix\Compliance\Database\Factories\ConsentCategoryFactory;
-use Academorix\Compliance\Observers\ConsentCategoryObserver;
-use Academorix\Compliance\Policies\ConsentCategoryPolicy;
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
+use Stackra\Compliance\Contracts\Data\ConsentCategoryInterface;
+use Stackra\Compliance\Database\Factories\ConsentCategoryFactory;
+use Stackra\Compliance\Observers\ConsentCategoryObserver;
+use Stackra\Compliance\Policies\ConsentCategoryPolicy;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -82,7 +82,7 @@ final class ConsentCategory extends Model implements AuditableContract, ConsentC
     {
         return $this->hasMany(
             ConsentRecord::class,
-            \Academorix\Compliance\Contracts\Data\ConsentRecordInterface::ATTR_CONSENT_CATEGORY_ID,
+            \Stackra\Compliance\Contracts\Data\ConsentRecordInterface::ATTR_CONSENT_CATEGORY_ID,
         );
     }
 }

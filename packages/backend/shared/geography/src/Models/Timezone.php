@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Models;
+namespace Stackra\Geography\Models;
 
-use Academorix\Geography\Contracts\Data\TimezoneInterface;
-use Academorix\Geography\Database\Factories\TimezoneFactory;
-use Academorix\Geography\Observers\TimezoneObserver;
-use Academorix\Geography\Policies\TimezonePolicy;
+use Stackra\Geography\Contracts\Data\TimezoneInterface;
+use Stackra\Geography\Database\Factories\TimezoneFactory;
+use Stackra\Geography\Observers\TimezoneObserver;
+use Stackra\Geography\Policies\TimezonePolicy;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;

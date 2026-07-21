@@ -1,7 +1,7 @@
-# academorix/health
+# stackra/health
 
 Attribute-driven health check discovery + notification channel routing for every
-Academorix app. Bridges
+Stackra app. Bridges
 [`spatie/laravel-health`](https://spatie.be/docs/laravel-health) with a
 zero-boilerplate `#[AsHealthCheck]` attribute discovered at
 `composer dump-autoload` time via
@@ -43,7 +43,7 @@ old abstract covered is now handled by the attribute path:
 The AI service already depends on this package. For a fresh app:
 
 ```bash
-composer require academorix/health
+composer require stackra/health
 ```
 
 The service provider is auto-discovered — nothing to add to
@@ -61,16 +61,16 @@ newly-published `config/health.php`:
 ```env
 HEALTH_SLACK_PLATFORM_ENG_WEBHOOK=https://hooks.slack.com/services/...
 HEALTH_PAGERDUTY_INTEGRATION_KEY=R0000...
-HEALTH_EMAIL_TO=ops@academorix.test
+HEALTH_EMAIL_TO=ops@stackra.test
 ```
 
 ### 3. Write a check
 
 ```php
-namespace Academorix\AI\Health;
+namespace Stackra\AI\Health;
 
-use Academorix\Health\Attributes\AsHealthCheck;
-use Academorix\Health\Enums\HealthNotificationChannel;
+use Stackra\Health\Attributes\AsHealthCheck;
+use Stackra\Health\Enums\HealthNotificationChannel;
 use Illuminate\Support\Facades\DB;
 use Spatie\Health\Checks\Check;
 use Spatie\Health\Checks\Result;
@@ -127,7 +127,7 @@ next time the app boots.
   Defaults to Spatie's built-in "every minute".
 - **`enabled`** — static disable switch. Prefer `condition` for runtime gating.
 - **`channel`** — logical {@see
-  \Academorix\Health\Enums\HealthNotificationChannel} case. App config
+  \Stackra\Health\Enums\HealthNotificationChannel} case. App config
   translates the case to a concrete notifiable.
 - **`condition`** — name of a `public static bool`-returning method on the same
   class. Called once at boot; check is skipped when it returns `false`. Use for
@@ -218,7 +218,7 @@ Everything else is glue.
 ## Testing
 
 ```bash
-pnpm turbo run test --filter=@academorix/health
+pnpm turbo run test --filter=@stackra/health
 ```
 
 ## Related

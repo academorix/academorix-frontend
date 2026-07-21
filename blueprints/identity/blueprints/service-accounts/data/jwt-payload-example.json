@@ -10,7 +10,7 @@
       "kid": "identity-2026-01"
     },
     "payload": {
-      "iss": "https://identity.academorix.com",
+      "iss": "https://identity.stackra.com",
       "aud": ["observability-service"],
       "sub": "svc_01H2K3M4N5P6Q7R8S9TAVBWCXDY",
       "app": "sports",
@@ -35,7 +35,7 @@
       "kid": "app-sports-2026-01"
     },
     "payload": {
-      "iss": "https://identity.academorix.com",
+      "iss": "https://identity.stackra.com",
       "aud": ["braintree-webhook-listener"],
       "sub": "svc_01H2K3M4N5P6Q7R8S9TAVBWCXDZ",
       "app": "sports",
@@ -58,7 +58,7 @@
       "kid": "identity-2026-01"
     },
     "payload": {
-      "iss": "https://identity.academorix.com",
+      "iss": "https://identity.stackra.com",
       "aud": ["sports-service"],
       "sub": "svc_01H2K3M4N5P6Q7R8S9TAVBWCXDY",
       "app": "sports",

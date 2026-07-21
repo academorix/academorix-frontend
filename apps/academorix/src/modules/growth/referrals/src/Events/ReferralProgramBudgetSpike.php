@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Events;
+namespace Stackra\Referrals\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -17,7 +17,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - audit::WriteToAuditLog
  * - activity::WriteToActivityLog
  * - notifications::DispatchProgramBudgetAlertNotification (to admin — includes recent-referral rollup)
- * - observability::MetricsCollector (academorix.referrals.budget_spikes_total)
+ * - observability::MetricsCollector (stackra.referrals.budget_spikes_total)
  *
  * @category Referrals
  *

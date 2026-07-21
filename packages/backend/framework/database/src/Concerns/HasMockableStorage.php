@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Database\Concerns;
+namespace Stackra\Database\Concerns;
 
 // TODO: The generator-side collaborators referenced from this
 // trait's docblock (FixtureLoader, ModelInterfaceRewriter) lived
@@ -120,7 +120,7 @@ use Sushi\Sushi;
  * accidentally wired to Sushi.
  *
  * @see Sushi The underlying package.
- * @see \Academorix\Foundation\Console\Generators\ModelInterfaceRewriter How the trait is injected during generation. (pending port — see file header)
+ * @see \Stackra\Foundation\Console\Generators\ModelInterfaceRewriter How the trait is injected during generation. (pending port — see file header)
  */
 trait HasMockableStorage
 {
@@ -167,7 +167,7 @@ trait HasMockableStorage
      * `{"data": [...]}` envelope for schema-registry parity with
      * the public API. This method unwraps that envelope
      * transparently — matching the behaviour of
-     * {@see \Academorix\Foundation\Console\Generators\FixtureLoader} (pending port)
+     * {@see \Stackra\Foundation\Console\Generators\FixtureLoader} (pending port)
      * so the generator + runtime agree on the row shape.
      *
      * ## Failure modes
@@ -576,7 +576,7 @@ trait HasMockableStorage
      *
      * The module name is inferred from the model's fully-qualified
      * class name — every module in this codebase is namespaced
-     * `Academorix\<Module>\Models\<Class>`, so the module segment
+     * `Stackra\<Module>\Models\<Class>`, so the module segment
      * is the second `\`-delimited fragment. When the FQCN does not
      * match that shape the method returns `null` and the caller
      * falls back to the model source file.
@@ -619,7 +619,7 @@ trait HasMockableStorage
     /**
      * Derive the conventional fixture path from the model FQCN.
      *
-     * `Academorix\Athletics\Models\Athlete` →
+     * `Stackra\Athletics\Models\Athlete` →
      *   `modules/Athletics/database/fixtures/athletes.json`.
      *
      * The slug is the kebab-cased plural of the model's short

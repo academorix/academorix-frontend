@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Services;
+namespace Stackra\Versioning\Services;
 
-use Academorix\Versioning\Contracts\Services\VersionResolverChainInterface;
-use Academorix\Versioning\Contracts\Services\VersionResolverInterface;
-use Academorix\Versioning\Resolvers\ContentNegotiationResolver;
-use Academorix\Versioning\Resolvers\GraphQlContextResolver;
-use Academorix\Versioning\Resolvers\QueryParamResolver;
-use Academorix\Versioning\Resolvers\UrlPathResolver;
-use Academorix\Versioning\Resolvers\WebhookSubscriptionResolver;
+use Stackra\Versioning\Contracts\Services\VersionResolverChainInterface;
+use Stackra\Versioning\Contracts\Services\VersionResolverInterface;
+use Stackra\Versioning\Resolvers\ContentNegotiationResolver;
+use Stackra\Versioning\Resolvers\GraphQlContextResolver;
+use Stackra\Versioning\Resolvers\QueryParamResolver;
+use Stackra\Versioning\Resolvers\UrlPathResolver;
+use Stackra\Versioning\Resolvers\WebhookSubscriptionResolver;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Http\Request;
 

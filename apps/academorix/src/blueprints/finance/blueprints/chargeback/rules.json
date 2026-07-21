@@ -1,90 +1,90 @@
 {
-  "id": "academorix://modules/chargeback/rules",
+  "id": "stackra://modules/chargeback/rules",
   "$version": 1,
   "title": "chargeback — validation rules",
   "description": "Custom Laravel validation rules published by ChargebackServiceProvider::boot(). All rules are used both by the observer chain (authoritative refusal on write) AND by FormRequest data classes (early request-time validation with clear error surfaces).",
-  "namespace": "Academorix\\Finance\\Chargeback\\Rules",
+  "namespace": "Stackra\\Finance\\Chargeback\\Rules",
   "rules": [
     {
       "name": "valid_network",
-      "class": "Academorix\\Finance\\Chargeback\\Rules\\ValidNetwork",
+      "class": "Stackra\\Finance\\Chargeback\\Rules\\ValidNetwork",
       "signature": "valid_network",
       "description": "Card network enum: visa / mastercard / amex / discover / jcb / unionpay / diners / other. Validates against data/network-catalog.json.",
       "default_message": "The :attribute must be one of the supported card networks."
     },
     {
       "name": "valid_reason_code",
-      "class": "Academorix\\Finance\\Chargeback\\Rules\\ValidReasonCode",
+      "class": "Stackra\\Finance\\Chargeback\\Rules\\ValidReasonCode",
       "signature": "valid_reason_code",
       "description": "Network-specific reason code. Validates the reason_code against data/reason-code-catalog.json for the declared network — Visa reason codes (10.4 / 10.5 / 11.1 / 11.2 / 11.3 / 12.1-12.7 / 13.1-13.9) must not appear on Mastercard chargebacks (which use 4837 / 4863 / 4870 / 4834 / 4841 / 4842 / 4853 / 4855), etc. Cross-network mismatches refuse with CHARGEBACK_INVALID_REASON_CODE.",
       "default_message": "The reason code :input is not valid for the :network network."
     },
     {
       "name": "valid_reason_category",
-      "class": "Academorix\\Finance\\Chargeback\\Rules\\ValidReasonCategory",
+      "class": "Stackra\\Finance\\Chargeback\\Rules\\ValidReasonCategory",
       "signature": "valid_reason_category",
       "description": "Reason category enum: fraud / authorization / processing_errors / consumer_disputes / card_recovery. Derived from reason_code + network via data/reason-category-catalog.json — the observer computes it at creation and the validator confirms it matches. Direct mutation of reason_category is refused (must recompute from reason_code + network).",
       "default_message": "The :attribute must be one of the reason categories."
     },
     {
       "name": "valid_currency",
-      "class": "Academorix\\Finance\\Chargeback\\Rules\\ValidCurrency",
+      "class": "Stackra\\Finance\\Chargeback\\Rules\\ValidCurrency",
       "signature": "valid_currency",
       "description": "ISO 4217 three-letter uppercase currency code (USD / EUR / GBP / etc.). Validates against foundation's shared ISO 4217 registry. Additionally validates that the chargeback's currency matches the parent payment's currency — no multi-currency chargebacks (banks file in the payment's original currency).",
       "default_message": "The :attribute must be a valid ISO 4217 currency code matching the parent payment's currency."
     },
     {
       "name": "valid_positive_amount",
-      "class": "Academorix\\Finance\\Chargeback\\Rules\\ValidPositiveAmount",
+      "class": "Stackra\\Finance\\Chargeback\\Rules\\ValidPositiveAmount",
       "signature": "valid_positive_amount",
       "description": "amount_cents > 0. Refuses zero-amount chargebacks (a chargeback with amount_cents=0 is nonsensical). Also validates amount_cents <= parent payment.amount_cents - payment.amount_refunded_cents (a chargeback cannot exceed the un-refunded portion of the parent payment).",
       "default_message": "The chargeback amount must be positive and at most the un-refunded portion of the parent payment."
     },
     {
       "name": "valid_state_transition",
-      "class": "Academorix\\Finance\\Chargeback\\Rules\\ValidStateTransition",
+      "class": "Stackra\\Finance\\Chargeback\\Rules\\ValidStateTransition",
       "signature": "valid_state_transition",
       "description": "The chargeback state machine one-way path enforcement. Allowed transitions: pending_evidence -> evidence_submitted; pending_evidence -> accepted_refund (RDR); pending_evidence -> expired; pending_evidence -> lost (manual mark-lost); evidence_submitted -> under_bank_review; evidence_submitted -> pending_evidence (bank requested additional evidence); evidence_submitted -> lost (manual mark-lost); under_bank_review -> won; under_bank_review -> lost. Every other transition refused with CHARGEBACK_INVALID_STATE_TRANSITION. Won / lost / expired / accepted_refund are terminal states (no outbound edges).",
       "default_message": "The requested state transition (:from -> :to) is not allowed by the chargeback state machine."
     },
     {
       "name": "valid_evidence_shape",
-      "class": "Academorix\\Finance\\Chargeback\\Rules\\ValidEvidenceShape",
+      "class": "Stackra\\Finance\\Chargeback\\Rules\\ValidEvidenceShape",
       "signature": "valid_evidence_shape",
       "description": "ChargebackEvidence JSONB body shape validation against schemas/chargeback-evidence.schema.json. Required top-level fields: invoice_evidence, receipt_evidence, service_documentation, refund_policy, communication_log, customer_signature_evidence. Optional: shipping_docs, uncategorized_text, ce3_bundle (when parent chargeback.ce3_eligible=true). Additional keys refused via additionalProperties=false semantics. Every field has its own sub-schema.",
       "default_message": "The evidence shape is malformed. See schemas/chargeback-evidence.schema.json for the required structure."
     },
     {
       "name": "evidence_within_deadline",
-      "class": "Academorix\\Finance\\Chargeback\\Rules\\EvidenceWithinDeadline",
+      "class": "Stackra\\Finance\\Chargeback\\Rules\\EvidenceWithinDeadline",
       "signature": "evidence_within_deadline",
       "description": "Parent chargeback.evidence_due_by MUST be in the future when submitting evidence. Refuses submission when evidence_due_by < NOW() (deadline missed — chargeback is already or about to be expired). Refuses with CHARGEBACK_EVIDENCE_DEADLINE_MISSED.",
       "default_message": "The evidence deadline has passed. Use `chargeback:mark-lost-manually` instead of submitting late evidence."
     },
     {
       "name": "immutable_after_terminal",
-      "class": "Academorix\\Finance\\Chargeback\\Rules\\ImmutableAfterTerminal",
+      "class": "Stackra\\Finance\\Chargeback\\Rules\\ImmutableAfterTerminal",
       "signature": "immutable_after_terminal",
       "description": "Post-terminal immutability guard. When the current chargeback.status IS IN ('won', 'lost', 'expired', 'accepted_refund'), REFUSE any mutation of any field. Refuses with CHARGEBACK_IMMUTABLE. Corrections after terminal state require ops investigation + optionally a manual reversal transaction in the transaction module.",
       "default_message": "This chargeback is immutable — terminal chargebacks cannot be modified. Corrections require a manual reversal transaction."
     },
     {
       "name": "unique_chargeback_number",
-      "class": "Academorix\\Finance\\Chargeback\\Rules\\UniqueChargebackNumber",
+      "class": "Stackra\\Finance\\Chargeback\\Rules\\UniqueChargebackNumber",
       "signature": "unique_chargeback_number",
       "description": "Enforces the composite unique index (tenant_id, chargeback_number). Two chargebacks with the same generated chargeback_number for the same tenant refuse. Runs both at request-validation time (early feedback) + the observer re-checks under the DB unique index (authoritative). The ChargebackNumberGenerator's collision-retry loop handles the rare race where two concurrent creates try the same next-in-sequence.",
       "default_message": "A chargeback with this number already exists for this tenant (should not surface; indicates a generator race)."
     },
     {
       "name": "valid_rdr_eligibility",
-      "class": "Academorix\\Finance\\Chargeback\\Rules\\ValidRdrEligibility",
+      "class": "Stackra\\Finance\\Chargeback\\Rules\\ValidRdrEligibility",
       "signature": "valid_rdr_eligibility",
       "description": "RDR eligibility computation validator. rdr_eligible=true requires: (1) network='visa', (2) amount_cents <= chargeback.rdr.auto_refund_threshold_cents, (3) tenant holds chargeback_rdr entitlement, (4) payment.amount_refunded_cents == 0 (payment hasn't been previously refunded). Any of the four false = rdr_eligible=false. Refuses direct mutation via CHARGEBACK_RDR_ELIGIBILITY_MISMATCH.",
       "default_message": "The chargeback does not meet RDR eligibility criteria (Visa-only, below threshold, tenant entitled, unrefunded payment)."
     },
     {
       "name": "valid_ce3_eligibility",
-      "class": "Academorix\\Finance\\Chargeback\\Rules\\ValidCe3Eligibility",
+      "class": "Stackra\\Finance\\Chargeback\\Rules\\ValidCe3Eligibility",
       "signature": "valid_ce3_eligibility",
       "description": "CE3.0 eligibility computation validator. ce3_eligible=true requires: (1) network='visa', (2) reason_category='fraud', (3) tenant holds chargeback_ce3 entitlement, (4) customer has >= 2 prior successful payments in last 120 days. Any of the four false = ce3_eligible=false. Refuses direct mutation via CHARGEBACK_CE3_ELIGIBILITY_MISMATCH.",
       "default_message": "The chargeback does not meet CE3.0 eligibility criteria (Visa, fraud reason, tenant entitled, customer purchase history)."

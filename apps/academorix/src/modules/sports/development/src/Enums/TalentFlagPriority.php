@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Development\Enums;
+namespace Stackra\Development\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `priority` on `talent-flag`.

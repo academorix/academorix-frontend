@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Event\Exceptions;
+namespace Stackra\Event\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to archive an Event that hasn't reached completed or cancelled.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class EventArchiveRequiresTerminalException extends AcademorixException
+final class EventArchiveRequiresTerminalException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

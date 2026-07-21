@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDevelopmentSdk\Resources;
+namespace Stackra\SportsDevelopmentSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsDevelopmentSdk\Data\ScoutingReportData;
-use Academorix\SportsDevelopmentSdk\Requests\ScoutingReports\CreateScoutingReportRequest;
-use Academorix\SportsDevelopmentSdk\Requests\ScoutingReports\ListScoutingReportsAdminRequest;
-use Academorix\SportsDevelopmentSdk\Requests\ScoutingReports\ListScoutingReportsRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsDevelopmentSdk\Data\ScoutingReportData;
+use Stackra\SportsDevelopmentSdk\Requests\ScoutingReports\CreateScoutingReportRequest;
+use Stackra\SportsDevelopmentSdk\Requests\ScoutingReports\ListScoutingReportsAdminRequest;
+use Stackra\SportsDevelopmentSdk\Requests\ScoutingReports\ListScoutingReportsRequest;
 use Saloon\Http\Response;
 
 /**
@@ -56,7 +56,7 @@ final readonly class ScoutingReportsResource
      *
      * @return ScoutingReportData
      */
-    public function create(\Academorix\SportsDevelopmentSdk\Payloads\ScoutingReports\CreateScoutingReportPayload $payload, ?string $idempotencyKey = null): ScoutingReportData
+    public function create(\Stackra\SportsDevelopmentSdk\Payloads\ScoutingReports\CreateScoutingReportPayload $payload, ?string $idempotencyKey = null): ScoutingReportData
     {
         return $this->connector->send(new CreateScoutingReportRequest($payload, $idempotencyKey))->dto();
     }

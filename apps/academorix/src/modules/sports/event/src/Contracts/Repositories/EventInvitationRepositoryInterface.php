@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Event\Contracts\Repositories;
+namespace Stackra\Event\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Event\Models\EventInvitation}.
+ * Repository contract for {@see Stackra\Event\Models\EventInvitation}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `EventInvitationRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Event\Models\EventInvitation>
+ * @extends RepositoryInterface<\Stackra\Event\Models\EventInvitation>
  *
  * @category Event
  *

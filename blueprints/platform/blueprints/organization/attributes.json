@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/organization/attributes",
+  "id": "stackra://modules/organization/attributes",
   "$version": 1,
   "title": "organization — PHP attribute contracts",
   "description": "One attribute. `AsOrganizationListener` marks a service that reacts to Organization lifecycle events (created / reparented / default-changed / archived / …). The organization module scans for this attribute at boot + auto-registers the class with the event dispatcher — no manual EventServiceProvider wiring per listener.",
-  "namespace": "Academorix\\Organization\\Attributes",
+  "namespace": "Stackra\\Organization\\Attributes",
   "attributes": [
     {
       "name": "AsOrganizationListener",
-      "class": "Academorix\\Organization\\Attributes\\AsOrganizationListener",
+      "class": "Stackra\\Organization\\Attributes\\AsOrganizationListener",
       "targets": ["class"],
       "params": [
         {

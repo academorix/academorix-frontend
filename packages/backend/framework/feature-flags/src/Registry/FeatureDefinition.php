@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Registry;
+namespace Stackra\FeatureFlags\Registry;
 
-use Academorix\FeatureFlags\Attributes\AsFeatureFlag;
-use Academorix\FeatureFlags\Enums\FlagKind;
+use Stackra\FeatureFlags\Attributes\AsFeatureFlag;
+use Stackra\FeatureFlags\Enums\FlagKind;
 
 /**
  * Frozen registry entry for one discovered feature flag.

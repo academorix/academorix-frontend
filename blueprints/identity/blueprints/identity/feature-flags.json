@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/identity/feature-flags",
+  "id": "stackra://modules/identity/feature-flags",
   "$version": 1,
   "title": "identity \u2014 kill switches + progressive-rollout flags",
   "engine": "laravel/pennant",

@@ -19,8 +19,8 @@ costs:
   awkward when the two modules could just as well share a boot boundary.
 
 Traces + metrics + logs stay conceptually separate inside this module via two
-internal sub-namespaces (`Academorix\Telemetry\Otel\*` and
-`Academorix\Telemetry\Logs\*`) and two internal providers composed by the outer
+internal sub-namespaces (`Stackra\Telemetry\Otel\*` and
+`Stackra\Telemetry\Logs\*`) and two internal providers composed by the outer
 `TelemetryServiceProvider`. From the outside it's one dependency, one boot order
 slot, one health probe surface.
 
@@ -31,8 +31,8 @@ The `TelemetryServiceProvider` boots two internal providers in order:
 1. **`OtelServiceProvider`** (traces + metrics)
    - `TracerProvider` + `MeterProvider` wired via keepsuit
    - Resource attributes: `service.name`, `service.version`,
-     `service.namespace`, `deployment.environment`, `academorix.tenant_id` (per
-     request), `academorix.request_id`, `k8s.pod.name` (when in K8s)
+     `service.namespace`, `deployment.environment`, `stackra.tenant_id` (per
+     request), `stackra.request_id`, `k8s.pod.name` (when in K8s)
    - Trace exporter: OTLP/HTTP to `$OTEL_EXPORTER_OTLP_ENDPOINT`
    - Metric exporter: OTLP/HTTP metrics with 10s aggregation window
    - Auto-instrumentation of HTTP server + HTTP client + Eloquent + queue
@@ -53,15 +53,15 @@ Modules add custom instrumentation via attributes. Discovery is a build-time
 pass; runtime is vanilla method calls.
 
 ```php
-use Academorix\Telemetry\Otel\Attributes\{AsSpan, AsCounter, AsHistogram, AsContext};
-use Academorix\Telemetry\Logs\Attributes\{AsLogChannel, AsLogContext};
+use Stackra\Telemetry\Otel\Attributes\{AsSpan, AsCounter, AsHistogram, AsContext};
+use Stackra\Telemetry\Logs\Attributes\{AsLogChannel, AsLogContext};
 
 #[AsLogChannel('webhook')]
 final class WebhookDispatcher
 {
     #[AsSpan(name: 'webhook.dispatch', kind: 'internal', attributes: ['webhook.subscription_id'])]
-    #[AsCounter(name: 'academorix.webhook.dispatches', unit: 'dispatches', labels: ['outcome'])]
-    #[AsHistogram(name: 'academorix.webhook.dispatch.duration_ms', unit: 'ms', buckets: [10, 50, 200, 1000, 5000])]
+    #[AsCounter(name: 'stackra.webhook.dispatches', unit: 'dispatches', labels: ['outcome'])]
+    #[AsHistogram(name: 'stackra.webhook.dispatch.duration_ms', unit: 'ms', buckets: [10, 50, 200, 1000, 5000])]
     public function dispatch(
         WebhookDelivery $delivery,
         #[AsContext(key: 'webhook.subscription_id')] string $subscriptionId,
@@ -104,16 +104,16 @@ Sample record:
     "duration_ms": 142
   },
   "extra": {
-    "academorix.request_id": "req_01HXYZ...",
-    "academorix.tenant_id": "ten_01HXYZ...",
-    "academorix.causer_id": "usr_01HXYZ...",
+    "stackra.request_id": "req_01HXYZ...",
+    "stackra.tenant_id": "ten_01HXYZ...",
+    "stackra.causer_id": "usr_01HXYZ...",
     "trace_id": "5b8aa5a2d2c872e8321cf37308d69df2",
     "span_id": "051581bf3cb55c13",
-    "service.name": "academorix",
+    "service.name": "stackra",
     "service.version": "v0.5.2-abc1234",
     "deployment.environment": "production",
     "source.module": "webhook",
-    "source.class": "Academorix\\Webhook\\Services\\DispatchService",
+    "source.class": "Stackra\\Webhook\\Services\\DispatchService",
     "source.line": 87
   }
 }
@@ -158,7 +158,7 @@ cutover to disable a noisy exporter without deploy. See `feature-flags.json`.
 
 This module NEVER blocks on export. OTLP exports run through a
 `BatchSpanProcessor` with a background worker; on backpressure, spans are
-dropped (bounded queue) and `academorix.otel.dropped_spans` increments. Log
+dropped (bounded queue) and `stackra.otel.dropped_spans` increments. Log
 sinks buffer with the same policy: bounded queue, oldest-dropped, drop counter
 in metrics.
 
@@ -181,9 +181,9 @@ This module supersedes `modules/telemetry-otel/` + `modules/telemetry-logs/`.
 See `module.json.migration_notes` for namespace + config + flag mappings.
 Consumers of the old modules must update:
 
-- Composer / autoload paths: `Academorix\TelemetryOtel\*` →
-  `Academorix\Telemetry\Otel\*`; `Academorix\TelemetryLogs\*` →
-  `Academorix\Telemetry\Logs\*`
+- Composer / autoload paths: `Stackra\TelemetryOtel\*` →
+  `Stackra\Telemetry\Otel\*`; `Stackra\TelemetryLogs\*` →
+  `Stackra\Telemetry\Logs\*`
 - `config('telemetry-otel.*')` → `config('telemetry.otel.*')` (traces / metrics
   under `otel.` sub-key); `config('telemetry-logs.*')` →
   `config('telemetry.logs.*')`

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Exceptions;
+namespace Stackra\Coupon\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The target does not match the coupon's applicability rules (wrong plan / not a membership / etc.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CouponApplicabilityMismatchException extends AcademorixException
+final class CouponApplicabilityMismatchException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

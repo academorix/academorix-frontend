@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Progress\Database\Factories;
+namespace Stackra\Progress\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Progress\Contracts\Data\CoachNoteInterface;
-use Academorix\Progress\Models\CoachNote;
+use Stackra\Progress\Contracts\Data\CoachNoteInterface;
+use Stackra\Progress\Models\CoachNote;
 
 /**
- * Factory for {@see \Academorix\Progress\Models\CoachNote}.
+ * Factory for {@see \Stackra\Progress\Models\CoachNote}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Progress\Models\CoachNote>
+ * @extends Factory<\Stackra\Progress\Models\CoachNote>
  *
  * @category Progress
  *

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Database\Factories;
+namespace Stackra\Storage\Database\Factories;
 
-use Academorix\Storage\Contracts\Data\SignedUrlAuditInterface;
-use Academorix\Storage\Enums\SignedUrlPurpose;
-use Academorix\Storage\Models\SignedUrlAudit;
+use Stackra\Storage\Contracts\Data\SignedUrlAuditInterface;
+use Stackra\Storage\Enums\SignedUrlPurpose;
+use Stackra\Storage\Models\SignedUrlAudit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

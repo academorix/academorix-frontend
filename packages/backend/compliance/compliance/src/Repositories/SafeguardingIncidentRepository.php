@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Repositories;
+namespace Stackra\Compliance\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Compliance\Contracts\Data\SafeguardingIncidentInterface;
-use Academorix\Compliance\Contracts\Repositories\SafeguardingIncidentRepositoryInterface;
-use Academorix\Compliance\Models\SafeguardingIncident;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Compliance\Contracts\Data\SafeguardingIncidentInterface;
+use Stackra\Compliance\Contracts\Repositories\SafeguardingIncidentRepositoryInterface;
+use Stackra\Compliance\Models\SafeguardingIncident;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Compliance\Models\SafeguardingIncident}.
+ * Attribute-first Eloquent repository for {@see Stackra\Compliance\Models\SafeguardingIncident}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(SafeguardingIncidentInterface::class)]` which resolves to
  * `SafeguardingIncident` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Compliance\Models\SafeguardingIncident>
+ * @extends Repository<\Stackra\Compliance\Models\SafeguardingIncident>
  *
  * @category Compliance
  *

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Competition\Enums;
+namespace Stackra\Competition\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `registration_status` on `competition-team`.

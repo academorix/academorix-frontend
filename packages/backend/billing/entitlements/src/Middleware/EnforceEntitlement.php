@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Middleware;
+namespace Stackra\Entitlements\Middleware;
 
-use Academorix\Entitlements\Contracts\Services\EnforcerInterface;
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Entitlements\Contracts\Services\EnforcerInterface;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

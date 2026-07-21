@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Models;
+namespace Stackra\Compliance\Models;
 
-use Academorix\Compliance\Contracts\Data\DsarArtefactInterface;
-use Academorix\Compliance\Database\Factories\DsarArtefactFactory;
-use Academorix\Compliance\Observers\DsarArtefactObserver;
-use Academorix\Compliance\Policies\DsarArtefactPolicy;
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Compliance\Contracts\Data\DsarArtefactInterface;
+use Stackra\Compliance\Database\Factories\DsarArtefactFactory;
+use Stackra\Compliance\Observers\DsarArtefactObserver;
+use Stackra\Compliance\Policies\DsarArtefactPolicy;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

@@ -1,20 +1,20 @@
 {
-  "id": "academorix://modules/mfa/settings",
+  "id": "stackra://modules/mfa/settings",
   "$version": 1,
   "title": "mfa — settings",
   "description": "Tenant-facing MFA policy settings. Two groups: tenant-level MFA policy (which roles require MFA, grace period, step-up strictness) + per-user MFA preferences (preferred method, low-recovery-codes threshold override). Only tenant admins with the `mfa.policy.manage` permission can modify the tenant-level group.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "namespace_registration": {
     "namespace": "mfa",
-    "consumer": "Academorix\\Mfa\\Providers\\MfaServiceProvider",
+    "consumer": "Stackra\\Mfa\\Providers\\MfaServiceProvider",
     "defaultValueFactory": "Delegates to config('mfa.*') when the tenant hasn't overridden. Ensures the effective value falls back to the config layer if no tenant-specific row exists.",
     "validator": "Enforces the compliance-floor rules — tenant settings can only TIGHTEN mfa.required_for_roles (add more roles, never remove any); tenant settings can only SHORTEN mfa.grace_days_after_enrollment; tenant settings can only SHORTEN mfa.step_up.sensitive_action_ttl_minutes."
   },
   "groups": [
     {
       "key": "mfa",
-      "class": "Academorix\\Mfa\\Settings\\MfaSettings",
+      "class": "Stackra\\Mfa\\Settings\\MfaSettings",
       "label": "Two-factor authentication",
       "description": "Tenant-wide MFA policy. Compliance floor: the tenant can only TIGHTEN these values, never loosen below the platform floor.",
       "icon": "shield-check",
@@ -162,7 +162,7 @@
     },
     {
       "key": "mfa_user",
-      "class": "Academorix\\Mfa\\Settings\\MfaUserSettings",
+      "class": "Stackra\\Mfa\\Settings\\MfaUserSettings",
       "label": "My two-factor preferences",
       "description": "Per-user MFA preferences.",
       "icon": "user-circle",

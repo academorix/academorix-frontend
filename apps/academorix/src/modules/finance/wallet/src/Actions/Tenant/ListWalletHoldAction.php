@@ -4,14 +4,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Wallet\Actions\Tenant;
+namespace Stackra\Wallet\Actions\Tenant;
 
-use Academorix\Wallet\Contracts\Repositories\WalletHoldRepositoryInterface;
-use Academorix\Wallet\Data\WalletHoldData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Wallet\Contracts\Repositories\WalletHoldRepositoryInterface;
+use Stackra\Wallet\Data\WalletHoldData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\LaravelData\PaginatedDataCollection;
@@ -20,7 +20,7 @@ use Spatie\LaravelData\PaginatedDataCollection;
  * `GET /api/v1/wallet-holds` — list action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Wallet
@@ -50,7 +50,7 @@ final class ListWalletHoldAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Academorix\Wallet\Models\WalletHold> $page */
+        /** @var LengthAwarePaginator<int, \Stackra\Wallet\Models\WalletHold> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

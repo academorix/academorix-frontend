@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/newsletter/permissions",
+  "id": "stackra://modules/newsletter/permissions",
   "$version": 1,
   "title": "newsletter \u2014 permissions",
-  "seeder": "Academorix\\Newsletter\\Database\\Seeders\\NewsletterPermissionSeeder",
+  "seeder": "Stackra\\Newsletter\\Database\\Seeders\\NewsletterPermissionSeeder",
   "isSystem": true,
   "permissions": [
     { "name": "newsletters.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "editor"] },

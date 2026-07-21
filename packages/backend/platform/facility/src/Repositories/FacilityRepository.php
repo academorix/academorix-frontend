@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Repositories;
+namespace Stackra\Facility\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Facility\Contracts\Data\FacilityInterface;
-use Academorix\Facility\Contracts\Repositories\FacilityRepositoryInterface;
-use Academorix\Facility\Models\Facility;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Facility\Contracts\Data\FacilityInterface;
+use Stackra\Facility\Contracts\Repositories\FacilityRepositoryInterface;
+use Stackra\Facility\Models\Facility;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Facility\Models\Facility}.
+ * Attribute-first Eloquent repository for {@see Stackra\Facility\Models\Facility}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(FacilityInterface::class)]` which resolves to
  * `Facility` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Facility\Models\Facility>
+ * @extends Repository<\Stackra\Facility\Models\Facility>
  *
  * @category Facility
  *

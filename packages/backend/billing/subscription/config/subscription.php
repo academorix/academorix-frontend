@@ -4,7 +4,7 @@
  * @file modules/billing/subscription/config/subscription.php
  *
  * @description
- * Runtime knobs for the `academorix/subscription` module. Every knob
+ * Runtime knobs for the `stackra/subscription` module. Every knob
  * is env-overridable so per-environment tuning stays out of code.
  */
 

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/features",
+  "id": "stackra://modules/workflow/approvals/features",
   "$version": 1,
   "title": "approvals — feature keys",
   "reference": {

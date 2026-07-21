@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsProgressSdk\Resources;
+namespace Stackra\SportsProgressSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsProgressSdk\Data\GradingEventData;
-use Academorix\SportsProgressSdk\Requests\GradingEvents\CreateGradingEventRequest;
-use Academorix\SportsProgressSdk\Requests\GradingEvents\ListGradingEventsAdminRequest;
-use Academorix\SportsProgressSdk\Requests\GradingEvents\ListGradingEventsRequest;
-use Academorix\SportsProgressSdk\Requests\GradingEvents\ShowGradingEventRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsProgressSdk\Data\GradingEventData;
+use Stackra\SportsProgressSdk\Requests\GradingEvents\CreateGradingEventRequest;
+use Stackra\SportsProgressSdk\Requests\GradingEvents\ListGradingEventsAdminRequest;
+use Stackra\SportsProgressSdk\Requests\GradingEvents\ListGradingEventsRequest;
+use Stackra\SportsProgressSdk\Requests\GradingEvents\ShowGradingEventRequest;
 use Saloon\Http\Response;
 
 /**
@@ -57,7 +57,7 @@ final readonly class GradingEventsResource
      *
      * @return GradingEventData
      */
-    public function create(\Academorix\SportsProgressSdk\Payloads\GradingEvents\CreateGradingEventPayload $payload, ?string $idempotencyKey = null): GradingEventData
+    public function create(\Stackra\SportsProgressSdk\Payloads\GradingEvents\CreateGradingEventPayload $payload, ?string $idempotencyKey = null): GradingEventData
     {
         return $this->connector->send(new CreateGradingEventRequest($payload, $idempotencyKey))->dto();
     }

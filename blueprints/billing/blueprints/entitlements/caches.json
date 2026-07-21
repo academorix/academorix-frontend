@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/entitlements/caches",
+  "id": "stackra://modules/entitlements/caches",
   "$version": 1,
   "title": "entitlements \u2014 cache keys + tags",
   "driver": "redis",

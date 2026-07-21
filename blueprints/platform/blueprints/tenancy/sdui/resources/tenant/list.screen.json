@@ -149,7 +149,7 @@
                       {
                         "kind": "Text",
                         "props": { "className": "text-xs text-muted font-mono" },
-                        "bindings": { "children": { "$expr": "row.slug + '.academorix.app'" } }
+                        "bindings": { "children": { "$expr": "row.slug + '.stackra.app'" } }
                       }
                     ]
                   }

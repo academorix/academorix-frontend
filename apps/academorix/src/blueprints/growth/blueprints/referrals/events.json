@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/referrals/events",
+  "id": "stackra://modules/referrals/events",
   "$version": 1,
   "title": "referrals — published events",
-  "namespace": "Academorix\\Growth\\Referrals\\Events",
+  "namespace": "Stackra\\Growth\\Referrals\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Two events are CRITICAL: `ReferralFraudDetected` (P1 signal — admin must review) and `ReferralProgramBudgetSpike` (P2 signal — > 50% program budget consumed in 24h suggests fraud storm OR viral traction OR budget mis-sizing). Financial events (ReferralVested / ReferralRewardMaterialized / ReferralRewarded / ReferralClawback) additionally fan out to finance (Wave 4) for credit + revenue attribution. ReferralSignedUp + ReferralVested fire a marketing event downstream for ad-network conversion attribution.",
   "events": [
     {
       "name": "ReferralProgramCreated",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralProgramCreated",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralProgramCreated",
       "trigger": "ReferralProgramRepository finished a successful create. Fires exactly once per (tenant_id, slug) tuple.",
       "queue": "referrals",
       "consumers": [
@@ -31,7 +31,7 @@
     },
     {
       "name": "ReferralProgramActivated",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralProgramActivated",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralProgramActivated",
       "trigger": "ReferralProgram.status transitioned draft -> active OR paused -> active. Program becomes eligible for new referral claims.",
       "queue": "referrals",
       "consumers": [
@@ -49,7 +49,7 @@
     },
     {
       "name": "ReferralProgramPaused",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralProgramPaused",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralProgramPaused",
       "trigger": "ReferralProgram.status transitioned active -> paused. New claims refused; existing referrals in-flight complete.",
       "queue": "referrals",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -63,7 +63,7 @@
     },
     {
       "name": "ReferralProgramArchived",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralProgramArchived",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralProgramArchived",
       "trigger": "ReferralProgram.status transitioned to archived. Terminal — cascades: pending referrals cancel + materialized-not-yet-paid rewards clawback.",
       "queue": "referrals-critical",
       "consumers": [
@@ -84,7 +84,7 @@
     },
     {
       "name": "ReferralCodeIssued",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralCodeIssued",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralCodeIssued",
       "trigger": "ReferralCodeRepository committed a new referral_codes row. Fires exactly once per code. Distinguishes user_scoped (auto-generated per user) from campaign (admin-generated) from opaque (system-generated for A/B test cohorts).",
       "queue": "referrals",
       "consumers": [
@@ -107,7 +107,7 @@
     },
     {
       "name": "ReferralCodeUsageCapReached",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralCodeUsageCapReached",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralCodeUsageCapReached",
       "trigger": "ReferralCode.usage_count reached ReferralCode.usage_cap. Fires from ReferralCodeObserver.updated when the increment crosses the threshold.",
       "queue": "referrals",
       "consumers": [
@@ -124,7 +124,7 @@
     },
     {
       "name": "ReferralCodeExpired",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralCodeExpired",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralCodeExpired",
       "trigger": "ReferralCode.expires_at passed. Detected by claim-path (ReferralClaimer refuses expired code + fires this event) or by ExpireStaleReferralsJob scanning codes.",
       "queue": "referrals",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -137,13 +137,13 @@
     },
     {
       "name": "ReferralClicked",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralClicked",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralClicked",
       "trigger": "Public route GET /api/v1/referrals/claim/{code} was hit. Attribution snapshot + device snapshot captured; a Referral row in status 'pending_claim' may be created (depends on session state).",
       "queue": "referrals",
       "consumers": [
         "activity::WriteToActivityLog (staff-visible for viral analytics)",
         "attribution::CaptureReferralClickTouchpoint (adds a touchpoint on the referrer's attribution profile)",
-        "observability::MetricsCollector (academorix.referrals.clicks_total)"
+        "observability::MetricsCollector (stackra.referrals.clicks_total)"
       ],
       "payload": {
         "code_id": "ULID | null (nullable when click carries no code — attribution-only)",
@@ -158,7 +158,7 @@
     },
     {
       "name": "ReferralClaimed",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralClaimed",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralClaimed",
       "trigger": "ReferralClaimer created a Referral row in status 'claimed' — the referred user landed on the signup page with the referral cookie set. Fires ONCE per referrer-referred pair.",
       "queue": "referrals",
       "consumers": [
@@ -181,7 +181,7 @@
     },
     {
       "name": "ReferralSignedUp",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralSignedUp",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralSignedUp",
       "trigger": "Referral.status transitioned claimed -> signed_up. The referred user completed the signup flow.",
       "queue": "referrals",
       "consumers": [
@@ -202,14 +202,14 @@
     },
     {
       "name": "ReferralTriggerReached",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralTriggerReached",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralTriggerReached",
       "trigger": "The program-configured trigger event fired for the referred user (signup / trial_started / first_payment / subscription_renewal_1 / subscription_renewal_3 / lifetime_value_threshold_hit / athlete_enrolled / event_registered). The listener captures it + transitions Referral -> trigger_pending.",
       "queue": "referrals",
       "consumers": [
         "audit::WriteToAuditLog",
         "activity::WriteToActivityLog",
         "referrals::DetectReferralFraudAtTriggerTime (re-runs FraudDetector before vesting)",
-        "observability::MetricsCollector (academorix.referrals.triggers_reached_total)"
+        "observability::MetricsCollector (stackra.referrals.triggers_reached_total)"
       ],
       "payload": {
         "referral_id": "ULID",
@@ -221,7 +221,7 @@
     },
     {
       "name": "ReferralEnteredVesting",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralEnteredVesting",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralEnteredVesting",
       "trigger": "Referral.status transitioned trigger_pending -> vesting. VestingScheduler computed vesting_completes_at based on program config. For immediate-vesting programs, this fires in the same transaction as ReferralVested.",
       "queue": "referrals",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -234,7 +234,7 @@
     },
     {
       "name": "ReferralVested",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralVested",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralVested",
       "trigger": "Referral.status transitioned to vested — either by CheckReferralVestingJob (nightly, for hold-window programs) OR by immediate-vesting programs at trigger time OR by admin force-vest. ReferralReward rows created atomically in the same transaction.",
       "queue": "referrals-critical",
       "consumers": [
@@ -255,7 +255,7 @@
     },
     {
       "name": "ReferralRewardMaterialized",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralRewardMaterialized",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralRewardMaterialized",
       "trigger": "ReferralReward.status transitioned vested -> materialized — MaterializeVestedRewardsJob successfully created a Finance credit and set finance_credit_id.",
       "queue": "referrals-critical",
       "consumers": [
@@ -276,7 +276,7 @@
     },
     {
       "name": "ReferralRewarded",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralRewarded",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralRewarded",
       "trigger": "ReferralReward.status transitioned materialized -> paid. Referral.status transitioned vested -> rewarded when ALL rewards on the referral are paid. Terminal happy path.",
       "queue": "referrals",
       "consumers": [
@@ -296,7 +296,7 @@
     },
     {
       "name": "ReferralCancelled",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralCancelled",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralCancelled",
       "trigger": "Referral.status transitioned to cancelled — either voluntarily (admin cancel / referred withdrew) OR cascaded (program archived / refund issued / chargeback filed / fraud confirmed).",
       "queue": "referrals",
       "consumers": [
@@ -315,7 +315,7 @@
     },
     {
       "name": "ReferralExpired",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralExpired",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralExpired",
       "trigger": "ExpireStaleReferralsJob transitioned a claimed-but-not-signed-up referral past 30-day TTL to expired.",
       "queue": "referrals",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -328,14 +328,14 @@
     },
     {
       "name": "ReferralFraudDetected",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralFraudDetected",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralFraudDetected",
       "trigger": "ReferralFraudFlagObserver.created — a new fraud flag was written to the DB. CRITICAL when severity IN ('block', 'critical'). Every critical fire pages the admin.",
       "queue": "referrals-critical",
       "consumers": [
         "audit::WriteToAuditLog (retention: 7 years — fraud audit trail)",
         "activity::WriteToActivityLog",
         "notifications::DispatchReferralFraudFlaggedNotification (to admin — cannot-opt-out for critical severity)",
-        "observability::MetricsCollector (academorix.referrals.fraud_flags_created_total labelled by flag_type + severity)"
+        "observability::MetricsCollector (stackra.referrals.fraud_flags_created_total labelled by flag_type + severity)"
       ],
       "payload": {
         "flag_id": "ULID (rfr_*)",
@@ -350,7 +350,7 @@
     },
     {
       "name": "ReferralFraudFlagReviewed",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralFraudFlagReviewed",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralFraudFlagReviewed",
       "trigger": "Admin reviewed a fraud flag — disposition set to confirmed_fraud / false_positive / manual_override_approved.",
       "queue": "referrals",
       "consumers": [
@@ -368,7 +368,7 @@
     },
     {
       "name": "ReferralFraudDismissed",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralFraudDismissed",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralFraudDismissed",
       "trigger": "Admin reviewed a flag with disposition = false_positive. Fires alongside ReferralFraudFlagReviewed for consumer convenience (a listener may want only dismissals).",
       "queue": "referrals",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -383,7 +383,7 @@
     },
     {
       "name": "ReferralClawback",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralClawback",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralClawback",
       "trigger": "ReferralReward.status transitioned to clawback. Reverses a materialized-or-paid reward due to refund / chargeback / fraud / program-archived. CRITICAL — every clawback is a financial reversal that Finance module (Wave 4) must also process.",
       "queue": "referrals-critical",
       "consumers": [
@@ -406,7 +406,7 @@
     },
     {
       "name": "ReferralProgramBudgetReached",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralProgramBudgetReached",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralProgramBudgetReached",
       "trigger": "ReferralProgram.rewards_issued_count >= max_rewards_per_program OR rewards_issued_amount_cents crosses a threshold. New referral claims start refusing with PROGRAM_BUDGET_EXHAUSTED.",
       "queue": "referrals-critical",
       "consumers": [
@@ -425,14 +425,14 @@
     },
     {
       "name": "ReferralProgramBudgetSpike",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralProgramBudgetSpike",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralProgramBudgetSpike",
       "trigger": "> 50% of remaining program budget consumed in a rolling 24h window. Fired by ReconcileProgramBudgetJob. Ops signal — could be viral traction OR fraud storm.",
       "queue": "referrals-critical",
       "consumers": [
         "audit::WriteToAuditLog",
         "activity::WriteToActivityLog",
         "notifications::DispatchProgramBudgetAlertNotification (to admin — includes recent-referral rollup)",
-        "observability::MetricsCollector (academorix.referrals.budget_spikes_total)"
+        "observability::MetricsCollector (stackra.referrals.budget_spikes_total)"
       ],
       "payload": {
         "program_id": "ULID",
@@ -445,7 +445,7 @@
     },
     {
       "name": "ReferralMaxReferralsPerReferrerReached",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralMaxReferralsPerReferrerReached",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralMaxReferralsPerReferrerReached",
       "trigger": "A referrer's completed-referral count hit ReferralProgram.max_rewards_per_referrer or max_rewards_per_period. Further claims by this referrer refuse until the period rolls or the program allows more.",
       "queue": "referrals",
       "consumers": [
@@ -464,13 +464,13 @@
     },
     {
       "name": "ReferralInvitationSent",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralInvitationSent",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralInvitationSent",
       "trigger": "A user called POST /api/v1/me/invitations to send an invitation email/SMS. Fires per invitation recipient.",
       "queue": "notifications",
       "consumers": [
         "activity::WriteToActivityLog",
         "notifications::DispatchInvitationEmail (delivers the invitation to the recipient)",
-        "observability::MetricsCollector (academorix.referrals.invitations_sent_total)"
+        "observability::MetricsCollector (stackra.referrals.invitations_sent_total)"
       ],
       "payload": {
         "tenant_id": "ULID",
@@ -484,13 +484,13 @@
     },
     {
       "name": "ReferralInvitationClicked",
-      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralInvitationClicked",
+      "class": "Stackra\\Growth\\Referrals\\Events\\ReferralInvitationClicked",
       "trigger": "The invitation URL was hit (redirect endpoint captures the click). Different from ReferralClicked (general referral link) — this is specifically from an emailed / SMS'd invitation.",
       "queue": "referrals",
       "consumers": [
         "activity::WriteToActivityLog",
         "attribution::CaptureInvitationClickTouchpoint",
-        "observability::MetricsCollector (academorix.referrals.invitations_clicked_total)"
+        "observability::MetricsCollector (stackra.referrals.invitations_clicked_total)"
       ],
       "payload": {
         "tenant_id": "ULID",

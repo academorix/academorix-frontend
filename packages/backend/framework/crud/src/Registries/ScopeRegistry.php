@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Crud\Registries;
+namespace Stackra\Crud\Registries;
 
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Database\Eloquent\Scope;

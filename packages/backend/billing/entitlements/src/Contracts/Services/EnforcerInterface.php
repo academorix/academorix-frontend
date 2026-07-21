@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Contracts\Services;
+namespace Stackra\Entitlements\Contracts\Services;
 
-use Academorix\Entitlements\Services\DefaultEnforcer;
+use Stackra\Entitlements\Services\DefaultEnforcer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

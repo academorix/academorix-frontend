@@ -29,15 +29,15 @@
  * Same as {@see ArchitectureRule}: idempotent, deterministic, and
  * side-effect free.
  *
- * @see \Academorix\Architecture\Rules\AbstractPathRule Base class.
+ * @see \Stackra\Architecture\Rules\AbstractPathRule Base class.
  * @see ArchitectureRule                                Source-scan sibling contract.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Contracts;
+namespace Stackra\Architecture\Contracts;
 
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Violations\Violation;
 
 /**
  * Every path-existence rule implements this shape.

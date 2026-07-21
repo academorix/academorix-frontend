@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/newsletter/subprocessors",
+  "id": "stackra://modules/newsletter/subprocessors",
   "$version": 1,
   "title": "newsletter \u2014 subprocessors",
   "description": "This module has NO new subprocessors. Actual dispatch flows through notifications-mail; refer there for provider-side subprocessors (Mailgun / SendGrid / SES / Postmark / Resend).",

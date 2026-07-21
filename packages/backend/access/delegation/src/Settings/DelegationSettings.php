@@ -4,12 +4,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Delegation\Settings;
+namespace Stackra\Delegation\Settings;
 
-use Academorix\Settings\Attributes\AsSetting;
-use Academorix\Settings\Attributes\SettingField;
-use Academorix\Settings\Attributes\SettingGroup;
-use Academorix\Settings\Enums\ControlType;
+use Stackra\Settings\Attributes\AsSetting;
+use Stackra\Settings\Attributes\SettingField;
+use Stackra\Settings\Attributes\SettingGroup;
+use Stackra\Settings\Enums\ControlType;
 use Spatie\LaravelSettings\Settings;
 
 /**

@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tasks\Concerns;
+namespace Stackra\Tasks\Concerns;
 
 /**
  * Trait — HasTasks.

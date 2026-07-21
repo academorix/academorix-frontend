@@ -1,10 +1,10 @@
 {
-  "name": "academorix/region",
+  "name": "stackra/region",
   "type": "library",
-  "description": "Academorix Region module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/region/`. Complements the wire SDK at `academorix-platform/region-sdk`.",
+  "description": "Stackra Region module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/region/`. Complements the wire SDK at `stackra-platform/region-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "platform",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-platform/region-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-platform/region-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Region\\": "src/"
+      "Stackra\\Region\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Region\\Tests\\": "tests/"
+      "Stackra\\Region\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Region\\Providers\\RegionServiceProvider"
+        "Stackra\\Region\\Providers\\RegionServiceProvider"
       ],
       "aliases": {}
     }

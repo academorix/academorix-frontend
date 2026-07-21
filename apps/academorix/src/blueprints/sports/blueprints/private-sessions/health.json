@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/private-sessions/health",
+  "id": "stackra://modules/private-sessions/health",
   "$version": 1,
   "title": "private-sessions — health probes",
   "description": "Health checks aggregated by foundation's /api/health.",

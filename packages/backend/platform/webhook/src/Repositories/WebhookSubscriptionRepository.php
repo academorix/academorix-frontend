@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Repositories;
+namespace Stackra\Webhook\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Webhook\Contracts\Data\WebhookSubscriptionInterface;
-use Academorix\Webhook\Contracts\Repositories\WebhookSubscriptionRepositoryInterface;
-use Academorix\Webhook\Models\WebhookSubscription;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Webhook\Contracts\Data\WebhookSubscriptionInterface;
+use Stackra\Webhook\Contracts\Repositories\WebhookSubscriptionRepositoryInterface;
+use Stackra\Webhook\Models\WebhookSubscription;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Webhook\Models\WebhookSubscription}.
+ * Attribute-first Eloquent repository for {@see Stackra\Webhook\Models\WebhookSubscription}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(WebhookSubscriptionInterface::class)]` which resolves to
  * `WebhookSubscription` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Webhook\Models\WebhookSubscription>
+ * @extends Repository<\Stackra\Webhook\Models\WebhookSubscription>
  *
  * @category Webhook
  *

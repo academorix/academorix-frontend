@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/user/subprocessors",
+  "id": "stackra://modules/user/subprocessors",
   "$version": 1,
   "title": "user \u2014 subprocessors",
   "description": "The user module itself does not engage third-party processors directly \u2014 every field is stored in the tenant's own database. Adjacent processors that carry User-scoped data are engaged by sibling modules. This blueprint documents them for the compliance ledger.",
@@ -55,6 +55,6 @@
   "notes": [
     "AWS S3 avatar bytes are subject to EU data residency when the tenant's region is EU \u2014 the media module reads `region.data_residency_zone` at bucket resolution time.",
     "The user module does NOT engage OpenAI / Google / DeepL / any translation provider directly \u2014 Profile.locale is a string tag, never machine-translated. Localised UI strings routed through localization::TranslatorDriverManager reference translation subprocessors under that module's ledger.",
-    "Postmark + Twilio DPAs are signed by the platform (Academorix). Tenant-level opt-out is available for `functional_optional` notifications only; `transactional_required` notifications cannot be opted out of per GDPR Art. 6(1)(b) (contract performance)."
+    "Postmark + Twilio DPAs are signed by the platform (Stackra). Tenant-level opt-out is available for `functional_optional` notifications only; `transactional_required` notifications cannot be opted out of per GDPR Art. 6(1)(b) (contract performance)."
   ]
 }

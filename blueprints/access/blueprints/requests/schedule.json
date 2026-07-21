@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/access/requests/schedule",
+  "id": "stackra://modules/access/requests/schedule",
   "$version": 1,
   "title": "requests \u2014 scheduled tasks",
   "description": "Cron entries registered by `AccessRequestServiceProvider::schedule()`. UTC throughout. `runOnOneServer` on every entry so multi-node worker pools do not duplicate work. `withoutOverlapping` where windows may exceed the interval.",

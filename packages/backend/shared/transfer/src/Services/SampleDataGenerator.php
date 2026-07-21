@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Services;
+namespace Stackra\Transfer\Services;
 
-use Academorix\Transfer\Contracts\Services\SampleDataGeneratorInterface;
+use Stackra\Transfer\Contracts\Services\SampleDataGeneratorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Transfer\Contracts\Repositories\XferArtifactRepositoryInterface;
+use Stackra\Transfer\Contracts\Repositories\XferArtifactRepositoryInterface;
 
 /**
  * Concrete service — SampleDataGenerator.

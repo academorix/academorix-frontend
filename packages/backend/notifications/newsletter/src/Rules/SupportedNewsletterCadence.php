@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Rules;
+namespace Stackra\Newsletter\Rules;
 
-use Academorix\Newsletter\Enums\NewsletterCadence;
+use Stackra\Newsletter\Enums\NewsletterCadence;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 

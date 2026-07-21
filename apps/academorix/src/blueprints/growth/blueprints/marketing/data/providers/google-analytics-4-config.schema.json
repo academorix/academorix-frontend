@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/marketing/data/providers/google-analytics-4-config",
+  "id": "stackra://modules/marketing/data/providers/google-analytics-4-config",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "GA4 Measurement Protocol provider config",

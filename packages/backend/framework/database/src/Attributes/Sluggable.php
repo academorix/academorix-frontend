@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Database\Attributes;
+namespace Stackra\Database\Attributes;
 
 use Attribute;
 
@@ -20,7 +20,7 @@ use Attribute;
  * Sluggable Attribute for Model Classes.
  *
  * Configures slug generation behaviour for the
- * {@see \Academorix\Database\Concerns\Model\HasSlug} trait. When applied,
+ * {@see \Stackra\Database\Concerns\Model\HasSlug} trait. When applied,
  * the attribute values override the trait's method-based defaults,
  * allowing per-model slug customisation via a single attribute.
  *
@@ -53,7 +53,7 @@ use Attribute;
  *
  * @since    2.0.0
  *
- * @see \Academorix\Database\Concerns\Model\HasSlug
+ * @see \Stackra\Database\Concerns\Model\HasSlug
  */
 #[Attribute(Attribute::TARGET_CLASS)]
 final readonly class Sluggable

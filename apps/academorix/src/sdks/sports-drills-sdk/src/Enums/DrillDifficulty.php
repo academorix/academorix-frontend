@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDrillsSdk\Enums;
+namespace Stackra\SportsDrillsSdk\Enums;
 
 /**
  * Wire-visible backed enum for `drill.difficulty`.

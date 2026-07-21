@@ -84,7 +84,7 @@ surface for the code phase that follows.
     lifecycle for tenant users.
   - Platform plane (`/api/v1/platform/auth/*` +
     `/api/v1/platform/identities/*` + `/api/v1/platform/jwt-*`): 17 routes
-    covering Academorix-staff auth + identity substrate CRUD (auth OWNS the HTTP
+    covering Stackra-staff auth + identity substrate CRUD (auth OWNS the HTTP
     surface for the substrate that owns no routes) + JWT key management +
     impersonation + deny-list management.
   - Public plane: 2 routes (`GET /.well-known/jwks.json` + health probe).

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Drills\Contracts\Data;
+namespace Stackra\Drills\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Drills\Models\SessionPlan;
+use Stackra\Drills\Models\SessionPlan;
 
 /**
  * Table shape for the `session_plans` table.

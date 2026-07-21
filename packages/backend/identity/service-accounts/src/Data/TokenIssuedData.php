@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Data;
+namespace Stackra\ServiceAccounts\Data;
 
-use Academorix\Auth\Data\SignedJwtData;
+use Stackra\Auth\Data\SignedJwtData;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;

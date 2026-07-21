@@ -47,16 +47,16 @@ The whole developer surface is PHP attributes. No property declarations required
 `#[ExportField]` / `#[TransferField]` is always the Eloquent attribute name.
 
 ```php
-use Academorix\Transfer\Attributes\Exportable;
-use Academorix\Transfer\Attributes\ExportField;
-use Academorix\Transfer\Attributes\Importable;
-use Academorix\Transfer\Attributes\ImportField;
-use Academorix\Transfer\Attributes\SampleData;
-use Academorix\Transfer\Attributes\TransferField;
-use Academorix\Transfer\Concerns\HasExportable;
-use Academorix\Transfer\Concerns\HasImportable;
-use Academorix\Transfer\Enums\ImportMode;
-use Academorix\Transfer\Support\LookupBy;
+use Stackra\Transfer\Attributes\Exportable;
+use Stackra\Transfer\Attributes\ExportField;
+use Stackra\Transfer\Attributes\Importable;
+use Stackra\Transfer\Attributes\ImportField;
+use Stackra\Transfer\Attributes\SampleData;
+use Stackra\Transfer\Attributes\TransferField;
+use Stackra\Transfer\Concerns\HasExportable;
+use Stackra\Transfer\Concerns\HasImportable;
+use Stackra\Transfer\Enums\ImportMode;
+use Stackra\Transfer\Support\LookupBy;
 
 #[Importable(
     label:              ['en' => 'Athletes', 'ar' => '\u0627\u0644\u0631\u064a\u0627\u0636\u064a\u0648\u0646'],
@@ -259,12 +259,12 @@ Rename map:
 
 | Was                                                      | Now                                                                           |
 | -------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `Academorix\Foundation\Concerns\Importable`              | `Academorix\Transfer\Concerns\HasImportable`                                  |
-| `Academorix\Foundation\Concerns\Exportable`              | `Academorix\Transfer\Concerns\HasExportable`                                  |
-| `Academorix\Foundation\Contracts\ImportContractRegistry` | `Academorix\Transfer\Contracts\EntityRegistryInterface`                       |
-| `Academorix\Foundation\Contracts\ExportContractRegistry` | `Academorix\Transfer\Contracts\EntityRegistryInterface` (unified)             |
-| `Academorix\Foundation\Jobs\ProcessImportBatchJob`       | `Academorix\Transfer\Jobs\ImportEntityJob` (+ shard variants)                 |
-| `Academorix\Foundation\Jobs\GenerateExportJob`           | `Academorix\Transfer\Jobs\ExportEntityJob` (+ shard variants)                 |
+| `Stackra\Foundation\Concerns\Importable`              | `Stackra\Transfer\Concerns\HasImportable`                                  |
+| `Stackra\Foundation\Concerns\Exportable`              | `Stackra\Transfer\Concerns\HasExportable`                                  |
+| `Stackra\Foundation\Contracts\ImportContractRegistry` | `Stackra\Transfer\Contracts\EntityRegistryInterface`                       |
+| `Stackra\Foundation\Contracts\ExportContractRegistry` | `Stackra\Transfer\Contracts\EntityRegistryInterface` (unified)             |
+| `Stackra\Foundation\Jobs\ProcessImportBatchJob`       | `Stackra\Transfer\Jobs\ImportEntityJob` (+ shard variants)                 |
+| `Stackra\Foundation\Jobs\GenerateExportJob`           | `Stackra\Transfer\Jobs\ExportEntityJob` (+ shard variants)                 |
 | `$table->importable()` blueprint macro                   | Removed. No macro needed \u2014 transfer's own tables live inside the module. |
 | `$table->exportable()` blueprint macro                   | Removed. Same rationale.                                                      |
 

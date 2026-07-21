@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Session\Actions\Tenant;
+namespace Stackra\Session\Actions\Tenant;
 
-use Academorix\Session\Contracts\Repositories\SessionRepositoryInterface;
-use Academorix\Session\Data\SessionData;
-use Academorix\Session\Data\Requests\UpdateSessionRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\Session\Contracts\Repositories\SessionRepositoryInterface;
+use Stackra\Session\Data\SessionData;
+use Stackra\Session\Data\Requests\UpdateSessionRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Patch;
 
 /**
  * `PATCH /api/v1/sessions/{session}` — update action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Patch(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Session

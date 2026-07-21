@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Contracts\Repositories;
+namespace Stackra\Subscription\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Subscription\Models\Plan;
-use Academorix\Subscription\Repositories\EloquentPlanRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Subscription\Models\Plan;
+use Stackra\Subscription\Repositories\EloquentPlanRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

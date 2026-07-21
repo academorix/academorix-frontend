@@ -11,7 +11,7 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use Spatie\RouteAttributes\Attributes\WhereIn as SpatieWhereIn;
@@ -29,8 +29,8 @@ use Spatie\RouteAttributes\Attributes\WhereIn as SpatieWhereIn;
  *
  * ## Usage:
  * ```php
- * use Academorix\Routing\Attributes\WhereIn;
- * use Academorix\Routing\Attributes\Get;
+ * use Stackra\Routing\Attributes\WhereIn;
+ * use Stackra\Routing\Attributes\Get;
  *
  * class PostController
  * {

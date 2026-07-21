@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Observers;
+namespace Stackra\Webhook\Observers;
 
-use Academorix\Webhook\Events\WebhookDeliveryDispatched;
-use Academorix\Webhook\Models\WebhookDelivery;
+use Stackra\Webhook\Events\WebhookDeliveryDispatched;
+use Stackra\Webhook\Models\WebhookDelivery;
 
 /**
  * Lifecycle side effect on {@see WebhookDelivery} — emit

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/wallet/errors",
+  "id": "stackra://modules/wallet/errors",
   "$version": 1,
   "title": "wallet — error codes",
   "namespace": "wallet",

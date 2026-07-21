@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/search/traits",
+  "id": "stackra://modules/search/traits",
   "$version": 1,
   "title": "search \u2014 trait composition",
   "description": "Owns `HasSearchable` \u2014 the opt-in trait models pull in alongside their #[Searchable] attribute. Wraps laravel/scout's own `Searchable` trait and layers our conventions (tenant scope on push, permission-scoped toSearchableArray, restricted-tier field filtering, alias-aware routing). Also owns the trait composition on our own SearchIndex + SearchSyncJob + SearchSynonym + SearchSavedQuery + SearchAnalyticsEvent models.",
   "owned": [
     {
-      "trait": "Academorix\\Search\\Concerns\\HasSearchable",
+      "trait": "Stackra\\Search\\Concerns\\HasSearchable",
       "description": "Opt-in trait for models registering with the search pipeline. Wraps scout's `Searchable` + adds our defaults: tenant-scoped push, permission-scoped `toSearchableArray()`, restricted-tier field filtering (never indexes those columns), alias-aware routing (`Model::search()` hits `{index}_live`), and integration with the SearchIndex registry.",
       "public": true,
       "usedBy": [
@@ -40,19 +40,19 @@
     ],
     "foundation": [
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasMetadata",
+        "trait": "Stackra\\Foundation\\Concerns\\HasMetadata",
         "usedBy": ["SearchIndex", "SearchSavedQuery"],
         "reason": "Free-form platform notes on the operation record + saved query."
       },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag",
+        "trait": "Stackra\\Foundation\\Concerns\\HasSystemFlag",
         "usedBy": ["SearchSynonym"],
         "reason": "Platform-seeded synonym rows carry is_system=true \u2014 they can be disabled but not deleted by tenants."
       }
     ],
     "tenancy": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
         "usedBy": [
           "SearchIndex",
           "SearchSyncJob",
@@ -65,14 +65,14 @@
     ],
     "activity": [
       {
-        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
         "usedBy": ["SearchIndex", "SearchSyncJob", "SearchSynonym", "SearchSavedQuery"],
         "reason": "Every mutation writes a product-feed row. Analytics events do NOT dual-write (query volume would drown the feed)."
       }
     ],
     "audit": [
       {
-        "trait": "Academorix\\Audit\\Concerns\\HasAudit",
+        "trait": "Stackra\\Audit\\Concerns\\HasAudit",
         "usedBy": ["SearchIndex", "SearchSyncJob"],
         "reason": "Every index registration / unregistration + sync-job transition writes a compliance-grade audit row. Synonym / saved-query / analytics do NOT audit (product concerns, not compliance)."
       }

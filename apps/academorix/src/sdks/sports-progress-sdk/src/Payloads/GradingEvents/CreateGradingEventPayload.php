@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsProgressSdk\Payloads\GradingEvents;
+namespace Stackra\SportsProgressSdk\Payloads\GradingEvents;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\StringType;

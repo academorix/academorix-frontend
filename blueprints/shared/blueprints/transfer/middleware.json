@@ -1,17 +1,17 @@
 {
-  "id": "academorix://modules/transfer/middleware",
+  "id": "stackra://modules/transfer/middleware",
   "$version": 1,
   "title": "transfer \u2014 HTTP middleware",
   "description": "Two owned middleware for job-scoped authorization and artifact-signed downloads. Everything else composes from foundation + tenants + versioning + throttle stacks.",
   "middleware": [
     {
       "alias": "transfer.owned-job",
-      "class": "Academorix\\Transfer\\Http\\Middleware\\ResolveOwnedJob",
+      "class": "Stackra\\Transfer\\Http\\Middleware\\ResolveOwnedJob",
       "role": "Resolves the {jobId} route parameter to an XferJob record. Refuses (404 with TRANSFER_JOB_NOT_FOUND) when the caller is not the initiator AND does not hold `platform.transfer.viewAny`. Runs after tenant.resolve so tenant scoping applies."
     },
     {
       "alias": "transfer.signed-artifact",
-      "class": "Academorix\\Transfer\\Http\\Middleware\\ValidateSignedArtifactUrl",
+      "class": "Stackra\\Transfer\\Http\\Middleware\\ValidateSignedArtifactUrl",
       "role": "Validates Laravel's signed-URL signature on artifact download routes and resolves the artifact record. The signature IS the credential \u2014 no Sanctum session required. Refuses expired or tampered URLs with TRANSFER_ARTIFACT_LINK_INVALID. Signature TTL from config('transfer.download_url_ttl_minutes')."
     }
   ],

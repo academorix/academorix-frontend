@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/formations/schemas/formation-slot",
+  "id": "stackra://modules/formations/schemas/formation-slot",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "FormationSlot",

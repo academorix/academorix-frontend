@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/messaging/retention",
+  "id": "stackra://modules/messaging/retention",
   "$version": 1,
   "title": "messaging — data retention windows",
   "description": "Message retention is the trickiest in the codebase. Safeguarding compliance mandates 7yr retention of flagged messages; GDPR mandates deletion on user request; K-12 tenants require zero retention post-graduation. Multi-policy resolution defers to the STRICTEST setting.",

@@ -1,10 +1,10 @@
 {
-  "name": "academorix/identity",
+  "name": "stackra/identity",
   "type": "library",
-  "description": "Academorix Identity module — server-side Laravel package emitted from the module blueprint at `modules/identity/blueprints/identity/`. Complements the wire SDK at `academorix-identity/identity-sdk`.",
+  "description": "Stackra Identity module — server-side Laravel package emitted from the module blueprint at `modules/identity/blueprints/identity/`. Complements the wire SDK at `stackra-identity/identity-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "identity",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-identity/identity-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-identity/identity-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Identity\\": "src/"
+      "Stackra\\Identity\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Identity\\Tests\\": "tests/"
+      "Stackra\\Identity\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Identity\\Providers\\IdentityServiceProvider"
+        "Stackra\\Identity\\Providers\\IdentityServiceProvider"
       ],
       "aliases": {}
     }

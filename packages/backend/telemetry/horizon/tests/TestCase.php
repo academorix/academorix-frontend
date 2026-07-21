@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Horizon\Tests;
+namespace Stackra\Horizon\Tests;
 
 use Illuminate\Foundation\Application;
 use Orchestra\Testbench\TestCase as BaseTestCase;
-use Academorix\Horizon\Providers\HorizonServiceProvider;
+use Stackra\Horizon\Providers\HorizonServiceProvider;
 
 /**
  * Base Test Case for Horizon Tests.

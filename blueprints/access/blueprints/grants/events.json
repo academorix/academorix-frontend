@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/grants/events",
+  "id": "stackra://modules/grants/events",
   "$version": 1,
   "title": "grants — domain events",
   "description": "Twelve events. Lifecycle events (Issued / Updated / Expired / Revoked) carry the AccessGrant model fresh from the DB. Security-critical events (SelfServiceGrantAttempted / GrantCrossTenantAttempt / GrantDenialIssued / GrantDenialRevoked) fire on audit-worthy conditions and always route to compliance. Cache-observability events (GrantEvaluationCacheHit / GrantEvaluationCacheMiss) sampled to keep volume manageable. All lifecycle events implement ShouldDispatchAfterCommit so listeners never fire against a rolled-back transaction; security events fire IMMEDIATELY (pre-commit) so a rolled-back attempt still leaves an audit trail.",
@@ -7,7 +7,7 @@
   "events": [
     {
       "name": "GrantIssued",
-      "class": "Academorix\\Grant\\Events\\GrantIssued",
+      "class": "Stackra\\Grant\\Events\\GrantIssued",
       "trigger": "GrantIssuer::issue() completes: row inserted, permissions validated, tenant + grantor guards passed. First domain event on the happy path.",
       "afterCommit": true,
       "payload": {
@@ -28,7 +28,7 @@
     },
     {
       "name": "GrantUpdated",
-      "class": "Academorix\\Grant\\Events\\GrantUpdated",
+      "class": "Stackra\\Grant\\Events\\GrantUpdated",
       "trigger": "PATCH /grants/{id} completed — only `expires_at` + `reason` are mutable (never subject/resource/permissions/decision after issue). Fires only when a real change happened.",
       "afterCommit": true,
       "payload": {
@@ -40,7 +40,7 @@
     },
     {
       "name": "GrantExpired",
-      "class": "Academorix\\Grant\\Events\\GrantExpired",
+      "class": "Stackra\\Grant\\Events\\GrantExpired",
       "trigger": "PurgeExpiredGrantsJob observed `expires_at <= now()` on a non-terminal grant. Transitions the row to revoked with revoked_reason='expired'. Terminal — no listener can reverse.",
       "afterCommit": true,
       "payload": {
@@ -54,7 +54,7 @@
     },
     {
       "name": "GrantRevoked",
-      "class": "Academorix\\Grant\\Events\\GrantRevoked",
+      "class": "Stackra\\Grant\\Events\\GrantRevoked",
       "trigger": "Explicit revocation via DELETE /grants/{id} or grantor action. Terminal.",
       "afterCommit": true,
       "payload": {
@@ -72,7 +72,7 @@
     },
     {
       "name": "GrantDenialIssued",
-      "class": "Academorix\\Grant\\Events\\GrantDenialIssued",
+      "class": "Stackra\\Grant\\Events\\GrantDenialIssued",
       "trigger": "A grant with decision='deny' was created. FIRES IMMEDIATELY (not afterCommit) so audit captures every attempt even if the outer transaction rolls back.",
       "afterCommit": false,
       "severity": "audit-critical",
@@ -92,7 +92,7 @@
     },
     {
       "name": "GrantDenialRevoked",
-      "class": "Academorix\\Grant\\Events\\GrantDenialRevoked",
+      "class": "Stackra\\Grant\\Events\\GrantDenialRevoked",
       "trigger": "A deny grant was revoked (lifting an inviolable block). Also audit-critical — someone re-enabled access that was explicitly denied.",
       "afterCommit": false,
       "severity": "audit-critical",
@@ -108,7 +108,7 @@
     },
     {
       "name": "BulkGrantIssued",
-      "class": "Academorix\\Grant\\Events\\BulkGrantIssued",
+      "class": "Stackra\\Grant\\Events\\BulkGrantIssued",
       "trigger": "BulkGrantIssueJob finished processing a CSV batch. Fires ONCE per batch (not per row) so downstream analytics can aggregate correctly.",
       "afterCommit": true,
       "payload": {
@@ -126,7 +126,7 @@
     },
     {
       "name": "SelfServiceGrantAttempted",
-      "class": "Academorix\\Grant\\Events\\SelfServiceGrantAttempted",
+      "class": "Stackra\\Grant\\Events\\SelfServiceGrantAttempted",
       "trigger": "A grantor tried to grant PERMISSIONS THEY DO NOT HOLD (privilege escalation attempt). Refused by observer with GRANT_PRIVILEGE_ESCALATION (403). FIRES IMMEDIATELY (pre-refusal) so audit captures every attempt.",
       "afterCommit": false,
       "severity": "audit-critical",
@@ -147,7 +147,7 @@
     },
     {
       "name": "GrantCrossTenantAttempt",
-      "class": "Academorix\\Grant\\Events\\GrantCrossTenantAttempt",
+      "class": "Stackra\\Grant\\Events\\GrantCrossTenantAttempt",
       "trigger": "Someone tried to issue a grant where subject.tenant_id !== resource.tenant_id !== grantor.tenant_id — a tenant-isolation breach attempt. Refused by observer with GRANT_CROSS_TENANT (422). FIRES IMMEDIATELY (pre-refusal).",
       "afterCommit": false,
       "severity": "audit-critical",
@@ -168,7 +168,7 @@
     },
     {
       "name": "GrantResourceOrphaned",
-      "class": "Academorix\\Grant\\Events\\GrantResourceOrphaned",
+      "class": "Stackra\\Grant\\Events\\GrantResourceOrphaned",
       "trigger": "ReconcileOrphanedGrantsJob discovered a grant whose resource_id no longer resolves (resource hard-deleted out-of-band). The reconciler auto-revokes the grant with revoked_reason='orphaned_resource' before firing this event.",
       "afterCommit": true,
       "payload": {
@@ -183,7 +183,7 @@
     },
     {
       "name": "GrantEvaluationCacheHit",
-      "class": "Academorix\\Grant\\Events\\GrantEvaluationCacheHit",
+      "class": "Stackra\\Grant\\Events\\GrantEvaluationCacheHit",
       "trigger": "GrantOverlayResolver::resolve() returned a decision from the L1 or L2 cache. Sampled per `grants.telemetry.cache_hit_sample_ratio` (default 0.01) to keep volume manageable.",
       "afterCommit": null,
       "payload": {
@@ -196,7 +196,7 @@
     },
     {
       "name": "GrantEvaluationCacheMiss",
-      "class": "Academorix\\Grant\\Events\\GrantEvaluationCacheMiss",
+      "class": "Stackra\\Grant\\Events\\GrantEvaluationCacheMiss",
       "trigger": "GrantOverlayResolver::resolve() missed both caches and hit the DB. Never sampled — every miss is interesting because they should be rare after warm-up.",
       "afterCommit": null,
       "payload": {

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Analytics\Exceptions;
+namespace Stackra\Analytics\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Custom webhook provider config points at a domain not in tenant.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsAnalyticsCustomWebhookDomainNotAllowedException extends AcademorixException
+final class NotificationsAnalyticsCustomWebhookDomainNotAllowedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

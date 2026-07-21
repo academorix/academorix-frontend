@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geography/schedule",
+  "id": "stackra://modules/geography/schedule",
   "$version": 1,
   "title": "geography \u2014 scheduled tasks",
   "entries": [

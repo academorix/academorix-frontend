@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Database\Factories;
+namespace Stackra\Activity\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Activity\Contracts\Data\ActivityInterface;
-use Academorix\Activity\Models\Activity;
+use Stackra\Activity\Contracts\Data\ActivityInterface;
+use Stackra\Activity\Models\Activity;
 
 /**
- * Factory for {@see \Academorix\Activity\Models\Activity}.
+ * Factory for {@see \Stackra\Activity\Models\Activity}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Activity\Models\Activity>
+ * @extends Factory<\Stackra\Activity\Models\Activity>
  *
  * @category Activity
  *

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/offline-sync/features",
+  "id": "stackra://modules/offline-sync/features",
   "$version": 1,
   "title": "offline-sync — feature keys",
   "features": [

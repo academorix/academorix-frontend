@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/teams/schemas/event-team",
+  "id": "stackra://modules/teams/schemas/event-team",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "EventTeam",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "evt_",
     "incrementing": false,
-    "model": "Academorix\\Teams\\Models\\EventTeam",
-    "interface": "Academorix\\Teams\\Contracts\\Data\\EventTeamInterface",
-    "implements": ["Academorix\\Teams\\Contracts\\Data\\EventTeamInterface"],
+    "model": "Stackra\\Teams\\Models\\EventTeam",
+    "interface": "Stackra\\Teams\\Contracts\\Data\\EventTeamInterface",
+    "implements": ["Stackra\\Teams\\Contracts\\Data\\EventTeamInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

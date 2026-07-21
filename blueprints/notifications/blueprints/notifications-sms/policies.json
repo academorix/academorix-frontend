@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/notifications-sms/policies",
+  "id": "stackra://modules/notifications-sms/policies",
   "$version": 1,
   "title": "notifications-sms \u2014 authorization policies",
   "policies": [
     {
       "model": "SmsOptOut",
-      "class": "Academorix\\Notifications\\Sms\\Policies\\SmsOptOutPolicy",
+      "class": "Stackra\\Notifications\\Sms\\Policies\\SmsOptOutPolicy",
       "abilities": [
         {
           "action": "viewAny",

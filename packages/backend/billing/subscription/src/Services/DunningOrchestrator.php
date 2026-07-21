@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Services;
+namespace Stackra\Subscription\Services;
 
-use Academorix\Subscription\Contracts\Services\DunningOrchestratorInterface;
+use Stackra\Subscription\Contracts\Services\DunningOrchestratorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Subscription\Contracts\Repositories\PlanRepositoryInterface;
+use Stackra\Subscription\Contracts\Repositories\PlanRepositoryInterface;
 
 /**
  * Concrete service — DunningOrchestrator.

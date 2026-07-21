@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/attribution/traits",
+  "id": "stackra://modules/attribution/traits",
   "$version": 1,
   "title": "attribution — trait composition",
   "description": "Three owned traits. `BelongsToAttribution` is the FK trait for downstream models that hold an attribution FK (rarely used — most downstream modules copy the FROZEN snapshot into a jsonb column rather than an FK). `HasAttribution` is a marker trait for models that carry an `attribution jsonb NULL` column (frozen snapshot). `HasAttributionSnapshot` is a scope + accessor helper for models composing `HasAttribution`. Order matters when composed with `BelongsToTenant` — tenant MUST come first so the scope chain observes the tenant context.",
   "owned": [
     {
-      "trait": "Academorix\\Growth\\Attribution\\Concerns\\BelongsToAttribution",
+      "trait": "Stackra\\Growth\\Attribution\\Concerns\\BelongsToAttribution",
       "description": "Mixed into any domain model that carries a `attribution_id` FK. Adds the `attribution()` belongsTo relation + a `resolveInAttribution(?Attribution)` query scope. RARELY used — most downstream modules prefer HasAttribution (frozen snapshot in jsonb) over BelongsToAttribution (live FK) because attribution can be reset. The FK form is only used by AttributionTouchpoint (the internal ledger).",
       "public": true,
       "usedBy": [
@@ -19,7 +19,7 @@
       ]
     },
     {
-      "trait": "Academorix\\Growth\\Attribution\\Concerns\\HasAttribution",
+      "trait": "Stackra\\Growth\\Attribution\\Concerns\\HasAttribution",
       "description": "Composed onto any downstream model that carries a frozen `attribution jsonb NULL` column (marketing events, analytics events, subscriptions, invoices, referral conversions). Adds no query scopes — just a getter that unpacks the jsonb into a structured DTO for readability. The trait's presence is a marker for the tenancy-compliance-auditor to recognise the row as attribution-carrying.",
       "public": true,
       "usedBy": [
@@ -31,7 +31,7 @@
       ]
     },
     {
-      "trait": "Academorix\\Growth\\Attribution\\Concerns\\HasAttributionSnapshot",
+      "trait": "Stackra\\Growth\\Attribution\\Concerns\\HasAttributionSnapshot",
       "description": "Extends HasAttribution with additional query helpers for reading the jsonb via SQL — `->whereAttributionSource(?string)`, `->whereAttributionCampaign(?string)`, `->whereAttributionMedium(?string)`, `->whereFirstTouchSource(?string)`. These generate `WHERE attribution->>'source' = ?` etc for direct rollup queries. Optional (only composed by models with reporting workloads).",
       "public": true,
       "usedBy": [
@@ -51,30 +51,30 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\Searchable",
+        "trait": "Stackra\\Foundation\\Concerns\\Searchable",
         "reason": "Attribution only — searchable by campaign/source. NOT AttributionTouchpoint (too high-volume for full-text)."
       }
     ],
     "tenants": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
         "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
       }
     ],
     "audit": [
       {
-        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "trait": "Stackra\\Audit\\Concerns\\Auditable",
         "reason": "Attribution lifecycle transitions + reset requests are compliance-relevant (7-year retention)."
       }
     ],
     "activity": [
       {
-        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
         "reason": "Attribution profile lifecycle transitions feed the staff-visible activity feed. NOT on AttributionTouchpoint — too high-volume."
       }
     ]

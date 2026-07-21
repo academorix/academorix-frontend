@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Settings\Listeners;
+namespace Stackra\Settings\Listeners;
 
-use Academorix\Activity\Contracts\ActivityLoggerInterface;
-use Academorix\Settings\Events\SettingsChangeEvent;
+use Stackra\Activity\Contracts\ActivityLoggerInterface;
+use Stackra\Settings\Events\SettingsChangeEvent;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Scoped;
 use Psr\Log\LoggerInterface;
@@ -19,7 +19,7 @@ use Throwable;
  * under `log_name = 'settings'`, `event = 'updated'`, with the
  * `group`, `field_key`, `old_value`, `new_value` in the vendor
  * `properties` blob. Retention is tier-based (30 / 90 / 365
- * days) — delegated to the `academorix/activity` retention
+ * days) — delegated to the `stackra/activity` retention
  * runner.
  *
  * ## Failure semantics

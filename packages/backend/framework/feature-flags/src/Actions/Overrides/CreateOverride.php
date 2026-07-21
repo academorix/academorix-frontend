@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Actions\Overrides;
+namespace Stackra\FeatureFlags\Actions\Overrides;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureOverrideRepositoryInterface;
-use Academorix\FeatureFlags\Data\FeatureOverrideData;
-use Academorix\FeatureFlags\Data\Requests\CreateOverrideRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureOverrideRepositoryInterface;
+use Stackra\FeatureFlags\Data\FeatureOverrideData;
+use Stackra\FeatureFlags\Data\Requests\CreateOverrideRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\Response;
 
 /**
@@ -51,7 +51,7 @@ final class CreateOverride
             \abort(Response::HTTP_FORBIDDEN, 'feature_flags.cross_tenant_write');
         }
 
-        /** @var \Academorix\FeatureFlags\Models\FeatureOverride $row */
+        /** @var \Stackra\FeatureFlags\Models\FeatureOverride $row */
         $row = $this->repository->create([
             FeatureOverrideInterface::ATTR_TENANT_ID   => $currentTenantId,
             FeatureOverrideInterface::ATTR_FLAG        => $data->flag,

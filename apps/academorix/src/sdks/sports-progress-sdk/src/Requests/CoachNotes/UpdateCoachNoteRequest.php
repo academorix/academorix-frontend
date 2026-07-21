@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsProgressSdk\Requests\CoachNotes;
+namespace Stackra\SportsProgressSdk\Requests\CoachNotes;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsProgressSdk\Data\CoachNoteData;
-use Academorix\SportsProgressSdk\Payloads\CoachNotes\UpdateCoachNotePayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsProgressSdk\Data\CoachNoteData;
+use Stackra\SportsProgressSdk\Payloads\CoachNotes\UpdateCoachNotePayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

@@ -1,39 +1,39 @@
 {
-  "id": "academorix://modules/athlete/schedule",
+  "id": "stackra://modules/athlete/schedule",
   "$version": 1,
   "title": "athlete — scheduled tasks",
   "entries": [
     {
       "name": "athlete-roll-age-group-snapshot",
-      "command": "queue:dispatch --job=Academorix\\Sports\\Athlete\\Jobs\\RollAthleteAgeGroupSnapshotJob",
+      "command": "queue:dispatch --job=Stackra\\Sports\\Athlete\\Jobs\\RollAthleteAgeGroupSnapshotJob",
       "cron": "0 2 * * *",
       "timezone": "UTC",
       "purpose": "Nightly 02:00 UTC: recompute current_age_group_id for every active + paused athlete. Fires AthleteAgeGroupSnapshotUpdated on flips."
     },
     {
       "name": "athlete-check-minor-turned-adult",
-      "command": "queue:dispatch --job=Academorix\\Sports\\Athlete\\Jobs\\CheckAthleteMinorTurnedAdultJob",
+      "command": "queue:dispatch --job=Stackra\\Sports\\Athlete\\Jobs\\CheckAthleteMinorTurnedAdultJob",
       "cron": "0 3 * * *",
       "timezone": "UTC",
       "purpose": "Daily 03:00 UTC: check for athletes crossing minor_min_age (16) and legal_adult_age (18) boundaries + fire AthleteMinorTurnedAdult."
     },
     {
       "name": "athlete-reconcile-consents",
-      "command": "queue:dispatch --job=Academorix\\Sports\\Athlete\\Jobs\\ReconcileAthleteConsentsJob",
+      "command": "queue:dispatch --job=Stackra\\Sports\\Athlete\\Jobs\\ReconcileAthleteConsentsJob",
       "cron": "0 4 * * *",
       "timezone": "UTC",
       "purpose": "Daily 04:00 UTC: 12-month re-consent reminders + expired-consent flagging. Only fires for tenants carrying athlete_consent_workflow entitlement."
     },
     {
       "name": "athlete-purge-archived",
-      "command": "queue:dispatch --job=Academorix\\Sports\\Athlete\\Jobs\\PurgeArchivedAthletesJob",
+      "command": "queue:dispatch --job=Stackra\\Sports\\Athlete\\Jobs\\PurgeArchivedAthletesJob",
       "cron": "0 5 * * *",
       "timezone": "UTC",
       "purpose": "Daily 05:00 UTC: 90-day PII redaction pass + 7-year hard-purge pass + medical_history purge."
     },
     {
       "name": "athlete-auto-link-user",
-      "command": "queue:dispatch --job=Academorix\\Sports\\Athlete\\Jobs\\AutoLinkAthleteToUserOnEmailMatchJob",
+      "command": "queue:dispatch --job=Stackra\\Sports\\Athlete\\Jobs\\AutoLinkAthleteToUserOnEmailMatchJob",
       "cron": "15 * * * *",
       "timezone": "UTC",
       "purpose": "Hourly at 15 minutes past: sweep unlinked adult athletes for email matches with newly-created Users. Auto-links + fires AthleteLinkedToUser."

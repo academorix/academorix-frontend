@@ -1,56 +1,56 @@
 {
-  "id": "academorix://modules/attribution/commands",
+  "id": "stackra://modules/attribution/commands",
   "$version": 1,
   "title": "attribution — Artisan commands",
   "commands": [
     {
       "signature": "attribution:list {--tenant=} {--subject-type=} {--lifecycle-state=} {--campaign=} {--source=} {--limit=50}",
-      "class": "Academorix\\Growth\\Attribution\\Console\\Commands\\ListAttributionsCommand",
+      "class": "Stackra\\Growth\\Attribution\\Console\\Commands\\ListAttributionsCommand",
       "purpose": "Table view of attribution profiles. Filterable by tenant, subject_type, lifecycle_state, campaign (first-touch OR last-touch), source. Support tool for triage."
     },
     {
       "signature": "attribution:describe {attribution}",
-      "class": "Academorix\\Growth\\Attribution\\Console\\Commands\\DescribeAttributionCommand",
+      "class": "Stackra\\Growth\\Attribution\\Console\\Commands\\DescribeAttributionCommand",
       "purpose": "Verbose read of one attribution profile: base fields + first_touch snapshot + last_touch snapshot + device_snapshot + consent_snapshot + touchpoint_count + last N touchpoints + lifecycle transitions with timestamps. Redacts confidential fields (click_id / ip_hash / device UA) unless caller has attribution.view-confidential permission."
     },
     {
       "signature": "attribution:capture-manual {--tenant=} {--subject-type=} {--subject-id=} {--source=} {--medium=} {--campaign=} {--landing-page=} {--referrer=} {--dry-run}",
-      "class": "Academorix\\Growth\\Attribution\\Console\\Commands\\CaptureManualAttributionCommand",
+      "class": "Stackra\\Growth\\Attribution\\Console\\Commands\\CaptureManualAttributionCommand",
       "purpose": "Admin CLI for backfilling attribution profiles that missed the middleware (e.g. historical signup imports from CSV). --dry-run validates the input against every observer rule without persisting. Requires --tenant + at least one of --source or --campaign."
     },
     {
       "signature": "attribution:merge {--into=} {--from=*} {--dry-run}",
-      "class": "Academorix\\Growth\\Attribution\\Console\\Commands\\MergeAttributionsCommand",
+      "class": "Stackra\\Growth\\Attribution\\Console\\Commands\\MergeAttributionsCommand",
       "purpose": "Manually merge N anonymous attributions into an identified attribution. --into = the identified attribution_id; --from = anonymous attribution_ids to absorb. Runs the same MergeStrategy as MergeIdentifiedAttributionsJob. Enterprise-only (checked against attribution_merge entitlement)."
     },
     {
       "signature": "attribution:reset {attribution} {--reason=} {--force}",
-      "class": "Academorix\\Growth\\Attribution\\Console\\Commands\\ResetAttributionCommand",
+      "class": "Stackra\\Growth\\Attribution\\Console\\Commands\\ResetAttributionCommand",
       "purpose": "GDPR right-to-erasure path. Redacts the attribution profile fields immediately + schedules touchpoint hard-delete 90 days out (audit hold). --force bypasses the interactive confirmation. Every fire writes to audits with 7-year retention + notifies the subject."
     },
     {
       "signature": "attribution:reconcile-counts {--tenant=} {--dry-run}",
-      "class": "Academorix\\Growth\\Attribution\\Console\\Commands\\ReconcileCountsCommand",
+      "class": "Stackra\\Growth\\Attribution\\Console\\Commands\\ReconcileCountsCommand",
       "purpose": "One-shot invocation of ReconcileAttributionCountsJob. Recomputes touchpoint_count + conversion_touchpoint_count from the actual attribution_touchpoints table. --dry-run reports drift without repair. Every finding is a data-integrity signal (should be rare)."
     },
     {
       "signature": "attribution:reconcile-campaigns {--tenant=} {--window=24h}",
-      "class": "Academorix\\Growth\\Attribution\\Console\\Commands\\ReconcileCampaignsCommand",
+      "class": "Stackra\\Growth\\Attribution\\Console\\Commands\\ReconcileCampaignsCommand",
       "purpose": "Recomputes the campaign rollup cache from scratch. Used when the incremental rollup drifts (rare — usually a job-runner outage). window ∈ {1h, 24h, 7d, 30d}."
     },
     {
       "signature": "attribution:rollup-campaigns {--tenant=} {--force}",
-      "class": "Academorix\\Growth\\Attribution\\Console\\Commands\\RollupCampaignsCommand",
+      "class": "Stackra\\Growth\\Attribution\\Console\\Commands\\RollupCampaignsCommand",
       "purpose": "One-shot invocation of CampaignRollupAggregatorJob. Runs hourly on schedule; this command exists for on-demand computation (support intervention, testing). --force runs even when rollup cache is fresh."
     },
     {
       "signature": "attribution:purge-expired {--tenant=} {--dry-run}",
-      "class": "Academorix\\Growth\\Attribution\\Console\\Commands\\PurgeExpiredCommand",
+      "class": "Stackra\\Growth\\Attribution\\Console\\Commands\\PurgeExpiredCommand",
       "purpose": "One-shot invocation of PurgeArchivedAttributionsJob. Hard-deletes soft-deleted attribution rows past retention + touchpoints past retention (730d default, 2555d on Enterprise via attribution_touchpoint_retention_extended). --dry-run reports what would be deleted."
     },
     {
       "signature": "attribution:audit-consent-suppressions {--tenant=} {--from=} {--to=} {--format=table}",
-      "class": "Academorix\\Growth\\Attribution\\Console\\Commands\\AuditConsentSuppressionsCommand",
+      "class": "Stackra\\Growth\\Attribution\\Console\\Commands\\AuditConsentSuppressionsCommand",
       "purpose": "Compliance audit report. Lists AttributionSuppressedByConsent events in the range, aggregated by day + consent-state-summary. Feeds the compliance-team quarterly review. --format ∈ {table, csv, json}."
     }
   ]

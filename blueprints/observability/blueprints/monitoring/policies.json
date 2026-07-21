@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/monitoring/policies",
+  "id": "stackra://modules/monitoring/policies",
   "$version": 1,
   "title": "monitoring — authorization policies",
   "description": "Six policies, one per owned model. Every ability resolves through spatie/laravel-permission, then narrows by tenant scope. HealthCheck + MonitoringAlertPolicy + MonitoringProviderConfig CRUD is admin/owner. Alert + Incident view + acknowledge is open to ops role + support role. Health check run history is view-only for support (they can't manually re-run — that's admin/owner via the rate-limited endpoint).",
   "policies": [
     {
       "model": "HealthCheck",
-      "class": "Academorix\\Observability\\Monitoring\\Policies\\HealthCheckPolicy",
+      "class": "Stackra\\Observability\\Monitoring\\Policies\\HealthCheckPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -39,7 +39,7 @@
     },
     {
       "model": "HealthCheckRun",
-      "class": "Academorix\\Observability\\Monitoring\\Policies\\HealthCheckRunPolicy",
+      "class": "Stackra\\Observability\\Monitoring\\Policies\\HealthCheckRunPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -62,7 +62,7 @@
     },
     {
       "model": "MonitoringAlertPolicy",
-      "class": "Academorix\\Observability\\Monitoring\\Policies\\MonitoringAlertPolicyPolicy",
+      "class": "Stackra\\Observability\\Monitoring\\Policies\\MonitoringAlertPolicyPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -94,7 +94,7 @@
     },
     {
       "model": "MonitoringAlert",
-      "class": "Academorix\\Observability\\Monitoring\\Policies\\MonitoringAlertPolicy",
+      "class": "Stackra\\Observability\\Monitoring\\Policies\\MonitoringAlertPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -128,7 +128,7 @@
     },
     {
       "model": "MonitoringIncident",
-      "class": "Academorix\\Observability\\Monitoring\\Policies\\MonitoringIncidentPolicy",
+      "class": "Stackra\\Observability\\Monitoring\\Policies\\MonitoringIncidentPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -170,7 +170,7 @@
     },
     {
       "model": "MonitoringProviderConfig",
-      "class": "Academorix\\Observability\\Monitoring\\Policies\\MonitoringProviderConfigPolicy",
+      "class": "Stackra\\Observability\\Monitoring\\Policies\\MonitoringProviderConfigPolicy",
       "abilities": [
         {
           "action": "viewAny",

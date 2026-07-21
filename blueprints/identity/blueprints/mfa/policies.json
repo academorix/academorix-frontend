@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/mfa/policies",
+  "id": "stackra://modules/mfa/policies",
   "$version": 1,
   "title": "mfa — authorization policies",
   "description": "Two policies. MfaPolicy governs the self-service surface — viewing / enrolling / disabling one's own MFA methods. Every write is additionally gated by `mfa.require_recent_challenge` middleware so a stolen session cookie can't disable MFA without proving fresh possession of the primary factor. WebauthnCredentialPolicy governs the per-credential CRUD on registered hardware keys — same principle: caller must own the Identity that owns the credential. Platform-admin abilities (force-disable, regenerate-codes for a user) are on MfaPolicy too, gated behind the `platform_admin` guard.",
   "policies": [
     {
       "model": "Mfa (virtual — represents the caller's own MFA posture, not a persisted row)",
-      "class": "Academorix\\Mfa\\Policies\\MfaPolicy",
+      "class": "Stackra\\Mfa\\Policies\\MfaPolicy",
       "guard": "sanctum + platform_admin (dual-guard — see boundary_note)",
       "abilities": [
         {
@@ -86,7 +86,7 @@
     },
     {
       "model": "WebauthnCredential",
-      "class": "Academorix\\Mfa\\Policies\\WebauthnCredentialPolicy",
+      "class": "Stackra\\Mfa\\Policies\\WebauthnCredentialPolicy",
       "guard": "sanctum + platform_admin",
       "abilities": [
         {

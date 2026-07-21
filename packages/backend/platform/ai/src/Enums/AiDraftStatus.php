@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Ai\Enums;
+namespace Stackra\Ai\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `status` on `ai-draft`.

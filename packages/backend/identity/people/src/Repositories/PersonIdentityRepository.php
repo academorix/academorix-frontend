@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\People\Repositories;
+namespace Stackra\People\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\People\Contracts\Data\PersonIdentityInterface;
-use Academorix\People\Contracts\Repositories\PersonIdentityRepositoryInterface;
-use Academorix\People\Models\PersonIdentity;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\People\Contracts\Data\PersonIdentityInterface;
+use Stackra\People\Contracts\Repositories\PersonIdentityRepositoryInterface;
+use Stackra\People\Models\PersonIdentity;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\People\Models\PersonIdentity}.
+ * Attribute-first Eloquent repository for {@see Stackra\People\Models\PersonIdentity}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(PersonIdentityInterface::class)]` which resolves to
  * `PersonIdentity` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\People\Models\PersonIdentity>
+ * @extends Repository<\Stackra\People\Models\PersonIdentity>
  *
  * @category People
  *

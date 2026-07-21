@@ -20,25 +20,25 @@
  *
  * For 422 responses, the middleware attempts to parse Laravel's
  * conventional `errors` map into
- * {@see \Academorix\ApiSdk\Exceptions\ValidationException}. When
+ * {@see \Stackra\ApiSdk\Exceptions\ValidationException}. When
  * the response body isn't JSON or the shape doesn't match, it
  * falls back to a plain exception with an empty errors list.
  *
  * For 429 responses, `Retry-After` is read into
- * {@see \Academorix\ApiSdk\Exceptions\RateLimitException::retryAfterSeconds()}.
+ * {@see \Stackra\ApiSdk\Exceptions\RateLimitException::retryAfterSeconds()}.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Middleware;
+namespace Stackra\ApiSdk\Middleware;
 
-use Academorix\ApiSdk\Exceptions\ApiRequestException;
-use Academorix\ApiSdk\Exceptions\AuthenticationException;
-use Academorix\ApiSdk\Exceptions\AuthorizationException;
-use Academorix\ApiSdk\Exceptions\RateLimitException;
-use Academorix\ApiSdk\Exceptions\ResourceNotFoundException;
-use Academorix\ApiSdk\Exceptions\ServerException;
-use Academorix\ApiSdk\Exceptions\ValidationException;
+use Stackra\ApiSdk\Exceptions\ApiRequestException;
+use Stackra\ApiSdk\Exceptions\AuthenticationException;
+use Stackra\ApiSdk\Exceptions\AuthorizationException;
+use Stackra\ApiSdk\Exceptions\RateLimitException;
+use Stackra\ApiSdk\Exceptions\ResourceNotFoundException;
+use Stackra\ApiSdk\Exceptions\ServerException;
+use Stackra\ApiSdk\Exceptions\ValidationException;
 use Saloon\Http\Connector;
 use Saloon\Http\Response;
 

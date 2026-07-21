@@ -1,82 +1,82 @@
 {
-  "id": "academorix://modules/transaction/listeners",
+  "id": "stackra://modules/transaction/listeners",
   "$version": 1,
   "title": "transaction — subscribed events",
   "description": "Transaction is a CONSUMER of invoice / payment / refund / chargeback / coupon / tax module events — every business-level money movement in the platform triggers a listener here that records the movement via TransactionRecorder. Also consumes tenancy lifecycle events (provisioning + suspension + erasure) via the tenancy hook chain.",
   "listeners": [
     {
       "event": "invoice::InvoicePaid",
-      "listener": "Academorix\\Finance\\Transaction\\Listeners\\RecordInvoicePaidTransaction",
+      "listener": "Stackra\\Finance\\Transaction\\Listeners\\RecordInvoicePaidTransaction",
       "queue": "finance",
       "priority": 100,
       "purpose": "The primary revenue-recording path. Maps invoice.paid → RecordInvoicePaidTransactionJob. Records a transaction (kind='invoice_payment', reference_type='Invoice', reference_id=invoice.id) with [debit: cash, credit: accounts_receivable] ledger entries. Runs afterCommit on the invoice update; if the invoice-paid state rolls back, this listener never fires."
     },
     {
       "event": "refund::RefundIssued",
-      "listener": "Academorix\\Finance\\Transaction\\Listeners\\RecordRefundIssuedTransaction",
+      "listener": "Stackra\\Finance\\Transaction\\Listeners\\RecordRefundIssuedTransaction",
       "queue": "finance",
       "purpose": "Wave 4.5 bridge. Maps refund.issued → RecordRefundIssuedTransactionJob. Records TWO transactions: (kind='refund_issued') [debit: refunds_owed, credit: cash] AND (kind='adjustment', reversal_reason='refund') [debit: refunds_expense, credit: revenue]. Both share source_transaction_id pointing at the original invoice-payment transaction."
     },
     {
       "event": "chargeback::ChargebackFiled",
-      "listener": "Academorix\\Finance\\Transaction\\Listeners\\RecordChargebackFiledTransaction",
+      "listener": "Stackra\\Finance\\Transaction\\Listeners\\RecordChargebackFiledTransaction",
       "queue": "finance-critical",
       "purpose": "Wave 4.5 bridge. Maps chargeback.filed → RecordChargebackTransactionJob. Records a transaction (kind='chargeback_debit', reversal_reason='chargeback') with [debit: chargebacks_expense, credit: cash] ledger entries."
     },
     {
       "event": "coupon::CouponRedeemed",
-      "listener": "Academorix\\Finance\\Transaction\\Listeners\\RecordCouponRedeemedTransaction",
+      "listener": "Stackra\\Finance\\Transaction\\Listeners\\RecordCouponRedeemedTransaction",
       "queue": "finance",
       "purpose": "Maps coupon.redeemed → recording of coupon credit. TransactionRecorder::recordCouponCredit(coupon_redemption) creates a transaction (kind='coupon_credit', reference_type='CouponRedemption') with [debit: coupons_expense, credit: revenue] entries — the discount is recognized as a revenue reduction + a marketing/coupons expense."
     },
     {
       "event": "tax::TaxRemitted",
-      "listener": "Academorix\\Finance\\Transaction\\Listeners\\RecordTaxRemittedTransaction",
+      "listener": "Stackra\\Finance\\Transaction\\Listeners\\RecordTaxRemittedTransaction",
       "queue": "finance",
       "purpose": "Maps tax.remitted (when the tenant files + pays tax to a regulator) → TransactionRecorder::recordTaxRemittance(tax_remittance) creates a transaction (kind='tax_remittance') with [debit: tax_payable, credit: cash] entries — tax_payable is cleared as the money flows to the regulator."
     },
     {
       "event": "payment::PaymentCaptured",
-      "listener": "Academorix\\Finance\\Transaction\\Listeners\\RecordGatewayFeeTransaction",
+      "listener": "Stackra\\Finance\\Transaction\\Listeners\\RecordGatewayFeeTransaction",
       "queue": "finance",
       "purpose": "Wave 4.5 bridge. When payment.captured carries a gateway_fee_cents > 0 (Stripe fees, Paddle fees, etc.), records a separate transaction (kind='fee_charge') with [debit: gateway_fees, credit: cash] entries — the fee is recognized as an expense against cash. Distinct from the invoice payment recording — fee is a separate transaction with its own reference_type='Payment' + reference_id."
     },
     {
       "event": "invoice::InvoiceWrittenOff",
-      "listener": "Academorix\\Finance\\Transaction\\Listeners\\RecordWriteOffTransaction",
+      "listener": "Stackra\\Finance\\Transaction\\Listeners\\RecordWriteOffTransaction",
       "queue": "finance",
       "purpose": "When an invoice is marked uncollectible (write-off), TransactionRecorder::recordWriteOff(invoice) creates a transaction (kind='write_off') with [debit: write_offs, credit: accounts_receivable] entries — the receivable is removed + the loss is recognized. Distinct from refund_issued (which reverses a paid transaction) — write_off recognizes an unpaid invoice as loss."
     },
     {
       "event": "tenancy::TenantProvisioned",
-      "listener": "Academorix\\Finance\\Transaction\\Listeners\\RecordOpeningBalanceOnTenantProvisioned",
+      "listener": "Stackra\\Finance\\Transaction\\Listeners\\RecordOpeningBalanceOnTenantProvisioned",
       "queue": "finance",
       "purpose": "Records the opening-balance transaction for a newly-provisioned tenant. See hooks.json:RecordOpeningBalanceOnTenantProvisioned."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Finance\\Transaction\\Listeners\\ArchiveTransactionsToComplianceOnTenantErased",
+      "listener": "Stackra\\Finance\\Transaction\\Listeners\\ArchiveTransactionsToComplianceOnTenantErased",
       "queue": "finance-critical",
       "priority": 10,
       "purpose": "Highest-priority listener — runs BEFORE the FK CASCADE. Archives every transaction + ledger entry to compliance-storage as JSONL keyed by (tenant_id, effective_date). See hooks.json:ArchiveTransactionsToComplianceOnTenantErased."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Finance\\Transaction\\Listeners\\PurgeTransactionDataForErasedTenant",
+      "listener": "Stackra\\Finance\\Transaction\\Listeners\\PurgeTransactionDataForErasedTenant",
       "queue": "finance-critical",
       "priority": 100,
       "purpose": "Runs AFTER the archive listener completes. Cascade delete via FK CASCADE. See hooks.json:PurgeTransactionDataForErasedTenant."
     },
     {
       "event": "compliance::LedgerImbalanceRaised",
-      "listener": "Academorix\\Finance\\Transaction\\Listeners\\HaltNewTransactionsOnImbalance",
+      "listener": "Stackra\\Finance\\Transaction\\Listeners\\HaltNewTransactionsOnImbalance",
       "queue": "finance-critical",
       "priority": 10,
       "purpose": "Reacts to LedgerImbalanceDetected fires from the reconciler (via the compliance module's event ingest). Sets tenant.transaction_halt_new=true — new transactions REFUSED until an ops-authored fix lands. Every fire pages the on-call via the LedgerImbalanceDetectedNotification channel."
     },
     {
       "event": "compliance::LedgerImbalanceResolved",
-      "listener": "Academorix\\Finance\\Transaction\\Listeners\\ResumeNewTransactionsAfterResolution",
+      "listener": "Stackra\\Finance\\Transaction\\Listeners\\ResumeNewTransactionsAfterResolution",
       "queue": "finance",
       "purpose": "The reverse of HaltNewTransactionsOnImbalance. When ops files a compliance ticket resolution + the imbalance is cleared, sets tenant.transaction_halt_new=false. Writes a critical audit row + fires an ops-visible notification confirming the resume."
     }

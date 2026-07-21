@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Data;
+namespace Stackra\Chargeback\Data;
 
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
@@ -12,7 +12,7 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
  * Result of a chargeback-rate computation.
  *
  * Emitted by
- * {@see \Academorix\Chargeback\Services\ChargebackRateCalculator::computeFor}
+ * {@see \Stackra\Chargeback\Services\ChargebackRateCalculator::computeFor}
  * and consumed by:
  *  - The `MonitorChargebackRateJob` (fires `ChargebackRateThresholdExceeded`
  *    when `$exceeded === true`).

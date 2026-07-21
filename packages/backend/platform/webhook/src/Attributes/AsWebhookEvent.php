@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Attributes;
+namespace Stackra\Webhook\Attributes;
 
 use Attribute;
 
@@ -10,10 +10,10 @@ use Attribute;
  * Register a class as a publishable webhook event.
  *
  * The build-time compiler discovers `#[AsWebhookEvent]`-marked classes
- * via `Academorix\Foundation\Contracts\DiscoversAttributes` and hands
- * them to {@see \Academorix\Webhook\Services\WebhookRegistry}, which
+ * via `Stackra\Foundation\Contracts\DiscoversAttributes` and hands
+ * them to {@see \Stackra\Webhook\Services\WebhookRegistry}, which
  * stores the event catalogue subscribers pick from when creating a
- * {@see \Academorix\Webhook\Models\WebhookSubscription}.
+ * {@see \Stackra\Webhook\Models\WebhookSubscription}.
  *
  * ```php
  * #[AsWebhookEvent(

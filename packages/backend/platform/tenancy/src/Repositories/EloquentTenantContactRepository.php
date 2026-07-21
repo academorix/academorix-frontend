@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Repositories;
+namespace Stackra\Tenancy\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Tenancy\Contracts\Data\TenantContactInterface;
-use Academorix\Tenancy\Contracts\Repositories\TenantContactRepositoryInterface;
-use Academorix\Tenancy\Enums\TenantContactKind;
-use Academorix\Tenancy\Models\TenantContact;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Tenancy\Contracts\Data\TenantContactInterface;
+use Stackra\Tenancy\Contracts\Repositories\TenantContactRepositoryInterface;
+use Stackra\Tenancy\Enums\TenantContactKind;
+use Stackra\Tenancy\Models\TenantContact;
 use Illuminate\Support\Collection;
 
 /**

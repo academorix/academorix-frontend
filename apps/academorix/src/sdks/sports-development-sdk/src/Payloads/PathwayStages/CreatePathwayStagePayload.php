@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDevelopmentSdk\Payloads\PathwayStages;
+namespace Stackra\SportsDevelopmentSdk\Payloads\PathwayStages;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\StringType;

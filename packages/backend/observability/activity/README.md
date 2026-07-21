@@ -1,4 +1,4 @@
-# academorix/activity
+# stackra/activity
 
 Server-side Laravel package for the `activity` module. Auto-generated from the
 blueprint at `modules/observability/blueprints/activity/`.
@@ -45,6 +45,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-observability/activity-sdk` under `sdk/observability-activity-sdk/`.
+`stackra-observability/activity-sdk` under `sdk/observability-activity-sdk/`.
 Consumers cross the service boundary through the SDK; this package is the
 SERVER-side owner of the domain.

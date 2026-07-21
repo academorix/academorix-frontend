@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/service-accounts/webhooks",
+  "id": "stackra://modules/service-accounts/webhooks",
   "$version": 1,
   "title": "service-accounts \u2014 webhooks",
   "description": "service-accounts DISPATCHES no outbound webhooks. Every lifecycle event is consumed by internal listeners (notifications, activity, observability). No tenant-configurable webhook stream fires on SA state changes \u2014 that would leak inter-service credential lifecycle metadata to third parties, a compromise surface with no matching product win.",
@@ -9,7 +9,7 @@
       "name": "kms.key.rotated",
       "description": "Optional AWS EventBridge integration (Wave 1c \u2014 not shipping in Wave 1a HS256 baseline). When Wave 1c introduces RS256 keys hosted on AWS KMS, EventBridge notifies the app on KMS-driven key rotation. Received event triggers the `auth::JwtSigningKeyRotator` service which cascades to this module's `HandleSignerKidRotation` listener.",
       "provider": "aws-kms",
-      "handler": "Academorix\\ServiceAccount\\Listeners\\HandleSignerKidRotation (via auth::JwtSigningKeyRotated event)",
+      "handler": "Stackra\\ServiceAccount\\Listeners\\HandleSignerKidRotation (via auth::JwtSigningKeyRotated event)",
       "required": false,
       "notes": "Best-effort. Missing the event is not catastrophic \u2014 the auth module also runs a periodic rotation-check cron. In Wave 1a HS256 baseline, key material is Doppler-backed + rotated via ops runbook; no external webhook needed."
     }

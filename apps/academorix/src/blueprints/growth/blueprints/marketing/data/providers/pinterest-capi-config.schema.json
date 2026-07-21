@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/marketing/data/providers/pinterest-capi-config",
+  "id": "stackra://modules/marketing/data/providers/pinterest-capi-config",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Pinterest Conversions API provider config",

@@ -1,18 +1,18 @@
 {
-  "id": "academorix://modules/user/helpers",
+  "id": "stackra://modules/user/helpers",
   "$version": 1,
   "title": "user \u2014 helper functions",
   "description": "Two published helpers for common /me-flavoured lookups from any layer (controller, action, listener, blade template, artisan command).",
-  "namespace": "Academorix\\User\\Support",
+  "namespace": "Stackra\\User\\Support",
   "helpers": [
     {
       "signature": "me(): ?User",
-      "purpose": "Returns the authenticated Sanctum principal cast to `Academorix\\User\\Models\\User`. Null when the caller is unauthenticated or auth'd via a different guard (platform_admin, bearer).",
+      "purpose": "Returns the authenticated Sanctum principal cast to `Stackra\\User\\Models\\User`. Null when the caller is unauthenticated or auth'd via a different guard (platform_admin, bearer).",
       "behaviours": [
         "Equivalent to `auth('sanctum')->user()` but typed to the User class the container binds.",
         "Never throws \u2014 returns null in every unauthenticated case."
       ],
-      "flow": "1) Read the auth manager. 2) Resolve the sanctum guard. 3) Return the guard's `user()` value cast to Academorix\\User\\Models\\User."
+      "flow": "1) Read the auth manager. 2) Resolve the sanctum guard. 3) Return the guard's `user()` value cast to Stackra\\User\\Models\\User."
     },
     {
       "signature": "active_tenant_id(): ?string",

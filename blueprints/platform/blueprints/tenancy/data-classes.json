@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tenancy/data-classes",
+  "id": "stackra://modules/tenancy/data-classes",
   "$version": 1,
   "title": "tenants — field-level data classification",
   "description": "Every column on every schema in this module classified by sensitivity tier. Drives DSAR (GDPR Art. 15) exportable-field selection, right-to-erasure (Art. 17) scope, encryption-at-rest policy, minor-data handling, and search-index eviction. Field paths use `Model.field` — dotted paths reference JSONB inner properties.",

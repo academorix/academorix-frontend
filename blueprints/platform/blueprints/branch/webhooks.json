@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/branch/webhooks",
+  "id": "stackra://modules/branch/webhooks",
   "$version": 1,
   "title": "branch — outbound webhooks",
   "description": "Tenant admins can subscribe to branch-lifecycle events via the webhook module (shared/webhooks, Wave 4). This blueprint declares the event types this module publishes. Payload shapes mirror the corresponding entries in `events.json` — the webhook module wraps them in the standard envelope + HMAC-signs with the tenant's webhook secret.",

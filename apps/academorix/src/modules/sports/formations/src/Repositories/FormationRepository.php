@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Formations\Repositories;
+namespace Stackra\Formations\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Formations\Contracts\Data\FormationInterface;
-use Academorix\Formations\Contracts\Repositories\FormationRepositoryInterface;
-use Academorix\Formations\Models\Formation;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Formations\Contracts\Data\FormationInterface;
+use Stackra\Formations\Contracts\Repositories\FormationRepositoryInterface;
+use Stackra\Formations\Models\Formation;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Formations\Models\Formation}.
+ * Attribute-first Eloquent repository for {@see Stackra\Formations\Models\Formation}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(FormationInterface::class)]` which resolves to
  * `Formation` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Formations\Models\Formation>
+ * @extends Repository<\Stackra\Formations\Models\Formation>
  *
  * @category Formations
  *

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/versioning/schemas/deprecation-notice",
+  "id": "stackra://modules/versioning/schemas/deprecation-notice",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "DeprecationNotice",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "dep_",
     "incrementing": false,
-    "model": "Academorix\\Versioning\\Models\\DeprecationNotice",
-    "interface": "Academorix\\Versioning\\Contracts\\Data\\DeprecationNoticeInterface",
-    "implements": ["Academorix\\Versioning\\Contracts\\Data\\DeprecationNoticeInterface"],
+    "model": "Stackra\\Versioning\\Models\\DeprecationNotice",
+    "interface": "Stackra\\Versioning\\Contracts\\Data\\DeprecationNoticeInterface",
+    "implements": ["Stackra\\Versioning\\Contracts\\Data\\DeprecationNoticeInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

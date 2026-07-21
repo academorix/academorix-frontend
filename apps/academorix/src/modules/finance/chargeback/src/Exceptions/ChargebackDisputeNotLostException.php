@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Exceptions;
+namespace Stackra\Chargeback\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Cannot escalate from a PaymentDispute that is not in status='lost'.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ChargebackDisputeNotLostException extends AcademorixException
+final class ChargebackDisputeNotLostException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

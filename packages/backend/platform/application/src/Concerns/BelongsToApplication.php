@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Concerns;
+namespace Stackra\Application\Concerns;
 
-use Academorix\Application\Models\Application;
+use Stackra\Application\Models\Application;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Facade;
 

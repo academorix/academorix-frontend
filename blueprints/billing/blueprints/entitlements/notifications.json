@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/entitlements/notifications",
+  "id": "stackra://modules/entitlements/notifications",
   "$version": 1,
   "title": "entitlements \u2014 notification classes + categories",
-  "namespace": "Academorix\\Entitlements\\Notifications",
+  "namespace": "Stackra\\Entitlements\\Notifications",
   "notifications": [
     "QuotaApproachingNotification",
     "QuotaExceededNotification",

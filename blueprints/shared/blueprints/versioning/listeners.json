@@ -1,36 +1,36 @@
 {
-  "id": "academorix://modules/versioning/listeners",
+  "id": "stackra://modules/versioning/listeners",
   "$version": 1,
   "title": "versioning \u2014 subscribed events",
   "description": "Versioning listens to foundation lifecycle events (warm + reload registries) + webhook subscription creation/update (validate the api_version FK). Does NOT listen to its own events \u2014 those flow downstream.",
   "listeners": [
     {
       "event": "foundation::ApplicationBooted",
-      "listener": "Academorix\\Versioning\\Listeners\\WarmRegistries",
+      "listener": "Stackra\\Versioning\\Listeners\\WarmRegistries",
       "queue": null,
       "purpose": "Synchronously loads ApiVersionRegistry + PayloadTransformerRegistry from cache (or rebuilds from DB + compiler artefact when cold). Runs in boot phase so first inbound request never sees a cold cache."
     },
     {
       "event": "foundation::ConfigReloaded",
-      "listener": "Academorix\\Versioning\\Listeners\\ReloadRegistries",
+      "listener": "Stackra\\Versioning\\Listeners\\ReloadRegistries",
       "queue": null,
       "purpose": "Rebuild registries when config hot-reloads. Synchronous \u2014 reload contract requires downstream registries fresh before signal returns."
     },
     {
       "event": "foundation::ModuleBooted",
-      "listener": "Academorix\\Versioning\\Listeners\\ScanModuleTransformers",
+      "listener": "Stackra\\Versioning\\Listeners\\ScanModuleTransformers",
       "queue": null,
       "purpose": "When a module boots, walk its declared classes for #[AsPayloadTransformer] attributes + register them with PayloadTransformerRegistry. Complements the build-time compiler for dev-mode hot module loading."
     },
     {
       "event": "webhook::WebhookSubscriptionCreating",
-      "listener": "Academorix\\Versioning\\Listeners\\ValidateSubscriptionVersion",
+      "listener": "Stackra\\Versioning\\Listeners\\ValidateSubscriptionVersion",
       "queue": null,
       "purpose": "Refuses creation of a WebhookSubscription whose api_version references an unknown or sunset ApiVersion. Emits NOTIFICATIONS_MAIL_INVALID_API_VERSION (namespaced error) on refusal."
     },
     {
       "event": "webhook::WebhookSubscriptionUpdating",
-      "listener": "Academorix\\Versioning\\Listeners\\ValidateSubscriptionVersion",
+      "listener": "Stackra\\Versioning\\Listeners\\ValidateSubscriptionVersion",
       "queue": null,
       "purpose": "Same validation on update."
     }

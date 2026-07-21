@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/teams/hooks",
+  "id": "stackra://modules/teams/hooks",
   "$version": 1,
   "title": "teams — TenancyHook + lifecycle hooks",
   "description": "Cross-module hook implementations. TenancyHooks are the tenancy module's contract for reacting to tenant-lifecycle events (provision / suspend / erase). Teams does not register a bootstrapper (nothing to hydrate at tenant-boot — teams are explicit tenant admin actions like Branches). Ships three cascade hooks: branch-close prevention, team-archive cascade, tenant-erasure purge.",
-  "namespace": "Academorix\\Teams\\Hooks",
+  "namespace": "Stackra\\Teams\\Hooks",
   "hooks": [
     {
       "name": "PreventTeamOrphansOnBranchClosed",
-      "class": "Academorix\\Teams\\Hooks\\PreventTeamOrphansOnBranchClosed",
+      "class": "Stackra\\Teams\\Hooks\\PreventTeamOrphansOnBranchClosed",
       "kind": "cascade_prevention",
       "listens_to": "branch::BranchClosed",
       "purpose": "Refuse the branch close when any team referencing the branch still has status='active'. Distinct from the FK CASCADE — we deliberately BLOCK because team archive is an ops decision, not a side-effect.",
@@ -15,7 +15,7 @@
     },
     {
       "name": "CascadeMembersOnTeamArchived",
-      "class": "Academorix\\Teams\\Hooks\\CascadeMembersOnTeamArchived",
+      "class": "Stackra\\Teams\\Hooks\\CascadeMembersOnTeamArchived",
       "kind": "cascade",
       "listens_to": "teams::TeamArchived",
       "purpose": "Cascades: transitions every active member on the archived team to status='inactive' with left_reason='team_archived'. Fires TeamMemberLeft per member with cascade_trigger='team_archived'. Runs at priority 50 (before notification listeners) so the notification fan-out sees the inactive state.",
@@ -23,7 +23,7 @@
     },
     {
       "name": "PurgeTeamsForErasedTenant",
-      "class": "Academorix\\Teams\\Hooks\\PurgeTeamsForErasedTenant",
+      "class": "Stackra\\Teams\\Hooks\\PurgeTeamsForErasedTenant",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErased",
       "purpose": "Cascade delete via FK; writes compliance audit trail entry + emits count metrics per entity family (teams / team_members / team_trials / event_teams purged). Audit rows outlive the source rows per financial + anti-discrimination retention.",

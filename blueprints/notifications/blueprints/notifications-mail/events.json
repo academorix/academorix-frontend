@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/notifications-mail/events",
+  "id": "stackra://modules/notifications-mail/events",
   "$version": 1,
   "title": "notifications-mail \u2014 published events",
   "description": "Channel-scoped events. Core listens for MailSent/MailDelivered/MailFailed/etc. + projects onto NotificationDelivery.state + emits its own aggregate events (NotificationSent/Delivered/Failed). All events afterCommit.",
-  "namespace": "Academorix\\Notifications\\Mail\\Events",
+  "namespace": "Stackra\\Notifications\\Mail\\Events",
   "dispatchMode": "afterCommit",
   "events": [
     {
       "name": "MailSent",
-      "class": "Academorix\\Notifications\\Mail\\Events\\MailSent",
+      "class": "Stackra\\Notifications\\Mail\\Events\\MailSent",
       "trigger": "SendMailJob completed \u2014 Mail::mailer()->send() returned without exception + provider message id captured.",
       "queue": "notifications",
       "consumers": ["notifications::UpdateDeliverySentListener"],
@@ -24,7 +24,7 @@
     },
     {
       "name": "MailDelivered",
-      "class": "Academorix\\Notifications\\Mail\\Events\\MailDelivered",
+      "class": "Stackra\\Notifications\\Mail\\Events\\MailDelivered",
       "trigger": "Provider webhook: delivered event.",
       "queue": "notifications",
       "consumers": ["notifications::UpdateDeliveryDeliveredListener"],
@@ -38,7 +38,7 @@
     },
     {
       "name": "MailOpened",
-      "class": "Academorix\\Notifications\\Mail\\Events\\MailOpened",
+      "class": "Stackra\\Notifications\\Mail\\Events\\MailOpened",
       "trigger": "Provider webhook: open event (tracking pixel loaded).",
       "queue": "notifications",
       "consumers": ["notifications::UpdateDeliveryOpenedListener"],
@@ -53,7 +53,7 @@
     },
     {
       "name": "MailClicked",
-      "class": "Academorix\\Notifications\\Mail\\Events\\MailClicked",
+      "class": "Stackra\\Notifications\\Mail\\Events\\MailClicked",
       "trigger": "Provider webhook: click event.",
       "queue": "notifications",
       "consumers": ["notifications::UpdateDeliveryClickedListener"],
@@ -67,7 +67,7 @@
     },
     {
       "name": "MailBounced",
-      "class": "Academorix\\Notifications\\Mail\\Events\\MailBounced",
+      "class": "Stackra\\Notifications\\Mail\\Events\\MailBounced",
       "trigger": "Provider webhook: bounce event. Hard bounces trigger address suppression; soft bounces trigger retry.",
       "queue": "notifications",
       "consumers": [
@@ -86,7 +86,7 @@
     },
     {
       "name": "MailComplaint",
-      "class": "Academorix\\Notifications\\Mail\\Events\\MailComplaint",
+      "class": "Stackra\\Notifications\\Mail\\Events\\MailComplaint",
       "trigger": "Provider webhook: complaint / spam-report event. Always suppresses the address.",
       "queue": "notifications",
       "consumers": [
@@ -104,7 +104,7 @@
     },
     {
       "name": "MailSuppressed",
-      "class": "Academorix\\Notifications\\Mail\\Events\\MailSuppressed",
+      "class": "Stackra\\Notifications\\Mail\\Events\\MailSuppressed",
       "trigger": "Address added to MailSuppression (either from webhook or manual admin).",
       "queue": "notifications",
       "consumers": [
@@ -121,7 +121,7 @@
     },
     {
       "name": "MailSuppressionRevoked",
-      "class": "Academorix\\Notifications\\Mail\\Events\\MailSuppressionRevoked",
+      "class": "Stackra\\Notifications\\Mail\\Events\\MailSuppressionRevoked",
       "trigger": "Admin removed a suppression OR soft-bounce expired.",
       "queue": "notifications",
       "consumers": ["notifications-mail::SuppressionCacheInvalidator"],

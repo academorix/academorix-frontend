@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Refund\Database\Seeders;
+namespace Stackra\Refund\Database\Seeders;
 
-use Academorix\Refund\Enums\RefundPermission;
-use Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
-use Academorix\ServiceProvider\Attributes\AsSeeder;
+use Stackra\Refund\Enums\RefundPermission;
+use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;
 
 /**

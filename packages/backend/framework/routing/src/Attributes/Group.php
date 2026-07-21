@@ -11,7 +11,7 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use Spatie\RouteAttributes\Attributes\Group as SpatieGroup;
@@ -29,8 +29,8 @@ use Spatie\RouteAttributes\Attributes\Group as SpatieGroup;
  *
  * ## Usage:
  * ```php
- * use Academorix\Routing\Attributes\Group;
- * use Academorix\Routing\Attributes\Get;
+ * use Stackra\Routing\Attributes\Group;
+ * use Stackra\Routing\Attributes\Get;
  *
  * #[Group(prefix: 'api/v1', as: 'api.')]
  * class ApiController

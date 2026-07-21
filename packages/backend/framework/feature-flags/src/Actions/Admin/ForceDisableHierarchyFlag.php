@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Actions\Admin;
+namespace Stackra\FeatureFlags\Actions\Admin;
 
-use Academorix\Authorization\Attributes\RequireRole;
-use Academorix\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureOverrideRepositoryInterface;
-use Academorix\FeatureFlags\Data\Requests\ForceDisableHierarchyRequestData;
-use Academorix\FeatureFlags\Events\FeatureHierarchyForceDisabled;
-use Academorix\FeatureFlags\Exceptions\HierarchyDisableBlockedException;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Authorization\Attributes\RequireRole;
+use Stackra\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureOverrideRepositoryInterface;
+use Stackra\FeatureFlags\Data\Requests\ForceDisableHierarchyRequestData;
+use Stackra\FeatureFlags\Events\FeatureHierarchyForceDisabled;
+use Stackra\FeatureFlags\Exceptions\HierarchyDisableBlockedException;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;

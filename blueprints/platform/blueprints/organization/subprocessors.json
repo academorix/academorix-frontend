@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/organization/subprocessors",
+  "id": "stackra://modules/organization/subprocessors",
   "$version": 1,
   "title": "organization — subprocessors",
   "description": "The organization module does not engage third-party subprocessors. All reads + writes hit the platform's own Postgres + Redis. Organization data never leaves the platform for organizational operations. This file documents the empty surface so compliance reviewers can quickly verify.",

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PrivateSessions\Console;
+namespace Stackra\PrivateSessions\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan private-sessions:reconcile-ledger` — Reconcile ledger — private sessions command.

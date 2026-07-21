@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Contracts\Services;
+namespace Stackra\Rbac\Contracts\Services;
 
-use Academorix\Rbac\Services\PermissionResolver;
+use Stackra\Rbac\Services\PermissionResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

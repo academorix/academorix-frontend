@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Contracts\Services;
+namespace Stackra\Attribution\Contracts\Services;
 
-use Academorix\Attribution\Services\DeviceParser;
+use Stackra\Attribution\Services\DeviceParser;
 use Illuminate\Container\Attributes\Bind;
 
 /**

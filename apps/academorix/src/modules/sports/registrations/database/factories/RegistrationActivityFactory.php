@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registrations\Database\Factories;
+namespace Stackra\Registrations\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Registrations\Contracts\Data\RegistrationActivityInterface;
-use Academorix\Registrations\Models\RegistrationActivity;
+use Stackra\Registrations\Contracts\Data\RegistrationActivityInterface;
+use Stackra\Registrations\Models\RegistrationActivity;
 
 /**
- * Factory for {@see \Academorix\Registrations\Models\RegistrationActivity}.
+ * Factory for {@see \Stackra\Registrations\Models\RegistrationActivity}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Registrations\Models\RegistrationActivity>
+ * @extends Factory<\Stackra\Registrations\Models\RegistrationActivity>
  *
  * @category Registrations
  *

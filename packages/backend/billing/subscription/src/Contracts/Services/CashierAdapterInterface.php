@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Contracts\Services;
+namespace Stackra\Subscription\Contracts\Services;
 
-use Academorix\Subscription\Enums\SubscriptionProvider;
-use Academorix\Subscription\Services\DefaultCashierAdapter;
+use Stackra\Subscription\Enums\SubscriptionProvider;
+use Stackra\Subscription\Services\DefaultCashierAdapter;
 use Illuminate\Container\Attributes\Bind;
 
 /**

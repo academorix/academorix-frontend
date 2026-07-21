@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Contracts\Services;
+namespace Stackra\Webhook\Contracts\Services;
 
-use Academorix\Webhook\Services\DefaultWebhookEventDispatcher;
+use Stackra\Webhook\Services\DefaultWebhookEventDispatcher;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -14,7 +14,7 @@ use Illuminate\Container\Attributes\Bind;
  * The default implementation
  * ({@see DefaultWebhookEventDispatcher})
  * looks up active subscriptions via
- * {@see \Academorix\Webhook\Contracts\Repositories\WebhookSubscriptionRepositoryInterface::findActiveForEvent()}
+ * {@see \Stackra\Webhook\Contracts\Repositories\WebhookSubscriptionRepositoryInterface::findActiveForEvent()}
  * and hands each one to the sender.
  *
  * ```php

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transfer/schemas/xfer-artifact",
+  "id": "stackra://modules/transfer/schemas/xfer-artifact",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "XferArtifact",
@@ -13,12 +13,12 @@
     "keyType": "string",
     "keyPrefix": "xart_",
     "incrementing": false,
-    "model": "Academorix\\Transfer\\Models\\XferArtifact",
-    "interface": "Academorix\\Transfer\\Contracts\\Data\\XferArtifactInterface",
-    "implements": ["Academorix\\Transfer\\Contracts\\Data\\XferArtifactInterface"],
+    "model": "Stackra\\Transfer\\Models\\XferArtifact",
+    "interface": "Stackra\\Transfer\\Contracts\\Data\\XferArtifactInterface",
+    "implements": ["Stackra\\Transfer\\Contracts\\Data\\XferArtifactInterface"],
     "traits": ["HasUlids", "BelongsToTenant"],
     "casts": {
-      "kind": "Academorix\\Transfer\\Enums\\XferArtifactKind",
+      "kind": "Stackra\\Transfer\\Enums\\XferArtifactKind",
       "format": "string",
       "size_bytes": "integer",
       "row_count": "integer",

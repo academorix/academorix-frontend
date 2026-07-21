@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/monitoring/attributes",
+  "id": "stackra://modules/monitoring/attributes",
   "$version": 1,
   "title": "monitoring — PHP attribute contracts",
   "description": "Three class-level attributes. `#[AsMonitoringListener]` subscribes a service to monitoring-lane events (alert lifecycle + incident lifecycle + circuit-breaker + provider lifecycle). `#[AsMonitoringProvider]` marks a class as a provider driver — the MonitoringProviderManager discovers these at boot and registers them via createXxxDriver factories. `#[AsHealthCheckStrategy]` marks a class as a health check executor strategy — the HealthCheckExecutor discovers these + dispatches per check_type.",
-  "namespace": "Academorix\\Observability\\Monitoring\\Attributes",
+  "namespace": "Stackra\\Observability\\Monitoring\\Attributes",
   "attributes": [
     {
       "name": "AsMonitoringListener",
-      "class": "Academorix\\Observability\\Monitoring\\Attributes\\AsMonitoringListener",
+      "class": "Stackra\\Observability\\Monitoring\\Attributes\\AsMonitoringListener",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a service as a subscriber to monitoring-lane events (MonitoringAlertFired / Acknowledged / Resolved / Suppressed, MonitoringIncidentOpened / Acknowledged / StatusUpdated / Resolved, MonitoringProviderCircuitBreakerOpened / Closed, MonitoringProviderConfigured / Deactivated, HealthCheck* variants). Discovery loader picks up each class at boot + wires the declared events. Consumers of MonitoringAlertFired for P1 should override queue to `monitoring-critical`.",
@@ -16,7 +16,7 @@
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Array of event short names (`MonitoringAlertFired`, `MonitoringIncidentOpened`, `MonitoringProviderCircuitBreakerOpened`, …). Empty = subscribe to every `Academorix\\Observability\\Monitoring\\Events\\*` event. Names resolve against events.json at boot; typos abort boot with a discovery error."
+          "description": "Array of event short names (`MonitoringAlertFired`, `MonitoringIncidentOpened`, `MonitoringProviderCircuitBreakerOpened`, …). Empty = subscribe to every `Stackra\\Observability\\Monitoring\\Events\\*` event. Names resolve against events.json at boot; typos abort boot with a discovery error."
         },
         {
           "name": "queue",
@@ -35,7 +35,7 @@
     },
     {
       "name": "AsMonitoringProvider",
-      "class": "Academorix\\Observability\\Monitoring\\Attributes\\AsMonitoringProvider",
+      "class": "Stackra\\Observability\\Monitoring\\Attributes\\AsMonitoringProvider",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a class as a monitoring provider driver. The MonitoringProviderManager discovers these at boot and registers a createXxxDriver factory keyed on the slug. Every driver MUST implement the IMonitoringProvider contract (name(), supports(MonitoringSeverity), notify(...), transform(...)) + ship a JSON Schema under data/providers/<slug>-config.schema.json for config validation.",
@@ -73,7 +73,7 @@
     },
     {
       "name": "AsHealthCheckStrategy",
-      "class": "Academorix\\Observability\\Monitoring\\Attributes\\AsHealthCheckStrategy",
+      "class": "Stackra\\Observability\\Monitoring\\Attributes\\AsHealthCheckStrategy",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a class as a health check executor strategy. The HealthCheckExecutor discovers these at boot + dispatches per check_type. Every strategy MUST implement the IHealthCheckStrategy contract (checkType(), execute(HealthCheck): HealthCheckRunResult).",

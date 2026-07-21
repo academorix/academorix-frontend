@@ -2,11 +2,11 @@
   "$version": 1,
   "name": "tenancy",
   "alias": "tenancy",
-  "namespace": "Academorix\\Tenancy",
+  "namespace": "Stackra\\Tenancy",
   "description": "Tenant substrate. Owns Tenant (the tenant row) and TenantContact (per-tenant billing/DPO/security contacts). Publishes the BelongsToTenant + BelongsToTenantOptional traits, the ->tenantable() migration macro, tenancy hooks, and the resolve.tenant + tenant.user middleware every downstream module composes. Slimmed at v0.3 — Application + BusinessType moved to `application`, Domain + DomainRecord to `domains`, Branding to `branding`, TenantIntegration to `integrations`, Identity dropped entirely (belongs in identity-service).",
   "keywords": ["tenants", "tenant", "tenant", "multi-tenant", "contact", "hierarchy"],
   "priority": 10,
-  "providers": ["Academorix\\Tenancy\\Providers\\TenancyServiceProvider"],
+  "providers": ["Stackra\\Tenancy\\Providers\\TenancyServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "application"],
   "extendedBy": [
@@ -81,7 +81,7 @@
       ]
     },
     "platform-admin": {
-      "description": "Academorix staff surface. Full CRUD over Tenant + TenantContact.",
+      "description": "Stackra staff surface. Full CRUD over Tenant + TenantContact.",
       "routes": ["* /api/v1/tenants*", "* /api/v1/tenant-contacts*"]
     },
     "tenant": {

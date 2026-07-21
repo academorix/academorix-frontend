@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Actions\Tenant;
+namespace Stackra\Localization\Actions\Tenant;
 
-use Academorix\Localization\Contracts\Repositories\TenantLocaleRepositoryInterface;
-use Academorix\Localization\Data\TenantLocaleData;
-use Academorix\Localization\Data\Requests\UpdateTenantLocaleRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\Localization\Contracts\Repositories\TenantLocaleRepositoryInterface;
+use Stackra\Localization\Data\TenantLocaleData;
+use Stackra\Localization\Data\Requests\UpdateTenantLocaleRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Patch;
 
 /**
  * `PATCH /api/v1/tenant-locales/{language}` — update action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Patch(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Localization

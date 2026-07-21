@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Contracts\Data;
+namespace Stackra\Tax\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Tax\Models\TaxExemption;
+use Stackra\Tax\Models\TaxExemption;
 
 /**
  * Table shape for the `tax_exemptions` table.

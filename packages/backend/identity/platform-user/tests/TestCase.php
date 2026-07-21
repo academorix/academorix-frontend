@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformUser\Tests;
+namespace Stackra\PlatformUser\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/platform-user.
+ * Base test case for stackra/platform-user.
  *
  * @category PlatformUser
  *

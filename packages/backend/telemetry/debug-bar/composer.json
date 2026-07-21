@@ -1,21 +1,21 @@
 {
-  "name": "academorix/debugbar",
-  "description": "Laravel Debugbar integration with automatic collector discovery for Academorix applications",
+  "name": "stackra/debugbar",
+  "description": "Laravel Debugbar integration with automatic collector discovery for Stackra applications",
   "type": "library",
   "license": "MIT",
   "authors": [
     {
-      "name": "Academorix Team",
-      "email": "dev@academorix.com"
+      "name": "Stackra Team",
+      "email": "dev@stackra.com"
     }
   ],
-  "homepage": "https://github.com/academorix-inc/laravel-telemetry/debugbar",
+  "homepage": "https://github.com/stackra-inc/laravel-telemetry/debugbar",
   "support": {
-    "issues": "https://github.com/academorix-inc/laravel-telemetry/debugbar/-/issues",
-    "source": "https://github.com/academorix-inc/laravel-telemetry/debugbar"
+    "issues": "https://github.com/stackra-inc/laravel-telemetry/debugbar/-/issues",
+    "source": "https://github.com/stackra-inc/laravel-telemetry/debugbar"
   },
   "keywords": [
-    "academorix",
+    "stackra",
     "telemetry",
     "debugbar",
     "debug",
@@ -36,7 +36,7 @@
   "require": {
     "barryvdh/laravel-debugbar": "^3.13",
     "php": "^8.4|^8.5",
-    "academorix/support": "@dev"
+    "stackra/support": "@dev"
   },
   "require-dev": {
     "mockery/mockery": "^1.6",
@@ -44,22 +44,22 @@
     "phpunit/phpunit": "^11.0"
   },
   "suggest": {
-    "academorix/telemetry-sentry": "For error tracking and monitoring"
+    "stackra/telemetry-sentry": "For error tracking and monitoring"
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Debugbar\\": "src/"
+      "Stackra\\Debugbar\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Debugbar\\Tests\\": "tests/"
+      "Stackra\\Debugbar\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Debugbar\\Providers\\DebugbarServiceProvider"
+        "Stackra\\Debugbar\\Providers\\DebugbarServiceProvider"
       ]
     }
   },

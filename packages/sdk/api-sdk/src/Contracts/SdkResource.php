@@ -38,14 +38,14 @@
  * agnostic so a future non-Saloon transport (gRPC, JSON-RPC) can
  * ship resources without a Saloon dependency.
  *
- * @see \Academorix\ApiSdk\Resources\BaseSdkResource Default implementation.
+ * @see \Stackra\ApiSdk\Resources\BaseSdkResource Default implementation.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Contracts;
+namespace Stackra\ApiSdk\Contracts;
 
-use Academorix\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Client\ApiConnector;
 
 interface SdkResource
 {

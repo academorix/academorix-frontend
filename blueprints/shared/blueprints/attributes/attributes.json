@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/attributes/attributes",
+  "id": "stackra://modules/attributes/attributes",
   "$version": 1,
   "title": "attributes — PHP attribute contracts",
   "description": "One class-level attribute discovered at boot. `AttributableEntity` binds a host model to the (entity_type, discriminator, values_column) triple so the AttributableEntityRegistry can resolve the active AttributeSet at runtime.",
-  "namespace": "Academorix\\Attributes\\Attributes",
+  "namespace": "Stackra\\Attributes\\Attributes",
   "attributes": [
     {
       "name": "AttributableEntity",
-      "class": "Academorix\\Attributes\\Attributes\\AttributableEntity",
+      "class": "Stackra\\Attributes\\Attributes\\AttributableEntity",
       "targets": ["class"],
       "description": "Marks a model class as an AttributeSet host. Boot-time compiler adds it to `AttributableEntityRegistry` so runtime resolution is a hash-map lookup.",
       "params": [
@@ -40,7 +40,7 @@
     }
   ],
   "discovery": {
-    "loader": "Academorix\\Attributes\\Discovery\\CompileAttributableEntityRegistry",
+    "loader": "Stackra\\Attributes\\Discovery\\CompileAttributableEntityRegistry",
     "runs_at": "boot (after ContainerBooted event)",
     "output_registries": [
       "AttributableEntityRegistry — map of model FQCN → {entityType, discriminator, valuesColumn, setResolver}"

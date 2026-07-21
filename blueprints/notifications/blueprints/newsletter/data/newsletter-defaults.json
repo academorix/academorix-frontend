@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/newsletter/data/newsletter-defaults",
+  "id": "stackra://modules/newsletter/data/newsletter-defaults",
   "$version": 1,
   "title": "newsletter \u2014 default newsletters per business_type",
   "description": "Bootstrap seed for tenant creation. Each business_type gets sensible starter newsletters. Tenant admins may delete + create as needed.",
-  "seeder": "Academorix\\Newsletter\\Database\\Seeders\\BootstrapNewslettersSeeder",
+  "seeder": "Stackra\\Newsletter\\Database\\Seeders\\BootstrapNewslettersSeeder",
   "note": "Only seeded when tenant.default_config.newsletter.seed_defaults=true (default true).",
   "byBusinessType": {
     "academy": [

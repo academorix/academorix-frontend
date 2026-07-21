@@ -4,7 +4,7 @@
  * @file modules/notifications/newsletter/config/newsletter.php
  *
  * @description
- * Runtime knobs for the `academorix/newsletter` module. Merged
+ * Runtime knobs for the `stackra/newsletter` module. Merged
  * under the `newsletter.*` key by the base ServiceProvider's
  * LoadsResources concern. Downstream code reads via
  * `config('newsletter.*')` — never `env()` outside this file per
@@ -42,15 +42,15 @@ return [
     'public_urls' => [
         'subscribe_pattern'   => env(
             'NEWSLETTER_SUBSCRIBE_URL_PATTERN',
-            'https://{tenant_slug}.academorix.app/newsletters/{newsletter_slug}/subscribe',
+            'https://{tenant_slug}.stackra.app/newsletters/{newsletter_slug}/subscribe',
         ),
         'confirm_pattern'     => env(
             'NEWSLETTER_CONFIRM_URL_PATTERN',
-            'https://{tenant_slug}.academorix.app/newsletters/{newsletter_slug}/confirm/{token}',
+            'https://{tenant_slug}.stackra.app/newsletters/{newsletter_slug}/confirm/{token}',
         ),
         'unsubscribe_pattern' => env(
             'NEWSLETTER_UNSUBSCRIBE_URL_PATTERN',
-            'https://{tenant_slug}.academorix.app/newsletters/{newsletter_slug}/unsubscribe/{token}',
+            'https://{tenant_slug}.stackra.app/newsletters/{newsletter_slug}/unsubscribe/{token}',
         ),
     ],
 

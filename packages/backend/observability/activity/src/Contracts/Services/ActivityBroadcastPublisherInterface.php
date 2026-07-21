@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Contracts\Services;
+namespace Stackra\Activity\Contracts\Services;
 
-use Academorix\Activity\Services\ActivityBroadcastPublisher;
+use Stackra\Activity\Services\ActivityBroadcastPublisher;
 use Illuminate\Container\Attributes\Bind;
 
 /**

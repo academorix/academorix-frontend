@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Database\Factories;
+namespace Stackra\Compliance\Database\Factories;
 
-use Academorix\Compliance\Contracts\Data\SafeguardingIncidentInterface;
-use Academorix\Compliance\Enums\SafeguardingIncidentState;
-use Academorix\Compliance\Enums\SafeguardingSeverity;
-use Academorix\Compliance\Models\SafeguardingIncident;
+use Stackra\Compliance\Contracts\Data\SafeguardingIncidentInterface;
+use Stackra\Compliance\Enums\SafeguardingIncidentState;
+use Stackra\Compliance\Enums\SafeguardingSeverity;
+use Stackra\Compliance\Models\SafeguardingIncident;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

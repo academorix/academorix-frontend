@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/staff/notifications",
+  "id": "stackra://modules/staff/notifications",
   "$version": 1,
   "title": "staff — notification classes + categories",
-  "namespace": "Academorix\\Staff\\Notifications",
+  "namespace": "Stackra\\Staff\\Notifications",
   "notifications": [
     "StaffWelcomeNotification",
     "StaffOffboardingScheduledNotification",

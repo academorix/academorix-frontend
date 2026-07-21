@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/activity/analytics",
+  "id": "stackra://modules/activity/analytics",
   "$version": 1,
   "title": "activity — product analytics events",
   "description": "Product analytics events (Segment / Mixpanel / PostHog). Distinct from `events.json` (server-side pub/sub) and `metrics.json` (ops telemetry). Every event carries a `consent_tier` that gates delivery through the analytics pipeline against the caller's consent state. Activity events are primarily `functional` (help us understand feed usage) with two `essential` events (feed adoption baseline).",

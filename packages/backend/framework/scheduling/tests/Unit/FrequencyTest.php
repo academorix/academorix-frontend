@@ -4,7 +4,7 @@
  * @file packages/scheduling/tests/Unit/FrequencyTest.php
  *
  * @description
- * Exercises the {@see \Academorix\Scheduling\Enums\Frequency}
+ * Exercises the {@see \Stackra\Scheduling\Enums\Frequency}
  * enum — the single mapping between our declarative
  * `#[Schedule(Frequency::...)]` attribute and Laravel's fluent
  * scheduler builder methods.
@@ -31,7 +31,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Scheduling\Enums\Frequency;
+use Stackra\Scheduling\Enums\Frequency;
 use Illuminate\Console\Scheduling\Event;
 
 /**

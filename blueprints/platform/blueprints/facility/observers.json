@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/facility/observers",
+  "id": "stackra://modules/facility/observers",
   "$version": 1,
   "title": "facility — Eloquent observers",
   "description": "Four observers enforce the module's write-time invariants: facility catalogue integrity, resource-booking overlap + capacity + availability + blackout + timing, day-pass entitlement + receipt-generation, and pass credit + eligibility. The ResourceBookingObserver is the most consequential — the overlap check runs under SERIALIZABLE isolation to preserve atomicity across concurrent booking requests.",
   "observers": [
     {
       "model": "Facility",
-      "observer": "Academorix\\Facility\\Observers\\FacilityObserver",
+      "observer": "Stackra\\Facility\\Observers\\FacilityObserver",
       "handles": [
         "creating → populate ULID prefix `fac_`",
         "creating → refuse when tenant does NOT hold `facilities` entitlement (returns `FACILITY_FEATURE_NOT_ENTITLED` — small tier is locked out entirely)",
@@ -29,7 +29,7 @@
     },
     {
       "model": "ResourceBooking",
-      "observer": "Academorix\\Facility\\Observers\\ResourceBookingObserver",
+      "observer": "Stackra\\Facility\\Observers\\ResourceBookingObserver",
       "handles": [
         "creating → populate ULID prefix `bkg_`",
         "creating → refuse when starts_at is in the past (returns `BOOKING_IN_PAST`)",
@@ -63,7 +63,7 @@
     },
     {
       "model": "DayPass",
-      "observer": "Academorix\\Facility\\Observers\\DayPassObserver",
+      "observer": "Stackra\\Facility\\Observers\\DayPassObserver",
       "handles": [
         "creating → populate ULID prefix `dpa_`",
         "creating → refuse when tenant does NOT hold `facilities_advanced` entitlement (returns `DAY_PASS_FEATURE_NOT_ENTITLED` — Enterprise-only)",
@@ -85,7 +85,7 @@
     },
     {
       "model": "Pass",
-      "observer": "Academorix\\Facility\\Observers\\PassObserver",
+      "observer": "Stackra\\Facility\\Observers\\PassObserver",
       "handles": [
         "creating → populate ULID prefix `pas_`",
         "creating → refuse when tenant does NOT hold `facilities_advanced` entitlement (returns `PASS_FEATURE_NOT_ENTITLED` — Enterprise-only)",

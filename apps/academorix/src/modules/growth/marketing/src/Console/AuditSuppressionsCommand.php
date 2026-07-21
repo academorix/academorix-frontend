@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Console;
+namespace Stackra\Marketing\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan marketing:audit-suppressions` — Audit suppressions — marketing command.

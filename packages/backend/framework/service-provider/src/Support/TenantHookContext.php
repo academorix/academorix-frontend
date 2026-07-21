@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceProvider\Support;
+namespace Stackra\ServiceProvider\Support;
 
-use Academorix\ServiceProvider\Contracts\TenancyHookInterface;
-use Academorix\ServiceProvider\Dispatchers\TenancyHookDispatcher;
+use Stackra\ServiceProvider\Contracts\TenancyHookInterface;
+use Stackra\ServiceProvider\Dispatchers\TenancyHookDispatcher;
 use Illuminate\Contracts\Container\Container;
 
 /**

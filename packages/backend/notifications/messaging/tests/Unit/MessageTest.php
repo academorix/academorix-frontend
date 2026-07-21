@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Messaging\Models\Message;
+use Stackra\Messaging\Models\Message;
 
 it('is a placeholder — replace with actual Message unit tests', function (): void {
     expect(Message::class)->toBeString();

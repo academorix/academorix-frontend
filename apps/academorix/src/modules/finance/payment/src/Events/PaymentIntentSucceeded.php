@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Events;
+namespace Stackra\Payment\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -15,7 +15,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * ## Consumers
  *
  * - audit::WriteToAuditLog (retention: 7 years)
- * - monitoring::MetricsCollector (increments academorix.payment.intents.succeeded_total)
+ * - monitoring::MetricsCollector (increments stackra.payment.intents.succeeded_total)
  *
  * @category Payment
  *

@@ -10,7 +10,7 @@
  *   resolves its imports through the built `dist/index.js` at runtime.
  */
 
-import { defineBaseConfig } from "@academorix/config-tsup";
+import { defineBaseConfig } from "@stackra/config-tsup";
 
 export default defineBaseConfig({
   index: "src/index.ts",

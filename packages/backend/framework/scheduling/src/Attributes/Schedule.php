@@ -6,9 +6,9 @@
  * @description
  * Class-level, repeatable attribute that attaches a named cadence
  * to a Job or Command. Read at boot by
- * {@see \Academorix\Scheduling\Support\ScheduleDiscovery} and
+ * {@see \Stackra\Scheduling\Support\ScheduleDiscovery} and
  * turned into a Laravel scheduled event by
- * {@see \Academorix\Scheduling\Support\ScheduleRegistrar}.
+ * {@see \Stackra\Scheduling\Support\ScheduleRegistrar}.
  *
  * Repeatable — a single class may run at more than one cadence
  * (e.g. once hourly + once daily) by stacking the attribute:
@@ -25,9 +25,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scheduling\Attributes;
+namespace Stackra\Scheduling\Attributes;
 
-use Academorix\Scheduling\Enums\Frequency;
+use Stackra\Scheduling\Enums\Frequency;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]

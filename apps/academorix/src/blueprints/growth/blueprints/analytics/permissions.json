@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/analytics/permissions",
+  "id": "stackra://modules/analytics/permissions",
   "$version": 1,
   "title": "analytics — permissions",
   "description": "Read-heavy permission surface. Analytics events + deliveries are READ-only via the API (only listener path creates); provider config + identity have full CRUD with tighter scoping.",
-  "seeder": "Academorix\\Growth\\Analytics\\Database\\Seeders\\AnalyticsPermissionSeeder",
+  "seeder": "Stackra\\Growth\\Analytics\\Database\\Seeders\\AnalyticsPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

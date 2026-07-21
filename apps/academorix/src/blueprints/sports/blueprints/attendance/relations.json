@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/attendance/relations",
+  "id": "stackra://modules/attendance/relations",
   "$version": 1,
   "title": "attendance — model relationships",
   "description": "Four owned entities. AttendanceRecord + AbsenceRecord belong to 4 aggregates directly (Tenant + Session + Athlete + AthleteEnrollment) + AttendanceRecord references Pass (SET NULL) + Membership (RESTRICT). AttendancePolicy belongs to Tenant + optional Branch + optional MembershipPlan. LateArrival is a satellite of AttendanceRecord. All RESTRICT outbound except tenant (CASCADE) + consumed_pass_id (RESTRICT — cannot lose the money-side reference). No `application_id` / `organization_id` / `region_id` / `scope_node_id` — forbidden columns.",

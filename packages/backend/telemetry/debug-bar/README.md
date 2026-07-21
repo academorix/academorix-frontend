@@ -1,10 +1,10 @@
 <div align="center">
 
-<img src="https://github.com/academorix-inc/laravel--laravel/telemetry/debugbar/-/raw/main/.gitlab/banner.svg" alt="Debugbar" width="100%">
+<img src="https://github.com/stackra-inc/laravel--laravel/telemetry/debugbar/-/raw/main/.gitlab/banner.svg" alt="Debugbar" width="100%">
 
 </div>
 
-Laravel Debugbar integration with automatic collector discovery for Academorix
+Laravel Debugbar integration with automatic collector discovery for Stackra
 applications.
 
 ## 📑 Table of Contents
@@ -26,11 +26,11 @@ Providers.
 
 ## 📦 Installation
 
-This package is included with the main `academorix/telemetry` package. If you
+This package is included with the main `stackra/telemetry` package. If you
 need to install it separately:
 
 ```bash
-composer require academorix/telemetry-debugbar
+composer require stackra/telemetry-debugbar
 ```
 
 ## ✨ Features
@@ -68,7 +68,7 @@ Check the [.examples](.examples) directory for real-world usage patterns.
 ### Basic Collector
 
 ```php
-use Academorix\Debugbar\Attributes\AsCollector;
+use Stackra\Debugbar\Attributes\AsCollector;
 use DebugBar\DataCollector\DataCollector;
 
 #[AsCollector(name: 'custom_metrics')]

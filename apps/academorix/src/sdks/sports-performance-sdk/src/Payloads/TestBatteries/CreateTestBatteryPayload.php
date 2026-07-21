@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsPerformanceSdk\Payloads\TestBatteries;
+namespace Stackra\SportsPerformanceSdk\Payloads\TestBatteries;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\StringType;

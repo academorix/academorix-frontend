@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/announcements/retention",
+  "id": "stackra://modules/announcements/retention",
   "$version": 1,
   "title": "announcements — data retention windows",
   "policies": [

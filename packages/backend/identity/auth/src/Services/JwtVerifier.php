@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Services;
+namespace Stackra\Auth\Services;
 
-use Academorix\Auth\Contracts\Data\AuthJwtSigningKeyInterface;
-use Academorix\Auth\Contracts\Repositories\AuthJwtSigningKeyRepositoryInterface;
-use Academorix\Auth\Contracts\Services\JwtDenyListManagerInterface;
-use Academorix\Auth\Contracts\Services\JwtVerifierInterface;
-use Academorix\Auth\Data\JwtPayloadData;
-use Academorix\Auth\Enums\JwtPayloadPurpose;
-use Academorix\Auth\Exceptions\JwtDeniedException;
-use Academorix\Auth\Exceptions\JwtInvalidException;
-use Academorix\Auth\Exceptions\JwtSigningKeyUnavailableException;
-use Academorix\Auth\Models\AuthJwtSigningKey;
+use Stackra\Auth\Contracts\Data\AuthJwtSigningKeyInterface;
+use Stackra\Auth\Contracts\Repositories\AuthJwtSigningKeyRepositoryInterface;
+use Stackra\Auth\Contracts\Services\JwtDenyListManagerInterface;
+use Stackra\Auth\Contracts\Services\JwtVerifierInterface;
+use Stackra\Auth\Data\JwtPayloadData;
+use Stackra\Auth\Enums\JwtPayloadPurpose;
+use Stackra\Auth\Exceptions\JwtDeniedException;
+use Stackra\Auth\Exceptions\JwtInvalidException;
+use Stackra\Auth\Exceptions\JwtSigningKeyUnavailableException;
+use Stackra\Auth\Models\AuthJwtSigningKey;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Contracts\Encryption\DecryptException;
@@ -74,8 +74,8 @@ final class JwtVerifier implements JwtVerifierInterface
         private readonly AuthJwtSigningKeyRepositoryInterface $keys,
         private readonly JwtDenyListManagerInterface $denyList,
         private readonly Encrypter $encrypter,
-        #[Config('auth.jwt.issuer', 'https://identity.academorix.com')]
-        private readonly string $expectedIssuer = 'https://identity.academorix.com',
+        #[Config('auth.jwt.issuer', 'https://identity.stackra.com')]
+        private readonly string $expectedIssuer = 'https://identity.stackra.com',
         #[Config('auth.jwt.clock_skew_seconds', 30)]
         private readonly int $clockSkewSeconds = 30,
         #[Config('auth.jwt.service_jwt_secret')]

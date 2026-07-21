@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Services;
+namespace Stackra\Localization\Services;
 
-use Academorix\Localization\Contracts\Services\GoogleTranslatorDriverInterface;
+use Stackra\Localization\Contracts\Services\GoogleTranslatorDriverInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Localization\Contracts\Repositories\PlatformLanguageRepositoryInterface;
+use Stackra\Localization\Contracts\Repositories\PlatformLanguageRepositoryInterface;
 
 /**
  * Concrete service — GoogleTranslatorDriver.

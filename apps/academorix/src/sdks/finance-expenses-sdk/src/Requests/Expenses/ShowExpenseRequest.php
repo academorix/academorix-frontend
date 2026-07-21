@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FinanceExpensesSdk\Requests\Expenses;
+namespace Stackra\FinanceExpensesSdk\Requests\Expenses;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\FinanceExpensesSdk\Data\ExpenseData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\FinanceExpensesSdk\Data\ExpenseData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Policies;
+namespace Stackra\Versioning\Policies;
 
-use Academorix\Versioning\Contracts\Data\ApiVersionInterface;
-use Academorix\Versioning\Enums\VersioningPermission;
-use Academorix\Versioning\Models\ApiVersion;
+use Stackra\Versioning\Contracts\Data\ApiVersionInterface;
+use Stackra\Versioning\Enums\VersioningPermission;
+use Stackra\Versioning\Models\ApiVersion;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

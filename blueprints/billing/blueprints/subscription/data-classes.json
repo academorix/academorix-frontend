@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/subscription/data-classes",
+  "id": "stackra://modules/subscription/data-classes",
   "$version": 1,
   "title": "subscription \u2014 field classification",
   "description": "Amounts + provider references are financial data (regulated). No PAN / CVV stored (delegated to Cashier). Actor identities are internal.",

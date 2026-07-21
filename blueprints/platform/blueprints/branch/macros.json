@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/branch/macros",
+  "id": "stackra://modules/branch/macros",
   "$version": 1,
   "title": "branch — published macros",
   "description": "No Blueprint schema macros. The three JSONB columns (address, coordinates, opening_hours) are added by ordinary `$table->jsonb()` calls in migrations; downstream modules that FK to Branch just use the standard `$table->foreignUlid('branch_id')` call — no branch-specific macro needed. Two runtime macros are published on `Illuminate\\Http\\Request` for `active-branch`-flavoured helpers on inbound requests.",
@@ -18,6 +18,6 @@
       "usage_example": "$row = Session::create([\n    'branch_id' => $request->activeBranchId(),\n    // ...\n]);"
     }
   ],
-  "registered_by": "Academorix\\Branch\\Providers\\BranchServiceProvider::boot()",
+  "registered_by": "Stackra\\Branch\\Providers\\BranchServiceProvider::boot()",
   "registration_order": "Registered during the standard boot phase. Depends on tenancy having booted first so the parent `BelongsToTenant` scope is already registered — tenancy priority (10) < branch priority (45), so ordering is safe by construction."
 }

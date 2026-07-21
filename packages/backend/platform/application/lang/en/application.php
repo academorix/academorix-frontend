@@ -4,7 +4,7 @@
  * @file modules/platform/application/lang/en/application.php
  *
  * @description
- * English translations for the `academorix/application` module. Loaded
+ * English translations for the `stackra/application` module. Loaded
  * under the `application::` namespace by the base ServiceProvider's
  * `LoadsResources(translations: true)`. Consumers translate via
  * `__('application::errors.system_row_immutable')` etc.

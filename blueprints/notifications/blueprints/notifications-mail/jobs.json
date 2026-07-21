@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/notifications-mail/jobs",
+  "id": "stackra://modules/notifications-mail/jobs",
   "$version": 1,
   "title": "notifications-mail \u2014 background jobs",
   "description": "Three jobs. SendMailJob is the workhorse. ReconcileSuppressionsJob polls provider-side suppression lists. IngestMailProviderWebhookJob dispatched by the InboundWebhookReceived listener normalises provider payloads.",
   "jobs": [
     {
-      "class": "Academorix\\Notifications\\Mail\\Jobs\\SendMailJob",
+      "class": "Stackra\\Notifications\\Mail\\Jobs\\SendMailJob",
       "queue": "resolved-at-dispatch \u2014 notifications-critical if priority=critical, else notifications",
       "purpose": "Sends a single Notification via Laravel Mail.",
       "steps": [
@@ -14,7 +14,7 @@
         "Blade::render(template.body_rendered_html, variables) + Blade::render(subject_template, variables).",
         "Inject CAN-SPAM footer with tenant.postal_address.",
         "Inject List-Unsubscribe-Post + List-Unsubscribe headers (RFC 8058).",
-        "Inject X-Academorix-Category + X-Academorix-Notification-Id + X-Academorix-Tenant-Id headers.",
+        "Inject X-Stackra-Category + X-Stackra-Notification-Id + X-Stackra-Tenant-Id headers.",
         "Mail::mailer(driver_for_category)->send(rendered).",
         "Create NotificationDelivery(state=sent, provider=driver, provider_message_id=Mail::lastMessageId()).",
         "Fire MailSent."
@@ -28,13 +28,13 @@
       "notes": "Retries only on transient failures (provider 5xx, network timeout, rate limit). Hard failures set state=permanently_failed with no further attempts."
     },
     {
-      "class": "Academorix\\Notifications\\Mail\\Jobs\\IngestMailProviderWebhookJob",
+      "class": "Stackra\\Notifications\\Mail\\Jobs\\IngestMailProviderWebhookJob",
       "queue": "notifications-webhooks",
       "purpose": "Normalises a provider-specific webhook payload into MailDelivered / Opened / Clicked / Bounced / Complaint events. Dispatched by the IngestMailProviderWebhookListener when webhook::InboundWebhookReceived fires with namespace=notifications-mail.",
       "steps": [
         "Read webhook::InboundWebhookReceived event's { namespace, provider, headers, payload }.",
         "Delegate to provider-specific normaliser (MailgunPayloadNormaliser / SendgridPayloadNormaliser / etc.) via NotificationsMailPayloadNormaliserRegistry.",
-        "Look up NotificationDelivery by (provider, provider_message_id) OR by header X-Academorix-Notification-Id when present.",
+        "Look up NotificationDelivery by (provider, provider_message_id) OR by header X-Stackra-Notification-Id when present.",
         "If not found: log NOTIFICATIONS_MAIL_WEBHOOK_DELIVERY_NOT_FOUND, ack. Late-arriving webhook for a purged notification is not an error.",
         "Dispatch the corresponding MailXxx event based on the normalised event type.",
         "Fire webhook::InboundWebhookProcessed with outcome=success/failure."
@@ -48,7 +48,7 @@
       "notes": "Idempotent: same (provider, provider_event_id) processed twice is a no-op."
     },
     {
-      "class": "Academorix\\Notifications\\Mail\\Jobs\\ReconcileSuppressionsJob",
+      "class": "Stackra\\Notifications\\Mail\\Jobs\\ReconcileSuppressionsJob",
       "queue": "notifications",
       "purpose": "Weekly reconciliation: pulls the provider-side suppression list (Mailgun / SES / SendGrid / Postmark provide APIs for this) + syncs any addresses we don't already have.",
       "shouldQueue": true,

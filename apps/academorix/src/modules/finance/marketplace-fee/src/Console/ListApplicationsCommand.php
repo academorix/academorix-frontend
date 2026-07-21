@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\MarketplaceFee\Console;
+namespace Stackra\MarketplaceFee\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan marketplace-fee:list-applications` — List applications — marketplace fee command.

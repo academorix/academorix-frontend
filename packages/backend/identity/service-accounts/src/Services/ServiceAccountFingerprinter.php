@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Services;
+namespace Stackra\ServiceAccounts\Services;
 
-use Academorix\ServiceAccounts\Contracts\Services\ServiceAccountFingerprinterInterface;
+use Stackra\ServiceAccounts\Contracts\Services\ServiceAccountFingerprinterInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\ServiceAccounts\Contracts\Repositories\ServiceAccountRepositoryInterface;
+use Stackra\ServiceAccounts\Contracts\Repositories\ServiceAccountRepositoryInterface;
 
 /**
  * Concrete service — ServiceAccountFingerprinter.

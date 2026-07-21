@@ -1,21 +1,21 @@
 {
-  "name": "academorix/nightwatch",
-  "description": "Laravel Nightwatch production monitoring with attribute-driven context discovery, sampling, filtering, and redaction for Academorix applications",
+  "name": "stackra/nightwatch",
+  "description": "Laravel Nightwatch production monitoring with attribute-driven context discovery, sampling, filtering, and redaction for Stackra applications",
   "type": "library",
   "license": "MIT",
   "authors": [
     {
-      "name": "Academorix Team",
-      "email": "dev@academorix.com"
+      "name": "Stackra Team",
+      "email": "dev@stackra.com"
     }
   ],
-  "homepage": "https://github.com/academorix-inc/laravel-telemetry/nightwatch",
+  "homepage": "https://github.com/stackra-inc/laravel-telemetry/nightwatch",
   "support": {
-    "issues": "https://github.com/academorix-inc/laravel-telemetry/nightwatch/-/issues",
-    "source": "https://github.com/academorix-inc/laravel-telemetry/nightwatch"
+    "issues": "https://github.com/stackra-inc/laravel-telemetry/nightwatch/-/issues",
+    "source": "https://github.com/stackra-inc/laravel-telemetry/nightwatch"
   },
   "keywords": [
-    "academorix",
+    "stackra",
     "telemetry",
     "nightwatch",
     "monitoring",
@@ -33,7 +33,7 @@
   "require": {
     "laravel/nightwatch": "^1.0",
     "php": "^8.4|^8.5",
-    "academorix/support": "@dev"
+    "stackra/support": "@dev"
   },
   "require-dev": {
     "mockery/mockery": "^1.6",
@@ -42,21 +42,21 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Nightwatch\\": "src/"
+      "Stackra\\Nightwatch\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Nightwatch\\Tests\\": "tests/"
+      "Stackra\\Nightwatch\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Nightwatch\\Providers\\NightwatchServiceProvider"
+        "Stackra\\Nightwatch\\Providers\\NightwatchServiceProvider"
       ],
       "aliases": {
-        "Nightwatch": "Academorix\\Nightwatch\\Facades\\Nightwatch"
+        "Nightwatch": "Stackra\\Nightwatch\\Facades\\Nightwatch"
       }
     }
   },

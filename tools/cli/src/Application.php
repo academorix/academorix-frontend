@@ -2,8 +2,8 @@
 
 /**
  * @file Application.php
- * @module Academorix\Cli
- * @description Symfony Console application entry point for the Academorix CLI.
+ * @module Stackra\Cli
+ * @description Symfony Console application entry point for the Stackra CLI.
  *   Owns the DI container, registers every command, and delegates rendering to
  *   Symfony Console. Concrete commands read services out of the container in
  *   their constructor via {@see Container::resolve()}.
@@ -11,19 +11,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli;
+namespace Stackra\Cli;
 
-use Academorix\Cli\Commands\CatalogListCommand;
-use Academorix\Cli\Commands\CatalogSearchCommand;
-use Academorix\Cli\Commands\ComposerSyncCommand;
-use Academorix\Cli\Commands\MakeActionCommand;
-use Academorix\Cli\Commands\MakeModelCommand;
-use Academorix\Cli\Commands\MakeNativeScreenCommand;
-use Academorix\Cli\Commands\MakePageCommand;
-use Academorix\Cli\Commands\ModuleGenerateCommand;
-use Academorix\Cli\Commands\ModuleNewCommand;
-use Academorix\Cli\Commands\NewProjectCommand;
-use Academorix\Cli\Commands\PackageAddCommand;
+use Stackra\Cli\Commands\CatalogListCommand;
+use Stackra\Cli\Commands\CatalogSearchCommand;
+use Stackra\Cli\Commands\ComposerSyncCommand;
+use Stackra\Cli\Commands\MakeActionCommand;
+use Stackra\Cli\Commands\MakeModelCommand;
+use Stackra\Cli\Commands\MakeNativeScreenCommand;
+use Stackra\Cli\Commands\MakePageCommand;
+use Stackra\Cli\Commands\ModuleGenerateCommand;
+use Stackra\Cli\Commands\ModuleNewCommand;
+use Stackra\Cli\Commands\NewProjectCommand;
+use Stackra\Cli\Commands\PackageAddCommand;
 use Symfony\Component\Console\Application as SymfonyApplication;
 use Symfony\Component\Console\Command\Command;
 
@@ -32,7 +32,7 @@ use Symfony\Component\Console\Command\Command;
  */
 final class Application extends SymfonyApplication
 {
-    public const NAME = 'Academorix CLI';
+    public const NAME = 'Stackra CLI';
 
     public const VERSION = '0.1.0';
 

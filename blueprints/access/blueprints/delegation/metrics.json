@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/delegation/metrics",
+  "id": "stackra://modules/delegation/metrics",
   "$version": 1,
   "title": "delegation — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "academorix.delegation",
+  "namespace": "stackra.delegation",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["delegation_type", "end_trigger", "department", "outcome"],
@@ -17,33 +17,33 @@
   },
   "metrics": [
     {
-      "name": "academorix.delegation.role_delegations.created_total",
+      "name": "stackra.delegation.role_delegations.created_total",
       "kind": "counter",
       "unit": "delegations",
       "labels": ["delegation_type"],
       "description": "delegation_type: oof / handover / emergency. Fires on DelegationCreated."
     },
     {
-      "name": "academorix.delegation.role_delegations.activated_total",
+      "name": "stackra.delegation.role_delegations.activated_total",
       "kind": "counter",
       "unit": "delegations",
       "labels": ["delegation_type"],
       "description": "Fires on DelegationActivated. Same-hour create+activate emits both created + activated."
     },
     {
-      "name": "academorix.delegation.role_delegations.expired_total",
+      "name": "stackra.delegation.role_delegations.expired_total",
       "kind": "counter",
       "unit": "delegations",
       "labels": ["delegation_type"]
     },
     {
-      "name": "academorix.delegation.role_delegations.revoked_early_total",
+      "name": "stackra.delegation.role_delegations.revoked_early_total",
       "kind": "counter",
       "unit": "delegations",
       "labels": ["delegation_type"]
     },
     {
-      "name": "academorix.delegation.role_delegations.duration_hours",
+      "name": "stackra.delegation.role_delegations.duration_hours",
       "kind": "histogram",
       "unit": "hours",
       "buckets": [1, 4, 8, 24, 72, 168, 360, 720, 1440, 2160],
@@ -51,21 +51,21 @@
       "description": "Distribution of the actual duration a delegation was in effect (from activation to expiration or revocation). Feeds product-team analysis of OOF adoption patterns."
     },
     {
-      "name": "academorix.delegation.role_delegations.self_overlap_detected_total",
+      "name": "stackra.delegation.role_delegations.self_overlap_detected_total",
       "kind": "counter",
       "unit": "detections",
       "labels": [],
       "description": "Fires on DelegationSelfOverlapDetected. > 0 usually indicates a UX bug in the tenant admin surface OR an abuse attempt."
     },
     {
-      "name": "academorix.delegation.role_delegations.resolver.lookup_total",
+      "name": "stackra.delegation.role_delegations.resolver.lookup_total",
       "kind": "counter",
       "unit": "lookups",
       "labels": ["outcome"],
       "description": "outcome: hit / miss / cache_hit. DelegationResolver's read counter — hit-rate feeds cache tuning."
     },
     {
-      "name": "academorix.delegation.role_delegations.resolver.duration_ms",
+      "name": "stackra.delegation.role_delegations.resolver.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [0.1, 0.5, 2, 10, 50, 200],
@@ -73,21 +73,21 @@
       "description": "DelegationResolver::activeAsDelegate() latency. P99 target < 10ms — the resolver is on the RBAC PermissionResolver hot-path."
     },
     {
-      "name": "academorix.delegation.impersonation.started_total",
+      "name": "stackra.delegation.impersonation.started_total",
       "kind": "counter",
       "unit": "sessions",
       "labels": ["department"],
       "description": "Fires on ImpersonationSessionStarted. department is the impersonator's department (support is expected to dominate)."
     },
     {
-      "name": "academorix.delegation.impersonation.ended_total",
+      "name": "stackra.delegation.impersonation.ended_total",
       "kind": "counter",
       "unit": "sessions",
       "labels": ["end_trigger", "department"],
       "description": "end_trigger: self_service / ttl_expired / admin_revocation / security_lockdown."
     },
     {
-      "name": "academorix.delegation.impersonation.duration_seconds",
+      "name": "stackra.delegation.impersonation.duration_seconds",
       "kind": "histogram",
       "unit": "seconds",
       "buckets": [60, 300, 900, 1800, 3600, 7200, 14400, 28800, 86400],
@@ -95,49 +95,49 @@
       "description": "Session duration. Most support sessions expected in the 5-30 minute band."
     },
     {
-      "name": "academorix.delegation.impersonation.extended_total",
+      "name": "stackra.delegation.impersonation.extended_total",
       "kind": "counter",
       "unit": "extensions",
       "labels": [],
       "description": "Extensions granted by super_admin. Rare — a step-up in this counter draws review."
     },
     {
-      "name": "academorix.delegation.impersonation.forced_terminated_total",
+      "name": "stackra.delegation.impersonation.forced_terminated_total",
       "kind": "counter",
       "unit": "terminations",
       "labels": [],
       "description": "end_trigger=security_lockdown. Every increment fires PagerDuty."
     },
     {
-      "name": "academorix.delegation.impersonation.attempt_refused_total",
+      "name": "stackra.delegation.impersonation.attempt_refused_total",
       "kind": "counter",
       "unit": "refusals",
       "labels": ["refusal_reason"],
       "description": "refusal_reason: missing_entitlement / operator_not_active / target_not_found / cross_tenant_target / target_tenant_disabled / target_application_disabled / ttl_out_of_bounds / reason_too_short / target_tenant_locked_down."
     },
     {
-      "name": "academorix.delegation.impersonation.tokens_scrubbed_total",
+      "name": "stackra.delegation.impersonation.tokens_scrubbed_total",
       "kind": "counter",
       "unit": "hashes",
       "labels": [],
       "description": "session_token_hash NULLED by PurgeImpersonationSessionsJob."
     },
     {
-      "name": "academorix.delegation.impersonation.concurrent_active",
+      "name": "stackra.delegation.impersonation.concurrent_active",
       "kind": "gauge",
       "unit": "sessions",
       "labels": [],
       "description": "Current count of active impersonation sessions across the platform. Feeds the active-impersonations-within-cap health probe."
     },
     {
-      "name": "academorix.delegation.role_delegations.stuck_pending",
+      "name": "stackra.delegation.role_delegations.stuck_pending",
       "kind": "gauge",
       "unit": "delegations",
       "labels": [],
       "description": "Count of pending delegations past their starts_at by > 1h. Should be 0."
     },
     {
-      "name": "academorix.delegation.impersonation.stuck_active",
+      "name": "stackra.delegation.impersonation.stuck_active",
       "kind": "gauge",
       "unit": "sessions",
       "labels": [],

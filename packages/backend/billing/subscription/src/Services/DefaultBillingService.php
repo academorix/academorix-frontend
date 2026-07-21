@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Services;
+namespace Stackra\Subscription\Services;
 
-use Academorix\Subscription\Contracts\Data\PlanInterface;
-use Academorix\Subscription\Contracts\Data\SubscriptionInterface;
-use Academorix\Subscription\Contracts\Services\BillingServiceInterface;
-use Academorix\Subscription\Contracts\Services\CashierAdapterInterface;
-use Academorix\Subscription\Enums\BillingMode;
-use Academorix\Subscription\Enums\SubscriptionState;
-use Academorix\Subscription\Events\SubscriptionReinstated;
-use Academorix\Subscription\Exceptions\PlanArchivedException;
-use Academorix\Subscription\Exceptions\PlanDeprecatedException;
-use Academorix\Subscription\Models\Plan;
-use Academorix\Subscription\Models\Subscription;
+use Stackra\Subscription\Contracts\Data\PlanInterface;
+use Stackra\Subscription\Contracts\Data\SubscriptionInterface;
+use Stackra\Subscription\Contracts\Services\BillingServiceInterface;
+use Stackra\Subscription\Contracts\Services\CashierAdapterInterface;
+use Stackra\Subscription\Enums\BillingMode;
+use Stackra\Subscription\Enums\SubscriptionState;
+use Stackra\Subscription\Events\SubscriptionReinstated;
+use Stackra\Subscription\Exceptions\PlanArchivedException;
+use Stackra\Subscription\Exceptions\PlanDeprecatedException;
+use Stackra\Subscription\Models\Plan;
+use Stackra\Subscription\Models\Subscription;
 use Illuminate\Container\Attributes\Scoped;
 
 /**

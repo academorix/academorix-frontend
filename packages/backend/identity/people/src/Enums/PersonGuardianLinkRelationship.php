@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\People\Enums;
+namespace Stackra\People\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `relationship` on `person-guardian-link`.

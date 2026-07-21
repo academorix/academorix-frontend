@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Repositories;
+namespace Stackra\Forms\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Forms\Contracts\Data\FormVersionInterface;
-use Academorix\Forms\Contracts\Repositories\FormVersionRepositoryInterface;
-use Academorix\Forms\Models\FormVersion;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Forms\Contracts\Data\FormVersionInterface;
+use Stackra\Forms\Contracts\Repositories\FormVersionRepositoryInterface;
+use Stackra\Forms\Models\FormVersion;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Forms\Models\FormVersion}.
+ * Attribute-first Eloquent repository for {@see Stackra\Forms\Models\FormVersion}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(FormVersionInterface::class)]` which resolves to
  * `FormVersion` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Forms\Models\FormVersion>
+ * @extends Repository<\Stackra\Forms\Models\FormVersion>
  *
  * @category Forms
  *

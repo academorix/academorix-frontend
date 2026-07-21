@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/competition/jobs",
+  "id": "stackra://modules/competition/jobs",
   "$version": 1,
   "title": "competition — queued jobs",
   "description": "Queued jobs this module dispatches.",

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Resolver;
+namespace Stackra\FeatureFlags\Resolver;
 
-use Academorix\FeatureFlags\Resolver\Layers\DefaultLayer;
-use Academorix\FeatureFlags\Resolver\Layers\KillSwitchLayer;
-use Academorix\FeatureFlags\Resolver\Layers\OverrideLayer;
-use Academorix\FeatureFlags\Resolver\Layers\PlanGateLayer;
-use Academorix\FeatureFlags\Resolver\Layers\ResolverLayer;
-use Academorix\FeatureFlags\Resolver\Layers\RolloutLayer;
+use Stackra\FeatureFlags\Resolver\Layers\DefaultLayer;
+use Stackra\FeatureFlags\Resolver\Layers\KillSwitchLayer;
+use Stackra\FeatureFlags\Resolver\Layers\OverrideLayer;
+use Stackra\FeatureFlags\Resolver\Layers\PlanGateLayer;
+use Stackra\FeatureFlags\Resolver\Layers\ResolverLayer;
+use Stackra\FeatureFlags\Resolver\Layers\RolloutLayer;
 
 /**
  * Composes the fixed KillSwitch → Override → Rollout → PlanGate → Default chain.

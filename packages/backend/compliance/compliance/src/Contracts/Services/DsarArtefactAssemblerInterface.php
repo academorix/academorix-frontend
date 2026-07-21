@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Contracts\Services;
+namespace Stackra\Compliance\Contracts\Services;
 
-use Academorix\Compliance\Services\DsarArtefactAssembler;
+use Stackra\Compliance\Services\DsarArtefactAssembler;
 use Illuminate\Container\Attributes\Bind;
 
 /**

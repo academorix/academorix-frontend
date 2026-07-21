@@ -2,7 +2,7 @@
 
 /**
  * @file StubFormatter.php
- * @module Academorix\Cli\Stubs
+ * @module Stackra\Cli\Stubs
  * @description Post-render format dispatch. Delegates to the same
  *   `UsesFormatters`-style pipeline, but as a service so
  *   {@see StubRenderer} doesn't need the container plumbing that traits
@@ -11,9 +11,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Stubs;
+namespace Stackra\Cli\Stubs;
 
-use Academorix\Cli\Support\ProcessRunner;
+use Stackra\Cli\Support\ProcessRunner;
 use Symfony\Component\Process\ExecutableFinder;
 
 /**

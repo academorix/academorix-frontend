@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/sports-registry/permissions",
+  "id": "stackra://modules/sports-registry/permissions",
   "$version": 1,
   "title": "sports-registry — permissions",
-  "seeder": "Academorix\\Sports\\Registry\\Database\\Seeders\\RegistryPermissionSeeder",
+  "seeder": "Stackra\\Sports\\Registry\\Database\\Seeders\\RegistryPermissionSeeder",
   "isSystem": true,
   "scope_suffix_convention": "Every read permission is universal — the sport catalog is UI reference data that every tenant role reads (enrollment flows, roster forms, team creation, athlete profiles all need it). Writes are admin-owned. The `.tenant` suffix on writes is implicit (the observer refuses cross-tenant writes anyway).",
   "permissions": [

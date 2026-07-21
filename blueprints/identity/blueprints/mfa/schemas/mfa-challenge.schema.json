@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/mfa/schemas/mfa-challenge",
+  "id": "stackra://modules/mfa/schemas/mfa-challenge",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "MfaChallenge",
@@ -10,7 +10,7 @@
     "owner": "identity/auth",
     "consumer": "mfa",
     "description": "The auth_mfa_challenges table is a SHARED LEDGER for every authentication-related challenge (MFA, password-reset, email-verification). This module (mfa) uses only the MFA subset — rows where method IN ('totp', 'webauthn', 'recovery_code'). Password-reset + email-verification challenges are handled by identity/auth directly.",
-    "repository_binding": "Academorix\\Auth\\Contracts\\MfaChallengeRepositoryInterface (bound in identity/auth); mfa module injects this to CREATE / VERIFY / EXPIRE / INVALIDATE challenges."
+    "repository_binding": "Stackra\\Auth\\Contracts\\MfaChallengeRepositoryInterface (bound in identity/auth); mfa module injects this to CREATE / VERIFY / EXPIRE / INVALIDATE challenges."
   },
   "x-eloquent": {
     "baseClass": "Illuminate\\Database\\Eloquent\\Model",
@@ -19,8 +19,8 @@
     "keyType": "string",
     "keyPrefix": "mfc_",
     "incrementing": false,
-    "model": "Academorix\\Auth\\Models\\MfaChallenge",
-    "interface": "Academorix\\Auth\\Contracts\\Data\\MfaChallengeInterface",
+    "model": "Stackra\\Auth\\Models\\MfaChallenge",
+    "interface": "Stackra\\Auth\\Contracts\\Data\\MfaChallengeInterface",
     "note": "The MODEL lives in identity/auth. This schema documents the shape mfa sees when reading through the repository contract."
   },
   "x-database": {

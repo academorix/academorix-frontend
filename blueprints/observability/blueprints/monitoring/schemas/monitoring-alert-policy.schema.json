@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/monitoring/schemas/monitoring-alert-policy",
+  "id": "stackra://modules/monitoring/schemas/monitoring-alert-policy",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "MonitoringAlertPolicy",
@@ -13,10 +13,10 @@
     "keyType": "string",
     "keyPrefix": "map_",
     "incrementing": false,
-    "model": "Academorix\\Observability\\Monitoring\\Models\\MonitoringAlertPolicy",
-    "interface": "Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringAlertPolicyInterface",
+    "model": "Stackra\\Observability\\Monitoring\\Models\\MonitoringAlertPolicy",
+    "interface": "Stackra\\Observability\\Monitoring\\Contracts\\Data\\MonitoringAlertPolicyInterface",
     "implements": [
-      "Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringAlertPolicyInterface"
+      "Stackra\\Observability\\Monitoring\\Contracts\\Data\\MonitoringAlertPolicyInterface"
     ],
     "traits": [
       "HasFactory",

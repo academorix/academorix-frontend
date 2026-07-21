@@ -11,9 +11,9 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Support;
+namespace Stackra\Support;
 
-use Academorix\Support\Concerns\HasLaravelPaths;
+use Stackra\Support\Concerns\HasLaravelPaths;
 
 /**
  * Path Helper.

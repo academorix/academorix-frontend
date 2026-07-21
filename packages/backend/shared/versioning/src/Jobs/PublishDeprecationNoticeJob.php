@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Jobs;
+namespace Stackra\Versioning\Jobs;
 
-use Academorix\Versioning\Contracts\Repositories\DeprecationNoticeRepositoryInterface;
-use Academorix\Versioning\Contracts\Services\DeprecationNoticeServiceInterface;
+use Stackra\Versioning\Contracts\Repositories\DeprecationNoticeRepositoryInterface;
+use Stackra\Versioning\Contracts\Services\DeprecationNoticeServiceInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -16,12 +16,12 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 /**
- * Publish a draft {@see \Academorix\Versioning\Models\DeprecationNotice}
+ * Publish a draft {@see \Stackra\Versioning\Models\DeprecationNotice}
  * asynchronously.
  *
  * Wraps {@see DeprecationNoticeServiceInterface::publish()} so the
  * customer-notification fanout doesn't block the HTTP admin action.
- * The service emits {@see \Academorix\Versioning\Events\DeprecationNoticePublished}
+ * The service emits {@see \Stackra\Versioning\Events\DeprecationNoticePublished}
  * on completion; downstream listeners fan-out per-tenant notifications.
  *
  * @category Versioning

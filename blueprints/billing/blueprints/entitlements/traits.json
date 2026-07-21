@@ -1,18 +1,18 @@
 {
-  "id": "academorix://modules/entitlements/traits",
+  "id": "stackra://modules/entitlements/traits",
   "$version": 1,
   "title": "entitlements \u2014 trait composition",
   "description": "Two owned traits: `HasEntitlements` mixed into Tenant (adds ->entitlements() relation + resolveEntitlement($key) accessor); `MetersUsage` mixed into consumer models (adds ->consumesEntitlement($key, $amount) helper). Owned entities also compose the standard foundation + tenants trait stack.",
   "owned": [
     {
-      "trait": "Academorix\\Entitlements\\Concerns\\HasEntitlements",
+      "trait": "Stackra\\Entitlements\\Concerns\\HasEntitlements",
       "description": "Mixed into `Tenant`. Adds an `entitlements()` hasMany relation, a memoised `resolveEntitlement(string $key): ?Entitlement` accessor for fast in-request lookups, and a `getResolvedEntitlementsMap(): array` for /auth/me hydration.",
       "public": true,
       "usedBy": ["tenancy::Tenant"],
       "conflicts_with": []
     },
     {
-      "trait": "Academorix\\Entitlements\\Concerns\\MetersUsage",
+      "trait": "Stackra\\Entitlements\\Concerns\\MetersUsage",
       "description": "Helper trait for domain models that consume metered features (WebhookDelivery, NotificationDelivery, NewsletterCampaign counters, etc.). Adds `consumesEntitlement(string $key, int $amount = 1, ?string $correlationId = null): void` which delegates to Enforcer::consume(). No stored state.",
       "public": true,
       "usedBy": [
@@ -34,29 +34,29 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps",
+        "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps",
         "reason": "Track who applied a platform override on Entitlement."
       },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" }
     ],
     "tenants": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
         "reason": "Every Entitlement + EntitlementUsage row scoped to a tenant."
       }
     ],
     "activity": [
       {
-        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
         "reason": "Entitlement overrides + resets surface in the tenant activity feed."
       }
     ],
     "audit": [
       {
-        "trait": "Academorix\\Audit\\Concerns\\HasAudit",
+        "trait": "Stackra\\Audit\\Concerns\\HasAudit",
         "reason": "Entitlement override history is compliance-material (contract obligations). Applied to Entitlement, NOT to EntitlementUsage (volume too high)."
       }
     ]

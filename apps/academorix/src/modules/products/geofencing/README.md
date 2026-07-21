@@ -1,4 +1,4 @@
-# `academorix/geofencing`
+# `stackra/geofencing`
 
 Model-agnostic point-in-polygon primitive. Any Eloquent model can carry a
 geofence by using the `HasGeofence` trait + declaring itself with the

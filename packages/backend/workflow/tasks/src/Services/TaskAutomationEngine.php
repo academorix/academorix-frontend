@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tasks\Services;
+namespace Stackra\Tasks\Services;
 
-use Academorix\Tasks\Contracts\Services\TaskAutomationEngineInterface;
+use Stackra\Tasks\Contracts\Services\TaskAutomationEngineInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Tasks\Contracts\Repositories\TaskAssignmentRepositoryInterface;
+use Stackra\Tasks\Contracts\Repositories\TaskAssignmentRepositoryInterface;
 
 /**
  * Concrete service — TaskAutomationEngine.

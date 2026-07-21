@@ -18,7 +18,7 @@
  *     `#[RequirePermission]`.
  *   - Console commands: `#[AsCommand]` extending `BaseCommand`.
  *   - Seeder: `#[AsSeeder(priority: 44)]` — composes
- *     {@see \Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
+ *     {@see \Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
  *   - Events: `#[AsEvent]` on every class.
  *   - Observers: `#[ObservedBy]` on the models.
  *   - Policies: `#[UsePolicy]` on the models.
@@ -26,22 +26,22 @@
  *   - Signer / registries / sender / rotator / resolver: `#[Bind]` on
  *     the interfaces + `#[Singleton]` / `#[Scoped]` on the concretes.
  *   - Attribute registries: `#[HydratesFrom(AsWebhookEvent::class)]` on
- *     {@see \Academorix\Webhook\Contracts\Services\WebhookRegistryInterface::register()}
+ *     {@see \Stackra\Webhook\Contracts\Services\WebhookRegistryInterface::register()}
  *     and `#[HydratesFrom(AsWebhookDestination::class)]` on
- *     {@see \Academorix\Webhook\Contracts\Services\WebhookDestinationRegistryInterface::register()}
+ *     {@see \Stackra\Webhook\Contracts\Services\WebhookDestinationRegistryInterface::register()}
  *     — the framework's
- *     {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ *     {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  *     scans every class carrying the source attribute and calls
  *     `register()` on the resolved concrete.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Providers;
+namespace Stackra\Webhook\Providers;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * Webhook module service provider.

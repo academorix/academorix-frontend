@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/workflow/approvals/compliance",
+  "id": "stackra://modules/workflow/approvals/compliance",
   "$version": 1,
   "title": "approvals — compliance evidence",
-  "description": "This module is a load-bearing compliance-evidence surface. Every SOC 2 CC6.3 access-review control, ISO 27001 A.9.2 user-access-management control, and PCI-DSS 8.5 privileged-access control ties an audit trail requirement to an approval_instance. Retention windows align with SOC 2's 7-year evidence retention on executed approvals and 90-day hold on rejected + expired flows. Subprocessors: NONE — the module runs entirely on Academorix-owned infra + delegates notification transports to the notifications module (which handles subprocessor DPAs at that layer).",
+  "description": "This module is a load-bearing compliance-evidence surface. Every SOC 2 CC6.3 access-review control, ISO 27001 A.9.2 user-access-management control, and PCI-DSS 8.5 privileged-access control ties an audit trail requirement to an approval_instance. Retention windows align with SOC 2's 7-year evidence retention on executed approvals and 90-day hold on rejected + expired flows. Subprocessors: NONE — the module runs entirely on Stackra-owned infra + delegates notification transports to the notifications module (which handles subprocessor DPAs at that layer).",
   "regimes": {
     "gdpr": {
       "applicable": true,
@@ -50,7 +50,7 @@
         {
           "criterion": "CC7.2",
           "principle": "system monitoring",
-          "evidence": "MetricsCollector emits academorix.approvals.* counters (instances by status, decisions by outcome, expression evaluation timings, selector failures). Health probes check queue-depth + reminder-cadence + template-integrity. ReconcileTemplateVersionsJob nightly enforces defensive invariants."
+          "evidence": "MetricsCollector emits stackra.approvals.* counters (instances by status, decisions by outcome, expression evaluation timings, selector failures). Health probes check queue-depth + reminder-cadence + template-integrity. ReconcileTemplateVersionsJob nightly enforces defensive invariants."
         }
       ]
     },

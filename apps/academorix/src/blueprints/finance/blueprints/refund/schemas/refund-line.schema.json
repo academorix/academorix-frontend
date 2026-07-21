@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/refund/schemas/refund-line",
+  "id": "stackra://modules/refund/schemas/refund-line",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "RefundLine",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "rfl_",
     "incrementing": false,
-    "model": "Academorix\\Finance\\Refund\\Models\\RefundLine",
-    "interface": "Academorix\\Finance\\Refund\\Contracts\\Data\\RefundLineInterface",
-    "implements": ["Academorix\\Finance\\Refund\\Contracts\\Data\\RefundLineInterface"],
+    "model": "Stackra\\Finance\\Refund\\Models\\RefundLine",
+    "interface": "Stackra\\Finance\\Refund\\Contracts\\Data\\RefundLineInterface",
+    "implements": ["Stackra\\Finance\\Refund\\Contracts\\Data\\RefundLineInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

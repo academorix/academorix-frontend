@@ -1,9 +1,9 @@
-# academorix/notifications-sdk
+# stackra/notifications-sdk
 
 Typed Saloon SDK for the Notifications service — email, SMS, push, in-app,
 WhatsApp, templates, digests.
 
-Per-service umbrella SDK built on the shared kernel (`academorix/api-sdk`). It
+Per-service umbrella SDK built on the shared kernel (`stackra/api-sdk`). It
 owns the Notifications service connector (config `sdk.notifications.*`), a typed
 `NotificationsSdk` client, and a discovery pass scoped to
 `#[AsSdkResource(service: 'notifications')]`.
@@ -11,7 +11,7 @@ owns the Notifications service connector (config `sdk.notifications.*`), a typed
 ## Usage
 
 ```php
-use Academorix\NotificationsSdk\Client\NotificationsSdk;
+use Stackra\NotificationsSdk\Client\NotificationsSdk;
 
 $notifications = app(NotificationsSdk::class);
 $notifications->someResource()->find($id);

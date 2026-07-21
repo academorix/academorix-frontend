@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Development\Contracts\Data;
+namespace Stackra\Development\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Development\Models\ScoutingReport;
+use Stackra\Development\Models\ScoutingReport;
 
 /**
  * Table shape for the `scouting_reports` table.

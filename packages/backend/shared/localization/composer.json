@@ -1,10 +1,10 @@
 {
-  "name": "academorix/localization",
+  "name": "stackra/localization",
   "type": "library",
   "description": "Multilingual substrate on top of Laravel's built-in localization. Owns four entities — PlatformLanguage (platform catalogue of BCP-47 locale tags with script + platform state, FK-referencing geography::Language + optionally geography::Country for regional variants), TenantLocale (per-tenant enabled locales with default + fallback + auto-translate policy), Translation (persistent DB cache of resolved key→value bindings per tenant + locale), TranslationJob (audit trail for async bulk-translation work). Resolves the caller's active locale from a 7-step precedence chain (query, header, user, tenant, Accept-Language, subdomain, app default). Decorates Laravel's Translator so `t()`, `__()`, `trans()`, `trans_choice()` transparently consult the DB cache before the filesystem. Ships #[Translatable] attribute for Eloquent property translation. Publishes 5 machine-translation drivers (OpenAI, Google, DeepL, AWS Translate, Azure) + a null driver for tests. RTL-aware. All ISO-639 + ISO-3166 metadata sourced from the geography module — no field duplication.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "laravel",
     "localization",
     "i18n",
@@ -22,22 +22,22 @@
   ],
   "require": {
     "php": "^8.3",
-    "academorix/activity": "@dev",
-    "academorix/authorization": "@dev",
-    "academorix/console": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/database": "@dev",
-    "academorix/entitlements": "@dev",
-    "academorix/enum": "@dev",
-    "academorix/events": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
-    "academorix/geography": "@dev",
-    "academorix/retention": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix/tenancy": "@dev",
+    "stackra/activity": "@dev",
+    "stackra/authorization": "@dev",
+    "stackra/console": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/database": "@dev",
+    "stackra/entitlements": "@dev",
+    "stackra/enum": "@dev",
+    "stackra/events": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/geography": "@dev",
+    "stackra/retention": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra/tenancy": "@dev",
     "illuminate/contracts": "^13.0",
     "illuminate/database": "^13.0",
     "illuminate/events": "^13.0",
@@ -64,20 +64,20 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Localization\\": "src/",
-      "Academorix\\Localization\\Database\\Factories\\": "database/factories/",
-      "Academorix\\Localization\\Database\\Seeders\\": "database/seeders/"
+      "Stackra\\Localization\\": "src/",
+      "Stackra\\Localization\\Database\\Factories\\": "database/factories/",
+      "Stackra\\Localization\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Localization\\Tests\\": "tests/"
+      "Stackra\\Localization\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Localization\\Providers\\LocalizationServiceProvider"
+        "Stackra\\Localization\\Providers\\LocalizationServiceProvider"
       ],
       "aliases": {}
     }

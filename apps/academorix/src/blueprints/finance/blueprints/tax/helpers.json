@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/tax/helpers",
+  "id": "stackra://modules/tax/helpers",
   "$version": 1,
   "title": "tax — helper functions",
   "description": "Ergonomic helpers for the tax pipeline. All helpers are thin wrappers around bound services — never business logic. Callers who need tax calculation results should always go through the TaxCalculator service (which handles gate checks, retries, circuit-breaker, and snapshot persistence); helpers here are for imperative flows and support tooling.",
-  "namespace": "Academorix\\Finance\\Tax\\Support",
+  "namespace": "Stackra\\Finance\\Tax\\Support",
   "helpers": [
     {
       "signature": "resolve_tax_rate(TaxJurisdiction $jurisdiction, TaxRateType $rateType, TaxRateAppliesTo $appliesTo, ?CarbonImmutable $on = null): ?TaxRate",

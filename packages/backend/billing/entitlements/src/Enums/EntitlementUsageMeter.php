@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Enums;
+namespace Stackra\Entitlements\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `meter` on `entitlement-usage`.

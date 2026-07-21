@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/identity/helpers",
+  "id": "stackra://modules/identity/helpers",
   "$version": 1,
   "title": "identity \u2014 helper functions",
   "description": "One global helper. Everything else the module exposes is behind DI / facades \u2014 helpers here are for the rare case where a downstream module needs a synchronous lookup without pulling in the repository binding.",
-  "namespace": "Academorix\\Identity\\Support",
+  "namespace": "Stackra\\Identity\\Support",
   "helpers": [
     {
       "signature": "resolve_identity(string $email): ?Identity",

@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Actions\Tenant;
+namespace Stackra\Audit\Actions\Tenant;
 
-use Academorix\Audit\Contracts\Repositories\AuditRetentionPolicyRepositoryInterface;
-use Academorix\Audit\Data\AuditRetentionPolicyData;
-use Academorix\Audit\Data\Requests\CreateAuditRetentionPolicyRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Audit\Contracts\Repositories\AuditRetentionPolicyRepositoryInterface;
+use Stackra\Audit\Data\AuditRetentionPolicyData;
+use Stackra\Audit\Data\Requests\CreateAuditRetentionPolicyRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/audit-retention-policies` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Audit

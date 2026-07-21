@@ -12,15 +12,15 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Enum;
+namespace Stackra\Enum;
 
-use Academorix\Enum\Concerns\CallableCases;
-use Academorix\Enum\Concerns\Comparable;
-use Academorix\Enum\Concerns\Metable;
-use Academorix\Enum\Concerns\Nameable;
-use Academorix\Enum\Concerns\Optionable;
-use Academorix\Enum\Concerns\Translatable;
-use Academorix\Enum\Concerns\Valuable;
+use Stackra\Enum\Concerns\CallableCases;
+use Stackra\Enum\Concerns\Comparable;
+use Stackra\Enum\Concerns\Metable;
+use Stackra\Enum\Concerns\Nameable;
+use Stackra\Enum\Concerns\Optionable;
+use Stackra\Enum\Concerns\Translatable;
+use Stackra\Enum\Concerns\Valuable;
 
 /**
  * Base Enum Trait.
@@ -39,9 +39,9 @@ use Academorix\Enum\Concerns\Valuable;
  *
  * ## Usage:
  * ```php
- * use Academorix\Enum\Enum;
- * use Academorix\Enum\Attributes\Description;
- * use Academorix\Enum\Attributes\Label;
+ * use Stackra\Enum\Enum;
+ * use Stackra\Enum\Attributes\Description;
+ * use Stackra\Enum\Attributes\Label;
  *
  * #[Meta([Description::class, Label::class])]
  * enum Status: string
@@ -67,7 +67,7 @@ use Academorix\Enum\Concerns\Valuable;
  * Status::ACTIVE()->label();       // Returns translated label
  * ```
  *
- * @author  Academorix Development Team
+ * @author  Stackra Development Team
  *
  * @since   1.0.0
  */

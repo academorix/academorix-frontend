@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Policies;
+namespace Stackra\Rbac\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Rbac\Models\Role;
+use Stackra\User\Models\User;
+use Stackra\Rbac\Models\Role;
 
 /**
- * Authorization policy for {@see \Academorix\Rbac\Models\Role}.
+ * Authorization policy for {@see \Stackra\Rbac\Models\Role}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

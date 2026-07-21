@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Concerns;
+namespace Stackra\Rbac\Concerns;
 
 /**
  * Trait — IsPermissionable.

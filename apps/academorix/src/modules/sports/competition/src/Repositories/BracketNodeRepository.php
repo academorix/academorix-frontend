@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Competition\Repositories;
+namespace Stackra\Competition\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Competition\Contracts\Data\BracketNodeInterface;
-use Academorix\Competition\Contracts\Repositories\BracketNodeRepositoryInterface;
-use Academorix\Competition\Models\BracketNode;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Competition\Contracts\Data\BracketNodeInterface;
+use Stackra\Competition\Contracts\Repositories\BracketNodeRepositoryInterface;
+use Stackra\Competition\Models\BracketNode;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Competition\Models\BracketNode}.
+ * Attribute-first Eloquent repository for {@see Stackra\Competition\Models\BracketNode}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(BracketNodeInterface::class)]` which resolves to
  * `BracketNode` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Competition\Models\BracketNode>
+ * @extends Repository<\Stackra\Competition\Models\BracketNode>
  *
  * @category Competition
  *

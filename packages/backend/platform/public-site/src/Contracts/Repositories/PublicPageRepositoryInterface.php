@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PublicSite\Contracts\Repositories;
+namespace Stackra\PublicSite\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\PublicSite\Models\PublicPage}.
+ * Repository contract for {@see Stackra\PublicSite\Models\PublicPage}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `PublicPageRepository`.
  *
- * @extends RepositoryInterface<\Academorix\PublicSite\Models\PublicPage>
+ * @extends RepositoryInterface<\Stackra\PublicSite\Models\PublicPage>
  *
  * @category PublicSite
  *

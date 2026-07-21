@@ -14,7 +14,7 @@ extracted before the first consumer ships:
 | Invite a parent to become a Guardian for an athlete                     | `Athlete`                              | `sports` (or `guardians`) |
 | Invite an external player to join a Team                                | `Team`                                 | `teams`                   |
 | Invite a Club to join a Federation                                      | `Federation`                           | `federation`              |
-| Academorix invites their staff into a tenant for time-bounded support   | `Tenant` (with `impersonation` grants) | `auth`                    |
+| Stackra invites their staff into a tenant for time-bounded support   | `Tenant` (with `impersonation` grants) | `auth`                    |
 | Invite a prospect to a trial session                                    | `TrialSession`                         | `sports`                  |
 | Invite an external evaluator (referee / assessor) with narrow abilities | `Event` or `Assessment`                | `sports`                  |
 
@@ -81,7 +81,7 @@ Every transition writes an `InvitationEvent` row.
 | `POST /api/v1/tenant/invitations/{invitation}/resend` | `InvitationPolicy@resend`  |
 | `POST /api/v1/tenant/invitations/{invitation}/revoke` | `InvitationPolicy@revoke`  |
 
-### Platform-admin host (Academorix staff)
+### Platform-admin host (Stackra staff)
 
 Cross-tenant search + audit. Read-only + revoke for abuse investigation.
 

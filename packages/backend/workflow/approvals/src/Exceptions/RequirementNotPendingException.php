@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Exceptions;
+namespace Stackra\Approvals\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to approve/reject a specific requirement not in status='pending' (already satisfied, failed, or still blocked by a sort_order predecessor).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class RequirementNotPendingException extends AcademorixException
+final class RequirementNotPendingException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

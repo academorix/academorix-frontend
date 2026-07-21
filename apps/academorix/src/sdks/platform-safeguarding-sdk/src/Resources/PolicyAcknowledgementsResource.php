@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformSafeguardingSdk\Resources;
+namespace Stackra\PlatformSafeguardingSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\PlatformSafeguardingSdk\Data\PolicyAcknowledgementData;
-use Academorix\PlatformSafeguardingSdk\Requests\PolicyAcknowledgements\ListPolicyAcknowledgementsRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\PlatformSafeguardingSdk\Data\PolicyAcknowledgementData;
+use Stackra\PlatformSafeguardingSdk\Requests\PolicyAcknowledgements\ListPolicyAcknowledgementsRequest;
 use Saloon\Http\Response;
 
 /**

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Jobs;
+namespace Stackra\Domains\Jobs;
 
-use Academorix\Domains\Contracts\Data\DomainInterface;
-use Academorix\Domains\Contracts\Data\DomainRecordInterface;
-use Academorix\Domains\Contracts\Repositories\DomainRecordRepositoryInterface;
-use Academorix\Domains\Contracts\Repositories\DomainRepositoryInterface;
-use Academorix\Domains\Contracts\Services\DomainVerifierInterface;
-use Academorix\Domains\Events\DomainVerificationFailed;
-use Academorix\Domains\Events\DomainVerified;
-use Academorix\Domains\Jobs\IssueCertificateJob;
-use Academorix\Domains\Models\DomainRecord;
+use Stackra\Domains\Contracts\Data\DomainInterface;
+use Stackra\Domains\Contracts\Data\DomainRecordInterface;
+use Stackra\Domains\Contracts\Repositories\DomainRecordRepositoryInterface;
+use Stackra\Domains\Contracts\Repositories\DomainRepositoryInterface;
+use Stackra\Domains\Contracts\Services\DomainVerifierInterface;
+use Stackra\Domains\Events\DomainVerificationFailed;
+use Stackra\Domains\Events\DomainVerified;
+use Stackra\Domains\Jobs\IssueCertificateJob;
+use Stackra\Domains\Models\DomainRecord;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;

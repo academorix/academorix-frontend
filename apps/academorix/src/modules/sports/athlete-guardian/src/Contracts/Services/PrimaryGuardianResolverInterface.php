@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AthleteGuardian\Contracts\Services;
+namespace Stackra\AthleteGuardian\Contracts\Services;
 
-use Academorix\AthleteGuardian\Models\AthleteGuardian;
-use Academorix\AthleteGuardian\Services\PrimaryGuardianResolver;
+use Stackra\AthleteGuardian\Models\AthleteGuardian;
+use Stackra\AthleteGuardian\Services\PrimaryGuardianResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -56,7 +56,7 @@ interface PrimaryGuardianResolverInterface
      * `is_primary = false`. Wrapped in a transaction so the invariant
      * "exactly one primary per athlete" always holds.
      *
-     * @throws \Academorix\AthleteGuardian\Exceptions\GuardianAthleteAlreadyHasPrimaryException
+     * @throws \Stackra\AthleteGuardian\Exceptions\GuardianAthleteAlreadyHasPrimaryException
      *         Only used for pathological states — see the code.
      */
     public function reassignPrimary(AthleteGuardian $target): AthleteGuardian;

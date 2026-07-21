@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/delegation/settings",
+  "id": "stackra://modules/delegation/settings",
   "$version": 1,
   "title": "delegation — settings",
   "description": "Tenant-facing preferences for role delegation lifecycle notifications + per-user delegation preferences.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "delegation",
-      "class": "Academorix\\Delegation\\Settings\\DelegationSettings",
+      "class": "Stackra\\Delegation\\Settings\\DelegationSettings",
       "label": "Delegation",
       "description": "Tenant-wide delegation policy — window caps, notification behaviour, emergency-flow eligibility.",
       "icon": "user-group",
@@ -95,7 +95,7 @@
     },
     {
       "key": "delegation_user",
-      "class": "Academorix\\Delegation\\Settings\\DelegationUserSettings",
+      "class": "Stackra\\Delegation\\Settings\\DelegationUserSettings",
       "label": "My delegations",
       "description": "Per-user delegation notification preferences.",
       "icon": "user-circle",

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Contracts\Services;
+namespace Stackra\ServiceAccounts\Contracts\Services;
 
-use Academorix\ServiceAccounts\Services\DormantAccountDetector;
+use Stackra\ServiceAccounts\Services\DormantAccountDetector;
 use Illuminate\Container\Attributes\Bind;
 
 /**

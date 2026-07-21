@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Policies;
+namespace Stackra\Monitoring\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Monitoring\Models\HealthCheckRun;
+use Stackra\User\Models\User;
+use Stackra\Monitoring\Models\HealthCheckRun;
 
 /**
- * Authorization policy for {@see \Academorix\Monitoring\Models\HealthCheckRun}.
+ * Authorization policy for {@see \Stackra\Monitoring\Models\HealthCheckRun}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Data;
+namespace Stackra\Forms\Data;
 
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Result of {@see \Academorix\Forms\Services\FormValidator::validate}.
+ * Result of {@see \Stackra\Forms\Services\FormValidator::validate}.
  *
  * `passed` is the top-line flag callers branch on. When false,
  * `errors` maps each failed field key to a list of Laravel-style

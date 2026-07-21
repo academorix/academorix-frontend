@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Jobs;
+namespace Stackra\Audit\Jobs;
 
-use Academorix\Audit\Contracts\Data\AuditInterface;
-use Academorix\Audit\Contracts\Services\AuditRegistryInterface;
-use Academorix\Audit\Contracts\Services\KmsCipherInterface;
-use Academorix\Audit\Models\Audit;
+use Stackra\Audit\Contracts\Data\AuditInterface;
+use Stackra\Audit\Contracts\Services\AuditRegistryInterface;
+use Stackra\Audit\Contracts\Services\KmsCipherInterface;
+use Stackra\Audit\Models\Audit;
 use Illuminate\Bus\Queueable;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Contracts\Queue\ShouldQueue;

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branch\Exceptions;
+namespace Stackra\Branch\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to close a Branch with active downstream references (teams, facilities, sessions, bookings, memberships).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class BranchInUseException extends AcademorixException
+final class BranchInUseException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

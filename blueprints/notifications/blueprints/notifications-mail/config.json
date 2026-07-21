@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-mail/config",
+  "id": "stackra://modules/notifications-mail/config",
   "$version": 1,
   "title": "notifications-mail \u2014 developer configuration",
   "description": "Deploy-static configuration. Mirrors `config/notifications-mail.php`. Delegates transport to Laravel Mail's own `config/mail.php` \u2014 the driver + mailer definitions live there. This config governs per-category routing + provider observability + suppression cache TTLs.",

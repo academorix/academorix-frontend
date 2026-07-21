@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Contracts\Data;
+namespace Stackra\Compliance\Contracts\Data;
 
-use Academorix\Compliance\Models\ConsentRecord;
+use Stackra\Compliance\Models\ConsentRecord;
 use Illuminate\Container\Attributes\Bind;
 
 /**

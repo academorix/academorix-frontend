@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/search/schemas/search-index",
+  "id": "stackra://modules/search/schemas/search-index",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "SearchIndex",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "sidx_",
     "incrementing": false,
-    "model": "Academorix\\Search\\Models\\SearchIndex",
-    "interface": "Academorix\\Search\\Contracts\\Data\\SearchIndexInterface",
-    "implements": ["Academorix\\Search\\Contracts\\Data\\SearchIndexInterface"],
+    "model": "Stackra\\Search\\Models\\SearchIndex",
+    "interface": "Stackra\\Search\\Contracts\\Data\\SearchIndexInterface",
+    "implements": ["Stackra\\Search\\Contracts\\Data\\SearchIndexInterface"],
     "traits": [
       "HasUlids",
       "BelongsToTenant",
@@ -25,9 +25,9 @@
       "SoftDeletes"
     ],
     "casts": {
-      "engine": "Academorix\\Search\\Enums\\SearchEngine",
-      "status": "Academorix\\Search\\Enums\\SearchIndexStatus",
-      "field_specs": "Academorix\\Search\\Casts\\SearchFieldSpecCast",
+      "engine": "Stackra\\Search\\Enums\\SearchEngine",
+      "status": "Stackra\\Search\\Enums\\SearchIndexStatus",
+      "field_specs": "Stackra\\Search\\Casts\\SearchFieldSpecCast",
       "facet_specs": "array",
       "boost_specs": "array",
       "metadata": "array",

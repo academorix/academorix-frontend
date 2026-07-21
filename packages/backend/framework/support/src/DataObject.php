@@ -12,13 +12,13 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Support;
+namespace Stackra\Support;
 
 use function in_array;
 
 use JsonException;
-use Academorix\Foundation\Contracts\DataObjectInterface;
-use Academorix\Foundation\Exceptions\Exception;
+use Stackra\Foundation\Contracts\DataObjectInterface;
+use Stackra\Foundation\Exceptions\Exception;
 use ReflectionException;
 use Spatie\LaravelData\Data;
 

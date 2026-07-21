@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/user/entitlements",
+  "id": "stackra://modules/user/entitlements",
   "$version": 1,
   "title": "user \u2014 declared entitlements",
   "description": "Five entitlement keys. Feature booleans gate capability visibility. Slots scope quantity. Pools scope per-period consumption (bulk-invite is quota-gated).",

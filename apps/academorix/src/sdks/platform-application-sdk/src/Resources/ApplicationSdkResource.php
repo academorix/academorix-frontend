@@ -1,12 +1,12 @@
 <?php
 
 /**
- * @file apps/academorix/src/sdks/platform-application-sdk/src/Resources/ApplicationSdkResource.php
+ * @file apps/stackra/src/sdks/platform-application-sdk/src/Resources/ApplicationSdkResource.php
  *
  * @description
  * Discovery-marked SDK entry point for the `application` module of
  * the Platform service. Auto-discovered at boot by
- * {@see \Academorix\PlatformSdk\Providers\PlatformSdkServiceProvider}
+ * {@see \Stackra\PlatformSdk\Providers\PlatformSdkServiceProvider}
  * because the attribute below carries `service: 'platform'`; the
  * provider attaches the shared Saloon connector via
  * `attachConnector()` before this class is exposed to consumers.
@@ -26,7 +26,7 @@
  * ## Consumer usage
  *
  * ```php
- * use Academorix\PlatformSdk\Client\PlatformSdk;
+ * use Stackra\PlatformSdk\Client\PlatformSdk;
  *
  * $platform = app(PlatformSdk::class);
  *
@@ -40,17 +40,17 @@
  * $types = $platform->application()->businessTypes()->list();
  * ```
  *
- * @see \Academorix\PlatformApplicationSdk\Resources\ApplicationsResource
- * @see \Academorix\PlatformApplicationSdk\Resources\ApplicationsAdminResource
- * @see \Academorix\PlatformApplicationSdk\Resources\BusinessTypesResource
+ * @see \Stackra\PlatformApplicationSdk\Resources\ApplicationsResource
+ * @see \Stackra\PlatformApplicationSdk\Resources\ApplicationsAdminResource
+ * @see \Stackra\PlatformApplicationSdk\Resources\BusinessTypesResource
  */
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformApplicationSdk\Resources;
+namespace Stackra\PlatformApplicationSdk\Resources;
 
-use Academorix\ApiSdk\Attributes\AsSdkResource;
-use Academorix\ApiSdk\Resources\BaseSdkResource;
+use Stackra\ApiSdk\Attributes\AsSdkResource;
+use Stackra\ApiSdk\Resources\BaseSdkResource;
 
 /**
  * Top-level SDK resource for the `application` module.

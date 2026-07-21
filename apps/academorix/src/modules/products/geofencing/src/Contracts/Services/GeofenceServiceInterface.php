@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Contracts\Services;
+namespace Stackra\Geofencing\Contracts\Services;
 
-use Academorix\Geofencing\Contracts\Geofenceable;
-use Academorix\Geofencing\Data\EvaluateGeofenceData;
-use Academorix\Geofencing\Data\GeofenceCheckResultData;
-use Academorix\Geofencing\Services\GeofenceService;
+use Stackra\Geofencing\Contracts\Geofenceable;
+use Stackra\Geofencing\Data\EvaluateGeofenceData;
+use Stackra\Geofencing\Data\GeofenceCheckResultData;
+use Stackra\Geofencing\Services\GeofenceService;
 use Illuminate\Container\Attributes\Bind;
 
 /**

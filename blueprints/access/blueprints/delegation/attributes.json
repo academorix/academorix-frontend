@@ -1,20 +1,20 @@
 {
-  "id": "academorix://modules/delegation/attributes",
+  "id": "stackra://modules/delegation/attributes",
   "$version": 1,
   "title": "delegation — PHP attribute contracts",
   "description": "Two attributes for lifecycle listeners. `#[AsDelegationListener]` marks a class as a subscriber to role_delegations events (Created / Activated / Expired / RevokedEarly / SelfOverlapDetected). `#[AsImpersonationListener]` marks a class as a subscriber to impersonation_sessions events (Started / Ended / Extended / ForcedTerminate / AttemptRefused). Both are discovered at boot by `DelegationServiceProvider` so internal services under `notifications`, `observability`, `compliance`, and `workflow/approvals` react without hard-coded event bindings.",
-  "namespace": "Academorix\\Delegation\\Attributes",
+  "namespace": "Stackra\\Delegation\\Attributes",
   "attributes": [
     {
       "name": "AsDelegationListener",
-      "class": "Academorix\\Delegation\\Attributes\\AsDelegationListener",
+      "class": "Stackra\\Delegation\\Attributes\\AsDelegationListener",
       "targets": ["class"],
       "params": [
         {
           "name": "events",
           "type": "array<string>",
           "default": ["*"],
-          "description": "Which delegation events this class reacts to. Wildcard `*` = every event under `Academorix\\Delegation\\Events\\*` matching the delegation aggregate (Created / Activated / Expired / RevokedEarly / SelfOverlapDetected). Specific list e.g. `['DelegationRevokedEarly']` subscribes to that event only. Validated against the events map at boot; typos abort application boot."
+          "description": "Which delegation events this class reacts to. Wildcard `*` = every event under `Stackra\\Delegation\\Events\\*` matching the delegation aggregate (Created / Activated / Expired / RevokedEarly / SelfOverlapDetected). Specific list e.g. `['DelegationRevokedEarly']` subscribes to that event only. Validated against the events map at boot; typos abort application boot."
         },
         {
           "name": "queue",
@@ -33,14 +33,14 @@
     },
     {
       "name": "AsImpersonationListener",
-      "class": "Academorix\\Delegation\\Attributes\\AsImpersonationListener",
+      "class": "Stackra\\Delegation\\Attributes\\AsImpersonationListener",
       "targets": ["class"],
       "params": [
         {
           "name": "events",
           "type": "array<string>",
           "default": ["*"],
-          "description": "Which impersonation events this class reacts to. Wildcard `*` = every event under `Academorix\\Delegation\\Events\\*` matching the impersonation aggregate (Started / Ended / Extended / ForcedTerminate / AttemptRefused). Specific list e.g. `['ImpersonationSessionForcedTerminate']` subscribes to that event only."
+          "description": "Which impersonation events this class reacts to. Wildcard `*` = every event under `Stackra\\Delegation\\Events\\*` matching the impersonation aggregate (Started / Ended / Extended / ForcedTerminate / AttemptRefused). Specific list e.g. `['ImpersonationSessionForcedTerminate']` subscribes to that event only."
         },
         {
           "name": "queue",

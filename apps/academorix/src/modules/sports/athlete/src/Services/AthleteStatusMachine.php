@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Athlete\Services;
+namespace Stackra\Athlete\Services;
 
-use Academorix\Athlete\Contracts\Data\AthleteInterface;
-use Academorix\Athlete\Contracts\Repositories\AthleteRepositoryInterface;
-use Academorix\Athlete\Contracts\Services\AthleteStatusMachineInterface;
-use Academorix\Athlete\Enums\AthleteStatus;
-use Academorix\Athlete\Exceptions\AthletePauseReasonRequiredException;
-use Academorix\Athlete\Exceptions\AthleteStatusTransitionInvalidException;
-use Academorix\Athlete\Exceptions\AthleteWithdrawalReasonRequiredException;
-use Academorix\Athlete\Models\Athlete;
+use Stackra\Athlete\Contracts\Data\AthleteInterface;
+use Stackra\Athlete\Contracts\Repositories\AthleteRepositoryInterface;
+use Stackra\Athlete\Contracts\Services\AthleteStatusMachineInterface;
+use Stackra\Athlete\Enums\AthleteStatus;
+use Stackra\Athlete\Exceptions\AthletePauseReasonRequiredException;
+use Stackra\Athlete\Exceptions\AthleteStatusTransitionInvalidException;
+use Stackra\Athlete\Exceptions\AthleteWithdrawalReasonRequiredException;
+use Stackra\Athlete\Models\Athlete;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Support\Facades\DB;
 

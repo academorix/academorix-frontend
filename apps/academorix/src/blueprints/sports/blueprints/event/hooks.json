@@ -1,22 +1,22 @@
 {
-  "id": "academorix://modules/event/hooks",
+  "id": "stackra://modules/event/hooks",
   "$version": 1,
   "title": "event — tenancy hooks",
   "description": "This module is tenant-aware and participates in tenancy + facility lifecycle. Two hooks: prevent orphans on tenant erasure, and cascade event_facilities cleanup on facility retirement.",
   "reference": {
-    "contract": "academorix://modules/tenancy/hooks",
+    "contract": "stackra://modules/tenancy/hooks",
     "hierarchy_note": "See hierarchy.md §12 for tenancy-lifecycle vs domain-event separation."
   },
   "hooks": [
     {
-      "class": "Academorix\\Sports\\Event\\Hooks\\PreventEventOrphansOnTenantErased",
+      "class": "Stackra\\Sports\\Event\\Hooks\\PreventEventOrphansOnTenantErased",
       "event": "tenancy::TenantErased",
       "lifecycle_phase": "before_cascade",
       "queue": null,
       "purpose": "Runs BEFORE tenancy's FK cascade drops the tenant. Iterates every Event on the tenant + verifies no active inbound reference remains (Session.event_id, EventTeam.event_id, athlete_enrollment references — Wave 3+). When any inbound reference exists, logs a diagnostic in the tenancy erasure report. Does NOT rehome Events to another tenant. The actual DELETE fires afterward via the tenant_id FK CASCADE + event_facilities cascades via CASCADE FK."
     },
     {
-      "class": "Academorix\\Sports\\Event\\Hooks\\CascadeEventFacilitiesOnFacilityRetired",
+      "class": "Stackra\\Sports\\Event\\Hooks\\CascadeEventFacilitiesOnFacilityRetired",
       "event": "facility::FacilityRetired",
       "lifecycle_phase": "after_commit",
       "queue": "sports",

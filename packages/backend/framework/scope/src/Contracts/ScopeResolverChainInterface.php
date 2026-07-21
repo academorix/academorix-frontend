@@ -12,10 +12,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Contracts;
+namespace Stackra\Scope\Contracts;
 
-use Academorix\Scope\Data\ScopeContextData;
-use Academorix\Scope\Services\ScopeResolverChain;
+use Stackra\Scope\Data\ScopeContextData;
+use Stackra\Scope\Services\ScopeResolverChain;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Http\Request;

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/sports-registry/data-classes",
+  "id": "stackra://modules/sports-registry/data-classes",
   "$version": 1,
   "title": "sports-registry — field classification",
   "description": "Sports / Disciplines / Positions carry only reference data. Zero PII on any row. All three entities are safe to cache aggressively per-tenant + safe to expose in every consumer-scoped API response. The safeguarding-adjacent field is `gender_typical` — some sports have male-only or female-only governance rules (masters swimming M35 vs W35, most rugby unions), which downstream Athlete flows honour via the eligibility resolver. Bounds mutations to age_range_min/max on Sport can cascade to downstream AgeGroup + Team eligibility recomputations, so they audit at info severity.",

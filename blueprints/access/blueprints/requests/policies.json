@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/access/requests/policies",
+  "id": "stackra://modules/access/requests/policies",
   "$version": 1,
   "title": "requests \u2014 authorization policies",
-  "description": "One policy class \u2014 `AccessRequestPolicy` \u2014 with abilities on both `sanctum` (tenant users submitting + reviewing) and `platform_admin` (Academorix ops for cross-tenant compliance). Guard-aware \u2014 each ability checks the caller's guard first and refuses cross-guard actions.",
+  "description": "One policy class \u2014 `AccessRequestPolicy` \u2014 with abilities on both `sanctum` (tenant users submitting + reviewing) and `platform_admin` (Stackra ops for cross-tenant compliance). Guard-aware \u2014 each ability checks the caller's guard first and refuses cross-guard actions.",
   "policies": [
     {
-      "class": "Academorix\\AccessRequest\\Policies\\AccessRequestPolicy",
-      "target": "Academorix\\AccessRequest\\Data\\AccessRequestData",
+      "class": "Stackra\\AccessRequest\\Policies\\AccessRequestPolicy",
+      "target": "Stackra\\AccessRequest\\Data\\AccessRequestData",
       "guard": ["sanctum", "platform_admin"],
       "abilities": [
         {
@@ -55,7 +55,7 @@
           "name": "viewAnyPlatform",
           "guard": "platform_admin",
           "requires": ["access-requests.manage_any"],
-          "description": "Cross-tenant list for Academorix ops. Filters + audit context capture on every list read (SOC 2 CC6.1)."
+          "description": "Cross-tenant list for Stackra ops. Filters + audit context capture on every list read (SOC 2 CC6.1)."
         },
         {
           "name": "viewPlatform",

@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Database\Factories;
+namespace Stackra\Attribution\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Attribution\Contracts\Data\AttributionInterface;
-use Academorix\Attribution\Models\Attribution;
+use Stackra\Attribution\Contracts\Data\AttributionInterface;
+use Stackra\Attribution\Models\Attribution;
 
 /**
- * Factory for {@see \Academorix\Attribution\Models\Attribution}.
+ * Factory for {@see \Stackra\Attribution\Models\Attribution}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Attribution\Models\Attribution>
+ * @extends Factory<\Stackra\Attribution\Models\Attribution>
  *
  * @category Attribution
  *

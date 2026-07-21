@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invitations/config",
+  "id": "stackra://modules/invitations/config",
   "$version": 1,
   "title": "invitations — developer configuration",
   "description": "Developer / operator configuration. Mirrors `config/invitations.php`. Static per deploy; changing requires redeploy + `config:cache`. Distinct from settings.json (which is tenant-editable at runtime).",
@@ -100,7 +100,7 @@
         {
           "path": "invitations.transports.per_application",
           "type": "map<application_slug, transport>",
-          "default": { "academorix": "sendgrid", "academorix-eu": "ses" },
+          "default": { "stackra": "sendgrid", "stackra-eu": "ses" },
           "description": "Per-Application transport routing. EU app defaults to SES for data-residency."
         },
         {

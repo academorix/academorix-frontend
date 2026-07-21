@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsInApp\Services;
+namespace Stackra\NotificationsInApp\Services;
 
-use Academorix\NotificationsInApp\Contracts\Services\InAppChannelInterface;
+use Stackra\NotificationsInApp\Contracts\Services\InAppChannelInterface;
 use Illuminate\Container\Attributes\Scoped;
 
 

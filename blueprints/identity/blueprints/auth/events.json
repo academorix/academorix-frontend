@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/auth/events",
+  "id": "stackra://modules/auth/events",
   "$version": 1,
   "title": "auth \u2014 published events",
-  "namespace": "Academorix\\Auth\\Events",
+  "namespace": "Stackra\\Auth\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every auth-lifecycle event fires after DB commit so downstream listeners never see uncommitted state. Payloads are readonly value objects. Payloads carry `user_id` / `identity_id` / `token_id` only \u2014 downstream services that need email / roles / permissions re-fetch through IdentityRepository or UserRepository so redaction rules apply consistently. High-severity events (RefreshTokenReuseDetected, JwtRevoked, ImpersonationStarted) fire on `notifications-critical` so ops paging pipelines catch them.",
   "events": [
     {
       "name": "UserLoggedIn",
-      "class": "Academorix\\Auth\\Events\\UserLoggedIn",
+      "class": "Stackra\\Auth\\Events\\UserLoggedIn",
       "trigger": "Successful password + optional MFA verification \u2192 Sanctum PAT issued. Fires exactly once per interactive login (never on refresh, never on cross-app grant exchange).",
       "queue": "notifications",
       "consumers": [
@@ -33,7 +33,7 @@
     },
     {
       "name": "UserLoggedOut",
-      "class": "Academorix\\Auth\\Events\\UserLoggedOut",
+      "class": "Stackra\\Auth\\Events\\UserLoggedOut",
       "trigger": "POST /auth/logout OR platform equivalent. Sanctum PAT revoked + paired refresh token consumed in the same transaction.",
       "queue": "notifications",
       "consumers": ["activity::WriteToActivityLog", "observability::EmitLogoutMetric"],
@@ -48,7 +48,7 @@
     },
     {
       "name": "SessionRevoked",
-      "class": "Academorix\\Auth\\Events\\SessionRevoked",
+      "class": "Stackra\\Auth\\Events\\SessionRevoked",
       "trigger": "A single PAT was revoked (via HasSessionRevocation trait, direct API call, or platform-admin action). Distinguished from UserLoggedOut because it does NOT require the user to be the actor.",
       "queue": "notifications",
       "consumers": ["activity::WriteToActivityLog", "observability::EmitSessionRevokedMetric"],
@@ -62,7 +62,7 @@
     },
     {
       "name": "AllSessionsRevoked",
-      "class": "Academorix\\Auth\\Events\\AllSessionsRevoked",
+      "class": "Stackra\\Auth\\Events\\AllSessionsRevoked",
       "trigger": "Bulk revocation \u2014 every active PAT for a User (or every User referencing an Identity in the cross-Application PasswordChanged case). Fires ONCE with the count; per-token SessionRevoked NOT fired for the bulk case.",
       "queue": "notifications-critical",
       "consumers": [
@@ -80,7 +80,7 @@
     },
     {
       "name": "RefreshTokenRotated",
-      "class": "Academorix\\Auth\\Events\\RefreshTokenRotated",
+      "class": "Stackra\\Auth\\Events\\RefreshTokenRotated",
       "trigger": "Refresh token exchanged for a new PAT + new refresh token. Old refresh consumed + new one issued inside the family_id chain.",
       "queue": null,
       "consumers": ["observability::EmitRefreshRotationMetric"],
@@ -95,7 +95,7 @@
     },
     {
       "name": "RefreshTokenReuseDetected",
-      "class": "Academorix\\Auth\\Events\\RefreshTokenReuseDetected",
+      "class": "Stackra\\Auth\\Events\\RefreshTokenReuseDetected",
       "trigger": "An already-consumed refresh token was presented again \u2014 canonical BCP defense signal from RFC draft-ietf-oauth-security-topics. The reuse indicates an attacker has captured a token; every PAT + refresh token in the family is invalidated + every session for the User revoked as a breach response.",
       "queue": "notifications-critical",
       "consumers": [
@@ -115,7 +115,7 @@
     },
     {
       "name": "PasswordResetInitiated",
-      "class": "Academorix\\Auth\\Events\\PasswordResetInitiated",
+      "class": "Stackra\\Auth\\Events\\PasswordResetInitiated",
       "trigger": "POST /auth/password/forgot passed rate-limit + resolved a real Identity. NEVER fired when email is unknown (enumeration safety). This is the AUTH surface's version of identity::PasswordResetRequested \u2014 fires alongside identity's event, since auth OWNS the endpoint.",
       "queue": "notifications",
       "consumers": ["notifications::DispatchPasswordResetLinkNotification"],
@@ -129,7 +129,7 @@
     },
     {
       "name": "PasswordResetCompleted",
-      "class": "Academorix\\Auth\\Events\\PasswordResetCompleted",
+      "class": "Stackra\\Auth\\Events\\PasswordResetCompleted",
       "trigger": "PasswordReset token exchanged for a new password. Token consumed atomically + all sessions revoked in the same transaction.",
       "queue": "notifications",
       "consumers": [
@@ -144,7 +144,7 @@
     },
     {
       "name": "EmailVerificationRequested",
-      "class": "Academorix\\Auth\\Events\\EmailVerificationRequested",
+      "class": "Stackra\\Auth\\Events\\EmailVerificationRequested",
       "trigger": "New EmailVerification token issued (registration OR email-change flow OR explicit resend). Debounced 60s per identity_id.",
       "queue": "notifications",
       "consumers": ["notifications::DispatchEmailVerificationLinkNotification"],
@@ -157,7 +157,7 @@
     },
     {
       "name": "EmailVerificationCompleted",
-      "class": "Academorix\\Auth\\Events\\EmailVerificationCompleted",
+      "class": "Stackra\\Auth\\Events\\EmailVerificationCompleted",
       "trigger": "EmailVerification token exchanged for identity.email_verified_at = now(). Token consumed atomically. Fires alongside identity::IdentityEmailVerified \u2014 auth OWNS the endpoint, identity OWNS the substrate mutation.",
       "queue": "notifications",
       "consumers": ["activity::WriteToActivityLog"],
@@ -169,7 +169,7 @@
     },
     {
       "name": "CrossAppGrantIssued",
-      "class": "Academorix\\Auth\\Events\\CrossAppGrantIssued",
+      "class": "Stackra\\Auth\\Events\\CrossAppGrantIssued",
       "trigger": "POST /auth/cross-app/grant succeeded \u2014 short-lived (300s) grant token issued to the caller for exchange on the target Application.",
       "queue": "notifications",
       "consumers": [
@@ -188,7 +188,7 @@
     },
     {
       "name": "CrossAppGrantExchanged",
-      "class": "Academorix\\Auth\\Events\\CrossAppGrantExchanged",
+      "class": "Stackra\\Auth\\Events\\CrossAppGrantExchanged",
       "trigger": "POST /auth/cross-app/exchange consumed a valid grant \u2192 target-Application PAT issued. Grant marked consumed atomically.",
       "queue": "notifications",
       "consumers": [
@@ -207,7 +207,7 @@
     },
     {
       "name": "CrossAppGrantExpired",
-      "class": "Academorix\\Auth\\Events\\CrossAppGrantExpired",
+      "class": "Stackra\\Auth\\Events\\CrossAppGrantExpired",
       "trigger": "Grant was NOT exchanged before expires_at. Fired by PurgeExpiredCrossAppGrantsJob when it hard-deletes an unconsumed row.",
       "queue": "notifications",
       "consumers": ["observability::EmitCrossAppGrantExpiredMetric"],
@@ -220,7 +220,7 @@
     },
     {
       "name": "MfaChallengeIssued",
-      "class": "Academorix\\Auth\\Events\\MfaChallengeIssued",
+      "class": "Stackra\\Auth\\Events\\MfaChallengeIssued",
       "trigger": "Login flow detected MFA is enrolled \u2192 dispatched MFA challenge (returns 202 with challenge_id). The pending-login context (application_id, tenant_id, requested_scope) is snapshotted into the challenge row's metadata.",
       "queue": null,
       "consumers": ["observability::EmitMfaChallengeIssuedMetric"],
@@ -233,7 +233,7 @@
     },
     {
       "name": "MfaChallengeCompleted",
-      "class": "Academorix\\Auth\\Events\\MfaChallengeCompleted",
+      "class": "Stackra\\Auth\\Events\\MfaChallengeCompleted",
       "trigger": "MFA challenge verified successfully. Challenge consumed atomically \u2192 Sanctum PAT issued.",
       "queue": "notifications",
       "consumers": [
@@ -250,7 +250,7 @@
     },
     {
       "name": "MfaChallengeFailed",
-      "class": "Academorix\\Auth\\Events\\MfaChallengeFailed",
+      "class": "Stackra\\Auth\\Events\\MfaChallengeFailed",
       "trigger": "MFA verification failed \u2014 wrong code / expired / already consumed. Third failure hard-deletes the challenge; the login flow restarts from step 1.",
       "queue": "notifications",
       "consumers": ["activity::WriteToActivityLog", "observability::EmitMfaChallengeFailedMetric"],
@@ -265,7 +265,7 @@
     },
     {
       "name": "ImpersonationStarted",
-      "class": "Academorix\\Auth\\Events\\ImpersonationStarted",
+      "class": "Stackra\\Auth\\Events\\ImpersonationStarted",
       "trigger": "Platform staff invoked POST /platform/auth/impersonate/start with valid target + reason. `platform.impersonate` entitlement checked; delegation session recorded in `access/delegation` (Wave 1b module).",
       "queue": "notifications-critical",
       "consumers": [
@@ -286,7 +286,7 @@
     },
     {
       "name": "ImpersonationEnded",
-      "class": "Academorix\\Auth\\Events\\ImpersonationEnded",
+      "class": "Stackra\\Auth\\Events\\ImpersonationEnded",
       "trigger": "POST /platform/auth/impersonate/end OR TTL expiry OR explicit revocation. Impersonation PAT revoked.",
       "queue": "notifications",
       "consumers": [
@@ -304,7 +304,7 @@
     },
     {
       "name": "JwtSigningKeyRotated",
-      "class": "Academorix\\Auth\\Events\\JwtSigningKeyRotated",
+      "class": "Stackra\\Auth\\Events\\JwtSigningKeyRotated",
       "trigger": "New JwtSigningKey row inserted with is_active=true; previous key marked retired_at=now() (kept for verification during rotation window).",
       "queue": "notifications-critical",
       "consumers": ["activity::WriteToActivityLog", "observability::EmitJwtKeyRotatedMetric"],
@@ -320,7 +320,7 @@
     },
     {
       "name": "JwtRevoked",
-      "class": "Academorix\\Auth\\Events\\JwtRevoked",
+      "class": "Stackra\\Auth\\Events\\JwtRevoked",
       "trigger": "Specific `jti` added to the deny list \u2014 revoke a JWT immediately, before natural expiry. Used on password-change, user-suspend, breach response.",
       "queue": "notifications-critical",
       "consumers": ["activity::WriteToActivityLog", "observability::EmitJwtRevokedMetric"],
@@ -334,7 +334,7 @@
     },
     {
       "name": "LoginFromNewDeviceDetected",
-      "class": "Academorix\\Auth\\Events\\LoginFromNewDeviceDetected",
+      "class": "Stackra\\Auth\\Events\\LoginFromNewDeviceDetected",
       "trigger": "DeviceFingerprinter reported the login's device fingerprint has not been seen for this User in the last `auth.session.new_device_lookback_days` (default 30).",
       "queue": "notifications",
       "consumers": [

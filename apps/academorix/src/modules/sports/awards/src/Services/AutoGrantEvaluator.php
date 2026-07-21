@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Awards\Services;
+namespace Stackra\Awards\Services;
 
-use Academorix\Awards\Contracts\Services\AutoGrantEvaluatorInterface;
+use Stackra\Awards\Contracts\Services\AutoGrantEvaluatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Awards\Contracts\Repositories\AwardRepositoryInterface;
+use Stackra\Awards\Contracts\Repositories\AwardRepositoryInterface;
 
 /**
  * Concrete service — AutoGrantEvaluator.

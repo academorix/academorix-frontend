@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Realtime\Database\Factories;
+namespace Stackra\Realtime\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Realtime\Contracts\Data\BroadcastSubscriptionInterface;
-use Academorix\Realtime\Models\BroadcastSubscription;
+use Stackra\Realtime\Contracts\Data\BroadcastSubscriptionInterface;
+use Stackra\Realtime\Models\BroadcastSubscription;
 
 /**
- * Factory for {@see \Academorix\Realtime\Models\BroadcastSubscription}.
+ * Factory for {@see \Stackra\Realtime\Models\BroadcastSubscription}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Realtime\Models\BroadcastSubscription>
+ * @extends Factory<\Stackra\Realtime\Models\BroadcastSubscription>
  *
  * @category Realtime
  *

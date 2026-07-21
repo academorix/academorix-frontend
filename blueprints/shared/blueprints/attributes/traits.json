@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/attributes/traits",
+  "id": "stackra://modules/attributes/traits",
   "$version": 1,
   "title": "attributes — trait composition",
   "description": "Three owned traits. `HasAttributeSet` is the host-side trait — mixes into any Eloquent model marked `#[AttributableEntity]` and exposes the resolved-set helpers. `HasSchemalessAttributes` wraps `spatie/laravel-schemaless-attributes` to inject validation on save. `BelongsToAttributeSet` is a satellite trait for hosts that snapshot the set version.",
   "owned": [
     {
-      "trait": "Academorix\\Attributes\\Concerns\\HasAttributeSet",
+      "trait": "Stackra\\Attributes\\Concerns\\HasAttributeSet",
       "description": "Host-side trait. Adds `->attributeSet(): AttributeSet` (resolves the active set for `(entityType, discriminator_value_from_column)`), `->attributeValues(): array` (reads the JSONB values column), `->validateAttributeValues(): array<string>` (returns validation errors), `->renderAttributeField(string $code): array` (renders one field for the UI). Boot hook registers the model with `AttributableEntityRegistry`.",
       "public": true,
       "usedBy": [
@@ -19,7 +19,7 @@
       "note": "The host is expected to have a JSONB column (default `attributes`) + a snapshot column (`attribute_set_version_snapshot INT` OR `attribute_set_snapshot_id ULID`). The trait does NOT add these — the host migration owns them."
     },
     {
-      "trait": "Academorix\\Attributes\\Concerns\\HasSchemalessAttributes",
+      "trait": "Stackra\\Attributes\\Concerns\\HasSchemalessAttributes",
       "description": "Thin wrapper around `spatie/laravel-schemaless-attributes` that injects the AttributeValidator on `saving` — refuses save when validation fails. Composed alongside `HasAttributeSet`.",
       "public": true,
       "usedBy": ["hosts using HasAttributeSet"],
@@ -27,7 +27,7 @@
       "columns_added": []
     },
     {
-      "trait": "Academorix\\Attributes\\Concerns\\BelongsToAttributeSet",
+      "trait": "Stackra\\Attributes\\Concerns\\BelongsToAttributeSet",
       "description": "For satellite tables that reference an AttributeSet directly (e.g. progress card snapshots). Adds `->attributeSet(): BelongsTo` + boot hook validating cross-tenant references.",
       "public": true,
       "usedBy": ["progress::CoachNote (planned)"],
@@ -41,13 +41,13 @@
       { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasAuditable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasAuditable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" }
     ],
-    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "tenants": [{ "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" }],
     "external": [
       {
         "package": "spatie/laravel-schemaless-attributes",

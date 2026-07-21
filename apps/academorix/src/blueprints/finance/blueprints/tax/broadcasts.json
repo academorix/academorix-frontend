@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/tax/broadcasts",
+  "id": "stackra://modules/tax/broadcasts",
   "$version": 1,
   "title": "tax — realtime broadcast channels",
   "description": "Three broadcast channel families for live UI updates. Tenant-level channel for tax activity streams (rate updates, calculation completions); exemption-scoped channel for the verification queue live updates; provider-scoped channel for provider health widget + circuit-breaker state indicator. Reverb driver (Laravel Reverb) is the default transport; the notifications module handles fanout.",
   "channels": [
     {
       "name": "tenant.{tenantId}.tax",
-      "class": "Academorix\\Finance\\Tax\\Broadcasts\\TenantTaxChannel",
+      "class": "Stackra\\Finance\\Tax\\Broadcasts\\TenantTaxChannel",
       "description": "Tenant-wide tax activity stream. Sink for the tax dashboard showing rate lifecycle + calculation activity.",
       "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner)",
       "events": [
@@ -23,7 +23,7 @@
     },
     {
       "name": "tenant.{tenantId}.tax.exemptions",
-      "class": "Academorix\\Finance\\Tax\\Broadcasts\\TenantTaxExemptionsChannel",
+      "class": "Stackra\\Finance\\Tax\\Broadcasts\\TenantTaxExemptionsChannel",
       "description": "Exemption verification queue live updates.",
       "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner OR compliance)",
       "events": [
@@ -37,7 +37,7 @@
     },
     {
       "name": "tenant.{tenantId}.tax.providers",
-      "class": "Academorix\\Finance\\Tax\\Broadcasts\\TenantTaxProvidersChannel",
+      "class": "Stackra\\Finance\\Tax\\Broadcasts\\TenantTaxProvidersChannel",
       "description": "Provider-scoped health + config activity. Powers the per-provider status chip + circuit-breaker state indicator in the tax dashboard.",
       "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner)",
       "events": ["TaxProviderConfigured", "TaxProviderCircuitBreakerOpened"],

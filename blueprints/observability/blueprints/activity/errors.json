@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/activity/errors",
+  "id": "stackra://modules/activity/errors",
   "$version": 1,
   "title": "activity — error catalogue",
   "description": "Error codes this module emits. `user_facing` controls whether the message renders to end users (translated via i18n). `retryable` signals client-side retry. `audit_severity` routes to the correct log channel — `alert` pages on-call, `critical` fires the security-incident notification pipeline.",

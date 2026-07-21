@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/invitations/permissions",
+  "id": "stackra://modules/invitations/permissions",
   "$version": 1,
   "title": "invitations — permissions",
-  "description": "Permission strings this module publishes. Split by guard: `sanctum` for tenant admins managing their tenant's invitations; `platform_admin` for Academorix ops with cross-tenant audit + revoke authority. Seeded by InvitationsPermissionSeeder with is_system=true.",
-  "seeder": "Academorix\\Invitations\\Database\\Seeders\\InvitationsPermissionSeeder",
+  "description": "Permission strings this module publishes. Split by guard: `sanctum` for tenant admins managing their tenant's invitations; `platform_admin` for Stackra ops with cross-tenant audit + revoke authority. Seeded by InvitationsPermissionSeeder with is_system=true.",
+  "seeder": "Stackra\\Invitations\\Database\\Seeders\\InvitationsPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {
@@ -37,7 +37,7 @@
     {
       "name": "invitations.manage_any",
       "guard": "platform_admin",
-      "description": "Cross-tenant read + audit-revoke for Academorix ops. Scoped to a small platform-admin role tier.",
+      "description": "Cross-tenant read + audit-revoke for Stackra ops. Scoped to a small platform-admin role tier.",
       "grantsPolicies": [
         "InvitationPolicy@viewAnyPlatform",
         "InvitationPolicy@viewPlatform",

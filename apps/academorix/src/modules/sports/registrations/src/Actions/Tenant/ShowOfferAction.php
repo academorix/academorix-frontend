@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registrations\Actions\Tenant;
+namespace Stackra\Registrations\Actions\Tenant;
 
-use Academorix\Registrations\Contracts\Repositories\OfferRepositoryInterface;
-use Academorix\Registrations\Data\OfferData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Registrations\Contracts\Repositories\OfferRepositoryInterface;
+use Stackra\Registrations\Data\OfferData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 
 /**
  * `GET /api/v1/offers/{offer}` — show action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Registrations

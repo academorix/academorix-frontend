@@ -2,8 +2,8 @@
 
 /**
  * @file ComposerSyncCommand.php
- * @module Academorix\Cli\Commands
- * @description `academorix composer:sync [--dry-run] [--check]
+ * @module Stackra\Cli\Commands
+ * @description `stackra composer:sync [--dry-run] [--check]
  *   [--verbose]` — walks every composer.json in the workspace and
  *   wires a `type: path` repositories entry for every `@dev` dep whose
  *   target resolves in the workspace. Native replacement for the
@@ -12,10 +12,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Commands;
+namespace Stackra\Cli\Commands;
 
-use Academorix\Cli\Composer\ComposerPathRepoWirer;
-use Academorix\Cli\Support\PathResolver;
+use Stackra\Cli\Composer\ComposerPathRepoWirer;
+use Stackra\Cli\Support\PathResolver;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -103,7 +103,7 @@ final class ComposerSyncCommand extends AbstractCommand
                 'Wiring drift',
                 sprintf('%d composer.json file(s) would change.', $report->touched),
                 [
-                    'Re-run `academorix composer:sync` (without --check) to apply.',
+                    'Re-run `stackra composer:sync` (without --check) to apply.',
                     'Or fix @dev deps by hand and re-run --check to verify.',
                 ],
             );

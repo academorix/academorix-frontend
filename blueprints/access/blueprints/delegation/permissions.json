@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/delegation/permissions",
+  "id": "stackra://modules/delegation/permissions",
   "$version": 1,
   "title": "delegation — permissions",
-  "seeder": "Academorix\\Delegation\\Database\\Seeders\\DelegationPermissionSeeder",
+  "seeder": "Stackra\\Delegation\\Database\\Seeders\\DelegationPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

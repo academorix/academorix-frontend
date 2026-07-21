@@ -26,7 +26,7 @@
  *
  *   - A **channel placeholder** — a string with `{property}`
  *     tokens (e.g. `'orders.{order->id}'`) that
- *     {@see \Academorix\Events\Support\BroadcastConfigurator}
+ *     {@see \Stackra\Events\Support\BroadcastConfigurator}
  *     interpolates against the event instance at broadcast time.
  *
  * ## Repeatable
@@ -40,7 +40,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Events\Attributes;
+namespace Stackra\Events\Attributes;
 
 use Attribute;
 

@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/tenancy/traits",
+  "id": "stackra://modules/tenancy/traits",
   "$version": 1,
   "title": "tenants — model traits",
   "description": "Owned traits + consumed traits for the slimmed tenancy module (post platform v0.3 split). BelongsToApplication moved to `application`; tenants retains BelongsToTenant + BelongsToTenantOptional as the tenant-scope substrate every downstream module composes.",
   "owned": [
     {
       "trait": "BelongsToTenant",
-      "class": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
-      "schemaRef": "academorix://modules/tenancy/schemas/tenant",
+      "class": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
+      "schemaRef": "stackra://modules/tenancy/schemas/tenant",
       "description": "Every domain row below Tenant on the hierarchy uses this. Adds a `tenant_id` column contract, an auto-fill saving hook, and a global scope that filters reads to the resolved tenant.",
       "pairedBlueprint": "tenantable",
       "adds": {
@@ -31,7 +31,7 @@
           "global": [
             {
               "name": "TenantScope",
-              "class": "Academorix\\Tenancy\\Scopes\\TenantScope",
+              "class": "Stackra\\Tenancy\\Scopes\\TenantScope",
               "description": "Filters every read to the tenant resolved by `resolve.tenant` middleware. Bypass via `Model::withoutGlobalScope(TenantScope::class)` \u2014 permitted only inside platform-admin contexts."
             }
           ]
@@ -46,7 +46,7 @@
           {
             "name": "tenant",
             "type": "BelongsTo",
-            "target": "Academorix\\Tenancy\\Models\\Tenant"
+            "target": "Stackra\\Tenancy\\Models\\Tenant"
           }
         ]
       },
@@ -90,8 +90,8 @@
     },
     {
       "trait": "BelongsToTenantOptional",
-      "class": "Academorix\\Tenancy\\Concerns\\BelongsToTenantOptional",
-      "schemaRef": "academorix://modules/tenancy/schemas/tenant",
+      "class": "Stackra\\Tenancy\\Concerns\\BelongsToTenantOptional",
+      "schemaRef": "stackra://modules/tenancy/schemas/tenant",
       "description": "Sibling of BelongsToTenant for rows where `tenant_id` may legitimately be NULL (platform-wide catalogue rows + system-level audit / suppression rows).",
       "pairedBlueprint": "tenantable_optional",
       "adds": {
@@ -114,7 +114,7 @@
           "global": [
             {
               "name": "TenantOptionalScope",
-              "class": "Academorix\\Tenancy\\Scopes\\TenantOptionalScope",
+              "class": "Stackra\\Tenancy\\Scopes\\TenantOptionalScope",
               "description": "`WHERE tenant_id = ? OR tenant_id IS NULL`. Platform-wide rows are visible to every tenant."
             }
           ]
@@ -132,13 +132,13 @@
   "consumed": [
     { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory", "source": "framework" },
     { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids", "source": "framework" },
-    { "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag", "source": "foundation" },
-    { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata", "source": "foundation" },
-    { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps", "source": "foundation" },
-    { "trait": "Academorix\\Foundation\\Concerns\\HasAuditable", "source": "foundation" },
+    { "trait": "Stackra\\Foundation\\Concerns\\HasSystemFlag", "source": "foundation" },
+    { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata", "source": "foundation" },
+    { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps", "source": "foundation" },
+    { "trait": "Stackra\\Foundation\\Concerns\\HasAuditable", "source": "foundation" },
     { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes", "source": "framework" },
     {
-      "trait": "Academorix\\Application\\Concerns\\BelongsToApplication",
+      "trait": "Stackra\\Application\\Concerns\\BelongsToApplication",
       "source": "application",
       "usedBy": ["Tenant"],
       "note": "Moved to `application` at v0.3; consumed here for the Tenant \u2192 Application boundary."

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Contracts\Data;
+namespace Stackra\FeatureFlags\Contracts\Data;
 
-use Academorix\FeatureFlags\Models\FeatureRollout;
+use Stackra\FeatureFlags\Models\FeatureRollout;
 use Illuminate\Container\Attributes\Bind;
 
 /**

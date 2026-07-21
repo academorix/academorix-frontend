@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Concerns;
+namespace Stackra\Transfer\Concerns;
 
 /**
  * Opt-in trait for models registering with the export pipeline.

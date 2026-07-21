@@ -1,9 +1,9 @@
 /**
  * @file index.mjs
- * @module @academorix/config-prettier
+ * @module @stackra/config-prettier
  *
  * @description
- * Canonical Prettier configuration for the academorix-frontend monorepo.
+ * Canonical Prettier configuration for the stackra-frontend monorepo.
  * Every root and per-package prettier.config.mjs re-exports this default.
  *
  * @see https://prettier.io/docs/configuration

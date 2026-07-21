@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Tests;
+namespace Stackra\Webhook\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/webhook.
+ * Base test case for stackra/webhook.
  *
  * @category Webhook
  *

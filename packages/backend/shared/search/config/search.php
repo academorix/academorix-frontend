@@ -26,7 +26,7 @@ return [
         'meilisearch' => [
             'host'         => env('SEARCH_MEILISEARCH_HOST', 'http://meilisearch:7700'),
             'api_key'      => env('SEARCH_MEILISEARCH_API_KEY'),
-            'index_prefix' => env('SEARCH_MEILISEARCH_INDEX_PREFIX', 'academorix_'),
+            'index_prefix' => env('SEARCH_MEILISEARCH_INDEX_PREFIX', 'stackra_'),
         ],
 
         'postgres_fts' => [

@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "organization",
   "alias": "organization",
-  "namespace": "Academorix\\Organization",
+  "namespace": "Stackra\\Organization",
   "description": "Structural sub-brand belonging to a Tenant. Answers 'which brand does this belong to?' — a tenant running two academies (say 'Elite Sports' and 'Community Sports') under one Tenant runs them as two Organizations. Orthogonal to Region; the two meet at Branch which carries FKs to both. Every Tenant provisions exactly one `is_default=true` Organization on TenantProvisioned so single-brand tenants never special-case it. Multi-org tenants add Organizations per entitlement. Enterprise tenants may NEST Organizations via `parent_id` self-referential FK (parent must be same tenant + no cycles + max depth cap). Small tier is locked to 1 Organization no nesting; Medium up to 5 no nesting; Enterprise unlimited + nesting via the `organization_hierarchy` entitlement. Ships: Organization model, org CRUD HTTP surface, default-org seeder listener on `TenantProvisioned`, is_default enforcement, parent_id cycle detection, materialised tree_path for efficient descendant queries, and a branding-integration hook (an Organization row can pin its own Branding profile when the tenant subscribes to `organization_branding` — otherwise the tenant's default branding applies).",
   "keywords": [
     "organization",
@@ -28,7 +28,7 @@
     "soc2-cc6.3"
   ],
   "priority": 41,
-  "providers": ["Academorix\\Organization\\Providers\\OrganizationServiceProvider"],
+  "providers": ["Stackra\\Organization\\Providers\\OrganizationServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "application", "entitlements"],
   "extendedBy": ["branch"],

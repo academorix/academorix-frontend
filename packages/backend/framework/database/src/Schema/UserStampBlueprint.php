@@ -48,15 +48,15 @@ declare(strict_types=1);
  *
  * @since    2.0.0
  *
- * @see \Academorix\Database\Concerns\Model\HasUserStamp
+ * @see \Stackra\Database\Concerns\Model\HasUserStamp
  * @see \Illuminate\Database\Eloquent\Relations\MorphTo
  * @see \Illuminate\Database\Schema\Blueprint
  */
 
-namespace Academorix\Database\Schema;
+namespace Stackra\Database\Schema;
 
 use Illuminate\Database\Schema\Blueprint;
-use Academorix\Database\Attributes\AsDatabaseBlueprint;
+use Stackra\Database\Attributes\AsDatabaseBlueprint;
 
 /**
  * Registers the userStampable() macro on Blueprint.

@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/session/traits",
+  "id": "stackra://modules/session/traits",
   "$version": 1,
   "title": "session — trait composition",
   "description": "Two owned traits — `BelongsToSession` for downstream models carrying a session_id FK (Wave 3+ attendance detail rows, ratings), and `HasSessionAttendance` for the Session model itself.",
   "owned": [
     {
-      "trait": "Academorix\\Sports\\Session\\Concerns\\BelongsToSession",
+      "trait": "Stackra\\Sports\\Session\\Concerns\\BelongsToSession",
       "description": "Mixed into downstream models with a session_id FK. Adds session() belongsTo relation + resolveInSession(?Session) query scope with Request::activeSession() fallback. Refuses cross-tenant FK smuggling at save time.",
       "public": true,
       "usedBy": [
@@ -19,7 +19,7 @@
       ]
     },
     {
-      "trait": "Academorix\\Sports\\Session\\Concerns\\HasSessionAttendance",
+      "trait": "Stackra\\Sports\\Session\\Concerns\\HasSessionAttendance",
       "description": "Mixed into the Session model. Exposes attendance() hasMany + checkedInAthletes() / absentAthletes() computed relations + registerAthlete($athleteId) / checkInAthlete($athleteId) / markAbsent($athleteId) mutation helpers routed through the observer.",
       "public": true,
       "usedBy": ["session::Session"],
@@ -37,28 +37,28 @@
       { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasSlug" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasSlug" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
-    "tenancy": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
-    "branch": [{ "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch" }],
+    "tenancy": [{ "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "branch": [{ "trait": "Stackra\\Branch\\Concerns\\BelongsToBranch" }],
     "season": [
-      { "trait": "Academorix\\Sports\\Season\\Concerns\\BelongsToSeason", "reason": "Optional FK." }
+      { "trait": "Stackra\\Sports\\Season\\Concerns\\BelongsToSeason", "reason": "Optional FK." }
     ],
     "event": [
-      { "trait": "Academorix\\Sports\\Event\\Concerns\\BelongsToEvent", "reason": "Optional FK." }
+      { "trait": "Stackra\\Sports\\Event\\Concerns\\BelongsToEvent", "reason": "Optional FK." }
     ],
     "audit": [
       {
-        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "trait": "Stackra\\Audit\\Concerns\\Auditable",
         "reason": "Session mutations are audit-critical; safeguarding-flagged sessions retain regulator-tier."
       }
     ],
-    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
+    "activity": [{ "trait": "Stackra\\Activity\\Concerns\\HasActivityLog" }]
   },
   "composition": {
     "session": {

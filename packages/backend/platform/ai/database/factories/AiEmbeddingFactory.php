@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Ai\Database\Factories;
+namespace Stackra\Ai\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Ai\Contracts\Data\AiEmbeddingInterface;
-use Academorix\Ai\Models\AiEmbedding;
+use Stackra\Ai\Contracts\Data\AiEmbeddingInterface;
+use Stackra\Ai\Models\AiEmbedding;
 
 /**
- * Factory for {@see \Academorix\Ai\Models\AiEmbedding}.
+ * Factory for {@see \Stackra\Ai\Models\AiEmbedding}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Ai\Models\AiEmbedding>
+ * @extends Factory<\Stackra\Ai\Models\AiEmbedding>
  *
  * @category Ai
  *

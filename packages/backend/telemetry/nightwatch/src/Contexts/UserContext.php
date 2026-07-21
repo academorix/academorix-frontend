@@ -20,10 +20,10 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Nightwatch\Contexts;
+namespace Stackra\Nightwatch\Contexts;
 
-use Academorix\Nightwatch\Attributes\AsNightwatchContext;
-use Academorix\Nightwatch\Contracts\NightwatchContext;
+use Stackra\Nightwatch\Attributes\AsNightwatchContext;
+use Stackra\Nightwatch\Contracts\NightwatchContext;
 
 /**
  * Provides authenticated user data as Nightwatch context.

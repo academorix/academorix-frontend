@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/people/permissions",
+  "id": "stackra://modules/people/permissions",
   "$version": 1,
   "title": "people — permissions",
-  "seeder": "Academorix\\People\\Database\\Seeders\\PeoplePermissionSeeder",
+  "seeder": "Stackra\\People\\Database\\Seeders\\PeoplePermissionSeeder",
   "isSystem": true,
   "description": "CENTRAL-plane permissions. Tenant users can lookup + file link requests; person owners approve/decline/revoke; platform staff verify + freeze.",
   "permissions": [

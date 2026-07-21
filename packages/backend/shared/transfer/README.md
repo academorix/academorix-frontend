@@ -1,6 +1,6 @@
-# academorix/transfer
+# stackra/transfer
 
-Enterprise-grade unified import/export engine for Academorix. Thin wrapper
+Enterprise-grade unified import/export engine for Stackra. Thin wrapper
 around `maatwebsite/excel` — leverages its `->queue()` chain,
 `WithChunkReading`, `WithBatchInserts`, `WithHeadings`, `WithMapping`,
 `WithValidation`, `WithUpserts`, `SkipsFailures` verbatim — layered with

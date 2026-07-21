@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "progress",
   "alias": "progress",
-  "namespace": "Academorix\\Sports\\Progress",
+  "namespace": "Stackra\\Sports\\Progress",
   "description": "Athlete skill development — the biggest Attributes consumer per blueprint §14.1. Ships SIX owned entities: `ProgressAssessment` (attribute-driven per-enrollment × capture_date; values JSONB validated against active AttributeSet, snapshot version_number frozen at capture for historic render; overall score computed via sport-config weighting to tier bronze/silver/gold/diamond), `ProgressCard` (snapshot render of an assessment as a shareable card — card_type IN fifa_card/attribute_card/radar/time_trial/apparatus_scores per sport config; public shareable via signed URL), `CoachNote` (coach observation on an athlete_enrollment; visibility IN coach_only/shared_with_parent/shared_with_athlete; immutable — edits create new revisions), `BeltRank` (martial-arts belt ordering per sport_key — karate white→black×5dan, judo, taekwondo; ordered progression), `GradingEvent` (formal belt-grading exam distinct from Session — date + venue + examiner_coach_id + candidates via GradingResult), `GradingResult` (per-athlete exam outcome — from_belt_id + to_belt_id + result pass/fail/deferred + examiner_notes). Reads `athlete-enrollment` via attribute-driven `sport_key` discriminator; the FIFA-card fields ARE the sport's active AttributeSet.",
   "keywords": [
     "progress",
@@ -16,7 +16,7 @@
     "wave-3"
   ],
   "priority": 78,
-  "providers": ["Academorix\\Sports\\Progress\\Providers\\ProgressServiceProvider"],
+  "providers": ["Stackra\\Sports\\Progress\\Providers\\ProgressServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

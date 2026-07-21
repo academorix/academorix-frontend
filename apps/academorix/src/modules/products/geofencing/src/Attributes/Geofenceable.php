@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Attributes;
+namespace Stackra\Geofencing\Attributes;
 
 use Attribute;
 
@@ -10,17 +10,17 @@ use Attribute;
  * Class-level marker for models that carry a geofence.
  *
  * The compile-time compiler discovers `#[Geofenceable]`-marked classes via
- * `Academorix\Foundation\Contracts\DiscoversAttributes` and registers each
+ * `Stackra\Foundation\Contracts\DiscoversAttributes` and registers each
  * against the fenceable morph map via `Relation::enforceMorphMap()`. Boot
  * fails on duplicate aliases OR on aliases whose target class doesn't
- * implement the {@see \Academorix\Geofencing\Contracts\Geofenceable}
+ * implement the {@see \Stackra\Geofencing\Contracts\Geofenceable}
  * interface.
  *
  * ```php
  * #[Geofenceable(alias: 'branch')]
- * final class Branch extends Model implements \Academorix\Geofencing\Contracts\Geofenceable
+ * final class Branch extends Model implements \Stackra\Geofencing\Contracts\Geofenceable
  * {
- *     use \Academorix\Geofencing\Concerns\HasGeofence;
+ *     use \Stackra\Geofencing\Concerns\HasGeofence;
  * }
  * ```
  *

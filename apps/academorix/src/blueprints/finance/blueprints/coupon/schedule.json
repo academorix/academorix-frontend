@@ -1,39 +1,39 @@
 {
-  "id": "academorix://modules/coupon/schedule",
+  "id": "stackra://modules/coupon/schedule",
   "$version": 1,
   "title": "coupon — scheduled tasks",
   "entries": [
     {
       "name": "coupon-reconcile-usage-count",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Coupon\\Jobs\\ReconcileUsageCountJob",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Coupon\\Jobs\\ReconcileUsageCountJob",
       "cron": "0 3 * * *",
       "timezone": "UTC",
       "purpose": "Nightly 03:00 UTC. Recomputes coupon.usage_count from a COUNT(*) over non-reversed coupon_redemptions per active coupon. Defense against counter drift. Any drift >= 1 fires a P2 signal to observability."
     },
     {
       "name": "coupon-expire",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Coupon\\Jobs\\ExpireCouponsJob",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Coupon\\Jobs\\ExpireCouponsJob",
       "cron": "0 4 * * *",
       "timezone": "UTC",
       "purpose": "Nightly 04:00 UTC. Flips coupons past their valid_until timestamp to is_active=false + fires CouponExpired + releases the `coupon_slot` entitlement unit."
     },
     {
       "name": "coupon-notify-expiring",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Coupon\\Jobs\\NotifyExpiringCouponsJob",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Coupon\\Jobs\\NotifyExpiringCouponsJob",
       "cron": "0 9 * * *",
       "timezone": "UTC",
       "purpose": "Daily 09:00 UTC. Sends CouponExpiredNotification warnings at 14 / 7 / 1 day before valid_until, for coupons with usage_count > 0."
     },
     {
       "name": "coupon-generate-usage-report",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Coupon\\Jobs\\GenerateCouponUsageReportJob",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Coupon\\Jobs\\GenerateCouponUsageReportJob",
       "cron": "0 6 * * 1",
       "timezone": "UTC",
       "purpose": "Weekly Monday 06:00 UTC. Generates per-tenant coupon usage report (7-day rolling window) + writes CSV/JSON to signed S3 + fires CouponReportGenerated + dispatches WeeklyCouponReportNotification to opt-in recipients."
     },
     {
       "name": "coupon-purge-expired",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Coupon\\Jobs\\PurgeExpiredCouponsJob",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Coupon\\Jobs\\PurgeExpiredCouponsJob",
       "cron": "0 5 * * 0",
       "timezone": "UTC",
       "purpose": "Weekly Sunday 05:00 UTC. Hard-purge coupons + non-invoice-linked redemptions past 7-year (or 10-year Enterprise) retention. Invoice-linked redemptions migrate to compliance_archive.coupon_redemptions first."

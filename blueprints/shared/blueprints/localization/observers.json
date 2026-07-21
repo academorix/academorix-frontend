@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/localization/observers",
+  "id": "stackra://modules/localization/observers",
   "$version": 1,
   "title": "localization \u2014 Eloquent observers",
   "observers": [
     {
       "model": "PlatformLanguage",
-      "observer": "Academorix\\Localization\\Observers\\PlatformLanguageObserver",
+      "observer": "Stackra\\Localization\\Observers\\PlatformLanguageObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `lng_`",
         "creating \u2192 validate geography_language_id resolves to a real geography::Language row (integrity guard beyond the FK)",
@@ -17,7 +17,7 @@
     },
     {
       "model": "TenantLocale",
-      "observer": "Academorix\\Localization\\Observers\\TenantLocaleObserver",
+      "observer": "Stackra\\Localization\\Observers\\TenantLocaleObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `wsl_`",
         "creating \u2192 consume 1 unit of localization.locales.count entitlement (throws QuotaExceeded when cap reached)",
@@ -30,7 +30,7 @@
     },
     {
       "model": "Translation",
-      "observer": "Academorix\\Localization\\Observers\\TranslationObserver",
+      "observer": "Stackra\\Localization\\Observers\\TranslationObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `trn_`",
         "creating \u2192 denormalise locale_code from PlatformLanguage.bcp47_code",
@@ -42,7 +42,7 @@
     },
     {
       "model": "TranslationJob",
-      "observer": "Academorix\\Localization\\Observers\\TranslationJobObserver",
+      "observer": "Stackra\\Localization\\Observers\\TranslationJobObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `tjb_`",
         "creating \u2192 refuse when tenant has an in-flight job for the same (kind, target_locale_codes) unless force flag",

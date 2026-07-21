@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/service-accounts/jobs",
+  "id": "stackra://modules/service-accounts/jobs",
   "$version": 1,
   "title": "service-accounts \u2014 background jobs",
   "jobs": [
     {
-      "class": "Academorix\\ServiceAccount\\Jobs\\RotateServiceAccountSecretJob",
+      "class": "Stackra\\ServiceAccount\\Jobs\\RotateServiceAccountSecretJob",
       "queue": "notifications",
       "purpose": "Rotate one SA's secret programmatically. Invoked on-demand (via `service-account:rotate` command OR the platform-admin rotate-secret HTTP endpoint) or by scheduled expiry checks. Generates a fresh 32-byte secret, bcrypt-hashes it, updates `secret_hash`/`secret_rotated_at`/`expires_at` inside a transaction. Fires ServiceAccountSecretRotated. The plaintext secret is returned to the caller inline (job payload is the caller-consumable response); it is NOT persisted anywhere.",
       "steps": [
@@ -13,7 +13,7 @@
         "Generate 32 cryptographically-random bytes via SecretRotator::generate(32).",
         "bcrypt-hash the plaintext at cost 12 via SecretRotator::hash($plain).",
         "UPDATE service_accounts SET secret_hash = $newHash, secret_rotated_at = now(), expires_at = now() + INTERVAL '$ttlDays days' WHERE id = ?.",
-        "Emit `academorix.service_account.rotated` metric (label: trigger).",
+        "Emit `stackra.service_account.rotated` metric (label: trigger).",
         "Fire ServiceAccountSecretRotated event via after-commit dispatch.",
         "Return the plaintext to the caller (encrypted in transit via the caller's own transport)."
       ],
@@ -26,13 +26,13 @@
       "timeout": 60
     },
     {
-      "class": "Academorix\\ServiceAccount\\Jobs\\NotifyRotationDueJob",
+      "class": "Stackra\\ServiceAccount\\Jobs\\NotifyRotationDueJob",
       "queue": "notifications",
       "purpose": "Weekly (Mondays 08:00 UTC) enumerate every SA whose `expires_at` falls inside the next `service-accounts.rotation.warning_days_before_expiry` window (default 14 days). Dispatch ServiceAccountSecretRotationDueNotification to each SA's Application owners + team-wide DLs.",
       "steps": [
         "SELECT id, application_id, expires_at FROM service_accounts WHERE is_enabled = true AND deleted_at IS NULL AND expires_at IS NOT NULL AND expires_at BETWEEN now() AND now() + INTERVAL '$warningDays days'.",
         "For each: fire ServiceAccountSecretRotationScheduled event (queue = notifications) which the notification-dispatch listener consumes.",
-        "Emit `academorix.service_account.rotation.warned` counter metric (label: application_id).",
+        "Emit `stackra.service_account.rotation.warned` counter metric (label: application_id).",
         "Update `svc:rotation_due_count:total` gauge with the total row count."
       ],
       "shouldQueue": true,
@@ -44,16 +44,16 @@
       "timeout": 300
     },
     {
-      "class": "Academorix\\ServiceAccount\\Jobs\\PurgeExpiredServiceAccountsJob",
+      "class": "Stackra\\ServiceAccount\\Jobs\\PurgeExpiredServiceAccountsJob",
       "queue": "notifications-critical",
       "purpose": "Daily (04:00 UTC) two-pass sweep. Pass 1: soft-disable SAs whose `expires_at + grace_days_after_expiry < now()` and are still enabled. Pass 2: hard-delete SAs whose `deleted_at + retention_hold_days < now()`.",
       "steps": [
         "PASS 1 (expire): SELECT id FROM service_accounts WHERE is_enabled = true AND deleted_at IS NULL AND expires_at IS NOT NULL AND expires_at + INTERVAL '$graceDays days' < now() LIMIT 200.",
-        "For each: UPDATE service_accounts SET is_enabled = false WHERE id = ?; fire ServiceAccountExpired event (with trigger='expired_grace' on subsequent Disabled event); emit `academorix.service_account.expired` metric.",
+        "For each: UPDATE service_accounts SET is_enabled = false WHERE id = ?; fire ServiceAccountExpired event (with trigger='expired_grace' on subsequent Disabled event); emit `stackra.service_account.expired` metric.",
         "PASS 2 (hard-delete): SELECT id FROM service_accounts WHERE deleted_at IS NOT NULL AND deleted_at + INTERVAL '$retentionHoldDays days' < now() LIMIT 100.",
         "For each: BEGIN TRANSACTION; DELETE FROM service_accounts WHERE id = ?; UPDATE audits SET user_id = '[REDACTED-SERVICE-ACCOUNT]' + anonymise user_type where user_id = ?; COMMIT.",
         "Fire ServiceAccountDeleted(erasure_phase='hard_delete') event.",
-        "Emit `academorix.service_account.retention.purged` metric.",
+        "Emit `stackra.service_account.retention.purged` metric.",
         "The signer_kid is NOT touched \u2014 it may live on to serve other SAs. The auth module owns its own kid retention policy."
       ],
       "shouldQueue": true,
@@ -65,7 +65,7 @@
       "timeout": 900
     },
     {
-      "class": "Academorix\\ServiceAccount\\Jobs\\UpdateLastUsedTimestampJob",
+      "class": "Stackra\\ServiceAccount\\Jobs\\UpdateLastUsedTimestampJob",
       "queue": "notifications",
       "purpose": "Flush the coalesced `svc:last_used:{service_account_id}` cache buffer to Postgres. Runs every 30 seconds. Batches all pending updates into a single UPDATE ... FROM (VALUES ...) so the write pressure is bounded regardless of machine traffic volume.",
       "steps": [
@@ -73,7 +73,7 @@
         "Parse into (service_account_id, last_used_at, last_used_ip) tuples.",
         "UPDATE service_accounts SET last_used_at = <tuple.timestamp>, last_used_ip = <tuple.ip> FROM (VALUES ...) AS t(id, ts, ip) WHERE service_accounts.id = t.id AND (service_accounts.last_used_at IS NULL OR service_accounts.last_used_at < t.ts).",
         "Delete the flushed cache keys atomically.",
-        "Emit `academorix.service_account.last_used.flush` metric with the batch size."
+        "Emit `stackra.service_account.last_used.flush` metric with the batch size."
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -84,13 +84,13 @@
       "timeout": 60
     },
     {
-      "class": "Academorix\\ServiceAccount\\Jobs\\DetectDormantServiceAccountJob",
+      "class": "Stackra\\ServiceAccount\\Jobs\\DetectDormantServiceAccountJob",
       "queue": "notifications",
       "purpose": "Weekly (Sundays 06:00 UTC) enumerate every SA whose `last_used_at` is older than `service-accounts.security.dormant_threshold_days` (default 30) AND is still enabled AND is older than the threshold (SAs created within the window are exempt \u2014 they're new). Dispatch ServiceAccountDormantNotification to each SA's Application owners + security-mailing-list.",
       "steps": [
         "SELECT id, application_id, last_used_at, created_at FROM service_accounts WHERE is_enabled = true AND deleted_at IS NULL AND created_at < now() - INTERVAL '$thresholdDays days' AND (last_used_at IS NULL OR last_used_at < now() - INTERVAL '$thresholdDays days').",
         "For each: dispatch ServiceAccountDormantNotification.",
-        "Emit `academorix.service_account.dormant.detected` counter metric (label: application_id).",
+        "Emit `stackra.service_account.dormant.detected` counter metric (label: application_id).",
         "Update `svc:dormant_count:total` gauge with the total row count."
       ],
       "shouldQueue": true,

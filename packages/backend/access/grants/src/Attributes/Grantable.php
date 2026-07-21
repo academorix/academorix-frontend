@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Grants\Attributes;
+namespace Stackra\Grants\Attributes;
 
 use Attribute;
 

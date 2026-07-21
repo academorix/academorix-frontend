@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/delegation/schedule",
+  "id": "stackra://modules/delegation/schedule",
   "$version": 1,
   "title": "delegation — scheduled tasks",
   "entries": [

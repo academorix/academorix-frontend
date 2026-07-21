@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsMedicalSdk\Resources;
+namespace Stackra\SportsMedicalSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsMedicalSdk\Data\MedicationData;
-use Academorix\SportsMedicalSdk\Requests\Medications\MedicationsMedicationRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsMedicalSdk\Data\MedicationData;
+use Stackra\SportsMedicalSdk\Requests\Medications\MedicationsMedicationRequest;
 use Saloon\Http\Response;
 
 /**

@@ -8,7 +8,7 @@ this module.
 
 ### `resources/platform-user/`
 
-Platform-admin CRUD for Academorix staff.
+Platform-admin CRUD for Stackra staff.
 
 - `list.screen.json` — filterable by department / status / employment_type;
   search on display_name + email fingerprint (when caller has viewPii). Shows

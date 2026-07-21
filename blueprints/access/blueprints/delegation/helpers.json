@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/delegation/helpers",
+  "id": "stackra://modules/delegation/helpers",
   "$version": 1,
   "title": "delegation — helper functions",
   "description": "Small helper facade over the DelegationResolver + the impersonation session lookup. Consumers rarely need direct access — the traits (HasDelegations + HasImpersonationHistory) cover the common cases — but these helpers exist for one-off checks in blade views, notification composers, and console commands.",
-  "namespace": "Academorix\\Delegation\\Support",
+  "namespace": "Stackra\\Delegation\\Support",
   "helpers": [
     {
       "signature": "delegating(User $delegator, ?Role $role = null, ?Tenant $tenant = null, ?Application $application = null): Collection<RoleDelegation>",

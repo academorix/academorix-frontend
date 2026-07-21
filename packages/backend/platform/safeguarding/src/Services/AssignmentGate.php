@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Safeguarding\Services;
+namespace Stackra\Safeguarding\Services;
 
-use Academorix\Safeguarding\Contracts\Services\AssignmentGateInterface;
+use Stackra\Safeguarding\Contracts\Services\AssignmentGateInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Safeguarding\Contracts\Repositories\BackgroundCheckRepositoryInterface;
+use Stackra\Safeguarding\Contracts\Repositories\BackgroundCheckRepositoryInterface;
 
 /**
  * Concrete service — AssignmentGate.

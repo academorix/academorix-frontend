@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/tenancy/middleware",
+  "id": "stackra://modules/tenancy/middleware",
   "$version": 1,
   "title": "tenants — HTTP middleware",
   "description": "HTTP middleware this module registers. Each middleware is aliased in `TenancyServiceProvider::boot()` via `Router::aliasMiddleware()` and composed on route groups declared in routes.json.",
   "middleware": [
     {
       "alias": "resolve.tenant",
-      "class": "Academorix\\Tenancy\\Middleware\\ResolveTenant",
+      "class": "Stackra\\Tenancy\\Middleware\\ResolveTenant",
       "priority": 40,
       "description": "Resolves the current Application (from Host header) and, on tenant subdomains, the current Tenant. On central + platform-admin hosts it binds only the Application. On unknown hosts it 404s the request.",
       "sideEffects": [
@@ -19,20 +19,20 @@
     },
     {
       "alias": "tenant.user",
-      "class": "Academorix\\Tenancy\\Middleware\\EnsureUserBelongsToTenant",
+      "class": "Stackra\\Tenancy\\Middleware\\EnsureUserBelongsToTenant",
       "priority": 60,
       "description": "Refuses cross-tenant sessions. Runs AFTER `auth:sanctum` so the caller is resolved, then asserts `auth()->user()->tenant_id === resolvedTenant()->id`. Throws `TenantException::crossTenantAccess()` (400 + Alert severity) on mismatch.",
       "requires": ["auth:sanctum", "resolve.tenant"]
     },
     {
       "alias": "platform.domain",
-      "class": "Academorix\\Tenancy\\Middleware\\EnsureCentralOrPlatformDomain",
+      "class": "Stackra\\Tenancy\\Middleware\\EnsureCentralOrPlatformDomain",
       "priority": 20,
       "description": "Rejects tenant subdomains on routes that must run on the central or platform-admin hosts. Prevents a self-serve register call from accidentally landing inside a tenant scope."
     },
     {
       "alias": "resolve.tenant.optional",
-      "class": "Academorix\\Tenancy\\Middleware\\ResolveTenantOptional",
+      "class": "Stackra\\Tenancy\\Middleware\\ResolveTenantOptional",
       "priority": 40,
       "description": "Same as resolve.tenant but does NOT 404 when the host is unknown. Used on the public-tenant read endpoints (public branding preview, newsletter subscribe) where an anonymous request may hit a not-yet-verified custom domain.",
       "aliases": []

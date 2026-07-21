@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Contracts\Data;
+namespace Stackra\Theme\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Theme\Models\ThemeTokenOverride;
+use Stackra\Theme\Models\ThemeTokenOverride;
 
 /**
  * Table shape for the `theme_token_overrides` table.

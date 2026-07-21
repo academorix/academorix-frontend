@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Actions\Tenant;
+namespace Stackra\Search\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Search\Contracts\Data\SearchSynonymInterface;
-use Academorix\Search\Contracts\Repositories\SearchSynonymRepositoryInterface;
-use Academorix\Search\Data\Requests\CreateSynonymRequestData;
-use Academorix\Search\Data\SearchSynonymData;
-use Academorix\Search\Enums\SearchPermission;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Search\Contracts\Data\SearchSynonymInterface;
+use Stackra\Search\Contracts\Repositories\SearchSynonymRepositoryInterface;
+use Stackra\Search\Data\Requests\CreateSynonymRequestData;
+use Stackra\Search\Data\SearchSynonymData;
+use Stackra\Search\Enums\SearchPermission;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 
 /**
  * `POST /api/v1/search/synonyms` — tenant admin creates a synonym.

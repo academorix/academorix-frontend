@@ -1,6 +1,6 @@
 ---
 description: >-
-  Data Modeler for Academorix — owns ERDs, column contracts, and migration order
+  Data Modeler for Stackra — owns ERDs, column contracts, and migration order
   for every persisted row. Enforces the three-axis row-attribution contract
   (tenant_id / application_id / scope_node_id) at design time. Emits ERDs under
   docs/data/ + column contracts referenced from ADRs.

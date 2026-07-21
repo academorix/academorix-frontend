@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/foundation/data-classes",
+  "id": "stackra://modules/foundation/data-classes",
   "$version": 1,
   "title": "foundation — data classification taxonomy (THE reference)",
   "description": "The 8-tier data classification taxonomy every downstream module's `data-classes.json` references. Foundation defines the tier semantics; downstream modules classify their fields against these tiers. Tiers drive DSAR export scope, right-to-erasure behaviour, encryption-at-rest policy, audit trail depth, and search-index eligibility. Every persistent column in every schema in every module MUST be classified — CI fails on unclassified fields.",

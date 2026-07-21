@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Exceptions;
+namespace Stackra\Localization\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The submitted bcp47_code region subtag does not match the geography::Country FK (e.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PlatformLanguageGeographyMismatchException extends AcademorixException
+final class PlatformLanguageGeographyMismatchException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

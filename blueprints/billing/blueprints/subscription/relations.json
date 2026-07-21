@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/subscription/relations",
+  "id": "stackra://modules/subscription/relations",
   "$version": 1,
   "title": "subscription \u2014 model relationships",
   "internal": [

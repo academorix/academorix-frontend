@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Database\Concerns;
+namespace Stackra\Database\Concerns;
 
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia as MediaLibraryInteractsWithMedia;
@@ -12,7 +12,7 @@ use Spatie\MediaLibrary\InteractsWithMedia as MediaLibraryInteractsWithMedia;
  *
  * Wraps the vendor trait so the whole codebase references one Foundation concern
  * — a single place to adjust behaviour, decoupled from the package — mirroring
- * {@see HasMetadata}. This is the standard for all images/files in Academorix.
+ * {@see HasMetadata}. This is the standard for all images/files in Stackra.
  *
  * Files are recorded in the central, polymorphic `media` table and stored on the
  * configured disk (`MEDIA_DISK`). On tenant-suffixed disks (see
@@ -24,7 +24,7 @@ use Spatie\MediaLibrary\InteractsWithMedia as MediaLibraryInteractsWithMedia;
  * an interface — and declare its collections:
  *
  * ```php
- * use Academorix\Database\Concerns\InteractsWithMedia;
+ * use Stackra\Database\Concerns\InteractsWithMedia;
  * use Illuminate\Database\Eloquent\Model;
  * use Spatie\MediaLibrary\HasMedia;
  *

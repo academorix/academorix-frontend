@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Requests\Repositories;
+namespace Stackra\Requests\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Requests\Contracts\Data\AccessRequestProjectionInterface;
-use Academorix\Requests\Contracts\Repositories\AccessRequestProjectionRepositoryInterface;
-use Academorix\Requests\Models\AccessRequestProjection;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Requests\Contracts\Data\AccessRequestProjectionInterface;
+use Stackra\Requests\Contracts\Repositories\AccessRequestProjectionRepositoryInterface;
+use Stackra\Requests\Models\AccessRequestProjection;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Requests\Models\AccessRequestProjection}.
+ * Attribute-first Eloquent repository for {@see Stackra\Requests\Models\AccessRequestProjection}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AccessRequestProjectionInterface::class)]` which resolves to
  * `AccessRequestProjection` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Requests\Models\AccessRequestProjection>
+ * @extends Repository<\Stackra\Requests\Models\AccessRequestProjection>
  *
  * @category Requests
  *

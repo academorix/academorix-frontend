@@ -1,19 +1,19 @@
-# academorix/application
+# stackra/application
 
-Application (product-catalogue) domain module for Academorix. Owns the global
-cross-tenant registry of Academorix products and the BusinessType catalogue.
+Application (product-catalogue) domain module for Stackra. Owns the global
+cross-tenant registry of Stackra products and the BusinessType catalogue.
 
 ## Aggregates
 
 | Aggregate      | ULID prefix | Storage     | Purpose                                                                                                                                                |
 | -------------- | ----------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Application`  | `app_`      | Eloquent    | One row per Academorix product (Sports, Marketplace, ...). Every Tenant belongs to exactly one.                                                        |
+| `Application`  | `app_`      | Eloquent    | One row per Stackra product (Sports, Marketplace, ...). Every Tenant belongs to exactly one.                                                        |
 | `BusinessType` | `bst_`      | Dual-source | Code-primary via `BusinessTypeEnum`, DB mirror in `business_types` for admin visibility + tenant customs (per steering `enum-db-seed-dual-source.md`). |
 
 ## Install
 
 ```bash
-composer require academorix/application
+composer require stackra/application
 ```
 
 Auto-registers via `extra.laravel.providers` — no `config/app.php` edits.
@@ -26,12 +26,12 @@ satisfaction of that blueprint.
 
 ## Contributes
 
-- Trait: `Academorix\Application\Concerns\BelongsToApplication` — applied to
+- Trait: `Stackra\Application\Concerns\BelongsToApplication` — applied to
   every row at the tenancy boundary (Tenant, Role, Permission,
   TenantSubscription, EntitlementLicense, Audit, Activity — per
   `.kiro/steering/tenancy-columns.md` §2 "eight boundary rows").
-- Permissions: `Academorix\Application\Enums\ApplicationPermission`.
-- Roles: `Academorix\Application\Enums\ApplicationRole`.
+- Permissions: `Stackra\Application\Enums\ApplicationPermission`.
+- Roles: `Stackra\Application\Enums\ApplicationRole`.
 - Commands: `application:sync-catalogue`, `application:list`.
 - Events: `ApplicationEnabled`, `ApplicationDisabled`, `BusinessTypeAdded`,
   `BusinessTypeArchived`.

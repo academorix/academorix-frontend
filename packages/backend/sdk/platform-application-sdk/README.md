@@ -1,4 +1,4 @@
-# academorix-platform/application-sdk
+# stackra-platform/application-sdk
 
 Wire-visible SDK surface for the **`application`** module of the **Platform**
 service. Ships:
@@ -19,7 +19,7 @@ service. Ships:
 Consumed only over HTTP via the umbrella client:
 
 ```php
-use Academorix\PlatformSdk\Client\PlatformSdk;
+use Stackra\PlatformSdk\Client\PlatformSdk;
 
 $platform = app(PlatformSdk::class);
 
@@ -34,8 +34,8 @@ $new = $platform->application()->applicationsAdmin()->create(
     new CreateApplicationPayload(
         slug: 'ticketing',
         name: 'Ticketing',
-        centralHost: 'ticketing.academorix.app',
-        platformAdminHost: 'admin.ticketing.academorix.app',
+        centralHost: 'ticketing.stackra.app',
+        platformAdminHost: 'admin.ticketing.stackra.app',
     ),
     idempotencyKey: 'idem-1',
 );

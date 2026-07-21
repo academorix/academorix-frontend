@@ -1,6 +1,6 @@
 # Foundation Module
 
-Foundation module for Academorix Laravel headless API backend. Provides custom
+Foundation module for Stackra Laravel headless API backend. Provides custom
 Application class, root route handlers, and base API structure.
 
 ## Features
@@ -26,7 +26,7 @@ Application class, root route handlers, and base API structure.
 
 ## Installation
 
-This module is included by default in the Academorix Laravel template.
+This module is included by default in the Stackra Laravel template.
 
 ## Usage
 

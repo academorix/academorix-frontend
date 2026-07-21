@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/digital-passes/data-classes",
+  "id": "stackra://modules/digital-passes/data-classes",
   "$version": 1,
   "title": "digital-passes — column classification",
   "description": "Every column across this module's schemas classified by foundation's 5-tier taxonomy (public / internal / confidential / restricted / secret).",

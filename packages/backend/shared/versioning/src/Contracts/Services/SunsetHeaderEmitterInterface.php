@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Contracts\Services;
+namespace Stackra\Versioning\Contracts\Services;
 
-use Academorix\Versioning\Services\DefaultSunsetHeaderEmitter;
+use Stackra\Versioning\Services\DefaultSunsetHeaderEmitter;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Http\Response;
 

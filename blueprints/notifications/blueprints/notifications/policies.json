@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/notifications/policies",
+  "id": "stackra://modules/notifications/policies",
   "$version": 1,
   "title": "notifications core \u2014 authorization policies",
   "description": "Three Eloquent policies wire abilities onto the core models. Every policy inherits foundation's `HasSystemFlag` refusal rule for is_system=true rows. Channel modules ship their own policies for their side-state models (MailSuppression, PushSubscription, SmsOptOut).",
   "policies": [
     {
       "model": "Notification",
-      "class": "Academorix\\Notifications\\Policies\\NotificationPolicy",
+      "class": "Stackra\\Notifications\\Policies\\NotificationPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -42,7 +42,7 @@
     },
     {
       "model": "NotificationTemplate",
-      "class": "Academorix\\Notifications\\Policies\\NotificationTemplatePolicy",
+      "class": "Stackra\\Notifications\\Policies\\NotificationTemplatePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -83,7 +83,7 @@
     },
     {
       "model": "NotificationPreference",
-      "class": "Academorix\\Notifications\\Policies\\NotificationPreferencePolicy",
+      "class": "Stackra\\Notifications\\Policies\\NotificationPreferencePolicy",
       "abilities": [
         {
           "action": "viewAny",

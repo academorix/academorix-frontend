@@ -88,7 +88,7 @@ Enforced by:
    TeamMember without a matching enrollment).
 
 Atomicity failures fire `EnrollmentAtomicityFailed` (P1 event). The metric
-`academorix.athlete_enrollment.atomicity.failures_total` should stay at 0.
+`stackra.athlete_enrollment.atomicity.failures_total` should stay at 0.
 
 ## 5. Age-group snapshot semantics
 

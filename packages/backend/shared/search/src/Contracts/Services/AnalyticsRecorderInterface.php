@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Contracts\Services;
+namespace Stackra\Search\Contracts\Services;
 
-use Academorix\Search\Enums\AnalyticsEventKind;
-use Academorix\Search\Services\DefaultAnalyticsRecorder;
+use Stackra\Search\Enums\AnalyticsEventKind;
+use Stackra\Search\Services\DefaultAnalyticsRecorder;
 use Illuminate\Container\Attributes\Bind;
 
 /**

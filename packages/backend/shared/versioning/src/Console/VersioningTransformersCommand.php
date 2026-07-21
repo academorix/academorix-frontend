@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Console;
+namespace Stackra\Versioning\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Versioning\Contracts\Services\PayloadTransformerRegistryInterface;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Versioning\Contracts\Services\PayloadTransformerRegistryInterface;
 
 /**
  * `php artisan versioning:transformers` — table view of every

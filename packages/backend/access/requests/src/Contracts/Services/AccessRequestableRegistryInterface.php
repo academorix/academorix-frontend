@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Requests\Contracts\Services;
+namespace Stackra\Requests\Contracts\Services;
 
-use Academorix\Requests\Services\AccessRequestableRegistry;
+use Stackra\Requests\Services\AccessRequestableRegistry;
 use Illuminate\Container\Attributes\Bind;
 
 /**

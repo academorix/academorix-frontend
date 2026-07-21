@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transfer/compliance",
+  "id": "stackra://modules/transfer/compliance",
   "$version": 1,
   "title": "transfer \u2014 compliance evidence",
   "description": "Transfer moves data across tenant boundaries at user request \u2014 imports carry data in, exports carry data out. Compliance surface is dominated by data-portability + retention + right-to-erasure. Every job transition also writes an audit row via HasAudit \u2014 the primary regulator-facing evidence is on `audits`, not here. This file documents what transfer contributes.",

@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "theme",
   "alias": "theme",
-  "namespace": "Academorix\\Platform\\Theme",
+  "namespace": "Stackra\\Platform\\Theme",
   "description": "Per-tenant design token substrate. Answers 'what does this tenant's dashboard, email, and PDF look like?'. Sibling of the settings module — settings owns arbitrary key-value config with cascading scope; theme owns the SPECIFIC design-token vocabulary (color palette, spacing scale, typography scale, radius scale, elevation scale, motion scale) with preset-selection + tenant-override semantics. Ships THREE aggregates: Theme (per-tenant active theme record — carries selected_preset_id + resolved tokens_snapshot jsonb + is_dark_mode + accessibility_flags like high_contrast/reduced_motion; one active per (tenant_id, mode)), ThemePreset (pre-built theme configs — tenant_id nullable for platform-provided presets; ships day-1 with 6 platform presets: light-default, dark-default, high-contrast-light, high-contrast-dark, brand-forward-blue, brand-forward-green; tenants may author custom presets), ThemeTokenOverride (per-tenant custom token override on top of a preset — for the 'we want the default preset but with our brand red on the primary action button' use case; overrides are token-key → token-value pairs with cascading resolution via the settings substrate). Every design token is a namespaced key: color.primary.500, color.surface.default, spacing.4, typography.body.family, typography.body.size.md, radius.md, shadow.md, motion.duration.fast. Presets ship as jsonb blobs of complete token maps; overrides are sparse patches applied in cascade order (platform default → tenant preset → tenant override). Tokens_snapshot is IMMUTABLE while a theme is active so mid-session theme changes never break rendering. Emits ThemeActivated event that clears the tenant's rendered-CSS cache. Not a scope-substrate consumer at the row level — theme is tenant-level (theme.tenant_id) with an optional per-user preference override (dark/light auto, high-contrast preference) stored in the user module's user_theme_preferences table. Distinct from branding (which owns STATIC assets — logo, favicon, brand name) and from settings (which owns arbitrary key-value config).",
   "keywords": [
     "theme",
@@ -23,7 +23,7 @@
     "config-plane"
   ],
   "priority": 23,
-  "providers": ["Academorix\\Platform\\Theme\\Providers\\ThemeServiceProvider"],
+  "providers": ["Stackra\\Platform\\Theme\\Providers\\ThemeServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "application", "settings"],
   "extendedBy": [],
@@ -140,7 +140,7 @@
       ]
     },
     "platform-admin": {
-      "description": "Cross-tenant preset library management — Academorix staff manage the platform-owned preset catalog + audit tenant preset usage.",
+      "description": "Cross-tenant preset library management — Stackra staff manage the platform-owned preset catalog + audit tenant preset usage.",
       "routes": [
         "GET /api/v1/platform/theme-presets",
         "POST /api/v1/platform/theme-presets",

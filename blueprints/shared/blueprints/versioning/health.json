@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/versioning/health",
+  "id": "stackra://modules/versioning/health",
   "$version": 1,
   "title": "versioning \u2014 health probes",
   "description": "Three probes registered with foundation's HealthAggregator at boot.",
   "probes": [
     {
       "name": "versioning-registry-loaded",
-      "class": "Academorix\\Versioning\\Health\\Probes\\RegistryLoadedProbe",
+      "class": "Stackra\\Versioning\\Health\\Probes\\RegistryLoadedProbe",
       "category": "startup",
       "critical": true,
       "description": "ApiVersionRegistry loaded on ApplicationBooted. Critical \u2014 without the registry, every request fails resolution.",
@@ -14,7 +14,7 @@
     },
     {
       "name": "versioning-default-version-set",
-      "class": "Academorix\\Versioning\\Health\\Probes\\DefaultVersionSetProbe",
+      "class": "Stackra\\Versioning\\Health\\Probes\\DefaultVersionSetProbe",
       "category": "readiness",
       "critical": true,
       "description": "Exactly one ApiVersion row has is_default=true AND state IN (released, deprecated). Critical \u2014 no default = no fallback for unresolved requests.",
@@ -22,7 +22,7 @@
     },
     {
       "name": "versioning-transformer-chains-valid",
-      "class": "Academorix\\Versioning\\Health\\Probes\\TransformerChainsValidProbe",
+      "class": "Stackra\\Versioning\\Health\\Probes\\TransformerChainsValidProbe",
       "category": "readiness",
       "critical": false,
       "description": "For every released \u2192 deprecated version pair with pinned WebhookSubscriptions, verify a transformer chain exists. Warns when a chain is missing (some pinned subs will fail on next dispatch); fails only when every chain is missing (severe misconfiguration).",

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Observers;
+namespace Stackra\Entitlements\Observers;
 
-use Academorix\Entitlements\Contracts\Data\EntitlementInterface;
-use Academorix\Entitlements\Contracts\Services\EntitlementResolverInterface;
-use Academorix\Entitlements\Enums\EntitlementKind;
-use Academorix\Entitlements\Enums\EntitlementPeriod;
-use Academorix\Entitlements\Events\EntitlementOverridden;
-use Academorix\Entitlements\Events\EntitlementResolved;
-use Academorix\Entitlements\Models\Entitlement;
+use Stackra\Entitlements\Contracts\Data\EntitlementInterface;
+use Stackra\Entitlements\Contracts\Services\EntitlementResolverInterface;
+use Stackra\Entitlements\Enums\EntitlementKind;
+use Stackra\Entitlements\Enums\EntitlementPeriod;
+use Stackra\Entitlements\Events\EntitlementOverridden;
+use Stackra\Entitlements\Events\EntitlementResolved;
+use Stackra\Entitlements\Models\Entitlement;
 use Illuminate\Support\Carbon;
 
 /**

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Console;
+namespace Stackra\Notifications\Mail\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 use Illuminate\Contracts\Mail\Factory as MailFactory;
 use Illuminate\Mail\Message;
 
@@ -69,7 +69,7 @@ final class TestSendCommand extends BaseCommand
             return self::FAILURE;
         }
 
-        $subject = 'Academorix notifications-mail test send';
+        $subject = 'Stackra notifications-mail test send';
         $bodyHtml = '<p>This is a test email from the notifications-mail module.</p>';
 
         $mail->mailer($mailer)->html(

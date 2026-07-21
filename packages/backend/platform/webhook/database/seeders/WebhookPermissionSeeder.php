@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Database\Seeders;
+namespace Stackra\Webhook\Database\Seeders;
 
-use Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
-use Academorix\ServiceProvider\Attributes\AsSeeder;
-use Academorix\Webhook\Enums\WebhookPermission;
+use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
+use Stackra\Webhook\Enums\WebhookPermission;
 use Illuminate\Database\Seeder;
 
 /**

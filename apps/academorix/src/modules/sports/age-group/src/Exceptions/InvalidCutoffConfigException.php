@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Exceptions;
+namespace Stackra\AgeGroup\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The combination of cutoff_date_kind + cutoff_month + cutoff_day is inconsistent.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvalidCutoffConfigException extends AcademorixException
+final class InvalidCutoffConfigException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

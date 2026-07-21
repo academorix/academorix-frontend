@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/versioning/schemas/api-version",
+  "id": "stackra://modules/versioning/schemas/api-version",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ApiVersion",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "apv_",
     "incrementing": false,
-    "model": "Academorix\\Versioning\\Models\\ApiVersion",
-    "interface": "Academorix\\Versioning\\Contracts\\Data\\ApiVersionInterface",
-    "implements": ["Academorix\\Versioning\\Contracts\\Data\\ApiVersionInterface"],
+    "model": "Stackra\\Versioning\\Models\\ApiVersion",
+    "interface": "Stackra\\Versioning\\Contracts\\Data\\ApiVersionInterface",
+    "implements": ["Stackra\\Versioning\\Contracts\\Data\\ApiVersionInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

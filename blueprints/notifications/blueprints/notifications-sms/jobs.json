@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/notifications-sms/jobs",
+  "id": "stackra://modules/notifications-sms/jobs",
   "$version": 1,
   "title": "notifications-sms \u2014 background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Notifications\\Sms\\Jobs\\SendSmsJob",
+      "class": "Stackra\\Notifications\\Sms\\Jobs\\SendSmsJob",
       "queue": "notifications",
       "purpose": "Send an SMS via the configured provider.",
       "steps": [
@@ -27,7 +27,7 @@
       "notes": "SMS retries are more conservative than mail \u2014 duplicate SMS is worse than duplicate email (user notices)."
     },
     {
-      "class": "Academorix\\Notifications\\Sms\\Jobs\\IngestSmsProviderWebhookJob",
+      "class": "Stackra\\Notifications\\Sms\\Jobs\\IngestSmsProviderWebhookJob",
       "queue": "notifications-webhooks",
       "purpose": "Normalise provider webhook payload. Handles delivery receipts AND inbound SMS messages (for STOP-keyword processing).",
       "steps": [
@@ -43,7 +43,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Notifications\\Sms\\Jobs\\RecordSmsOptOutJob",
+      "class": "Stackra\\Notifications\\Sms\\Jobs\\RecordSmsOptOutJob",
       "queue": "notifications",
       "purpose": "Create SmsOptOut row. Called by IngestSmsProviderWebhookJob when STOP keyword detected.",
       "shouldQueue": true,
@@ -53,7 +53,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Notifications\\Sms\\Jobs\\GenerateSmsCostReportJob",
+      "class": "Stackra\\Notifications\\Sms\\Jobs\\GenerateSmsCostReportJob",
       "queue": "notifications",
       "purpose": "Monthly SMS cost report per tenant. Aggregates cost_micro_units by destination country + provider. Emailed to tenant admins on the 1st of each month.",
       "shouldQueue": true,

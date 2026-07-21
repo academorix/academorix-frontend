@@ -16,7 +16,7 @@ declare(strict_types=1);
  * @template TModel of \Illuminate\Database\Eloquent\Model
  */
 
-namespace Academorix\Crud\Contracts;
+namespace Stackra\Crud\Contracts;
 
 use Closure;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;

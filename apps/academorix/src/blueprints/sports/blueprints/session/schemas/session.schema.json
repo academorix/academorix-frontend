@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/session/schemas/session",
+  "id": "stackra://modules/session/schemas/session",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Session",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "ses_",
     "incrementing": false,
-    "model": "Academorix\\Sports\\Session\\Models\\Session",
-    "interface": "Academorix\\Sports\\Session\\Contracts\\Data\\SessionInterface",
-    "implements": ["Academorix\\Sports\\Session\\Contracts\\Data\\SessionInterface"],
+    "model": "Stackra\\Sports\\Session\\Models\\Session",
+    "interface": "Stackra\\Sports\\Session\\Contracts\\Data\\SessionInterface",
+    "implements": ["Stackra\\Sports\\Session\\Contracts\\Data\\SessionInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

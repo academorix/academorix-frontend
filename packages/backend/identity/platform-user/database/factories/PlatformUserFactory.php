@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformUser\Database\Factories;
+namespace Stackra\PlatformUser\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\PlatformUser\Contracts\Data\PlatformUserInterface;
-use Academorix\PlatformUser\Models\PlatformUser;
+use Stackra\PlatformUser\Contracts\Data\PlatformUserInterface;
+use Stackra\PlatformUser\Models\PlatformUser;
 
 /**
- * Factory for {@see \Academorix\PlatformUser\Models\PlatformUser}.
+ * Factory for {@see \Stackra\PlatformUser\Models\PlatformUser}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\PlatformUser\Models\PlatformUser>
+ * @extends Factory<\Stackra\PlatformUser\Models\PlatformUser>
  *
  * @category PlatformUser
  *

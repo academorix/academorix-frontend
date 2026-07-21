@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Console;
+namespace Stackra\Localization\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Localization\Jobs\WarmTranslationCacheJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Localization\Jobs\WarmTranslationCacheJob;
 
 /**
  * `php artisan localization:warm-cache` — pre-populate the

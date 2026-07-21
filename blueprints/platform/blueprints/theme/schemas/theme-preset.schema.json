@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/theme/schemas/theme-preset",
+  "id": "stackra://modules/theme/schemas/theme-preset",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ThemePreset",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "tps_",
     "incrementing": false,
-    "model": "Academorix\\Platform\\Theme\\Models\\ThemePreset",
-    "interface": "Academorix\\Platform\\Theme\\Contracts\\Data\\ThemePresetInterface",
-    "implements": ["Academorix\\Platform\\Theme\\Contracts\\Data\\ThemePresetInterface"],
+    "model": "Stackra\\Platform\\Theme\\Models\\ThemePreset",
+    "interface": "Stackra\\Platform\\Theme\\Contracts\\Data\\ThemePresetInterface",
+    "implements": ["Stackra\\Platform\\Theme\\Contracts\\Data\\ThemePresetInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -221,7 +221,7 @@
   },
   "x-related": [
     {
-      "schema": "academorix://modules/theme/schemas/theme",
+      "schema": "stackra://modules/theme/schemas/theme",
       "kind": "themes that reference this preset via selected_preset_id"
     }
   ]

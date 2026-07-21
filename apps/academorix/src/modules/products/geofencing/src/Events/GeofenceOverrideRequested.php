@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Events;
+namespace Stackra\Geofencing\Events;
 
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 /**
  * A caller requested an admin override on a rejected geofence check.
  *

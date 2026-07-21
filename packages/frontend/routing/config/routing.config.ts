@@ -33,7 +33,7 @@ const routingConfig: Partial<IRoutingModuleOptions> = {
    * The Vite plugin (`@stackra/routing/vite`) owns dev-mode subdomain
    * resolution, so set this in production configs only.
    *
-   * @example "academorix.app"
+   * @example "stackra.app"
    */
   // rootDomain: "example.com",
 

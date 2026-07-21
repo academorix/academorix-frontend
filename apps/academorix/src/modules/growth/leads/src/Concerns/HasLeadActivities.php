@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Concerns;
+namespace Stackra\Leads\Concerns;
 
 /**
  * Trait — HasLeadActivities.

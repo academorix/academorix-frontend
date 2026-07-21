@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/events",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/events",
   "tier": "framework",
   "surfaces": ["core"],
   "kind": "framework-plumbing",
@@ -16,10 +16,10 @@
     "Optional manifest cache under bootstrap/cache/events.php"
   ],
   "when_to_use": "Any package needs to declare an event listener or broadcast an event without editing EventServiceProvider.",
-  "when_not_to_use": "For queue-worker orchestration or job-lifecycle events, use academorix/scheduling and Laravel Horizon.",
+  "when_not_to_use": "For queue-worker orchestration or job-lifecycle events, use stackra/scheduling and Laravel Horizon.",
   "peer_deps": [
-    "academorix/foundation",
-    "academorix/service-provider",
+    "stackra/foundation",
+    "stackra/service-provider",
     "olvlvl/composer-attribute-collector"
   ],
   "backend_pair": null,

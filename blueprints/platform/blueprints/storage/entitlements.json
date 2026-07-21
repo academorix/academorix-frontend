@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/storage/entitlements",
+  "id": "stackra://modules/storage/entitlements",
   "$version": 1,
   "title": "storage \u2014 declared entitlements",
   "description": "Three entitlements the storage module consumes. Two pool kinds (bytes + monthly uploads) + one slot kind (max file count per tenant). Overquota rejects at the middleware layer with HTTP 402.",

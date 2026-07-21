@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Contracts\Repositories;
+namespace Stackra\Auth\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Auth\Models\AuthPasswordReset}.
+ * Repository contract for {@see Stackra\Auth\Models\AuthPasswordReset}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `AuthPasswordResetRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Auth\Models\AuthPasswordReset>
+ * @extends RepositoryInterface<\Stackra\Auth\Models\AuthPasswordReset>
  *
  * @category Auth
  *

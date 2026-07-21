@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/event/notifications",
+  "id": "stackra://modules/event/notifications",
   "$version": 1,
   "title": "event — notification classes + categories",
-  "namespace": "Academorix\\Sports\\Event\\Notifications",
+  "namespace": "Stackra\\Sports\\Event\\Notifications",
   "notifications": [
     "EventAnnouncedNotification",
     "EventRegistrationOpeningNotification",

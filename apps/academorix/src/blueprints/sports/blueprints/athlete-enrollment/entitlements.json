@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/athlete-enrollment/entitlements",
+  "id": "stackra://modules/athlete-enrollment/entitlements",
   "$version": 1,
   "title": "athlete-enrollment — declared entitlements",
   "description": "Three entitlement keys. `athlete_enrollment_slot` (slot cap per season) matches athlete_slot at each tier. `athlete_enrollment_waitlist` (boolean) enables waitlist workflow when teams are at capacity. `athlete_enrollment_provisional` (boolean) enables provisional enrollment state for pending-consent scenarios past the deadline.",

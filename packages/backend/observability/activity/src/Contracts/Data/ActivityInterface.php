@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Contracts\Data;
+namespace Stackra\Activity\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Activity\Models\Activity;
+use Stackra\Activity\Models\Activity;
 
 /**
  * Table shape for the `activities` table.

@@ -1,10 +1,10 @@
 {
-  "name": "academorix/wallet",
+  "name": "stackra/wallet",
   "type": "library",
-  "description": "Academorix Wallet module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/wallet/`. Complements the wire SDK at `academorix-finance/wallet-sdk`.",
+  "description": "Stackra Wallet module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/wallet/`. Complements the wire SDK at `stackra-finance/wallet-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "finance",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-finance/wallet-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-finance/wallet-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Wallet\\": "src/"
+      "Stackra\\Wallet\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Wallet\\Tests\\": "tests/"
+      "Stackra\\Wallet\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Wallet\\Providers\\WalletServiceProvider"
+        "Stackra\\Wallet\\Providers\\WalletServiceProvider"
       ],
       "aliases": {}
     }

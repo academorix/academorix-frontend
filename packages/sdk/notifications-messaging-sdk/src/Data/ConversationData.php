@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsMessagingSdk\Data;
+namespace Stackra\NotificationsMessagingSdk\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
@@ -26,7 +26,7 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
  * ## Example
  *
  * ```php
- * use Academorix\NotificationsSdk\Client\NotificationsSdk;
+ * use Stackra\NotificationsSdk\Client\NotificationsSdk;
  *
  * $row = app(NotificationsSdk::class)->messaging()->conversations()->show($id);
  * ```

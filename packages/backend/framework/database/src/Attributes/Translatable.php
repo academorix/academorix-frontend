@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Database\Attributes;
+namespace Stackra\Database\Attributes;
 
 use Attribute;
 
@@ -50,13 +50,13 @@ use Attribute;
 #[Attribute(Attribute::TARGET_CLASS)]
 final readonly class Translatable
 {
-    /** 
- * @var array<int, string> Translatable field names. 
+    /**
+ * @var array<int, string> Translatable field names.
  */
     public array $fields;
 
-    /** 
- * @var string|null Default locale (null = app locale). 
+    /**
+ * @var string|null Default locale (null = app locale).
  */
     public ?string $defaultLocale;
 

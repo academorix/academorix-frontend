@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Exceptions;
+namespace Stackra\Coaching\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `COACH_ASSIGNMENT_ALREADY_ENDED` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CoachAssignmentAlreadyEndedException extends AcademorixException
+final class CoachAssignmentAlreadyEndedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

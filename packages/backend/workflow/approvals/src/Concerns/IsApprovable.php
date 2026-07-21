@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Concerns;
+namespace Stackra\Approvals\Concerns;
 
 /**
  * Trait — IsApprovable.

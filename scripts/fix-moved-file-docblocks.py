@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
 Fix stale `@file packages/{sdk,backend}/...` docblock references in
-files that moved into apps/academorix/src/.
+files that moved into apps/stackra/src/.
 
-Rewrites the `packages/sdk/` prefix to `apps/academorix/src/sdks/` and
-`packages/backend/` prefix to `apps/academorix/src/modules/` when the
-file lives under `apps/academorix/src/`.
+Rewrites the `packages/sdk/` prefix to `apps/stackra/src/sdks/` and
+`packages/backend/` prefix to `apps/stackra/src/modules/` when the
+file lives under `apps/stackra/src/`.
 
 Idempotent — safe to re-run.
 """
@@ -15,13 +15,13 @@ import pathlib
 import re
 import sys
 
-WORKSPACE = pathlib.Path("/Users/akouta/Projects/academorix-frontend")
-ROOT = WORKSPACE / "apps/academorix/src"
+WORKSPACE = pathlib.Path("/Users/akouta/Projects/stackra-frontend")
+ROOT = WORKSPACE / "apps/stackra/src"
 
 PATTERNS = [
-    (re.compile(r"(@file\s+)packages/sdk/"), r"\1apps/academorix/src/sdks/"),
-    (re.compile(r"(@file\s+)packages/backend/"), r"\1apps/academorix/src/modules/"),
-    (re.compile(r"(@file\s+)blueprints/"), r"\1apps/academorix/src/blueprints/"),
+    (re.compile(r"(@file\s+)packages/sdk/"), r"\1apps/stackra/src/sdks/"),
+    (re.compile(r"(@file\s+)packages/backend/"), r"\1apps/stackra/src/modules/"),
+    (re.compile(r"(@file\s+)blueprints/"), r"\1apps/stackra/src/blueprints/"),
 ]
 
 

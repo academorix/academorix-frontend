@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Middleware;
+namespace Stackra\Notifications\Mail\Middleware;
 
-use Academorix\Notifications\Mail\Contracts\Services\MailProviderWebhookVerifierInterface;
-use Academorix\Notifications\Mail\Exceptions\MailWebhookSignatureFailedException;
-use Academorix\Routing\Attributes\AsMiddleware;
+use Stackra\Notifications\Mail\Contracts\Services\MailProviderWebhookVerifierInterface;
+use Stackra\Notifications\Mail\Exceptions\MailWebhookSignatureFailedException;
+use Stackra\Routing\Attributes\AsMiddleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

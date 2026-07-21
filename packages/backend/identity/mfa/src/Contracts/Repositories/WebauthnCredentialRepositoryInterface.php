@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Contracts\Repositories;
+namespace Stackra\Mfa\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Mfa\Models\WebauthnCredential}.
+ * Repository contract for {@see Stackra\Mfa\Models\WebauthnCredential}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `WebauthnCredentialRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Mfa\Models\WebauthnCredential>
+ * @extends RepositoryInterface<\Stackra\Mfa\Models\WebauthnCredential>
  *
  * @category Mfa
  *

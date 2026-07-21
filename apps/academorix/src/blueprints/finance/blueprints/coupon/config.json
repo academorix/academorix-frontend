@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/coupon/config",
+  "id": "stackra://modules/coupon/config",
   "$version": 1,
   "title": "coupon — developer configuration",
   "configFile": "config/coupon.php",

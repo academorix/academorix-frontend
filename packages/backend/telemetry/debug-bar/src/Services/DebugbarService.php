@@ -12,11 +12,11 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Debugbar\Services;
+namespace Stackra\Debugbar\Services;
 
 use Barryvdh\Debugbar\LaravelDebugbar;
 use Illuminate\Support\Facades\App;
-use Academorix\Contracts\Telemetry\Debugbar\DebugbarService as DebugbarServiceContracts;
+use Stackra\Contracts\Telemetry\Debugbar\DebugbarService as DebugbarServiceContracts;
 use Throwable;
 
 /**
@@ -43,7 +43,7 @@ use Throwable;
  * You can inject the interface in your classes:
  *
  * ```php
- * use Academorix\Debugbar\Contracts\DebugbarService;
+ * use Stackra\Debugbar\Contracts\DebugbarService;
  *
  * class MyService
  * {
@@ -55,7 +55,7 @@ use Throwable;
  *
  * ## Usage:
  * ```php
- * use Academorix\Debugbar\Services\DebugbarService;
+ * use Stackra\Debugbar\Services\DebugbarService;
  *
  * // Add a message
  * DebugbarService::info('Processing user data');

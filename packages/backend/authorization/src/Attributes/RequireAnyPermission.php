@@ -39,13 +39,13 @@
  * action, method level narrows to a single action, both may
  * coexist and combine with AND across attribute instances.
  *
- * @see \Academorix\Authorization\Middleware\AuthorizeControllerAction Enforcement point.
+ * @see \Stackra\Authorization\Middleware\AuthorizeControllerAction Enforcement point.
  * @see RequirePermission                                              AND semantics variant.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Authorization\Attributes;
+namespace Stackra\Authorization\Attributes;
 
 use Attribute;
 use BackedEnum;
@@ -61,7 +61,7 @@ final class RequireAnyPermission
     /**
      * @param BackedEnum|string ...$permissions Permission names —
      *   backed enum cases (typically implementers of
-     *   {@see \Academorix\Authorization\Contracts\PermissionEnum})
+     *   {@see \Stackra\Authorization\Contracts\PermissionEnum})
      *   OR raw strings.
      */
     public function __construct(BackedEnum|string ...$permissions)

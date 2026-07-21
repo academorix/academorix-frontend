@@ -148,7 +148,7 @@ Rollback on either side aborts both. Enforced by:
    to the Finance module. Every double-materialization attempt fires
    `REFERRAL_REWARD_DOUBLE_MATERIALIZATION` (P1 signal).
 
-The metric `academorix.referrals.atomicity.failures_total` should stay at 0.
+The metric `stackra.referrals.atomicity.failures_total` should stay at 0.
 
 ## 5. Attribution snapshot semantics
 

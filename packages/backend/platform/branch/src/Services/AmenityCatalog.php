@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branch\Services;
+namespace Stackra\Branch\Services;
 
-use Academorix\Branch\Contracts\Services\AmenityCatalogInterface;
+use Stackra\Branch\Contracts\Services\AmenityCatalogInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Branch\Contracts\Repositories\BranchRepositoryInterface;
+use Stackra\Branch\Contracts\Repositories\BranchRepositoryInterface;
 
 /**
  * Concrete service — AmenityCatalog.

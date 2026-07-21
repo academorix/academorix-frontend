@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Data;
+namespace Stackra\Forms\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Server-side output DTO for {@see \Academorix\Forms\Models\Form}.
+ * Server-side output DTO for {@see \Stackra\Forms\Models\Form}.
  *
  * Consumed by controllers + services on the SERVER side. This is
  * distinct from the wire SDK's DTO (which sits under
- * `Academorix\PlatformFormsSdk\Data`) — the wire DTO travels across the HTTP
+ * `Stackra\PlatformFormsSdk\Data`) — the wire DTO travels across the HTTP
  * boundary; this one stays in-process.
  *
  * @category Forms

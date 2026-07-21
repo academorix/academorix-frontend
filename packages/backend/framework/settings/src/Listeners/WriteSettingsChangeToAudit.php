@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Settings\Listeners;
+namespace Stackra\Settings\Listeners;
 
-use Academorix\Audit\Contracts\Data\AuditInterface;
-use Academorix\Audit\Models\Audit;
-use Academorix\Settings\Events\SettingsChangeEvent;
+use Stackra\Audit\Contracts\Data\AuditInterface;
+use Stackra\Audit\Models\Audit;
+use Stackra\Settings\Events\SettingsChangeEvent;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
@@ -22,7 +22,7 @@ use Throwable;
  * Eloquent models, so `owen-it/laravel-auditing`'s automatic
  * `Auditable` observer path doesn't apply — this listener writes
  * to the `audits` table directly using a synthetic
- * `auditable_type = "Academorix\\Settings\\Group\\<group>"` and
+ * `auditable_type = "Stackra\\Settings\\Group\\<group>"` and
  * `auditable_id = <field_key>`. That lets the compliance
  * `/api/v1/audits?filter[auditable_type]=...` query slice by
  * group cleanly, and preserves the field-level diff shape.
@@ -68,7 +68,7 @@ final class WriteSettingsChangeToAudit
      * Handle the settings-change event.
      *
      * Writes one audit row per changed field. Every row carries
-     * the same synthetic auditable_type (`Academorix\Settings\Group\<group>`)
+     * the same synthetic auditable_type (`Stackra\Settings\Group\<group>`)
      * so the compliance console can filter by group.
      */
     public function handle(SettingsChangeEvent $event): void
@@ -77,7 +77,7 @@ final class WriteSettingsChangeToAudit
         $userId = $user?->getAuthIdentifier();
         $userType = $user !== null ? $user::class : null;
 
-        $auditableType = sprintf('Academorix\\Settings\\Group\\%s', $event->group);
+        $auditableType = sprintf('Stackra\\Settings\\Group\\%s', $event->group);
 
         $url = (string) $this->request->fullUrl();
         $ip = $this->request->ip();

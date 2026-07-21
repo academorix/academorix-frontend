@@ -6,7 +6,7 @@
  * @description
  * Stamps every outbound SDK request with the current
  * correlation id (read from
- * {@see \Academorix\Foundation\Support\CorrelationId}). `apps/api`'s
+ * {@see \Stackra\Foundation\Support\CorrelationId}). `apps/api`'s
  * inbound correlation-id middleware picks up the header,
  * threads the same id through its own logs, and echoes it back
  * on the response — so log aggregation joins the two sides
@@ -28,9 +28,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Middleware;
+namespace Stackra\ApiSdk\Middleware;
 
-use Academorix\Foundation\Support\CorrelationId;
+use Stackra\Foundation\Support\CorrelationId;
 use Saloon\Http\PendingRequest;
 
 /**

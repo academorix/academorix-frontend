@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/access/requests/hooks",
+  "id": "stackra://modules/access/requests/hooks",
   "$version": 1,
   "title": "requests \u2014 tenancy hooks",
   "description": "Per-tenant lifecycle callbacks (`#[AsTenancyHook]`) this module contributes. None today \u2014 the module holds no per-tenant runtime state that needs warming or clearing beyond what workflow/approvals + access/grants already do. This file exists for uniform blueprint shape; hooks land here if a future feature needs per-tenant preloading (e.g. warming the AccessRequestableRegistry-per-tenant map when a tenant has resource-type overrides).",
-  "contract": "Academorix\\ServiceProvider\\Contracts\\TenancyHookInterface",
-  "dispatcher": "Academorix\\ServiceProvider\\Dispatchers\\TenancyHookDispatcher",
-  "registry": "Academorix\\ServiceProvider\\Registry\\TenancyHookRegistry",
+  "contract": "Stackra\\ServiceProvider\\Contracts\\TenancyHookInterface",
+  "dispatcher": "Stackra\\ServiceProvider\\Dispatchers\\TenancyHookDispatcher",
+  "registry": "Stackra\\ServiceProvider\\Registry\\TenancyHookRegistry",
   "hooks": [],
   "notes": [
     "The AccessRequestableRegistry is APPLICATION-WIDE (not per-tenant) \u2014 it's populated at boot from the classmap discovery. Every tenant sees the same requestable resource types.",

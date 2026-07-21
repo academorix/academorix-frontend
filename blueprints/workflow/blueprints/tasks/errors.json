@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tasks/errors",
+  "id": "stackra://modules/tasks/errors",
   "$version": 1,
   "title": "tasks — error codes",
   "namespace": "tasks",

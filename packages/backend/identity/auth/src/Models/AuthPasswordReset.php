@@ -4,16 +4,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Models;
+namespace Stackra\Auth\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Auth\Contracts\Data\AuthPasswordResetInterface;
-use Academorix\Auth\Database\Factories\AuthPasswordResetFactory;
-use Academorix\Foundation\Concerns\Filterable;
+use Stackra\Auth\Contracts\Data\AuthPasswordResetInterface;
+use Stackra\Auth\Database\Factories\AuthPasswordResetFactory;
+use Stackra\Foundation\Concerns\Filterable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;

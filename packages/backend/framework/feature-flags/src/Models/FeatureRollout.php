@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Models;
+namespace Stackra\FeatureFlags\Models;
 
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\FeatureFlags\Contracts\Data\FeatureRolloutInterface;
-use Academorix\FeatureFlags\Database\Factories\FeatureRolloutFactory;
-use Academorix\FeatureFlags\Observers\FeatureRolloutObserver;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\FeatureFlags\Contracts\Data\FeatureRolloutInterface;
+use Stackra\FeatureFlags\Database\Factories\FeatureRolloutFactory;
+use Stackra\FeatureFlags\Observers\FeatureRolloutObserver;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

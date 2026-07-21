@@ -30,14 +30,14 @@
  * public function all(): Collection { … }
  * ```
  *
- * @see \Academorix\Caching\Contracts\CacheTagResolver Referenced resolver contract.
+ * @see \Stackra\Caching\Contracts\CacheTagResolver Referenced resolver contract.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Caching\Attributes;
+namespace Stackra\Caching\Attributes;
 
-use Academorix\Caching\Contracts\CacheTagResolver;
+use Stackra\Caching\Contracts\CacheTagResolver;
 use Attribute;
 
 /**

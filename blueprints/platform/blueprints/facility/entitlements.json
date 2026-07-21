@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/facility/entitlements",
+  "id": "stackra://modules/facility/entitlements",
   "$version": 1,
   "title": "facility — declared entitlements",
   "description": "Five entitlement keys. `facilities` is the boolean feature gate for the whole module (off on Small tier per hierarchy.md §7). `facilities_advanced` gates the Enterprise-only surfaces (day_passes, passes, recurring bookings, blackouts, package integration). `facility_slot` caps the number of facilities per tenant. `booking_recurring` gates recurring-booking rule creation (Enterprise). `booking_capacity_gating` toggles per-tenant capacity enforcement (default off — gate exists so ops can flip it per-tenant without a code change).",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-mail/schemas/mail-suppression",
+  "id": "stackra://modules/notifications-mail/schemas/mail-suppression",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "MailSuppression",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "supp_",
     "incrementing": false,
-    "model": "Academorix\\Notifications\\Mail\\Models\\MailSuppression",
-    "interface": "Academorix\\Notifications\\Mail\\Contracts\\Data\\MailSuppressionInterface",
-    "implements": ["Academorix\\Notifications\\Mail\\Contracts\\Data\\MailSuppressionInterface"],
+    "model": "Stackra\\Notifications\\Mail\\Models\\MailSuppression",
+    "interface": "Stackra\\Notifications\\Mail\\Contracts\\Data\\MailSuppressionInterface",
+    "implements": ["Stackra\\Notifications\\Mail\\Contracts\\Data\\MailSuppressionInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

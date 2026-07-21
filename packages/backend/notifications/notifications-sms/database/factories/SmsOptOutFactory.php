@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Database\Factories;
+namespace Stackra\Notifications\Sms\Database\Factories;
 
-use Academorix\Notifications\Sms\Contracts\Data\SmsOptOutInterface;
-use Academorix\Notifications\Sms\Enums\SmsOptOutReason;
-use Academorix\Notifications\Sms\Enums\SmsProvider;
-use Academorix\Notifications\Sms\Models\SmsOptOut;
+use Stackra\Notifications\Sms\Contracts\Data\SmsOptOutInterface;
+use Stackra\Notifications\Sms\Enums\SmsOptOutReason;
+use Stackra\Notifications\Sms\Enums\SmsProvider;
+use Stackra\Notifications\Sms\Models\SmsOptOut;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

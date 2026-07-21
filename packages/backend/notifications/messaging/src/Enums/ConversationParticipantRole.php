@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Messaging\Enums;
+namespace Stackra\Messaging\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `role` on `conversation-participant`.

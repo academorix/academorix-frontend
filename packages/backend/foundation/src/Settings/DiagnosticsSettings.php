@@ -24,12 +24,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Settings;
+namespace Stackra\Foundation\Settings;
 
-use Academorix\Settings\Attributes\AsSetting;
-use Academorix\Settings\Attributes\SettingField;
-use Academorix\Settings\Enums\ControlType;
-use Academorix\Settings\Enums\SettingScope;
+use Stackra\Settings\Attributes\AsSetting;
+use Stackra\Settings\Attributes\SettingField;
+use Stackra\Settings\Enums\ControlType;
+use Stackra\Settings\Enums\SettingScope;
 
 /**
  * Diagnostics + developer-tool exposure toggles.

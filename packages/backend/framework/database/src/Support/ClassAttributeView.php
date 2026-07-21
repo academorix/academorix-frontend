@@ -13,7 +13,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Database\Support;
+namespace Stackra\Database\Support;
 
 /**
  * Lightweight view of a target class's class-level attributes.

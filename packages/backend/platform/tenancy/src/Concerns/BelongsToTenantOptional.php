@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Concerns;
+namespace Stackra\Tenancy\Concerns;
 
-use Academorix\Tenancy\Models\Tenant;
-use Academorix\Tenancy\Scopes\TenantOptionalScope;
+use Stackra\Tenancy\Models\Tenant;
+use Stackra\Tenancy\Scopes\TenantOptionalScope;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Facade;
 

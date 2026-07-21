@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsPerformanceSdk\Requests\PerformanceTestResults;
+namespace Stackra\SportsPerformanceSdk\Requests\PerformanceTestResults;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsPerformanceSdk\Data\PerformanceTestResultData;
-use Academorix\SportsPerformanceSdk\Payloads\PerformanceTestResults\CreatePerformanceTestResultPayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsPerformanceSdk\Data\PerformanceTestResultData;
+use Stackra\SportsPerformanceSdk\Payloads\PerformanceTestResults\CreatePerformanceTestResultPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

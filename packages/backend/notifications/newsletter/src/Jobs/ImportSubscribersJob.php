@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Jobs;
+namespace Stackra\Newsletter\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -20,7 +20,7 @@ use Psr\Log\LoggerInterface;
  * Import subscribers from a CSV upload.
  *
  * Streams the CSV row-by-row and creates
- * {@see \Academorix\Newsletter\Models\NewsletterSubscription} rows
+ * {@see \Stackra\Newsletter\Models\NewsletterSubscription} rows
  * with `source = 'imported'`. Requires the `consent_evidence`
  * column on every row — rows missing it are skipped and reported
  * in the import output.

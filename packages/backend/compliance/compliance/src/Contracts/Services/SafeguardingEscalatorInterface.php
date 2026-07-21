@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Contracts\Services;
+namespace Stackra\Compliance\Contracts\Services;
 
-use Academorix\Compliance\Services\SafeguardingEscalator;
+use Stackra\Compliance\Services\SafeguardingEscalator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

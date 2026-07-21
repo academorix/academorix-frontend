@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Contracts\Repositories;
+namespace Stackra\Monitoring\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Monitoring\Models\HealthCheckRun}.
+ * Repository contract for {@see Stackra\Monitoring\Models\HealthCheckRun}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `HealthCheckRunRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Monitoring\Models\HealthCheckRun>
+ * @extends RepositoryInterface<\Stackra\Monitoring\Models\HealthCheckRun>
  *
  * @category Monitoring
  *

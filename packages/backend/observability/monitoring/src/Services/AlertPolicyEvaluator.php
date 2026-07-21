@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Services;
+namespace Stackra\Monitoring\Services;
 
-use Academorix\Monitoring\Contracts\Services\AlertPolicyEvaluatorInterface;
+use Stackra\Monitoring\Contracts\Services\AlertPolicyEvaluatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Monitoring\Contracts\Repositories\HealthCheckRunRepositoryInterface;
+use Stackra\Monitoring\Contracts\Repositories\HealthCheckRunRepositoryInterface;
 
 /**
  * Concrete service — AlertPolicyEvaluator.

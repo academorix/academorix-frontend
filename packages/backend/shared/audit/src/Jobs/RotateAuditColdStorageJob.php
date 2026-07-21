@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Jobs;
+namespace Stackra\Audit\Jobs;
 
-use Academorix\Audit\Contracts\Data\AuditInterface;
-use Academorix\Audit\Models\Audit;
+use Stackra\Audit\Contracts\Data\AuditInterface;
+use Stackra\Audit\Models\Audit;
 use Illuminate\Bus\Queueable;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\Log;

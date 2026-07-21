@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Actions\Platform;
+namespace Stackra\Storage\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Storage\Contracts\Repositories\SignedUrlAuditRepositoryInterface;
-use Academorix\Storage\Data\SignedUrlAuditData;
-use Academorix\Storage\Enums\StoragePermission;
-use Academorix\Storage\Models\SignedUrlAudit;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Storage\Contracts\Repositories\SignedUrlAuditRepositoryInterface;
+use Stackra\Storage\Data\SignedUrlAuditData;
+use Stackra\Storage\Enums\StoragePermission;
+use Stackra\Storage\Models\SignedUrlAudit;
 use Spatie\LaravelData\DataCollection;
 
 /**

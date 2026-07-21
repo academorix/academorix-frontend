@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "athlete-enrollment",
   "alias": "athlete_enrollment",
-  "namespace": "Academorix\\Sports\\AthleteEnrollment",
+  "namespace": "Stackra\\Sports\\AthleteEnrollment",
   "description": "The roster attachment binding an Athlete to a specific Team within a specific Season. Answers 'which athletes are on team X this season?'. Snapshotted: `age_group_snapshot_id` is FROZEN at enrollment time so birthday drift after registration doesn't affect eligibility for the current season — a U10 athlete who turns 11 mid-season stays on the U10 team through the season boundary. Payment status tracked forward-compat for Wave 4 Finance integration (price_amount_cents + price_currency + payment_status enum). Consent snapshot at enroll time captures the guardian's consent state for provisional/confirmed transitions. Registration workflow: submitted (fresh registration, awaiting approval or payment) → payment_pending (approved but awaiting Wave 4 payment) → consent_pending (payment cleared, awaiting guardian consent for minors) → confirmed (all preconditions met, athlete on roster from planned start date) → active (season started, athlete currently enrolled) → completed (season end, terminal happy path) / withdrawn (parent left mid-season) / expelled (disciplinary termination) / expired (never reached confirmed within registration window). ATOMIC CONVERSION: the enrollment observer creates a `teams::TeamMember` row (with `member_type='athlete'`, `member_id=enrollment.athlete_id`) in the same DB transaction when status → active. Rollback on either side aborts both. The `team_member_id` FK on enrollment tracks the created TeamMember. Consumes 1 unit of `athlete_enrollment_slot` entitlement per season (Small=15 / Medium=250 / Enterprise=unlimited; aligns with athlete_slot at each tier — most tenants enroll their whole roster). Ships lifecycle events, atomicity + waitlist + capacity handling. Trial conversion path: when `enrollment_type='trial_converted'`, `source_trial_id` references the originating TeamTrial (teams module). Late registration + waitlist promotion driven by scheduled jobs. Provisional enrollment (Enterprise-only) allows pending-consent state past the deadline — for regulatory-sensitive tenants with strict consent verification.",
   "keywords": [
     "enrollment",
@@ -28,7 +28,7 @@
   ],
   "priority": 57,
   "providers": [
-    "Academorix\\Sports\\AthleteEnrollment\\Providers\\AthleteEnrollmentServiceProvider"
+    "Stackra\\Sports\\AthleteEnrollment\\Providers\\AthleteEnrollmentServiceProvider"
   ],
   "files": [],
   "dependencies": [

@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/marketing/attributes",
+  "id": "stackra://modules/marketing/attributes",
   "$version": 1,
   "title": "marketing — PHP attribute contracts",
   "description": "Three class-level attributes. `#[AsMarketingListener]` subscribes a service to marketing-lane events (event lifecycle + delivery lifecycle + circuit-breaker + dead-letter). `#[AsMarketingProvider]` marks a class as a provider driver — the MarketingProviderManager discovers these at boot and registers them via createXxxDriver factories. `#[AsDomainEventMapper]` marks a class as a domain-event → marketing-event mapper; the DomainEventMapper registry auto-discovers these and wires the appropriate listener.",
-  "namespace": "Academorix\\Growth\\Marketing\\Attributes",
+  "namespace": "Stackra\\Growth\\Marketing\\Attributes",
   "attributes": [
     {
       "name": "AsMarketingListener",
-      "class": "Academorix\\Growth\\Marketing\\Attributes\\AsMarketingListener",
+      "class": "Stackra\\Growth\\Marketing\\Attributes\\AsMarketingListener",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a service as a subscriber to marketing-lane events (MarketingEventCaptured / Dispatched / Delivered / Failed / SuppressedByConsent / Superseded, MarketingDelivery* variants, MarketingProviderCircuitBreaker*, MarketingDeadLetter*). Discovery loader picks up each class at boot + wires the declared events. Consumers of MarketingDeadLetterCreated should override queue to `marketing-critical` since dead-letter creation is a P1 signal.",
@@ -16,7 +16,7 @@
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Array of event short names (`MarketingEventCaptured`, `MarketingDeadLetterCreated`, `MarketingProviderCircuitBreakerOpened`, …). Empty = subscribe to every `Academorix\\Growth\\Marketing\\Events\\*` event. Names resolve against events.json at boot; typos abort boot with a discovery error."
+          "description": "Array of event short names (`MarketingEventCaptured`, `MarketingDeadLetterCreated`, `MarketingProviderCircuitBreakerOpened`, …). Empty = subscribe to every `Stackra\\Growth\\Marketing\\Events\\*` event. Names resolve against events.json at boot; typos abort boot with a discovery error."
         },
         {
           "name": "queue",
@@ -35,7 +35,7 @@
     },
     {
       "name": "AsMarketingProvider",
-      "class": "Academorix\\Growth\\Marketing\\Attributes\\AsMarketingProvider",
+      "class": "Stackra\\Growth\\Marketing\\Attributes\\AsMarketingProvider",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a class as a marketing provider driver. The MarketingProviderManager discovers these at boot and registers a createXxxDriver factory keyed on the slug. Every driver MUST implement the IMarketingProvider contract (name(), supports(MarketingEventType), dispatch(...), transform(...)) + ship a JSON Schema under data/providers/<slug>-config.schema.json for config validation.",
@@ -67,7 +67,7 @@
     },
     {
       "name": "AsDomainEventMapper",
-      "class": "Academorix\\Growth\\Marketing\\Attributes\\AsDomainEventMapper",
+      "class": "Stackra\\Growth\\Marketing\\Attributes\\AsDomainEventMapper",
       "targets": ["class"],
       "isRepeatable": true,
       "description": "Marks a class as a domain-event → marketing-event mapper. The MarketingEventCapturer's discovery loop reads this at boot and wires the listener path. One mapper class per (domain_event_class, marketing_event_type) pair. Mappers are pure — they take a domain event + return a MarketingEventData DTO ready for insertion.",
@@ -75,7 +75,7 @@
         {
           "name": "domain_event_class",
           "type": "string",
-          "description": "Fully-qualified class name of the domain event this mapper handles (e.g. 'Academorix\\User\\Events\\UserRegistered')."
+          "description": "Fully-qualified class name of the domain event this mapper handles (e.g. 'Stackra\\User\\Events\\UserRegistered')."
         },
         {
           "name": "marketing_event_type",
@@ -94,7 +94,7 @@
           "description": "Optional Symfony ExpressionLanguage predicate against the domain event. When set, the mapper is applied only when the expression returns true. E.g. \"event.payment_status == 'paid'\" on facility.BookingCreated to fire session_booked only for paid bookings."
         }
       ],
-      "example": "#[AsDomainEventMapper(domain_event_class: 'Academorix\\\\Facility\\\\Events\\\\BookingCreated', marketing_event_type: 'session_booked', deduplication_key_pattern: 'booking:{subject_id}', condition: 'event.payment_status in [\"paid\", \"included_in_membership\"]')]\nfinal class CaptureSessionBookedMapper\n{\n    public function map(BookingCreated $event): MarketingEventData { ... }\n}"
+      "example": "#[AsDomainEventMapper(domain_event_class: 'Stackra\\\\Facility\\\\Events\\\\BookingCreated', marketing_event_type: 'session_booked', deduplication_key_pattern: 'booking:{subject_id}', condition: 'event.payment_status in [\"paid\", \"included_in_membership\"]')]\nfinal class CaptureSessionBookedMapper\n{\n    public function map(BookingCreated $event): MarketingEventData { ... }\n}"
     }
   ]
 }

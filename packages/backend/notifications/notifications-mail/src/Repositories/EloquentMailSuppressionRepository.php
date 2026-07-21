@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Repositories;
+namespace Stackra\Notifications\Mail\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Notifications\Mail\Contracts\Data\MailSuppressionInterface;
-use Academorix\Notifications\Mail\Contracts\Repositories\MailSuppressionRepositoryInterface;
-use Academorix\Notifications\Mail\Enums\MailSuppressionReason;
-use Academorix\Notifications\Mail\Models\MailSuppression;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Notifications\Mail\Contracts\Data\MailSuppressionInterface;
+use Stackra\Notifications\Mail\Contracts\Repositories\MailSuppressionRepositoryInterface;
+use Stackra\Notifications\Mail\Enums\MailSuppressionReason;
+use Stackra\Notifications\Mail\Models\MailSuppression;
 use DateTimeInterface;
 
 /**
@@ -20,7 +20,7 @@ use DateTimeInterface;
  *
  * ## What this class owns
  *
- * Hot-path finders the {@see \Academorix\Notifications\Mail\Channels\MailChannel}
+ * Hot-path finders the {@see \Stackra\Notifications\Mail\Channels\MailChannel}
  * + the retention pruner rely on:
  *
  *   - {@see isSuppressed()} — pre-send block-list check. Called

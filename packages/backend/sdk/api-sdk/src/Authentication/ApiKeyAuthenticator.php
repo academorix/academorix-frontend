@@ -30,7 +30,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Authentication;
+namespace Stackra\ApiSdk\Authentication;
 
 use Saloon\Contracts\Authenticator;
 use Saloon\Http\PendingRequest;

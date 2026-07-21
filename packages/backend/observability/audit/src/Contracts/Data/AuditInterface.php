@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Contracts\Data;
+namespace Stackra\Audit\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Audit\Models\Audit;
+use Stackra\Audit\Models\Audit;
 
 /**
  * Table shape for the `audits` table.

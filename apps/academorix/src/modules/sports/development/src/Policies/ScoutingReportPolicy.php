@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Development\Policies;
+namespace Stackra\Development\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Development\Models\ScoutingReport;
+use Stackra\User\Models\User;
+use Stackra\Development\Models\ScoutingReport;
 
 /**
- * Authorization policy for {@see \Academorix\Development\Models\ScoutingReport}.
+ * Authorization policy for {@see \Stackra\Development\Models\ScoutingReport}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

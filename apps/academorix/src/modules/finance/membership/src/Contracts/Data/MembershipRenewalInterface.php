@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Membership\Contracts\Data;
+namespace Stackra\Membership\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Membership\Models\MembershipRenewal;
+use Stackra\Membership\Models\MembershipRenewal;
 
 /**
  * Table shape for the `membership_renewals` table.

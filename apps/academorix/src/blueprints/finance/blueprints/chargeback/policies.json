@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/chargeback/policies",
+  "id": "stackra://modules/chargeback/policies",
   "$version": 1,
   "title": "chargeback — authorization policies",
   "description": "Two policies, one per owned entity. Chargebacks are admin-only surface — no customer-facing routes. Read access opens to finance + admin + owner + support roles; write access (evidence submission + RDR accept + manual mark-lost) restricted to finance + admin + owner. Every ability defers to spatie/laravel-permission for the permission check; scope narrowing runs via the ResolveScope middleware (tenant context; no branch scoping — chargebacks are tenant-wide by design). Customer routes DO NOT EXIST — chargebacks are bank-initiated + surfacing chargeback state to customers may violate some card network rules.",
   "policies": [
     {
       "model": "Chargeback",
-      "class": "Academorix\\Finance\\Chargeback\\Policies\\ChargebackPolicy",
+      "class": "Stackra\\Finance\\Chargeback\\Policies\\ChargebackPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -58,13 +58,13 @@
         {
           "action": "platformViewRateAlerts",
           "permission": "platform.chargebacks.view-rate-alerts",
-          "scope": "Academorix platform ops for cross-tenant merchant-account risk monitoring — surfaces every tenant approaching VDMP/MDMP thresholds."
+          "scope": "Stackra platform ops for cross-tenant merchant-account risk monitoring — surfaces every tenant approaching VDMP/MDMP thresholds."
         }
       ]
     },
     {
       "model": "ChargebackEvidence",
-      "class": "Academorix\\Finance\\Chargeback\\Policies\\ChargebackEvidencePolicy",
+      "class": "Stackra\\Finance\\Chargeback\\Policies\\ChargebackEvidencePolicy",
       "abilities": [
         {
           "action": "viewAny",

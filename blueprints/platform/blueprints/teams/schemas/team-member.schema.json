@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/teams/schemas/team-member",
+  "id": "stackra://modules/teams/schemas/team-member",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "TeamMember",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "trm_",
     "incrementing": false,
-    "model": "Academorix\\Teams\\Models\\TeamMember",
-    "interface": "Academorix\\Teams\\Contracts\\Data\\TeamMemberInterface",
-    "implements": ["Academorix\\Teams\\Contracts\\Data\\TeamMemberInterface"],
+    "model": "Stackra\\Teams\\Models\\TeamMember",
+    "interface": "Stackra\\Teams\\Contracts\\Data\\TeamMemberInterface",
+    "implements": ["Stackra\\Teams\\Contracts\\Data\\TeamMemberInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

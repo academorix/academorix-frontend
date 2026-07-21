@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/auth/middleware",
+  "id": "stackra://modules/auth/middleware",
   "$version": 1,
   "title": "auth \u2014 HTTP middleware",
   "description": "Five owned middleware. Each enforces an auth-flow-specific invariant BEFORE the endpoint handler runs. Ordering matters \u2014 the priorities below are the relative order the framework applies them within the auth-flow middleware group.",
   "middleware": [
     {
       "alias": "auth.rate_limit_login",
-      "class": "Academorix\\Auth\\Http\\Middleware\\RateLimitLogin",
+      "class": "Stackra\\Auth\\Http\\Middleware\\RateLimitLogin",
       "priority": 8,
       "description": "Per-IP + per-email rate limit on login / password-reset / MFA verify. 5 attempts per 15 minutes per IP; 10 attempts per hour per email. Uses laravel/framework's RateLimiter with separate buckets per (ip, email). Returns 429 with Retry-After header on exceed. This is the CHEAPEST rejection surface \u2014 runs BEFORE any DB call.",
       "auto_applied": false,
@@ -20,7 +20,7 @@
     },
     {
       "alias": "auth.enforce_session_scope",
-      "class": "Academorix\\Auth\\Http\\Middleware\\EnforceSessionScope",
+      "class": "Stackra\\Auth\\Http\\Middleware\\EnforceSessionScope",
       "priority": 20,
       "description": "Validates the request's X-Application-Id matches the Sanctum PAT's Application scope (from the PAT's abilities compact array). Refuses with 403 `application_mismatch` when a token issued on Sports is presented on Marketplace. Also refuses when the PAT's tenant scope doesn't match the caller's active tenant_member.",
       "auto_applied": false,
@@ -30,7 +30,7 @@
     },
     {
       "alias": "auth.jwt_verify",
-      "class": "Academorix\\Auth\\Http\\Middleware\\JwtVerify",
+      "class": "Stackra\\Auth\\Http\\Middleware\\JwtVerify",
       "priority": 15,
       "description": "Verifies an inter-service JWT (Authorization: Bearer <jwt>) against the JWKS. Resolves kid \u2192 signing key \u2192 signature check + `iss` + `aud` + `exp` + `iat` (with auth.jwt.clock_skew_seconds tolerance) + deny-list check (auth_jwt_deny_list). On success populates auth.jwt_claims on the request; on failure returns 401 `jwt_invalid` or 403 `jwt_denied`. Reserved for downstream service-to-service calls \u2014 NOT applied on user-facing HTTP routes.",
       "auto_applied": false,
@@ -41,7 +41,7 @@
     },
     {
       "alias": "auth.cors_strict",
-      "class": "Academorix\\Auth\\Http\\Middleware\\CorsStrict",
+      "class": "Stackra\\Auth\\Http\\Middleware\\CorsStrict",
       "priority": 4,
       "description": "Strict CORS. Whitelist origins per Application via config('auth.cors.applications.<app_slug>'). No wildcard origins. No credentials-with-wildcard. No unlisted headers. On preflight failure returns 403 immediately \u2014 the browser fails the request.",
       "auto_applied": true,
@@ -49,7 +49,7 @@
     },
     {
       "alias": "auth.detect_new_device",
-      "class": "Academorix\\Auth\\Http\\Middleware\\DetectNewDevice",
+      "class": "Stackra\\Auth\\Http\\Middleware\\DetectNewDevice",
       "priority": 12,
       "description": "AFTER authentication resolves, compute the request's device fingerprint (via DeviceFingerprinter) and compare against the User's known fingerprints in the last auth.session.new_device_lookback_days. Mismatch \u2192 fire LoginFromNewDeviceDetected event (async) so the notification pipeline can dispatch LoginFromNewDeviceNotification. Runs on the LOGIN endpoint (after login succeeded) \u2014 not on subsequent requests.",
       "auto_applied": false,

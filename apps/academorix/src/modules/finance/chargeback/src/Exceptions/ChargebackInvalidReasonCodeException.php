@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Exceptions;
+namespace Stackra\Chargeback\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Reason code is not valid for the declared network.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ChargebackInvalidReasonCodeException extends AcademorixException
+final class ChargebackInvalidReasonCodeException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

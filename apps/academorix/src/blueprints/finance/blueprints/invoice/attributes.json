@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/invoice/attributes",
+  "id": "stackra://modules/invoice/attributes",
   "$version": 1,
   "title": "invoice — PHP attribute contracts",
   "description": "Three class-level attributes. `#[AsInvoiceListener]` subscribes a service to invoice-lane events. `#[AsInvoiceLineItemType]` registers a new item_type + its rendering + tax classification rules. `#[AsInvoicePdfRenderer]` marks a class as an invoice PDF renderer implementation (default is DomPDF; Enterprise tenants may register wkhtmltopdf or other engines).",
-  "namespace": "Academorix\\Finance\\Invoice\\Attributes",
+  "namespace": "Stackra\\Finance\\Invoice\\Attributes",
   "attributes": [
     {
       "name": "AsInvoiceListener",
-      "class": "Academorix\\Finance\\Invoice\\Attributes\\AsInvoiceListener",
+      "class": "Stackra\\Finance\\Invoice\\Attributes\\AsInvoiceListener",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a service as a subscriber to invoice-lane events (InvoiceCreated / Finalized / Sent / Viewed / Paid / PartiallyPaid / Voided / Uncollectible / PastDue / Refunded / Disputed / Dunning* / WrittenOff / Line* / CreditNote*). Discovery loader picks up each class at boot + wires the declared events.",
@@ -16,7 +16,7 @@
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Array of event short names (`InvoicePaid`, `CreditNoteIssued`, `InvoiceUncollectible`, …). Empty = subscribe to every `Academorix\\Finance\\Invoice\\Events\\*` event. Names resolve against events.json at boot; typos abort boot with a discovery error."
+          "description": "Array of event short names (`InvoicePaid`, `CreditNoteIssued`, `InvoiceUncollectible`, …). Empty = subscribe to every `Stackra\\Finance\\Invoice\\Events\\*` event. Names resolve against events.json at boot; typos abort boot with a discovery error."
         },
         {
           "name": "queue",
@@ -35,7 +35,7 @@
     },
     {
       "name": "AsInvoiceLineItemType",
-      "class": "Academorix\\Finance\\Invoice\\Attributes\\AsInvoiceLineItemType",
+      "class": "Stackra\\Finance\\Invoice\\Attributes\\AsInvoiceLineItemType",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a class as an InvoiceLineItemType registration. Each item_type declared here becomes a valid value for invoice_lines.item_type. Provides rendering hints (SDUI columns), tax classification (which tax_type applies), and unit_price sign convention (must be >= 0 vs may be negative).",
@@ -72,7 +72,7 @@
     },
     {
       "name": "AsInvoicePdfRenderer",
-      "class": "Academorix\\Finance\\Invoice\\Attributes\\AsInvoicePdfRenderer",
+      "class": "Stackra\\Finance\\Invoice\\Attributes\\AsInvoicePdfRenderer",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a class as an invoice PDF renderer implementation. Registered with the InvoicePDFRenderer factory at boot. Default implementation is DomPDF; Enterprise tenants may register wkhtmltopdf (better CSS support) or a custom renderer.",
@@ -85,7 +85,7 @@
         {
           "name": "supports_templates",
           "type": "array<string>",
-          "description": "Template slugs this renderer supports. 'academorix-default' / 'tenant-branded' / 'minimal' / 'vat-eu'. The factory picks a renderer that supports the tenant's active template."
+          "description": "Template slugs this renderer supports. 'stackra-default' / 'tenant-branded' / 'minimal' / 'vat-eu'. The factory picks a renderer that supports the tenant's active template."
         },
         {
           "name": "typical_latency_ms",
@@ -100,7 +100,7 @@
           "description": "Optional entitlement gate for this renderer. Enterprise-only renderers (wkhtmltopdf) declare 'invoice_advanced_pdf'."
         }
       ],
-      "example": "#[AsInvoicePdfRenderer(slug: 'dompdf', supports_templates: ['academorix-default', 'tenant-branded', 'minimal'], typical_latency_ms: 350)]\nfinal class DomPdfInvoiceRenderer implements IInvoicePdfRenderer\n{\n    public function render(Invoice $invoice, string $template): string { ... }\n}"
+      "example": "#[AsInvoicePdfRenderer(slug: 'dompdf', supports_templates: ['stackra-default', 'tenant-branded', 'minimal'], typical_latency_ms: 350)]\nfinal class DomPdfInvoiceRenderer implements IInvoicePdfRenderer\n{\n    public function render(Invoice $invoice, string $template): string { ... }\n}"
     }
   ]
 }

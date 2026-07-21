@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Repositories;
+namespace Stackra\Activity\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Activity\Contracts\Data\ActivityRetentionPolicyInterface;
-use Academorix\Activity\Contracts\Repositories\ActivityRetentionPolicyRepositoryInterface;
-use Academorix\Activity\Models\ActivityRetentionPolicy;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Activity\Contracts\Data\ActivityRetentionPolicyInterface;
+use Stackra\Activity\Contracts\Repositories\ActivityRetentionPolicyRepositoryInterface;
+use Stackra\Activity\Models\ActivityRetentionPolicy;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Activity\Models\ActivityRetentionPolicy}.
+ * Attribute-first Eloquent repository for {@see Stackra\Activity\Models\ActivityRetentionPolicy}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ActivityRetentionPolicyInterface::class)]` which resolves to
  * `ActivityRetentionPolicy` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Activity\Models\ActivityRetentionPolicy>
+ * @extends Repository<\Stackra\Activity\Models\ActivityRetentionPolicy>
  *
  * @category Activity
  *

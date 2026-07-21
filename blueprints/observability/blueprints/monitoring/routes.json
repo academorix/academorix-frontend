@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/monitoring/routes",
+  "id": "stackra://modules/monitoring/routes",
   "$version": 1,
   "title": "monitoring — HTTP routes",
   "description": "Tenant-facing monitoring surface (health check CRUD + alert policy CRUD + alert acknowledge/resolve + incident management + provider CRUD + dashboard — 29 routes) + platform-admin cross-tenant support (2 routes). Every tenant-plane route carries `entitlement.enforce:monitoring_capture` at minimum. The two write endpoints that dispatch external side-effects (POST /health-checks/{h}/run and POST /providers/{p}/test) additionally carry the `monitoring.rate_limit` middleware to prevent test spam.",
@@ -24,41 +24,41 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\HealthCheckController@index",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\HealthCheckController@index",
           "permission": "monitoring.health_checks.viewAny",
           "description": "filter[check_type], filter[is_enabled], filter[last_run_status], filter[name]. Default sort: name ASC."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\HealthCheckController@store",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\HealthCheckController@store",
           "permission": "monitoring.health_checks.create",
           "description": "Body: HealthCheckCreateData. target jsonb validated against data/check-type-catalog.json per-check-type schema. Consumes 1 unit of monitoring_health_check_slot."
         },
         {
           "method": "GET",
           "path": "/{check}",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\HealthCheckController@show",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\HealthCheckController@show",
           "permission": "monitoring.health_checks.view",
           "description": "Includes last_run_at + last_run_status + consecutive_failure_count."
         },
         {
           "method": "PATCH",
           "path": "/{check}",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\HealthCheckController@update",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\HealthCheckController@update",
           "permission": "monitoring.health_checks.update"
         },
         {
           "method": "DELETE",
           "path": "/{check}",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\HealthCheckController@destroy",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\HealthCheckController@destroy",
           "permission": "monitoring.health_checks.delete",
           "description": "Soft-delete. Cancels pending RunHealthCheckJob. 90-day grace before hard-purge."
         },
         {
           "method": "POST",
           "path": "/{check}/run",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\HealthCheckController@run",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\HealthCheckController@run",
           "permission": "monitoring.health_checks.run",
           "middleware_add": ["monitoring.rate_limit"],
           "description": "Manual trigger — dispatches RunHealthCheckJob immediately. Rate-limited (1 per check per minute) to prevent test spam. Returns 202 with the pending run_id."
@@ -66,7 +66,7 @@
         {
           "method": "GET",
           "path": "/{check}/runs",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\HealthCheckController@runs",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\HealthCheckController@runs",
           "permission": "monitoring.health_check_runs.view",
           "description": "filter[from], filter[to], filter[status]. Default sort: run_at DESC. Default limit: 100. Retention-bounded to 7d hot / 30d cold (Enterprise: 30d hot / 90d cold)."
         }
@@ -92,40 +92,40 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringAlertPolicyController@index",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringAlertPolicyController@index",
           "permission": "monitoring.alert_policies.viewAny",
           "description": "filter[signal_type], filter[severity], filter[is_enabled], filter[silenced]."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringAlertPolicyController@store",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringAlertPolicyController@store",
           "permission": "monitoring.alert_policies.create",
           "description": "Body: MonitoringAlertPolicyCreateData. Consumes 1 unit of monitoring_alert_policy_slot."
         },
         {
           "method": "GET",
           "path": "/{policy}",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringAlertPolicyController@show",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringAlertPolicyController@show",
           "permission": "monitoring.alert_policies.view"
         },
         {
           "method": "PATCH",
           "path": "/{policy}",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringAlertPolicyController@update",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringAlertPolicyController@update",
           "permission": "monitoring.alert_policies.update"
         },
         {
           "method": "DELETE",
           "path": "/{policy}",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringAlertPolicyController@destroy",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringAlertPolicyController@destroy",
           "permission": "monitoring.alert_policies.delete",
           "description": "Refused when firing alerts exist against this policy."
         },
         {
           "method": "POST",
           "path": "/{policy}/suppress",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringAlertPolicyController@suppress",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringAlertPolicyController@suppress",
           "permission": "monitoring.alert_policies.suppress",
           "description": "Body: { silenced_until: ISO 8601, reason }. Fires MonitoringAlertPolicySuppressed audit-trail notification."
         }
@@ -151,28 +151,28 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringAlertController@index",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringAlertController@index",
           "permission": "monitoring.alerts.viewAny",
           "description": "filter[severity], filter[status], filter[policy_id], filter[from], filter[to], filter[incident_id]. Default filter: status=firing. Sort: fired_at DESC."
         },
         {
           "method": "GET",
           "path": "/{alert}",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringAlertController@show",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringAlertController@show",
           "permission": "monitoring.alerts.view",
           "description": "Includes signal_value + signal_context + parent policy details."
         },
         {
           "method": "POST",
           "path": "/{alert}/acknowledge",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringAlertController@acknowledge",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringAlertController@acknowledge",
           "permission": "monitoring.alerts.acknowledge",
           "description": "Body: { note? }. Sets status='acknowledged' + acknowledged_by_user_id + acknowledged_at. Triggers incident ack path if this was the last unack'd alert."
         },
         {
           "method": "POST",
           "path": "/{alert}/resolve",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringAlertController@resolve",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringAlertController@resolve",
           "permission": "monitoring.alerts.resolve",
           "description": "Body: { note }. Sets status='resolved' + resolved_by='manual'. Triggers incident auto-resolve path if this was the last firing alert."
         }
@@ -198,35 +198,35 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringIncidentController@index",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringIncidentController@index",
           "permission": "monitoring.incidents.viewAny",
           "description": "filter[severity], filter[status], filter[from], filter[to], filter[affected_service]. Default sort: opened_at DESC."
         },
         {
           "method": "GET",
           "path": "/{incident}",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringIncidentController@show",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringIncidentController@show",
           "permission": "monitoring.incidents.view",
           "description": "Includes attached alerts + timeline events + oncall_page_config."
         },
         {
           "method": "POST",
           "path": "/{incident}/acknowledge",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringIncidentController@acknowledge",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringIncidentController@acknowledge",
           "permission": "monitoring.incidents.acknowledge",
           "description": "Body: { note? }. Cancels pending EscalateIncidentJob."
         },
         {
           "method": "PATCH",
           "path": "/{incident}",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringIncidentController@update",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringIncidentController@update",
           "permission": "monitoring.incidents.update",
           "description": "Body: { status?, title?, description?, affected_services? }. Status transitions: acknowledged → investigating → mitigating → resolved (or postmortem for P1)."
         },
         {
           "method": "POST",
           "path": "/{incident}/resolve",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringIncidentController@resolve",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringIncidentController@resolve",
           "permission": "monitoring.incidents.resolve",
           "description": "Body: { note, postmortem_url? }. P1 without postmortem_url fires MonitoringPostmortemRequiredNotification."
         }
@@ -252,40 +252,40 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringProviderConfigController@index",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringProviderConfigController@index",
           "permission": "monitoring.providers.viewAny",
           "description": "filter[provider], filter[is_active], filter[test_mode], filter[circuit_breaker_state]. Config returned redacted; support role sees redacted view."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringProviderConfigController@store",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringProviderConfigController@store",
           "permission": "monitoring.providers.create",
           "description": "Body: MonitoringProviderConfigCreateData. config jsonb validated against per-provider JSON Schema. Consumes 1 unit of monitoring_provider_slot."
         },
         {
           "method": "GET",
           "path": "/{provider}",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringProviderConfigController@show",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringProviderConfigController@show",
           "permission": "monitoring.providers.view"
         },
         {
           "method": "PATCH",
           "path": "/{provider}",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringProviderConfigController@update",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringProviderConfigController@update",
           "permission": "monitoring.providers.update"
         },
         {
           "method": "DELETE",
           "path": "/{provider}",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringProviderConfigController@destroy",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringProviderConfigController@destroy",
           "permission": "monitoring.providers.delete",
           "description": "Soft-delete. Refused when circuit-breaker is open. 90-day grace before hard-purge."
         },
         {
           "method": "POST",
           "path": "/{provider}/test",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringProviderConfigController@test",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringProviderConfigController@test",
           "permission": "monitoring.providers.test",
           "middleware_add": ["monitoring.rate_limit"],
           "description": "Send a synthetic P4 test alert. Rate-limited (1 per config per minute) to prevent test spam. Returns test outcome + latency."
@@ -293,7 +293,7 @@
         {
           "method": "POST",
           "path": "/{provider}/reset-circuit-breaker",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringProviderConfigController@resetCircuitBreaker",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringProviderConfigController@resetCircuitBreaker",
           "permission": "monitoring.providers.reset-circuit-breaker",
           "description": "Body: { note }. Every reset writes to audits with 7-year retention. Increments circuit_breaker_reset_count."
         }
@@ -319,7 +319,7 @@
         {
           "method": "GET",
           "path": "/dashboard",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringDashboardController@show",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Tenant\\MonitoringDashboardController@show",
           "permission": "monitoring.dashboard.view",
           "description": "Returns { health_checks_summary: {healthy_count, degraded_count, unhealthy_count}, active_alerts_by_severity: {p1, p2, p3, p4}, open_incidents_count, mttr_last_7d_seconds, top_failing_checks: [...], provider_health: [{provider, circuit_state, last_success_at, last_failure_at}] }. Cached 60s per tenant."
         }
@@ -342,14 +342,14 @@
         {
           "method": "GET",
           "path": "/incidents",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Platform\\MonitoringIncidentController@index",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Platform\\MonitoringIncidentController@index",
           "permission": "platform.monitoring.incidents.viewAny",
           "description": "Cross-tenant P1 incident review. filter[tenant_id], filter[severity], filter[status], filter[unresolved]. Sorted by opened_at DESC."
         },
         {
           "method": "GET",
           "path": "/circuit-breakers",
-          "controller": "Academorix\\Observability\\Monitoring\\Http\\Controllers\\Platform\\CircuitBreakerHealthController@index",
+          "controller": "Stackra\\Observability\\Monitoring\\Http\\Controllers\\Platform\\CircuitBreakerHealthController@index",
           "permission": "platform.monitoring.circuit_breakers.viewAny",
           "description": "Cross-tenant view of every OPEN circuit-breaker + half-open probes in flight. Feeds the ops health dashboard."
         }

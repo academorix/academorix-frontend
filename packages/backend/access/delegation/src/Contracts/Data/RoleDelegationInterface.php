@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Delegation\Contracts\Data;
+namespace Stackra\Delegation\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Delegation\Models\RoleDelegation;
+use Stackra\Delegation\Models\RoleDelegation;
 
 /**
  * Table shape for the `role_delegations` table.

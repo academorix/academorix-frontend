@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Contracts\Repositories;
+namespace Stackra\ServiceAccounts\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\ServiceAccounts\Models\ServiceAccount}.
+ * Repository contract for {@see Stackra\ServiceAccounts\Models\ServiceAccount}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `ServiceAccountRepository`.
  *
- * @extends RepositoryInterface<\Academorix\ServiceAccounts\Models\ServiceAccount>
+ * @extends RepositoryInterface<\Stackra\ServiceAccounts\Models\ServiceAccount>
  *
  * @category ServiceAccounts
  *

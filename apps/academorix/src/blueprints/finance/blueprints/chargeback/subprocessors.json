@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/chargeback/subprocessors",
+  "id": "stackra://modules/chargeback/subprocessors",
   "$version": 1,
   "title": "chargeback — subprocessors",
-  "description": "The Chargeback module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. Downstream payment module engages the actual payment providers (Stripe / Paddle / Adyen / Square / PayPal / CustomWebhook) that ORIGINATE the chargeback webhook + receive the evidence submission; downstream marketing module engages ad-network subprocessors (Meta / Google / TikTok / Microsoft / Snapchat) that receive negative-value + fraud signal events; downstream notifications module engages email/SMS subprocessors. All are declared in their respective modules' subprocessors.json.",
+  "description": "The Chargeback module itself engages ZERO third-party subprocessors — every state transition happens within the Stackra platform. Downstream payment module engages the actual payment providers (Stripe / Paddle / Adyen / Square / PayPal / CustomWebhook) that ORIGINATE the chargeback webhook + receive the evidence submission; downstream marketing module engages ad-network subprocessors (Meta / Google / TikTok / Microsoft / Snapchat) that receive negative-value + fraud signal events; downstream notifications module engages email/SMS subprocessors. All are declared in their respective modules' subprocessors.json.",
   "subprocessors": [],
   "downstream_subprocessors_referenced": [
     {

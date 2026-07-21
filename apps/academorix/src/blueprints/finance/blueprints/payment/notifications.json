@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/payment/notifications",
+  "id": "stackra://modules/payment/notifications",
   "$version": 1,
   "title": "payment — notification classes + categories",
-  "namespace": "Academorix\\Finance\\Payment\\Notifications",
+  "namespace": "Stackra\\Finance\\Payment\\Notifications",
   "notifications": [
     "PaymentSucceededNotification",
     "PaymentFailedNotification",

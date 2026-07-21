@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Services;
+namespace Stackra\Localization\Services;
 
-use Academorix\Localization\Contracts\Services\TranslationCacheInterface;
+use Stackra\Localization\Contracts\Services\TranslationCacheInterface;
 use Illuminate\Cache\Repository;
 use Illuminate\Container\Attributes\Cache;
 use Illuminate\Container\Attributes\Config;

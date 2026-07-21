@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Services;
+namespace Stackra\Coaching\Services;
 
-use Academorix\Coaching\Contracts\Services\AssignmentConflictDetectorInterface;
+use Stackra\Coaching\Contracts\Services\AssignmentConflictDetectorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Coaching\Contracts\Repositories\CoachAssignmentRepositoryInterface;
+use Stackra\Coaching\Contracts\Repositories\CoachAssignmentRepositoryInterface;
 
 /**
  * Concrete service — AssignmentConflictDetector.

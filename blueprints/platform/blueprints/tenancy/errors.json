@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tenancy/errors",
+  "id": "stackra://modules/tenancy/errors",
   "$version": 1,
   "title": "tenants — error catalogue",
   "description": "Error codes this module can emit, with their HTTP status, i18n key, and support-runbook classification. `user_facing=true` means the message renders to end users (i18n key must exist in every supported locale). `retryable=true` signals the client should retry with backoff. `audit_severity` routes the error to the correct log channel — `alert` events page on-call.",

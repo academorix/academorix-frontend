@@ -105,7 +105,7 @@
               "actions": {
                 "onUpload": {
                   "kind": "s3.presign",
-                  "bucket": "academorix-tax-certificates",
+                  "bucket": "stackra-tax-certificates",
                   "keyPattern": "tenants/{{tenant.id}}/exemptions/{{form.customer_type}}/{{form.customer_id}}/{{uuid()}}.{{ext}}",
                   "onResult": {
                     "kind": "form.set",

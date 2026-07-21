@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/refund/caches",
+  "id": "stackra://modules/refund/caches",
   "$version": 1,
   "title": "refund — cache keys + tags",
   "driver": "redis",

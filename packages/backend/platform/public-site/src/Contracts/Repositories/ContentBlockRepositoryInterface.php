@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PublicSite\Contracts\Repositories;
+namespace Stackra\PublicSite\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\PublicSite\Models\ContentBlock}.
+ * Repository contract for {@see Stackra\PublicSite\Models\ContentBlock}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `ContentBlockRepository`.
  *
- * @extends RepositoryInterface<\Academorix\PublicSite\Models\ContentBlock>
+ * @extends RepositoryInterface<\Stackra\PublicSite\Models\ContentBlock>
  *
  * @category PublicSite
  *

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Exceptions;
+namespace Stackra\Branding\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a caller attempts to delete the tenant's default
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class LastDefaultBrandingException extends AcademorixException
+final class LastDefaultBrandingException extends StackraException
 {
     public const CODE = 'branding.last_default';
 

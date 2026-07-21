@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/service-accounts/helpers",
+  "id": "stackra://modules/service-accounts/helpers",
   "$version": 1,
   "title": "service-accounts \u2014 helper functions",
   "description": "Two global helpers. Everything else the module exposes is behind DI / facades \u2014 helpers here are for the rare case where a downstream module needs a synchronous lookup without pulling in the repository binding.",
-  "namespace": "Academorix\\ServiceAccount\\Support",
+  "namespace": "Stackra\\ServiceAccount\\Support",
   "helpers": [
     {
       "signature": "resolve_service_account(string $id): ?ServiceAccount",

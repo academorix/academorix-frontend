@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/competition/features",
+  "id": "stackra://modules/competition/features",
   "$version": 1,
   "title": "competition — feature keys",
   "features": [

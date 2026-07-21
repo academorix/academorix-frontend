@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Exceptions;
+namespace Stackra\Coaching\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * role must be one of: head_coach / assistant_coach / observer / substitute.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CoachAssignmentInvalidRoleException extends AcademorixException
+final class CoachAssignmentInvalidRoleException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

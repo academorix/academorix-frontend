@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/broadcasts",
+  "id": "stackra://modules/workflow/approvals/broadcasts",
   "$version": 1,
   "title": "approvals — broadcast channels",
   "description": "Real-time broadcast channels for approval-lifecycle events. Three channels serve three audiences: tenant-wide feed for admin dashboards, per-user feed for requester + approver inboxes, per-instance feed for detail-view live updates.",

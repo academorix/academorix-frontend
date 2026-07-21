@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Entitlements\Models\Entitlement;
+use Stackra\Entitlements\Models\Entitlement;
 
 it('is a placeholder — replace with actual Entitlement unit tests', function (): void {
     expect(Entitlement::class)->toBeString();

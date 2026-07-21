@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Concerns;
+namespace Stackra\Activity\Concerns;
 
 use Illuminate\Support\Str;
 use Spatie\Activitylog\LogOptions;
@@ -27,7 +27,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * ## Example
  *
  * ```php
- * use Academorix\Activity\Concerns\HasActivityLog;
+ * use Stackra\Activity\Concerns\HasActivityLog;
  *
  * final class Branch extends Model
  * {

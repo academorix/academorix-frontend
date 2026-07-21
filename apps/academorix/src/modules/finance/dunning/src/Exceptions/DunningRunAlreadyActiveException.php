@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Dunning\Exceptions;
+namespace Stackra\Dunning\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to start a new run for a subject that already has an active run.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class DunningRunAlreadyActiveException extends AcademorixException
+final class DunningRunAlreadyActiveException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

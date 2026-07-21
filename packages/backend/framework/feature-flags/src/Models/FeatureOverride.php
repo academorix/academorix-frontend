@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Models;
+namespace Stackra\FeatureFlags\Models;
 
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
-use Academorix\FeatureFlags\Database\Factories\FeatureOverrideFactory;
-use Academorix\FeatureFlags\Enums\OverrideDecision;
-use Academorix\FeatureFlags\Observers\FeatureOverrideObserver;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
+use Stackra\FeatureFlags\Database\Factories\FeatureOverrideFactory;
+use Stackra\FeatureFlags\Enums\OverrideDecision;
+use Stackra\FeatureFlags\Observers\FeatureOverrideObserver;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

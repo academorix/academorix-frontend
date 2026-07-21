@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/identity/drivers",
+  "id": "stackra://modules/identity/drivers",
   "$version": 1,
   "title": "identity \u2014 driver specifications",
   "description": "Two driver contracts. MfaSecretEncryptor drivers wrap the KMS envelope encryption for Identity.mfa_secret_encrypted. CredentialHasher drivers wrap the password-hash algorithm. Every driver is resolved via `TranslatorDriverManager`-style factory in IdentityServiceProvider.",
   "contracts": [
     {
-      "interface": "Academorix\\Identity\\Contracts\\MfaSecretEncryptorInterface",
+      "interface": "Stackra\\Identity\\Contracts\\MfaSecretEncryptorInterface",
       "methods": [
         {
           "signature": "encrypt(string $plaintext): string",
@@ -26,7 +26,7 @@
       ]
     },
     {
-      "interface": "Academorix\\Identity\\Contracts\\CredentialHasherInterface",
+      "interface": "Stackra\\Identity\\Contracts\\CredentialHasherInterface",
       "methods": [
         {
           "signature": "hash(string $plaintext): string",
@@ -46,7 +46,7 @@
   "mfa_secret_encryptor_drivers": [
     {
       "name": "kms",
-      "class": "Academorix\\Identity\\Drivers\\KmsMfaSecretEncryptor",
+      "class": "Stackra\\Identity\\Drivers\\KmsMfaSecretEncryptor",
       "underlying_package": "aws/aws-sdk-php",
       "strengths": [
         "Managed key rotation via KMS built-in rotation policy",
@@ -57,7 +57,7 @@
     },
     {
       "name": "vault",
-      "class": "Academorix\\Identity\\Drivers\\VaultMfaSecretEncryptor",
+      "class": "Stackra\\Identity\\Drivers\\VaultMfaSecretEncryptor",
       "underlying_package": "hashicorp/vault-php",
       "strengths": ["Self-hosted", "Cross-cloud portable"],
       "weaknesses": ["Additional operational surface"],
@@ -65,7 +65,7 @@
     },
     {
       "name": "local",
-      "class": "Academorix\\Identity\\Drivers\\LocalMfaSecretEncryptor",
+      "class": "Stackra\\Identity\\Drivers\\LocalMfaSecretEncryptor",
       "purpose": "DEV-ONLY. Reads a key from disk and performs AES-256-GCM inline. Refuses to load when APP_ENV=production. Retained here for local-development ergonomics.",
       "strengths": ["Zero external dependencies"],
       "weaknesses": [
@@ -78,7 +78,7 @@
   "credential_hasher_drivers": [
     {
       "name": "argon2id",
-      "class": "Academorix\\Identity\\Drivers\\Argon2idHasher",
+      "class": "Stackra\\Identity\\Drivers\\Argon2idHasher",
       "underlying_package": "laravel/framework Hash::driver('argon2id')",
       "strengths": [
         "Memory-hard \u2014 resistant to GPU cracking",
@@ -93,7 +93,7 @@
     },
     {
       "name": "bcrypt",
-      "class": "Academorix\\Identity\\Drivers\\BcryptHasher",
+      "class": "Stackra\\Identity\\Drivers\\BcryptHasher",
       "underlying_package": "laravel/framework Hash::driver('bcrypt')",
       "strengths": [
         "Battle-tested \u2014 in wide use since 1999",

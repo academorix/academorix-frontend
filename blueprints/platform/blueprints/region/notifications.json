@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/region/notifications",
+  "id": "stackra://modules/region/notifications",
   "$version": 1,
   "title": "region — notification classes + categories",
-  "namespace": "Academorix\\Region\\Notifications",
+  "namespace": "Stackra\\Region\\Notifications",
   "notifications": [
     "RegionCreatedNotification",
     "RegionPausedNotification",

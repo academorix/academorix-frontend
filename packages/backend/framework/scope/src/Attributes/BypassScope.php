@@ -18,7 +18,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Attributes;
+namespace Stackra\Scope\Attributes;
 
 use Attribute;
 
@@ -38,8 +38,8 @@ use Attribute;
  * ## Usage
  *
  * ```php
- * use Academorix\Scope\Attributes\BypassScope;
- * use Academorix\Scope\Eloquent\ScopedGlobalScope;
+ * use Stackra\Scope\Attributes\BypassScope;
+ * use Stackra\Scope\Eloquent\ScopedGlobalScope;
  *
  * final class TenantAuditController
  * {

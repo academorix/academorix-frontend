@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PrivateSessions\Services;
+namespace Stackra\PrivateSessions\Services;
 
-use Academorix\PrivateSessions\Contracts\Services\PrivateSessionOrchestratorInterface;
+use Stackra\PrivateSessions\Contracts\Services\PrivateSessionOrchestratorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\PrivateSessions\Contracts\Repositories\PrivateSessionRequestRepositoryInterface;
+use Stackra\PrivateSessions\Contracts\Repositories\PrivateSessionRequestRepositoryInterface;
 
 /**
  * Concrete service — PrivateSessionOrchestrator.

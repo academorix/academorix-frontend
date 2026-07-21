@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transfer/feature-flags",
+  "id": "stackra://modules/transfer/feature-flags",
   "$version": 1,
   "title": "transfer \u2014 kill switches",
   "engine": "laravel/pennant",

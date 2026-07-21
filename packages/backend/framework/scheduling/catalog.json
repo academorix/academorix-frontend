@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/scheduling",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/scheduling",
   "tier": "framework",
   "surfaces": ["core"],
   "kind": "framework-plumbing",
@@ -17,8 +17,8 @@
   "when_to_use": "Any Job or Command class needs a recurring schedule — the attribute registers itself at boot.",
   "when_not_to_use": "For one-shot dispatched jobs, use Laravel's queue directly without a scheduling attribute.",
   "peer_deps": [
-    "academorix/foundation",
-    "academorix/service-provider",
+    "stackra/foundation",
+    "stackra/service-provider",
     "olvlvl/composer-attribute-collector"
   ],
   "backend_pair": null,

@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/entitlements/jobs",
+  "id": "stackra://modules/entitlements/jobs",
   "$version": 1,
   "title": "entitlements \u2014 background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Entitlements\\Jobs\\ResetPeriodicUsageJob",
+      "class": "Stackra\\Entitlements\\Jobs\\ResetPeriodicUsageJob",
       "queue": "notifications",
       "purpose": "Scan Entitlement rows with kind=pool AND resets_at <= now(). Reset value_used=0 + compute next resets_at.",
       "steps": [
@@ -22,7 +22,7 @@
       "notes": "Runs from schedule every 15 minutes (frequent enough to catch month boundaries in every timezone)."
     },
     {
-      "class": "Academorix\\Entitlements\\Jobs\\ReconcileUsageJob",
+      "class": "Stackra\\Entitlements\\Jobs\\ReconcileUsageJob",
       "queue": "notifications",
       "purpose": "Sync Redis counters back to Postgres. Detects drift + repairs.",
       "steps": [
@@ -39,7 +39,7 @@
       "notes": "Runs hourly. Catches Redis-Postgres divergence from queue backpressure or job failures."
     },
     {
-      "class": "Academorix\\Entitlements\\Jobs\\ExportUsageForBillingJob",
+      "class": "Stackra\\Entitlements\\Jobs\\ExportUsageForBillingJob",
       "queue": "notifications-critical",
       "purpose": "Push metered-billing usage to Stripe/Paddle at period end. Called by subscription module.",
       "steps": [
@@ -57,7 +57,7 @@
       "backoff": [60, 300, 1800, 3600, 21600]
     },
     {
-      "class": "Academorix\\Entitlements\\Jobs\\SyncEntitlementsFromPlanJob",
+      "class": "Stackra\\Entitlements\\Jobs\\SyncEntitlementsFromPlanJob",
       "queue": "notifications-critical",
       "purpose": "Reconcile tenant's Entitlement rows against the current Plan's default_entitlements + tenant-level overrides.",
       "steps": [
@@ -75,7 +75,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Entitlements\\Jobs\\ApplyEntitlementOverrideJob",
+      "class": "Stackra\\Entitlements\\Jobs\\ApplyEntitlementOverrideJob",
       "queue": "notifications",
       "purpose": "Async application of platform-admin overrides. Called by PATCH /platform/entitlements/{tenant}/{key} to keep the request path fast.",
       "shouldQueue": true,
@@ -85,7 +85,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Entitlements\\Jobs\\PruneUsageJob",
+      "class": "Stackra\\Entitlements\\Jobs\\PruneUsageJob",
       "queue": "notifications",
       "purpose": "Drop old EntitlementUsage monthly partitions past retention. Uses DROP PARTITION rather than DELETE (instant + storage-reclaiming).",
       "shouldQueue": true,

@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/webhook/notifications",
+  "id": "stackra://modules/webhook/notifications",
   "$version": 1,
   "title": "webhook \u2014 notification classes + categories",
   "description": "3 Notification classes + 3 categories registered with the notifications core. Fired on subscription lifecycle events + probe failures. All transactional \u2014 admins can't opt out.",
-  "namespace": "Academorix\\Webhook\\Notifications",
+  "namespace": "Stackra\\Webhook\\Notifications",
   "notifications": [
     "WebhookSubscriptionDisabledNotification",
     "WebhookSubscriptionUpgradedNotification",

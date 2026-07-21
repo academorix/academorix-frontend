@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Data\Resources;
+namespace Stackra\Geography\Data\Resources;
 
-use Academorix\Geography\Contracts\Data\CurrencyInterface;
-use Academorix\Geography\Models\Currency;
+use Stackra\Geography\Contracts\Data\CurrencyInterface;
+use Stackra\Geography\Models\Currency;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;

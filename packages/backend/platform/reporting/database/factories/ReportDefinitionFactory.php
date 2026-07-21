@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Reporting\Database\Factories;
+namespace Stackra\Reporting\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Reporting\Contracts\Data\ReportDefinitionInterface;
-use Academorix\Reporting\Models\ReportDefinition;
+use Stackra\Reporting\Contracts\Data\ReportDefinitionInterface;
+use Stackra\Reporting\Models\ReportDefinition;
 
 /**
- * Factory for {@see \Academorix\Reporting\Models\ReportDefinition}.
+ * Factory for {@see \Stackra\Reporting\Models\ReportDefinition}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Reporting\Models\ReportDefinition>
+ * @extends Factory<\Stackra\Reporting\Models\ReportDefinition>
  *
  * @category Reporting
  *

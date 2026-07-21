@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/organization/helpers",
+  "id": "stackra://modules/organization/helpers",
   "$version": 1,
   "title": "organization — helper functions",
   "description": "Two helpers. `active_organization()` returns the currently-resolved Organization (from the `organization.resolve_active` middleware). `default_organization()` returns the tenant's is_default row. Both are cached per-request. NO getter equivalent for descendants / ancestors — callers use the trait accessors on the model directly.",
-  "namespace": "Academorix\\Organization\\Support",
+  "namespace": "Stackra\\Organization\\Support",
   "helpers": [
     {
-      "signature": "active_organization(): Academorix\\Organization\\Models\\Organization | null",
+      "signature": "active_organization(): Stackra\\Organization\\Models\\Organization | null",
       "purpose": "The Organization resolved for the current request by the `organization.resolve_active` middleware. Reads: (1) `X-Organization-Id` header (ULID or slug), (2) `me.default_organization_id` (user's pinned org), (3) tenant.default_organization (via cache).",
       "behaviours": [
         "Returns null on unauthenticated + platform-admin requests (no organization context).",
@@ -16,7 +16,7 @@
       "flow": "1) Read RequestContext::organization() if set. 2) Fall through to middleware resolution. 3) Return null when unresolved."
     },
     {
-      "signature": "default_organization(?string $tenantId = null): Academorix\\Organization\\Models\\Organization | null",
+      "signature": "default_organization(?string $tenantId = null): Stackra\\Organization\\Models\\Organization | null",
       "purpose": "The tenant's is_default=true row. Cached in Redis at `org:default:{tenant_id}` for 15 minutes.",
       "behaviours": [
         "$tenantId omitted → uses RequestContext::tenant() (current tenant).",

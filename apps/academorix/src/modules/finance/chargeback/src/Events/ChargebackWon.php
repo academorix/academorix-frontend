@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Events;
+namespace Stackra\Chargeback\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -18,7 +18,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - activity::WriteToActivityLog
  * - payment::ReducePaymentDisputedOnChargebackWon (reduces parent payment.amount_disputed_cents back)
  * - notifications::DispatchChargebackWonNotification (admin only — no customer message)
- * - observability::MetricsCollector (academorix.chargeback.won_total labelled by network + reason_category)
+ * - observability::MetricsCollector (stackra.chargeback.won_total labelled by network + reason_category)
  *
  * @category Chargeback
  *

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Contracts\Services;
+namespace Stackra\Webhook\Contracts\Services;
 
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
-use Academorix\Webhook\Attributes\AsWebhookEvent;
-use Academorix\Webhook\Services\WebhookRegistry;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Webhook\Attributes\AsWebhookEvent;
+use Stackra\Webhook\Services\WebhookRegistry;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -14,7 +14,7 @@ use Illuminate\Container\Attributes\Bind;
  * class the app boots with.
  *
  * Hydrated at boot by the framework's generic
- * {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ * {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  * pump via the {@see HydratesFrom} attribute on {@see register()}.
  * Consumed by:
  *

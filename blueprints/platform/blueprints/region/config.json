@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/region/config",
+  "id": "stackra://modules/region/config",
   "$version": 1,
   "title": "region — developer configuration",
   "configFile": "config/region.php",

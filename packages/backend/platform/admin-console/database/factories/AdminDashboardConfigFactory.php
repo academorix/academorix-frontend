@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AdminConsole\Database\Factories;
+namespace Stackra\AdminConsole\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\AdminConsole\Contracts\Data\AdminDashboardConfigInterface;
-use Academorix\AdminConsole\Models\AdminDashboardConfig;
+use Stackra\AdminConsole\Contracts\Data\AdminDashboardConfigInterface;
+use Stackra\AdminConsole\Models\AdminDashboardConfig;
 
 /**
- * Factory for {@see \Academorix\AdminConsole\Models\AdminDashboardConfig}.
+ * Factory for {@see \Stackra\AdminConsole\Models\AdminDashboardConfig}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\AdminConsole\Models\AdminDashboardConfig>
+ * @extends Factory<\Stackra\AdminConsole\Models\AdminDashboardConfig>
  *
  * @category AdminConsole
  *

@@ -1,10 +1,10 @@
 {
-  "name": "academorix/user",
+  "name": "stackra/user",
   "type": "library",
-  "description": "Academorix User module — server-side Laravel package emitted from the module blueprint at `modules/identity/blueprints/user/`. Complements the wire SDK at `academorix-identity/user-sdk`.",
+  "description": "Stackra User module — server-side Laravel package emitted from the module blueprint at `modules/identity/blueprints/user/`. Complements the wire SDK at `stackra-identity/user-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "identity",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-identity/user-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-identity/user-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\User\\": "src/"
+      "Stackra\\User\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\User\\Tests\\": "tests/"
+      "Stackra\\User\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\User\\Providers\\UserServiceProvider"
+        "Stackra\\User\\Providers\\UserServiceProvider"
       ],
       "aliases": {}
     }

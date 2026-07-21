@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Actions\Platform\Languages;
+namespace Stackra\Localization\Actions\Platform\Languages;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Localization\Contracts\Data\PlatformLanguageInterface;
-use Academorix\Localization\Contracts\Repositories\PlatformLanguageRepositoryInterface;
-use Academorix\Localization\Data\Requests\CreatePlatformLanguageRequestData;
-use Academorix\Localization\Data\Resources\PlatformLanguageData;
-use Academorix\Localization\Enums\LocalizationPermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Localization\Contracts\Data\PlatformLanguageInterface;
+use Stackra\Localization\Contracts\Repositories\PlatformLanguageRepositoryInterface;
+use Stackra\Localization\Data\Requests\CreatePlatformLanguageRequestData;
+use Stackra\Localization\Data\Resources\PlatformLanguageData;
+use Stackra\Localization\Enums\LocalizationPermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `POST /api/v1/platform/languages` — platform-admin creates a

@@ -19,10 +19,10 @@
  *     public function broadcastQueue(): string { return '...'; }
  *
  * Instead, packages declare the same information via attributes on
- * the event class (see {@see \Academorix\Events\Attributes\Broadcastable},
- * {@see \Academorix\Events\Attributes\BroadcastOn},
- * {@see \Academorix\Events\Attributes\BroadcastAs},
- * {@see \Academorix\Events\Attributes\BroadcastQueue}) and delegate
+ * the event class (see {@see \Stackra\Events\Attributes\Broadcastable},
+ * {@see \Stackra\Events\Attributes\BroadcastOn},
+ * {@see \Stackra\Events\Attributes\BroadcastAs},
+ * {@see \Stackra\Events\Attributes\BroadcastQueue}) and delegate
  * the runtime resolution to this class.
  *
  * ## Wiring pattern
@@ -62,9 +62,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Events\Support;
+namespace Stackra\Events\Support;
 
-use Academorix\Events\Attributes\Broadcastable;
+use Stackra\Events\Attributes\Broadcastable;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;

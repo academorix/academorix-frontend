@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Data\Requests;
+namespace Stackra\Notifications\Mail\Data\Requests;
 
-use Academorix\Notifications\Mail\Enums\MailSuppressionReason;
+use Stackra\Notifications\Mail\Enums\MailSuppressionReason;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Email;
 use Spatie\LaravelData\Attributes\Validation\Enum;

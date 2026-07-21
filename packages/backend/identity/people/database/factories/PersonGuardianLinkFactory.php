@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\People\Database\Factories;
+namespace Stackra\People\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\People\Contracts\Data\PersonGuardianLinkInterface;
-use Academorix\People\Models\PersonGuardianLink;
+use Stackra\People\Contracts\Data\PersonGuardianLinkInterface;
+use Stackra\People\Models\PersonGuardianLink;
 
 /**
- * Factory for {@see \Academorix\People\Models\PersonGuardianLink}.
+ * Factory for {@see \Stackra\People\Models\PersonGuardianLink}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\People\Models\PersonGuardianLink>
+ * @extends Factory<\Stackra\People\Models\PersonGuardianLink>
  *
  * @category People
  *

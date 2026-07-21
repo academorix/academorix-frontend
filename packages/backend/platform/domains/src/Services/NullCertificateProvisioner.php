@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Services;
+namespace Stackra\Domains\Services;
 
-use Academorix\Domains\Contracts\Services\CertificateProvisionerInterface;
-use Academorix\Domains\Enums\SslStatus;
-use Academorix\Domains\Models\Domain;
+use Stackra\Domains\Contracts\Services\CertificateProvisionerInterface;
+use Stackra\Domains\Enums\SslStatus;
+use Stackra\Domains\Models\Domain;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

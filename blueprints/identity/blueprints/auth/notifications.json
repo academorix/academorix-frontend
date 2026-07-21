@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/auth/notifications",
+  "id": "stackra://modules/auth/notifications",
   "$version": 1,
   "title": "auth \u2014 notification classes + categories",
-  "namespace": "Academorix\\Auth\\Notifications",
+  "namespace": "Stackra\\Auth\\Notifications",
   "description": "Seven notifications. Two are transactional-required (password-reset-link, email-verification-link). Five are informational-security (login-from-new-device, login-from-new-location, password-changed-from-new-device, impersonation-session-active, mfa-enrolled-confirmation) with default-on opt-in.",
   "notifications": [
     "PasswordResetLinkNotification",
@@ -21,7 +21,7 @@
       "queue": "notifications",
       "subject_template": "auth::mail.password_reset_link.subject",
       "body_template_path": "auth::mail.password_reset_link.body",
-      "default_subject_en": "Reset your Academorix password",
+      "default_subject_en": "Reset your Stackra password",
       "trigger_event": "PasswordResetInitiated",
       "payload_bindings": {
         "reset_url": "string (signed URL, 15min TTL)",
@@ -37,7 +37,7 @@
       "queue": "notifications",
       "subject_template": "auth::mail.email_verification_link.subject",
       "body_template_path": "auth::mail.email_verification_link.body",
-      "default_subject_en": "Verify your Academorix email",
+      "default_subject_en": "Verify your Stackra email",
       "trigger_event": "EmailVerificationRequested",
       "payload_bindings": {
         "verification_url": "string (signed URL, 24h TTL)",
@@ -53,7 +53,7 @@
       "queue": "notifications",
       "subject_template": "auth::mail.new_device_login.subject",
       "body_template_path": "auth::mail.new_device_login.body",
-      "default_subject_en": "New device sign-in on your Academorix account",
+      "default_subject_en": "New device sign-in on your Stackra account",
       "trigger_event": "LoginFromNewDeviceDetected",
       "payload_bindings": {
         "device_fingerprint_short": "string (first 8 chars of the SHA-256)",
@@ -70,7 +70,7 @@
       "queue": "notifications",
       "subject_template": "auth::mail.new_location_login.subject",
       "body_template_path": "auth::mail.new_location_login.body",
-      "default_subject_en": "Unusual sign-in location on your Academorix account",
+      "default_subject_en": "Unusual sign-in location on your Stackra account",
       "trigger_event": "UserLoggedIn",
       "payload_bindings": {
         "geolocation_hint": "string",
@@ -104,7 +104,7 @@
       "queue": "notifications-critical",
       "subject_template": "auth::mail.impersonation_active.subject",
       "body_template_path": "auth::mail.impersonation_active.body",
-      "default_subject_en": "Academorix support is currently signed in to your account",
+      "default_subject_en": "Stackra support is currently signed in to your account",
       "trigger_event": "ImpersonationStarted",
       "payload_bindings": {
         "impersonator_display_name": "string",
@@ -122,7 +122,7 @@
       "queue": "notifications",
       "subject_template": "auth::mail.mfa_enrolled.subject",
       "body_template_path": "auth::mail.mfa_enrolled.body",
-      "default_subject_en": "Two-factor authentication is now enabled on your Academorix account",
+      "default_subject_en": "Two-factor authentication is now enabled on your Stackra account",
       "trigger_event": "identity::MfaEnrolled",
       "payload_bindings": {
         "enrolled_at": "ISO-8601 timestamp",

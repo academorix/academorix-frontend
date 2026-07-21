@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Contracts\Services;
+namespace Stackra\Coaching\Contracts\Services;
 
-use Academorix\Coaching\Services\AssignmentConflictDetector;
+use Stackra\Coaching\Services\AssignmentConflictDetector;
 use Illuminate\Container\Attributes\Bind;
 
 /**

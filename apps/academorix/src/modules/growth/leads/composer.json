@@ -1,10 +1,10 @@
 {
-  "name": "academorix/leads",
+  "name": "stackra/leads",
   "type": "library",
-  "description": "Academorix Leads module — server-side Laravel package emitted from the module blueprint at `modules/growth/blueprints/leads/`. Complements the wire SDK at `academorix-growth/leads-sdk`.",
+  "description": "Stackra Leads module — server-side Laravel package emitted from the module blueprint at `modules/growth/blueprints/leads/`. Complements the wire SDK at `stackra-growth/leads-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "growth",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-growth/leads-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-growth/leads-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Leads\\": "src/"
+      "Stackra\\Leads\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Leads\\Tests\\": "tests/"
+      "Stackra\\Leads\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Leads\\Providers\\LeadsServiceProvider"
+        "Stackra\\Leads\\Providers\\LeadsServiceProvider"
       ],
       "aliases": {}
     }

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Exceptions;
+namespace Stackra\Integrations\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Raised when a lookup expects a tenant integration but none matches

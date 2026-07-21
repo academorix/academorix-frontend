@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/subscription/errors",
+  "id": "stackra://modules/subscription/errors",
   "$version": 1,
   "title": "subscription \u2014 error codes",
   "namespace": "subscription",

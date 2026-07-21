@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Actions\Tenant\Translations;
+namespace Stackra\Localization\Actions\Tenant\Translations;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Localization\Data\Resources\TranslationData;
-use Academorix\Localization\Enums\LocalizationPermission;
-use Academorix\Localization\Models\Translation;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Localization\Data\Resources\TranslationData;
+use Stackra\Localization\Enums\LocalizationPermission;
+use Stackra\Localization\Models\Translation;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `GET /api/v1/translations/{translation}` — read one translation

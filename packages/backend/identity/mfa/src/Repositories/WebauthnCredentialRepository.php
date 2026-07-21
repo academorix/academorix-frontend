@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Repositories;
+namespace Stackra\Mfa\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Mfa\Contracts\Data\WebauthnCredentialInterface;
-use Academorix\Mfa\Contracts\Repositories\WebauthnCredentialRepositoryInterface;
-use Academorix\Mfa\Models\WebauthnCredential;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Mfa\Contracts\Data\WebauthnCredentialInterface;
+use Stackra\Mfa\Contracts\Repositories\WebauthnCredentialRepositoryInterface;
+use Stackra\Mfa\Models\WebauthnCredential;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Mfa\Models\WebauthnCredential}.
+ * Attribute-first Eloquent repository for {@see Stackra\Mfa\Models\WebauthnCredential}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(WebauthnCredentialInterface::class)]` which resolves to
  * `WebauthnCredential` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Mfa\Models\WebauthnCredential>
+ * @extends Repository<\Stackra\Mfa\Models\WebauthnCredential>
  *
  * @category Mfa
  *

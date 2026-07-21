@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/rbac/traits",
+  "id": "stackra://modules/rbac/traits",
   "$version": 1,
   "title": "rbac \u2014 trait composition",
   "description": "Four owned traits. `HasRoles` + `HasPermissions` are the composable traits every principal-type model uses to participate in RBAC \u2014 they wrap spatie's shipped traits and route the hot-path check through PermissionResolver. `HasResolvedPermissions` exposes a computed accessor for the cached compact permission array. `IsPermissionable` is a marker on models that policies protect \u2014 signals reflection-based tooling that the model is a permission target.",
   "owned": [
     {
-      "trait": "Academorix\\Rbac\\Concerns\\HasRoles",
+      "trait": "Stackra\\Rbac\\Concerns\\HasRoles",
       "description": "Composable trait for principal-type models. EXTENDS `Spatie\\Permission\\Traits\\HasRoles` and overrides `hasPermissionTo(...)` to route through `PermissionResolver::resolve()` \u2014 so RBAC \u222a grants \u2212 denies + delegation compose at query-time. Composed by User, PlatformUser, ServiceAccount.",
       "public": true,
       "usedBy": ["identity::User", "identity::PlatformUser", "identity::ServiceAccount"],
@@ -14,7 +14,7 @@
       "conflicts_with": []
     },
     {
-      "trait": "Academorix\\Rbac\\Concerns\\HasPermissions",
+      "trait": "Stackra\\Rbac\\Concerns\\HasPermissions",
       "description": "Companion trait for direct permission grants (via model_has_permissions). Rare \u2014 usually roles carry perms. Composed alongside HasRoles on the same principal models.",
       "public": true,
       "usedBy": ["identity::User", "identity::PlatformUser", "identity::ServiceAccount"],
@@ -23,7 +23,7 @@
       "conflicts_with": []
     },
     {
-      "trait": "Academorix\\Rbac\\Concerns\\HasResolvedPermissions",
+      "trait": "Stackra\\Rbac\\Concerns\\HasResolvedPermissions",
       "description": "Exposes a computed accessor `->resolvedPermissions` returning the caller's full compact permission array (RBAC \u222a grants \u2212 denies). Cached per-request. Optional to compose \u2014 only for models that need programmatic access to the resolved set (e.g. custom controllers rendering permission-aware UI).",
       "public": true,
       "usedBy": ["identity::User (composed by default so /api/v1/auth/me can return the array)"],
@@ -32,7 +32,7 @@
       "conflicts_with": []
     },
     {
-      "trait": "Academorix\\Rbac\\Concerns\\IsPermissionable",
+      "trait": "Stackra\\Rbac\\Concerns\\IsPermissionable",
       "description": "Marker trait signalling that a model is a permission TARGET (i.e. policies gate reads/writes on it, and access/grants can attach dynamic permissions to it). Adds no accessor / mutator / scope \u2014 pure metadata for reflection-based tooling (the access-request module's discovery scan uses it). Composed by every domain model with a policy.",
       "public": true,
       "usedBy": [
@@ -60,15 +60,15 @@
       { "trait": "Spatie\\Permission\\Traits\\HasPermissions" }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasSystemFlag" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
-    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
-    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
+    "tenants": [{ "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "activity": [{ "trait": "Stackra\\Activity\\Concerns\\HasActivityLog" }]
   },
   "composition": {
     "role": {

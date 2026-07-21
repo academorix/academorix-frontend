@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attendance\Exceptions;
+namespace Stackra\Attendance\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * no_show_fee_currency is required when no_show_fee_cents > 0.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AttendancePolicyCurrencyRequiredException extends AcademorixException
+final class AttendancePolicyCurrencyRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

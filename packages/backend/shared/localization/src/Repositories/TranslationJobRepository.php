@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Repositories;
+namespace Stackra\Localization\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Localization\Contracts\Data\TranslationJobInterface;
-use Academorix\Localization\Contracts\Repositories\TranslationJobRepositoryInterface;
-use Academorix\Localization\Models\TranslationJob;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Localization\Contracts\Data\TranslationJobInterface;
+use Stackra\Localization\Contracts\Repositories\TranslationJobRepositoryInterface;
+use Stackra\Localization\Models\TranslationJob;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Localization\Models\TranslationJob}.
+ * Attribute-first Eloquent repository for {@see Stackra\Localization\Models\TranslationJob}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(TranslationJobInterface::class)]` which resolves to
  * `TranslationJob` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Localization\Models\TranslationJob>
+ * @extends Repository<\Stackra\Localization\Models\TranslationJob>
  *
  * @category Localization
  *

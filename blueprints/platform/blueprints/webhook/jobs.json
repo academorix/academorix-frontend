@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/webhook/jobs",
+  "id": "stackra://modules/webhook/jobs",
   "$version": 1,
   "title": "webhook \u2014 background jobs",
   "description": "Four jobs. DispatchWebhookJob is the workhorse; WebhookProbeJob is the scheduled health probe; PruneWebhookDeliveriesJob enforces retention; AutoUpgradePinnedSubscriptionsJob handles version-sunset cascade.",
@@ -10,7 +10,7 @@
   },
   "jobs": [
     {
-      "class": "Academorix\\Webhook\\Jobs\\DispatchWebhookJob",
+      "class": "Stackra\\Webhook\\Jobs\\DispatchWebhookJob",
       "queue": "notifications",
       "purpose": "Send one delivery to one subscription. Wrapped in Bus::batch() by WebhookEventDispatcher for fan-out. Handles versioning transformer chain, rate limiting, signing, destination dispatch, response parsing, state transition, retry scheduling.",
       "steps": [
@@ -38,7 +38,7 @@
       "notes": "Job tries=1 because retry orchestration is state-machine-driven. A crashed job leaves the delivery in state=inFlight with attempted_at set \u2014 the ReconcileDeliveriesJob (foundation) picks up stuck rows > 30 min old."
     },
     {
-      "class": "Academorix\\Webhook\\Jobs\\WebhookProbeJob",
+      "class": "Stackra\\Webhook\\Jobs\\WebhookProbeJob",
       "queue": "notifications",
       "purpose": "Health probe: send a HEAD (or GET) to every active subscription's destination + track consecutive_probe_failures. Reachability sanity check without dispatching a real event.",
       "steps": [
@@ -55,7 +55,7 @@
       "notes": "Runs from schedule (daily). Manual invocation via `webhook:probe` command."
     },
     {
-      "class": "Academorix\\Webhook\\Jobs\\PruneWebhookDeliveriesJob",
+      "class": "Stackra\\Webhook\\Jobs\\PruneWebhookDeliveriesJob",
       "queue": "notifications",
       "purpose": "Hard-delete WebhookDelivery rows older than config('webhook.audit.prune_after_days', 30). Chunked at prune_chunk_size (default 1000).",
       "steps": [
@@ -71,7 +71,7 @@
       "notes": "Runs from schedule daily 03:00 UTC. Idempotent \u2014 no-op when nothing to prune."
     },
     {
-      "class": "Academorix\\Webhook\\Jobs\\AutoUpgradePinnedSubscriptionsJob",
+      "class": "Stackra\\Webhook\\Jobs\\AutoUpgradePinnedSubscriptionsJob",
       "queue": "notifications-critical",
       "purpose": "Handle version-sunset cascade. Dispatched by versioning::AutoUpgradePinnedSubscriptions listener on versioning::ApiVersionSunset.",
       "steps": [

@@ -42,12 +42,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Attributes\AllowsDirectModelAccess;
-use Academorix\Architecture\Enums\LayerType;
-use Academorix\Architecture\Support\SourceFile;
-use Academorix\Architecture\Violations\Severity;
+use Stackra\Architecture\Attributes\AllowsDirectModelAccess;
+use Stackra\Architecture\Enums\LayerType;
+use Stackra\Architecture\Support\SourceFile;
+use Stackra\Architecture\Violations\Severity;
 
 /**
  * Enforce "only Repositories touch Models".
@@ -72,7 +72,7 @@ final class NoDirectModelAccessRule extends AbstractRule
     }
 
     /**
-     * @return list<\Academorix\Architecture\Violations\Violation>
+     * @return list<\Stackra\Architecture\Violations\Violation>
      */
     public function check(SourceFile $file): array
     {
@@ -176,7 +176,7 @@ final class NoDirectModelAccessRule extends AbstractRule
     /**
      * Short name of the escape-hatch attribute. We use the
      * short name so callers can add either `use AllowsDirectModelAccess`
-     * or `use Academorix\Architecture\Attributes\AllowsDirectModelAccess`
+     * or `use Stackra\Architecture\Attributes\AllowsDirectModelAccess`
      * — both survive.
      */
     private function shortAttributeName(): string

@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/region/events",
+  "id": "stackra://modules/region/events",
   "$version": 1,
   "title": "region — published events",
-  "namespace": "Academorix\\Region\\Events",
+  "namespace": "Stackra\\Region\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Financial-adjacent events (tax_config, is_default) fan out to the audit + finance modules; lifecycle events (paused, archived) fan out to notifications + the Branch module (which caches the default region).",
   "events": [
     {
       "name": "RegionCreated",
-      "class": "Academorix\\Region\\Events\\RegionCreated",
+      "class": "Stackra\\Region\\Events\\RegionCreated",
       "trigger": "RegionProvisioner completed successfully. Fires exactly once per (tenant_id, slug) pair.",
       "queue": "notifications",
       "consumers": [
@@ -31,7 +31,7 @@
     },
     {
       "name": "RegionUpdated",
-      "class": "Academorix\\Region\\Events\\RegionUpdated",
+      "class": "Stackra\\Region\\Events\\RegionUpdated",
       "trigger": "Any Region field mutated except status (RegionStatusChanged), is_default (RegionDefaultChanged), and tax_config (RegionTaxConfigUpdated). Fires for renames, timezone changes, locale changes, sort_order, weekend_days, subdivision_code.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -44,7 +44,7 @@
     },
     {
       "name": "RegionStatusChanged",
-      "class": "Academorix\\Region\\Events\\RegionStatusChanged",
+      "class": "Stackra\\Region\\Events\\RegionStatusChanged",
       "trigger": "Region.status transitioned. Umbrella event fired alongside the specific transition event (RegionPaused / RegionResumed / RegionArchived / RegionRestored). Downstream consumers subscribe to whichever level of specificity they need.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -59,7 +59,7 @@
     },
     {
       "name": "RegionPaused",
-      "class": "Academorix\\Region\\Events\\RegionPaused",
+      "class": "Stackra\\Region\\Events\\RegionPaused",
       "trigger": "Region.status transitioned active → paused. New bookings + new memberships referencing this Region are refused; existing rows survive unchanged.",
       "queue": "notifications-critical",
       "consumers": [
@@ -80,7 +80,7 @@
     },
     {
       "name": "RegionResumed",
-      "class": "Academorix\\Region\\Events\\RegionResumed",
+      "class": "Stackra\\Region\\Events\\RegionResumed",
       "trigger": "Region.status transitioned paused → active. Reverses RegionPaused. New bookings + memberships accepted again.",
       "queue": "notifications",
       "consumers": [
@@ -99,7 +99,7 @@
     },
     {
       "name": "RegionArchived",
-      "class": "Academorix\\Region\\Events\\RegionArchived",
+      "class": "Stackra\\Region\\Events\\RegionArchived",
       "trigger": "Region.status transitioned to archived. Refused when is_default=true (observer catches it). Refused when any inbound row (Branch, Membership) still references this Region (REGION_IN_USE). Archived Regions vanish from selectors but existing rows stay valid.",
       "queue": "notifications",
       "consumers": [
@@ -117,7 +117,7 @@
     },
     {
       "name": "RegionRestored",
-      "class": "Academorix\\Region\\Events\\RegionRestored",
+      "class": "Stackra\\Region\\Events\\RegionRestored",
       "trigger": "Archived Region transitioned back to active. Restoration allowed within the 730-day retention window (financial retention).",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -130,7 +130,7 @@
     },
     {
       "name": "RegionDefaultChanged",
-      "class": "Academorix\\Region\\Events\\RegionDefaultChanged",
+      "class": "Stackra\\Region\\Events\\RegionDefaultChanged",
       "trigger": "The is_default flag flipped. Fires with the previous default's ID + the new default's ID. Audit-critical: the default region determines invoice calculations for regionless legacy rows.",
       "queue": "notifications-critical",
       "consumers": [
@@ -148,7 +148,7 @@
     },
     {
       "name": "RegionTaxConfigUpdated",
-      "class": "Academorix\\Region\\Events\\RegionTaxConfigUpdated",
+      "class": "Stackra\\Region\\Events\\RegionTaxConfigUpdated",
       "trigger": "Region.tax_config JSONB mutated. Any sub-field change (default_rate_percent, rates, name, inclusive, registration_number, fiscal_year_start_month) fires this event. Financial-record retention 7 years.",
       "queue": "notifications-critical",
       "consumers": [
@@ -168,7 +168,7 @@
     },
     {
       "name": "RegionDeleted",
-      "class": "Academorix\\Region\\Events\\RegionDeleted",
+      "class": "Stackra\\Region\\Events\\RegionDeleted",
       "trigger": "Region soft-deleted OR hard-deleted. Distinct events not needed — the payload carries the mode.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -182,7 +182,7 @@
     },
     {
       "name": "TenantDefaultRegionSeeded",
-      "class": "Academorix\\Region\\Events\\TenantDefaultRegionSeeded",
+      "class": "Stackra\\Region\\Events\\TenantDefaultRegionSeeded",
       "trigger": "SeedDefaultRegionForTenantJob completed for a freshly-provisioned tenant. Fires exactly once per tenant lifetime (unless the tenant loses its default region + the reconciler re-seeds — that path fires a fresh event).",
       "queue": "notifications",
       "consumers": [

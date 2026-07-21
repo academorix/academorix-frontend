@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsMedicalSdk\Resources;
+namespace Stackra\SportsMedicalSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsMedicalSdk\Data\InjuryData;
-use Academorix\SportsMedicalSdk\Requests\Injuries\InjuriesInjuryRequest;
-use Academorix\SportsMedicalSdk\Requests\Injuries\ListInjuriesAdminRequest;
-use Academorix\SportsMedicalSdk\Requests\Injuries\ShowInjuryRequest;
-use Academorix\SportsMedicalSdk\Requests\Injuries\UpdateInjuryRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsMedicalSdk\Data\InjuryData;
+use Stackra\SportsMedicalSdk\Requests\Injuries\InjuriesInjuryRequest;
+use Stackra\SportsMedicalSdk\Requests\Injuries\ListInjuriesAdminRequest;
+use Stackra\SportsMedicalSdk\Requests\Injuries\ShowInjuryRequest;
+use Stackra\SportsMedicalSdk\Requests\Injuries\UpdateInjuryRequest;
 use Saloon\Http\Response;
 
 /**
@@ -71,7 +71,7 @@ final readonly class InjuriesResource
      *
      * @return InjuryData
      */
-    public function update(string $injury, \Academorix\SportsMedicalSdk\Payloads\Injuries\UpdateInjuryPayload $payload, ?string $idempotencyKey = null): InjuryData
+    public function update(string $injury, \Stackra\SportsMedicalSdk\Payloads\Injuries\UpdateInjuryPayload $payload, ?string $idempotencyKey = null): InjuryData
     {
         return $this->connector->send(new UpdateInjuryRequest($injury, $payload, $idempotencyKey))->dto();
     }

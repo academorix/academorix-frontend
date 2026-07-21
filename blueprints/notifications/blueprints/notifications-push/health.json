@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/notifications-push/health",
+  "id": "stackra://modules/notifications-push/health",
   "$version": 1,
   "title": "notifications-push \u2014 health probes",
   "probes": [
     {
       "name": "notifications-push-fcm-reachable",
-      "class": "Academorix\\Notifications\\Push\\Health\\Probes\\FcmReachableProbe",
+      "class": "Stackra\\Notifications\\Push\\Health\\Probes\\FcmReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "OAuth 2.0 token exchange + FCM v1 API reachability.",
@@ -14,7 +14,7 @@
     },
     {
       "name": "notifications-push-apns-reachable",
-      "class": "Academorix\\Notifications\\Push\\Health\\Probes\\ApnsReachableProbe",
+      "class": "Stackra\\Notifications\\Push\\Health\\Probes\\ApnsReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "APNs endpoint reachability via JWT auth. Distinct probe for prod (api.push.apple.com) vs sandbox (api.sandbox.push.apple.com).",
@@ -23,7 +23,7 @@
     },
     {
       "name": "notifications-push-expo-reachable",
-      "class": "Academorix\\Notifications\\Push\\Health\\Probes\\ExpoReachableProbe",
+      "class": "Stackra\\Notifications\\Push\\Health\\Probes\\ExpoReachableProbe",
       "category": "readiness",
       "critical": false,
       "timeoutMs": 3000,
@@ -31,7 +31,7 @@
     },
     {
       "name": "notifications-push-onesignal-reachable",
-      "class": "Academorix\\Notifications\\Push\\Health\\Probes\\OneSignalReachableProbe",
+      "class": "Stackra\\Notifications\\Push\\Health\\Probes\\OneSignalReachableProbe",
       "category": "readiness",
       "critical": false,
       "timeoutMs": 3000,
@@ -39,7 +39,7 @@
     },
     {
       "name": "notifications-push-subscription-registry-warm",
-      "class": "Academorix\\Notifications\\Push\\Health\\Probes\\SubscriptionRegistryProbe",
+      "class": "Stackra\\Notifications\\Push\\Health\\Probes\\SubscriptionRegistryProbe",
       "category": "readiness",
       "critical": false,
       "description": "Registry cache hit ratio > 90% over rolling 5m.",

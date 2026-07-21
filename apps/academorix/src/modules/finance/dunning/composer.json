@@ -1,10 +1,10 @@
 {
-  "name": "academorix/dunning",
+  "name": "stackra/dunning",
   "type": "library",
-  "description": "Academorix Dunning module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/dunning/`. Complements the wire SDK at `academorix-finance/dunning-sdk`.",
+  "description": "Stackra Dunning module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/dunning/`. Complements the wire SDK at `stackra-finance/dunning-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "finance",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-finance/dunning-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-finance/dunning-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Dunning\\": "src/"
+      "Stackra\\Dunning\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Dunning\\Tests\\": "tests/"
+      "Stackra\\Dunning\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Dunning\\Providers\\DunningServiceProvider"
+        "Stackra\\Dunning\\Providers\\DunningServiceProvider"
       ],
       "aliases": {}
     }

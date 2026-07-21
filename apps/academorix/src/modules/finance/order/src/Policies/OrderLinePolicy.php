@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Order\Policies;
+namespace Stackra\Order\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Order\Models\OrderLine;
+use Stackra\User\Models\User;
+use Stackra\Order\Models\OrderLine;
 
 /**
- * Authorization policy for {@see \Academorix\Order\Models\OrderLine}.
+ * Authorization policy for {@see \Stackra\Order\Models\OrderLine}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

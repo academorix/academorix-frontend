@@ -4,15 +4,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Contracts\Data;
+namespace Stackra\Integrations\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Integrations\Models\IntegrationProvider;
+use Stackra\Integrations\Models\IntegrationProvider;
 
 /**
  * Table shape for the `integration_providers` table.
  *
- * Allowlist catalog of every provider Academorix supports (stripe / paddle / pipedrive / hubspot / twilio / zoom / apple_wallet / google_wallet / mailchimp / xero / etc).
+ * Allowlist catalog of every provider Stackra supports (stripe / paddle / pipedrive / hubspot / twilio / zoom / apple_wallet / google_wallet / mailchimp / xero / etc).
  *
  * @category Integrations
  *

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Reception\Contracts\Data;
+namespace Stackra\Reception\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Reception\Models\ReceptionVisit;
+use Stackra\Reception\Models\ReceptionVisit;
 
 /**
  * Table shape for the `reception_visits` table.

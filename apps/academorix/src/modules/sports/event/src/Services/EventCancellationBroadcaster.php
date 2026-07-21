@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Event\Services;
+namespace Stackra\Event\Services;
 
-use Academorix\Event\Contracts\Services\EventCancellationBroadcasterInterface;
+use Stackra\Event\Contracts\Services\EventCancellationBroadcasterInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Event\Contracts\Repositories\CalendarSubscriptionRepositoryInterface;
+use Stackra\Event\Contracts\Repositories\CalendarSubscriptionRepositoryInterface;
 
 /**
  * Concrete service — EventCancellationBroadcaster.

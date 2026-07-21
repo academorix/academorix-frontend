@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Identity\Concerns;
+namespace Stackra\Identity\Concerns;
 
-use Academorix\Identity\Contracts\Data\IdentityInterface;
+use Stackra\Identity\Contracts\Data\IdentityInterface;
 use DateTimeInterface;
 
 /**

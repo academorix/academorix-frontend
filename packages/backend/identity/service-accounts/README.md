@@ -1,4 +1,4 @@
-# academorix/service-accounts
+# stackra/service-accounts
 
 Server-side Laravel package for the `service-accounts` module. Auto-generated
 from the blueprint at `modules/identity/blueprints/service-accounts/`.
@@ -44,6 +44,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-identity/service-accounts-sdk` under
+`stackra-identity/service-accounts-sdk` under
 `sdk/identity-service-accounts-sdk/`. Consumers cross the service boundary
 through the SDK; this package is the SERVER-side owner of the domain.

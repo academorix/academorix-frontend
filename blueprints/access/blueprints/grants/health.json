@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/grants/health",
+  "id": "stackra://modules/grants/health",
   "$version": 1,
   "title": "grants — health probes",
   "description": "Health probes registered with Foundation's health aggregator (surfaced via `GET /api/health`). Grants is a critical-path module — a broken overlay resolver = broken authorization. Probes here have low tolerance for latency + errors.",
   "endpoint": "GET /api/health",
-  "aggregator": "Academorix\\Foundation\\Health\\HealthAggregator",
+  "aggregator": "Stackra\\Foundation\\Health\\HealthAggregator",
   "probes": [
     {
       "name": "grants-registry-integrity",
-      "class": "Academorix\\Grant\\Health\\GrantableRegistryIntegrityProbe",
+      "class": "Stackra\\Grant\\Health\\GrantableRegistryIntegrityProbe",
       "category": "startup",
       "critical": true,
       "description": "Verifies that every model composing #[Grantable] is (a) registered in GrantableRegistry, (b) also composes HasResourceGrants + IsGrantable, (c) has a valid preflight_validator class if declared. Fails startup if the invariant breaks — a consumer module's boot ordering bug should not silently produce grants that can't be enforced.",
@@ -16,7 +16,7 @@
     },
     {
       "name": "grants-permission-catalogue-reachable",
-      "class": "Academorix\\Grant\\Health\\PermissionCatalogueReachableProbe",
+      "class": "Stackra\\Grant\\Health\\PermissionCatalogueReachableProbe",
       "category": "readiness",
       "critical": true,
       "description": "Verifies the access/rbac permissions table is reachable + non-empty. Every grant write needs to cross-reference against this table; if unreachable, all writes fail with PERMISSION_UNKNOWN. Critical because the grant module cannot function without this reference.",
@@ -24,7 +24,7 @@
     },
     {
       "name": "grants-eval-cache-reachable",
-      "class": "Academorix\\Grant\\Health\\EvaluationCacheReachableProbe",
+      "class": "Stackra\\Grant\\Health\\EvaluationCacheReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "Verifies the L2 Redis evaluation cache is reachable. Non-critical because the resolver falls back to DB reads if L2 is unavailable — slower but correct.",
@@ -32,7 +32,7 @@
     },
     {
       "name": "grants-overlay-resolver-latency",
-      "class": "Academorix\\Grant\\Health\\OverlayResolverLatencyProbe",
+      "class": "Stackra\\Grant\\Health\\OverlayResolverLatencyProbe",
       "category": "readiness",
       "critical": false,
       "description": "Runs a synthetic GrantOverlayResolver::resolve() with a warm test-tenant + test-subject. Fails when p95 latency > 25ms over the last 60s. Non-critical (informational) — this is the canary for the SLO.",
@@ -40,7 +40,7 @@
     },
     {
       "name": "grants-jobs-not-stalled",
-      "class": "Academorix\\Grant\\Health\\JobsNotStalledProbe",
+      "class": "Stackra\\Grant\\Health\\JobsNotStalledProbe",
       "category": "liveness",
       "critical": true,
       "description": "Reads depth + oldest-job age for the `grants` job queue class (retention + notifications + bulk). Fails when depth > 5000 pending OR oldest job > 30 minutes on `retention` OR > 5 minutes on `notifications`. Stalled queues = grants stop invalidating cache = stale ACL decisions.",
@@ -48,7 +48,7 @@
     },
     {
       "name": "grants-schedule-registered",
-      "class": "Academorix\\Grant\\Health\\ScheduleRegisteredProbe",
+      "class": "Stackra\\Grant\\Health\\ScheduleRegisteredProbe",
       "category": "startup",
       "critical": true,
       "description": "Boot-time. Verifies the six scheduled entries (purge-expired hourly, notify-expiring daily, purge-revoked daily, reconcile-orphaned dry-run + real weekly, review-flags monthly) are registered on the scheduler. Missing entries = grants never expire = permanent unintended access.",
@@ -56,7 +56,7 @@
     },
     {
       "name": "grants-orphaned-grants-count",
-      "class": "Academorix\\Grant\\Health\\OrphanedGrantsCountProbe",
+      "class": "Stackra\\Grant\\Health\\OrphanedGrantsCountProbe",
       "category": "readiness",
       "critical": false,
       "description": "Emits count of grants whose resource_id no longer exists. Fed by the weekly dry-run reconciliation. Non-critical but alerts fire above threshold (default 10 orphaned grants tenant-wide — anything higher signals cascade-delete bugs elsewhere).",

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\People\Contracts\Services;
+namespace Stackra\People\Contracts\Services;
 
-use Academorix\People\Services\LookupAttemptLogger;
+use Stackra\People\Services\LookupAttemptLogger;
 use Illuminate\Container\Attributes\Bind;
 
 /**

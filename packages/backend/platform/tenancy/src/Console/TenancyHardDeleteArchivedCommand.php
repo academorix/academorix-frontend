@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Console;
+namespace Stackra\Tenancy\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
-use Academorix\Tenancy\Jobs\HardDeleteArchivedTenantJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
+use Stackra\Tenancy\Jobs\HardDeleteArchivedTenantJob;
 use Carbon\CarbonImmutable;
 
 /**

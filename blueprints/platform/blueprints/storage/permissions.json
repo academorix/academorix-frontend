@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/storage/permissions",
+  "id": "stackra://modules/storage/permissions",
   "$version": 1,
   "title": "storage \u2014 permissions",
-  "seeder": "Academorix\\Storage\\Database\\Seeders\\StoragePermissionSeeder",
+  "seeder": "Stackra\\Storage\\Database\\Seeders\\StoragePermissionSeeder",
   "isSystem": true,
   "description": "Tenant-facing file permissions + platform-admin permissions. Every tenant-scoped route composes one of the tenant permissions; every platform-admin route composes one of the platform permissions.",
   "permissions": [

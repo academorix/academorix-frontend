@@ -117,8 +117,8 @@
     }
   },
   "devDependencies": {
-    "@academorix/config-tsconfig": "workspace:*",
-    "@academorix/config-tsup": "workspace:*",
+    "@stackra/config-tsconfig": "workspace:*",
+    "@stackra/config-tsup": "workspace:*",
     "@react-native-async-storage/async-storage": "catalog:",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",

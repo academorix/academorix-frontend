@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Actions\Overrides;
+namespace Stackra\FeatureFlags\Actions\Overrides;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureOverrideRepositoryInterface;
-use Academorix\FeatureFlags\Data\FeatureOverrideData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureOverrideRepositoryInterface;
+use Stackra\FeatureFlags\Data\FeatureOverrideData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 /**
@@ -41,7 +41,7 @@ final class ListOverrides
      */
     public function __invoke(): LengthAwarePaginator
     {
-        /** @var LengthAwarePaginator<int, \Academorix\FeatureFlags\Models\FeatureOverride> $rows */
+        /** @var LengthAwarePaginator<int, \Stackra\FeatureFlags\Models\FeatureOverride> $rows */
         $rows = $this->repository->paginate();
 
         return $rows->through(fn ($row): FeatureOverrideData => FeatureOverrideData::fromModel($row));

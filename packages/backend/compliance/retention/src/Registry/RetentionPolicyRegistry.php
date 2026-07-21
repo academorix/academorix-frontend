@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Retention\Registry;
+namespace Stackra\Retention\Registry;
 
-use Academorix\Retention\Support\RetentionPolicyDescriptor;
-use Academorix\ServiceProvider\Registry\AbstractRegistry;
+use Stackra\Retention\Support\RetentionPolicyDescriptor;
+use Stackra\ServiceProvider\Registry\AbstractRegistry;
 use Illuminate\Container\Attributes\Singleton;
 use LogicException;
 

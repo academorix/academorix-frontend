@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geography/errors",
+  "id": "stackra://modules/geography/errors",
   "$version": 1,
   "title": "geography \u2014 error codes",
   "namespace": "geography",

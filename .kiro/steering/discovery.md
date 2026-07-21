@@ -16,7 +16,7 @@ Discoverers live in `<module>/src/Bootstrappers/` — they ARE bootstrappers
 (subclasses of `AbstractBootstrapper`), just with one specific job: scan
 `#[AsX]` and hydrate a registry. The registries they hydrate live in
 `<module>/src/Registry/`. Every registry extends
-`Academorix\ServiceProvider\Registry\AbstractRegistry`.
+`Stackra\ServiceProvider\Registry\AbstractRegistry`.
 
 See `.kiro/steering/folder-conventions.md` for the locked per-folder ownership
 table + the anti-pattern catalogue (in particular: registries never in
@@ -24,9 +24,9 @@ table + the anti-pattern catalogue (in particular: registries never in
 
 ## The seam — `DiscoversAttributes`
 
-`Academorix\Foundation\Contracts\DiscoversAttributes` is the ONLY interface any
+`Stackra\Foundation\Contracts\DiscoversAttributes` is the ONLY interface any
 bootstrapper touches to walk `#[AsX]` classes. Production binds
-`Academorix\Foundation\Discovery\AttributeDiscovery`, which wraps
+`Stackra\Foundation\Discovery\AttributeDiscovery`, which wraps
 `olvlvl/composer-attribute-collector`'s `vendor/attributes.php` manifest. Tests
 bind a hand-built fake.
 
@@ -50,7 +50,7 @@ discovery flows through `DiscoversAttributes`.
 ## The bootstrapper shape
 
 One class per discovery concern. Every discovery is a subclass of
-`Academorix\ServiceProvider\Bootstrappers\AbstractBootstrapper`. See
+`Stackra\ServiceProvider\Bootstrappers\AbstractBootstrapper`. See
 `.kiro/steering/bootstrappers.md` for the full contract.
 
 ```php

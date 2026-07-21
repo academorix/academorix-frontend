@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/analytics/traits",
+  "id": "stackra://modules/analytics/traits",
   "$version": 1,
   "title": "analytics — trait composition",
   "description": "One owned trait — `EmitsAnalyticsEvent` — mixed into any domain aggregate that wants to emit analytics events from its own methods (rare; usually done via listeners). Complements the primary capture path (domain event → attribute-registered capturer). Not a wrapper for a vendor package.",
   "owned": [
     {
-      "trait": "Academorix\\Growth\\Analytics\\Concerns\\EmitsAnalyticsEvent",
+      "trait": "Stackra\\Growth\\Analytics\\Concerns\\EmitsAnalyticsEvent",
       "description": "Mixed into a domain aggregate that wants to fire analytics events INLINE from its methods. Adds `->emitAnalytics(string $eventName, string $category, array $properties = [], ?string $kind = 'track'): void`. Under the hood this dispatches an `AnalyticsEventCaptured` event with the aggregate as the subject. Rare — the standard path is a Domain Event + a listener registered via #[AsAnalyticsEventCapturer]. Inline emission is reserved for cases where the domain event doesn't carry enough context for the analytics event (e.g. multi-step forms where each step is its own analytics event but the aggregate only fires one 'FormSubmitted' domain event at the end).",
       "public": true,
       "usedBy": ["future consumers (rarely; prefer the listener path)"],
@@ -24,34 +24,34 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasAuditable",
+        "trait": "Stackra\\Foundation\\Concerns\\HasAuditable",
         "consumed_by": "AnalyticsProviderConfig + AnalyticsIdentity + AnalyticsEvent. NOT AnalyticsDelivery (parent event carries the compliance trail; delivery deltas would double-log volume)."
       },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" }
     ],
     "tenancy": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
         "reason": "Every entity carries tenant_id. Applied via global scope + auto-fill on save. Order matters: BelongsToTenant MUST come first among tenancy-related traits."
       }
     ],
     "attribution": [
       {
-        "trait": "Academorix\\Growth\\Attribution\\Concerns\\HasAttributionSnapshot",
+        "trait": "Stackra\\Growth\\Attribution\\Concerns\\HasAttributionSnapshot",
         "consumed_by": "AnalyticsEvent \u2014 the trait's boot hook fills attribution jsonb at creating from the active AttributionContext."
       }
     ],
     "compliance": [
       {
-        "trait": "Academorix\\Compliance\\Concerns\\HasConsent",
+        "trait": "Stackra\\Compliance\\Concerns\\HasConsent",
         "note": "NOT applied. Analytics events snapshot consent at CREATE time into a jsonb column \u2014 not a runtime lookup. The consent check happens in the capture path (AnalyticsEventObserver.creating), not on model-level trait composition."
       },
       {
-        "trait": "Academorix\\Compliance\\Concerns\\IsRetentionAware",
+        "trait": "Stackra\\Compliance\\Concerns\\IsRetentionAware",
         "consumed_by": "All four entities via the retention.json declaration; the trait provides the runtime helper `->retentionEffective()`."
       }
     ]

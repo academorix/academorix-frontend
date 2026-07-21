@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Crud\Contracts;
+namespace Stackra\Crud\Contracts;
 
 /**
  * Has Repository Events Interface.

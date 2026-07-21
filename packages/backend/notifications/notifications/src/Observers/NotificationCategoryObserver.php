@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Observers;
+namespace Stackra\Notifications\Observers;
 
-use Academorix\Notifications\Events\CategoryRegistered;
-use Academorix\Notifications\Models\NotificationCategory;
+use Stackra\Notifications\Events\CategoryRegistered;
+use Stackra\Notifications\Models\NotificationCategory;
 
 /**
  * Lifecycle side effects on {@see NotificationCategory}.

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Jobs;
+namespace Stackra\Notifications\Sms\Jobs;
 
-use Academorix\Notifications\Sms\Contracts\Data\SmsOptOutInterface;
-use Academorix\Notifications\Sms\Contracts\Repositories\SmsOptOutRepositoryInterface;
-use Academorix\Notifications\Sms\Enums\SmsOptOutReason;
+use Stackra\Notifications\Sms\Contracts\Data\SmsOptOutInterface;
+use Stackra\Notifications\Sms\Contracts\Repositories\SmsOptOutRepositoryInterface;
+use Stackra\Notifications\Sms\Enums\SmsOptOutReason;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;

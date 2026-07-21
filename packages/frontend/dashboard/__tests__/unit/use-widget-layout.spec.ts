@@ -33,7 +33,7 @@ import {
 const USER_ID = "user-42";
 
 /** Storage key the hook writes to (kept private in the module). */
-const STORAGE_KEY = `academorix.dashboard.layout.${USER_ID}.v1`;
+const STORAGE_KEY = `stackra.dashboard.layout.${USER_ID}.v1`;
 
 /**
  * Small stub catalogue. Only three widgets — enough to exercise the

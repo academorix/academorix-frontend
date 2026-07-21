@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Actions\Contacts;
+namespace Stackra\Tenancy\Actions\Contacts;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Repositories\TenantContactRepositoryInterface;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
-use Academorix\Tenancy\Data\TenantContactData;
-use Academorix\Tenancy\Enums\TenancyPermission;
-use Academorix\Tenancy\Models\TenantContact;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Repositories\TenantContactRepositoryInterface;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Tenancy\Data\TenantContactData;
+use Stackra\Tenancy\Enums\TenancyPermission;
+use Stackra\Tenancy\Models\TenantContact;
 use Spatie\LaravelData\DataCollection;
 
 /**

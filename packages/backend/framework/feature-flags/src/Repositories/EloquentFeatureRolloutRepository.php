@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Repositories;
+namespace Stackra\FeatureFlags\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\FeatureFlags\Contracts\Data\FeatureRolloutInterface;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureRolloutRepositoryInterface;
-use Academorix\FeatureFlags\Models\FeatureRollout;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\FeatureFlags\Contracts\Data\FeatureRolloutInterface;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureRolloutRepositoryInterface;
+use Stackra\FeatureFlags\Models\FeatureRollout;
 use Illuminate\Support\Carbon;
 
 /**

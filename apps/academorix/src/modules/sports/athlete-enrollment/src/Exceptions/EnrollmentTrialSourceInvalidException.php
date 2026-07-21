@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AthleteEnrollment\Exceptions;
+namespace Stackra\AthleteEnrollment\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The referenced trial is not in a converted state OR does not match this team/season.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class EnrollmentTrialSourceInvalidException extends AcademorixException
+final class EnrollmentTrialSourceInvalidException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

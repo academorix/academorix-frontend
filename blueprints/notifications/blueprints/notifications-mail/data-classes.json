@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-mail/data-classes",
+  "id": "stackra://modules/notifications-mail/data-classes",
   "$version": 1,
   "title": "notifications-mail \u2014 field classification",
   "description": "MailSuppression entity fields classified. Email + bounce_reason are confidential (PII / near-PII); provider metadata + system flags are internal.",

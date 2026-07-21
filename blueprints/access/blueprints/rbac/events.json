@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/rbac/events",
+  "id": "stackra://modules/rbac/events",
   "$version": 1,
   "title": "rbac \u2014 published events",
-  "namespace": "Academorix\\Rbac\\Events",
+  "namespace": "Stackra\\Rbac\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every RBAC-lifecycle event fires after DB commit so downstream listeners never see uncommitted state. Payloads are readonly value objects. High-severity events (SystemRoleModificationRefused, GuardMismatchRefused, ApplicationMismatchRefused) fire on `notifications-critical` so ops paging pipelines catch them.",
   "events": [
     {
       "name": "RoleCreated",
-      "class": "Academorix\\Rbac\\Events\\RoleCreated",
+      "class": "Stackra\\Rbac\\Events\\RoleCreated",
       "trigger": "New row inserted into `roles`. Fires for both system-seeded rows (created_by null) and admin-created custom rows.",
       "queue": "notifications",
       "consumers": [
@@ -30,7 +30,7 @@
     },
     {
       "name": "RoleUpdated",
-      "class": "Academorix\\Rbac\\Events\\RoleUpdated",
+      "class": "Stackra\\Rbac\\Events\\RoleUpdated",
       "trigger": "Any column on `roles` changed. Excludes assignment count changes (those fire RoleAssignedToPrincipal / RoleRevokedFromPrincipal).",
       "queue": "notifications",
       "consumers": [
@@ -48,7 +48,7 @@
     },
     {
       "name": "RoleDeleted",
-      "class": "Academorix\\Rbac\\Events\\RoleDeleted",
+      "class": "Stackra\\Rbac\\Events\\RoleDeleted",
       "trigger": "`roles` row soft-deleted (`deleted_at` set). Custom roles only \u2014 system roles refuse deletion.",
       "queue": "notifications",
       "consumers": [
@@ -68,7 +68,7 @@
     },
     {
       "name": "PermissionCreated",
-      "class": "Academorix\\Rbac\\Events\\PermissionCreated",
+      "class": "Stackra\\Rbac\\Events\\PermissionCreated",
       "trigger": "New row inserted into `permissions`. Fires for both catalogue-loader inserts (created_by null) and tenant-created custom permissions.",
       "queue": "notifications",
       "consumers": ["activity::WriteToActivityLog", "observability::EmitPermissionCreatedMetric"],
@@ -85,7 +85,7 @@
     },
     {
       "name": "PermissionUpdated",
-      "class": "Academorix\\Rbac\\Events\\PermissionUpdated",
+      "class": "Stackra\\Rbac\\Events\\PermissionUpdated",
       "queue": "notifications",
       "payload": {
         "permission_id": "ULID",
@@ -95,7 +95,7 @@
     },
     {
       "name": "PermissionDeleted",
-      "class": "Academorix\\Rbac\\Events\\PermissionDeleted",
+      "class": "Stackra\\Rbac\\Events\\PermissionDeleted",
       "queue": "notifications",
       "payload": {
         "permission_id": "ULID",
@@ -106,7 +106,7 @@
     },
     {
       "name": "RoleAssignedToPrincipal",
-      "class": "Academorix\\Rbac\\Events\\RoleAssignedToPrincipal",
+      "class": "Stackra\\Rbac\\Events\\RoleAssignedToPrincipal",
       "trigger": "A `model_has_roles` row was inserted. Applies to User / PlatformUser / ServiceAccount.",
       "queue": "notifications",
       "consumers": [
@@ -131,7 +131,7 @@
     },
     {
       "name": "RoleRevokedFromPrincipal",
-      "class": "Academorix\\Rbac\\Events\\RoleRevokedFromPrincipal",
+      "class": "Stackra\\Rbac\\Events\\RoleRevokedFromPrincipal",
       "trigger": "`model_has_roles` row hard-deleted (spatie does not soft-delete pivots).",
       "queue": "notifications",
       "consumers": [
@@ -152,7 +152,7 @@
     },
     {
       "name": "PermissionGrantedToPrincipal",
-      "class": "Academorix\\Rbac\\Events\\PermissionGrantedToPrincipal",
+      "class": "Stackra\\Rbac\\Events\\PermissionGrantedToPrincipal",
       "trigger": "Direct permission attach via `model_has_permissions` (rare \u2014 usually roles carry perms).",
       "queue": "notifications",
       "consumers": [
@@ -170,7 +170,7 @@
     },
     {
       "name": "PermissionRevokedFromPrincipal",
-      "class": "Academorix\\Rbac\\Events\\PermissionRevokedFromPrincipal",
+      "class": "Stackra\\Rbac\\Events\\PermissionRevokedFromPrincipal",
       "queue": "notifications",
       "payload": {
         "permission_id": "ULID",
@@ -181,7 +181,7 @@
     },
     {
       "name": "PermissionsAttachedToRole",
-      "class": "Academorix\\Rbac\\Events\\PermissionsAttachedToRole",
+      "class": "Stackra\\Rbac\\Events\\PermissionsAttachedToRole",
       "trigger": "One or more permissions attached to a role via `role_has_permissions`. Emitted ONCE per attach transaction \u2014 batches many permissions into one event with a `permission_ids[]` array.",
       "queue": "notifications",
       "consumers": [
@@ -199,7 +199,7 @@
     },
     {
       "name": "PermissionsDetachedFromRole",
-      "class": "Academorix\\Rbac\\Events\\PermissionsDetachedFromRole",
+      "class": "Stackra\\Rbac\\Events\\PermissionsDetachedFromRole",
       "queue": "notifications",
       "payload": {
         "role_id": "ULID",
@@ -209,7 +209,7 @@
     },
     {
       "name": "SystemRoleModificationRefused",
-      "class": "Academorix\\Rbac\\Events\\SystemRoleModificationRefused",
+      "class": "Stackra\\Rbac\\Events\\SystemRoleModificationRefused",
       "trigger": "RoleObserver refused a rename / delete / non-permission mutation on an is_system=true row. THE compliance-critical event \u2014 pages security.",
       "queue": "notifications-critical",
       "consumers": [
@@ -229,7 +229,7 @@
     },
     {
       "name": "RoleAssignmentExpired",
-      "class": "Academorix\\Rbac\\Events\\RoleAssignmentExpired",
+      "class": "Stackra\\Rbac\\Events\\RoleAssignmentExpired",
       "trigger": "PurgeExpiredRoleAssignmentsJob removed a `model_has_roles` row past its `expires_at`. Fires ONCE per purged row.",
       "queue": "notifications",
       "consumers": [
@@ -248,7 +248,7 @@
     },
     {
       "name": "TenantCustomRoleCreated",
-      "class": "Academorix\\Rbac\\Events\\TenantCustomRoleCreated",
+      "class": "Stackra\\Rbac\\Events\\TenantCustomRoleCreated",
       "trigger": "A NEW custom role was created by a tenant admin (distinct from system-seeded roles). Feeds the tier-adoption analytics.",
       "queue": "notifications",
       "consumers": [
@@ -266,7 +266,7 @@
     },
     {
       "name": "TenantCustomRoleDeleted",
-      "class": "Academorix\\Rbac\\Events\\TenantCustomRoleDeleted",
+      "class": "Stackra\\Rbac\\Events\\TenantCustomRoleDeleted",
       "queue": "notifications",
       "payload": {
         "role_id": "ULID",
@@ -277,7 +277,7 @@
     },
     {
       "name": "TenantDefaultRolesSeeded",
-      "class": "Academorix\\Rbac\\Events\\TenantDefaultRolesSeeded",
+      "class": "Stackra\\Rbac\\Events\\TenantDefaultRolesSeeded",
       "trigger": "TenantDefaultRoleSeeder finished seeding a tenant's default role set on TenantProvisioned OR on `rbac:seed-defaults --force` re-seed.",
       "queue": "notifications",
       "consumers": ["activity::WriteToActivityLog", "observability::EmitDefaultRolesSeededMetric"],
@@ -293,7 +293,7 @@
     },
     {
       "name": "PermissionCacheInvalidated",
-      "class": "Academorix\\Rbac\\Events\\PermissionCacheInvalidated",
+      "class": "Stackra\\Rbac\\Events\\PermissionCacheInvalidated",
       "trigger": "PermissionCacheManager purged one or more cache keys. Fires ONCE per invalidation call (may batch many keys).",
       "queue": null,
       "consumers": ["observability::EmitPermissionCacheInvalidatedMetric"],
@@ -307,7 +307,7 @@
     },
     {
       "name": "GuardMismatchRefused",
-      "class": "Academorix\\Rbac\\Events\\GuardMismatchRefused",
+      "class": "Stackra\\Rbac\\Events\\GuardMismatchRefused",
       "trigger": "RoleHasPermissionsObserver OR ModelHasRolesObserver refused a cross-guard write. Compliance-critical.",
       "queue": "notifications-critical",
       "consumers": ["audit::WriteToAuditLog", "observability::EmitGuardMismatchMetric"],
@@ -322,7 +322,7 @@
     },
     {
       "name": "ApplicationMismatchRefused",
-      "class": "Academorix\\Rbac\\Events\\ApplicationMismatchRefused",
+      "class": "Stackra\\Rbac\\Events\\ApplicationMismatchRefused",
       "trigger": "RoleHasPermissionsObserver OR ModelHasRolesObserver refused a cross-Application write.",
       "queue": "notifications-critical",
       "consumers": ["audit::WriteToAuditLog", "observability::EmitApplicationMismatchMetric"],

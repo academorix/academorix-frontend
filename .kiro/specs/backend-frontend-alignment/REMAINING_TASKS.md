@@ -42,7 +42,7 @@ Small, self-contained backend changes that unblock frontend work.
 - [ ] 70. **G2b** — seed the full permission catalog from
       `BusinessType::defaultRoles()` + assign per role.
 - [ ] 71. **G11** — verify `allowed_origins_patterns` CORS wildcard for
-      `*.academorix.app` is committed to `origin/main` (per handoff §3 it landed
+      `*.stackra.app` is committed to `origin/main` (per handoff §3 it landed
       locally but was not yet committed).
 - [ ] 72. **G12** — verify `X-Api-Version` in `exposed_headers`.
 - [ ] 73. Commit + push the uncommitted `/me` DTOs (`MeData`, `PlatformMeData`,
@@ -135,7 +135,7 @@ Suggested order (by domain dependency):
       billing + entitlements flows against real endpoints.
 - [ ] 107. Real-backend smoke test doc in `README.md` + `docker-compose up -d`
       quickstart on the frontend side.
-- [ ] 108. Vercel: tenant subdomain routing (`*.academorix.app`) + confirm
+- [ ] 108. Vercel: tenant subdomain routing (`*.stackra.app`) + confirm
       wildcard TLS.
 - [ ] 109. Doppler production wiring for `apps/web/environments/.env.production`
       (Reverb host, app key, API URL).
@@ -154,8 +154,8 @@ Suggested order (by domain dependency):
 - [ ] 114. **G13** — Password-policy config exposed on
       `GET /api/v1/config/password-policy` (min length, complexity rules).
 - [ ] 115. Custom-domain flow (backend `Domain` row + DNS validation UI).
-- [ ] 116. Central admin subdomain decision + wiring (`admin.academorix.app` vs
-      `academorix.app/admin`).
+- [ ] 116. Central admin subdomain decision + wiring (`admin.stackra.app` vs
+      `stackra.app/admin`).
 - [ ] 117. Impersonation E2E test against real backend (platform → tenant).
 - [ ] 118. AI Assistant real integration (stubbed today).
 - [ ] 119. Reports module real dashboards (stubbed today).

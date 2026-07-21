@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/region/subprocessors",
+  "id": "stackra://modules/region/subprocessors",
   "$version": 1,
   "title": "region — subprocessors",
   "description": "The region module engages ZERO third-party processors. Every field is stored in the tenant's own database. Region data feeds the Finance module's tax + invoice pipelines, and those pipelines engage their own processors (Stripe / Paddle for payment, S3 for invoice PDF storage) — those subprocessors are documented in `modules/notifications/subprocessors.json` + `modules/billing/subprocessors.json`, not here.",

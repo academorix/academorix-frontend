@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Actions\Timezones;
+namespace Stackra\Geography\Actions\Timezones;
 
-use Academorix\Geography\Contracts\Repositories\TimezoneRepositoryInterface;
-use Academorix\Geography\Data\Resources\TimezoneResourceData;
-use Academorix\Geography\Models\Timezone;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Geography\Contracts\Repositories\TimezoneRepositoryInterface;
+use Stackra\Geography\Data\Resources\TimezoneResourceData;
+use Stackra\Geography\Models\Timezone;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 use Spatie\LaravelData\DataCollection;
 
 /**

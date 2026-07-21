@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/newsletter/observers",
+  "id": "stackra://modules/newsletter/observers",
   "$version": 1,
   "title": "newsletter \u2014 Eloquent observers",
   "observers": [
     {
       "model": "Newsletter",
-      "observer": "Academorix\\Newsletter\\Observers\\NewsletterObserver",
+      "observer": "Stackra\\Newsletter\\Observers\\NewsletterObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `nlp_` + normalise slug",
         "creating \u2192 apply platform-default reputation_thresholds from config",
@@ -16,7 +16,7 @@
     },
     {
       "model": "NewsletterIssue",
-      "observer": "Academorix\\Newsletter\\Observers\\NewsletterIssueObserver",
+      "observer": "Stackra\\Newsletter\\Observers\\NewsletterIssueObserver",
       "handles": [
         "creating \u2192 ULID prefix `nli_` + auto-increment issue_number for non-adhoc newsletters",
         "created \u2192 fire NewsletterIssueDrafted",
@@ -28,7 +28,7 @@
     },
     {
       "model": "NewsletterSubscription",
-      "observer": "Academorix\\Newsletter\\Observers\\NewsletterSubscriptionObserver",
+      "observer": "Stackra\\Newsletter\\Observers\\NewsletterSubscriptionObserver",
       "handles": [
         "creating \u2192 ULID prefix `nls_` + normalise email (lowercase, trim)",
         "creating \u2192 generate confirmation_token + unsubscribe_token (signed HMAC)",
@@ -43,7 +43,7 @@
     },
     {
       "model": "NewsletterCampaign",
-      "observer": "Academorix\\Newsletter\\Observers\\NewsletterCampaignObserver",
+      "observer": "Stackra\\Newsletter\\Observers\\NewsletterCampaignObserver",
       "handles": [
         "creating \u2192 ULID prefix `nlc_` + initialise counters",
         "created \u2192 fire NewsletterCampaignScheduled",
@@ -55,7 +55,7 @@
     },
     {
       "model": "NewsletterAudience",
-      "observer": "Academorix\\Newsletter\\Observers\\NewsletterAudienceObserver",
+      "observer": "Stackra\\Newsletter\\Observers\\NewsletterAudienceObserver",
       "handles": [
         "creating \u2192 ULID prefix `nla_` + normalise slug",
         "created \u2192 fire NewsletterAudienceCreated + dispatch BuildAudienceSegmentJob",

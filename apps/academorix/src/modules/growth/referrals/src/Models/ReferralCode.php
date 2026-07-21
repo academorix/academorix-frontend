@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Models;
+namespace Stackra\Referrals\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Referrals\Contracts\Data\ReferralCodeInterface;
-use Academorix\Referrals\Database\Factories\ReferralCodeFactory;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Referrals\Enums\ReferralCodeOwnerType;
-use Academorix\Referrals\Policies\ReferralCodePolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Referrals\Contracts\Data\ReferralCodeInterface;
+use Stackra\Referrals\Database\Factories\ReferralCodeFactory;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Referrals\Enums\ReferralCodeOwnerType;
+use Stackra\Referrals\Policies\ReferralCodePolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

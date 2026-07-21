@@ -1,31 +1,31 @@
 {
-  "id": "academorix://modules/storage/metrics",
+  "id": "stackra://modules/storage/metrics",
   "$version": 1,
   "title": "storage \u2014 metrics",
-  "description": "OpenTelemetry-compatible metrics emitted via the telemetry module (Academorix\\Telemetry\\Otel). Every metric is namespaced `academorix.storage.*` and carries tenant_id as a low-cardinality label wherever attributable.",
+  "description": "OpenTelemetry-compatible metrics emitted via the telemetry module (Stackra\\Telemetry\\Otel). Every metric is namespaced `stackra.storage.*` and carries tenant_id as a low-cardinality label wherever attributable.",
   "instrumentation": "self via telemetry",
-  "namespace": "academorix.storage",
+  "namespace": "stackra.storage",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["tenant_id", "kind", "mime_type", "disk", "reason", "outcome"]
   },
   "metrics": [
     {
-      "name": "academorix.storage.uploads.started_total",
+      "name": "stackra.storage.uploads.started_total",
       "kind": "counter",
       "unit": "uploads",
       "labels": ["tenant_id", "kind", "protocol"],
       "description": "Every upload initiation. protocol = single | tus | s3_multipart."
     },
     {
-      "name": "academorix.storage.uploads.completed_total",
+      "name": "stackra.storage.uploads.completed_total",
       "kind": "counter",
       "unit": "uploads",
       "labels": ["tenant_id", "kind", "outcome"],
       "description": "outcome = success | quota_exceeded | mime_rejected | size_rejected | virus_found | aborted | expired."
     },
     {
-      "name": "academorix.storage.uploads.duration_ms",
+      "name": "stackra.storage.uploads.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 200, 1000, 5000, 30000, 180000, 900000],
@@ -33,49 +33,49 @@
       "description": "Wall-clock upload duration from initiate to available. Chunked uploads measured from initiate to finalize."
     },
     {
-      "name": "academorix.storage.uploads.bytes_total",
+      "name": "stackra.storage.uploads.bytes_total",
       "kind": "counter",
       "unit": "bytes",
       "labels": ["tenant_id", "kind"],
       "description": "Total bytes uploaded across all files. Sum-of-histogram companion; used for cost attribution + capacity planning."
     },
     {
-      "name": "academorix.storage.bytes.stored",
+      "name": "stackra.storage.bytes.stored",
       "kind": "gauge",
       "unit": "bytes",
       "labels": ["tenant_id"],
       "description": "Observable gauge polled at scrape. Reports the current storage.bytes.consumed usage per tenant (from the SyncStorageEntitlementUsageJob reconciled value, not per-request stale reads)."
     },
     {
-      "name": "academorix.storage.files.count",
+      "name": "stackra.storage.files.count",
       "kind": "gauge",
       "unit": "files",
       "labels": ["tenant_id", "kind"],
       "description": "Observable gauge \u2014 File row count per (tenant, kind). Sum across kinds = storage.files.max_per_tenant usage."
     },
     {
-      "name": "academorix.storage.dedup.hits_total",
+      "name": "stackra.storage.dedup.hits_total",
       "kind": "counter",
       "unit": "hits",
       "labels": ["tenant_id", "kind"],
       "description": "How many uploads matched an existing sha256 within the tenant. Measures per-tenant dedup effectiveness."
     },
     {
-      "name": "academorix.storage.dedup.cross_tenant_hits_total",
+      "name": "stackra.storage.dedup.cross_tenant_hits_total",
       "kind": "counter",
       "unit": "hits",
       "labels": ["kind"],
       "description": "How many uploads matched an existing sha256 in ANOTHER tenant (cross-tenant physical byte sharing). Platform-side capacity signal."
     },
     {
-      "name": "academorix.storage.variants.generated_total",
+      "name": "stackra.storage.variants.generated_total",
       "kind": "counter",
       "unit": "variants",
       "labels": ["tenant_id", "variant_key", "outcome"],
       "description": "GenerateFileVariantsJob outcomes. outcome = success | failed | skipped_already_exists."
     },
     {
-      "name": "academorix.storage.variants.duration_ms",
+      "name": "stackra.storage.variants.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 200, 1000, 5000, 30000],
@@ -83,14 +83,14 @@
       "description": "Variant generation duration. Alerts when P95 > 5s (image processing degradation)."
     },
     {
-      "name": "academorix.storage.virus.scans_total",
+      "name": "stackra.storage.virus.scans_total",
       "kind": "counter",
       "unit": "scans",
       "labels": ["outcome", "driver"],
       "description": "ScanFileForVirusesJob outcomes. outcome = clean | infected | scan_failed. driver = clamav | s3-antivirus | cloudmersive | null."
     },
     {
-      "name": "academorix.storage.virus.scan_duration_ms",
+      "name": "stackra.storage.virus.scan_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [100, 500, 2000, 10000, 30000],
@@ -98,63 +98,63 @@
       "description": "AV scan wall-clock duration. Alerts when P95 > 10s."
     },
     {
-      "name": "academorix.storage.virus.quarantined_total",
+      "name": "stackra.storage.virus.quarantined_total",
       "kind": "counter",
       "unit": "files",
       "labels": ["tenant_id", "driver"],
       "description": "Files moved to quarantine. Security signal \u2014 spikes indicate attack traffic."
     },
     {
-      "name": "academorix.storage.signed_urls.issued_total",
+      "name": "stackra.storage.signed_urls.issued_total",
       "kind": "counter",
       "unit": "urls",
       "labels": ["tenant_id", "reason"],
       "description": "Signed URL issuance rate. reason = download | preview | share | admin_action | export | notification_attachment."
     },
     {
-      "name": "academorix.storage.signed_urls.hits_total",
+      "name": "stackra.storage.signed_urls.hits_total",
       "kind": "counter",
       "unit": "hits",
       "labels": ["reason"],
       "description": "Redemption hits. Ratio to issued gives redemption effectiveness."
     },
     {
-      "name": "academorix.storage.signed_urls.rejected_total",
+      "name": "stackra.storage.signed_urls.rejected_total",
       "kind": "counter",
       "unit": "rejections",
       "labels": ["reason", "cause"],
       "description": "cause = expired | revoked | ip_lock_mismatch | user_lock_mismatch | one_time_used | signature_invalid."
     },
     {
-      "name": "academorix.storage.signed_urls.active_count",
+      "name": "stackra.storage.signed_urls.active_count",
       "kind": "gauge",
       "unit": "urls",
       "labels": [],
       "description": "Observable gauge. Rolling count of non-revoked, non-expired signed URLs. Capacity signal \u2014 sustained growth indicates missed sweep runs."
     },
     {
-      "name": "academorix.storage.chunked_uploads.in_flight",
+      "name": "stackra.storage.chunked_uploads.in_flight",
       "kind": "gauge",
       "unit": "uploads",
       "labels": ["state"],
       "description": "Observable gauge. Rolling count of ChunkedUpload rows per state (initiating / uploading / finalizing). Alerts when finalizing > 10 (stuck finalisations)."
     },
     {
-      "name": "academorix.storage.chunked_uploads.reservation_bytes",
+      "name": "stackra.storage.chunked_uploads.reservation_bytes",
       "kind": "gauge",
       "unit": "bytes",
       "labels": [],
       "description": "Observable gauge. Total bytes RESERVED by in-flight ChunkedUploads (uncommitted). Compare with actual + reservations to detect leaks."
     },
     {
-      "name": "academorix.storage.driver.errors_total",
+      "name": "stackra.storage.driver.errors_total",
       "kind": "counter",
       "unit": "errors",
       "labels": ["disk", "operation", "error_class"],
       "description": "Underlying storage driver errors (S3 4xx/5xx, GCS errors, ClamAV socket errors). operation = put | get | delete | copy | temporaryUrl."
     },
     {
-      "name": "academorix.storage.driver.latency_ms",
+      "name": "stackra.storage.driver.latency_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 50, 200, 1000, 5000, 30000],
@@ -162,28 +162,28 @@
       "description": "Underlying driver operation latency. Alerts when S3 put P99 > 5s."
     },
     {
-      "name": "academorix.storage.retention.purged_files_total",
+      "name": "stackra.storage.retention.purged_files_total",
       "kind": "counter",
       "unit": "files",
       "labels": ["kind", "erasure_reason"],
       "description": "PurgeExpiredFilesJob output. Used to reconcile disk cost forecasts."
     },
     {
-      "name": "academorix.storage.retention.freed_bytes_total",
+      "name": "stackra.storage.retention.freed_bytes_total",
       "kind": "counter",
       "unit": "bytes",
       "labels": ["kind"],
       "description": "Bytes actually freed after refcount decremented to zero. Distinct from purged_files_total when dedup keeps blobs alive across tenants."
     },
     {
-      "name": "academorix.storage.quota.rejections_total",
+      "name": "stackra.storage.quota.rejections_total",
       "kind": "counter",
       "unit": "rejections",
       "labels": ["tenant_id", "entitlement_key"],
       "description": "Uploads rejected by storage.quota.enforce middleware. entitlement_key = storage.bytes.consumed | storage.files.max_per_tenant | storage.uploads.month."
     },
     {
-      "name": "academorix.storage.entitlement.fail_open_total",
+      "name": "stackra.storage.entitlement.fail_open_total",
       "kind": "counter",
       "unit": "events",
       "labels": ["tenant_id", "reason"],

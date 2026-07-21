@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/marketing/caches",
+  "id": "stackra://modules/marketing/caches",
   "$version": 1,
   "title": "marketing — cache keys + tags",
   "driver": "redis",

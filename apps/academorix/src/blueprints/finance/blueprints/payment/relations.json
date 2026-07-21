@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/payment/relations",
+  "id": "stackra://modules/payment/relations",
   "$version": 1,
   "title": "payment — model relationships",
   "description": "Four owned entities. Payment is the terminal aggregate — it exists only after a successful PaymentIntent. PaymentDispute attaches to Payment. PaymentMethod is standalone (customer-scoped) and referenced by PaymentIntent + Payment. Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / region_id / organization_id / branch_id / scope_node_id on any owned row.",

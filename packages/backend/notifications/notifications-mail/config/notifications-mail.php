@@ -4,7 +4,7 @@
  * @file modules/notifications/notifications-mail/config/notifications-mail.php
  *
  * @description
- * Runtime knobs for the `academorix/notifications-mail` module.
+ * Runtime knobs for the `stackra/notifications-mail` module.
  * Merged under the `notifications-mail.*` key by the base
  * ServiceProvider's LoadsResources concern. Downstream code reads
  * via `config('notifications-mail.*')` (never `env()` outside this

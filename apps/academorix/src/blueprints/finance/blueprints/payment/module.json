@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "payment",
   "alias": "payment",
-  "namespace": "Academorix\\Finance\\Payment",
+  "namespace": "Stackra\\Finance\\Payment",
   "description": "Payment orchestration + saved payment tokens + dispute lifecycle. Answers 'has this invoice been captured, and what payment method did the customer use?'. FUNDAMENTALLY DISTINCT from the invoice module (invoice = money OWED) and the transaction module (transaction = double-entry ledger movement). Payment sits BETWEEN them — it's the record that a specific customer moved money for a specific invoice, using a specific payment method, at a specific instant. Ships FOUR tables: `payments` (successful captures — one row per successful money-in event; references invoice + transaction; carries provider + provider_reference + captured amount + fees; IMMUTABLE after create — financial records are never mutated, only credit-noted), `payment_methods` (saved payment tokens — NEVER card PAN/CVV; provider-scoped token IDs like Stripe pm_... / Paddle payment_method_id; PCI-DSS Level 1 concern; encrypted at rest; deduplicated per customer via fingerprint hash), `payment_intents` (in-flight payment intent objects — mirrors provider intent lifecycle from initialization → confirmation → success/failure/cancelled; 3DS2 step-up flows live here; client_secret encrypted at rest), `payment_disputes` (per-payment dispute — tenant-visible pre-chargeback lifecycle with evidence submission window; may escalate to Chargeback via chargeback module). MultipleInstanceManager pattern via `PaymentProviderManager` with 6 drivers day-1: **Stripe** (Stripe Payments + Stripe Billing + Stripe Radar + 3DS2), **Paddle** (Paddle Classic + Paddle Billing), **Adyen** (Adyen Checkout + Adyen Marketplace), **Square** (Square Checkout + Cash App Pay), **PayPal** (PayPal Checkout + PayPal Braintree + Venmo), **CustomWebhook** (generic HMAC-signed for tenant-run payment gateways like Braintree direct / dLocal / PayFast). Per-provider webhooks captured via `payment.webhook_verify` middleware + dispatched to `<Provider>WebhookHandler` for state reconciliation. 3D Secure 2 / SCA compliance built-in — payment intents lifecycle handles authentication step-up flows via next_action_type + next_action_url. Every successful payment triggers Transaction.record (double-entry ledger: debit cash, credit accounts_receivable) + Invoice.mark_paid (state update) + growth::marketing::CaptureMembershipPurchasedMarketingEvent (attribution). NO card PAN/CVV/magnetic-stripe/PIN on any row (PCI-DSS Level 1). PSD2 + SCA enforced by 3DS2 gate on card transactions above the SCA threshold. Never conflate with invoice (invoice = the bill) or transaction (transaction = the ledger movement) or refund (refund = the reverse-money-out record, separate module).",
   "keywords": [
     "payment",
@@ -56,7 +56,7 @@
     "wave-4"
   ],
   "priority": 65,
-  "providers": ["Academorix\\Finance\\Payment\\Providers\\PaymentServiceProvider"],
+  "providers": ["Stackra\\Finance\\Payment\\Providers\\PaymentServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

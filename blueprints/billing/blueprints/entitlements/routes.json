@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/entitlements/routes",
+  "id": "stackra://modules/entitlements/routes",
   "$version": 1,
   "title": "entitlements \u2014 HTTP routes",
   "description": "Tenant-facing read surface (tenant sees own quotas) + platform-admin override + reset surface.",
@@ -22,20 +22,20 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Entitlements\\Http\\Controllers\\Tenant\\EntitlementController@index",
+          "controller": "Stackra\\Entitlements\\Http\\Controllers\\Tenant\\EntitlementController@index",
           "permission": "entitlements.viewAny"
         },
         {
           "method": "GET",
           "path": "/{key}",
-          "controller": "Academorix\\Entitlements\\Http\\Controllers\\Tenant\\EntitlementController@show",
+          "controller": "Stackra\\Entitlements\\Http\\Controllers\\Tenant\\EntitlementController@show",
           "permission": "entitlements.view",
           "description": "Detail for one entitlement key including remaining + reset time."
         },
         {
           "method": "GET",
           "path": "/{key}/usage",
-          "controller": "Academorix\\Entitlements\\Http\\Controllers\\Tenant\\EntitlementController@usage",
+          "controller": "Stackra\\Entitlements\\Http\\Controllers\\Tenant\\EntitlementController@usage",
           "permission": "entitlements.view",
           "description": "Aggregate usage over time. Powers usage-chart widget. filter[bucket]=day|hour|month."
         }
@@ -58,33 +58,33 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Entitlements\\Http\\Controllers\\Platform\\EntitlementController@index",
+          "controller": "Stackra\\Entitlements\\Http\\Controllers\\Platform\\EntitlementController@index",
           "permission": "platform.entitlements.viewAny"
         },
         {
           "method": "GET",
           "path": "/{tenant}/{key}",
-          "controller": "Academorix\\Entitlements\\Http\\Controllers\\Platform\\EntitlementController@show",
+          "controller": "Stackra\\Entitlements\\Http\\Controllers\\Platform\\EntitlementController@show",
           "permission": "platform.entitlements.view"
         },
         {
           "method": "PATCH",
           "path": "/{tenant}/{key}",
-          "controller": "Academorix\\Entitlements\\Http\\Controllers\\Platform\\EntitlementController@override",
+          "controller": "Stackra\\Entitlements\\Http\\Controllers\\Platform\\EntitlementController@override",
           "permission": "platform.entitlements.override",
           "description": "Body: { value_cap, is_unlimited, notes }. Sets is_platform_overridden=true so it survives plan syncs."
         },
         {
           "method": "POST",
           "path": "/{tenant}/reset/{key}",
-          "controller": "Academorix\\Entitlements\\Http\\Controllers\\Platform\\EntitlementController@reset",
+          "controller": "Stackra\\Entitlements\\Http\\Controllers\\Platform\\EntitlementController@reset",
           "permission": "platform.entitlements.reset",
           "description": "Force reset value_used to 0 for a pool. Used for support credits."
         },
         {
           "method": "POST",
           "path": "/{tenant}/sync-plan",
-          "controller": "Academorix\\Entitlements\\Http\\Controllers\\Platform\\EntitlementController@syncPlan",
+          "controller": "Stackra\\Entitlements\\Http\\Controllers\\Platform\\EntitlementController@syncPlan",
           "permission": "platform.entitlements.sync",
           "description": "Force re-sync from Plan.default_entitlements. Dispatches SyncEntitlementsFromPlanJob."
         }

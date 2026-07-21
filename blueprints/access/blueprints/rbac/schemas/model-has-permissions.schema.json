@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/rbac/schemas/model-has-permissions",
+  "id": "stackra://modules/rbac/schemas/model-has-permissions",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ModelHasPermissions (spatie pivot, augmented)",
@@ -70,9 +70,9 @@
     "model_type": {
       "type": "string",
       "enum": [
-        "Academorix\\User\\Models\\User",
-        "Academorix\\PlatformUser\\Models\\PlatformUser",
-        "Academorix\\ServiceAccounts\\Models\\ServiceAccount"
+        "Stackra\\User\\Models\\User",
+        "Stackra\\PlatformUser\\Models\\PlatformUser",
+        "Stackra\\ServiceAccounts\\Models\\ServiceAccount"
       ]
     },
     "model_id": { "type": "string" },

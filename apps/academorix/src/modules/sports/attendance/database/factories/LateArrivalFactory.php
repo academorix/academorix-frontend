@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attendance\Database\Factories;
+namespace Stackra\Attendance\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Attendance\Contracts\Data\LateArrivalInterface;
-use Academorix\Attendance\Models\LateArrival;
+use Stackra\Attendance\Contracts\Data\LateArrivalInterface;
+use Stackra\Attendance\Models\LateArrival;
 
 /**
- * Factory for {@see \Academorix\Attendance\Models\LateArrival}.
+ * Factory for {@see \Stackra\Attendance\Models\LateArrival}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Attendance\Models\LateArrival>
+ * @extends Factory<\Stackra\Attendance\Models\LateArrival>
  *
  * @category Attendance
  *

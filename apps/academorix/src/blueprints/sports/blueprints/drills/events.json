@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/drills/events",
+  "id": "stackra://modules/drills/events",
   "$version": 1,
   "title": "drills — published events",
-  "namespace": "Academorix\\Sports\\Drills\\Events",
+  "namespace": "Stackra\\Sports\\Drills\\Events",
   "dispatchMode": "afterCommit",
   "description": "Drill library. Every drill is search-indexed via search::UpsertDrillEmbedding (feeds ai/RAG). CoachAssistantPersona queries this library during session planning.",
   "events": [
@@ -62,7 +62,7 @@
       "payload": {
         "import_id": "ULID",
         "tenant_id": "ULID",
-        "source": "'academorix_public'|'partner_academy'|'csv_upload'",
+        "source": "'stackra_public'|'partner_academy'|'csv_upload'",
         "count": "int"
       }
     }

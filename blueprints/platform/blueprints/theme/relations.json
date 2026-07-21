@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/theme/relations",
+  "id": "stackra://modules/theme/relations",
   "$version": 1,
   "title": "theme — model relationships",
   "description": "Three aggregates + one outbound reference to a co-located row (user_theme_preferences, owned by user module).",

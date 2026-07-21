@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Exceptions;
+namespace Stackra\Payment\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted a dispute state transition that violates the state machine.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PaymentDisputeInvalidTransitionException extends AcademorixException
+final class PaymentDisputeInvalidTransitionException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

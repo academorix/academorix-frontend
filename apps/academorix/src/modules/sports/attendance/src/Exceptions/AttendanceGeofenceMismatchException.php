@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attendance\Exceptions;
+namespace Stackra\Attendance\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * GPS coordinates are outside the session's venue geofence radius.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AttendanceGeofenceMismatchException extends AcademorixException
+final class AttendanceGeofenceMismatchException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

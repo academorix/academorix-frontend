@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Enums;
+namespace Stackra\Subscription\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `actor_type` on `subscription-event`.

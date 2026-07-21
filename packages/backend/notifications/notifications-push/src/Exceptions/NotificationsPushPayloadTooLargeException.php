@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsPush\Exceptions;
+namespace Stackra\NotificationsPush\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Payload exceeds provider limit (FCM 4KB / APNs 4KB standard, 5KB VoIP).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsPushPayloadTooLargeException extends AcademorixException
+final class NotificationsPushPayloadTooLargeException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

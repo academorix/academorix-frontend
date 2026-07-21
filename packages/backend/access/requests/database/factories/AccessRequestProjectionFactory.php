@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Requests\Database\Factories;
+namespace Stackra\Requests\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Requests\Contracts\Data\AccessRequestProjectionInterface;
-use Academorix\Requests\Models\AccessRequestProjection;
+use Stackra\Requests\Contracts\Data\AccessRequestProjectionInterface;
+use Stackra\Requests\Models\AccessRequestProjection;
 
 /**
- * Factory for {@see \Academorix\Requests\Models\AccessRequestProjection}.
+ * Factory for {@see \Stackra\Requests\Models\AccessRequestProjection}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Requests\Models\AccessRequestProjection>
+ * @extends Factory<\Stackra\Requests\Models\AccessRequestProjection>
  *
  * @category Requests
  *

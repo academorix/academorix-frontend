@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/public-site/settings",
+  "id": "stackra://modules/public-site/settings",
   "$version": 1,
   "title": "public-site — tenant-editable settings",
   "description": "Settings this module registers against the settings substrate.",

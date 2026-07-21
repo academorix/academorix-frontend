@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Actions\KillSwitches;
+namespace Stackra\FeatureFlags\Actions\KillSwitches;
 
-use Academorix\Authorization\Attributes\RequireRole;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureKillSwitchRepositoryInterface;
-use Academorix\FeatureFlags\Data\FeatureKillSwitchData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
+use Stackra\Authorization\Attributes\RequireRole;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureKillSwitchRepositoryInterface;
+use Stackra\FeatureFlags\Data\FeatureKillSwitchData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 /**
@@ -41,7 +41,7 @@ final class ListKillSwitches
      */
     public function __invoke(): LengthAwarePaginator
     {
-        /** @var LengthAwarePaginator<int, \Academorix\FeatureFlags\Models\FeatureKillSwitch> $rows */
+        /** @var LengthAwarePaginator<int, \Stackra\FeatureFlags\Models\FeatureKillSwitch> $rows */
         $rows = $this->repository->paginate();
 
         return $rows->through(fn ($row): FeatureKillSwitchData => FeatureKillSwitchData::fromModel($row));

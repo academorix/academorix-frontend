@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Exceptions;
+namespace Stackra\Marketing\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to soft-delete an event still in status IN ('pending', 'dispatching').
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MarketingEventStillInFlightException extends AcademorixException
+final class MarketingEventStillInFlightException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

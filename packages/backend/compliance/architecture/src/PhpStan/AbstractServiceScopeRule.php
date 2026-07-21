@@ -40,7 +40,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\PhpStan;
+namespace Stackra\Architecture\PhpStan;
 
 use PHPStan\Analyser\Scope;
 

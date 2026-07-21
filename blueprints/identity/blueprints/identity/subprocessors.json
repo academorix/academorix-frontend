@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/identity/subprocessors",
+  "id": "stackra://modules/identity/subprocessors",
   "$version": 1,
   "title": "identity \u2014 subprocessors",
   "description": "Two categories of subprocessor. KMS provider for MFA-secret envelope encryption at rest (invoked on every enrolment + verification). haveibeenpwned for password-breach k-anonymity check (invoked on every password set / reset, optional per config). Email delivery is a subprocessor of `notifications`, not `identity` directly.",

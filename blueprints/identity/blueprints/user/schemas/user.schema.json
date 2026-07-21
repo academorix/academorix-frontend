@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/user/schemas/user",
+  "id": "stackra://modules/user/schemas/user",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "User",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "usr_",
     "incrementing": false,
-    "model": "Academorix\\User\\Models\\User",
-    "interface": "Academorix\\User\\Contracts\\Data\\UserInterface",
-    "implements": ["Academorix\\User\\Contracts\\Data\\UserInterface"],
+    "model": "Stackra\\User\\Models\\User",
+    "interface": "Stackra\\User\\Contracts\\Data\\UserInterface",
+    "implements": ["Stackra\\User\\Contracts\\Data\\UserInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

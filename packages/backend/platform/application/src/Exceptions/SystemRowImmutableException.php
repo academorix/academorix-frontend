@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Exceptions;
+namespace Stackra\Application\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 
 /**
  * Raised when a caller attempts to mutate a system-marked row
@@ -35,7 +35,7 @@ use Academorix\Exceptions\Enums\ErrorSeverity;
  *
  * @since    0.1.0
  */
-final class SystemRowImmutableException extends AcademorixException
+final class SystemRowImmutableException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

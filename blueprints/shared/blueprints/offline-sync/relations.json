@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/offline-sync/relations",
+  "id": "stackra://modules/offline-sync/relations",
   "$version": 1,
   "title": "offline-sync — model relationships",
   "description": "Eloquent relations rooted at this module's models. `internal` = same-module edges; `outbound` = edges to other modules' models.",

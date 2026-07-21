@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Order\Database\Factories;
+namespace Stackra\Order\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Order\Contracts\Data\OrderInterface;
-use Academorix\Order\Models\Order;
+use Stackra\Order\Contracts\Data\OrderInterface;
+use Stackra\Order\Models\Order;
 
 /**
- * Factory for {@see \Academorix\Order\Models\Order}.
+ * Factory for {@see \Stackra\Order\Models\Order}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Order\Models\Order>
+ * @extends Factory<\Stackra\Order\Models\Order>
  *
  * @category Order
  *

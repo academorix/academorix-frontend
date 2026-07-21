@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Contracts\Data;
+namespace Stackra\Attribution\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Attribution\Models\AttributionTouchpoint;
+use Stackra\Attribution\Models\AttributionTouchpoint;
 
 /**
  * Table shape for the `attribution_touchpoints` table.

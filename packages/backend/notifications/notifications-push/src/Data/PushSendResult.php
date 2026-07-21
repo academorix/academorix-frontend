@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Data;
+namespace Stackra\Notifications\Push\Data;
 
 use Spatie\LaravelData\Data;
 
@@ -10,7 +10,7 @@ use Spatie\LaravelData\Data;
  * Outcome of one push send attempt.
  *
  * The transport driver constructs this after the provider call; the
- * `SendPushJob` reads it to update the {@see \Academorix\Notifications\Push\Models\PushSubscription}
+ * `SendPushJob` reads it to update the {@see \Stackra\Notifications\Push\Models\PushSubscription}
  * lifecycle + emit the correct event.
  *
  * @category NotificationsPush

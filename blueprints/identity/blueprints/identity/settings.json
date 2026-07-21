@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/identity/settings",
+  "id": "stackra://modules/identity/settings",
   "$version": 1,
   "title": "identity \u2014 settings",
-  "description": "Identity substrate exposes NO tenant-configurable settings directly. Tenants tune authentication policy via `identity/auth` settings (password rules, session TTL, MFA requirements). This file registers the `identity` scope-consumer namespace with `academorix/settings` so future keys land under a consistent prefix.",
+  "description": "Identity substrate exposes NO tenant-configurable settings directly. Tenants tune authentication policy via `identity/auth` settings (password rules, session TTL, MFA requirements). This file registers the `identity` scope-consumer namespace with `stackra/settings` so future keys land under a consistent prefix.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "namespace_registration": {
     "namespace": "identity",
-    "consumer": "Academorix\\Identity\\Providers\\IdentityServiceProvider",
+    "consumer": "Stackra\\Identity\\Providers\\IdentityServiceProvider",
     "defaultValueFactory": "Delegates to config('identity.*') when the tenant hasn't overridden. Ensures the effective value falls back to the config layer if no tenant-specific row exists.",
     "validator": "Enforces the compliance-floor rules (COPPA / GDPR minor age) as a hard clamp: a tenant setting can only TIGHTEN password / lockout policy, never loosen below the compliance floor."
   },

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Events;
+namespace Stackra\Search\Events;
 
-use Academorix\Events\Attributes\AsEvent;
-use Academorix\Search\Models\SearchSynonym;
+use Stackra\Events\Attributes\AsEvent;
+use Stackra\Search\Models\SearchSynonym;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 

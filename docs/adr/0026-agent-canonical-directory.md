@@ -5,16 +5,16 @@ Docs Lead + Delivery Lead
 
 ## Context
 
-Academorix spans three source repositories today (`academorix-frontend`,
-`academorix-backend`, `academorix-ai-service`) and will grow to four when the
-mobile app spins out of `academorix-frontend/apps/react-native-template` into
+Stackra spans three source repositories today (`stackra-frontend`,
+`stackra-backend`, `stackra-ai-service`) and will grow to four when the
+mobile app spins out of `stackra-frontend/apps/react-native-template` into
 its own repo. Every repo has some overlap with the shared 51-agent roster
 described in `AGENT_ROSTER.md`. Concretely, the same agent file exists (or needs
 to exist) in more than one place today:
 
-- `academorix-frontend/.kiro/agents/laravel-feature-builder.md` — reference copy
+- `stackra-frontend/.kiro/agents/laravel-feature-builder.md` — reference copy
   referring to the sibling backend repo.
-- `academorix-backend/.kiro/agents/laravel-feature-builder.md` — the
+- `stackra-backend/.kiro/agents/laravel-feature-builder.md` — the
   authoritative copy for the backend lane.
 - `.ref/agents/*.md` (git-ignored, per-workspace notes).
 
@@ -48,7 +48,7 @@ consciously does so via an explicit override, not by silent copy- paste-drift.
    their own onboarding tax (every clone needs `--recursive`), and Kiro's tool
    layer does not follow submodule boundaries cleanly for `.kiro/agents/`
    discovery.
-4. **A parent workspace (`academorix/`) with per-repo children + symlinks
+4. **A parent workspace (`stackra/`) with per-repo children + symlinks
    (chosen).** The parent workspace holds the truly-cross-repo assets; each leaf
    carries its repo-specific charters plus symlinks to the parent for the shared
    ones. The `.ref/agents/` folder becomes purely informational (git-ignored)
@@ -59,13 +59,13 @@ consciously does so via an explicit override, not by silent copy- paste-drift.
 Adopt a **three-tier canonical directory model** for agent charters, personas,
 steering, and ADRs:
 
-### Tier 1 — Parent workspace (`academorix/`)
+### Tier 1 — Parent workspace (`stackra/`)
 
-Truly cross-repo assets live in `academorix/` (the parent of every leaf repo).
+Truly cross-repo assets live in `stackra/` (the parent of every leaf repo).
 Each leaf symlinks into it:
 
 ```
-academorix/                             ← parent workspace (new)
+stackra/                             ← parent workspace (new)
 ├── .kiro/
 │   ├── agents/                         ← cross-repo charters
 │   ├── product/agent-personas.md       ← the dossier
@@ -73,9 +73,9 @@ academorix/                             ← parent workspace (new)
 ├── AGENT_ROSTER.md                     ← the master plan
 ├── AGENT_QUICKSTART.md
 ├── docs/adr/                           ← cross-repo ADRs (including this one)
-├── academorix-frontend/                ← leaf 1
-├── academorix-backend/                 ← leaf 2
-└── academorix-ai-service/              ← leaf 3
+├── stackra-frontend/                ← leaf 1
+├── stackra-backend/                 ← leaf 2
+└── stackra-ai-service/              ← leaf 3
 ```
 
 **Which agents live in Tier 1** (cross-repo, symlinked from every leaf):
@@ -99,17 +99,17 @@ academorix/                             ← parent workspace (new)
 
 Agents that only make sense inside one repo stay local:
 
-- `academorix-frontend/.kiro/agents/`: `heroui-ui-builder`,
+- `stackra-frontend/.kiro/agents/`: `heroui-ui-builder`,
   `framework-core-builder`, `heroui-native-builder`, `code-standards-steward`,
   `code-documentation-writer`, `support-utilities-steward`,
   `vitest-test-engineer`, `native-test-engineer`,
   `package-api-release-reviewer`, `container-di-architecture-reviewer`,
   `ui-design-a11y-reviewer`.
-- `academorix-backend/.kiro/agents/`: `laravel-feature-builder`,
+- `stackra-backend/.kiro/agents/`: `laravel-feature-builder`,
   `codebase-housekeeper`, `tenancy-compliance-auditor`,
   `test-mutation-engineer`, `backend-architecture-reviewer`,
   `backend-platform-reviewer`.
-- `academorix-ai-service/.kiro/agents/`: `python-service-builder`,
+- `stackra-ai-service/.kiro/agents/`: `python-service-builder`,
   `mlops-reviewer`, `data-scientist-reviewer`.
 
 ### Tier 3 — Reference-only (`.ref/agents/`)
@@ -124,9 +124,9 @@ charter change to `.ref/` is a no-op.
 **Positive:**
 
 - **Single source of truth per shared charter.** A change to `product-lead`
-  lands once in `academorix/.kiro/agents/product-lead.md` and is visible in
+  lands once in `stackra/.kiro/agents/product-lead.md` and is visible in
   every leaf via the symlink.
-- **Steering rules stay in sync.** `academorix/.kiro/steering/*.md` is the
+- **Steering rules stay in sync.** `stackra/.kiro/steering/*.md` is the
   canonical set; leaves symlink.
 - **AGENT_ROSTER.md is one file.** Every leaf reads the same roster.
 - **Onboarding is one command.** Cloning any leaf pulls the parent (or the setup
@@ -155,28 +155,28 @@ one-file revert.
 
 **Pass 1 (Day 1–3): Establish the parent + move Tier 1 charters.**
 
-- Create `academorix/` as a sibling of the existing leaf repos.
-- Move Tier 1 charters from `academorix-frontend/.kiro/agents/` (where they
-  exist today) into `academorix/.kiro/agents/`.
+- Create `stackra/` as a sibling of the existing leaf repos.
+- Move Tier 1 charters from `stackra-frontend/.kiro/agents/` (where they
+  exist today) into `stackra/.kiro/agents/`.
 - Replace the moved files with relative symlinks pointing at
-  `../../../academorix/.kiro/agents/<slug>.md`.
-- Same move for `academorix/.kiro/product/agent-personas.md` (leaves keep the
+  `../../../stackra/.kiro/agents/<slug>.md`.
+- Same move for `stackra/.kiro/product/agent-personas.md` (leaves keep the
   symlink at `.kiro/product/agent-personas.md`).
-- Same move for `academorix/AGENT_ROSTER.md` (leaves symlink at
+- Same move for `stackra/AGENT_ROSTER.md` (leaves symlink at
   `AGENT_ROSTER.md` at their root).
-- Same move for `academorix/docs/adr/*.md` for cross-cutting ADRs (this file
-  0026 lives in `academorix/docs/adr/`).
+- Same move for `stackra/docs/adr/*.md` for cross-cutting ADRs (this file
+  0026 lives in `stackra/docs/adr/`).
 
 **Pass 2 (Day 4–7): Sync steering.**
 
-- Move `academorix-frontend/.kiro/steering/*.md` into
-  `academorix/.kiro/steering/`.
+- Move `stackra-frontend/.kiro/steering/*.md` into
+  `stackra/.kiro/steering/`.
 - Replace with symlinks per file.
 - Sanity-check the `Included Steering` hook in `.kiro/hooks/`.
 
 **Pass 3 (Day 8–14): Set up backend + AI-service leaves.**
 
-- Repeat Pass 1 + Pass 2 in `academorix-backend/` and `academorix-ai-service/`.
+- Repeat Pass 1 + Pass 2 in `stackra-backend/` and `stackra-ai-service/`.
 - Verify `invoke_sub_agent(name: "<slug>")` still resolves in every leaf.
 
 ## Rollout timeline

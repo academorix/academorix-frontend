@@ -1,4 +1,4 @@
-# academorix/monitoring
+# stackra/monitoring
 
 Server-side Laravel package for the `monitoring` module. Auto-generated from the
 blueprint at `modules/observability/blueprints/monitoring/`.
@@ -48,6 +48,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-observability/monitoring-sdk` under
+`stackra-observability/monitoring-sdk` under
 `sdk/observability-monitoring-sdk/`. Consumers cross the service boundary
 through the SDK; this package is the SERVER-side owner of the domain.

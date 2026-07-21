@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Reporting\Models\ReportRun;
+use Stackra\Reporting\Models\ReportRun;
 
 it('is a placeholder — replace with actual ReportRun unit tests', function (): void {
     expect(ReportRun::class)->toBeString();

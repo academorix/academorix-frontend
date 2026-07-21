@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\MarketplaceFee\Contracts\Repositories;
+namespace Stackra\MarketplaceFee\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\MarketplaceFee\Models\FeeApplication}.
+ * Repository contract for {@see Stackra\MarketplaceFee\Models\FeeApplication}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `FeeApplicationRepository`.
  *
- * @extends RepositoryInterface<\Academorix\MarketplaceFee\Models\FeeApplication>
+ * @extends RepositoryInterface<\Stackra\MarketplaceFee\Models\FeeApplication>
  *
  * @category MarketplaceFee
  *

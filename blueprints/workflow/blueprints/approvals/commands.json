@@ -1,89 +1,89 @@
 {
-  "id": "academorix://modules/workflow/approvals/commands",
+  "id": "stackra://modules/workflow/approvals/commands",
   "$version": 1,
   "title": "approvals — Artisan commands",
   "description": "Sixteen commands split into three families: introspection (list-*, describe-*), authoring (test-expression, test-selector, activate-*, deactivate-*), and operations (approve/reject/withdraw via CLI, sweepers, audit reports, remediation).",
   "commands": [
     {
       "signature": "approvals:list-instances {--status=*} {--tenant=} {--action=} {--limit=50}",
-      "class": "Academorix\\Approval\\Console\\Commands\\ListInstancesCommand",
+      "class": "Stackra\\Approval\\Console\\Commands\\ListInstancesCommand",
       "purpose": "List approval_instances filtered by status + tenant + action_key. --status accepts comma-list. Useful for support diagnostics + audit spot-checks."
     },
     {
       "signature": "approvals:describe-instance {id} {--include-decisions} {--include-requirements}",
-      "class": "Academorix\\Approval\\Console\\Commands\\DescribeInstanceCommand",
+      "class": "Stackra\\Approval\\Console\\Commands\\DescribeInstanceCommand",
       "purpose": "Print full state of one instance: template snapshot, requirements + resolved_approvers, decision timeline, context_json (redacted per caller's ClI-audit tier). Includes delegation substitutions if any occurred."
     },
     {
       "signature": "approvals:list-templates {--tenant=} {--action=} {--active-only}",
-      "class": "Academorix\\Approval\\Console\\Commands\\ListTemplatesCommand",
+      "class": "Stackra\\Approval\\Console\\Commands\\ListTemplatesCommand",
       "purpose": "List approval templates. Support-scoped. --active-only filters to is_active=true; default shows every version."
     },
     {
       "signature": "approvals:activate-template {template_id}",
-      "class": "Academorix\\Approval\\Console\\Commands\\ActivateTemplateCommand",
+      "class": "Stackra\\Approval\\Console\\Commands\\ActivateTemplateCommand",
       "purpose": "Flip is_active=true on a template row. Observer enforces the one-is-active invariant (deactivates the peer). Support-tooling — normal path is HTTP PATCH."
     },
     {
       "signature": "approvals:deactivate-template {template_id}",
-      "class": "Academorix\\Approval\\Console\\Commands\\DeactivateTemplateCommand",
+      "class": "Stackra\\Approval\\Console\\Commands\\DeactivateTemplateCommand",
       "purpose": "Flip is_active=false. Leaves the template row in place for audit."
     },
     {
       "signature": "approvals:list-actions {--namespace=} {--active-only}",
-      "class": "Academorix\\Approval\\Console\\Commands\\ListActionsCommand",
+      "class": "Stackra\\Approval\\Console\\Commands\\ListActionsCommand",
       "purpose": "List the approvable_actions registry. --namespace filters to one owning module. Confirms every #[AsApprovableAction] decorator was discovered at boot."
     },
     {
       "signature": "approvals:test-expression {expression} {--context-json=} {--action=}",
-      "class": "Academorix\\Approval\\Console\\Commands\\TestExpressionCommand",
+      "class": "Stackra\\Approval\\Console\\Commands\\TestExpressionCommand",
       "purpose": "Dry-run a template's when_expression against a synthetic context. Prints parse tree + evaluation result (true|false). --context-json accepts inline JSON or a path to a fixture file. --action optional; when provided, the schema for the action's context_variables gets applied so the caller sees which vars are recognised.",
       "example": "approvals:test-expression \"amount_cents > 50000 and requester_role != 'admin'\" --context-json='{\"amount_cents\":75000,\"requester_role\":\"cashier\"}'"
     },
     {
       "signature": "approvals:test-selector {selector_expression} {--tenant=} {--context-json=}",
-      "class": "Academorix\\Approval\\Console\\Commands\\TestSelectorCommand",
+      "class": "Stackra\\Approval\\Console\\Commands\\TestSelectorCommand",
       "purpose": "Dry-run an approver selector expression against a specific tenant. Prints the resolved User set + delegation substitutions. Useful when template authors want to preview 'who would be paged' without submitting a real request.",
       "example": "approvals:test-selector \"role('finance_manager') and branch_of(requester)\" --tenant=tnt_01H... --context-json='{\"requester_id\":\"usr_01H...\"}'"
     },
     {
       "signature": "approvals:approve {instance_id} {approver_id} {--comment=}",
-      "class": "Academorix\\Approval\\Console\\Commands\\ApproveCommand",
+      "class": "Stackra\\Approval\\Console\\Commands\\ApproveCommand",
       "purpose": "CLI approve — support-tooling for the (rare) case where a customer's approver can't access the UI. Enforces the same caller_is_approver + status invariants as the HTTP endpoint. Records the CLI operator via `--as=platform_ops_user_id` when the approving user is impersonated for support purposes."
     },
     {
       "signature": "approvals:reject {instance_id} {approver_id} {--reason=}",
-      "class": "Academorix\\Approval\\Console\\Commands\\RejectCommand",
+      "class": "Stackra\\Approval\\Console\\Commands\\RejectCommand",
       "purpose": "CLI reject. --reason required (min 10 chars — SOC 2 evidence)."
     },
     {
       "signature": "approvals:withdraw {instance_id} {--as-admin=} {--reason=}",
-      "class": "Academorix\\Approval\\Console\\Commands\\WithdrawCommand",
+      "class": "Stackra\\Approval\\Console\\Commands\\WithdrawCommand",
       "purpose": "Withdraw a pending instance. Default caller = the requester. --as-admin allows a platform_admin to cancel on the requester's behalf (rare — audited as an admin-override with reason required)."
     },
     {
       "signature": "approvals:expire-overdue {--dry-run}",
-      "class": "Academorix\\Approval\\Console\\Commands\\ExpireOverdueCommand",
+      "class": "Stackra\\Approval\\Console\\Commands\\ExpireOverdueCommand",
       "purpose": "Force-run the sweeper (usually scheduled every 5 minutes). --dry-run prints the instances that WOULD transition without touching the DB."
     },
     {
       "signature": "approvals:dispatch-reminders {--dry-run}",
-      "class": "Academorix\\Approval\\Console\\Commands\\DispatchRemindersCommand",
+      "class": "Stackra\\Approval\\Console\\Commands\\DispatchRemindersCommand",
       "purpose": "Force-run the reminder sweeper. --dry-run prints the reminders that WOULD be sent."
     },
     {
       "signature": "approvals:audit-report {--tenant=*} {--from=} {--to=} {--format=json} {--out=}",
-      "class": "Academorix\\Approval\\Console\\Commands\\AuditReportCommand",
+      "class": "Stackra\\Approval\\Console\\Commands\\AuditReportCommand",
       "purpose": "Generate a compliance snapshot (SOC 2 CC6.3 + ISO 27001 A.9.2 evidence). --tenant accepts comma-list (empty = all tenants); --from/--to define the period (default: last 90 days). --format=json | csv. --out writes to a local file; omitting streams to stdout."
     },
     {
       "signature": "approvals:remediate-failed-executions {--dry-run} {--instance=} {--tenant=}",
-      "class": "Academorix\\Approval\\Console\\Commands\\RemediateFailedExecutionsCommand",
+      "class": "Stackra\\Approval\\Console\\Commands\\RemediateFailedExecutionsCommand",
       "purpose": "Find instances in the WEDGED state (status='approved' AND executed_at IS NULL AND updated_at older than 1 hour) — re-dispatch the underlying action via ApprovalInstanceExecutor. --instance targets one; without it iterates the wedged set. --dry-run prints without re-dispatch."
     },
     {
       "signature": "approvals:reconcile-template-versions {--dry-run}",
-      "class": "Academorix\\Approval\\Console\\Commands\\ReconcileTemplateVersionsCommand",
+      "class": "Stackra\\Approval\\Console\\Commands\\ReconcileTemplateVersionsCommand",
       "purpose": "Force-run the nightly reconciler. --dry-run prints invariant violations without fixing. Fixes: (1) demote extra is_active=true peers to false; (2) log orphan approval_instances pointing to deleted templates; (3) re-evaluate delegation-touched requirements + dispatch supplementary reminders where delegates changed."
     }
   ]

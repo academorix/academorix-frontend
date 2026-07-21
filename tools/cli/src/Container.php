@@ -2,7 +2,7 @@
 
 /**
  * @file Container.php
- * @module Academorix\Cli
+ * @module Stackra\Cli
  * @description Illuminate Container wrapper. Wires the 7 workspace services
  *   the CLI relies on: Filesystem, CatalogReader, CatalogQuery, StubRegistry,
  *   StubRenderer, TemplateManager, BlueprintReader. Also boots the Illuminate
@@ -11,22 +11,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli;
+namespace Stackra\Cli;
 
-use Academorix\Cli\Blueprint\BlueprintReader;
-use Academorix\Cli\Blueprint\BlueprintValidator;
-use Academorix\Cli\Bootstrap\ViewBootstrapper;
-use Academorix\Cli\Catalog\CatalogQuery;
-use Academorix\Cli\Catalog\CatalogReader;
-use Academorix\Cli\Composer\ComposerPathRepoWirer;
-use Academorix\Cli\Stubs\StubFormatter;
-use Academorix\Cli\Stubs\StubRegistry;
-use Academorix\Cli\Stubs\StubRenderer;
-use Academorix\Cli\Support\PathResolver;
-use Academorix\Cli\Support\ProcessRunner;
-use Academorix\Cli\Templates\TemplateHydrator;
-use Academorix\Cli\Templates\TemplateManager;
-use Academorix\Cli\Templates\TemplateRegistry;
+use Stackra\Cli\Blueprint\BlueprintReader;
+use Stackra\Cli\Blueprint\BlueprintValidator;
+use Stackra\Cli\Bootstrap\ViewBootstrapper;
+use Stackra\Cli\Catalog\CatalogQuery;
+use Stackra\Cli\Catalog\CatalogReader;
+use Stackra\Cli\Composer\ComposerPathRepoWirer;
+use Stackra\Cli\Stubs\StubFormatter;
+use Stackra\Cli\Stubs\StubRegistry;
+use Stackra\Cli\Stubs\StubRenderer;
+use Stackra\Cli\Support\PathResolver;
+use Stackra\Cli\Support\ProcessRunner;
+use Stackra\Cli\Templates\TemplateHydrator;
+use Stackra\Cli\Templates\TemplateManager;
+use Stackra\Cli\Templates\TemplateRegistry;
 use Illuminate\Container\Container as IlluminateContainer;
 use Illuminate\Filesystem\Filesystem;
 

@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Models;
+namespace Stackra\Audit\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Audit\Contracts\Data\AuditInterface;
-use Academorix\Audit\Database\Factories\AuditFactory;
-use Academorix\Audit\Policies\AuditPolicy;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\IsRetentionAware;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Audit\Contracts\Data\AuditInterface;
+use Stackra\Audit\Database\Factories\AuditFactory;
+use Stackra\Audit\Policies\AuditPolicy;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\IsRetentionAware;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 

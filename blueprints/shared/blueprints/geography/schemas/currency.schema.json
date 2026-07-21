@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geography/schemas/currency",
+  "id": "stackra://modules/geography/schemas/currency",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Currency",
@@ -19,9 +19,9 @@
     "keyType": "int",
     "incrementing": true,
     "timestamps": false,
-    "model": "Academorix\\Geography\\Models\\Currency",
-    "interface": "Academorix\\Geography\\Contracts\\Data\\CurrencyInterface",
-    "implements": ["Academorix\\Geography\\Contracts\\Data\\CurrencyInterface"],
+    "model": "Stackra\\Geography\\Models\\Currency",
+    "interface": "Stackra\\Geography\\Contracts\\Data\\CurrencyInterface",
+    "implements": ["Stackra\\Geography\\Contracts\\Data\\CurrencyInterface"],
     "traits": ["HasFactory", "Filterable"],
     "observers": ["CurrencyObserver"]
   },
@@ -64,7 +64,7 @@
     "envelope": "spatie-data",
     "wrap": "data",
     "mapper": "SnakeCaseMapper",
-    "resource_class": "Academorix\\Geography\\Data\\Resources\\CurrencyResourceData"
+    "resource_class": "Stackra\\Geography\\Data\\Resources\\CurrencyResourceData"
   },
   "x-route-binding": {
     "strategy": "resolveRouteBinding",

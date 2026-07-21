@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Expenses\Concerns;
+namespace Stackra\Expenses\Concerns;
 
 /**
  * Trait — HasReceipt.

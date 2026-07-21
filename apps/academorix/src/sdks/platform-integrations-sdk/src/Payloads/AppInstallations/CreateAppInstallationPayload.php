@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformIntegrationsSdk\Payloads\AppInstallations;
+namespace Stackra\PlatformIntegrationsSdk\Payloads\AppInstallations;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\StringType;

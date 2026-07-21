@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Tests;
+namespace Stackra\Forms\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/forms.
+ * Base test case for stackra/forms.
  *
  * @category Forms
  *

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Refund\Contracts\Repositories;
+namespace Stackra\Refund\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Refund\Models\Refund}.
+ * Repository contract for {@see Stackra\Refund\Models\Refund}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `RefundRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Refund\Models\Refund>
+ * @extends RepositoryInterface<\Stackra\Refund\Models\Refund>
  *
  * @category Refund
  *

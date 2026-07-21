@@ -1,7 +1,7 @@
 # realtime
 
 The WebSocket transport substrate. Wave 0 foundational module — every live
-update in Academorix flows through here.
+update in Stackra flows through here.
 
 ## 1. What this module owns
 

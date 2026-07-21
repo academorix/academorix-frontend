@@ -1,10 +1,10 @@
 {
-  "name": "academorix/versioning",
+  "name": "stackra/versioning",
   "type": "library",
   "description": "Public interface versioning substrate. Owns the ApiVersion + DeprecationNotice aggregates, the resolver chain (URL path / content negotiation / query param / webhook subscription / GraphQL context), payload transformer registry (attribute-discovered via #[AsPayloadTransformer]), version scheme adapters (SemVer + CalVer), the RFC 8594 Sunset workflow, and the platform-admin + tenant + central-public HTTP surfaces.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "laravel",
     "versioning",
     "api-versioning",
@@ -20,18 +20,18 @@
   ],
   "require": {
     "php": "^8.3",
-    "academorix/authorization": "@dev",
-    "academorix/console": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/database": "@dev",
-    "academorix/enum": "@dev",
-    "academorix/events": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
-    "academorix/retention": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
+    "stackra/authorization": "@dev",
+    "stackra/console": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/database": "@dev",
+    "stackra/enum": "@dev",
+    "stackra/events": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/retention": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
     "illuminate/contracts": "^13.0",
     "illuminate/database": "^13.0",
     "illuminate/events": "^13.0",
@@ -56,20 +56,20 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Versioning\\": "src/",
-      "Academorix\\Versioning\\Database\\Factories\\": "database/factories/",
-      "Academorix\\Versioning\\Database\\Seeders\\": "database/seeders/"
+      "Stackra\\Versioning\\": "src/",
+      "Stackra\\Versioning\\Database\\Factories\\": "database/factories/",
+      "Stackra\\Versioning\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Versioning\\Tests\\": "tests/"
+      "Stackra\\Versioning\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Versioning\\Providers\\VersioningServiceProvider"
+        "Stackra\\Versioning\\Providers\\VersioningServiceProvider"
       ],
       "aliases": {}
     }

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsProgressSdk\Resources;
+namespace Stackra\SportsProgressSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsProgressSdk\Data\GradingResultData;
-use Academorix\SportsProgressSdk\Requests\GradingResults\ShowGradingResultRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsProgressSdk\Data\GradingResultData;
+use Stackra\SportsProgressSdk\Requests\GradingResults\ShowGradingResultRequest;
 use Saloon\Http\Response;
 
 /**

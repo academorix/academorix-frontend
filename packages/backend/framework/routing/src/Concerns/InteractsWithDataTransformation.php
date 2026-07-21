@@ -12,10 +12,10 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Concerns;
+namespace Stackra\Routing\Concerns;
 
-use Academorix\Crud\Attributes\UseData;
-use Academorix\Support\Reflection;
+use Stackra\Crud\Attributes\UseData;
+use Stackra\Support\Reflection;
 use Spatie\LaravelData\Data;
 
 /**
@@ -27,7 +27,7 @@ use Spatie\LaravelData\Data;
  *
  * ## Usage:
  * ```php
- * use Academorix\Crud\Attributes\UseData;
+ * use Stackra\Crud\Attributes\UseData;
  * use App\Data\UserData;
  *
  * #[UseData(UserData::class)]

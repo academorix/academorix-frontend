@@ -1,90 +1,90 @@
 {
-  "id": "academorix://modules/facility/rules",
+  "id": "stackra://modules/facility/rules",
   "$version": 1,
   "title": "facility — validation rules",
   "description": "Custom Laravel validation rules published by FacilityServiceProvider::boot(). All rules are used both by the observer chain (for authoritative refusal on write) AND by FormRequest data classes (for early request-time validation with clear error surfaces).",
-  "namespace": "Academorix\\Facility\\Rules",
+  "namespace": "Stackra\\Facility\\Rules",
   "rules": [
     {
       "name": "valid_facility_type",
-      "class": "Academorix\\Facility\\Rules\\ValidFacilityType",
+      "class": "Stackra\\Facility\\Rules\\ValidFacilityType",
       "signature": "valid_facility_type",
       "description": "Value is one of: court, field, pool, studio, room, gym_floor, equipment, lane, general. Backed by the FacilityType enum cast.",
       "default_message": "The :attribute must be one of: court, field, pool, studio, room, gym_floor, equipment, lane, general."
     },
     {
       "name": "valid_facility_type_for_sport",
-      "class": "Academorix\\Facility\\Rules\\ValidFacilityTypeForSport",
+      "class": "Stackra\\Facility\\Rules\\ValidFacilityTypeForSport",
       "signature": "valid_facility_type_for_sport",
       "description": "Requires facility_type to be sensible for sport_category. Reads the catalogue from data/facility-type-catalog.json. Examples: pool → swimming, water_polo, diving, synchronised_swimming; court → basketball, tennis, volleyball, badminton, squash, padel; field → football, rugby, cricket, baseball, field_hockey. Applied on the model + FormRequest — passes when sport_category IS NULL (sport-agnostic facilities like rooms/studios).",
       "default_message": "The facility_type ':facility_type' is not valid for sport_category ':sport_category'. See docs for the compatibility matrix."
     },
     {
       "name": "valid_availability_json",
-      "class": "Academorix\\Facility\\Rules\\ValidAvailabilityJson",
+      "class": "Stackra\\Facility\\Rules\\ValidAvailabilityJson",
       "signature": "valid_availability_json",
       "description": "Validates the availability_json blob against schemas/availability.schema.json. Shape: { monday: [{starts, ends}], tuesday: [...], ..., sunday: [...] }. Each window: starts + ends are 'HH:MM' 24h strings; ends > starts; no overlapping windows within a day. Additionally checks each window against the parent branch.opening_hours envelope (facility hours cannot exceed branch hours) — the observer runs this on save.",
       "default_message": "The :attribute is not a valid availability schedule. Each day must have non-overlapping HH:MM–HH:MM windows within the parent branch's opening hours."
     },
     {
       "name": "valid_pricing_json",
-      "class": "Academorix\\Facility\\Rules\\ValidPricingJson",
+      "class": "Stackra\\Facility\\Rules\\ValidPricingJson",
       "signature": "valid_pricing_json",
       "description": "Validates pricing_json against schemas/pricing.schema.json. Shape: { model, currency, tiers[], peak_hours? }. model ∈ { per_hour, per_slot, per_person, included_in_membership }. currency must match parent branch.region.currency. tiers[] must be non-empty when model != included_in_membership. peak_hours (optional) mirrors availability_json's day-shape with a multiplier per window.",
       "default_message": "The :attribute is not a valid pricing model. See docs for the pricing_json schema."
     },
     {
       "name": "valid_blackout_window",
-      "class": "Academorix\\Facility\\Rules\\ValidBlackoutWindow",
+      "class": "Stackra\\Facility\\Rules\\ValidBlackoutWindow",
       "signature": "valid_blackout_window",
       "description": "Each blackout entry has starts_at + ends_at (ISO 8601 with tz); ends_at > starts_at; not entirely in the past (retroactive blackouts are meaningless).",
       "default_message": "The blackout window must have starts_at + ends_at with ends_at > starts_at, and cannot be entirely in the past."
     },
     {
       "name": "booking_within_facility_hours",
-      "class": "Academorix\\Facility\\Rules\\BookingWithinFacilityHours",
+      "class": "Stackra\\Facility\\Rules\\BookingWithinFacilityHours",
       "signature": "booking_within_facility_hours",
       "description": "Booking window fits within the facility's availability_json for that day. Timezone-aware (converts starts_at + ends_at to facility.branch.region.timezone before checking).",
       "default_message": "This facility is not available at the requested time. See the facility's schedule for available windows."
     },
     {
       "name": "booking_within_branch_hours",
-      "class": "Academorix\\Facility\\Rules\\BookingWithinBranchHours",
+      "class": "Stackra\\Facility\\Rules\\BookingWithinBranchHours",
       "signature": "booking_within_branch_hours",
       "description": "Defense-in-depth against a facility whose availability_json somehow exceeds the branch envelope. Checks the booking against branch.opening_hours directly.",
       "default_message": "The branch is closed during the requested booking window."
     },
     {
       "name": "booking_not_in_past",
-      "class": "Academorix\\Facility\\Rules\\BookingNotInPast",
+      "class": "Stackra\\Facility\\Rules\\BookingNotInPast",
       "signature": "booking_not_in_past",
       "description": "starts_at > now(). Rejects retroactive bookings.",
       "default_message": "Bookings cannot start in the past."
     },
     {
       "name": "booking_within_advance_window",
-      "class": "Academorix\\Facility\\Rules\\BookingWithinAdvanceWindow",
+      "class": "Stackra\\Facility\\Rules\\BookingWithinAdvanceWindow",
       "signature": "booking_within_advance_window",
       "description": "starts_at <= now() + facility.advance_booking_window_days. Default window 30 days; some facilities allow up to 90 for corporate/team bookings.",
       "default_message": "Bookings can be made at most :max_advance_days days in advance for this facility."
     },
     {
       "name": "booking_duration_within_bounds",
-      "class": "Academorix\\Facility\\Rules\\BookingDurationWithinBounds",
+      "class": "Stackra\\Facility\\Rules\\BookingDurationWithinBounds",
       "signature": "booking_duration_within_bounds",
       "description": "ends_at - starts_at in [facility.min_booking_duration_minutes, facility.max_booking_duration_minutes]. Defaults 60 min / 240 min.",
       "default_message": "Booking duration must be between :min_minutes and :max_minutes minutes for this facility."
     },
     {
       "name": "booking_slot_aligned",
-      "class": "Academorix\\Facility\\Rules\\BookingSlotAligned",
+      "class": "Stackra\\Facility\\Rules\\BookingSlotAligned",
       "signature": "booking_slot_aligned",
       "description": "starts_at minute component is a multiple of facility.booking_slot_step_minutes. Default 30 → bookings start at :00 or :30. Preserves the facility's slot grid so gaps don't fragment.",
       "default_message": "Bookings must start on :step-minute boundaries for this facility."
     },
     {
       "name": "booking_no_overlap",
-      "class": "Academorix\\Facility\\Rules\\BookingNoOverlap",
+      "class": "Stackra\\Facility\\Rules\\BookingNoOverlap",
       "signature": "booking_no_overlap",
       "description": "No existing pending/confirmed booking with tsrange overlap. The rule uses the (facility_id, starts_at, ends_at) partial index. On the observer path this is wrapped in SERIALIZABLE isolation for atomicity across concurrent requests.",
       "default_message": "This time slot is already booked. Choose a different time or facility.",
@@ -92,42 +92,42 @@
     },
     {
       "name": "booking_not_in_blackout",
-      "class": "Academorix\\Facility\\Rules\\BookingNotInBlackout",
+      "class": "Stackra\\Facility\\Rules\\BookingNotInBlackout",
       "signature": "booking_not_in_blackout",
       "description": "Booking window does not overlap any facility.blackout_dates entry.",
       "default_message": "The facility is closed for maintenance during the requested time."
     },
     {
       "name": "capacity_not_exceeded",
-      "class": "Academorix\\Facility\\Rules\\CapacityNotExceeded",
+      "class": "Stackra\\Facility\\Rules\\CapacityNotExceeded",
       "signature": "capacity_not_exceeded",
       "description": "attendees_count <= facility.capacity_persons. Skipped when the booking_capacity_gating entitlement is off for the tenant (per-tenant overbook allowance).",
       "default_message": "This facility's capacity is :capacity people. Please reduce attendee count or choose a larger facility."
     },
     {
       "name": "pass_credits_available",
-      "class": "Academorix\\Facility\\Rules\\PassCreditsAvailable",
+      "class": "Stackra\\Facility\\Rules\\PassCreditsAvailable",
       "signature": "pass_credits_available",
       "description": "When a pass is invoked for the booking: pass.used_credits + 1 <= pass.total_credits. Defends against double-spend races.",
       "default_message": "This pass has no remaining credits."
     },
     {
       "name": "pass_valid_for_date",
-      "class": "Academorix\\Facility\\Rules\\PassValidForDate",
+      "class": "Stackra\\Facility\\Rules\\PassValidForDate",
       "signature": "pass_valid_for_date",
       "description": "pass.valid_from <= booking.starts_at (date) <= pass.valid_until.",
       "default_message": "This pass is not valid for the requested date."
     },
     {
       "name": "pass_assignable_to_user",
-      "class": "Academorix\\Facility\\Rules\\PassAssignableToUser",
+      "class": "Stackra\\Facility\\Rules\\PassAssignableToUser",
       "signature": "pass_assignable_to_user",
       "description": "booking.booked_for_user_id IS IN pass.assignable_user_ids.",
       "default_message": "This pass is not assigned to this user."
     },
     {
       "name": "day_pass_valid_on_date",
-      "class": "Academorix\\Facility\\Rules\\DayPassValidOnDate",
+      "class": "Stackra\\Facility\\Rules\\DayPassValidOnDate",
       "signature": "day_pass_valid_on_date",
       "description": "day_pass.valid_on_date = today() at consume-time.",
       "default_message": "This day pass is not valid today."

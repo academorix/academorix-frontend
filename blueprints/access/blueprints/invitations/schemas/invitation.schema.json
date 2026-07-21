@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invitations/schemas/invitation",
+  "id": "stackra://modules/invitations/schemas/invitation",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Invitation",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "inv_",
     "incrementing": false,
-    "model": "Academorix\\Invitations\\Models\\Invitation",
-    "interface": "Academorix\\Invitations\\Contracts\\Data\\InvitationInterface",
-    "implements": ["Academorix\\Invitations\\Contracts\\Data\\InvitationInterface"],
+    "model": "Stackra\\Invitations\\Models\\Invitation",
+    "interface": "Stackra\\Invitations\\Contracts\\Data\\InvitationInterface",
+    "implements": ["Stackra\\Invitations\\Contracts\\Data\\InvitationInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -71,7 +71,7 @@
         "type": "string",
         "length": 64,
         "nullable": true,
-        "description": "Owning tenant. NULL for platform-scope invites (Academorix staff onboarding). Filtered by BelongsToTenantOptional global scope when a tenant context is present; unfiltered on the central + platform-admin hosts.",
+        "description": "Owning tenant. NULL for platform-scope invites (Stackra staff onboarding). Filtered by BelongsToTenantOptional global scope when a tenant context is present; unfiltered on the central + platform-admin hosts.",
         "foreign": {
           "table": "tenants",
           "column": "id",

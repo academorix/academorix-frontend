@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Models;
+namespace Stackra\Domains\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Domains\Contracts\Data\DomainRecordInterface;
-use Academorix\Domains\Database\Factories\DomainRecordFactory;
-use Academorix\Domains\Enums\DnsRecordStatus;
-use Academorix\Domains\Enums\DnsRecordType;
-use Academorix\Domains\Observers\DomainRecordObserver;
-use Academorix\Domains\Policies\DomainRecordPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Domains\Contracts\Data\DomainRecordInterface;
+use Stackra\Domains\Database\Factories\DomainRecordFactory;
+use Stackra\Domains\Enums\DnsRecordStatus;
+use Stackra\Domains\Enums\DnsRecordType;
+use Stackra\Domains\Observers\DomainRecordObserver;
+use Stackra\Domains\Policies\DomainRecordPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -30,9 +30,9 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * Eloquent model for a {@see DomainRecordInterface}.
  *
  * Expected DNS record for a Domain. Populated by
- * {@see \Academorix\Domains\Observers\DomainObserver} on Domain
+ * {@see \Stackra\Domains\Observers\DomainObserver} on Domain
  * create; diffed against real DNS by
- * {@see \Academorix\Domains\Jobs\VerifyDomainDnsJob}.
+ * {@see \Stackra\Domains\Jobs\VerifyDomainDnsJob}.
  *
  * Hard-deleted (no SoftDeletes) — diff-state, not compliance data.
  */

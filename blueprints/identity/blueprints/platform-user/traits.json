@@ -1,20 +1,20 @@
 {
-  "id": "academorix://modules/platform-user/traits",
+  "id": "stackra://modules/platform-user/traits",
   "$version": 1,
   "title": "platform-user \u2014 trait composition",
   "description": "Two owned traits. `IsPlatformUser` is a marker composed by the PlatformUser model itself for reflection-based tooling (audit correlator, on-call resolver, offboarding coordinator). `HasEmploymentLifecycle` composes the state-machine transitions (hire \u2192 activate \u2192 suspend? \u2192 offboard) with the observers that gate them + fire the matching events. Critically, NO `BelongsToTenant` \u2014 platform_users is cross-plane by construction.",
   "owned": [
     {
-      "trait": "Academorix\\PlatformUser\\Concerns\\IsPlatformUser",
+      "trait": "Stackra\\PlatformUser\\Concerns\\IsPlatformUser",
       "description": "Marker trait composed by the PlatformUser model. Provides the shared shape identifier for reflection-based tooling that must enumerate every PlatformUser-shaped row without hard-coding the class (audit correlator, on-call rotation service, offboarding coordinator). Adds `->isPlatformStaff()` boolean check + `->guardName()` returning `'platform_admin'` (used by Sanctum + spatie-permission to disambiguate from the `sanctum` guard). Adds no accessor / mutator / scope of its own \u2014 those live on HasEmploymentLifecycle.",
       "public": true,
       "usedBy": ["platform-user::PlatformUser"],
       "underlying_package": null,
       "wraps": null,
-      "conflicts_with": ["Academorix\\User\\Concerns\\IsUserOwnable"]
+      "conflicts_with": ["Stackra\\User\\Concerns\\IsUserOwnable"]
     },
     {
-      "trait": "Academorix\\PlatformUser\\Concerns\\HasEmploymentLifecycle",
+      "trait": "Stackra\\PlatformUser\\Concerns\\HasEmploymentLifecycle",
       "description": "Composable state-machine transitions for the employment lifecycle. Ships: `->activate()` (from pending \u2192 active), `->suspend(string $reason)` (from active \u2192 suspended \u2014 temporary), `->restore()` (from suspended \u2192 active), `->offboard(string $reason, ?Carbon $effective_at = null)` (any \u2192 offboarded, terminal), `->reassignManager(?PlatformUser $newManager)`. Each transition wraps in a DB transaction, fires the matching event, writes to the audit trail via HasActivityLog, and refuses invalid transitions (e.g. `offboard()` on an already-offboarded row is a no-op; `activate()` on an offboarded row throws `EmploymentLifecycleTransitionRefused`). Every transition captures the actor id (the PlatformUser invoking the action, resolved from the request context) so the audit trail attributes the action correctly.",
       "public": true,
       "usedBy": ["platform-user::PlatformUser"],
@@ -41,14 +41,14 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
-    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }],
-    "audit": [{ "trait": "Academorix\\Audit\\Concerns\\HasAudit" }]
+    "activity": [{ "trait": "Stackra\\Activity\\Concerns\\HasActivityLog" }],
+    "audit": [{ "trait": "Stackra\\Audit\\Concerns\\HasAudit" }]
   },
   "composition": {
     "platform_user": {

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\People\Contracts\Repositories;
+namespace Stackra\People\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\People\Models\PersonGuardianLink}.
+ * Repository contract for {@see Stackra\People\Models\PersonGuardianLink}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `PersonGuardianLinkRepository`.
  *
- * @extends RepositoryInterface<\Academorix\People\Models\PersonGuardianLink>
+ * @extends RepositoryInterface<\Stackra\People\Models\PersonGuardianLink>
  *
  * @category People
  *

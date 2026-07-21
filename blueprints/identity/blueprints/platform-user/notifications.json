@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/platform-user/notifications",
+  "id": "stackra://modules/platform-user/notifications",
   "$version": 1,
   "title": "platform-user \u2014 notification classes + categories",
-  "namespace": "Academorix\\PlatformUser\\Notifications",
-  "description": "Every notification here targets ONLY the Academorix-staff plane \u2014 mail to internal `@academorix.com` addresses, in-app on the platform-admin dashboard, Slack via the internal-notifications transport, PagerDuty via the on-call transport. NEVER cross-emitted to tenant users. All three categories are `transactional_required` \u2014 platform staff cannot opt out (they are Academorix's own employees, not customer users; consent is governed by the employment contract, not the notification-preferences UI).",
+  "namespace": "Stackra\\PlatformUser\\Notifications",
+  "description": "Every notification here targets ONLY the Stackra-staff plane \u2014 mail to internal `@stackra.com` addresses, in-app on the platform-admin dashboard, Slack via the internal-notifications transport, PagerDuty via the on-call transport. NEVER cross-emitted to tenant users. All three categories are `transactional_required` \u2014 platform staff cannot opt out (they are Stackra's own employees, not customer users; consent is governed by the employment contract, not the notification-preferences UI).",
   "notifications": [
     "PlatformUserHiredNotification",
     "PlatformUserOffboardingScheduledNotification",
@@ -13,7 +13,7 @@
     {
       "slug": "platform_user.hired",
       "display_name": "Platform staff hired",
-      "description": "New Academorix employee onboarded. Goes to the ops distribution list + the new hire's manager + the new hire themselves (welcome message). Includes department, employment type, hire date, manager, and links to the onboarding checklist + the platform-admin dashboard.",
+      "description": "New Stackra employee onboarded. Goes to the ops distribution list + the new hire's manager + the new hire themselves (welcome message). Includes department, employment type, hire date, manager, and links to the onboarding checklist + the platform-admin dashboard.",
       "default_channels": ["mail", "in_app", "slack"],
       "priority": "transactional",
       "consent_tier": "transactional_required",
@@ -24,7 +24,7 @@
     {
       "slug": "platform_user.offboarding_scheduled",
       "display_name": "Platform staff offboarding scheduled",
-      "description": "Offboarding kicked off for a Academorix employee. Goes to the ops distribution list + security + the offboarding target's manager. Includes reason, effective_at, and the ACL-inventory report link (what tenants + what tools this PlatformUser had access to \u2014 required for the 24h revocation SLA review). Never sent to the offboarded PlatformUser themselves (HR handles that off-channel).",
+      "description": "Offboarding kicked off for a Stackra employee. Goes to the ops distribution list + security + the offboarding target's manager. Includes reason, effective_at, and the ACL-inventory report link (what tenants + what tools this PlatformUser had access to \u2014 required for the 24h revocation SLA review). Never sent to the offboarded PlatformUser themselves (HR handles that off-channel).",
       "default_channels": ["mail", "in_app", "slack"],
       "priority": "transactional",
       "consent_tier": "transactional_required",

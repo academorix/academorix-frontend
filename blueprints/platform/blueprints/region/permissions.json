@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/region/permissions",
+  "id": "stackra://modules/region/permissions",
   "$version": 1,
   "title": "region — permissions",
-  "seeder": "Academorix\\Region\\Database\\Seeders\\RegionPermissionSeeder",
+  "seeder": "Stackra\\Region\\Database\\Seeders\\RegionPermissionSeeder",
   "isSystem": true,
   "scope_suffix_convention": "Every read permission may be seeded WITH a scope suffix (`.any`, `.tenant`). The base permission (no suffix) is the highest-tier variant, effectively `.tenant`. The ScopeSuffixResolver (shipped by the user module, consumed by every base repository) applies the corresponding WHERE clause at query build time. Region has no `.branch` / `.own` variants — regions are tenant-wide reference data + not branch-scoped.",
   "permissions": [

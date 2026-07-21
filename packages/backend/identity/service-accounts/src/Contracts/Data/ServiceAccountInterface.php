@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Contracts\Data;
+namespace Stackra\ServiceAccounts\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\ServiceAccounts\Models\ServiceAccount;
+use Stackra\ServiceAccounts\Models\ServiceAccount;
 
 /**
  * Table shape for the `service_accounts` table.

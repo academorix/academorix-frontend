@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/payment/subprocessors",
+  "id": "stackra://modules/payment/subprocessors",
   "$version": 1,
   "title": "payment — subprocessors",
   "description": "The Payment module engages SIX third-party subprocessors — one per provider driver. Every subprocessor receives payment identifiers (invoice ref + amount + currency) + customer identifiers (name, email, phone, billing address) + tokenized card references. GDPR Art. 28 DPA references + Art. 30 records of processing activities. Every tenant that activates a provider effectively adds that subprocessor to their processing register; the tenant admin acknowledges the DPA reference before configuring.",
@@ -127,7 +127,7 @@
       "data_categories": [
         "full payment intent payload — cardholder_name, email, phone, billing_address, amount, currency, invoice_reference"
       ],
-      "data_hashing": "none by Academorix — caller's endpoint responsible for handling. Caller MUST NOT accept raw PAN over this webhook (PCI-DSS scope violation).",
+      "data_hashing": "none by Stackra — caller's endpoint responsible for handling. Caller MUST NOT accept raw PAN over this webhook (PCI-DSS scope violation).",
       "endpoint": "caller-configured (HTTPS-only, enforced by config schema)",
       "sub_processing_locations": ["caller-hosted"],
       "dpa_url": "N/A — the tenant is responsible for their downstream endpoint's DPA if any",

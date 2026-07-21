@@ -2,7 +2,7 @@
 
 /**
  * @file StubRenderer.php
- * @module Academorix\Cli\Stubs
+ * @module Stackra\Cli\Stubs
  * @description Token-substitution renderer. Reads a stub, replaces every
  *   `{{ tokenName }}` marker, writes the emitted file, and dispatches
  *   the formatter. Strict mode throws on any unresolved marker; lenient
@@ -12,9 +12,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Stubs;
+namespace Stackra\Cli\Stubs;
 
-use Academorix\Cli\Exceptions\StubException;
+use Stackra\Cli\Exceptions\StubException;
 use Illuminate\Filesystem\Filesystem;
 
 /**

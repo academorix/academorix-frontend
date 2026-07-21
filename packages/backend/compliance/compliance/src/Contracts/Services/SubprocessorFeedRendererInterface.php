@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Contracts\Services;
+namespace Stackra\Compliance\Contracts\Services;
 
-use Academorix\Compliance\Services\DefaultSubprocessorFeedRenderer;
+use Stackra\Compliance\Services\DefaultSubprocessorFeedRenderer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

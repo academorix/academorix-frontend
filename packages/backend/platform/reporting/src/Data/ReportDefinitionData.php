@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Reporting\Data;
+namespace Stackra\Reporting\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Server-side output DTO for {@see \Academorix\Reporting\Models\ReportDefinition}.
+ * Server-side output DTO for {@see \Stackra\Reporting\Models\ReportDefinition}.
  *
  * Consumed by controllers + services on the SERVER side. This is
  * distinct from the wire SDK's DTO (which sits under
- * `Academorix\PlatformReportingSdk\Data`) — the wire DTO travels across the HTTP
+ * `Stackra\PlatformReportingSdk\Data`) — the wire DTO travels across the HTTP
  * boundary; this one stays in-process.
  *
  * @category Reporting

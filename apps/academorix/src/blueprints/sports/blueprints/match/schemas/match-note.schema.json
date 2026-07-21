@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/match/schemas/match-note",
+  "id": "stackra://modules/match/schemas/match-note",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "MatchNote",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "mno_",
     "incrementing": false,
-    "model": "Academorix\\Sports\\Match\\Models\\MatchNote",
-    "interface": "Academorix\\Sports\\Match\\Contracts\\Data\\MatchNoteInterface",
-    "implements": ["Academorix\\Sports\\Match\\Contracts\\Data\\MatchNoteInterface"],
+    "model": "Stackra\\Sports\\Match\\Models\\MatchNote",
+    "interface": "Stackra\\Sports\\Match\\Contracts\\Data\\MatchNoteInterface",
+    "implements": ["Stackra\\Sports\\Match\\Contracts\\Data\\MatchNoteInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

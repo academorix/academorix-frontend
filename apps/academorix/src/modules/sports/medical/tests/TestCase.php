@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Medical\Tests;
+namespace Stackra\Medical\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/medical.
+ * Base test case for stackra/medical.
  *
  * @category Medical
  *

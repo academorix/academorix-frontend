@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Credentials\Contracts\Services;
+namespace Stackra\Credentials\Contracts\Services;
 
-use Academorix\Credentials\Services\CheckinDebouncer;
+use Stackra\Credentials\Services\CheckinDebouncer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

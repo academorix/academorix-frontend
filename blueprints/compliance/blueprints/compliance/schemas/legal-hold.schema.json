@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/compliance/schemas/legal-hold",
+  "id": "stackra://modules/compliance/schemas/legal-hold",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "LegalHold",
@@ -12,9 +12,9 @@
     "keyType": "string",
     "keyPrefix": "lhd_",
     "incrementing": false,
-    "model": "Academorix\\Compliance\\Models\\LegalHold",
-    "interface": "Academorix\\Compliance\\Contracts\\Data\\LegalHoldInterface",
-    "implements": ["Academorix\\Compliance\\Contracts\\Data\\LegalHoldInterface"],
+    "model": "Stackra\\Compliance\\Models\\LegalHold",
+    "interface": "Stackra\\Compliance\\Contracts\\Data\\LegalHoldInterface",
+    "implements": ["Stackra\\Compliance\\Contracts\\Data\\LegalHoldInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

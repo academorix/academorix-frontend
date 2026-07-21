@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Actions\KillSwitches;
+namespace Stackra\FeatureFlags\Actions\KillSwitches;
 
-use Academorix\Authorization\Attributes\RequireRole;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureKillSwitchRepositoryInterface;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Delete;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\WhereUlid;
+use Stackra\Authorization\Attributes\RequireRole;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureKillSwitchRepositoryInterface;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Delete;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\WhereUlid;
 use Illuminate\Http\Response;
 
 /**

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Repositories;
+namespace Stackra\Storage\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Contracts\Repositories\FileRepositoryInterface;
-use Academorix\Storage\Enums\VirusScanState;
-use Academorix\Storage\Models\File;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Contracts\Repositories\FileRepositoryInterface;
+use Stackra\Storage\Enums\VirusScanState;
+use Stackra\Storage\Models\File;
 use Illuminate\Support\Collection;
 
 /**

@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/organization/traits",
+  "id": "stackra://modules/organization/traits",
   "$version": 1,
   "title": "organization — trait composition",
   "description": "Two owned traits. `BelongsToOrganization` for downstream models (Branch, Team, planned Facility + Season) with an `organization_id` FK. `HasOrganizationHierarchy` for the Organization model itself — adds descendant/ancestor accessor methods over the materialised tree_path.",
   "owned": [
     {
-      "trait": "Academorix\\Organization\\Concerns\\BelongsToOrganization",
+      "trait": "Stackra\\Organization\\Concerns\\BelongsToOrganization",
       "description": "Mixed into models with an `organization_id` FK. Adds (a) belongsTo relation `organization()`, (b) global scope filtering to the request's active Organization when composed with a matching middleware, (c) auto-fill of organization_id on save from RequestContext::organization() when not explicitly set, (d) refuses cross-organization writes on save (defense-in-depth beyond the FK).",
       "public": true,
       "compose_order": "AFTER BelongsToTenant. BelongsToTenant sets tenant_id first; BelongsToOrganization then enforces that the resolved Organization's tenant_id matches.",
@@ -17,7 +17,7 @@
       "conflicts_with": []
     },
     {
-      "trait": "Academorix\\Organization\\Concerns\\HasOrganizationHierarchy",
+      "trait": "Stackra\\Organization\\Concerns\\HasOrganizationHierarchy",
       "description": "Applied to the Organization model itself. Adds five accessor methods for tree navigation, backed by the materialised tree_path (never a recursive CTE): `parent()`, `children()`, `ancestors()`, `descendants()`, `siblings()`, plus two predicate helpers `isAncestorOf($other)` and `isDescendantOf($other)`.",
       "public": false,
       "usedBy": ["organization::Organization"],
@@ -40,21 +40,21 @@
       { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasSlug" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasSlug" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
     "tenancy": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
         "compose_order_note": "MUST come first among the tenant-scoping traits. Applies the global scope + fills tenant_id on save."
       }
     ],
-    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }],
+    "activity": [{ "trait": "Stackra\\Activity\\Concerns\\HasActivityLog" }],
     "audit": [{ "trait": "OwenIt\\Auditing\\Auditable" }]
   },
   "composition": {

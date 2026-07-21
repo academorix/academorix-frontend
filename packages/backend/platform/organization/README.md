@@ -1,4 +1,4 @@
-# academorix/organization
+# stackra/organization
 
 Server-side Laravel package for the `organization` module. Auto-generated from
 the blueprint at `modules/platform/blueprints/organization/`.
@@ -43,6 +43,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-platform/organization-sdk` under `sdk/platform-organization-sdk/`.
+`stackra-platform/organization-sdk` under `sdk/platform-organization-sdk/`.
 Consumers cross the service boundary through the SDK; this package is the
 SERVER-side owner of the domain.

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Contracts\Services;
+namespace Stackra\Monitoring\Contracts\Services;
 
-use Academorix\Monitoring\Services\IncidentGrouper;
+use Stackra\Monitoring\Services\IncidentGrouper;
 use Illuminate\Container\Attributes\Bind;
 
 /**

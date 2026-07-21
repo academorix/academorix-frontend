@@ -2,15 +2,15 @@
 
 /**
  * @file CatalogSelection.php
- * @module Academorix\Cli\Catalog
- * @description Result of a {@see \Academorix\Cli\Catalog\CatalogQuery::resolvePackages()}
+ * @module Stackra\Cli\Catalog
+ * @description Result of a {@see \Stackra\Cli\Catalog\CatalogQuery::resolvePackages()}
  *   call. Wraps a deduplicated list of {@see CatalogEntry} with lookup
  *   helpers.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Catalog;
+namespace Stackra\Cli\Catalog;
 
 /**
  * A read-only view over a set of resolved catalogue entries.

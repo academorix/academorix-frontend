@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/mfa/notifications",
+  "id": "stackra://modules/mfa/notifications",
   "$version": 1,
   "title": "mfa — notification classes + categories",
-  "namespace": "Academorix\\Mfa\\Notifications",
+  "namespace": "Stackra\\Mfa\\Notifications",
   "description": "Five notifications. Two are informational-transactional (MFA-enrolled, MFA-disabled — non-actionable, informing the user their MFA posture changed); one is high-priority security (recovery-code consumed — signals possible account compromise); one is a periodic reminder (low recovery codes); one is a security incident alert (suspicious activity — repeated failed challenges from novel IPs). All render through the localized template pipeline — subject + body support {{placeholders}} resolved at dispatch time.",
   "notifications": [
     "MfaEnrolledConfirmationNotification",
@@ -19,7 +19,7 @@
       "queue": "notifications",
       "subject_template": "mfa::mail.enrolled.subject",
       "body_template_path": "mfa::mail.enrolled.body",
-      "default_subject_en": "Two-factor authentication is now active on your Academorix account",
+      "default_subject_en": "Two-factor authentication is now active on your Stackra account",
       "trigger_event": "MfaEnrollmentConfirmed",
       "payload_bindings": {
         "method": "'totp' | 'webauthn'",
@@ -36,12 +36,12 @@
       "queue": "notifications-critical",
       "subject_template": "mfa::mail.disabled.subject",
       "body_template_path": "mfa::mail.disabled.body",
-      "default_subject_en": "Two-factor authentication was disabled on your Academorix account",
+      "default_subject_en": "Two-factor authentication was disabled on your Stackra account",
       "trigger_event": "MfaDisabled",
       "payload_bindings": {
         "disabled_at": "ISO-8601 timestamp",
         "trigger": "'self_service' | 'admin_action' | 'account_recovery' | 'identity_erasure'",
-        "actor_label": "'You' | 'Academorix support' | 'The system, as part of account erasure'",
+        "actor_label": "'You' | 'Stackra support' | 'The system, as part of account erasure'",
         "restore_mfa_url": "signed URL back to /me/mfa (re-enrolment CTA)"
       },
       "notes": "Fires on the cumulative MFA-disabled event. Escalation-worthy — if the user did not initiate this, they should reset their password immediately (link included in the body). Non-optional for compliance."
@@ -53,7 +53,7 @@
       "queue": "notifications-critical",
       "subject_template": "mfa::mail.recovery_code_consumed.subject",
       "body_template_path": "mfa::mail.recovery_code_consumed.body",
-      "default_subject_en": "A recovery code was used to sign in to your Academorix account",
+      "default_subject_en": "A recovery code was used to sign in to your Stackra account",
       "trigger_event": "MfaRecoveryCodeConsumed",
       "payload_bindings": {
         "consumed_at": "ISO-8601 timestamp",
@@ -71,7 +71,7 @@
       "queue": "notifications",
       "subject_template": "mfa::mail.low_recovery_codes.subject",
       "body_template_path": "mfa::mail.low_recovery_codes.body",
-      "default_subject_en": "You're running low on Academorix recovery codes",
+      "default_subject_en": "You're running low on Stackra recovery codes",
       "trigger_event": "MfaBackupCodeCountLow (per-consumption) OR NotifyLowRecoveryCodesJob (nightly sweep)",
       "payload_bindings": {
         "remaining_count": "integer",
@@ -87,7 +87,7 @@
       "queue": "notifications-critical",
       "subject_template": "mfa::mail.suspicious_activity.subject",
       "body_template_path": "mfa::mail.suspicious_activity.body",
-      "default_subject_en": "Unusual two-factor authentication activity on your Academorix account",
+      "default_subject_en": "Unusual two-factor authentication activity on your Stackra account",
       "trigger_event": "MfaSuspiciousActivityDetector output",
       "payload_bindings": {
         "detected_at": "ISO-8601 timestamp",

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformReportingSdk\Requests\Dashboards;
+namespace Stackra\PlatformReportingSdk\Requests\Dashboards;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\PlatformReportingSdk\Data\DashboardData;
-use Academorix\PlatformReportingSdk\Payloads\Dashboards\CreateDashboardPayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\PlatformReportingSdk\Data\DashboardData;
+use Stackra\PlatformReportingSdk\Payloads\Dashboards\CreateDashboardPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

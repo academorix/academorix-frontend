@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Jobs;
+namespace Stackra\Notifications\Sms\Jobs;
 
-use Academorix\Notifications\Sms\Contracts\Repositories\SmsOptOutRepositoryInterface;
-use Academorix\Notifications\Sms\Contracts\Services\SmsCostCalculatorInterface;
-use Academorix\Notifications\Sms\Contracts\Services\SmsTransportManagerInterface;
-use Academorix\Notifications\Sms\Data\SmsEnvelope;
-use Academorix\Notifications\Sms\Enums\SmsProvider;
-use Academorix\Notifications\Sms\Events\SmsFailed;
-use Academorix\Notifications\Sms\Events\SmsSent;
-use Academorix\Notifications\Sms\Events\SmsUndeliverable;
+use Stackra\Notifications\Sms\Contracts\Repositories\SmsOptOutRepositoryInterface;
+use Stackra\Notifications\Sms\Contracts\Services\SmsCostCalculatorInterface;
+use Stackra\Notifications\Sms\Contracts\Services\SmsTransportManagerInterface;
+use Stackra\Notifications\Sms\Data\SmsEnvelope;
+use Stackra\Notifications\Sms\Enums\SmsProvider;
+use Stackra\Notifications\Sms\Events\SmsFailed;
+use Stackra\Notifications\Sms\Events\SmsSent;
+use Stackra\Notifications\Sms\Events\SmsUndeliverable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Console;
+namespace Stackra\Activity\Console;
 
-use Academorix\Activity\Models\Activity;
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Activity\Models\Activity;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 use Illuminate\Contracts\Foundation\Application;
 
 /**

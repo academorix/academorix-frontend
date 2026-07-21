@@ -1,32 +1,32 @@
 {
-  "id": "academorix://modules/payment/schedule",
+  "id": "stackra://modules/payment/schedule",
   "$version": 1,
   "title": "payment — scheduled tasks",
   "entries": [
     {
       "name": "payment-reconcile-nightly",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Payment\\Jobs\\ReconcilePaymentIntentsJob",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Payment\\Jobs\\ReconcilePaymentIntentsJob",
       "cron": "0 3 * * *",
       "timezone": "UTC",
       "purpose": "Nightly 03:00 UTC: per active provider polls provider intent list (last 24h + all in-flight) + reconciles drift between our records + provider records. Findings above 0 fire PaymentReconcileDriftNotification."
     },
     {
       "name": "payment-expire-stale-intents",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Payment\\Jobs\\ExpireStalePaymentIntentsJob",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Payment\\Jobs\\ExpireStalePaymentIntentsJob",
       "cron": "0 1 * * *",
       "timezone": "UTC",
       "purpose": "Nightly 01:00 UTC: marks intents in non-terminal status for > 24h as 'cancelled' with cancellation_reason='expired'. Signals abandoned checkouts. Best-effort provider-side cleanup dispatched."
     },
     {
       "name": "payment-purge-expired-data",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Payment\\Jobs\\PurgeExpiredPaymentDataJob",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Payment\\Jobs\\PurgeExpiredPaymentDataJob",
       "cron": "0 5 * * 0",
       "timezone": "UTC",
       "purpose": "Weekly Sunday 05:00 UTC: applies the per-entity retention windows. Payments > 7y (or 10y Enterprise) hard-deleted (with financial-record archive first). Payment intents > 90d hard-deleted. Payment disputes > 7y (10y Enterprise) hard-deleted. Payment methods soft-deleted > 90d hard-purged."
     },
     {
       "name": "payment-sync-method-expiry",
-      "command": "queue:dispatch --job=Academorix\\Finance\\Payment\\Jobs\\SyncPaymentMethodExpiryJob",
+      "command": "queue:dispatch --job=Stackra\\Finance\\Payment\\Jobs\\SyncPaymentMethodExpiryJob",
       "cron": "0 6 * * 1",
       "timezone": "UTC",
       "purpose": "Weekly Monday 06:00 UTC: flags cards expiring in 30 + 7 days + hard-expires cards past their expiry. Fires PaymentMethodExpiringNotification (30d + 7d out) + PaymentMethodExpired (post-expiry)."

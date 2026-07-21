@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformCredentialsSdk\Payloads\Gates;
+namespace Stackra\PlatformCredentialsSdk\Payloads\Gates;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\StringType;

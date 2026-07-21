@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/foundation/entitlements",
+  "id": "stackra://modules/foundation/entitlements",
   "$version": 1,
   "title": "foundation — entitlements",
   "description": "Foundation publishes zero entitlements — it is not a slotted resource for any customer plan. It ships the substrate every entitled resource is built on. The `entitlements` module (Wave 3) owns the storage + resolution runtime. This file exists for uniform module shape.",

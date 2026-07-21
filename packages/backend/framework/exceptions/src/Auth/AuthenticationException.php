@@ -12,7 +12,7 @@
  *   - The password-grant flow when the email + password pair fails.
  *   - Session-based auth when the session cookie is stale.
  *
- * Distinct from {@see \Academorix\Exceptions\Auth\TokenExpiredException}:
+ * Distinct from {@see \Stackra\Exceptions\Auth\TokenExpiredException}:
  * use that class when the token WAS valid at some point and simply
  * timed out — clients can then run their refresh flow instead of
  * kicking the user back to the login screen.
@@ -26,7 +26,7 @@
  *
  * ## Context payload
  *
- * Named factories attach these keys to {@see \Academorix\Exceptions\AcademorixException::context()}:
+ * Named factories attach these keys to {@see \Stackra\Exceptions\StackraException::context()}:
  *
  *   - `guards`      list<string> — the guard chain that rejected the request
  *   - `token_name`  string       — for revocation, the human-readable token label
@@ -35,23 +35,23 @@
  *
  * Never throw this for an authenticated user who lacks a specific
  * permission — that's a 403 and belongs in
- * {@see \Academorix\Exceptions\Auth\ForbiddenException}. Confusing 401
+ * {@see \Stackra\Exceptions\Auth\ForbiddenException}. Confusing 401
  * and 403 breaks clients that redirect to the login screen on 401.
  *
- * @see \Academorix\Exceptions\AcademorixException  Base class exposing `::make()` + fluent setters.
- * @see \Academorix\Exceptions\Concerns\TranslatesMessages  Trait powering `withTranslationKey()` / `withTranslationParameters()`.
+ * @see \Stackra\Exceptions\StackraException  Base class exposing `::make()` + fluent setters.
+ * @see \Stackra\Exceptions\Concerns\TranslatesMessages  Trait powering `withTranslationKey()` / `withTranslationParameters()`.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Auth;
+namespace Stackra\Exceptions\Auth;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class AuthenticationException extends AcademorixException
+class AuthenticationException extends StackraException
 {
     /**
      * Stable, machine-readable error code exposed on the wire as
@@ -62,7 +62,7 @@ class AuthenticationException extends AcademorixException
 
     /**
      * Class-level translation key resolved by
-     * {@see AcademorixException::userMessage()} when no factory
+     * {@see StackraException::userMessage()} when no factory
      * override is applied. Points at the split lang catalogue at
      * `lang/en/auth.php` under the `exceptions::` namespace.
      */

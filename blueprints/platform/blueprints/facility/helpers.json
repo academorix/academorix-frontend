@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/facility/helpers",
+  "id": "stackra://modules/facility/helpers",
   "$version": 1,
   "title": "facility — helper functions",
   "description": "Ergonomic helpers for accessing the active facility from the request context, resolving pricing, checking availability, and computing pass credits. All helpers are thin wrappers around bound services — never business logic.",
-  "namespace": "Academorix\\Facility\\Support",
+  "namespace": "Stackra\\Facility\\Support",
   "helpers": [
     {
       "signature": "active_facility(): ?Facility",

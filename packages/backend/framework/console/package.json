@@ -1,15 +1,15 @@
 {
-  "name": "@academorix/foundation",
+  "name": "@stackra/foundation",
   "version": "0.1.0",
-  "description": "Academorix Foundation module \u2014 custom Application class, base API structure, and core providers.",
-  "homepage": "https://github.com/academorix-inc/php-monorepo/tree/main/modules/foundation",
+  "description": "Stackra Foundation module \u2014 custom Application class, base API structure, and core providers.",
+  "homepage": "https://github.com/stackra-inc/php-monorepo/tree/main/modules/foundation",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/academorix-inc/php-monorepo.git",
+    "url": "git+https://github.com/stackra-inc/php-monorepo.git",
     "directory": "modules/foundation"
   },
   "bugs": {
-    "url": "https://github.com/academorix-inc/php-monorepo/issues"
+    "url": "https://github.com/stackra-inc/php-monorepo/issues"
   },
   "license": "MIT",
   "scripts": {
@@ -31,9 +31,9 @@
   },
   "private": false,
   "author": {
-    "name": "Academorix Team",
-    "email": "dev@academorix.com",
-    "url": "https://academorix.com"
+    "name": "Stackra Team",
+    "email": "dev@stackra.com",
+    "url": "https://stackra.com"
   },
   "packageManager": "pnpm@10.33.0"
 }

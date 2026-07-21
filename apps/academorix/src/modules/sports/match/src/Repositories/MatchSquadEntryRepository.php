@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Repositories;
+namespace Stackra\Match\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Match\Contracts\Data\MatchSquadEntryInterface;
-use Academorix\Match\Contracts\Repositories\MatchSquadEntryRepositoryInterface;
-use Academorix\Match\Models\MatchSquadEntry;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Match\Contracts\Data\MatchSquadEntryInterface;
+use Stackra\Match\Contracts\Repositories\MatchSquadEntryRepositoryInterface;
+use Stackra\Match\Models\MatchSquadEntry;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Match\Models\MatchSquadEntry}.
+ * Attribute-first Eloquent repository for {@see Stackra\Match\Models\MatchSquadEntry}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(MatchSquadEntryInterface::class)]` which resolves to
  * `MatchSquadEntry` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Match\Models\MatchSquadEntry>
+ * @extends Repository<\Stackra\Match\Models\MatchSquadEntry>
  *
  * @category Match
  *

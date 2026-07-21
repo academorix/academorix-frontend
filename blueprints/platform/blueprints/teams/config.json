@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/teams/config",
+  "id": "stackra://modules/teams/config",
   "$version": 1,
   "title": "teams — developer configuration",
   "configFile": "config/teams.php",
@@ -130,10 +130,10 @@
           "path": "teams.polymorphism.member_type_registry",
           "type": "array",
           "default": {
-            "athlete": "Academorix\\Sports\\Models\\Athlete",
-            "coach": "Academorix\\Staff\\Models\\Coach",
-            "staff": "Academorix\\Staff\\Models\\Staff",
-            "user": "Academorix\\User\\Models\\User"
+            "athlete": "Stackra\\Sports\\Models\\Athlete",
+            "coach": "Stackra\\Staff\\Models\\Coach",
+            "staff": "Stackra\\Staff\\Models\\Staff",
+            "user": "Stackra\\User\\Models\\User"
           },
           "description": "Static registry for PolymorphicTeamMemberResolver. Wave 3 sports + Wave 2b staff modules ADD entries here at boot — the Wave 2 default only wires the `user` binding; the others are placeholders that raise a clear error until the owning module lands."
         },

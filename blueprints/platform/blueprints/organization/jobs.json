@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/organization/jobs",
+  "id": "stackra://modules/organization/jobs",
   "$version": 1,
   "title": "organization — background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Organization\\Jobs\\SeedDefaultOrganizationForTenantJob",
+      "class": "Stackra\\Organization\\Jobs\\SeedDefaultOrganizationForTenantJob",
       "queue": "notifications",
       "purpose": "Create the tenant's is_default=true Organization on tenancy::TenantProvisioned. Runs once per tenant. Idempotent: no-op when a default already exists.",
       "steps": [
@@ -23,7 +23,7 @@
       "backoff": [10, 30, 60, 300, 900]
     },
     {
-      "class": "Academorix\\Organization\\Jobs\\RebuildTreePathsJob",
+      "class": "Stackra\\Organization\\Jobs\\RebuildTreePathsJob",
       "queue": "notifications-critical",
       "purpose": "After a parent_id change on an Organization, walk the moved subtree BFS + recompute tree_path + tree_depth for every descendant. Blocks the tree cache invalidation until completion.",
       "steps": [
@@ -46,14 +46,14 @@
       ]
     },
     {
-      "class": "Academorix\\Organization\\Jobs\\ReconcileDefaultOrganizationInvariantJob",
+      "class": "Stackra\\Organization\\Jobs\\ReconcileDefaultOrganizationInvariantJob",
       "queue": "notifications",
       "purpose": "Nightly sweep. Verifies EXACTLY ONE is_default=true row per tenant. Repairs drift when config('organization.reconciliation.repair_mode')='auto'; escalates otherwise.",
       "steps": [
         "SELECT tenant_id, COUNT(*) FILTER (WHERE is_default=true) FROM organizations GROUP BY tenant_id HAVING COUNT(*) != 1.",
         "For each violating tenant, decide the resolution: zero defaults → promote the oldest active row (or dispatch SeedDefaultOrganizationForTenantJob when zero rows exist); multiple defaults → keep the oldest is_default=true row, demote the rest.",
         "Fire OrganizationDefaultChanged(source='reconciler') for every repair.",
-        "Emit the `academorix.organization.default_invariant.violations` counter with the tenant_id label pattern for observability."
+        "Emit the `stackra.organization.default_invariant.violations` counter with the tenant_id label pattern for observability."
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -61,14 +61,14 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Organization\\Jobs\\PurgeArchivedOrganizationsJob",
+      "class": "Stackra\\Organization\\Jobs\\PurgeArchivedOrganizationsJob",
       "queue": "notifications",
       "purpose": "Daily. Hard-delete archived Organizations past the 730-day hold window IF no descendants + no branch references remain.",
       "steps": [
         "SELECT id, tenant_id FROM organizations WHERE deleted_at < NOW() - INTERVAL '730 days'.",
         "For each candidate: verify (a) no descendants (JOIN organizations children ON children.parent_id = id — zero rows required), (b) no branches referencing (JOIN branches ON branches.organization_id = id — zero rows required).",
         "When both checks pass: hard-delete + fire OrganizationDeleted with the terminal-purge payload.",
-        "When either check fails: leave the row archived (retention held for another sweep) + emit `academorix.organization.purge_blocked` metric with reason label."
+        "When either check fails: leave the row archived (retention held for another sweep) + emit `stackra.organization.purge_blocked` metric with reason label."
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,

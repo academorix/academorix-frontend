@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Events;
+namespace Stackra\Activity\Events;
 
-use Academorix\Activity\Models\Activity;
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Activity\Models\Activity;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 

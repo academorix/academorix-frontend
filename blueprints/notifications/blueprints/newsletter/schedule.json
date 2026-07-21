@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/newsletter/schedule",
+  "id": "stackra://modules/newsletter/schedule",
   "$version": 1,
   "title": "newsletter \u2014 scheduled tasks",
   "entries": [

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Console;
+namespace Stackra\Auth\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan auth:test-signing-key` — Test signing key — auth command.

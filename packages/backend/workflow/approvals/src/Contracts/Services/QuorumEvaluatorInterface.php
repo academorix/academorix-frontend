@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Contracts\Services;
+namespace Stackra\Approvals\Contracts\Services;
 
-use Academorix\Approvals\Enums\ApprovalDecisionOutcome;
-use Academorix\Approvals\Enums\ApprovalQuorumType;
-use Academorix\Approvals\Services\QuorumEvaluator;
+use Stackra\Approvals\Enums\ApprovalDecisionOutcome;
+use Stackra\Approvals\Enums\ApprovalQuorumType;
+use Stackra\Approvals\Services\QuorumEvaluator;
 use Illuminate\Container\Attributes\Bind;
 
 /**
  * Contract for the group-quorum decider.
  *
- * Every {@see \Academorix\Approvals\Models\ApprovalRequirement} group
+ * Every {@see \Stackra\Approvals\Models\ApprovalRequirement} group
  * defines a `quorum_type` (`all` / `any` / `n_of_m`) + optional
  * `count` (for `n_of_m`). This service computes whether a set of
  * recorded decisions satisfies that quorum, and — separately —

@@ -93,7 +93,7 @@ NotificationDispatched (channel=mail)
   `/api/notifications/unsubscribe/{token}` (signed URL).
 - Marketing-priority sends refused to Canadian recipients without express
   consent (CASL s. 6).
-- Every sent mail carries the category slug in `X-Academorix-Category` header
+- Every sent mail carries the category slug in `X-Stackra-Category` header
   for provider-side filtering.
 
 ## 7. Files

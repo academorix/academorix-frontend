@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Repositories;
+namespace Stackra\Leads\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Leads\Contracts\Data\LeadActivityInterface;
-use Academorix\Leads\Contracts\Repositories\LeadActivityRepositoryInterface;
-use Academorix\Leads\Models\LeadActivity;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Leads\Contracts\Data\LeadActivityInterface;
+use Stackra\Leads\Contracts\Repositories\LeadActivityRepositoryInterface;
+use Stackra\Leads\Models\LeadActivity;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Leads\Models\LeadActivity}.
+ * Attribute-first Eloquent repository for {@see Stackra\Leads\Models\LeadActivity}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(LeadActivityInterface::class)]` which resolves to
  * `LeadActivity` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Leads\Models\LeadActivity>
+ * @extends Repository<\Stackra\Leads\Models\LeadActivity>
  *
  * @category Leads
  *

@@ -45,7 +45,7 @@ export interface IRouterPluginOptions {
    * against this suffix. Defaults to `undefined` (no subdomain
    * routing in dev).
    *
-   * @example `'academorix.app'`
+   * @example `'stackra.app'`
    */
   readonly rootDomain?: string;
 

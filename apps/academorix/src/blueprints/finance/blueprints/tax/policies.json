@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/tax/policies",
+  "id": "stackra://modules/tax/policies",
   "$version": 1,
   "title": "tax — authorization policies",
   "description": "Four policies, one per owned model. Every ability resolves through spatie/laravel-permission, then narrows by tenant scope. Write actions on TaxCalculation are NEVER allowed via API — calculations are persisted only via the CalculateTaxForInvoiceLineJob path (calculation-freeze pattern). Real-time preview is a distinct ability that does NOT persist.",
   "policies": [
     {
       "model": "TaxRate",
-      "class": "Academorix\\Finance\\Tax\\Policies\\TaxRatePolicy",
+      "class": "Stackra\\Finance\\Tax\\Policies\\TaxRatePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -39,7 +39,7 @@
     },
     {
       "model": "TaxJurisdiction",
-      "class": "Academorix\\Finance\\Tax\\Policies\\TaxJurisdictionPolicy",
+      "class": "Stackra\\Finance\\Tax\\Policies\\TaxJurisdictionPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -66,7 +66,7 @@
     },
     {
       "model": "TaxExemption",
-      "class": "Academorix\\Finance\\Tax\\Policies\\TaxExemptionPolicy",
+      "class": "Stackra\\Finance\\Tax\\Policies\\TaxExemptionPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -107,7 +107,7 @@
     },
     {
       "model": "TaxCalculation",
-      "class": "Academorix\\Finance\\Tax\\Policies\\TaxCalculationPolicy",
+      "class": "Stackra\\Finance\\Tax\\Policies\\TaxCalculationPolicy",
       "abilities": [
         {
           "action": "viewAny",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transfer/routes",
+  "id": "stackra://modules/transfer/routes",
   "$version": 1,
   "title": "transfer \u2014 HTTP routes",
   "description": "Six tenant groups + one platform-admin group. Every mutation runs through the queue \u2014 the HTTP handler only records the xfer_job and dispatches. Preview / dry-run / template are the sync exceptions. Downloads use signed URLs so an email link works without Sanctum session.",
@@ -22,28 +22,28 @@
         {
           "method": "POST",
           "path": "/imports",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Tenant\\ImportController@store",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Tenant\\ImportController@store",
           "permission": "transfer.imports.run",
           "description": "Create an import job. Multipart body: entity + file + mode + mapping_profile_id? + notifyChannels? + csv overrides? Returns 202 + xfer_job."
         },
         {
           "method": "POST",
           "path": "/imports/preview",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Tenant\\ImportController@preview",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Tenant\\ImportController@preview",
           "permission": "transfer.imports.run",
           "description": "Sync. Parses the first N rows (config('transfer.preview.rows'), default 10) + returns detected headers + suggested mapping. No xfer_job written."
         },
         {
           "method": "POST",
           "path": "/imports/dry-run",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Tenant\\ImportController@dryRun",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Tenant\\ImportController@dryRun",
           "permission": "transfer.imports.run",
           "description": "Sync. Runs the full import inside a rolled-back transaction. Returns counters + errors. No xfer_job written (creates a temporary job row deleted after response)."
         },
         {
           "method": "POST",
           "path": "/samples",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Tenant\\SampleController@store",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Tenant\\SampleController@store",
           "permission": "transfer.samples.generate",
           "description": "Create a sample-data generation job. Body: entity + count?. Returns 202 + xfer_job."
         }
@@ -67,14 +67,14 @@
         {
           "method": "POST",
           "path": "/exports",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Tenant\\ExportController@store",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Tenant\\ExportController@store",
           "permission": "transfer.exports.run",
           "description": "Create an export job. Body: entity + format + filters? + include? + sort? + columns? + notifyChannels?. Returns 202 + xfer_job."
         },
         {
           "method": "POST",
           "path": "/exports/stream",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Tenant\\ExportController@stream",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Tenant\\ExportController@stream",
           "permission": "transfer.exports.run",
           "description": "Sync inline stream. Refuses when the query would exceed the entity's syncThreshold + returns 413 with a hint to use the async endpoint. No xfer_job written."
         }
@@ -98,21 +98,21 @@
         {
           "method": "GET",
           "path": "/entities",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Tenant\\EntityController@index",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Tenant\\EntityController@index",
           "permission": "transfer.entities.viewAny",
           "description": "List every entity the caller can import / export / sample given permissions + feature toggles. Returns fields (headers, formats, required, examples) for the UI."
         },
         {
           "method": "GET",
           "path": "/entities/{entity}",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Tenant\\EntityController@show",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Tenant\\EntityController@show",
           "permission": "transfer.entities.view",
           "description": "Full detail for one entity: field map, formats, permissions, defaults."
         },
         {
           "method": "GET",
           "path": "/templates/{entity}",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Tenant\\TemplateController@show",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Tenant\\TemplateController@show",
           "permission": "transfer.templates.download",
           "description": "Download an empty template (?format=xlsx|csv). Headers reflect the entity's #[ImportField] map + locale."
         }
@@ -136,21 +136,21 @@
         {
           "method": "GET",
           "path": "/jobs",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Tenant\\JobController@index",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Tenant\\JobController@index",
           "permission": "transfer.viewAny",
           "description": "List caller's xfer_jobs. Filterable via spatie/laravel-query-builder (filter[status], filter[kind], filter[entity], filter[created_at])."
         },
         {
           "method": "GET",
           "path": "/jobs/{jobId}",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Tenant\\JobController@show",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Tenant\\JobController@show",
           "permission": "transfer.view",
           "description": "Show one xfer_job with shards + artifacts."
         },
         {
           "method": "POST",
           "path": "/jobs/{jobId}/cancel",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Tenant\\JobController@cancel",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Tenant\\JobController@cancel",
           "permission": "transfer.cancel",
           "middleware_extras": ["transfer.owned-job"],
           "description": "Cancel a queued / running job. Sets status=cancelling."
@@ -158,7 +158,7 @@
         {
           "method": "POST",
           "path": "/jobs/{jobId}/retry-shard/{shardId}",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Tenant\\JobController@retryShard",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Tenant\\JobController@retryShard",
           "permission": "transfer.retryShard",
           "middleware_extras": ["transfer.owned-job"],
           "description": "Re-dispatch a single failed shard against the persisted source file. Increments XferShard.attempt."
@@ -166,7 +166,7 @@
         {
           "method": "GET",
           "path": "/jobs/{jobId}/download",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Tenant\\ArtifactController@download",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Tenant\\ArtifactController@download",
           "permission": "transfer.download",
           "middleware_extras": ["transfer.signed-artifact"],
           "description": "Download the result artifact via signed URL. Signature-only auth so email links work off-session."
@@ -174,7 +174,7 @@
         {
           "method": "GET",
           "path": "/jobs/{jobId}/errors",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Tenant\\ArtifactController@errors",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Tenant\\ArtifactController@errors",
           "permission": "transfer.download",
           "middleware_extras": ["transfer.signed-artifact"],
           "description": "Download the errors artifact (only exists for partially_succeeded imports)."
@@ -199,31 +199,31 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Tenant\\MappingProfileController@index",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Tenant\\MappingProfileController@index",
           "permission": "transfer.mapping-profiles.viewAny"
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Tenant\\MappingProfileController@store",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Tenant\\MappingProfileController@store",
           "permission": "transfer.mapping-profiles.create"
         },
         {
           "method": "GET",
           "path": "/{profile}",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Tenant\\MappingProfileController@show",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Tenant\\MappingProfileController@show",
           "permission": "transfer.mapping-profiles.view"
         },
         {
           "method": "PATCH",
           "path": "/{profile}",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Tenant\\MappingProfileController@update",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Tenant\\MappingProfileController@update",
           "permission": "transfer.mapping-profiles.update"
         },
         {
           "method": "DELETE",
           "path": "/{profile}",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Tenant\\MappingProfileController@destroy",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Tenant\\MappingProfileController@destroy",
           "permission": "transfer.mapping-profiles.delete"
         }
       ]
@@ -245,20 +245,20 @@
         {
           "method": "GET",
           "path": "/jobs",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Platform\\JobController@index",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Platform\\JobController@index",
           "permission": "platform.transfer.viewAny",
           "description": "Cross-tenant xfer_jobs list. Filter[tenant_id] + all tenant filters."
         },
         {
           "method": "GET",
           "path": "/jobs/{jobId}",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Platform\\JobController@show",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Platform\\JobController@show",
           "permission": "platform.transfer.view"
         },
         {
           "method": "GET",
           "path": "/entities",
-          "controller": "Academorix\\Transfer\\Http\\Controllers\\Platform\\EntityController@index",
+          "controller": "Stackra\\Transfer\\Http\\Controllers\\Platform\\EntityController@index",
           "permission": "platform.transfer.viewAny",
           "description": "Full EntityRegistry dump for support inspection."
         }

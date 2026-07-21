@@ -13,7 +13,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Newsletter\Contracts\Data\NewsletterInterface;
+use Stackra\Newsletter\Contracts\Data\NewsletterInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

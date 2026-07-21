@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Actions\Tenant;
+namespace Stackra\Forms\Actions\Tenant;
 
-use Academorix\Forms\Contracts\Repositories\FormRepositoryInterface;
-use Academorix\Forms\Data\FormData;
-use Academorix\Forms\Data\Requests\UpdateFormRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\Forms\Contracts\Repositories\FormRepositoryInterface;
+use Stackra\Forms\Data\FormData;
+use Stackra\Forms\Data\Requests\UpdateFormRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Patch;
 
 /**
  * `PATCH /api/v1/forms/{form}` — update action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Patch(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Forms

@@ -1,19 +1,19 @@
-# `academorix/service-provider`
+# `stackra/service-provider`
 
 Attribute-driven module service provider for Laravel — declarative resource
 loading, olvlvl-cached discovery, lifecycle hooks. The enterprise-grade
 replacement for hand-rolled `boot()` / `register()` methods.
 
-Ported from the enterprise `academorix/service-provider` package with
+Ported from the enterprise `stackra/service-provider` package with
 monorepo-friendly adaptations. See `MIGRATION.md` for what changed and where the
-remaining integration points (`academorix/routing`, `academorix/compiler`) plug
+remaining integration points (`stackra/routing`, `stackra/compiler`) plug
 in.
 
 ## Quick start
 
 ```php
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 #[AsModule(name: 'Blog')]
 final class BlogServiceProvider extends ServiceProvider

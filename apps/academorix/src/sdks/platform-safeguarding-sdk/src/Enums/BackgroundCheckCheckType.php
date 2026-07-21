@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformSafeguardingSdk\Enums;
+namespace Stackra\PlatformSafeguardingSdk\Enums;
 
 /**
  * Wire-visible backed enum for `background-check.check_type`.

@@ -1,15 +1,15 @@
 {
-  "id": "academorix://modules/teams/jobs",
+  "id": "stackra://modules/teams/jobs",
   "$version": 1,
   "title": "teams — background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Teams\\Jobs\\ReconcileTeamMemberActiveInvariantJob",
+      "class": "Stackra\\Teams\\Jobs\\ReconcileTeamMemberActiveInvariantJob",
       "queue": "teams",
       "purpose": "Nightly audit to catch (tenant_id, team_id, member_type, member_id) tuples with 2+ active team_members rows. Every finding is a P1 signal + fires TeamMemberInvariantViolated (see errors.json). This job's counter should always report 0 findings.",
       "steps": [
         "SELECT tenant_id, team_id, member_type, member_id, COUNT(*) FROM team_members WHERE status='active' AND deleted_at IS NULL GROUP BY tenant_id, team_id, member_type, member_id HAVING COUNT(*) > 1",
-        "For each violation: emit critical audit row + increment academorix.teams.member_invariant.violations counter + page on-call"
+        "For each violation: emit critical audit row + increment stackra.teams.member_invariant.violations counter + page on-call"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -18,7 +18,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Teams\\Jobs\\CloseExpiredTrialsJob",
+      "class": "Stackra\\Teams\\Jobs\\CloseExpiredTrialsJob",
       "queue": "teams",
       "purpose": "Hourly sweep of team_trials rows in status='in_progress' with ends_at + 24h past-due. Transitions them to 'completed' + fires TrialCompleted with completed_by=null (automated).",
       "steps": [
@@ -33,7 +33,7 @@
       "backoff": [30, 120, 600]
     },
     {
-      "class": "Academorix\\Teams\\Jobs\\ConvertConfirmedTrialsJob",
+      "class": "Stackra\\Teams\\Jobs\\ConvertConfirmedTrialsJob",
       "queue": "teams",
       "purpose": "Fires on TrialConvertedToMember event. Runs the atomic trial-to-member conversion INSIDE a DB transaction: UPDATE trial SET status='converted' + INSERT team_members row. Refuses on uniqueness violation (rolls back the whole transaction).",
       "steps": [
@@ -54,7 +54,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Teams\\Jobs\\NotifyTrialistPreTrialJob",
+      "class": "Stackra\\Teams\\Jobs\\NotifyTrialistPreTrialJob",
       "queue": "notifications",
       "purpose": "Individual trialist reminder dispatch. Scheduled at trial-create time (24h + 1h before starts_at). Fires the TrialScheduledNotification variant (T-24h / T-1h) unless the trial has been cancelled since scheduling.",
       "steps": [
@@ -70,7 +70,7 @@
       "backoff": [10, 60, 300]
     },
     {
-      "class": "Academorix\\Teams\\Jobs\\PurgeArchivedTeamsJob",
+      "class": "Stackra\\Teams\\Jobs\\PurgeArchivedTeamsJob",
       "queue": "teams",
       "purpose": "Daily sweep of archived teams past the 730-day retention hold. Hard-deletes ONLY when no downstream row still references (RESTRICT FKs enforce this at DB level).",
       "steps": [
@@ -84,7 +84,7 @@
       "tries": 1
     },
     {
-      "class": "Academorix\\Teams\\Jobs\\OpenClosePendingRegistrationsJob",
+      "class": "Stackra\\Teams\\Jobs\\OpenClosePendingRegistrationsJob",
       "queue": "teams",
       "purpose": "Every 5 min sweep to auto-flip Team.registration_opens_at / registration_closes_at windows. Fires TeamRegistrationOpened / TeamRegistrationClosed for the day's transitions.",
       "steps": [

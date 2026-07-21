@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Contracts\Services;
+namespace Stackra\Localization\Contracts\Services;
 
-use Academorix\Localization\Attributes\AsTranslatorDriver;
-use Academorix\Localization\Services\TranslatorDriverRegistry;
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Localization\Attributes\AsTranslatorDriver;
+use Stackra\Localization\Services\TranslatorDriverRegistry;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -15,7 +15,7 @@ use Illuminate\Container\Attributes\Bind;
  * `#[HydratesFrom]` declaration on {@see register()}.
  *
  * Consumed by
- * {@see \Academorix\Localization\Services\TranslatorDriverManager}
+ * {@see \Stackra\Localization\Services\TranslatorDriverManager}
  * — the manager reaches into the registry to resolve `driver(name)`.
  *
  * @category Localization

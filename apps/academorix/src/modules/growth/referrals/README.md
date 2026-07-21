@@ -1,4 +1,4 @@
-# academorix/referrals
+# stackra/referrals
 
 Server-side Laravel package for the `referrals` module. Auto-generated from the
 blueprint at `modules/growth/blueprints/referrals/`.
@@ -49,6 +49,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-growth/referrals-sdk` under `sdk/growth-referrals-sdk/`. Consumers
+`stackra-growth/referrals-sdk` under `sdk/growth-referrals-sdk/`. Consumers
 cross the service boundary through the SDK; this package is the SERVER-side
 owner of the domain.

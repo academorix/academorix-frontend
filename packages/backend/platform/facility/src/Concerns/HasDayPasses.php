@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Concerns;
+namespace Stackra\Facility\Concerns;
 
 /**
  * Trait — HasDayPasses.

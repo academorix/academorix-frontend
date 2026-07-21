@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Access;
+namespace Stackra\FeatureFlags\Access;
 
-use Academorix\Access\Contracts\PermissionContributor;
-use Academorix\Access\Data\PermissionDefinition;
-use Academorix\Access\Enums\Guard;
-use Academorix\Access\Registry\PermissionRegistry;
-use Academorix\Foundation\Contributions\ContributorTag;
+use Stackra\Access\Contracts\PermissionContributor;
+use Stackra\Access\Data\PermissionDefinition;
+use Stackra\Access\Enums\Guard;
+use Stackra\Access\Registry\PermissionRegistry;
+use Stackra\Foundation\Contributions\ContributorTag;
 
 /**
  * Permissions owned by the FeatureFlags module.

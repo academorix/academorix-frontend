@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsCompetitionSdk\Requests\CompetitionFixtures;
+namespace Stackra\SportsCompetitionSdk\Requests\CompetitionFixtures;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsCompetitionSdk\Data\CompetitionFixtureData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsCompetitionSdk\Data\CompetitionFixtureData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Models;
+namespace Stackra\Integrations\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Integrations\Contracts\Data\IntegrationProviderInterface;
-use Academorix\Integrations\Database\Factories\IntegrationProviderFactory;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Integrations\Contracts\Data\IntegrationProviderInterface;
+use Stackra\Integrations\Database\Factories\IntegrationProviderFactory;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
@@ -23,7 +23,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 /**
  * Eloquent model for a IntegrationProvider.
  *
- * Allowlist catalog of every provider Academorix supports (stripe / paddle / pipedrive / hubspot / twilio / zoom / apple_wallet / google_wallet / mailchimp / xero / etc).
+ * Allowlist catalog of every provider Stackra supports (stripe / paddle / pipedrive / hubspot / twilio / zoom / apple_wallet / google_wallet / mailchimp / xero / etc).
  *
  * @category Integrations
  *

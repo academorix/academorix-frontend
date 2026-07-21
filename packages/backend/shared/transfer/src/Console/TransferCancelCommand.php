@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Console;
+namespace Stackra\Transfer\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Transfer\Contracts\Data\XferJobInterface;
-use Academorix\Transfer\Enums\XferJobStatus;
-use Academorix\Transfer\Models\XferJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Transfer\Contracts\Data\XferJobInterface;
+use Stackra\Transfer\Enums\XferJobStatus;
+use Stackra\Transfer\Models\XferJob;
 
 /**
  * `php artisan transfer:cancel` — cancel a queued or running job.

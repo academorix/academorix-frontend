@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Contracts\Services;
+namespace Stackra\AgeGroup\Contracts\Services;
 
-use Academorix\AgeGroup\Services\AgeGroupCatalogSeeder;
+use Stackra\AgeGroup\Services\AgeGroupCatalogSeeder;
 use Illuminate\Container\Attributes\Bind;
 
 /**

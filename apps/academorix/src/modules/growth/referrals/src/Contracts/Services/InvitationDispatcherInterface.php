@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Contracts\Services;
+namespace Stackra\Referrals\Contracts\Services;
 
-use Academorix\Referrals\Services\InvitationDispatcher;
+use Stackra\Referrals\Services\InvitationDispatcher;
 use Illuminate\Container\Attributes\Bind;
 
 /**

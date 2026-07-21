@@ -4,7 +4,7 @@
  * @file modules/notifications/notifications/config/notifications.php
  *
  * @description
- * Runtime knobs for the `academorix/notifications` module. Merged under
+ * Runtime knobs for the `stackra/notifications` module. Merged under
  * the `notifications.*` key by the base ServiceProvider's LoadsResources
  * concern. Downstream modules read via `config('notifications.*')` —
  * never `env()` outside this file per Octane-first rules.

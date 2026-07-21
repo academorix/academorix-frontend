@@ -1,10 +1,10 @@
 {
-  "name": "academorix-platform/public-site-sdk",
+  "name": "stackra-platform/public-site-sdk",
   "type": "library",
-  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `public-site` module of the Platform service. Auto-discovered at boot by academorix/platform-sdk via #[AsSdkResource(name: 'public-site', service: 'platform')]; consumed by every cross-service caller strictly over HTTP.",
+  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `public-site` module of the Platform service. Auto-discovered at boot by stackra/platform-sdk via #[AsSdkResource(name: 'public-site', service: 'platform')]; consumed by every cross-service caller strictly over HTTP.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "sdk",
     "saloon",
     "spatie-data",
@@ -16,10 +16,10 @@
   ],
   "require": {
     "php": "^8.3",
-    "academorix/api-sdk": "@dev",
-    "academorix/enum": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
+    "stackra/api-sdk": "@dev",
+    "stackra/enum": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
     "saloonphp/saloon": "^3.10",
     "spatie/laravel-data": "^4.11"
   },
@@ -32,12 +32,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\\\PlatformPublicSiteSdk\\\\": "src/"
+      "Stackra\\\\PlatformPublicSiteSdk\\\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\\\PlatformPublicSiteSdk\\\\Tests\\\\": "tests/"
+      "Stackra\\\\PlatformPublicSiteSdk\\\\Tests\\\\": "tests/"
     }
   },
   "extra": {

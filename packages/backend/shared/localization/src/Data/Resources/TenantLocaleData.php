@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Data\Resources;
+namespace Stackra\Localization\Data\Resources;
 
-use Academorix\Localization\Contracts\Data\TenantLocaleInterface;
-use Academorix\Localization\Models\TenantLocale;
+use Stackra\Localization\Contracts\Data\TenantLocaleInterface;
+use Stackra\Localization\Models\TenantLocale;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;

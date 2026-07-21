@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Data;
+namespace Stackra\Exceptions\Data;
 
 use JsonSerializable;
 

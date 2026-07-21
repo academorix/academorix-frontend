@@ -4,8 +4,8 @@ The **cross-service compliance orchestrator** — the one place DSAR, retention,
 legal hold, consent, subprocessors, and safeguarding are coordinated across
 every other service.
 
-Deploys to `academorix-backend/apps/compliance-service/` (see
-[`apps/compliance-service/README.md`](../../../academorix/academorix-backend/apps/compliance-service/README.md)).
+Deploys to `stackra-backend/apps/compliance-service/` (see
+[`apps/compliance-service/README.md`](../../../stackra/stackra-backend/apps/compliance-service/README.md)).
 
 ## Modules — on disk
 

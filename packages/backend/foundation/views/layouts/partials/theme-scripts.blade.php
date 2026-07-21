@@ -1,5 +1,5 @@
 @php
-    use Academorix\Foundation\Enums\Theme;
+    use Stackra\Foundation\Enums\Theme;
 @endphp
 {{--
 /**

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Exceptions;
+namespace Stackra\Coaching\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * availability must be a day-of-week map with valid time-range arrays.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CoachingProfileInvalidAvailabilityException extends AcademorixException
+final class CoachingProfileInvalidAvailabilityException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

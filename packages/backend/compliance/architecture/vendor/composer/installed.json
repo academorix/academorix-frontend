@@ -1,7 +1,7 @@
 {
   "packages": [
     {
-      "name": "academorix/enum",
+      "name": "stackra/enum",
       "version": "dev-main",
       "version_normalized": "dev-main",
       "dist": {
@@ -20,18 +20,18 @@
       "installation-source": "dist",
       "autoload": {
         "psr-4": {
-          "Academorix\\Enum\\": "src/"
+          "Stackra\\Enum\\": "src/"
         }
       },
       "autoload-dev": {
         "psr-4": {
-          "Academorix\\Enum\\Tests\\": "tests/"
+          "Stackra\\Enum\\Tests\\": "tests/"
         }
       },
       "license": ["proprietary"],
       "description": "Modern PHP 8.1+ enum system with metadata, attributes, and helper traits",
       "homepage": "https://github.com/stackra-inc/laravel-framework/enum",
-      "keywords": ["academorix", "attributes", "enum", "laravel", "metadata", "php81"],
+      "keywords": ["stackra", "attributes", "enum", "laravel", "metadata", "php81"],
       "support": {
         "issues": "https://github.com/stackra-inc/laravel-framework/enum/-/issues",
         "source": "https://github.com/stackra-inc/laravel-framework/enum"
@@ -40,10 +40,10 @@
         "symlink": true,
         "relative": true
       },
-      "install-path": "../academorix/enum"
+      "install-path": "../stackra/enum"
     },
     {
-      "name": "academorix/exceptions",
+      "name": "stackra/exceptions",
       "version": "dev-main",
       "version_normalized": "dev-main",
       "dist": {
@@ -52,7 +52,7 @@
         "reference": "9cc665f9fdc598b8133fcd8f02f78d9c22a71155"
       },
       "require": {
-        "academorix/foundation": "@dev",
+        "stackra/foundation": "@dev",
         "illuminate/auth": "^13.0",
         "illuminate/contracts": "^13.0",
         "illuminate/http": "^13.0",
@@ -80,31 +80,31 @@
       "type": "library",
       "extra": {
         "laravel": {
-          "providers": ["Academorix\\Exceptions\\Providers\\ExceptionsServiceProvider"],
+          "providers": ["Stackra\\Exceptions\\Providers\\ExceptionsServiceProvider"],
           "aliases": []
         }
       },
       "installation-source": "dist",
       "autoload": {
         "psr-4": {
-          "Academorix\\Exceptions\\": "src/"
+          "Stackra\\Exceptions\\": "src/"
         }
       },
       "autoload-dev": {
         "psr-4": {
-          "Academorix\\Exceptions\\Tests\\": "tests/"
+          "Stackra\\Exceptions\\Tests\\": "tests/"
         }
       },
       "license": ["proprietary"],
-      "description": "Structured exception hierarchy, JSON error renderer, Spatie Ignition + AI solutions, and Sentry context enrichment for every Academorix app and package.",
+      "description": "Structured exception hierarchy, JSON error renderer, Spatie Ignition + AI solutions, and Sentry context enrichment for every Stackra app and package.",
       "transport-options": {
         "symlink": true,
         "relative": true
       },
-      "install-path": "../academorix/exceptions"
+      "install-path": "../stackra/exceptions"
     },
     {
-      "name": "academorix/foundation",
+      "name": "stackra/foundation",
       "version": "dev-main",
       "version_normalized": "dev-main",
       "dist": {
@@ -113,7 +113,7 @@
         "reference": "1fa723df8878133d161ee692d2c999bada4a5e28"
       },
       "require": {
-        "academorix/enum": "@dev",
+        "stackra/enum": "@dev",
         "illuminate/config": "^13.0",
         "illuminate/contracts": "^13.0",
         "illuminate/http": "^13.0",
@@ -130,29 +130,29 @@
       "type": "library",
       "extra": {
         "laravel": {
-          "providers": ["Academorix\\Foundation\\Providers\\FoundationServiceProvider"],
+          "providers": ["Stackra\\Foundation\\Providers\\FoundationServiceProvider"],
           "aliases": []
         }
       },
       "installation-source": "dist",
       "autoload": {
         "psr-4": {
-          "Academorix\\Foundation\\": "src/"
+          "Stackra\\Foundation\\": "src/"
         },
         "files": ["src/Support/helpers.php"]
       },
       "autoload-dev": {
         "psr-4": {
-          "Academorix\\Foundation\\Tests\\": "tests/"
+          "Stackra\\Foundation\\Tests\\": "tests/"
         }
       },
       "license": ["proprietary"],
-      "description": "Shared kernel for every Academorix package: module service-provider base class, cross-cutting contracts, correlation-id middleware, guard clauses, testable clock.",
+      "description": "Shared kernel for every Stackra package: module service-provider base class, cross-cutting contracts, correlation-id middleware, guard clauses, testable clock.",
       "transport-options": {
         "symlink": true,
         "relative": true
       },
-      "install-path": "../academorix/foundation"
+      "install-path": "../stackra/foundation"
     },
     {
       "name": "brianium/paratest",

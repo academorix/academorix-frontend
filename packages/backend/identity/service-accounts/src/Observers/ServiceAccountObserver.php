@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Observers;
+namespace Stackra\ServiceAccounts\Observers;
 
-use Academorix\ServiceAccounts\Contracts\Data\ServiceAccountInterface;
-use Academorix\ServiceAccounts\Exceptions\ServiceAccountImmutableFieldException;
-use Academorix\ServiceAccounts\Exceptions\ServiceAccountTenantMutationException;
-use Academorix\ServiceAccounts\Models\ServiceAccount;
+use Stackra\ServiceAccounts\Contracts\Data\ServiceAccountInterface;
+use Stackra\ServiceAccounts\Exceptions\ServiceAccountImmutableFieldException;
+use Stackra\ServiceAccounts\Exceptions\ServiceAccountTenantMutationException;
+use Stackra\ServiceAccounts\Models\ServiceAccount;
 
 /**
  * Blueprint-invariant guard for {@see ServiceAccount} lifecycle.

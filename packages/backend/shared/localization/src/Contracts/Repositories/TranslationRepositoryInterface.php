@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Contracts\Repositories;
+namespace Stackra\Localization\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Localization\Models\Translation;
-use Academorix\Localization\Repositories\EloquentTranslationRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Localization\Models\Translation;
+use Stackra\Localization\Repositories\EloquentTranslationRepository;
 use DateTimeInterface;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;

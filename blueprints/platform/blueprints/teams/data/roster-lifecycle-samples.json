@@ -87,7 +87,7 @@
         "Team U-13 (min_age=11, max_age=13). coach_id changed from Coach A → Coach B.",
         "TeamCoachChanged event fires with is_minor_only=true.",
         "Downstream: critical-severity audit row written (retention 7 years). Notifications dispatched to Coach A + Coach B + branch safeguarding lead (cannot-opt-out).",
-        "academorix.teams.coach_changed_total counter increments with label is_minor_only=true — dashboard alerts if the rate spikes."
+        "stackra.teams.coach_changed_total counter increments with label is_minor_only=true — dashboard alerts if the rate spikes."
       ]
     },
     {

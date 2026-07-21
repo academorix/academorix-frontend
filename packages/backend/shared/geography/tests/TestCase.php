@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Tests;
+namespace Stackra\Geography\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/geography.
+ * Base test case for stackra/geography.
  *
  * @category Geography
  *

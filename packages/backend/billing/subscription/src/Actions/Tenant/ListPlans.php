@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Actions\Tenant;
+namespace Stackra\Subscription\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Subscription\Contracts\Repositories\PlanRepositoryInterface;
-use Academorix\Subscription\Data\PlanData;
-use Academorix\Subscription\Enums\SubscriptionPermission;
-use Academorix\Subscription\Models\Plan;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Subscription\Contracts\Repositories\PlanRepositoryInterface;
+use Stackra\Subscription\Data\PlanData;
+use Stackra\Subscription\Enums\SubscriptionPermission;
+use Stackra\Subscription\Models\Plan;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Spatie\LaravelData\DataCollection;
 
 /**

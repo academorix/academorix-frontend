@@ -5,7 +5,7 @@
  *
  * @description
  * Log-level severity aligned with PSR-3. Every {@see
- * \Academorix\Exceptions\AcademorixException} declares a severity that
+ * \Stackra\Exceptions\StackraException} declares a severity that
  * drives:
  *
  *   - The PSR-3 log level a reporter emits (`Log::log($severity->psr(), ...)`).
@@ -21,10 +21,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Enums;
+namespace Stackra\Exceptions\Enums;
 
 use Psr\Log\LogLevel;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 enum ErrorSeverity: string
 {

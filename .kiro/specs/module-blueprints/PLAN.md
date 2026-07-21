@@ -1,4 +1,4 @@
-# Academorix — Module Blueprints Plan
+# Stackra — Module Blueprints Plan
 
 Draft plan for the `modules/<name>/` blueprints that live at the root of the
 frontend repo and drive the Laravel backend build. This document is the
@@ -38,7 +38,7 @@ contract a Laravel module publishes and consumes:
 
 **Naming rule.** All folders and files are **kebab-case lowercase**, including
 `readme.md`. Class-name strings inside JSON (e.g.
-`Academorix\Tenancy\Models\Tenant`) stay PSR-4 capitalized. There are no other
+`Stackra\Tenancy\Models\Tenant`) stay PSR-4 capitalized. There are no other
 exceptions.
 
 **Why this shape, in this repo?**
@@ -72,7 +72,7 @@ the folder's own basename — every `dependencies` / `extendedBy` /
 moves never cascade into blueprint edits.
 
 ```
-academorix-frontend/
+stackra-frontend/
 ├── apps/                          Vite + React SPAs (frontend code)
 ├── packages/                      shared TS packages (UI, types, http)
 ├── modules/                       ← the blueprints
@@ -552,7 +552,7 @@ Cross-module references land in `relations.json`:
   "target": {
     "module": "tenancy",
     "model": "Tenant",
-    "class": "Academorix\\Tenancy\\Models\\Tenant"
+    "class": "Stackra\\Tenancy\\Models\\Tenant"
   },
   "foreignKey": "application_id"
 }
@@ -637,7 +637,7 @@ Per-module authoring checklist (every module runs the same list):
    `module-kernel` package? Blocks §5.2(2).
 2. **Schema versioning.** Tag every `schemas/*.schema.json` with `$version` and
    CI-enforce bumps on breaking changes? Recommend yes.
-3. **Ref resolution scheme.** `academorix://modules/<name>/…` URIs need a
+3. **Ref resolution scheme.** `stackra://modules/<name>/…` URIs need a
    resolver in CI (small Node script) that turns them into filesystem paths and
    validates cross-refs.
 4. **Fixture validation.** Standardise on `ajv-cli`?

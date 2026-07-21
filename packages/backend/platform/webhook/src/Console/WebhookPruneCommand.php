@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Console;
+namespace Stackra\Webhook\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Webhook\Jobs\PruneWebhookDeliveriesJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Webhook\Jobs\PruneWebhookDeliveriesJob;
 
 /**
  * `php artisan webhook:prune {--days=90}` — dispatch the retention

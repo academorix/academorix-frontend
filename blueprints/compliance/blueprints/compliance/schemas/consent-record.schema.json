@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/compliance/schemas/consent-record",
+  "id": "stackra://modules/compliance/schemas/consent-record",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ConsentRecord",
@@ -12,9 +12,9 @@
     "keyType": "string",
     "keyPrefix": "cns_",
     "incrementing": false,
-    "model": "Academorix\\Compliance\\Models\\ConsentRecord",
-    "interface": "Academorix\\Compliance\\Contracts\\Data\\ConsentRecordInterface",
-    "implements": ["Academorix\\Compliance\\Contracts\\Data\\ConsentRecordInterface"],
+    "model": "Stackra\\Compliance\\Models\\ConsentRecord",
+    "interface": "Stackra\\Compliance\\Contracts\\Data\\ConsentRecordInterface",
+    "implements": ["Stackra\\Compliance\\Contracts\\Data\\ConsentRecordInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -49,7 +49,7 @@
         "type": "string",
         "length": 128,
         "nullable": false,
-        "description": "Polymorphic subject class \u2014 e.g. `Academorix\\User\\Models\\User`."
+        "description": "Polymorphic subject class \u2014 e.g. `Stackra\\User\\Models\\User`."
       },
       "subject_id": {
         "type": "string",

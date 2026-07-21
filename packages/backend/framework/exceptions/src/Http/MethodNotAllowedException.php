@@ -14,21 +14,21 @@
  *
  *   exceptions::http.method_not_allowed
  *
- * @see \Academorix\Exceptions\AcademorixException  Base class.
- * @see \Academorix\Exceptions\Support\ExceptionMapper  Adapter that
+ * @see \Stackra\Exceptions\StackraException  Base class.
+ * @see \Stackra\Exceptions\Support\ExceptionMapper  Adapter that
  *      converts Symfony's exception into this class.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Http;
+namespace Stackra\Exceptions\Http;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class MethodNotAllowedException extends AcademorixException
+class MethodNotAllowedException extends StackraException
 {
     /**
      * Stable machine-readable code. Clients that offer a "try the

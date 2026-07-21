@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Services;
+namespace Stackra\Search\Services;
 
-use Academorix\Search\Contracts\Services\QueryParserInterface;
+use Stackra\Search\Contracts\Services\QueryParserInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

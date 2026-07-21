@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Actions\Tenant;
+namespace Stackra\Domains\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Domains\Enums\DomainsPermission;
-use Academorix\Domains\Exceptions\LastPrimaryDomainException;
-use Academorix\Domains\Models\Domain;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Delete;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\WhereUlid;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Domains\Enums\DomainsPermission;
+use Stackra\Domains\Exceptions\LastPrimaryDomainException;
+use Stackra\Domains\Models\Domain;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Delete;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\WhereUlid;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\Response;
 
 /**

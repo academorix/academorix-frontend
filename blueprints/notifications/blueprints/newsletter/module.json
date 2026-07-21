@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "newsletter",
   "alias": "newsletter",
-  "namespace": "Academorix\\Newsletter",
+  "namespace": "Stackra\\Newsletter",
   "description": "Editorial publication + audience management. Distinct from notifications (transactional / event-driven). Ships five entities: Newsletter (the publication), NewsletterIssue (an individual issue with content + schedule), NewsletterSubscription (audience membership), NewsletterCampaign (a send event), NewsletterAudience (segment definition). Reuses notifications-mail for the actual dispatch. CAN-SPAM + CASL enforcement, one-click unsubscribe via signed URL, per-issue open + click tracking, subscriber-growth analytics, sender-reputation guardrails.",
   "keywords": [
     "newsletter",
@@ -16,7 +16,7 @@
     "segments"
   ],
   "priority": 30,
-  "providers": ["Academorix\\Newsletter\\Providers\\NewsletterServiceProvider"],
+  "providers": ["Stackra\\Newsletter\\Providers\\NewsletterServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

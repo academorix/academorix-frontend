@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/delegation/subprocessors",
+  "id": "stackra://modules/delegation/subprocessors",
   "$version": 1,
   "title": "delegation — subprocessors",
-  "description": "This module publishes NO subprocessors. The two aggregates (role_delegations + impersonation_sessions) are pure DB rows managed inside the Academorix trust boundary; no third-party processor receives their contents. External Slack + PagerDuty deliveries for impersonation-related notifications DO reach subprocessors but those subprocessors are owned by notifications module + on-call transport respectively, so they are declared there — not duplicated here.",
+  "description": "This module publishes NO subprocessors. The two aggregates (role_delegations + impersonation_sessions) are pure DB rows managed inside the Stackra trust boundary; no third-party processor receives their contents. External Slack + PagerDuty deliveries for impersonation-related notifications DO reach subprocessors but those subprocessors are owned by notifications module + on-call transport respectively, so they are declared there — not duplicated here.",
   "subprocessors": [],
   "future": [
     "If a security-team SIEM (Splunk, DataDog Security, Panther) subscribes to the impersonation audit stream via webhook or S3 export, that subprocessor is documented HERE at that time. Wave 2 open door.",

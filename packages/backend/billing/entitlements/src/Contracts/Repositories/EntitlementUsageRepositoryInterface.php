@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Contracts\Repositories;
+namespace Stackra\Entitlements\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Entitlements\Models\EntitlementUsage;
-use Academorix\Entitlements\Repositories\EloquentEntitlementUsageRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Entitlements\Models\EntitlementUsage;
+use Stackra\Entitlements\Repositories\EloquentEntitlementUsageRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

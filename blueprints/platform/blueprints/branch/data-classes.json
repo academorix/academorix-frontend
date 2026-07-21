@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/branch/data-classes",
+  "id": "stackra://modules/branch/data-classes",
   "$version": 1,
   "title": "branch — field classification",
   "description": "Branch carries no PII directly. The address is business location (often published on the tenant's marketing site). Phone / email / website_url are business contacts. Coordinates are business location. Amenities + capacity are administrative. The one field with a redactor tier is `notes` (via HasMetadata → metadata jsonb) which may carry internal-only operational notes.",

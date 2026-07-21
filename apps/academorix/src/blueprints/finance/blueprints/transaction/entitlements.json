@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transaction/entitlements",
+  "id": "stackra://modules/transaction/entitlements",
   "$version": 1,
   "title": "transaction — declared entitlements",
   "description": "Five entitlement keys. `transaction_capture` is the master boolean gate (all tiers implicitly — every tenant has a ledger; but the flag ensures dormant/lapsed tenants can't record new movements). `transaction_multi_currency` unlocks cross-currency transactions (Medium+). `transaction_advanced_reporting` unlocks the monthly General Ledger report + custom GL exports (Medium+). `transaction_ledger_reconciliation_api` unlocks programmatic reconciliation via the ledger:reconcile API (Enterprise). `transaction_extended_retention` unlocks 10-year retention (Enterprise — some finance regimes require > 7 years).",

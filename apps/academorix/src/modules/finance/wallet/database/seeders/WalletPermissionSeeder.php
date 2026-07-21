@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Wallet\Database\Seeders;
+namespace Stackra\Wallet\Database\Seeders;
 
-use Academorix\Wallet\Enums\WalletPermission;
-use Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
-use Academorix\ServiceProvider\Attributes\AsSeeder;
+use Stackra\Wallet\Enums\WalletPermission;
+use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;
 
 /**

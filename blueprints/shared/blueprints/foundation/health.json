@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/foundation/health",
+  "id": "stackra://modules/foundation/health",
   "$version": 1,
   "title": "foundation — health aggregator contract + base probes",
   "description": "Foundation OWNS the health substrate. `HealthAggregator` is the container-bound service every module's service provider registers probes with. `/api/health` walks every registered probe and returns aggregate status. This file (a) defines the probe interface every downstream module implements and (b) enumerates the base probes foundation itself ships.",
-  "aggregatorClass": "Academorix\\Foundation\\Health\\HealthAggregator",
-  "probeInterface": "Academorix\\Foundation\\Health\\HealthProbeInterface",
+  "aggregatorClass": "Stackra\\Foundation\\Health\\HealthAggregator",
+  "probeInterface": "Stackra\\Foundation\\Health\\HealthProbeInterface",
   "endpoints": {
     "public": {
       "path": "GET /api/health",
@@ -41,7 +41,7 @@
   "probes": [
     {
       "name": "app-booted",
-      "class": "Academorix\\Foundation\\Health\\Probes\\AppBootedProbe",
+      "class": "Stackra\\Foundation\\Health\\Probes\\AppBootedProbe",
       "category": "startup",
       "critical": true,
       "description": "The service-provider chain completed. HealthAggregator sets this on ApplicationBooted event; probe returns cached result. Fails at boot only.",
@@ -49,7 +49,7 @@
     },
     {
       "name": "db-connectivity",
-      "class": "Academorix\\Foundation\\Health\\Probes\\DbConnectivityProbe",
+      "class": "Stackra\\Foundation\\Health\\Probes\\DbConnectivityProbe",
       "category": "readiness",
       "critical": true,
       "description": "Runs `SELECT 1` against the primary database connection. Fails when connectivity is lost or the pool is exhausted.",
@@ -57,7 +57,7 @@
     },
     {
       "name": "db-read-replica-lag",
-      "class": "Academorix\\Foundation\\Health\\Probes\\DbReadReplicaLagProbe",
+      "class": "Stackra\\Foundation\\Health\\Probes\\DbReadReplicaLagProbe",
       "category": "readiness",
       "critical": false,
       "description": "Read-replica lag from the primary. Warns > 5s, fails > 30s. Non-critical because we can degrade to primary reads.",
@@ -66,7 +66,7 @@
     },
     {
       "name": "cache-connectivity",
-      "class": "Academorix\\Foundation\\Health\\Probes\\CacheConnectivityProbe",
+      "class": "Stackra\\Foundation\\Health\\Probes\\CacheConnectivityProbe",
       "category": "readiness",
       "critical": true,
       "description": "Redis PING + SET/GET round-trip on a canary key. Fails when Redis is unreachable or evictions are hot.",
@@ -74,7 +74,7 @@
     },
     {
       "name": "queue-connectivity",
-      "class": "Academorix\\Foundation\\Health\\Probes\\QueueConnectivityProbe",
+      "class": "Stackra\\Foundation\\Health\\Probes\\QueueConnectivityProbe",
       "category": "liveness",
       "critical": true,
       "description": "Horizon dashboard's supervisors list is reachable + at least one worker is running. Fails when the queue backend is dead.",
@@ -82,7 +82,7 @@
     },
     {
       "name": "queue-depth-under-threshold",
-      "class": "Academorix\\Foundation\\Health\\Probes\\QueueDepthProbe",
+      "class": "Stackra\\Foundation\\Health\\Probes\\QueueDepthProbe",
       "category": "liveness",
       "critical": false,
       "description": "Warns when any queue's depth exceeds its per-queue threshold (default 10000). Non-critical because a backed-up queue does not stop the app.",
@@ -96,7 +96,7 @@
     },
     {
       "name": "search-engine-reachable",
-      "class": "Academorix\\Foundation\\Health\\Probes\\SearchEngineReachableProbe",
+      "class": "Stackra\\Foundation\\Health\\Probes\\SearchEngineReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "Pings the configured Scout engine (Meilisearch by default). Non-critical — search degrades gracefully to a filtered DB query when the engine is unavailable.",
@@ -104,7 +104,7 @@
     },
     {
       "name": "module-registry-loaded",
-      "class": "Academorix\\Foundation\\Health\\Probes\\ModuleRegistryLoadedProbe",
+      "class": "Stackra\\Foundation\\Health\\Probes\\ModuleRegistryLoadedProbe",
       "category": "startup",
       "critical": true,
       "description": "ModuleRegistry booted every discovered module + resolved the dependency graph without cycles. Fails at boot only.",
@@ -112,7 +112,7 @@
     },
     {
       "name": "config-cache-fresh",
-      "class": "Academorix\\Foundation\\Health\\Probes\\ConfigCacheFreshProbe",
+      "class": "Stackra\\Foundation\\Health\\Probes\\ConfigCacheFreshProbe",
       "category": "readiness",
       "critical": false,
       "description": "The compiled config cache (`bootstrap/cache/config.php`) is present + its mtime is within 24h of the current deploy timestamp. Warns on staleness — production deploys should always ship a fresh cache.",

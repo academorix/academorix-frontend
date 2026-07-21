@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Reporters;
+namespace Stackra\Exceptions\Reporters;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Contracts\ExceptionReporterInterface;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Support\ExceptionMapper;
-use Academorix\Exceptions\Support\Redactor;
-use Academorix\Exceptions\Support\TraceCleaner;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Contracts\ExceptionReporterInterface;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Support\ExceptionMapper;
+use Stackra\Exceptions\Support\Redactor;
+use Stackra\Exceptions\Support\TraceCleaner;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Log\LogManager;
@@ -31,7 +31,7 @@ use Throwable;
  *      `error_code`, `category`, `severity`, `correlation_id`,
  *      `retry_after`, plus the exception's own `context()` metadata,
  *      the request context stashed by
- *      {@see \Academorix\Exceptions\Middleware\CaptureExceptionContext},
+ *      {@see \Stackra\Exceptions\Middleware\CaptureExceptionContext},
  *      and a cleaned stack trace.
  *
  *   3. **Masked** — everything runs through the {@see Redactor} +
@@ -77,7 +77,7 @@ final class LogReporter implements ExceptionReporterInterface
         // Framework `dontReport` handles the coarse skip list; we
         // still respect per-exception opt-outs where a subclass
         // returns `false` from its `report()` hook.
-        if ($throwable instanceof AcademorixException) {
+        if ($throwable instanceof StackraException) {
             return $throwable->report() !== false;
         }
 
@@ -111,7 +111,7 @@ final class LogReporter implements ExceptionReporterInterface
      * back to the manager's default channel when the configured
      * channel isn't declared in the host app.
      */
-    private function resolveLogger(AcademorixException $e): LoggerInterface
+    private function resolveLogger(StackraException $e): LoggerInterface
     {
         /** @var LogManager $manager */
         $manager = $this->container->make('log');
@@ -135,7 +135,7 @@ final class LogReporter implements ExceptionReporterInterface
      *
      * @return array<string, mixed>
      */
-    private function buildContext(AcademorixException $mapped, Throwable $original): array
+    private function buildContext(StackraException $mapped, Throwable $original): array
     {
         return [
             'error_code' => $mapped->errorCode(),
@@ -182,11 +182,11 @@ final class LogReporter implements ExceptionReporterInterface
      */
     private function requestContext(): array
     {
-        if (! $this->container->bound('academorix.exception_context')) {
+        if (! $this->container->bound('stackra.exception_context')) {
             return [];
         }
 
-        $context = $this->container->make('academorix.exception_context');
+        $context = $this->container->make('stackra.exception_context');
 
         return is_array($context) ? $context : [];
     }

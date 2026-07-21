@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Enums;
+namespace Stackra\Notifications\Push\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
- * Reasons a {@see \Academorix\Notifications\Push\Models\PushSubscription} may
+ * Reasons a {@see \Stackra\Notifications\Push\Models\PushSubscription} may
  * become expired / inactive.
  *
  * Carried on `PushSubscriptionExpired` events so listeners (analytics, audit,

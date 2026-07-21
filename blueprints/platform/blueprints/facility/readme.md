@@ -106,7 +106,7 @@ bypass, engine downgrade, corrupted index), the weekly
 `ReconcileBookingOverlapsJob` catches the drift and fires
 `BookingOverlapDetected` — a P1 event.
 
-The `academorix.facility.overlaps.detected` counter should stay at 0 for the
+The `stackra.facility.overlaps.detected` counter should stay at 0 for the
 lifetime of a healthy platform.
 
 ## 5. Cascades
@@ -184,7 +184,7 @@ grants:
 Credits decrement atomically on booking-create (SELECT ... FOR UPDATE inside the
 booking transaction). Over-consumption is refused at the observer — every
 attempted double-spend is a P1 signal (`PASS_DOUBLE_SPEND` error,
-`academorix.facility.passes.double_spend_attempts_total` counter).
+`stackra.facility.passes.double_spend_attempts_total` counter).
 
 ## 10. What this module does NOT do
 

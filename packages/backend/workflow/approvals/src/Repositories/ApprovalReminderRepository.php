@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Repositories;
+namespace Stackra\Approvals\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Approvals\Contracts\Data\ApprovalReminderInterface;
-use Academorix\Approvals\Contracts\Repositories\ApprovalReminderRepositoryInterface;
-use Academorix\Approvals\Models\ApprovalReminder;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Approvals\Contracts\Data\ApprovalReminderInterface;
+use Stackra\Approvals\Contracts\Repositories\ApprovalReminderRepositoryInterface;
+use Stackra\Approvals\Models\ApprovalReminder;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Approvals\Models\ApprovalReminder}.
+ * Attribute-first Eloquent repository for {@see Stackra\Approvals\Models\ApprovalReminder}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ApprovalReminderInterface::class)]` which resolves to
  * `ApprovalReminder` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Approvals\Models\ApprovalReminder>
+ * @extends Repository<\Stackra\Approvals\Models\ApprovalReminder>
  *
  * @category Approvals
  *

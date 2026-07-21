@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Gateway\Services;
+namespace Stackra\Gateway\Services;
 
-use Academorix\Gateway\Contracts\Services\CheckoutComGatewayDriverInterface;
-use Academorix\Gateway\Data\PaymentIntentRequest;
-use Academorix\Gateway\Data\PaymentIntentResponse;
-use Academorix\Gateway\Data\RefundRequest;
-use Academorix\Gateway\Data\RefundResponse;
-use Academorix\Gateway\Data\WebhookEnvelope;
-use Academorix\Gateway\Exceptions\PaymentGatewayException;
-use Academorix\Gateway\Exceptions\WebhookSignatureInvalidException;
+use Stackra\Gateway\Contracts\Services\CheckoutComGatewayDriverInterface;
+use Stackra\Gateway\Data\PaymentIntentRequest;
+use Stackra\Gateway\Data\PaymentIntentResponse;
+use Stackra\Gateway\Data\RefundRequest;
+use Stackra\Gateway\Data\RefundResponse;
+use Stackra\Gateway\Data\WebhookEnvelope;
+use Stackra\Gateway\Exceptions\PaymentGatewayException;
+use Stackra\Gateway\Exceptions\WebhookSignatureInvalidException;
 use Illuminate\Container\Attributes\Scoped;
 
 /**

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsRegistrationsSdk\Requests\Registrations;
+namespace Stackra\SportsRegistrationsSdk\Requests\Registrations;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsRegistrationsSdk\Data\RegistrationData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsRegistrationsSdk\Data\RegistrationData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

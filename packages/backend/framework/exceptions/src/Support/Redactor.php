@@ -46,7 +46,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Support;
+namespace Stackra\Exceptions\Support;
 
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 

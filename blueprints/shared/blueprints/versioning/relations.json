@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/versioning/relations",
+  "id": "stackra://modules/versioning/relations",
   "$version": 1,
   "title": "versioning \u2014 model relationships",
   "description": "2 entities. Self-referential migration_target_slug on ApiVersion (a version points at its successor). DeprecationNotice belongsTo ApiVersion. Inbound conventions describe how webhook + notifications-* + subscription reference versions.",
@@ -35,7 +35,7 @@
     "conventions": [
       "`webhook::WebhookSubscription.api_version` \u2014 nullable FK to api_versions.slug. Null = follow platform default (config('versioning.default'))",
       "`notifications::Notification.metadata.api_version` \u2014 the version snapshot at dispatch time. Not an FK; the value is captured on emit and stays event-carried even if the version later sunsets.",
-      "`subscription::Subscription.stripe_api_version` \u2014 pins Stripe's API version (different from Academorix's api_version). Separate column but same lifecycle pattern.",
+      "`subscription::Subscription.stripe_api_version` \u2014 pins Stripe's API version (different from Stackra's api_version). Separate column but same lifecycle pattern.",
       "GraphQL controllers via `#[AsApiSurface(name, versions: [...])]` \u2014 build-time compiler validates every declared version exists in the ApiVersion table."
     ]
   }

@@ -7,7 +7,7 @@
  * **DEPRECATED (ADR 0016 — Actions-only architecture).**
  * Marker attribute for the legacy multi-method Controller
  * pattern. New code MUST use
- * {@see \Academorix\Routing\Attributes\AsAction} on a
+ * {@see \Stackra\Routing\Attributes\AsAction} on a
  * single-invoke action class instead.
  *
  * ## Why deprecated
@@ -53,7 +53,7 @@
  * ```
  *
  * Each action inherits the same HTTP surface via the
- * {@see \Academorix\Routing\Concerns\AsController} trait — the
+ * {@see \Stackra\Routing\Concerns\AsController} trait — the
  * trait shares the short name with this attribute but lives in a
  * different namespace, so both coexist in the codebase during
  * the migration window.
@@ -72,7 +72,7 @@
  *     `#[AsController]` and `#[AsAction]` classes until the
  *     next major version.
  *
- *   - **Next major** — The attribute + the `Academorix\Routing\Controller`
+ *   - **Next major** — The attribute + the `Stackra\Routing\Controller`
  *     base class are both removed. Any lingering usage becomes
  *     a compile error.
  *
@@ -85,16 +85,16 @@
  * gives existing consumers time to migrate without breaking
  * routes.
  *
- * @see \Academorix\Routing\Attributes\AsAction  Replacement — single-invoke action classes.
- * @see \Academorix\Routing\Concerns\AsController Replacement — HTTP-surface trait for actions.
- * @see \Academorix\Routing\Controller           Legacy base class (also deprecated by ADR 0016).
+ * @see \Stackra\Routing\Attributes\AsAction  Replacement — single-invoke action classes.
+ * @see \Stackra\Routing\Concerns\AsController Replacement — HTTP-surface trait for actions.
+ * @see \Stackra\Routing\Controller           Legacy base class (also deprecated by ADR 0016).
  *
  * @deprecated since 3.0 — per ADR 0016 use `#[AsAction]` on a `final class` action with `use AsController;` for the HTTP surface. Slated for removal in the next major.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 

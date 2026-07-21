@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/identity/config",
+  "id": "stackra://modules/identity/config",
   "$version": 1,
   "title": "identity \u2014 developer configuration",
   "configFile": "config/identity.php",
@@ -177,7 +177,7 @@
           "path": "identity.mfa_secret.kms.key_id",
           "type": "string",
           "env": "IDENTITY_MFA_KMS_KEY_ID",
-          "description": "KMS key ARN or alias. E.g. `alias/academorix/identity-mfa`."
+          "description": "KMS key ARN or alias. E.g. `alias/stackra/identity-mfa`."
         },
         {
           "path": "identity.mfa_secret.kms.region",

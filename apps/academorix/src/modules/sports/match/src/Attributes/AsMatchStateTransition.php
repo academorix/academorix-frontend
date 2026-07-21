@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Attributes;
+namespace Stackra\Match\Attributes;
 
 use Attribute;
 

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Season\Exceptions;
+namespace Stackra\Season\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * allows_late_registration=true supplied without late_registration_fee_cents > 0.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SeasonLateRegistrationFeeRequiredException extends AcademorixException
+final class SeasonLateRegistrationFeeRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

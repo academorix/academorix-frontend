@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Progress\Repositories;
+namespace Stackra\Progress\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Progress\Contracts\Data\CoachNoteInterface;
-use Academorix\Progress\Contracts\Repositories\CoachNoteRepositoryInterface;
-use Academorix\Progress\Models\CoachNote;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Progress\Contracts\Data\CoachNoteInterface;
+use Stackra\Progress\Contracts\Repositories\CoachNoteRepositoryInterface;
+use Stackra\Progress\Models\CoachNote;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Progress\Models\CoachNote}.
+ * Attribute-first Eloquent repository for {@see Stackra\Progress\Models\CoachNote}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(CoachNoteInterface::class)]` which resolves to
  * `CoachNote` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Progress\Models\CoachNote>
+ * @extends Repository<\Stackra\Progress\Models\CoachNote>
  *
  * @category Progress
  *

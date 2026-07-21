@@ -1,4 +1,4 @@
-# academorix/awards
+# stackra/awards
 
 Server-side Laravel package for the `awards` module. Auto-generated from the
 blueprint at `modules/sports/blueprints/awards/`.
@@ -44,6 +44,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-sports/awards-sdk` under `sdk/sports-awards-sdk/`. Consumers cross
+`stackra-sports/awards-sdk` under `sdk/sports-awards-sdk/`. Consumers cross
 the service boundary through the SDK; this package is the SERVER-side owner of
 the domain.

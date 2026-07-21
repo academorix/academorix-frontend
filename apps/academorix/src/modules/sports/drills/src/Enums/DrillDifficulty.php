@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Drills\Enums;
+namespace Stackra\Drills\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `difficulty` on `drill`.

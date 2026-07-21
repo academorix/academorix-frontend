@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformReportingSdk\Resources;
+namespace Stackra\PlatformReportingSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\PlatformReportingSdk\Data\ReportDefinitionData;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\PlatformReportingSdk\Data\ReportDefinitionData;
 use Saloon\Http\Response;
 
 /**

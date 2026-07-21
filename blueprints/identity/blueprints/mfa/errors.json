@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/mfa/errors",
+  "id": "stackra://modules/mfa/errors",
   "$version": 1,
   "title": "mfa — error codes",
   "namespace": "mfa",

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Delegation\Tests;
+namespace Stackra\Delegation\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/delegation.
+ * Base test case for stackra/delegation.
  *
  * @category Delegation
  *

@@ -1,4 +1,4 @@
-# Academorix — Backend ↔ Frontend Alignment Plan
+# Stackra — Backend ↔ Frontend Alignment Plan
 
 Comprehensive plan to align the mock-driven frontend with the actual Laravel
 backend, based on a deep scan of both codebases performed on 2026‑07‑04.
@@ -57,7 +57,7 @@ the mock provider until their backend modules land.
 The backend is a **modular monolith** with six modules currently in place —
 **Foundation, Tenancy, User, Auth, Access, FeatureFlag** — plus stub
 `Organization` support that has not been implemented yet. Tenancy is
-**single‑database, subdomain‑identified** (`{slug}.academorix.app`) using
+**single‑database, subdomain‑identified** (`{slug}.stackra.app`) using
 `stancl/tenancy`, with a strict **two‑audience** design:
 
 - **Tenant surface** — `/api/auth/*` on tenant hosts (subdomain), issues
@@ -66,7 +66,7 @@ The backend is a **modular monolith** with six modules currently in place —
   applied to the tenant User yet, so tenant 2FA endpoints return
   `501 Not Implemented`.
 - **Platform surface** — `/api/v1/platform/auth/*` on the central domain, issues
-  `sanctum` tokens for `App\User\Models\PlatformUser` (Academorix staff). **2FA
+  `sanctum` tokens for `App\User\Models\PlatformUser` (Stackra staff). **2FA
   is mandatory** with a full flow
   (enable/confirm/challenge/disable/recovery‑codes). Adds token‑based
   impersonation into any tenant user.
@@ -135,7 +135,7 @@ now. Everything else must keep the mock provider or the frontend must accept
 
 ### 1.3 Endpoint map (verified against `modules/*/routes/`)
 
-#### Tenant surface — served on `{slug}.academorix.app`, prefix `/api`
+#### Tenant surface — served on `{slug}.stackra.app`, prefix `/api`
 
 The `tenant` middleware group (`InitializeTenancyByDomain` +
 `PreventAccessFromCentralDomains`) is applied to everything under this prefix.
@@ -257,9 +257,9 @@ Configured in `config/tenancy.php`:
   `Domain`).
 - **Central domains**: env `TENANCY_CENTRAL_DOMAINS` (default
   `localhost,127.0.0.1`), e.g.
-  `academorix.app,www.academorix.app,api.academorix.app`.
+  `stackra.app,www.stackra.app,api.stackra.app`.
 - **Custom domains supported** — any `Domain` row hosts a tenant (both
-  `{slug}.academorix.app` and `academy.example.com` are stored the same way).
+  `{slug}.stackra.app` and `academy.example.com` are stored the same way).
 - **No** header‑based tenant resolver is configured. `X‑Tenant` etc. is **not**
   honored today; if we want SPA‑set tenant, backend must add
   `InitializeTenancyByRequestData` middleware — this is listed as a **backend
@@ -271,8 +271,8 @@ Configured in `config/tenancy.php`:
   `allowed_headers=['*']` (wildcard — our custom `X-*` headers are already
   permitted), `supports_credentials=false`, `allowed_origins` from
   `CORS_ALLOWED_ORIGINS` env (comma‑separated). **Backend must configure this
-  env with our frontend origins** (`https://academorix.app`,
-  `https://*.academorix.app`, `https://academorix.vercel.app`, dev origins).
+  env with our frontend origins** (`https://stackra.app`,
+  `https://*.stackra.app`, `https://stackra.vercel.app`, dev origins).
 - `config/sanctum.php`: `guard=['web']`, `expiration=null` (tokens are
   long‑lived; the app rotates via `/refresh`). Bearer‑token, not SPA cookies.
 - `config/fortify.php`: `views=false`, `routes=false` — Fortify never mounts
@@ -363,8 +363,8 @@ Currently only admin can toggle; **no tenant‑user readable endpoint exists yet
 
 ### 3.1 Tenant identification — subdomain, not header
 
-Adopt the backend's model as‑is: the SPA lives at `{slug}.academorix.app` and
-the browser sends requests to `https://{slug}.academorix.app/api/*`. This is the
+Adopt the backend's model as‑is: the SPA lives at `{slug}.stackra.app` and
+the browser sends requests to `https://{slug}.stackra.app/api/*`. This is the
 Slack model.
 
 **Alternatives rejected**:
@@ -382,7 +382,7 @@ Slack model.
   `window.location.hostname` to know the tenant slug and whether we're on the
   central host.
 - The central host renders a **workspace picker** page (public) that redirects
-  to `https://{slug}.academorix.app` on selection.
+  to `https://{slug}.stackra.app` on selection.
 - On any subdomain page load, the SPA calls `GET /api/current-tenant` to
   bootstrap branding/name (public — no auth) and stores it in a `TenantContext`.
 
@@ -390,10 +390,10 @@ Slack model.
 
 The frontend must expose **two auth flows** because the backend has two:
 
-- **Tenant auth** — used on `{slug}.academorix.app`.
+- **Tenant auth** — used on `{slug}.stackra.app`.
   Login/register/forgot/reset/verify/change/confirm/logout/refresh. 2FA UI
   stubbed out for now (backend returns 501).
-- **Platform admin auth** — used on `admin.academorix.app` (or however we name
+- **Platform admin auth** — used on `admin.stackra.app` (or however we name
   the central admin surface). Login + mandatory 2FA enrolment + full 2FA
   challenge + impersonation.
 
@@ -427,9 +427,9 @@ The Axios instance must:
 
 ```
 // Given window.location.hostname:
-//   "academorix.app"           -> baseURL = "https://academorix.app/api"       (central)
-//   "admin.academorix.app"     -> baseURL = "https://admin.academorix.app/api" (central admin)
-//   "{slug}.academorix.app"    -> baseURL = "https://{slug}.academorix.app/api" (tenant)
+//   "stackra.app"           -> baseURL = "https://stackra.app/api"       (central)
+//   "admin.stackra.app"     -> baseURL = "https://admin.stackra.app/api" (central admin)
+//   "{slug}.stackra.app"    -> baseURL = "https://{slug}.stackra.app/api" (tenant)
 //   "academy.example.com"      -> baseURL = "https://academy.example.com/api"   (custom domain tenant)
 //   "localhost:3000"           -> baseURL = env.VITE_API_URL (dev, points at backend)
 ```
@@ -445,7 +445,7 @@ Every request:
 - `Accept: application/json`.
 - `X-Requested-With: XMLHttpRequest`.
 - `X-Api-Version: 1.0` — read by the `api.version` middleware.
-- `X-Client: academorix-web/{version}` — from `package.json`.
+- `X-Client: stackra-web/{version}` — from `package.json`.
 - `X-Device-Id: {stable-uuid}` — generated once in `localStorage`, sent so
   backend can associate login/session records with a device. **Backend gap**: no
   middleware reads this yet; documented as gap G8.
@@ -530,7 +530,7 @@ Public API:
   Fetches `GET /api/v1/auth/workspaces` (**backend gap G3** — new endpoint
   needed).
 - `switchWorkspace(slug)` — sets
-  `window.location = "https://{slug}.academorix.app"` (a full navigation because
+  `window.location = "https://{slug}.stackra.app"` (a full navigation because
   the request host must change).
 
 ### 4.3 `src/lib/scope` — keep, refine
@@ -732,9 +732,9 @@ provider by host at construction time (§4.4).
 
 Add:
 
-- `VITE_PLATFORM_ADMIN_HOST` — e.g. `admin.academorix.app` (which subdomain
+- `VITE_PLATFORM_ADMIN_HOST` — e.g. `admin.stackra.app` (which subdomain
   hosts the platform admin surface).
-- `VITE_CENTRAL_HOST` — e.g. `academorix.app` (the workspace‑picker host).
+- `VITE_CENTRAL_HOST` — e.g. `stackra.app` (the workspace‑picker host).
 - `VITE_API_PATH` — default `/api`.
 - Keep `VITE_API_URL` as the dev‑mode override (still used when running Vite on
   `localhost:3000`).
@@ -782,13 +782,13 @@ MODIFIED
 
 - `/` — **workspace picker**: if the visitor has an active session cookie
   (unlikely — we're bearer‑token) or a remembered slug in `localStorage`,
-  redirect to `https://{slug}.academorix.app`. Otherwise show a two‑step wizard:
+  redirect to `https://{slug}.stackra.app`. Otherwise show a two‑step wizard:
   1. "Sign in to your workspace" — enter workspace slug or list of workspaces
      the user belongs to (`GET /api/v1/auth/workspaces` — **gap G3**). Anonymous
      users see a "Find your workspace" form that emails them their workspaces
      (**gap G4**).
   2. Click a workspace → full page navigation to
-     `https://{slug}.academorix.app/login`.
+     `https://{slug}.stackra.app/login`.
 - `/create-workspace` — sign‑up flow for a new tenant. Calls
   `POST /api/v1/tenants` (currently platform‑admin only — **gap G5**: needs a
   public "self‑serve tenant creation" endpoint).
@@ -849,7 +849,7 @@ MODIFIED
 | `Accept`            | `application/json`         | ✅                                            | Forces JSON error responses.                                                                 |
 | `X-Requested-With`  | `XMLHttpRequest`           | ✅                                            | Laravel's `wantsJson()` shortcut.                                                            |
 | `X-Api-Version`     | `1.0`                      | ✅ `api.version` middleware                   | Confirmed used on `/api/v1/tenants*` and `/api/v1/tenants/*/features`.                       |
-| `X-Client`          | `academorix-web/{version}` | ❌ (gap G7)                                   | Informational; used server‑side for analytics/logging.                                       |
+| `X-Client`          | `stackra-web/{version}` | ❌ (gap G7)                                   | Informational; used server‑side for analytics/logging.                                       |
 | `X-Device-Id`       | UUID (stable per browser)  | ❌ (gap G8)                                   | For device/session records.                                                                  |
 | `X-Device-Name`     | e.g. `"Chrome on macOS"`   | ❌ (used only as `device_name` in login body) | Redundant to `LoginData.device_name` on login; carried on every request for session tagging. |
 | `X-Device-Platform` | e.g. `"macOS 15.0"`        | ❌                                            |                                                                                              |
@@ -877,7 +877,7 @@ this backend):
 **CORS work required (backend)** — gap G0:
 
 - Set `CORS_ALLOWED_ORIGINS` to the SPA origins:
-  `https://academorix.app,https://*.academorix.app,https://academorix.vercel.app,http://localhost:3000,http://127.0.0.1:3000`
+  `https://stackra.app,https://*.stackra.app,https://stackra.vercel.app,http://localhost:3000,http://127.0.0.1:3000`
   (wildcard subdomains may require Laravel patching; if not supported, list each
   custom domain explicitly).
 - Add these to `exposed_headers` in `config/cors.php`:
@@ -940,7 +940,7 @@ fields on the User.
   "user": {
     "id": "…UUID",
     "name": "Alex Rivera",
-    "email": "owner@academorix.test",
+    "email": "owner@stackra.test",
     "email_verified_at": "…",
     "status": "active",
     "last_login_at": "…",
@@ -1095,7 +1095,7 @@ surface)
 **G11 — Wildcard CORS origin**
 
 - Configure `allowed_origins_patterns` (via Laravel package or manual patch) to
-  accept `https://*.academorix.app` — otherwise each custom‑domain tenant needs
+  accept `https://*.stackra.app` — otherwise each custom‑domain tenant needs
   an explicit CORS entry.
 
 **G12 — `X-Api-Version`** in `exposed_headers`.
@@ -1107,7 +1107,7 @@ surface)
 ### 9.1 Sign in — tenant
 
 ```
-User at {slug}.academorix.app/login enters email + password
+User at {slug}.stackra.app/login enters email + password
   ↓
 Frontend POST /api/auth/login  { email, password, device_name: "Chrome on macOS 15.0" }
   ↓ 200
@@ -1151,7 +1151,7 @@ POST /api/auth/forgot-password { email }
 Show "If an account exists with that email, we sent instructions."
 ```
 
-Email contains a link to `{slug}.academorix.app/reset-password?token=…&email=…`.
+Email contains a link to `{slug}.stackra.app/reset-password?token=…&email=…`.
 
 ### 9.4 Reset password — tenant
 
@@ -1166,7 +1166,7 @@ All tokens revoked. Redirect to /login.
 ### 9.5 Email verify — tenant
 
 - Verification email link:
-  `{slug}.academorix.app/api/auth/email/verify/{id}/{hash}?signature=…`
+  `{slug}.stackra.app/api/auth/email/verify/{id}/{hash}?signature=…`
 - Backend serves the endpoint directly (no frontend interception); the frontend
   handles the redirect target via a public `/verify-email` route that reads the
   query params, hits the backend, then routes on the response.
@@ -1198,7 +1198,7 @@ Password step-up modal → POST /confirm-password
 POST /api/v1/platform/auth/impersonate { tenant_id, tenant_user_id, ttl_minutes: 15 }
   ↓ 200 { access_token, expires_at, user }
   ↓
-Open new tab at {slug}.academorix.app with the impersonation token in a URL fragment (or handshake)
+Open new tab at {slug}.stackra.app with the impersonation token in a URL fragment (or handshake)
   ↓ Tenant SPA reads the token, stores it, calls /me, renders impersonation banner
   ↓
 Stop → POST /api/v1/platform/auth/impersonate/stop  (uses the tenant-side token)
@@ -1298,9 +1298,9 @@ and a conventional commit.
 
 1. **Custom domains** — do we set them up server‑side (backend adds a `Domain`
    row) or do tenants add their own via a DNS validation flow? Affects Phase 4.
-2. **Central admin subdomain** — `admin.academorix.app` vs
-   `academorix.app/admin`? Recommendation: use a subdomain so `platform.domain`
-   middleware unambiguously matches; the central host `academorix.app` is
+2. **Central admin subdomain** — `admin.stackra.app` vs
+   `stackra.app/admin`? Recommendation: use a subdomain so `platform.domain`
+   middleware unambiguously matches; the central host `stackra.app` is
    workspace picker + marketing only.
 3. **Multi‑workspace session** — do we share the auth token across tenant
    subdomains (impossible cross‑subdomain with `localStorage`) or force login
@@ -1365,7 +1365,7 @@ Backend (documented gaps)
 - **Backend blueprint**: `.ref/docs/DOMAIN_MODULES_BLUEPRINT.md` (full domain
   module list).
 - **Backend Postman collection**:
-  `docs/postman/Academorix.postman_collection.json` (current endpoints).
+  `docs/postman/Stackra.postman_collection.json` (current endpoints).
 - **Frontend spec**:
   `.kiro/specs/frontend-domain-rebuild/{requirements,design,tasks}.md`.
 - **Frontend steering**: `.kiro/steering/frontend-module-architecture.md`.

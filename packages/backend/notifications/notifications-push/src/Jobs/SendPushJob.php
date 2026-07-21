@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Jobs;
+namespace Stackra\Notifications\Push\Jobs;
 
-use Academorix\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
-use Academorix\Notifications\Push\Contracts\Repositories\PushSubscriptionRepositoryInterface;
-use Academorix\Notifications\Push\Contracts\Services\PushTransportManagerInterface;
-use Academorix\Notifications\Push\Data\PushEnvelope;
-use Academorix\Notifications\Push\Enums\PushPlatform;
-use Academorix\Notifications\Push\Enums\PushProvider;
-use Academorix\Notifications\Push\Enums\PushSubscriptionExpiredReason;
-use Academorix\Notifications\Push\Events\PushFailed;
-use Academorix\Notifications\Push\Events\PushInvalidToken;
-use Academorix\Notifications\Push\Events\PushSent;
+use Stackra\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
+use Stackra\Notifications\Push\Contracts\Repositories\PushSubscriptionRepositoryInterface;
+use Stackra\Notifications\Push\Contracts\Services\PushTransportManagerInterface;
+use Stackra\Notifications\Push\Data\PushEnvelope;
+use Stackra\Notifications\Push\Enums\PushPlatform;
+use Stackra\Notifications\Push\Enums\PushProvider;
+use Stackra\Notifications\Push\Enums\PushSubscriptionExpiredReason;
+use Stackra\Notifications\Push\Events\PushFailed;
+use Stackra\Notifications\Push\Events\PushInvalidToken;
+use Stackra\Notifications\Push\Events\PushSent;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;

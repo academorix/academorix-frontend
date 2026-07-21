@@ -281,7 +281,7 @@ whose `last_used_at` is older than `security.dormant_threshold_days` (default
 2. Skip if the SA is already disabled.
 3. Dispatch `ServiceAccountDormantNotification` to the SA's Application owners +
    the security-mailing-list.
-4. Emit `academorix.service_account.dormant.detected` metric.
+4. Emit `stackra.service_account.dormant.detected` metric.
 
 Operators triage: either wake the SA (record why), or disable + delete (most
 dormant SAs are forgotten provisioning artefacts).

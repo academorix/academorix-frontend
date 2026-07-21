@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Jobs;
+namespace Stackra\Subscription\Jobs;
 
-use Academorix\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
-use Academorix\Subscription\Contracts\Services\CashierAdapterInterface;
-use Academorix\Subscription\Events\UsageReported;
-use Academorix\Subscription\Exceptions\UsageReportFailedException;
+use Stackra\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
+use Stackra\Subscription\Contracts\Services\CashierAdapterInterface;
+use Stackra\Subscription\Events\UsageReported;
+use Stackra\Subscription\Exceptions\UsageReportFailedException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -87,7 +87,7 @@ final class ReportMeteredUsageJob implements ShouldBeUnique, ShouldQueue
             return;
         }
 
-        $tenantId = (string) $subscription->{\Academorix\Subscription\Contracts\Data\SubscriptionInterface::ATTR_TENANT_ID};
+        $tenantId = (string) $subscription->{\Stackra\Subscription\Contracts\Data\SubscriptionInterface::ATTR_TENANT_ID};
 
         try {
             $providerUsageId = $cashier->reportUsage($tenantId, $this->priceId, $this->amount, $this->timestamp);

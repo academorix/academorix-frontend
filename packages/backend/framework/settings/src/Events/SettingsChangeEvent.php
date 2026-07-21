@@ -35,17 +35,17 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  *
- * @see \Academorix\Settings\Services\SettingsService::updateGroup()
- * @see \Academorix\Settings\Contracts\SettingsRegistryInterface
+ * @see \Stackra\Settings\Services\SettingsService::updateGroup()
+ * @see \Stackra\Settings\Contracts\SettingsRegistryInterface
  */
 
-namespace Academorix\Settings\Events;
+namespace Stackra\Settings\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Academorix\Events\Attributes\AsEvent;
-use Academorix\Settings\Contracts\SettingsRegistryInterface;
+use Stackra\Events\Attributes\AsEvent;
+use Stackra\Settings\Contracts\SettingsRegistryInterface;
 
 /**
  * Settings Change Event.

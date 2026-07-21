@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-mail/errors",
+  "id": "stackra://modules/notifications-mail/errors",
   "$version": 1,
   "title": "notifications-mail \u2014 error codes",
   "description": "Mail-scoped error codes. Namespace: NOTIFICATIONS_MAIL_.",

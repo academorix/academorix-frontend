@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Notifications;
+namespace Stackra\Localization\Notifications;
 
-use Academorix\Localization\Models\TranslationJob;
+use Stackra\Localization\Models\TranslationJob;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;

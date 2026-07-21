@@ -34,11 +34,11 @@
  * ## Example implementation
  *
  * ```php
- * use Academorix\Authorization\Concerns\HasRoleMetadata;
- * use Academorix\Authorization\Contracts\RoleEnum;
- * use Academorix\Authorization\Enums\Guard;
- * use Academorix\Authorization\Attributes\RoleMeta;
- * use Academorix\Users\Enums\UserPermission;
+ * use Stackra\Authorization\Concerns\HasRoleMetadata;
+ * use Stackra\Authorization\Contracts\RoleEnum;
+ * use Stackra\Authorization\Enums\Guard;
+ * use Stackra\Authorization\Attributes\RoleMeta;
+ * use Stackra\Users\Enums\UserPermission;
  *
  * enum UserRole: string implements RoleEnum
  * {
@@ -68,16 +68,16 @@
  * requires a role migration — treat case values as stable public
  * API the same way you would a database column name.
  *
- * @see \Academorix\Authorization\Concerns\HasRoleMetadata Default trait implementation.
- * @see \Academorix\Authorization\Attributes\RoleMeta Per-case metadata attribute.
- * @see \Academorix\Authorization\Contracts\PermissionEnum Symmetric permission-enum marker.
+ * @see \Stackra\Authorization\Concerns\HasRoleMetadata Default trait implementation.
+ * @see \Stackra\Authorization\Attributes\RoleMeta Per-case metadata attribute.
+ * @see \Stackra\Authorization\Contracts\PermissionEnum Symmetric permission-enum marker.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Authorization\Contracts;
+namespace Stackra\Authorization\Contracts;
 
-use Academorix\Authorization\Enums\Guard;
+use Stackra\Authorization\Enums\Guard;
 use BackedEnum;
 
 /**
@@ -85,7 +85,7 @@ use BackedEnum;
  *
  * Implementers MUST be `enum: string` (string-backed) so the
  * `->value` is a stable storage key. The four accessors below
- * are provided by the {@see \Academorix\Authorization\Concerns\HasRoleMetadata}
+ * are provided by the {@see \Stackra\Authorization\Concerns\HasRoleMetadata}
  * trait — domain enums simply implement this interface + `use`
  * the trait; no method boilerplate needed.
  */

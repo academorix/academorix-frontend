@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/grants/broadcasts",
+  "id": "stackra://modules/grants/broadcasts",
   "$version": 1,
   "title": "grants — broadcast channels",
   "description": "Two broadcast channels this module owns. Registered by `GrantServiceProvider::registerBroadcastChannels()`. Tenant-scoped channel for admin dashboards; user-scoped channel for the subject's live 'my access' view.",

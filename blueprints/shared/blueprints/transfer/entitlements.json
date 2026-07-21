@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transfer/entitlements",
+  "id": "stackra://modules/transfer/entitlements",
   "$version": 1,
   "title": "transfer \u2014 entitlements",
   "reference": {

@@ -44,7 +44,7 @@
                   "kind": "Text",
                   "props": {
                     "className": "text-sm text-muted",
-                    "children": "BCP 47 tags Academorix officially supports. Each row references a `geography::Language` row for ISO-639 metadata + optionally a `geography::Country` for regional variants. Tenancy enable a subset via TenantLocale."
+                    "children": "BCP 47 tags Stackra officially supports. Each row references a `geography::Language` row for ISO-639 metadata + optionally a `geography::Country` for regional variants. Tenancy enable a subset via TenantLocale."
                   }
                 }
               ]

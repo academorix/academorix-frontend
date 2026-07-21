@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geofencing/feature-flags",
+  "id": "stackra://modules/geofencing/feature-flags",
   "$version": 1,
   "title": "geofencing \u2014 kill switches",
   "engine": "laravel/pennant",

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Drills\Contracts\Data;
+namespace Stackra\Drills\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Drills\Models\CurriculumWeek;
+use Stackra\Drills\Models\CurriculumWeek;
 
 /**
  * Table shape for the `curriculum_weeks` table.

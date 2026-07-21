@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Contracts\Data;
+namespace Stackra\Notifications\Mail\Contracts\Data;
 
-use Academorix\Notifications\Mail\Models\MailSuppression;
+use Stackra\Notifications\Mail\Models\MailSuppression;
 use Illuminate\Container\Attributes\Bind;
 
 /**

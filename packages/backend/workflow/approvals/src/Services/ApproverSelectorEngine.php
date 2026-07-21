@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Services;
+namespace Stackra\Approvals\Services;
 
-use Academorix\Approvals\Contracts\Services\ApproverSelectorEngineInterface;
+use Stackra\Approvals\Contracts\Services\ApproverSelectorEngineInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Approvals\Contracts\Repositories\ApprovableActionRepositoryInterface;
+use Stackra\Approvals\Contracts\Repositories\ApprovableActionRepositoryInterface;
 
 /**
  * Concrete service — ApproverSelectorEngine.

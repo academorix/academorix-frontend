@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Session\Contracts\Services;
+namespace Stackra\Session\Contracts\Services;
 
-use Academorix\Session\Services\SessionCapacityGate;
+use Stackra\Session\Services\SessionCapacityGate;
 use Illuminate\Container\Attributes\Bind;
 
 /**

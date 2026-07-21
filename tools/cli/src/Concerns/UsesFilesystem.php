@@ -2,24 +2,24 @@
 
 /**
  * @file UsesFilesystem.php
- * @module Academorix\Cli\Concerns
+ * @module Stackra\Cli\Concerns
  * @description Wraps `Illuminate\Filesystem\Filesystem` for the ops the CLI
  *   actually needs. Every method throws a
- *   {@see \Academorix\Cli\Exceptions\CliException} on failure so callers get
+ *   {@see \Stackra\Cli\Exceptions\CliException} on failure so callers get
  *   consistent remediation guidance.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Concerns;
+namespace Stackra\Cli\Concerns;
 
-use Academorix\Cli\Exceptions\CliException;
+use Stackra\Cli\Exceptions\CliException;
 use Illuminate\Filesystem\Filesystem;
 
 /**
- * Composed by every command through {@see \Academorix\Cli\Commands\AbstractCommand}.
+ * Composed by every command through {@see \Stackra\Cli\Commands\AbstractCommand}.
  *
- * @property \Academorix\Cli\Container $container populated by {@see \Academorix\Cli\Commands\AbstractCommand}
+ * @property \Stackra\Cli\Container $container populated by {@see \Stackra\Cli\Commands\AbstractCommand}
  */
 trait UsesFilesystem
 {

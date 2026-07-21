@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/private-sessions/feature-flags",
+  "id": "stackra://modules/private-sessions/feature-flags",
   "$version": 1,
   "title": "private-sessions — feature flags",
   "description": "Kill switches + gradual-rollout flags this module publishes.",

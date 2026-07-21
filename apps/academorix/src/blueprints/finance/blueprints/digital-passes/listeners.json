@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/digital-passes/listeners",
+  "id": "stackra://modules/digital-passes/listeners",
   "$version": 1,
   "title": "digital-passes — event listeners",
   "description": "Listeners this module registers, keyed by the event they consume.",

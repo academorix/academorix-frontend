@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Season\Actions\Tenant;
+namespace Stackra\Season\Actions\Tenant;
 
-use Academorix\Season\Contracts\Repositories\SeasonRepositoryInterface;
-use Academorix\Season\Data\SeasonData;
-use Academorix\Season\Data\Requests\CreateSeasonRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Season\Contracts\Repositories\SeasonRepositoryInterface;
+use Stackra\Season\Data\SeasonData;
+use Stackra\Season\Data\Requests\CreateSeasonRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/seasons` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Season

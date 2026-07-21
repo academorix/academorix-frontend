@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Enums;
+namespace Stackra\Localization\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
  * Machine-translation driver identifiers registered with
- * {@see \Academorix\Localization\Services\TranslatorDriverManager}.
+ * {@see \Stackra\Localization\Services\TranslatorDriverManager}.
  *
  * The backing string is the key `TenantLocale.auto_translate_driver`
  * stores AND the config key inside `config('localization.drivers.*')`.

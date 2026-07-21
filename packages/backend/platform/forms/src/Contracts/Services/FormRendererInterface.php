@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Contracts\Services;
+namespace Stackra\Forms\Contracts\Services;
 
-use Academorix\Forms\Services\FormRenderer;
+use Stackra\Forms\Services\FormRenderer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

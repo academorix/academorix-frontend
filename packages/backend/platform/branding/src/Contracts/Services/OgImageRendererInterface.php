@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Contracts\Services;
+namespace Stackra\Branding\Contracts\Services;
 
-use Academorix\Branding\Models\Branding;
-use Academorix\Branding\Services\NullOgImageRenderer;
+use Stackra\Branding\Models\Branding;
+use Stackra\Branding\Services\NullOgImageRenderer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

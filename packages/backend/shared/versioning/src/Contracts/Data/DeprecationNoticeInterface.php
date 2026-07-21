@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Contracts\Data;
+namespace Stackra\Versioning\Contracts\Data;
 
-use Academorix\Versioning\Models\DeprecationNotice;
+use Stackra\Versioning\Models\DeprecationNotice;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Observers;
+namespace Stackra\Storage\Observers;
 
-use Academorix\Storage\Contracts\Data\ChunkedUploadInterface;
-use Academorix\Storage\Contracts\Services\ChunkedUploadCoordinatorInterface;
-use Academorix\Storage\Enums\ChunkedUploadState;
-use Academorix\Storage\Models\ChunkedUpload;
+use Stackra\Storage\Contracts\Data\ChunkedUploadInterface;
+use Stackra\Storage\Contracts\Services\ChunkedUploadCoordinatorInterface;
+use Stackra\Storage\Enums\ChunkedUploadState;
+use Stackra\Storage\Models\ChunkedUpload;
 
 /**
  * Lifecycle side effects on {@see ChunkedUpload}.

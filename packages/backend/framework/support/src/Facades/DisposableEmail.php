@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Support\Facades;
+namespace Stackra\Support\Facades;
 
 use Beeyev\DisposableEmailFilter\DisposableEmailDomains\DisposableEmailDomains;
 use Beeyev\DisposableEmailFilter\DisposableEmailFilter as DisposableEmailFilterManager;

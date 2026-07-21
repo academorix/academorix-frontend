@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Database\Factories;
+namespace Stackra\Subscription\Database\Factories;
 
-use Academorix\Subscription\Contracts\Data\SubscriptionEventInterface;
-use Academorix\Subscription\Enums\SubscriptionEventActor;
-use Academorix\Subscription\Enums\SubscriptionEventKind;
-use Academorix\Subscription\Enums\SubscriptionState;
-use Academorix\Subscription\Models\SubscriptionEvent;
+use Stackra\Subscription\Contracts\Data\SubscriptionEventInterface;
+use Stackra\Subscription\Enums\SubscriptionEventActor;
+use Stackra\Subscription\Enums\SubscriptionEventKind;
+use Stackra\Subscription\Enums\SubscriptionState;
+use Stackra\Subscription\Models\SubscriptionEvent;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

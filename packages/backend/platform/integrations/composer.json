@@ -1,10 +1,10 @@
 {
-  "name": "academorix/integrations",
+  "name": "stackra/integrations",
   "type": "library",
   "description": "Third-party integration credentials per Tenant (Stripe, Slack, HubSpot, Zapier, OAuth2, SCIM, HRIS, LMS, ...). Extracted from tenants at v0.3 because integration credentials carry different sensitivity than a tenant's own configuration — they are encrypted at rest (Doppler-derived KMS key), rotate on their own schedule, and NEVER surface on the tenant-facing wire outside a redacted status shape.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "laravel",
     "integration",
     "oauth",
@@ -16,19 +16,19 @@
   ],
   "require": {
     "php": "^8.3",
-    "academorix/authorization": "@dev",
-    "academorix/console": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/database": "@dev",
-    "academorix/enum": "@dev",
-    "academorix/events": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
-    "academorix/retention": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix/tenancy": "@dev",
+    "stackra/authorization": "@dev",
+    "stackra/console": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/database": "@dev",
+    "stackra/enum": "@dev",
+    "stackra/events": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/retention": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra/tenancy": "@dev",
     "illuminate/contracts": "^13.0",
     "illuminate/database": "^13.0",
     "illuminate/events": "^13.0",
@@ -48,20 +48,20 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Integrations\\": "src/",
-      "Academorix\\Integrations\\Database\\Factories\\": "database/factories/",
-      "Academorix\\Integrations\\Database\\Seeders\\": "database/seeders/"
+      "Stackra\\Integrations\\": "src/",
+      "Stackra\\Integrations\\Database\\Factories\\": "database/factories/",
+      "Stackra\\Integrations\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Integrations\\Tests\\": "tests/"
+      "Stackra\\Integrations\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Integrations\\Providers\\IntegrationsServiceProvider"
+        "Stackra\\Integrations\\Providers\\IntegrationsServiceProvider"
       ],
       "aliases": {}
     }

@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Drills\Actions\Tenant;
+namespace Stackra\Drills\Actions\Tenant;
 
-use Academorix\Drills\Contracts\Repositories\CurriculumRepositoryInterface;
-use Academorix\Drills\Data\CurriculumData;
-use Academorix\Drills\Data\Requests\CreateCurriculumRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Drills\Contracts\Repositories\CurriculumRepositoryInterface;
+use Stackra\Drills\Data\CurriculumData;
+use Stackra\Drills\Data\Requests\CreateCurriculumRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/curriculums` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Drills

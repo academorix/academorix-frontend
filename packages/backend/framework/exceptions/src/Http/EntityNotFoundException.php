@@ -33,7 +33,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Http;
+namespace Stackra\Exceptions\Http;
 
 class EntityNotFoundException extends NotFoundException
 {
@@ -49,7 +49,7 @@ class EntityNotFoundException extends NotFoundException
      * Class-level translation key pointing at
      * `lang/en/http.php → entity_not_found`. Overridable per
      * instance via the trait's
-     * {@see \Academorix\Exceptions\Concerns\TranslatesMessages::withTranslationKey()}.
+     * {@see \Stackra\Exceptions\Concerns\TranslatesMessages::withTranslationKey()}.
      */
     public const TRANSLATION_KEY = 'exceptions::http.entity_not_found';
 

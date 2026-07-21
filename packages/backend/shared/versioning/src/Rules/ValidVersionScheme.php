@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Rules;
+namespace Stackra\Versioning\Rules;
 
-use Academorix\Versioning\Enums\VersionScheme;
+use Stackra\Versioning\Enums\VersionScheme;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 

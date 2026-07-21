@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/development/schemas/scouting-report",
+  "id": "stackra://modules/development/schemas/scouting-report",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ScoutingReport",

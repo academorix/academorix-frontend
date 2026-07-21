@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsFormationsSdk\Requests\Formations;
+namespace Stackra\SportsFormationsSdk\Requests\Formations;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsFormationsSdk\Data\FormationData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsFormationsSdk\Data\FormationData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

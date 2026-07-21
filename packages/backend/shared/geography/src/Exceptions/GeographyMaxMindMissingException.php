@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Exceptions;
+namespace Stackra\Geography\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the local GeoLite2-City.mmdb is missing. Non-fatal —
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GeographyMaxMindMissingException extends AcademorixException
+final class GeographyMaxMindMissingException extends StackraException
 {
     public const CODE = 'GEOGRAPHY_MAXMIND_MISSING';
 

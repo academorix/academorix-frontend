@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geofencing/analytics",
+  "id": "stackra://modules/geofencing/analytics",
   "$version": 1,
   "title": "geofencing \u2014 product analytics",
   "sink": "segment",

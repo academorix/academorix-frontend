@@ -1,47 +1,47 @@
 {
-  "id": "academorix://modules/audit/commands",
+  "id": "stackra://modules/audit/commands",
   "$version": 1,
   "title": "audit — Artisan commands",
   "description": "7 ops + support commands. Every command is READ-heavy or ops-privileged; there is NO write command for creating audits (capture is exclusively via the vendor Auditable trait). The purge + backfill + extend-retention commands are the only mutation paths and each requires explicit privileges + audit-trail metadata.",
   "commands": [
     {
       "signature": "audit:list {--tenant=} {--user=} {--auditable=} {--event=} {--since=} {--until=} {--limit=50} {--format=table}",
-      "class": "Academorix\\Observability\\Audit\\Console\\Commands\\ListAuditsCommand",
-      "purpose": "Paginated list of audit rows. Same filters as GET /api/v1/audits. --auditable accepts either just the class name ('Membership') or the fully-qualified form ('Academorix\\\\Finance\\\\Models\\\\Membership'). Useful for CLI-based investigation and platform-support tooling.",
+      "class": "Stackra\\Observability\\Audit\\Console\\Commands\\ListAuditsCommand",
+      "purpose": "Paginated list of audit rows. Same filters as GET /api/v1/audits. --auditable accepts either just the class name ('Membership') or the fully-qualified form ('Stackra\\\\Finance\\\\Models\\\\Membership'). Useful for CLI-based investigation and platform-support tooling.",
       "notes": "Redacts old_values + new_values by default; --reveal-diff flag requires super_admin AND writes an audit row for the reveal action (chain of custody)."
     },
     {
       "signature": "audit:show {audit_id}",
-      "class": "Academorix\\Observability\\Audit\\Console\\Commands\\ShowAuditCommand",
+      "class": "Stackra\\Observability\\Audit\\Console\\Commands\\ShowAuditCommand",
       "purpose": "Dump a single audit row + its subject (auditable) + actor (user) context. Includes old_values + new_values blob (redacted by default; --reveal-diff writes a chain-of-custody row).",
       "notes": "audit_id is the vendor's bigint primary key. When the aud_ ULID conversion lands in Wave 7+, this signature switches to `{audit_ulid}`."
     },
     {
       "signature": "audit:count-by-tenant {--since=} {--until=}",
-      "class": "Academorix\\Observability\\Audit\\Console\\Commands\\CountByTenantCommand",
+      "class": "Stackra\\Observability\\Audit\\Console\\Commands\\CountByTenantCommand",
       "purpose": "Rollup — audit row counts per tenant over the window. Useful for identifying tenants with unusually high mutation activity (potential exfiltration or data-import event)."
     },
     {
       "signature": "audit:backfill-tenant-id {--tenant=} {--all} {--dry-run} {--batch-size=10000}",
-      "class": "Academorix\\Observability\\Audit\\Console\\Commands\\BackfillTenantIdCommand",
+      "class": "Stackra\\Observability\\Audit\\Console\\Commands\\BackfillTenantIdCommand",
       "purpose": "One-shot migration helper. Reads audit rows where tenant_id IS NULL, extracts the value from new_values.tenant_id (fallback: old_values.tenant_id), populates the column. Delegates to BackfillAuditTenantIdFromJsonbJob for batching. Idempotent — re-runs skip already-populated rows.",
       "notes": "Rate-limited to 1 concurrent invocation per environment (uses a distributed lock). --dry-run flag prints the count of null-tenant-id rows without mutating. --all flag processes every tenant; --tenant=<slug> processes a single tenant."
     },
     {
       "signature": "audit:purge {--tenant=} {--all} {--dry-run} {--cutoff=}",
-      "class": "Academorix\\Observability\\Audit\\Console\\Commands\\PurgeAuditsCommand",
+      "class": "Stackra\\Observability\\Audit\\Console\\Commands\\PurgeAuditsCommand",
       "purpose": "Manual invocation of PurgeExpiredAuditsJob. Nightly scheduled version runs the same job. --cutoff overrides the retention-policy-derived cutoff (super_admin only; must specify --reason for the override audit trail).",
       "notes": "Rate-limited to 3 invocations per hour per operator. Writes an audit row for the purge action itself (auditing the audit purge — meta-audit trail)."
     },
     {
       "signature": "audit:extend-retention {tenant} {retention_years} {reason} {--ends-at=} {--force}",
-      "class": "Academorix\\Observability\\Audit\\Console\\Commands\\ExtendRetentionCommand",
+      "class": "Stackra\\Observability\\Audit\\Console\\Commands\\ExtendRetentionCommand",
       "purpose": "Creates an AuditRetentionPolicy override for a tenant. Enterprise-only (audit_retention_extended entitlement). retention_years capped at config.audit.retention.max_years (10). --ends-at optional; when omitted, override is indefinite. --force lets super_admin bypass the entitlement check (writes an override audit row).",
       "notes": "Rate-limited to 10 uses per hour per operator. Common triggers: regulator hold ('SEC investigation'), lawsuit hold ('discovery pending'), HIPAA compliance ('PHI record — 10y required')."
     },
     {
       "signature": "audit:export {tenant} {--kind=dsar} {--filters=} {--format=jsonl}",
-      "class": "Academorix\\Observability\\Audit\\Console\\Commands\\ExportAuditsCommand",
+      "class": "Stackra\\Observability\\Audit\\Console\\Commands\\ExportAuditsCommand",
       "purpose": "Async export request. Same behavior as POST /api/v1/audits/export. --kind: dsar | regulator | legal_hold. --filters accepts a JSON blob or references a saved filter (settings:audit.saved_filters).",
       "notes": "Rate-limited to 20 exports per day per tenant. Fires AuditExportRequested event; the async job writes the jsonl.gz file to S3 + generates a signed URL. Requester receives AuditExportReadyNotification on completion."
     }

@@ -5,7 +5,7 @@
  *
  * @description
  * Login-risk-scorer tunables. Ported from private constants on
- * `Academorix\Auth\Services\LoginRiskScorer` in the old
+ * `Stackra\Auth\Services\LoginRiskScorer` in the old
  * codebase — five weights, a max-score clamp, a sample window,
  * and the "normal" hour window bounds. Moved to settings so an
  * on-call engineer can retune the scorer without a deploy when
@@ -24,12 +24,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Authorization\Settings;
+namespace Stackra\Authorization\Settings;
 
-use Academorix\Settings\Attributes\AsSetting;
-use Academorix\Settings\Attributes\SettingField;
-use Academorix\Settings\Enums\ControlType;
-use Academorix\Settings\Enums\SettingScope;
+use Stackra\Settings\Attributes\AsSetting;
+use Stackra\Settings\Attributes\SettingField;
+use Stackra\Settings\Enums\ControlType;
+use Stackra\Settings\Enums\SettingScope;
 
 /**
  * Login risk-scoring policy.

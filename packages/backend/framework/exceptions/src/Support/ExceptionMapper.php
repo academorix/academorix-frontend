@@ -5,7 +5,7 @@
  *
  * @description
  * Converts framework / Symfony / SPL throwables into the equivalent
- * {@see \Academorix\Exceptions\AcademorixException} so downstream
+ * {@see \Stackra\Exceptions\StackraException} so downstream
  * renderers, reporters, and dashboards only ever have to reason
  * about one hierarchy.
  *
@@ -21,14 +21,14 @@
  *
  * ## Precedence
  *
- *   1. `AcademorixException` instances pass through unchanged.
+ *   1. `StackraException` instances pass through unchanged.
  *   2. Explicit `class-string => factory` entries registered on the
  *      instance win in the order they were declared (custom wins
  *      over default because `register()` prepends).
  *   3. Anything implementing Symfony's `HttpExceptionInterface`
  *      falls into the status-code switch as a last resort.
  *   4. Everything else becomes an
- *      {@see \Academorix\Exceptions\UnexpectedException} wrapping
+ *      {@see \Stackra\Exceptions\UnexpectedException} wrapping
  *      the original throwable.
  *
  * ## Why `::make()` everywhere
@@ -46,21 +46,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Support;
+namespace Stackra\Exceptions\Support;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Auth\AuthenticationException as AcademorixAuthenticationException;
-use Academorix\Exceptions\Auth\ForbiddenException;
-use Academorix\Exceptions\Http\ConflictException;
-use Academorix\Exceptions\Http\EntityNotFoundException;
-use Academorix\Exceptions\Http\MethodNotAllowedException;
-use Academorix\Exceptions\Http\NotFoundException;
-use Academorix\Exceptions\Http\TooManyRequestsException;
-use Academorix\Exceptions\Http\UnsupportedMediaTypeException;
-use Academorix\Exceptions\Http\ValidationException;
-use Academorix\Exceptions\Infrastructure\MaintenanceModeException;
-use Academorix\Exceptions\Infrastructure\ServiceUnavailableException;
-use Academorix\Exceptions\UnexpectedException;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Auth\AuthenticationException as StackraAuthenticationException;
+use Stackra\Exceptions\Auth\ForbiddenException;
+use Stackra\Exceptions\Http\ConflictException;
+use Stackra\Exceptions\Http\EntityNotFoundException;
+use Stackra\Exceptions\Http\MethodNotAllowedException;
+use Stackra\Exceptions\Http\NotFoundException;
+use Stackra\Exceptions\Http\TooManyRequestsException;
+use Stackra\Exceptions\Http\UnsupportedMediaTypeException;
+use Stackra\Exceptions\Http\ValidationException;
+use Stackra\Exceptions\Infrastructure\MaintenanceModeException;
+use Stackra\Exceptions\Infrastructure\ServiceUnavailableException;
+use Stackra\Exceptions\UnexpectedException;
 use Closure;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
@@ -81,7 +81,7 @@ use Throwable;
 
 final class ExceptionMapper
 {
-    /** @var array<class-string<Throwable>, Closure(Throwable): AcademorixException> */
+    /** @var array<class-string<Throwable>, Closure(Throwable): StackraException> */
     private array $mappings = [];
 
     public function __construct()
@@ -91,12 +91,12 @@ final class ExceptionMapper
 
     /**
      * Convert any throwable into the corresponding
-     * {@see AcademorixException}. Deterministic — same input always
+     * {@see StackraException}. Deterministic — same input always
      * yields the same output class.
      */
-    public function map(Throwable $e): AcademorixException
+    public function map(Throwable $e): StackraException
     {
-        if ($e instanceof AcademorixException) {
+        if ($e instanceof StackraException) {
             return $e;
         }
 
@@ -116,12 +116,12 @@ final class ExceptionMapper
     }
 
     /**
-     * Register a custom throwable → Academorix factory. Prepended
+     * Register a custom throwable → Stackra factory. Prepended
      * to the mapping table so custom entries take precedence over
      * defaults.
      *
      * @param class-string<Throwable> $class
-     * @param Closure(Throwable): AcademorixException $factory
+     * @param Closure(Throwable): StackraException $factory
      */
     public function register(string $class, Closure $factory): void
     {
@@ -143,25 +143,25 @@ final class ExceptionMapper
         $this->mappings = [
             // ---- Laravel-specific ----
 
-            LaravelValidationException::class => static function (Throwable $e): AcademorixException {
+            LaravelValidationException::class => static function (Throwable $e): StackraException {
                 /** @var LaravelValidationException $e */
                 return ValidationException::withErrors($e->errors(), $e->getMessage())
                     ->withHttpStatus($e->status);
             },
 
-            AuthenticationException::class => static function (Throwable $e): AcademorixException {
+            AuthenticationException::class => static function (Throwable $e): StackraException {
                 /** @var AuthenticationException $e */
                 $guards = method_exists($e, 'guards') ? $e->guards() : [];
 
-                return AcademorixAuthenticationException::make($e->getMessage() ?: 'Unauthenticated.')
+                return StackraAuthenticationException::make($e->getMessage() ?: 'Unauthenticated.')
                     ->withContextValue('guards', $guards);
             },
 
-            AuthorizationException::class => static fn (Throwable $e): AcademorixException => ForbiddenException::make(
+            AuthorizationException::class => static fn (Throwable $e): StackraException => ForbiddenException::make(
                 $e->getMessage() !== '' ? $e->getMessage() : 'This action is unauthorized.'
             ),
 
-            ModelNotFoundException::class => static function (Throwable $e): AcademorixException {
+            ModelNotFoundException::class => static function (Throwable $e): StackraException {
                 /** @var ModelNotFoundException<\Illuminate\Database\Eloquent\Model> $e */
                 $model = method_exists($e, 'getModel') ? $e->getModel() : null;
                 $ids = method_exists($e, 'getIds') ? $e->getIds() : [];
@@ -176,11 +176,11 @@ final class ExceptionMapper
                 );
             },
 
-            RecordsNotFoundException::class => static fn (Throwable $e): AcademorixException => NotFoundException::make(
+            RecordsNotFoundException::class => static fn (Throwable $e): StackraException => NotFoundException::make(
                 $e->getMessage() !== '' ? $e->getMessage() : 'No records found.'
             ),
 
-            ThrottleRequestsException::class => static function (Throwable $e): AcademorixException {
+            ThrottleRequestsException::class => static function (Throwable $e): StackraException {
                 /** @var ThrottleRequestsException $e */
                 $retryAfter = (int) ($e->getHeaders()['Retry-After'] ?? 0);
 
@@ -189,11 +189,11 @@ final class ExceptionMapper
 
             // ---- Symfony HTTP layer ----
 
-            NotFoundHttpException::class => static fn (Throwable $e): AcademorixException => NotFoundException::make(
+            NotFoundHttpException::class => static fn (Throwable $e): StackraException => NotFoundException::make(
                 $e->getMessage() !== '' ? $e->getMessage() : 'Not found.'
             ),
 
-            MethodNotAllowedHttpException::class => static function (Throwable $e): AcademorixException {
+            MethodNotAllowedHttpException::class => static function (Throwable $e): StackraException {
                 /** @var MethodNotAllowedHttpException $e */
                 $allow = (string) ($e->getHeaders()['Allow'] ?? '');
                 $allowed = $allow === '' ? [] : array_values(array_map('trim', explode(',', $allow)));
@@ -201,28 +201,28 @@ final class ExceptionMapper
                 return MethodNotAllowedException::with($allowed);
             },
 
-            UnauthorizedHttpException::class => static fn (Throwable $e): AcademorixException => AcademorixAuthenticationException::make(
+            UnauthorizedHttpException::class => static fn (Throwable $e): StackraException => StackraAuthenticationException::make(
                 $e->getMessage() !== '' ? $e->getMessage() : 'Unauthorized.'
             ),
 
-            AccessDeniedHttpException::class => static fn (Throwable $e): AcademorixException => ForbiddenException::make(
+            AccessDeniedHttpException::class => static fn (Throwable $e): StackraException => ForbiddenException::make(
                 $e->getMessage() !== '' ? $e->getMessage() : 'Forbidden.'
             ),
 
-            ConflictHttpException::class => static fn (Throwable $e): AcademorixException => ConflictException::make(
+            ConflictHttpException::class => static fn (Throwable $e): StackraException => ConflictException::make(
                 $e->getMessage() !== '' ? $e->getMessage() : 'Conflict.'
             ),
 
-            UnsupportedMediaTypeHttpException::class => static fn (Throwable $e): AcademorixException => UnsupportedMediaTypeException::accepted([]),
+            UnsupportedMediaTypeHttpException::class => static fn (Throwable $e): StackraException => UnsupportedMediaTypeException::accepted([]),
 
-            TooManyRequestsHttpException::class => static function (Throwable $e): AcademorixException {
+            TooManyRequestsHttpException::class => static function (Throwable $e): StackraException {
                 /** @var TooManyRequestsHttpException $e */
                 $retryAfter = (int) ($e->getHeaders()['Retry-After'] ?? 0);
 
                 return TooManyRequestsException::exceeded($retryAfter);
             },
 
-            ServiceUnavailableHttpException::class => static function (Throwable $e): AcademorixException {
+            ServiceUnavailableHttpException::class => static function (Throwable $e): StackraException {
                 /** @var ServiceUnavailableHttpException $e */
                 $retryAfter = (int) ($e->getHeaders()['Retry-After'] ?? 0);
 
@@ -243,15 +243,15 @@ final class ExceptionMapper
     /**
      * Fallback for any `HttpExceptionInterface` we haven't mapped
      * by class. Uses the status code to pick the closest
-     * Academorix equivalent.
+     * Stackra equivalent.
      */
-    private function fromHttpException(HttpExceptionInterface $e): AcademorixException
+    private function fromHttpException(HttpExceptionInterface $e): StackraException
     {
         $status = $e->getStatusCode();
         $message = $e->getMessage() !== '' ? $e->getMessage() : "HTTP {$status}";
 
         return match (true) {
-            $status === 401 => AcademorixAuthenticationException::make($message),
+            $status === 401 => StackraAuthenticationException::make($message),
             $status === 403 => ForbiddenException::make($message),
             $status === 404 => NotFoundException::make($message),
             $status === 405 => MethodNotAllowedException::with([]),

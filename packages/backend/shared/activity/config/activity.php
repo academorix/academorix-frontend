@@ -4,7 +4,7 @@
  * @file modules/shared/activity/config/activity.php
  *
  * @description
- * Runtime knobs for the `academorix/activity` module. Merged under the
+ * Runtime knobs for the `stackra/activity` module. Merged under the
  * `activity.*` key by the base ServiceProvider's LoadsResources concern.
  * Downstream modules read via `config('activity.*')` (never `env()` outside
  * this file per Octane-first rules).

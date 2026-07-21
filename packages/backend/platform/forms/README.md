@@ -1,4 +1,4 @@
-# academorix/forms
+# stackra/forms
 
 Server-side Laravel package for the `forms` module. Auto-generated from the
 blueprint at `modules/platform/blueprints/forms/`.
@@ -47,6 +47,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-platform/forms-sdk` under `sdk/platform-forms-sdk/`. Consumers cross
+`stackra-platform/forms-sdk` under `sdk/platform-forms-sdk/`. Consumers cross
 the service boundary through the SDK; this package is the SERVER-side owner of
 the domain.

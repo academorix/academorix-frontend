@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FinanceExpensesSdk\Tests;
+namespace Stackra\FinanceExpensesSdk\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix-finance/expenses-sdk.
+ * Base test case for stackra-finance/expenses-sdk.
  *
  * @category ExpensesSdk
  *

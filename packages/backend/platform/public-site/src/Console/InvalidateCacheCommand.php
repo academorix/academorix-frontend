@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PublicSite\Console;
+namespace Stackra\PublicSite\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan public-site:invalidate-cache` — Invalidate cache — public site command.

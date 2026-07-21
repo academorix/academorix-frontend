@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/theme/events",
+  "id": "stackra://modules/theme/events",
   "$version": 1,
   "title": "theme — published events",
-  "namespace": "Academorix\\Platform\\Theme\\Events",
+  "namespace": "Stackra\\Platform\\Theme\\Events",
   "dispatchMode": "afterCommit",
   "events": [
     {
       "name": "ThemeCreated",
-      "class": "Academorix\\Platform\\Theme\\Events\\ThemeCreated",
+      "class": "Stackra\\Platform\\Theme\\Events\\ThemeCreated",
       "trigger": "New Theme row inserted. Row starts is_active=false; a separate ThemeActivated fires once someone flips is_active=true.",
       "queue": "notifications",
       "consumers": ["activity::WriteThemeCreatedToActivity"],
@@ -22,7 +22,7 @@
     },
     {
       "name": "ThemeActivated",
-      "class": "Academorix\\Platform\\Theme\\Events\\ThemeActivated",
+      "class": "Stackra\\Platform\\Theme\\Events\\ThemeActivated",
       "trigger": "Theme.is_active transitions false → true (via ThemeObserver::updating). Fires AFTER the prior active theme (same mode) has been flipped to is_active=false in the same DB txn.",
       "queue": "notifications",
       "consumers": [
@@ -43,7 +43,7 @@
     },
     {
       "name": "ThemeDeactivated",
-      "class": "Academorix\\Platform\\Theme\\Events\\ThemeDeactivated",
+      "class": "Stackra\\Platform\\Theme\\Events\\ThemeDeactivated",
       "trigger": "Theme.is_active transitions true → false. Typically fires alongside a sibling ThemeActivated for the replacement theme in the same DB txn.",
       "queue": "notifications",
       "consumers": ["activity::WriteThemeDeactivatedToActivity"],
@@ -56,7 +56,7 @@
     },
     {
       "name": "ThemePresetCreated",
-      "class": "Academorix\\Platform\\Theme\\Events\\ThemePresetCreated",
+      "class": "Stackra\\Platform\\Theme\\Events\\ThemePresetCreated",
       "trigger": "New ThemePreset row inserted. tenant_id NULL = platform preset (fires only during platform-admin operations); non-null = tenant custom preset.",
       "queue": "notifications",
       "consumers": ["activity::WriteThemePresetCreatedToActivity"],
@@ -73,7 +73,7 @@
     },
     {
       "name": "ThemePresetPublished",
-      "class": "Academorix\\Platform\\Theme\\Events\\ThemePresetPublished",
+      "class": "Stackra\\Platform\\Theme\\Events\\ThemePresetPublished",
       "trigger": "ThemePreset.is_active transitions false → true. For tenant custom presets: makes the preset visible to admin selection UI. For platform presets: cross-tenant announcement.",
       "queue": "notifications",
       "consumers": [
@@ -89,7 +89,7 @@
     },
     {
       "name": "ThemeTokenOverridden",
-      "class": "Academorix\\Platform\\Theme\\Events\\ThemeTokenOverridden",
+      "class": "Stackra\\Platform\\Theme\\Events\\ThemeTokenOverridden",
       "trigger": "New ThemeTokenOverride row inserted. One event per (theme_id, token_key) — batched at the request level.",
       "queue": "notifications",
       "consumers": [
@@ -107,7 +107,7 @@
     },
     {
       "name": "ThemeTokenOverrideRemoved",
-      "class": "Academorix\\Platform\\Theme\\Events\\ThemeTokenOverrideRemoved",
+      "class": "Stackra\\Platform\\Theme\\Events\\ThemeTokenOverrideRemoved",
       "trigger": "ThemeTokenOverride hard-deleted or soft-deleted. Falls through to the underlying preset value in next resolution.",
       "queue": "notifications",
       "consumers": [
@@ -124,7 +124,7 @@
     },
     {
       "name": "ThemeAccessibilityFlagChanged",
-      "class": "Academorix\\Platform\\Theme\\Events\\ThemeAccessibilityFlagChanged",
+      "class": "Stackra\\Platform\\Theme\\Events\\ThemeAccessibilityFlagChanged",
       "trigger": "Theme.accessibility_flags jsonb changes. One event per boolean flip within the payload — high_contrast, reduced_motion, larger_text, focus_visible_always.",
       "queue": "notifications",
       "consumers": [
@@ -142,7 +142,7 @@
     },
     {
       "name": "ThemeCacheInvalidated",
-      "class": "Academorix\\Platform\\Theme\\Events\\ThemeCacheInvalidated",
+      "class": "Stackra\\Platform\\Theme\\Events\\ThemeCacheInvalidated",
       "trigger": "Fires post-RegenerateRenderedCssJob completion. Downstream consumers (CDN purge, SSR cache) key off this to bust their own caches.",
       "queue": "notifications",
       "consumers": ["observability::MetricsCollector", "storage::PurgeCdnCache (planned)"],
@@ -156,7 +156,7 @@
     },
     {
       "name": "UserThemePreferenceUpdated",
-      "class": "Academorix\\Platform\\Theme\\Events\\UserThemePreferenceUpdated",
+      "class": "Stackra\\Platform\\Theme\\Events\\UserThemePreferenceUpdated",
       "trigger": "user::user_theme_preferences row updated — mode preference (light/dark/auto) OR accessibility overrides. Event fires HERE (not in user module) because theme is the resolver — user module owns the ROW, theme owns the SEMANTICS.",
       "queue": "notifications",
       "consumers": ["activity::WriteUserThemePreferenceUpdatedToActivity"],

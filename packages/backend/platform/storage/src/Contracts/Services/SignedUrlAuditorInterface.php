@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Contracts\Services;
+namespace Stackra\Storage\Contracts\Services;
 
-use Academorix\Storage\Services\SignedUrlAuditor;
+use Stackra\Storage\Services\SignedUrlAuditor;
 use Illuminate\Container\Attributes\Bind;
 
 /**

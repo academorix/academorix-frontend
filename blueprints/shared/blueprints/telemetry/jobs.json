@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/telemetry/jobs",
+  "id": "stackra://modules/telemetry/jobs",
   "$version": 1,
   "title": "telemetry \u2014 background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Telemetry\\Otel\\Jobs\\FlushBufferedSpansJob",
+      "class": "Stackra\\Telemetry\\Otel\\Jobs\\FlushBufferedSpansJob",
       "queue": "telemetry",
       "signal": "traces",
       "purpose": "Escape hatch when the BatchSpanProcessor's in-process worker misbehaves. Force-flushes the current SDK provider.",

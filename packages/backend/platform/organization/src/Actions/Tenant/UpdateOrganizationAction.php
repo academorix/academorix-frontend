@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Organization\Actions\Tenant;
+namespace Stackra\Organization\Actions\Tenant;
 
-use Academorix\Organization\Contracts\Repositories\OrganizationRepositoryInterface;
-use Academorix\Organization\Data\OrganizationData;
-use Academorix\Organization\Data\Requests\UpdateOrganizationRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\Organization\Contracts\Repositories\OrganizationRepositoryInterface;
+use Stackra\Organization\Data\OrganizationData;
+use Stackra\Organization\Data\Requests\UpdateOrganizationRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Patch;
 
 /**
  * `PATCH /api/v1/organizations/{organization}` — update action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Patch(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Organization

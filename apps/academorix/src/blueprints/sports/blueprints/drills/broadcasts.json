@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/drills/broadcasts",
+  "id": "stackra://modules/drills/broadcasts",
   "$version": 1,
   "title": "drills — broadcast channels",
   "description": "Channels this module publishes to for real-time UI updates.",

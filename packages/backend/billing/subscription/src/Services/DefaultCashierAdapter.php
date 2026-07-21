@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Services;
+namespace Stackra\Subscription\Services;
 
-use Academorix\Subscription\Contracts\Services\CashierAdapterInterface;
-use Academorix\Subscription\Enums\SubscriptionProvider;
+use Stackra\Subscription\Contracts\Services\CashierAdapterInterface;
+use Stackra\Subscription\Enums\SubscriptionProvider;
 use Illuminate\Container\Attributes\Scoped;
 
 /**

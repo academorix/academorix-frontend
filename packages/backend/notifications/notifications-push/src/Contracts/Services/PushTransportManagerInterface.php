@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Contracts\Services;
+namespace Stackra\Notifications\Push\Contracts\Services;
 
-use Academorix\Notifications\Push\Services\PushTransportManager;
+use Stackra\Notifications\Push\Services\PushTransportManager;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -12,7 +12,7 @@ use Illuminate\Container\Attributes\Bind;
  *
  * Consumers call `manager->instance('fcm')->send(...)` OR let the manager pick
  * the driver based on a subscription's `provider` column. Drivers are
- * registered at boot via the {@see \Academorix\Notifications\Push\Attributes\AsPushProvider}
+ * registered at boot via the {@see \Stackra\Notifications\Push\Attributes\AsPushProvider}
  * attribute discovery pipeline.
  *
  * @category NotificationsPush
@@ -25,7 +25,7 @@ interface PushTransportManagerInterface
     /**
      * Resolve a driver by name.
      *
-     * @throws \Academorix\Notifications\Push\Exceptions\PushProviderDisabledException
+     * @throws \Stackra\Notifications\Push\Exceptions\PushProviderDisabledException
      *   When the provider is unknown or feature-flagged off.
      */
     public function driver(string $name): PushTransportInterface;

@@ -12,10 +12,10 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  *
- * @see \Academorix\Debugbar\Compiler\DebugbarCompiler
+ * @see \Stackra\Debugbar\Compiler\DebugbarCompiler
  */
 
-namespace Academorix\Debugbar\Attributes;
+namespace Stackra\Debugbar\Attributes;
 
 use Attribute;
 
@@ -37,7 +37,7 @@ use Attribute;
  *
  * ## Usage:
  * ```php
- * use Academorix\Debugbar\Attributes\AsCollector;
+ * use Stackra\Debugbar\Attributes\AsCollector;
  * use DebugBar\DataCollector\DataCollector;
  *
  * #[AsCollector(

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/search/config",
+  "id": "stackra://modules/search/config",
   "$version": 1,
   "title": "search \u2014 developer configuration",
   "configFile": "config/search.php",
@@ -30,7 +30,7 @@
         {
           "path": "search.engines.meilisearch.index_prefix",
           "type": "string",
-          "default": "academorix_",
+          "default": "stackra_",
           "description": "Prefix on every physical Meilisearch index name to isolate multi-tenant deployments sharing a cluster."
         },
         {

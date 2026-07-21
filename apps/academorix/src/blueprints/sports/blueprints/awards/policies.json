@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/awards/policies",
+  "id": "stackra://modules/awards/policies",
   "$version": 1,
   "title": "awards — authorization policies",
   "policies": [
     {
       "model": "AwardTemplate",
-      "class": "Academorix\\Sports\\Awards\\Policies\\AwardTemplatePolicy",
+      "class": "Stackra\\Sports\\Awards\\Policies\\AwardTemplatePolicy",
       "abilities": [
         { "action": "viewAny", "permission": "awards.templates.viewAny" },
         { "action": "view", "permission": "awards.templates.view" },
@@ -20,7 +20,7 @@
     },
     {
       "model": "Award",
-      "class": "Academorix\\Sports\\Awards\\Policies\\AwardPolicy",
+      "class": "Stackra\\Sports\\Awards\\Policies\\AwardPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "awards.viewAny" },
         { "action": "view", "permission": "awards.view", "scope": "own + team + admin" },

@@ -9,7 +9,7 @@ declare(strict_types=1);
  * Class-level attribute that binds THIS concrete class as the resolution
  * for another abstract in the DI container. The "flipped" counterpart to
  * Laravel's canonical {@see \Illuminate\Container\Attributes\Bind} — kept
- * in the Academorix framework specifically for the case Laravel's
+ * in the Stackra framework specifically for the case Laravel's
  * canonical shape cannot express:
  *
  *   > **The abstract is a class we do not control** (typically a vendor
@@ -36,8 +36,8 @@ declare(strict_types=1);
  * └────────────────────────────────────────────────────────────────┘
  *
  * ┌────────────────────────────────────────────────────────────────┐
- * │  Pattern B — Academorix override                               │
- * │  #[Academorix\Container\Attributes\Overrides(Vendor::class)]   │
+ * │  Pattern B — Stackra override                               │
+ * │  #[Stackra\Container\Attributes\Overrides(Vendor::class)]   │
  * │  class MyConcrete extends Vendor { ... }                       │
  * │                                                                │
  * │  Attribute lives on the CONCRETE (we own it).                  │
@@ -51,7 +51,7 @@ declare(strict_types=1);
  * ## Semantics
  *
  * The container's discovery loop (see
- * {@see \Academorix\Container\Concerns\HasDiscovery::discoverOverriddenClasses()})
+ * {@see \Stackra\Container\Concerns\HasDiscovery::discoverOverriddenClasses()})
  * scans every class carrying this attribute and registers
  * `$app->bind($attribute->abstract, $carrierClass)`. The carrier's
  * lifetime is honoured — `#[Singleton]` promotes the binding to
@@ -61,7 +61,7 @@ declare(strict_types=1);
  * ## Canonical example
  *
  * ```php
- * use Academorix\Container\Attributes\Overrides;
+ * use Stackra\Container\Attributes\Overrides;
  * use Spatie\RouteAttributes\RouteRegistrar as SpatieRouteRegistrar;
  *
  * #[Overrides(SpatieRouteRegistrar::class)]
@@ -83,7 +83,7 @@ declare(strict_types=1);
  *     runtime rather than compile-time attribute-visible. Use imperative
  *     `$this->app->bind(...)` inside the provider's `register()`.
  *
- * @see \Academorix\Container\Concerns\HasDiscovery::discoverOverriddenClasses()  Discovery consumer.
+ * @see \Stackra\Container\Concerns\HasDiscovery::discoverOverriddenClasses()  Discovery consumer.
  * @see \Illuminate\Container\Attributes\Bind Canonical Laravel counterpart (Pattern A).
  *
  * @category Attributes
@@ -91,7 +91,7 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Container\Attributes;
+namespace Stackra\Container\Attributes;
 
 use Attribute;
 use BackedEnum;

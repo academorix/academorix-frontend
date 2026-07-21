@@ -1,21 +1,21 @@
 {
-  "name": "academorix/horizon",
-  "description": "Laravel Horizon queue monitoring with automatic supervisor and metric discovery for Academorix applications",
+  "name": "stackra/horizon",
+  "description": "Laravel Horizon queue monitoring with automatic supervisor and metric discovery for Stackra applications",
   "type": "library",
   "license": "MIT",
   "authors": [
     {
-      "name": "Academorix Team",
-      "email": "dev@academorix.com"
+      "name": "Stackra Team",
+      "email": "dev@stackra.com"
     }
   ],
-  "homepage": "https://github.com/academorix-inc/laravel-telemetry/horizon",
+  "homepage": "https://github.com/stackra-inc/laravel-telemetry/horizon",
   "support": {
-    "issues": "https://github.com/academorix-inc/laravel-telemetry/horizon/-/issues",
-    "source": "https://github.com/academorix-inc/laravel-telemetry/horizon"
+    "issues": "https://github.com/stackra-inc/laravel-telemetry/horizon/-/issues",
+    "source": "https://github.com/stackra-inc/laravel-telemetry/horizon"
   },
   "keywords": [
-    "academorix",
+    "stackra",
     "telemetry",
     "horizon",
     "queue",
@@ -37,7 +37,7 @@
   "require": {
     "laravel/horizon": "^5.0",
     "php": "^8.4|^8.5",
-    "academorix/support": "@dev"
+    "stackra/support": "@dev"
   },
   "require-dev": {
     "mockery/mockery": "^1.6",
@@ -45,24 +45,24 @@
     "phpunit/phpunit": "^11.0"
   },
   "suggest": {
-    "academorix/telemetry-pulse": "For real-time application monitoring",
-    "academorix/telemetry-telescope": "For application debugging",
+    "stackra/telemetry-pulse": "For real-time application monitoring",
+    "stackra/telemetry-telescope": "For application debugging",
     "predis/predis": "Required for Redis queue driver"
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Horizon\\": "src/"
+      "Stackra\\Horizon\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Horizon\\Tests\\": "tests/"
+      "Stackra\\Horizon\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Horizon\\Providers\\HorizonServiceProvider"
+        "Stackra\\Horizon\\Providers\\HorizonServiceProvider"
       ]
     }
   },

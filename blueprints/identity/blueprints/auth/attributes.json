@@ -1,20 +1,20 @@
 {
-  "id": "academorix://modules/auth/attributes",
+  "id": "stackra://modules/auth/attributes",
   "$version": 1,
   "title": "auth \u2014 PHP attribute contracts",
   "description": "Two attributes. #[AsAuthListener] marks a class as a subscriber to auth-lifecycle events (login / logout / refresh / reuse-detection / cross-app-grant / impersonation / JWT rotation). #[RegistrationPolicy] marks a class as a domain-specific registration policy \u2014 discovered at boot, resolved per RegistrationContext type. Both are discovered by the AuthServiceProvider at boot so downstream services react without explicit event bindings.",
-  "namespace": "Academorix\\Auth\\Attributes",
+  "namespace": "Stackra\\Auth\\Attributes",
   "attributes": [
     {
       "name": "AsAuthListener",
-      "class": "Academorix\\Auth\\Attributes\\AsAuthListener",
+      "class": "Stackra\\Auth\\Attributes\\AsAuthListener",
       "targets": ["class"],
       "params": [
         {
           "name": "events",
           "type": "array<string>",
           "default": ["*"],
-          "description": "Which auth events this class reacts to. Wildcard `*` = every event under `Academorix\\Auth\\Events\\*`. Specific list e.g. `['UserLoggedIn', 'RefreshTokenReuseDetected']` subscribes to those only. Validated against the events map at boot; typos abort application boot."
+          "description": "Which auth events this class reacts to. Wildcard `*` = every event under `Stackra\\Auth\\Events\\*`. Specific list e.g. `['UserLoggedIn', 'RefreshTokenReuseDetected']` subscribes to those only. Validated against the events map at boot; typos abort application boot."
         },
         {
           "name": "queue",
@@ -33,14 +33,14 @@
     },
     {
       "name": "RegistrationPolicy",
-      "class": "Academorix\\Auth\\Attributes\\RegistrationPolicy",
+      "class": "Stackra\\Auth\\Attributes\\RegistrationPolicy",
       "targets": ["class"],
       "params": [
         {
           "name": "contextType",
           "type": "string",
           "required": true,
-          "description": "Fully-qualified class name of the RegistrationContext subclass this policy handles. E.g. `Academorix\\Sports\\Athletes\\Data\\AthleteRegistrationContext`. The default `GenericRegistrationPolicy` handles `Academorix\\Auth\\Data\\GenericRegistrationContext`. Discovery matches a context to its policy via this attribute at boot."
+          "description": "Fully-qualified class name of the RegistrationContext subclass this policy handles. E.g. `Stackra\\Sports\\Athletes\\Data\\AthleteRegistrationContext`. The default `GenericRegistrationPolicy` handles `Stackra\\Auth\\Data\\GenericRegistrationContext`. Discovery matches a context to its policy via this attribute at boot."
         },
         {
           "name": "priority",

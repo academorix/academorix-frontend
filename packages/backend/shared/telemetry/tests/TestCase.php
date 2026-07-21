@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Telemetry\Tests;
+namespace Stackra\Telemetry\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/telemetry.
+ * Base test case for stackra/telemetry.
  *
  * @category Telemetry
  *

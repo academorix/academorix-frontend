@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDrillsSdk\Resources;
+namespace Stackra\SportsDrillsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsDrillsSdk\Data\DrillCategoryData;
-use Academorix\SportsDrillsSdk\Requests\DrillCategories\CreateDrillCategoryRequest;
-use Academorix\SportsDrillsSdk\Requests\DrillCategories\ListDrillCategoriesRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsDrillsSdk\Data\DrillCategoryData;
+use Stackra\SportsDrillsSdk\Requests\DrillCategories\CreateDrillCategoryRequest;
+use Stackra\SportsDrillsSdk\Requests\DrillCategories\ListDrillCategoriesRequest;
 use Saloon\Http\Response;
 
 /**
@@ -55,7 +55,7 @@ final readonly class DrillCategoriesResource
      *
      * @return DrillCategoryData
      */
-    public function create(\Academorix\SportsDrillsSdk\Payloads\DrillCategories\CreateDrillCategoryPayload $payload, ?string $idempotencyKey = null): DrillCategoryData
+    public function create(\Stackra\SportsDrillsSdk\Payloads\DrillCategories\CreateDrillCategoryPayload $payload, ?string $idempotencyKey = null): DrillCategoryData
     {
         return $this->connector->send(new CreateDrillCategoryRequest($payload, $idempotencyKey))->dto();
     }

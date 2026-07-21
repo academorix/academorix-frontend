@@ -1,127 +1,127 @@
 {
-  "id": "academorix://modules/tenancy/metrics",
+  "id": "stackra://modules/tenancy/metrics",
   "$version": 1,
   "title": "tenants — OpenTelemetry metrics",
   "description": "OpenTelemetry / Prometheus metrics this module emits. Every metric follows the RED pattern where relevant (Rate / Errors / Duration). Labels are aggressive — filter cardinality is capped at ~5k per metric.",
   "instrumentation": "open-telemetry/sdk",
-  "namespace": "academorix.tenants",
+  "namespace": "stackra.tenants",
   "metrics": [
     {
-      "name": "academorix.tenants.provisioned.total",
+      "name": "stackra.tenants.provisioned.total",
       "kind": "counter",
       "unit": "tenants",
       "labels": ["application_id", "business_type"],
       "description": "TenantProvisioned dispatches."
     },
     {
-      "name": "academorix.tenants.suspended.total",
+      "name": "stackra.tenants.suspended.total",
       "kind": "counter",
       "unit": "tenants",
       "labels": ["application_id", "business_type", "reason"]
     },
     {
-      "name": "academorix.tenants.resumed.total",
+      "name": "stackra.tenants.resumed.total",
       "kind": "counter",
       "unit": "tenants",
       "labels": ["application_id", "business_type"]
     },
     {
-      "name": "academorix.tenants.archived.total",
+      "name": "stackra.tenants.archived.total",
       "kind": "counter",
       "unit": "tenants",
       "labels": ["application_id", "business_type"]
     },
     {
-      "name": "academorix.tenants.active",
+      "name": "stackra.tenants.active",
       "kind": "gauge",
       "unit": "tenants",
       "labels": ["application_id", "business_type"],
       "description": "Point-in-time count of `status=active` tenants. Sampled every 60s."
     },
     {
-      "name": "academorix.tenants.trialing",
+      "name": "stackra.tenants.trialing",
       "kind": "gauge",
       "unit": "tenants",
       "labels": ["application_id"]
     },
     {
-      "name": "academorix.tenants.grace",
+      "name": "stackra.tenants.grace",
       "kind": "gauge",
       "unit": "tenants",
       "labels": ["application_id"]
     },
-    { "name": "academorix.applications.count", "kind": "gauge", "unit": "applications" },
+    { "name": "stackra.applications.count", "kind": "gauge", "unit": "applications" },
     {
-      "name": "academorix.tenants.orphaned.count",
+      "name": "stackra.tenants.orphaned.count",
       "kind": "gauge",
       "unit": "tenants",
       "description": "Emitted by tenants-not-orphaned health probe. Expected 0."
     },
     {
-      "name": "academorix.domains.added.total",
+      "name": "stackra.domains.added.total",
       "kind": "counter",
       "unit": "domains",
       "labels": ["application_id", "kind"]
     },
     {
-      "name": "academorix.domains.verified.total",
+      "name": "stackra.domains.verified.total",
       "kind": "counter",
       "unit": "domains",
       "labels": ["application_id"]
     },
     {
-      "name": "academorix.domains.verification_failed.total",
+      "name": "stackra.domains.verification_failed.total",
       "kind": "counter",
       "unit": "domains",
       "labels": ["application_id", "failure_reason"]
     },
     {
-      "name": "academorix.domains.verify.duration_ms",
+      "name": "stackra.domains.verify.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 100, 250, 500, 1000, 2500, 5000, 10000, 30000],
       "labels": ["kind"]
     },
     {
-      "name": "academorix.tenant.provisioning.duration_ms",
+      "name": "stackra.tenant.provisioning.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 100, 250, 500, 1000, 2500, 5000, 10000],
       "labels": ["business_type"]
     },
     {
-      "name": "academorix.tenant.branding.cache_hit_ratio",
+      "name": "stackra.tenant.branding.cache_hit_ratio",
       "kind": "gauge",
       "unit": "ratio",
       "labels": ["application_id"]
     },
     {
-      "name": "academorix.tenant.features.cache_hit_ratio",
+      "name": "stackra.tenant.features.cache_hit_ratio",
       "kind": "gauge",
       "unit": "ratio",
       "labels": ["application_id"]
     },
     {
-      "name": "academorix.tenant_contacts.added.total",
+      "name": "stackra.tenant_contacts.added.total",
       "kind": "counter",
       "unit": "contacts",
       "labels": ["kind"]
     },
     {
-      "name": "academorix.tenant_integrations.configured.total",
+      "name": "stackra.tenant_integrations.configured.total",
       "kind": "counter",
       "unit": "integrations",
       "labels": ["kind", "provider"]
     },
     {
-      "name": "academorix.tenant_integrations.sync.duration_ms",
+      "name": "stackra.tenant_integrations.sync.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [500, 1000, 5000, 15000, 60000, 300000],
       "labels": ["kind", "provider", "outcome"]
     },
     {
-      "name": "academorix.tenant_integrations.sync.failures.total",
+      "name": "stackra.tenant_integrations.sync.failures.total",
       "kind": "counter",
       "unit": "syncs",
       "labels": ["kind", "provider", "error_class"]

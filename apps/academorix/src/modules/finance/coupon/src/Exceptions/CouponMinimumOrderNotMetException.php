@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Exceptions;
+namespace Stackra\Coupon\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The source amount is below the coupon's minimum_order_amount threshold.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CouponMinimumOrderNotMetException extends AcademorixException
+final class CouponMinimumOrderNotMetException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

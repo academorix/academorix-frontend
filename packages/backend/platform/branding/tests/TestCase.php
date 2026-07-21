@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Tests;
+namespace Stackra\Branding\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/branding.
+ * Base test case for stackra/branding.
  *
  * @category Branding
  *

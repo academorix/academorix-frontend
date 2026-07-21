@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Policies;
+namespace Stackra\Facility\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Facility\Models\ResourceBooking;
+use Stackra\User\Models\User;
+use Stackra\Facility\Models\ResourceBooking;
 
 /**
- * Authorization policy for {@see \Academorix\Facility\Models\ResourceBooking}.
+ * Authorization policy for {@see \Stackra\Facility\Models\ResourceBooking}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

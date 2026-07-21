@@ -8,7 +8,7 @@
  *
  * The runner is the smallest testable unit of the retention
  * pipeline — one descriptor in, one report out. Both
- * {@see \Academorix\Retention\Console\RunRetentionCommand} (which
+ * {@see \Stackra\Retention\Console\RunRetentionCommand} (which
  * iterates every descriptor from the registry) and future
  * background workers (per-policy queue jobs) call this class the
  * same way: `$runner->run($descriptor, $dryRun)`.
@@ -32,11 +32,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Retention\Runner;
+namespace Stackra\Retention\Runner;
 
-use Academorix\Foundation\Contracts\Clock;
-use Academorix\Retention\Enums\RetentionAction;
-use Academorix\Retention\Support\RetentionPolicyDescriptor;
+use Stackra\Foundation\Contracts\Clock;
+use Stackra\Retention\Enums\RetentionAction;
+use Stackra\Retention\Support\RetentionPolicyDescriptor;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Database\Eloquent\Model;
@@ -74,7 +74,7 @@ use Throwable;
 final class RetentionRunner
 {
     /**
-     * @param  Clock  $clock  Testable "now" abstraction from `academorix/foundation`.
+     * @param  Clock  $clock  Testable "now" abstraction from `stackra/foundation`.
      * @param  LoggerInterface  $log  Log channel for deferred-branch warnings + exception context.
      */
     public function __construct(

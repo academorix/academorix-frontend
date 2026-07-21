@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Requests\Contracts\Repositories;
+namespace Stackra\Requests\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Requests\Models\AccessRequestProjection}.
+ * Repository contract for {@see Stackra\Requests\Models\AccessRequestProjection}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `AccessRequestProjectionRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Requests\Models\AccessRequestProjection>
+ * @extends RepositoryInterface<\Stackra\Requests\Models\AccessRequestProjection>
  *
  * @category Requests
  *

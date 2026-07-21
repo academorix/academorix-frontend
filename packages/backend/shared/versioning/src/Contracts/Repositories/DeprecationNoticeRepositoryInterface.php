@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Contracts\Repositories;
+namespace Stackra\Versioning\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Versioning\Enums\DeprecationSurface;
-use Academorix\Versioning\Models\DeprecationNotice;
-use Academorix\Versioning\Repositories\EloquentDeprecationNoticeRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Versioning\Enums\DeprecationSurface;
+use Stackra\Versioning\Models\DeprecationNotice;
+use Stackra\Versioning\Repositories\EloquentDeprecationNoticeRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

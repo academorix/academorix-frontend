@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Middleware;
+namespace Stackra\Geography\Middleware;
 
-use Academorix\Routing\Attributes\AsMiddleware;
+use Stackra\Routing\Attributes\AsMiddleware;
 use Closure;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Http\Request;

@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "domains",
   "alias": "domains",
-  "namespace": "Academorix\\Domains",
+  "namespace": "Stackra\\Domains",
   "description": "Custom domain substrate for tenant white-label. Owns Domain (canonical hostname bound to a Tenant) and DomainRecord (DNS records inside a Domain). Publishes DNS verification round-trips, certificate rotation jobs, and the DomainVerifier binding every host-resolver consumes. Extracted from tenants at v0.3 so long-running DNS + cert workflows have their own module lifecycle independent of the Tenant lifecycle.",
   "keywords": [
     "domain",
@@ -15,7 +15,7 @@
     "hostname"
   ],
   "priority": 12,
-  "providers": ["Academorix\\Domains\\Providers\\DomainsServiceProvider"],
+  "providers": ["Stackra\\Domains\\Providers\\DomainsServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy"],
   "extendedBy": [],
@@ -68,7 +68,7 @@
   },
   "hosts": {
     "platform-admin": {
-      "description": "Academorix staff surface. Full CRUD over Domain + DomainRecord.",
+      "description": "Stackra staff surface. Full CRUD over Domain + DomainRecord.",
       "routes": ["* /api/v1/domains*"]
     },
     "tenant": {

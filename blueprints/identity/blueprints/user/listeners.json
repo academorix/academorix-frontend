@@ -1,53 +1,53 @@
 {
-  "id": "academorix://modules/user/listeners",
+  "id": "stackra://modules/user/listeners",
   "$version": 1,
   "title": "user \u2014 subscribed events",
   "listeners": [
     {
       "event": "tenancy::TenantProvisioned",
-      "listener": "Academorix\\User\\Listeners\\SeedOwnerMembershipOnTenantProvisioned",
+      "listener": "Stackra\\User\\Listeners\\SeedOwnerMembershipOnTenantProvisioned",
       "queue": "notifications",
       "purpose": "Fires when a new Tenant is created. Creates the initial TenantMember row linking the tenant's owner User to the tenant with the `owner` role + is_default=true. Skips when the caller already provided a default membership (idempotent)."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\User\\Listeners\\TenantMembersOnTenantErased",
+      "listener": "Stackra\\User\\Listeners\\TenantMembersOnTenantErased",
       "queue": "notifications",
       "purpose": "Fires when a Tenant is being erased. Iterates every TenantMember row on that tenant: if is_default=true AND the User has other memberships, promote the oldest sibling to default BEFORE the cascade delete removes this row (so the User doesn't end up defaultless mid-cascade). Fires UserRemovedFromTenant per row."
     },
     {
       "event": "identity::IdentityDeleted",
-      "listener": "Academorix\\User\\Listeners\\SoftDeleteAllUsersOnIdentityDeleted",
+      "listener": "Stackra\\User\\Listeners\\SoftDeleteAllUsersOnIdentityDeleted",
       "queue": "notifications-critical",
       "purpose": "Fires when the underlying Identity is being deleted (a real human requested global erasure). Soft-deletes every User row across every Application that references this identity_id, kicking each into its own erasure hold window. Once every User is hard-deleted, `identity::PurgeErasedIdentitiesJob` completes the Identity purge."
     },
     {
       "event": "auth::EmailVerified",
-      "listener": "Academorix\\User\\Listeners\\ActivateUserOnEmailVerified",
+      "listener": "Stackra\\User\\Listeners\\ActivateUserOnEmailVerified",
       "queue": "notifications",
       "purpose": "Fires when the Identity's email is verified. For every User in status=pending across every Application, transition to active (unless `user.registration.requires_admin_approval` on that tenant is true, in which case leave pending)."
     },
     {
       "event": "auth::LoginSucceeded",
-      "listener": "Academorix\\User\\Listeners\\UpdateLastLoginOnLoginSucceeded",
+      "listener": "Stackra\\User\\Listeners\\UpdateLastLoginOnLoginSucceeded",
       "queue": null,
       "purpose": "Fires on successful login. Updates `users.last_login_at` = now(). Non-queued because it's a single UPDATE per event + we want the fresh timestamp immediately in the /me response."
     },
     {
       "event": "auth::AuthenticatedRequest",
-      "listener": "Academorix\\User\\Listeners\\BufferLastActiveOnAuthenticatedRequest",
+      "listener": "Stackra\\User\\Listeners\\BufferLastActiveOnAuthenticatedRequest",
       "queue": null,
       "purpose": "Fires on every authenticated request. Writes into the `usr:last_active_buffer` Redis SET. UpdateLastActiveJob (every 60s) flushes to `tenant_members.last_active_at`. Non-queued \u2014 buffer write is O(1) + must not block the request."
     },
     {
       "event": "access::RolePermissionsChanged",
-      "listener": "Academorix\\User\\Listeners\\InvalidatePrincipalCacheOnRoleChanged",
+      "listener": "Stackra\\User\\Listeners\\InvalidatePrincipalCacheOnRoleChanged",
       "queue": "notifications",
       "purpose": "Fires when a Role's permission set changes. Invalidates the `usr:me:{user_id}` cache for every User currently carrying that role (via TenantMember.role_id)."
     },
     {
       "event": "sports::AthleteLinkedToUser",
-      "listener": "Academorix\\User\\Listeners\\OnAthleteLinkedToUser",
+      "listener": "Stackra\\User\\Listeners\\OnAthleteLinkedToUser",
       "queue": "notifications",
       "purpose": "Fires when the sports module (Wave 7) sets `athletes.user_id`. Writes an activity_log entry naming the athlete + fires the /me cache invalidation so the freshly-linked user sees the athlete on their next request."
     }

@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Teams\Actions\Platform;
+namespace Stackra\Teams\Actions\Platform;
 
-use Academorix\Teams\Contracts\Repositories\TeamRepositoryInterface;
-use Academorix\Teams\Data\TeamData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Teams\Contracts\Repositories\TeamRepositoryInterface;
+use Stackra\Teams\Data\TeamData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 
 /**
  * `GET /api/v1/platform/teams/{team}` — show action (platform-admin audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Teams

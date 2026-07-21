@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/storage/schemas/file",
+  "id": "stackra://modules/storage/schemas/file",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "File",
@@ -13,10 +13,10 @@
     "keyType": "string",
     "keyPrefix": "fil_",
     "incrementing": false,
-    "model": "Academorix\\Storage\\Models\\File",
-    "interface": "Academorix\\Storage\\Contracts\\Data\\FileInterface",
+    "model": "Stackra\\Storage\\Models\\File",
+    "interface": "Stackra\\Storage\\Contracts\\Data\\FileInterface",
     "implements": [
-      "Academorix\\Storage\\Contracts\\Data\\FileInterface",
+      "Stackra\\Storage\\Contracts\\Data\\FileInterface",
       "Spatie\\MediaLibrary\\HasMedia"
     ],
     "traits": [
@@ -314,7 +314,7 @@
     },
     "fileable_type": {
       "type": ["string", "null"],
-      "description": "Fully-qualified class name of the parent model. e.g. `Academorix\\Branding\\Models\\Branding`."
+      "description": "Fully-qualified class name of the parent model. e.g. `Stackra\\Branding\\Models\\Branding`."
     },
     "fileable_id": {
       "type": ["string", "null"],

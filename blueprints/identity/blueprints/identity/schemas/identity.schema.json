@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/identity/schemas/identity",
+  "id": "stackra://modules/identity/schemas/identity",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Identity",
-  "description": "Global credential record. One row per real human across every Academorix Application. Owns email (citext, unique), password hash (argon2id preferred, bcrypt fallback), MFA secret (KMS-envelope-encrypted at rest), MFA recovery codes (bcrypt-hashed JSONB), email verification lifecycle, account lockout with progressive backoff, password history for reuse prevention. NEVER carries `application_id` or `tenant_id` \u2014 global by design (see design.md D1).",
+  "description": "Global credential record. One row per real human across every Stackra Application. Owns email (citext, unique), password hash (argon2id preferred, bcrypt fallback), MFA secret (KMS-envelope-encrypted at rest), MFA recovery codes (bcrypt-hashed JSONB), email verification lifecycle, account lockout with progressive backoff, password history for reuse prevention. NEVER carries `application_id` or `tenant_id` \u2014 global by design (see design.md D1).",
   "type": "object",
   "x-module": "identity",
   "x-eloquent": {
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "idn_",
     "incrementing": false,
-    "model": "Academorix\\Identity\\Models\\Identity",
-    "interface": "Academorix\\Identity\\Contracts\\Data\\IdentityInterface",
-    "implements": ["Academorix\\Identity\\Contracts\\Data\\IdentityInterface"],
+    "model": "Stackra\\Identity\\Models\\Identity",
+    "interface": "Stackra\\Identity\\Contracts\\Data\\IdentityInterface",
+    "implements": ["Stackra\\Identity\\Contracts\\Data\\IdentityInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

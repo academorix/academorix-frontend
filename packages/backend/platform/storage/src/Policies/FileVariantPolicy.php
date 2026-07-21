@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Policies;
+namespace Stackra\Storage\Policies;
 
-use Academorix\Storage\Contracts\Data\FileVariantInterface;
-use Academorix\Storage\Enums\StoragePermission;
-use Academorix\Storage\Models\FileVariant;
+use Stackra\Storage\Contracts\Data\FileVariantInterface;
+use Stackra\Storage\Enums\StoragePermission;
+use Stackra\Storage\Models\FileVariant;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

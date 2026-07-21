@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Actions\Tenant;
+namespace Stackra\Search\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Search\Contracts\Data\SearchSavedQueryInterface;
-use Academorix\Search\Contracts\Repositories\SearchSavedQueryRepositoryInterface;
-use Academorix\Search\Data\Requests\CreateSavedQueryRequestData;
-use Academorix\Search\Data\SearchSavedQueryData;
-use Academorix\Search\Enums\SearchPermission;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Search\Contracts\Data\SearchSavedQueryInterface;
+use Stackra\Search\Contracts\Repositories\SearchSavedQueryRepositoryInterface;
+use Stackra\Search\Data\Requests\CreateSavedQueryRequestData;
+use Stackra\Search\Data\SearchSavedQueryData;
+use Stackra\Search\Enums\SearchPermission;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 

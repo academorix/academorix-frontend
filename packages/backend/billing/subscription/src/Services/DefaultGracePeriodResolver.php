@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Services;
+namespace Stackra\Subscription\Services;
 
-use Academorix\Subscription\Contracts\Data\SubscriptionInterface;
-use Academorix\Subscription\Contracts\Services\GracePeriodResolverInterface;
-use Academorix\Subscription\Enums\SubscriptionState;
-use Academorix\Subscription\Models\Subscription;
+use Stackra\Subscription\Contracts\Data\SubscriptionInterface;
+use Stackra\Subscription\Contracts\Services\GracePeriodResolverInterface;
+use Stackra\Subscription\Enums\SubscriptionState;
+use Stackra\Subscription\Models\Subscription;
 use Carbon\CarbonImmutable;
 use DateTimeInterface;
 use Illuminate\Container\Attributes\Scoped;

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Console;
+namespace Stackra\Newsletter\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Newsletter\Jobs\ExportSubscribersJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Newsletter\Jobs\ExportSubscribersJob;
 
 /**
  * `php artisan newsletter:export-subscribers` — dispatch a CSV

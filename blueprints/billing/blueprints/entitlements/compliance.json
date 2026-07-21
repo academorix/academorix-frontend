@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/entitlements/compliance",
+  "id": "stackra://modules/entitlements/compliance",
   "$version": 1,
   "title": "entitlements \u2014 compliance evidence",
   "description": "Enterprise-contract override history is the primary compliance surface. SOX 404 for metered-billing usage evidence. GDPR Art. 30 for records of processing where entitlements reflect contractual terms.",

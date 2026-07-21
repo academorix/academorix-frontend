@@ -12,10 +12,10 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Support;
+namespace Stackra\Support;
 
 use Illuminate\Container\Attributes\Singleton;
-use Academorix\Foundation\Exceptions\InvalidArgumentException;
+use Stackra\Foundation\Exceptions\InvalidArgumentException;
 
 /**
  * CaseConverter - Array Key Case Transformation Utility.

@@ -10,7 +10,7 @@
       "saved_token_supported": true,
       "requires_customer_side_tokenization": true,
       "supported_by_providers": ["stripe", "paddle", "adyen", "square", "paypal", "custom_webhook"],
-      "typical_pci_scope": "SAQ A (Academorix scope): customer confirms via provider SDK; we never see PAN. Would be SAQ D if we accepted raw card fields — deliberately avoided.",
+      "typical_pci_scope": "SAQ A (Stackra scope): customer confirms via provider SDK; we never see PAN. Would be SAQ D if we accepted raw card fields — deliberately avoided.",
       "typical_brands": ["visa", "mastercard", "amex", "discover", "jcb", "unionpay"]
     },
     {
@@ -40,17 +40,17 @@
       "saved_token_supported": true,
       "requires_customer_side_tokenization": true,
       "supported_by_providers": ["stripe", "adyen", "square", "paypal"],
-      "typical_pci_scope": "Not PCI-DSS at Academorix layer — wallet handles PCI on its side.",
+      "typical_pci_scope": "Not PCI-DSS at Stackra layer — wallet handles PCI on its side.",
       "typical_brands": ["apple_pay", "google_pay", "paypal", "venmo", "cash_app"]
     },
     {
       "method_type": "installment",
       "display_name": "Buy Now Pay Later",
-      "description": "Klarna / Afterpay / Affirm / Zip. Provider handles the installment agreement; Academorix sees a single capture as if it were a full-amount card payment. Provider bears default risk.",
+      "description": "Klarna / Afterpay / Affirm / Zip. Provider handles the installment agreement; Stackra sees a single capture as if it were a full-amount card payment. Provider bears default risk.",
       "saved_token_supported": true,
       "requires_customer_side_tokenization": true,
       "supported_by_providers": ["stripe", "adyen", "paypal"],
-      "typical_pci_scope": "Not PCI-DSS at Academorix layer.",
+      "typical_pci_scope": "Not PCI-DSS at Stackra layer.",
       "typical_brands": []
     },
     {

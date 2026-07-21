@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Data;
+namespace Stackra\Audit\Data;
 
-use Academorix\Audit\Contracts\Data\AuditInterface;
-use Academorix\Audit\Contracts\Services\AuditRegistryInterface;
-use Academorix\Audit\Enums\AuditPermission;
-use Academorix\Audit\Models\Audit;
+use Stackra\Audit\Contracts\Data\AuditInterface;
+use Stackra\Audit\Contracts\Services\AuditRegistryInterface;
+use Stackra\Audit\Enums\AuditPermission;
+use Stackra\Audit\Models\Audit;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Facade;

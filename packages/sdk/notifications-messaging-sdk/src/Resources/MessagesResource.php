@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsMessagingSdk\Resources;
+namespace Stackra\NotificationsMessagingSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\NotificationsMessagingSdk\Data\MessageData;
-use Academorix\NotificationsMessagingSdk\Requests\Messages\MessagesMessageRequest;
-use Academorix\NotificationsMessagingSdk\Requests\Messages\UpdateMessageRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\NotificationsMessagingSdk\Data\MessageData;
+use Stackra\NotificationsMessagingSdk\Requests\Messages\MessagesMessageRequest;
+use Stackra\NotificationsMessagingSdk\Requests\Messages\UpdateMessageRequest;
 use Saloon\Http\Response;
 
 /**
@@ -69,7 +69,7 @@ final readonly class MessagesResource
      *
      * @return MessageData
      */
-    public function update(string $message, \Academorix\NotificationsMessagingSdk\Payloads\Messages\UpdateMessagePayload $payload, ?string $idempotencyKey = null): MessageData
+    public function update(string $message, \Stackra\NotificationsMessagingSdk\Payloads\Messages\UpdateMessagePayload $payload, ?string $idempotencyKey = null): MessageData
     {
         return $this->connector->send(new UpdateMessageRequest($message, $payload, $idempotencyKey))->dto();
     }

@@ -2,7 +2,7 @@
 
 /**
  * @file CatalogReader.php
- * @module Academorix\Cli\Catalog
+ * @module Stackra\Cli\Catalog
  * @description Walks every `catalog.json` under `packages/{backend,
  *   frontend,sdk,config}/**` and wraps each in a
  *   {@see CatalogEntry}. First call populates a lazy cache; subsequent
@@ -11,11 +11,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Catalog;
+namespace Stackra\Cli\Catalog;
 
-use Academorix\Cli\Exceptions\CatalogException;
-use Academorix\Cli\Exceptions\CliException;
-use Academorix\Cli\Support\PathResolver;
+use Stackra\Cli\Exceptions\CatalogException;
+use Stackra\Cli\Exceptions\CliException;
+use Stackra\Cli\Support\PathResolver;
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 

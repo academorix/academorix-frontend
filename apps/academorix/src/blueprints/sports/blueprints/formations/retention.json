@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/formations/retention",
+  "id": "stackra://modules/formations/retention",
   "$version": 1,
   "title": "formations — data retention windows",
   "policies": [

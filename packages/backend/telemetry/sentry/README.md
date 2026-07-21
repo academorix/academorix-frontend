@@ -1,11 +1,11 @@
 <div align="center">
 
-<img src="https://github.com/academorix-inc/laravel--laravel/telemetry/sentry/-/raw/main/.gitlab/banner.svg" alt="Sentry" width="100%">
+<img src="https://github.com/stackra-inc/laravel--laravel/telemetry/sentry/-/raw/main/.gitlab/banner.svg" alt="Sentry" width="100%">
 
 </div>
 
 Sentry error tracking and monitoring with automatic context discovery for
-Academorix applications.
+Stackra applications.
 
 ## 📑 Table of Contents
 
@@ -24,11 +24,11 @@ enriched with user data, tags, and extra context using PHP 8 attributes.
 
 ## 📦 Installation
 
-This package is included with the main `academorix/telemetry` package. To
+This package is included with the main `stackra/telemetry` package. To
 install separately:
 
 ```bash
-composer require academorix/telemetry-sentry
+composer require stackra/telemetry-sentry
 ```
 
 ## ✨ Features
@@ -58,7 +58,7 @@ Check the [.examples](.examples) directory for real-world usage patterns.
 ### Custom Context Provider
 
 ```php
-use Academorix\Sentry\Attributes\AsSentryContext;
+use Stackra\Sentry\Attributes\AsSentryContext;
 use Sentry\State\Scope;
 
 #[AsSentryContext]

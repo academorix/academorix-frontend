@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-mail/entitlements",
+  "id": "stackra://modules/notifications-mail/entitlements",
   "$version": 1,
   "title": "notifications-mail \u2014 entitlements",
   "description": "Metered mail send caps + attachment caps. Aggregated by notifications core into the top-level `notifications.mail.month` entitlement.",

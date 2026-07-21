@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Actions\Tenant;
+namespace Stackra\Subscription\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
-use Academorix\Subscription\Contracts\Services\BillingServiceInterface;
-use Academorix\Subscription\Data\SubscriptionData;
-use Academorix\Subscription\Enums\SubscriptionPermission;
-use Academorix\Subscription\Exceptions\SubscriptionNotFoundException;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
+use Stackra\Subscription\Contracts\Services\BillingServiceInterface;
+use Stackra\Subscription\Data\SubscriptionData;
+use Stackra\Subscription\Enums\SubscriptionPermission;
+use Stackra\Subscription\Exceptions\SubscriptionNotFoundException;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 
 /**
  * `POST /api/v1/subscription/resume` — reinstate a pending

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/monitoring/retention",
+  "id": "stackra://modules/monitoring/retention",
   "$version": 1,
   "title": "monitoring — retention windows",
   "description": "Health check runs 7d hot / 30d cold (Enterprise: 30d/90d via monitoring_extended_retention). Alerts 30d hot / 90d cold (Enterprise: 90d/1y). Incidents 90d hot / 1y cold (Enterprise: indefinite retention on P1 incidents for postmortem archive). Health check configs + alert policies + provider configs retained while active + 90d grace after soft-delete.",

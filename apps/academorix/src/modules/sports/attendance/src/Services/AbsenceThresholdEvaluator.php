@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attendance\Services;
+namespace Stackra\Attendance\Services;
 
-use Academorix\Attendance\Contracts\Services\AbsenceThresholdEvaluatorInterface;
+use Stackra\Attendance\Contracts\Services\AbsenceThresholdEvaluatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Attendance\Contracts\Repositories\AbsenceRecordRepositoryInterface;
+use Stackra\Attendance\Contracts\Repositories\AbsenceRecordRepositoryInterface;
 
 /**
  * Concrete service — AbsenceThresholdEvaluator.

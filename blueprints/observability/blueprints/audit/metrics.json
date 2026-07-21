@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/audit/metrics",
+  "id": "stackra://modules/audit/metrics",
   "$version": 1,
   "title": "audit — OpenTelemetry metrics",
   "description": "Audit-side ops metrics — fire rate, purge cadence, retention-policy churn, export request rate, archive migration health. Distinct from analytics.json (which would be growth-facing behavioral metrics; audit does NOT emit growth analytics). Metrics feed the on-call Grafana dashboard + AuditFireRateAnomaly + PurgeJobLiveness probes.",
   "instrumentation": "open-telemetry/sdk",
-  "namespace": "academorix.audit",
+  "namespace": "stackra.audit",
   "labelConventions": {
     "always": ["tenant_id"],
     "commonlyAvailable": ["event", "auditable_type", "user_type", "outcome"],
@@ -12,42 +12,42 @@
   },
   "metrics": [
     {
-      "name": "academorix.audit.records_total",
+      "name": "stackra.audit.records_total",
       "kind": "counter",
       "unit": "records",
       "labels": ["tenant_id", "event", "auditable_type"],
       "description": "Cumulative audit row count. Incremented on every AuditRecorded event afterCommit. Feeds AuditFireRateAnomaly probe."
     },
     {
-      "name": "academorix.audit.records_rate_gauge",
+      "name": "stackra.audit.records_rate_gauge",
       "kind": "gauge",
       "unit": "records_per_hour",
       "labels": ["tenant_id"],
       "description": "Instantaneous audit fire rate per tenant. Sampled every 30s over a rolling 1h window. Compared against 7d baseline in FireRateAnomalyProbe."
     },
     {
-      "name": "academorix.audit.records_by_event_total",
+      "name": "stackra.audit.records_by_event_total",
       "kind": "counter",
       "unit": "records",
       "labels": ["event"],
       "description": "Cross-tenant rollup by event name. Cardinality bounded by the audited-events catalog (~ dozens)."
     },
     {
-      "name": "academorix.audit.purge.total",
+      "name": "stackra.audit.purge.total",
       "kind": "counter",
       "unit": "purges",
       "labels": ["tenant_id"],
       "description": "PurgeExpiredAuditsJob execution counter (per tenant per nightly run)."
     },
     {
-      "name": "academorix.audit.rows_purged_total",
+      "name": "stackra.audit.rows_purged_total",
       "kind": "counter",
       "unit": "rows",
       "labels": ["tenant_id"],
       "description": "Cumulative rows purged by the retention runner. Delta per run is available via query."
     },
     {
-      "name": "academorix.audit.purge.duration_ms",
+      "name": "stackra.audit.purge.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1000, 5000, 30000, 300000, 1800000],
@@ -55,28 +55,28 @@
       "description": "Time to complete PurgeExpiredAuditsJob per tenant. Distribution over the past 30 days."
     },
     {
-      "name": "academorix.audit.retention_policies_active_gauge",
+      "name": "stackra.audit.retention_policies_active_gauge",
       "kind": "gauge",
       "unit": "policies",
       "labels": ["application_id"],
       "description": "Active AuditRetentionPolicy count per application. Sampled hourly. Baseline is low (Enterprise-only)."
     },
     {
-      "name": "academorix.audit.retention_policies_expiring_soon_gauge",
+      "name": "stackra.audit.retention_policies_expiring_soon_gauge",
       "kind": "gauge",
       "unit": "policies",
       "labels": ["application_id"],
       "description": "Policies with override_ends_at within 30 days. Sampled hourly. Drives the AuditRetentionExtensionExpiringSoonNotification cadence."
     },
     {
-      "name": "academorix.audit.exports_requested_total",
+      "name": "stackra.audit.exports_requested_total",
       "kind": "counter",
       "unit": "exports",
       "labels": ["tenant_id", "export_kind", "outcome"],
       "description": "outcome: requested / completed / failed / rate_limited."
     },
     {
-      "name": "academorix.audit.exports.row_count_histogram",
+      "name": "stackra.audit.exports.row_count_histogram",
       "kind": "histogram",
       "unit": "rows",
       "buckets": [100, 1000, 10000, 100000, 1000000, 10000000],
@@ -84,35 +84,35 @@
       "description": "Distribution of export payload row counts. Useful for capacity planning + spotting unusually large exports."
     },
     {
-      "name": "academorix.audit.archive_migration_rows_total",
+      "name": "stackra.audit.archive_migration_rows_total",
       "kind": "counter",
       "unit": "rows",
       "labels": ["tenant_id"],
       "description": "Cumulative rows migrated from hot to cold archive. ExportAuditsToArchiveJob emits this delta per run."
     },
     {
-      "name": "academorix.audit.archive_bucket_object_count_gauge",
+      "name": "stackra.audit.archive_bucket_object_count_gauge",
       "kind": "gauge",
       "unit": "objects",
       "labels": ["application_id"],
       "description": "S3 archive object count per application (measured via S3 inventory). Sampled daily."
     },
     {
-      "name": "academorix.audit.immutability_violations_total",
+      "name": "stackra.audit.immutability_violations_total",
       "kind": "counter",
       "unit": "violations",
       "labels": ["tenant_id"],
       "description": "Attempts to UPDATE an audit row (refused by AuditObserver::updating). SHOULD BE ZERO in a healthy environment. Non-zero triggers security-alert-level notifications."
     },
     {
-      "name": "academorix.audit.delete_violations_total",
+      "name": "stackra.audit.delete_violations_total",
       "kind": "counter",
       "unit": "violations",
       "labels": ["tenant_id"],
       "description": "Attempts to DELETE an audit row outside PurgeExpiredAuditsJob (refused by AuditObserver::deleting). SHOULD BE ZERO."
     },
     {
-      "name": "academorix.audit.raw_diff_reveals_total",
+      "name": "stackra.audit.raw_diff_reveals_total",
       "kind": "counter",
       "unit": "reveals",
       "labels": ["tenant_id"],

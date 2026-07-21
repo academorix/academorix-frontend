@@ -54,7 +54,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Authorization\Contracts;
+namespace Stackra\Authorization\Contracts;
 
 interface PermissionContributor
 {

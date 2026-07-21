@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Actions\Central;
+namespace Stackra\Newsletter\Actions\Central;
 
-use Academorix\Newsletter\Contracts\Services\NewsletterServiceInterface;
-use Academorix\Newsletter\Data\NewsletterSubscriptionData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Newsletter\Contracts\Services\NewsletterServiceInterface;
+use Stackra\Newsletter\Data\NewsletterSubscriptionData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `POST /newsletters/{newsletter}/unsubscribe/{token}` — RFC 8058

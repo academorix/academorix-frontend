@@ -12,13 +12,13 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Enum\Concerns;
+namespace Stackra\Enum\Concerns;
 
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Meta\Reflection;
-use Academorix\Support\Arr;
-use Academorix\Support\Reflection as SupportReflection;
-use Academorix\Support\Str;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Meta\Reflection;
+use Stackra\Support\Arr;
+use Stackra\Support\Reflection as SupportReflection;
+use Stackra\Support\Str;
 use Throwable;
 
 /**
@@ -33,8 +33,8 @@ use Throwable;
  *
  * ## Usage:
  * ```php
- * use Academorix\Enum\Attributes\Label;
- * use Academorix\Enum\Meta\Meta;
+ * use Stackra\Enum\Attributes\Label;
+ * use Stackra\Enum\Meta\Meta;
  *
  * #[Meta([Label::class])]
  * enum Status: string
@@ -52,7 +52,7 @@ use Throwable;
  * Status::names(true);  // Returns ['ACTIVE' => 'Active Status', 'INACTIVE' => 'Inactive']
  * ```
  *
- * @author  Academorix Development Team
+ * @author  Stackra Development Team
  *
  * @since   1.0.0
  */

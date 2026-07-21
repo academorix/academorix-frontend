@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Console;
+namespace Stackra\Subscription\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
-use Academorix\Subscription\Contracts\Services\DunningOrchestratorInterface;
-use Academorix\Subscription\Jobs\AdvanceDunningStageJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
+use Stackra\Subscription\Contracts\Services\DunningOrchestratorInterface;
+use Stackra\Subscription\Jobs\AdvanceDunningStageJob;
 use Carbon\CarbonImmutable;
 
 /**
@@ -59,7 +59,7 @@ final class SubscriptionAdvanceDunningCommand extends BaseCommand
         foreach ($due as $subscription) {
             $this->omni->tableRow(
                 (string) $subscription->getKey(),
-                (string) $subscription->{\Academorix\Subscription\Contracts\Data\SubscriptionInterface::ATTR_STATE},
+                (string) $subscription->{\Stackra\Subscription\Contracts\Data\SubscriptionInterface::ATTR_STATE},
                 (string) ($dunning->nextStage($subscription) ?? '—'),
             );
         }

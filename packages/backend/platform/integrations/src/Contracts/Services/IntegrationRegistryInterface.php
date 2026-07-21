@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Contracts\Services;
+namespace Stackra\Integrations\Contracts\Services;
 
-use Academorix\Integrations\Models\TenantIntegration;
-use Academorix\Integrations\Services\NullIntegrationRegistry;
+use Stackra\Integrations\Models\TenantIntegration;
+use Stackra\Integrations\Services\NullIntegrationRegistry;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -39,7 +39,7 @@ interface IntegrationRegistryInterface
      * integration. Implementations MUST honour the row's `is_active`
      * flag + `sync_cursor` for incremental sync.
      *
-     * @throws \Academorix\Integrations\Exceptions\IntegrationSyncFailedException
+     * @throws \Stackra\Integrations\Exceptions\IntegrationSyncFailedException
      *   When the underlying provider raises unrecoverable errors.
      */
     public function sync(TenantIntegration $integration): void;

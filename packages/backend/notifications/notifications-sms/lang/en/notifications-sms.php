@@ -4,7 +4,7 @@
  * @file modules/notifications/notifications-sms/lang/en/notifications-sms.php
  *
  * @description
- * English translations for the `academorix/notifications-sms` module. Loaded
+ * English translations for the `stackra/notifications-sms` module. Loaded
  * under the `notifications-sms::` namespace.
  */
 

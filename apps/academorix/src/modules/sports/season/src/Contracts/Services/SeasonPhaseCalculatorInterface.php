@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Season\Contracts\Services;
+namespace Stackra\Season\Contracts\Services;
 
-use Academorix\Season\Services\SeasonPhaseCalculator;
+use Stackra\Season\Services\SeasonPhaseCalculator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

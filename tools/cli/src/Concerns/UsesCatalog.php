@@ -2,25 +2,25 @@
 
 /**
  * @file UsesCatalog.php
- * @module Academorix\Cli\Concerns
- * @description Convenience accessors around {@see \Academorix\Cli\Catalog\CatalogReader}
- *   and {@see \Academorix\Cli\Catalog\CatalogQuery}. Concrete commands go through
+ * @module Stackra\Cli\Concerns
+ * @description Convenience accessors around {@see \Stackra\Cli\Catalog\CatalogReader}
+ *   and {@see \Stackra\Cli\Catalog\CatalogQuery}. Concrete commands go through
  *   these methods rather than resolving the services directly.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Concerns;
+namespace Stackra\Cli\Concerns;
 
-use Academorix\Cli\Catalog\CatalogEntry;
-use Academorix\Cli\Catalog\CatalogQuery;
-use Academorix\Cli\Catalog\CatalogReader;
-use Academorix\Cli\Catalog\CatalogSelection;
+use Stackra\Cli\Catalog\CatalogEntry;
+use Stackra\Cli\Catalog\CatalogQuery;
+use Stackra\Cli\Catalog\CatalogReader;
+use Stackra\Cli\Catalog\CatalogSelection;
 
 /**
- * Composed by every command through {@see \Academorix\Cli\Commands\AbstractCommand}.
+ * Composed by every command through {@see \Stackra\Cli\Commands\AbstractCommand}.
  *
- * @property \Academorix\Cli\Container $container populated by {@see \Academorix\Cli\Commands\AbstractCommand}
+ * @property \Stackra\Cli\Container $container populated by {@see \Stackra\Cli\Commands\AbstractCommand}
  */
 trait UsesCatalog
 {

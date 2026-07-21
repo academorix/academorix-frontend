@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Rules;
+namespace Stackra\Notifications\Mail\Rules;
 
-use Academorix\Notifications\Mail\Enums\MailProvider;
+use Stackra\Notifications\Mail\Enums\MailProvider;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 

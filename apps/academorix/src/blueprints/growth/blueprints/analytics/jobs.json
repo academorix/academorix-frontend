@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/analytics/jobs",
+  "id": "stackra://modules/analytics/jobs",
   "$version": 1,
   "title": "analytics — background jobs",
   "description": "8 queued jobs covering capture, fan-out dispatch, per-provider delivery, batched flush, retry, identity reconciliation, retention purge, and sampling-rate reconciliation.",
   "jobs": [
     {
-      "class": "Academorix\\Growth\\Analytics\\Jobs\\CaptureAnalyticsEventJob",
+      "class": "Stackra\\Growth\\Analytics\\Jobs\\CaptureAnalyticsEventJob",
       "queue": "analytics",
       "purpose": "Dispatched by the AnalyticsEventCapturer when EmitsAnalyticsEvent trait fires inline (rare) OR when a domain event's registered capturer chooses async capture. Standard sync capture goes through AnalyticsEventCapturer::capture() directly which creates the row synchronously; this job is the async escape hatch.",
       "steps": [
@@ -24,7 +24,7 @@
       "backoff": [10, 60, 300]
     },
     {
-      "class": "Academorix\\Growth\\Analytics\\Jobs\\DispatchAnalyticsEventJob",
+      "class": "Stackra\\Growth\\Analytics\\Jobs\\DispatchAnalyticsEventJob",
       "queue": "analytics",
       "purpose": "Reads an AnalyticsEvent row + fans out DispatchToProviderJob per eligible provider. Skips providers with circuit_breaker_state.state='open'. Suppresses providers where consent has since revoked (re-checks consent_snapshot column).",
       "steps": [
@@ -42,7 +42,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Growth\\Analytics\\Jobs\\DispatchToProviderJob",
+      "class": "Stackra\\Growth\\Analytics\\Jobs\\DispatchToProviderJob",
       "queue": "resolved-at-dispatch \u2014 analytics-critical if event.category IN (funnel_step, lifecycle), else analytics",
       "purpose": "Single-event delivery to a single provider (non-batching path OR opportunistic non-batched dispatch when the batch queue is otherwise empty).",
       "steps": [
@@ -64,7 +64,7 @@
       "notes": "Retries are HANDLED VIA RetryFailedAnalyticsDeliveriesJob (schedule-driven), not via Laravel's job retry mechanism. This gives us explicit control over the next_retry_at column + backoff schedule."
     },
     {
-      "class": "Academorix\\Growth\\Analytics\\Jobs\\FlushBatchedProviderJob",
+      "class": "Stackra\\Growth\\Analytics\\Jobs\\FlushBatchedProviderJob",
       "queue": "analytics",
       "purpose": "Per-provider batch flush. Dispatched by the batch buffer when batch_config.size reached OR flush_interval_ms elapsed OR shutdown signal received.",
       "steps": [
@@ -85,7 +85,7 @@
       "backoff": [10, 60]
     },
     {
-      "class": "Academorix\\Growth\\Analytics\\Jobs\\RetryFailedAnalyticsDeliveriesJob",
+      "class": "Stackra\\Growth\\Analytics\\Jobs\\RetryFailedAnalyticsDeliveriesJob",
       "queue": "analytics",
       "purpose": "Every 30 seconds \u2014 scan AnalyticsDelivery where status IN (failed, rate_limited) AND next_retry_at <= now() AND attempt_number < config.retry_config.max_attempts. Dispatch DispatchToProviderJob to retry.",
       "shouldQueue": true,
@@ -95,7 +95,7 @@
       "notes": "Scheduled every 30s. Reads a bounded batch (100 rows per invocation) to avoid overwhelming providers on recovery."
     },
     {
-      "class": "Academorix\\Growth\\Analytics\\Jobs\\ReconcileAnalyticsIdentityJob",
+      "class": "Stackra\\Growth\\Analytics\\Jobs\\ReconcileAnalyticsIdentityJob",
       "queue": "analytics",
       "purpose": "Nightly 03:00 UTC per tenant. Cleans dangling anonymous identities: (a) purges AnalyticsIdentity rows with last_seen_at older than 90 days and identified_user_id IS NULL; (b) rewrites subject_id on any remaining anonymous events whose subject is now identified but MergeAliasedEventsJob failed to run (belt-and-braces); (c) purges identified identities where the User was erased more than 30 days ago.",
       "shouldQueue": true,
@@ -105,7 +105,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Growth\\Analytics\\Jobs\\PurgeExpiredAnalyticsDataJob",
+      "class": "Stackra\\Growth\\Analytics\\Jobs\\PurgeExpiredAnalyticsDataJob",
       "queue": "analytics",
       "purpose": "Weekly Sunday 03:00 UTC. Retention purge: analytics_events > 2 years (5 with extended retention); analytics_deliveries > 90 days; analytics_provider_configs deleted_at > 90 days. Writes a summary row into audit + fires per-batch counters.",
       "shouldQueue": true,
@@ -115,7 +115,7 @@
       "notes": "Ordering matters: deliveries first (they RESTRICT event deletion), then events, then configs."
     },
     {
-      "class": "Academorix\\Growth\\Analytics\\Jobs\\SamplingRateReconcilerJob",
+      "class": "Stackra\\Growth\\Analytics\\Jobs\\SamplingRateReconcilerJob",
       "queue": "analytics",
       "purpose": "Nightly 04:00 UTC. Computes per-event actual dispatch rate vs configured sampling_rate for the past 24h. Emits a monitoring metric per provider per event_name so ops can see if sampling is behaving as configured. Not a data-mutating job \u2014 diagnostic only.",
       "shouldQueue": true,

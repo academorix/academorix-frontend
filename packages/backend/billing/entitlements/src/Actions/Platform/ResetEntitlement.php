@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Actions\Platform;
+namespace Stackra\Entitlements\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Entitlements\Contracts\Repositories\EntitlementRepositoryInterface;
-use Academorix\Entitlements\Data\EntitlementData;
-use Academorix\Entitlements\Data\Requests\ResetEntitlementRequestData;
-use Academorix\Entitlements\Enums\EntitlementsPermission;
-use Academorix\Entitlements\Exceptions\EntitlementNotFoundException;
-use Academorix\Entitlements\Jobs\ResetPeriodicUsageJob;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Entitlements\Contracts\Repositories\EntitlementRepositoryInterface;
+use Stackra\Entitlements\Data\EntitlementData;
+use Stackra\Entitlements\Data\Requests\ResetEntitlementRequestData;
+use Stackra\Entitlements\Enums\EntitlementsPermission;
+use Stackra\Entitlements\Exceptions\EntitlementNotFoundException;
+use Stackra\Entitlements\Jobs\ResetPeriodicUsageJob;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `POST /api/v1/platform/entitlements/{tenant}/reset/{key}` — platform

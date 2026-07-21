@@ -105,7 +105,7 @@ identity/auth.
 Codified across observers + tests:
 
 - **Constant-time comparisons** — every code / assertion / recovery-code compare
-  uses `hash_equals()`. The `academorix.mfa.challenge.duration_ms` histogram is
+  uses `hash_equals()`. The `stackra.mfa.challenge.duration_ms` histogram is
   monitored for drift between success + failure paths — any divergence signals a
   code path that leaks timing.
 - **Plaintext-never-persists** — TOTP secret plaintext lives in-memory during

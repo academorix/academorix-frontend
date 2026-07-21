@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tax/routes",
+  "id": "stackra://modules/tax/routes",
   "$version": 1,
   "title": "tax — HTTP routes",
   "description": "Tenant-facing tax surface (rates + jurisdictions + exemptions + calculations + providers + reports — 27 routes) + platform-admin cross-tenant support routes (2 routes). Every tenant-plane route carries `entitlement.enforce:tax_capture` at minimum; the custom-jurisdiction create additionally carries `entitlement.enforce:tax_jurisdiction_custom`; the annual report additionally carries `entitlement.enforce:tax_annual_report`. Calculations are NEVER created via API — persist happens only via CalculateTaxForInvoiceLineJob. POST /calculate is a preview endpoint that does NOT persist.",
@@ -24,41 +24,41 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxRateController@index",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxRateController@index",
           "permission": "tax.rates.viewAny",
           "description": "filter[jurisdiction_id], filter[rate_type], filter[applies_to], filter[active] (effective_from <= today AND (effective_to IS NULL OR effective_to > today)), filter[from], filter[to]. Default sort: effective_from DESC."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxRateController@store",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxRateController@store",
           "permission": "tax.rates.create",
           "description": "Body: TaxRateCreateData. Validates percentage in [0, 1] + effective_range + refuses overlapping."
         },
         {
           "method": "GET",
           "path": "/{rate}",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxRateController@show",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxRateController@show",
           "permission": "tax.rates.view"
         },
         {
           "method": "PATCH",
           "path": "/{rate}",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxRateController@update",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxRateController@update",
           "permission": "tax.rates.update",
           "description": "Refused when the rate has been referenced by any tax_calculation (calculation-freeze). Instead: create a new rate + set effective_to on the old."
         },
         {
           "method": "DELETE",
           "path": "/{rate}",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxRateController@destroy",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxRateController@destroy",
           "permission": "tax.rates.delete",
           "description": "Soft-delete only. Refused when tax_calculations reference the rate."
         },
         {
           "method": "POST",
           "path": "/sync",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxRateController@sync",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxRateController@sync",
           "permission": "tax.rates.sync",
           "description": "Body: { provider }. Triggers on-demand SyncTaxRatesFromProviderJob. 202 Accepted."
         }
@@ -84,14 +84,14 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxJurisdictionController@index",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxJurisdictionController@index",
           "permission": "tax.jurisdictions.viewAny",
           "description": "filter[country_code], filter[state_code], filter[tax_type], filter[nexus_type], filter[custom_only]. Default: both platform + custom."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxJurisdictionController@store",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxJurisdictionController@store",
           "permission": "tax.jurisdictions.create",
           "middleware_add": ["entitlement.enforce:tax_jurisdiction_custom"],
           "description": "Custom jurisdictions only (tenant_id populated automatically). Enterprise-only."
@@ -99,20 +99,20 @@
         {
           "method": "GET",
           "path": "/{jurisdiction}",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxJurisdictionController@show",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxJurisdictionController@show",
           "permission": "tax.jurisdictions.view"
         },
         {
           "method": "PATCH",
           "path": "/{jurisdiction}",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxJurisdictionController@update",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxJurisdictionController@update",
           "permission": "tax.jurisdictions.update",
           "description": "Refused on platform-reference jurisdictions (tenant_id IS NULL) unless caller is super_admin."
         },
         {
           "method": "DELETE",
           "path": "/{jurisdiction}",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxJurisdictionController@destroy",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxJurisdictionController@destroy",
           "permission": "tax.jurisdictions.delete",
           "description": "Soft-delete only. Refused when any tax_rates references (RESTRICT FK)."
         }
@@ -139,35 +139,35 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxExemptionController@index",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxExemptionController@index",
           "permission": "tax.exemptions.viewAny",
           "description": "filter[exemption_type], filter[verification_status], filter[customer_type], filter[customer_id], filter[expiring_within_days]. Customers see only their own; admin/owner/finance/compliance see all."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxExemptionController@store",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxExemptionController@store",
           "permission": "tax.exemptions.create",
           "description": "Body: TaxExemptionCreateData. certificate_document_url must be a pre-signed S3 upload URL from the tenant-scoped bucket prefix."
         },
         {
           "method": "GET",
           "path": "/{exemption}",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxExemptionController@show",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxExemptionController@show",
           "permission": "tax.exemptions.view",
           "description": "certificate_number redacted for support role. certificate_document_url returned as time-limited S3 signed URL (15min TTL default)."
         },
         {
           "method": "POST",
           "path": "/{exemption}/verify",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxExemptionController@verify",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxExemptionController@verify",
           "permission": "tax.exemptions.verify",
           "description": "Body: { note? }. Transitions verification_status pending → verified. Sets verified_by_user_id + verified_at."
         },
         {
           "method": "POST",
           "path": "/{exemption}/reject",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxExemptionController@reject",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxExemptionController@reject",
           "permission": "tax.exemptions.reject",
           "description": "Body: { reason, note? }. Transitions verification_status pending → rejected. Fires TaxExemptionRejectedNotification."
         }
@@ -193,14 +193,14 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxCalculationController@index",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxCalculationController@index",
           "permission": "tax.calculations.viewAny",
           "description": "filter[provider], filter[invoice_line_id], filter[from], filter[to]. Default sort: calculated_at DESC."
         },
         {
           "method": "GET",
           "path": "/{calculation}",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxCalculationController@show",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxCalculationController@show",
           "permission": "tax.calculations.view",
           "description": "Includes tax_rate_snapshot + exemption_applied + provider_metadata + linked invoice_line."
         }
@@ -227,7 +227,7 @@
         {
           "method": "POST",
           "path": "/calculate",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxCalculationController@preview",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxCalculationController@preview",
           "permission": "tax.calculations.preview",
           "description": "Body: { source_amount_cents, source_currency, customer_type?, customer_id?, jurisdiction_id? }. Returns TaxCalculationResult without persisting. Used by cart previews + pricing pages."
         }
@@ -253,47 +253,47 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxProviderConfigController@index",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxProviderConfigController@index",
           "permission": "tax.providers.viewAny",
           "description": "filter[provider], filter[is_active], filter[jurisdiction]. config returned encrypted; support role sees redacted view."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxProviderConfigController@store",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxProviderConfigController@store",
           "permission": "tax.providers.create",
           "description": "Body: TaxProviderConfigCreateData. Consumes 1 unit of tax_provider_slot."
         },
         {
           "method": "GET",
           "path": "/{provider}",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxProviderConfigController@show",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxProviderConfigController@show",
           "permission": "tax.providers.view"
         },
         {
           "method": "PATCH",
           "path": "/{provider}",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxProviderConfigController@update",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxProviderConfigController@update",
           "permission": "tax.providers.update"
         },
         {
           "method": "DELETE",
           "path": "/{provider}",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxProviderConfigController@destroy",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxProviderConfigController@destroy",
           "permission": "tax.providers.delete",
           "description": "Soft-delete. 90-day grace before hard-purge."
         },
         {
           "method": "POST",
           "path": "/{provider}/test",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxProviderConfigController@test",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxProviderConfigController@test",
           "permission": "tax.providers.test",
           "description": "Send a synthetic test calculation via the provider's sandbox endpoint. Body: { jurisdiction, amount_cents, currency }."
         },
         {
           "method": "POST",
           "path": "/{provider}/reset-circuit-breaker",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxProviderConfigController@resetCircuitBreaker",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxProviderConfigController@resetCircuitBreaker",
           "permission": "tax.providers.reset-circuit-breaker",
           "description": "Body: { note }. Every reset writes to audits with 7-year retention."
         }
@@ -319,7 +319,7 @@
         {
           "method": "GET",
           "path": "/annual",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxAnnualReportController@show",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Tenant\\TaxAnnualReportController@show",
           "permission": "tax.reports.annual.view",
           "middleware_add": ["entitlement.enforce:tax_annual_report"],
           "description": "?year=YYYY&format=json|csv|pdf. Returns aggregated tax_calculations per jurisdiction for regulator filing. Enterprise gets 10-year history via tax_extended_retention."
@@ -343,14 +343,14 @@
         {
           "method": "GET",
           "path": "/calculations",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Platform\\TaxCalculationController@index",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Platform\\TaxCalculationController@index",
           "permission": "platform.tax.calculations.viewAny",
           "description": "filter[tenant_id], filter[provider], filter[from], filter[to]. Cross-tenant support for regulator inquiries + reconciliation."
         },
         {
           "method": "GET",
           "path": "/rates",
-          "controller": "Academorix\\Finance\\Tax\\Http\\Controllers\\Platform\\TaxRateController@index",
+          "controller": "Stackra\\Finance\\Tax\\Http\\Controllers\\Platform\\TaxRateController@index",
           "permission": "platform.tax.rates.viewAny",
           "description": "filter[tenant_id], filter[country_code], filter[rate_type]. Platform-managed reference rates + tenant-specific rates."
         }

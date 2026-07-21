@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/session/events",
+  "id": "stackra://modules/session/events",
   "$version": 1,
   "title": "session — published events",
-  "namespace": "Academorix\\Sports\\Session\\Events",
+  "namespace": "Stackra\\Sports\\Session\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements ShouldDispatchAfterCommit so listeners never fire against a rolled-back write. Lifecycle events fan out to notifications + activity + audit. SessionCoachReassigned when < 24h before start is critical-audit — parents planned around the coach identity for minor participants. SessionMinorSafeguardingIncident is the top-severity event — every fire generates a mandatory audit row + regulator-facing notification chain.",
   "events": [
     {
       "name": "SessionScheduled",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionScheduled",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionScheduled",
       "trigger": "SessionProvisioner completed a successful create. Fires exactly once per `sessions.id`.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -29,7 +29,7 @@
     },
     {
       "name": "SessionConfirmed",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionConfirmed",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionConfirmed",
       "trigger": "Session.status transitioned scheduled -> confirmed. Confirmation locks the session for attendees (roster is committed).",
       "queue": "notifications",
       "consumers": [
@@ -46,7 +46,7 @@
     },
     {
       "name": "SessionRescheduled",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionRescheduled",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionRescheduled",
       "trigger": "Session.resource_booking_id changed to a new booking (which is how time changes flow — Session doesn't store starts_at/ends_at directly; the booking does). AUDIT-WARN — affects athletes + coach.",
       "queue": "notifications-critical",
       "consumers": [
@@ -69,7 +69,7 @@
     },
     {
       "name": "SessionCancelled",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionCancelled",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionCancelled",
       "trigger": "Session.status transitioned to cancelled. Requires cancellation_reason.",
       "queue": "notifications-critical",
       "consumers": [
@@ -91,7 +91,7 @@
     },
     {
       "name": "SessionStarted",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionStarted",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionStarted",
       "trigger": "Session.status transitioned to in_progress. Fires from StartScheduledSessionsJob (every 5 min) at starts_at.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -104,7 +104,7 @@
     },
     {
       "name": "SessionCompleted",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionCompleted",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionCompleted",
       "trigger": "Session.status transitioned in_progress -> completed. Fires from CompleteFinishedSessionsJob at ends_at + 15-minute grace.",
       "queue": "notifications",
       "consumers": [
@@ -123,7 +123,7 @@
     },
     {
       "name": "SessionCoachAssigned",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionCoachAssigned",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionCoachAssigned",
       "trigger": "head_coach_id set on session for the first time OR assistant_coach added to array.",
       "queue": "notifications",
       "consumers": [
@@ -141,7 +141,7 @@
     },
     {
       "name": "SessionCoachReassigned",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionCoachReassigned",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionCoachReassigned",
       "trigger": "head_coach_id changed post-scheduled (was NOT null, now different). AUDIT-CRITICAL when < 24h before session starts_at — parents planned around the coach identity for minor participants. Safeguarding-adjacent.",
       "queue": "notifications-critical",
       "consumers": [
@@ -161,7 +161,7 @@
     },
     {
       "name": "SessionCurriculumTopicUpdated",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionCurriculumTopicUpdated",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionCurriculumTopicUpdated",
       "trigger": "curriculum_topic OR lesson_plan_url changed.",
       "queue": "notifications",
       "consumers": [
@@ -179,7 +179,7 @@
     },
     {
       "name": "SessionAttendanceCapacityChanged",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionAttendanceCapacityChanged",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionAttendanceCapacityChanged",
       "trigger": "attendance_capacity OR attendance_min changed.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -193,7 +193,7 @@
     },
     {
       "name": "SessionAthleteCheckedIn",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionAthleteCheckedIn",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionAthleteCheckedIn",
       "trigger": "SessionAttendance.status transitioned registered -> checked_in.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -208,7 +208,7 @@
     },
     {
       "name": "SessionAthleteMarkedAbsent",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionAthleteMarkedAbsent",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionAthleteMarkedAbsent",
       "trigger": "SessionAttendance.status transitioned to absent.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -223,7 +223,7 @@
     },
     {
       "name": "SessionAthleteMarkedLate",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionAthleteMarkedLate",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionAthleteMarkedLate",
       "trigger": "SessionAttendance.status transitioned to late (checked in past grace window).",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -238,7 +238,7 @@
     },
     {
       "name": "SessionAthleteRemoved",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionAthleteRemoved",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionAthleteRemoved",
       "trigger": "SessionAttendance soft-deleted.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -253,7 +253,7 @@
     },
     {
       "name": "SessionAttendanceBelowMinimum",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionAttendanceBelowMinimum",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionAttendanceBelowMinimum",
       "trigger": "checked_in_athletes_count < attendance_min after session start. Fires from CancelUnderMinimumSessionsJob. Session transitions to cancelled with trigger='automated_under_minimum'.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -267,7 +267,7 @@
     },
     {
       "name": "SessionRatingReceived",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionRatingReceived",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionRatingReceived",
       "trigger": "An athlete or guardian submitted a rating for the session. Fires per rating.",
       "queue": "low",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -280,7 +280,7 @@
     },
     {
       "name": "SessionRatingAggregated",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionRatingAggregated",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionRatingAggregated",
       "trigger": "AggregateSessionRatingsJob wrote a new session_rating value. Fires at session close (nightly job).",
       "queue": "low",
       "consumers": [
@@ -297,7 +297,7 @@
     },
     {
       "name": "SessionLessonPlanUpdated",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionLessonPlanUpdated",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionLessonPlanUpdated",
       "trigger": "lesson_plan_url changed. Gated by session_lesson_plans entitlement.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -309,7 +309,7 @@
     },
     {
       "name": "SessionMinorSafeguardingIncident",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionMinorSafeguardingIncident",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionMinorSafeguardingIncident",
       "trigger": "safeguarding_incident_flag set true on a session where any registered athlete is a minor. TOP-SEVERITY audit event — regulator-facing. Never opt-out.",
       "queue": "notifications-critical",
       "consumers": [
@@ -330,7 +330,7 @@
     },
     {
       "name": "SessionArchived",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionArchived",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionArchived",
       "trigger": "Session.status transitioned to archived (soft-delete from a terminal state).",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -343,7 +343,7 @@
     },
     {
       "name": "SessionRestored",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionRestored",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionRestored",
       "trigger": "Archived -> completed/cancelled. Only within retention window.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -357,7 +357,7 @@
     },
     {
       "name": "SessionDeleted",
-      "class": "Academorix\\Sports\\Session\\Events\\SessionDeleted",
+      "class": "Stackra\\Sports\\Session\\Events\\SessionDeleted",
       "trigger": "Hard-delete via PurgeCompletedSessionsJob (past 7-year retention + no inbound refs) OR platform-support two-person CLI path.",
       "queue": "notifications-critical",
       "consumers": ["audit::WriteToAuditLog (retention: 7 years — the audit outlives the row)"],

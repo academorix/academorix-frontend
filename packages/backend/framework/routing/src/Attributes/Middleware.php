@@ -11,7 +11,7 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use Spatie\RouteAttributes\Attributes\Middleware as SpatieMiddleware;
@@ -29,8 +29,8 @@ use Spatie\RouteAttributes\Attributes\Middleware as SpatieMiddleware;
  *
  * ## Usage:
  * ```php
- * use Academorix\Routing\Attributes\Middleware;
- * use Academorix\Routing\Attributes\Get;
+ * use Stackra\Routing\Attributes\Middleware;
+ * use Stackra\Routing\Attributes\Get;
  *
  * // Single middleware
  * #[Middleware('auth')]

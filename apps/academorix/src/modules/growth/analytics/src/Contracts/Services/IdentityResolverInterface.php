@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Analytics\Contracts\Services;
+namespace Stackra\Analytics\Contracts\Services;
 
-use Academorix\Analytics\Services\IdentityResolver;
+use Stackra\Analytics\Services\IdentityResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

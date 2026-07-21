@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Observers;
+namespace Stackra\Subscription\Observers;
 
-use Academorix\Subscription\Contracts\Data\SubscriptionInterface;
-use Academorix\Subscription\Enums\PlanTier;
-use Academorix\Subscription\Enums\SubscriptionState;
-use Academorix\Subscription\Events\SubscriptionActivated;
-use Academorix\Subscription\Events\SubscriptionCancelled;
-use Academorix\Subscription\Events\SubscriptionDowngraded;
-use Academorix\Subscription\Events\SubscriptionPastDue;
-use Academorix\Subscription\Events\SubscriptionStarted;
-use Academorix\Subscription\Events\SubscriptionSuspended;
-use Academorix\Subscription\Events\SubscriptionSwitched;
-use Academorix\Subscription\Events\SubscriptionUnpaid;
-use Academorix\Subscription\Events\SubscriptionUpgraded;
-use Academorix\Subscription\Events\TrialEnded;
-use Academorix\Subscription\Models\Plan;
-use Academorix\Subscription\Models\Subscription;
+use Stackra\Subscription\Contracts\Data\SubscriptionInterface;
+use Stackra\Subscription\Enums\PlanTier;
+use Stackra\Subscription\Enums\SubscriptionState;
+use Stackra\Subscription\Events\SubscriptionActivated;
+use Stackra\Subscription\Events\SubscriptionCancelled;
+use Stackra\Subscription\Events\SubscriptionDowngraded;
+use Stackra\Subscription\Events\SubscriptionPastDue;
+use Stackra\Subscription\Events\SubscriptionStarted;
+use Stackra\Subscription\Events\SubscriptionSuspended;
+use Stackra\Subscription\Events\SubscriptionSwitched;
+use Stackra\Subscription\Events\SubscriptionUnpaid;
+use Stackra\Subscription\Events\SubscriptionUpgraded;
+use Stackra\Subscription\Events\TrialEnded;
+use Stackra\Subscription\Models\Plan;
+use Stackra\Subscription\Models\Subscription;
 
 /**
  * Lifecycle side effects on {@see Subscription}.
@@ -173,8 +173,8 @@ final class SubscriptionObserver
             return;
         }
 
-        $fromTier = $fromPlan->{\Academorix\Subscription\Contracts\Data\PlanInterface::ATTR_TIER};
-        $toTier = $toPlan->{\Academorix\Subscription\Contracts\Data\PlanInterface::ATTR_TIER};
+        $fromTier = $fromPlan->{\Stackra\Subscription\Contracts\Data\PlanInterface::ATTR_TIER};
+        $toTier = $toPlan->{\Stackra\Subscription\Contracts\Data\PlanInterface::ATTR_TIER};
 
         $fromRank = $fromTier instanceof PlanTier ? $fromTier->rank() : (PlanTier::tryFrom((string) $fromTier)?->rank() ?? 0);
         $toRank   = $toTier   instanceof PlanTier ? $toTier->rank()   : (PlanTier::tryFrom((string) $toTier)?->rank() ?? 0);

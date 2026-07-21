@@ -4,18 +4,18 @@
  * @file packages/foundation/src/Providers/FoundationServiceProvider.php
  *
  * @description
- * Package entry point for `academorix/foundation`. Owns the
+ * Package entry point for `stackra/foundation`. Owns the
  * shared-kernel wiring every other package in the monorepo depends
  * on:
  *
  *   - The `correlation-id` middleware alias — registered by the
  *     Routing package's `#[AsMiddleware]` discovery pass, driven
  *     by the attribute on
- *     {@see \Academorix\Foundation\Middleware\AssignCorrelationId}.
+ *     {@see \Stackra\Foundation\Middleware\AssignCorrelationId}.
  *     Nothing to wire imperatively here.
  *   - The default {@see Clock} implementation
  *     ({@see SystemClock}) so packages that depend on the `Clock`
- *     contract can be swapped out for {@see \Academorix\Foundation\Support\FrozenClock}
+ *     contract can be swapped out for {@see \Stackra\Foundation\Support\FrozenClock}
  *     under test without a bespoke rebind.
  *   - A `RequestHandled` listener that clears the {@see CorrelationId}
  *     static accessor between requests so long-lived workers
@@ -37,7 +37,7 @@
  * some after). Register from `bootstrap/app.php`:
  *
  *     $middleware->api(prepend: [
- *         \Academorix\Foundation\Middleware\AssignCorrelationId::class,
+ *         \Stackra\Foundation\Middleware\AssignCorrelationId::class,
  *     ]);
  *
  * ## Publish tags
@@ -52,13 +52,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Providers;
+namespace Stackra\Foundation\Providers;
 
-use Academorix\Foundation\Contracts\Clock;
-use Academorix\Foundation\Contracts\DiscoversAttributes;
-use Academorix\Foundation\Discovery\AttributeDiscovery;
-use Academorix\Foundation\Support\CorrelationId;
-use Academorix\Foundation\Support\SystemClock;
+use Stackra\Foundation\Contracts\Clock;
+use Stackra\Foundation\Contracts\DiscoversAttributes;
+use Stackra\Foundation\Discovery\AttributeDiscovery;
+use Stackra\Foundation\Support\CorrelationId;
+use Stackra\Foundation\Support\SystemClock;
 use Illuminate\Foundation\Http\Events\RequestHandled;
 
 final class FoundationServiceProvider extends AbstractModuleServiceProvider
@@ -67,7 +67,7 @@ final class FoundationServiceProvider extends AbstractModuleServiceProvider
      * Container singletons contributed by the foundation package.
      *
      *   - {@see Clock} — default is {@see SystemClock}. Tests
-     *     rebind to {@see \Academorix\Foundation\Support\FrozenClock}.
+     *     rebind to {@see \Stackra\Foundation\Support\FrozenClock}.
      *   - {@see DiscoversAttributes} — the compile-time
      *     attribute-discovery contract. Every consumer (routing,
      *     events, ai, crud, scheduling) resolves this to look up
@@ -87,7 +87,7 @@ final class FoundationServiceProvider extends AbstractModuleServiceProvider
      *
      * The `correlation-id` alias is registered by the Routing
      * package's `#[AsMiddleware]` discovery pass — see
-     * {@see \Academorix\Foundation\Middleware\AssignCorrelationId}.
+     * {@see \Stackra\Foundation\Middleware\AssignCorrelationId}.
      * Host apps prepend it to the api middleware group in
      * `bootstrap/app.php` where placement (before CORS, after
      * auth) is app-specific.

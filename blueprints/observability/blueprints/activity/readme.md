@@ -158,7 +158,7 @@ columns living gap register.
 
 ### Platform-admin host
 
-Read-only cross-tenant support-tool endpoints for Academorix ops. No writes, no
+Read-only cross-tenant support-tool endpoints for Stackra ops. No writes, no
 policy CRUD.
 
 ## 8. Consumer contract — how domain modules opt in
@@ -166,7 +166,7 @@ policy CRUD.
 A downstream module wanting user-facing activity capture on its aggregate:
 
 ```php
-use Academorix\Observability\Activity\Concerns\LogsActivity;
+use Stackra\Observability\Activity\Concerns\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
 final class Booking extends Model

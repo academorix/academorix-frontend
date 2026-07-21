@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AthleteGuardian\Contracts\Services;
+namespace Stackra\AthleteGuardian\Contracts\Services;
 
-use Academorix\AthleteGuardian\Models\AthleteGuardian;
-use Academorix\AthleteGuardian\Services\GuardianVerificationGate;
+use Stackra\AthleteGuardian\Models\AthleteGuardian;
+use Stackra\AthleteGuardian\Services\GuardianVerificationGate;
 use Illuminate\Container\Attributes\Bind;
 
 /**

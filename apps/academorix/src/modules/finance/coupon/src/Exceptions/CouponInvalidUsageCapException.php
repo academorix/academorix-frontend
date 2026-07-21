@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Exceptions;
+namespace Stackra\Coupon\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `COUPON_INVALID_USAGE_CAP` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CouponInvalidUsageCapException extends AcademorixException
+final class CouponInvalidUsageCapException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

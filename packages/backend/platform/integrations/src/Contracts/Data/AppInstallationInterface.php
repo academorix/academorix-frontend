@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Contracts\Data;
+namespace Stackra\Integrations\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Integrations\Models\AppInstallation;
+use Stackra\Integrations\Models\AppInstallation;
 
 /**
  * Table shape for the `app_installations` table.

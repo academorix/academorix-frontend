@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/retention",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/retention",
   "tier": "saas",
   "surfaces": ["core"],
   "kind": "feature",
@@ -14,12 +14,12 @@
     "Framework-tier, no domain knowledge, no per-app coupling"
   ],
   "when_to_use": "A model has a retention cutoff (e.g. delete AI runs older than 180 days) and needs a scheduled sweep.",
-  "when_not_to_use": "For DSAR/consent orchestration or legal-hold-aware policies, use academorix/compliance which extends this substrate.",
+  "when_not_to_use": "For DSAR/consent orchestration or legal-hold-aware policies, use stackra/compliance which extends this substrate.",
   "peer_deps": [
-    "academorix/console",
-    "academorix/foundation",
-    "academorix/scheduling",
-    "academorix/service-provider"
+    "stackra/console",
+    "stackra/foundation",
+    "stackra/scheduling",
+    "stackra/service-provider"
   ],
   "backend_pair": null,
   "size_gzip_kb": {},

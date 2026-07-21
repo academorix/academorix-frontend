@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "refund",
   "alias": "refund",
-  "namespace": "Academorix\\Finance\\Refund",
+  "namespace": "Stackra\\Finance\\Refund",
   "description": "Refund orchestration. Answers 'has this payment been reversed, in full or in part?'. Ships TWO tables: `refunds` (root record — one per refund initiation; references payment + invoice + credit_note; carries reason + amount + provider result), `refund_lines` (per-invoice-line partial refunds — supports 'refund only the addon fee, not the membership'). Refunds are IMMUTABLE after processing — reversal via cancel path only when status=pending. Every refund creates: (1) offsetting Transaction via TransactionRecorder (debit refunds_owed, credit cash), (2) CreditNote via CreditNoteIssuer (reversal invoice), (3) provider-side refund call via PaymentProviderManager (returns provider reference + fee_reversal), (4) marketing::RefundIssued event (negative-value conversion — ad networks subtract from ROAS), (5) referrals::ClawbackReward when the original invoice had a referral reward materialized. Refund reasons: customer_requested / product_not_received / product_unacceptable / duplicate_charge / fraud_confirmed / subscription_cancelled / admin_correction / chargeback_prevention. Approval workflow — refunds > $X or issued > 30 days after payment require admin approval (workflow module integration). Full-refund vs partial-refund vs prorated-refund (for cancelled memberships — refund_amount computed from unused period + carried-over passes).",
   "keywords": [
     "refund",
@@ -54,7 +54,7 @@
     "wave-4"
   ],
   "priority": 66,
-  "providers": ["Academorix\\Finance\\Refund\\Providers\\RefundServiceProvider"],
+  "providers": ["Stackra\\Finance\\Refund\\Providers\\RefundServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

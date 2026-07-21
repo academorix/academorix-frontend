@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Event\Repositories;
+namespace Stackra\Event\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Event\Contracts\Data\RsvpInterface;
-use Academorix\Event\Contracts\Repositories\RsvpRepositoryInterface;
-use Academorix\Event\Models\Rsvp;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Event\Contracts\Data\RsvpInterface;
+use Stackra\Event\Contracts\Repositories\RsvpRepositoryInterface;
+use Stackra\Event\Models\Rsvp;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Event\Models\Rsvp}.
+ * Attribute-first Eloquent repository for {@see Stackra\Event\Models\Rsvp}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(RsvpInterface::class)]` which resolves to
  * `Rsvp` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Event\Models\Rsvp>
+ * @extends Repository<\Stackra\Event\Models\Rsvp>
  *
  * @category Event
  *

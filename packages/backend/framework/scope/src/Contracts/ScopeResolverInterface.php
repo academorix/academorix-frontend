@@ -13,13 +13,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Contracts;
+namespace Stackra\Scope\Contracts;
 
-use Academorix\Scope\Data\ScopeContextData;
-use Academorix\Scope\Resolvers\HeaderScopeResolver;
-use Academorix\Scope\Resolvers\JwtScopeResolver;
-use Academorix\Scope\Resolvers\RootFallbackResolver;
-use Academorix\Scope\Resolvers\TenantContextResolver;
+use Stackra\Scope\Data\ScopeContextData;
+use Stackra\Scope\Resolvers\HeaderScopeResolver;
+use Stackra\Scope\Resolvers\JwtScopeResolver;
+use Stackra\Scope\Resolvers\RootFallbackResolver;
+use Stackra\Scope\Resolvers\TenantContextResolver;
 use Illuminate\Http\Request;
 
 /**

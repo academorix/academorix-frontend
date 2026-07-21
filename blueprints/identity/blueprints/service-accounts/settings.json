@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/service-accounts/settings",
+  "id": "stackra://modules/service-accounts/settings",
   "$version": 1,
   "title": "service-accounts \u2014 settings",
   "description": "service-accounts exposes NO tenant-configurable settings. Every knob (rotation TTL, warning window, dormant threshold, TTL bounds, rate-limit thresholds) is a platform-wide policy owned by `service-accounts.php` config. Tenants cannot loosen any of these settings for their own SAs \u2014 the compliance floors (mandatory rotation, mandatory audit) apply uniformly. This file registers the `service-accounts` scope-consumer namespace so future keys land under a consistent prefix.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "namespace_registration": {
     "namespace": "service-accounts",
-    "consumer": "Academorix\\ServiceAccount\\Providers\\ServiceAccountServiceProvider",
+    "consumer": "Stackra\\ServiceAccount\\Providers\\ServiceAccountServiceProvider",
     "defaultValueFactory": "Delegates to config('service-accounts.*') when the tenant hasn't overridden. Placeholder \u2014 no tenant-visible settings are exposed today.",
     "validator": "Enforces the mandatory-rotation floor (a tenant cannot extend expires_at beyond `service-accounts.rotation.default_secret_ttl_days` \u00d7 2 = 180d), the audit-required floor (audit middleware cannot be disabled), and the entitlement-gated ceilings (extended TTL requires enterprise entitlement)."
   },

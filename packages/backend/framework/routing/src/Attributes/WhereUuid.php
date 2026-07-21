@@ -11,7 +11,7 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use Spatie\RouteAttributes\Attributes\WhereUuid as SpatieWhereUuid;
@@ -29,8 +29,8 @@ use Spatie\RouteAttributes\Attributes\WhereUuid as SpatieWhereUuid;
  *
  * ## Usage:
  * ```php
- * use Academorix\Routing\Attributes\WhereUuid;
- * use Academorix\Routing\Attributes\Get;
+ * use Stackra\Routing\Attributes\WhereUuid;
+ * use Stackra\Routing\Attributes\Get;
  *
  * class UserController
  * {

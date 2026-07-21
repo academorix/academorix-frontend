@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/coupon/caches",
+  "id": "stackra://modules/coupon/caches",
   "$version": 1,
   "title": "coupon — cache keys + tags",
   "driver": "redis",

@@ -11,15 +11,15 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing;
+namespace Stackra\Routing;
 
-use Academorix\Container\Attributes\Overrides;
-use Academorix\Foundation\Contracts\DiscoversAttributes;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\AsController;
+use Stackra\Container\Attributes\Overrides;
+use Stackra\Foundation\Contracts\DiscoversAttributes;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\AsController;
 use Illuminate\Support\Collection;
 use Override;
-use Academorix\Support\Reflection;
+use Stackra\Support\Reflection;
 use ReflectionClass;
 use Spatie\RouteAttributes\RouteRegistrar as SpatieRouteRegistrar;
 
@@ -31,7 +31,7 @@ use Spatie\RouteAttributes\RouteRegistrar as SpatieRouteRegistrar;
  *
  * ## Automatic Binding (Pattern B — vendor override):
  * This class carries `#[Overrides(SpatieRouteRegistrar::class)]` (from
- * `academorix/container`) so the container resolves any injection of
+ * `stackra/container`) so the container resolves any injection of
  * `SpatieRouteRegistrar` to this subclass instead — Spatie's own service
  * provider ends up using our implementation. Pattern B is used here
  * because Spatie's class is a vendor class we cannot annotate with
@@ -179,7 +179,7 @@ class RouteRegistrar extends SpatieRouteRegistrar
      * Collect route groups by asking the shared attribute-discovery
      * service for every class carrying `#[AsController]`.
      *
-     * Uses {@see \Academorix\Foundation\Contracts\DiscoversAttributes}
+     * Uses {@see \Stackra\Foundation\Contracts\DiscoversAttributes}
      * — the same contract every other package in the monorepo
      * consumes (events, ai, crud). Production binding delegates to
      * `olvlvl/composer-attribute-collector`; tests bind a fake with

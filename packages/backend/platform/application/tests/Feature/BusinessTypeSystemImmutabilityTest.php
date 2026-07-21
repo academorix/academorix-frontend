@@ -12,9 +12,9 @@
 
 declare(strict_types=1);
 
-use Academorix\Application\Enums\BusinessTypeEnum;
-use Academorix\Application\Exceptions\SystemRowImmutableException;
-use Academorix\Application\Models\BusinessType;
+use Stackra\Application\Enums\BusinessTypeEnum;
+use Stackra\Application\Exceptions\SystemRowImmutableException;
+use Stackra\Application\Models\BusinessType;
 
 it('seeder produces system rows via allowSystemMutation', function (): void {
     BusinessType::allowSystemMutation(function (): void {

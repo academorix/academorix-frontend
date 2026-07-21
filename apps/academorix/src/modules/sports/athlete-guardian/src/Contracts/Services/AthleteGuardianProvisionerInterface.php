@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AthleteGuardian\Contracts\Services;
+namespace Stackra\AthleteGuardian\Contracts\Services;
 
-use Academorix\AthleteGuardian\Models\AthleteGuardian;
-use Academorix\AthleteGuardian\Services\AthleteGuardianProvisioner;
+use Stackra\AthleteGuardian\Models\AthleteGuardian;
+use Stackra\AthleteGuardian\Services\AthleteGuardianProvisioner;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -40,8 +40,8 @@ interface AthleteGuardianProvisionerInterface
      *                                             validated request DTO.
      * @return AthleteGuardian  The persisted row.
      *
-     * @throws \Academorix\AthleteGuardian\Exceptions\GuardianDuplicateException
-     * @throws \Academorix\AthleteGuardian\Exceptions\GuardianAthleteAlreadyHasPrimaryException
+     * @throws \Stackra\AthleteGuardian\Exceptions\GuardianDuplicateException
+     * @throws \Stackra\AthleteGuardian\Exceptions\GuardianAthleteAlreadyHasPrimaryException
      */
     public function provision(array $attributes): AthleteGuardian;
 }

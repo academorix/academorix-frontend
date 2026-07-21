@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Database\Factories;
+namespace Stackra\Facility\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Facility\Contracts\Data\ResourceBookingInterface;
-use Academorix\Facility\Models\ResourceBooking;
+use Stackra\Facility\Contracts\Data\ResourceBookingInterface;
+use Stackra\Facility\Models\ResourceBooking;
 
 /**
- * Factory for {@see \Academorix\Facility\Models\ResourceBooking}.
+ * Factory for {@see \Stackra\Facility\Models\ResourceBooking}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Facility\Models\ResourceBooking>
+ * @extends Factory<\Stackra\Facility\Models\ResourceBooking>
  *
  * @category Facility
  *

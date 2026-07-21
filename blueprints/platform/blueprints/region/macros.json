@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/region/macros",
+  "id": "stackra://modules/region/macros",
   "$version": 1,
   "title": "region — published macros",
   "description": "No Blueprint schema macros. The region module does NOT publish schema-level composition helpers — Branch adds region_id via its own explicit column declaration (Wave 2b). Two runtime macros are published on `Illuminate\\Http\\Request` for `active-region`-flavoured helpers on inbound requests.",
@@ -18,6 +18,6 @@
       "usage_example": "$regionId = $request->activeRegionId();"
     }
   ],
-  "registered_by": "Academorix\\Region\\Providers\\RegionServiceProvider::boot()",
+  "registered_by": "Stackra\\Region\\Providers\\RegionServiceProvider::boot()",
   "registration_order": "Registered during the standard boot phase. Depends on tenancy having booted first so the tenant scope is already registered when the macros run — tenancy priority (10) < region priority (40) so ordering is safe by construction. Also depends on the `region.resolve_active` middleware having run in the request pipeline before the macros are called; the middleware populates the RequestContext slot the macros read from."
 }

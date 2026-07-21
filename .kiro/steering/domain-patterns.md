@@ -14,10 +14,10 @@ This file is the "how" for each layer.
 
 - One invokable controller per use case (`__invoke`) is preferred. Resource
   controllers acceptable when the actions are cohesive CRUD on a single entity.
-- Mark the class with `#[AsController]` from `Academorix\Routing\Attributes` —
+- Mark the class with `#[AsController]` from `Stackra\Routing\Attributes` —
   the Routing package's `RouteRegistrar` discovers it at boot. NO route file
   needed.
-- Extend `Academorix\Routing\BaseController` — it brings the traits
+- Extend `Stackra\Routing\BaseController` — it brings the traits
   (`InteractsWithAuth`, `InteractsWithRequest`, `InteractsWithResponse`,
   `InteractsWithPagination`, `InteractsWithResources`,
   `InteractsWithBulkOperations`, `InteractsWithDataTransformation`,
@@ -40,13 +40,13 @@ This file is the "how" for each layer.
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Controllers;
+namespace Stackra\Auth\Controllers;
 
-use Academorix\Auth\Data\{AuthTokenData, LoginData};
-use Academorix\Auth\Enums\AuthPermission;
-use Academorix\Auth\Services\AuthenticationService;
-use Academorix\Routing\Attributes\{AsController, Middleware, Post, Prefix};
-use Academorix\Routing\BaseController;
+use Stackra\Auth\Data\{AuthTokenData, LoginData};
+use Stackra\Auth\Enums\AuthPermission;
+use Stackra\Auth\Services\AuthenticationService;
+use Stackra\Routing\Attributes\{AsController, Middleware, Post, Prefix};
+use Stackra\Routing\BaseController;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -94,7 +94,7 @@ final class LoginController extends BaseController
   `request()`, no direct `Auth::` / `Session::` calls.
 - Accept input `Data` (or scalars / value objects); return domain results
   (models, value objects, or output `Data`).
-- Throw domain / Academorix exceptions on failure paths. Never return
+- Throw domain / Stackra exceptions on failure paths. Never return
   `['success' => false, 'error' => '...']` shapes.
 - Wrap multi-write operations in `DB::transaction()`.
 - `final` — services are leaves in the dependency graph.
@@ -116,8 +116,8 @@ final class AuthenticationService implements AuthenticationServiceInterface
     /**
      * Verify credentials and issue an access token.
      *
-     * @throws \Academorix\Exceptions\Auth\AuthenticationException
-     * @throws \Academorix\Exceptions\Domain\TenantException
+     * @throws \Stackra\Exceptions\Auth\AuthenticationException
+     * @throws \Stackra\Exceptions\Domain\TenantException
      */
     public function login(LoginData $data): IssuedToken
     {
@@ -179,9 +179,9 @@ implementation, Magento 2 / Laravel convention:
 
 declare(strict_types=1);
 
-namespace Academorix\User\Contracts;
+namespace Stackra\User\Contracts;
 
-use Academorix\User\Models\User;
+use Stackra\User\Models\User;
 
 /**
  * Persistence boundary for {@see User} records.
@@ -215,10 +215,10 @@ interface UserRepositoryInterface
 
 declare(strict_types=1);
 
-namespace Academorix\User\Repositories;
+namespace Stackra\User\Repositories;
 
-use Academorix\User\Contracts\UserRepositoryInterface;
-use Academorix\User\Models\User;
+use Stackra\User\Contracts\UserRepositoryInterface;
+use Stackra\User\Models\User;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -452,7 +452,7 @@ Rules:
   action.
 - **Notifications / Mailables** — `implements ShouldQueue`, always queued.
   Respect `HasLocalePreference` on the notifiable so locale-aware copy works.
-- **Exceptions** — extend `\Academorix\Exceptions\AcademorixException`. Every
+- **Exceptions** — extend `\Stackra\Exceptions\StackraException`. Every
   subclass declares `public const CODE` + `public const TRANSLATION_KEY`
   - severity / category / status defaults. See
     `packages/exceptions/RECOMMENDATIONS.md`.
@@ -465,7 +465,7 @@ Rules:
 - **Feature tests** are split by use case, one class per file: `LoginTest`,
   `RegisterTest`, `LogoutTest`, `TwoFactorLoginTest`, `AccountLockoutTest` — NOT
   a single `AuthTest`.
-- Namespace `Academorix\<Name>\Tests\Feature`; extend `Tests\TestCase`; use
+- Namespace `Stackra\<Name>\Tests\Feature`; extend `Tests\TestCase`; use
   `RefreshDatabase` (project convention).
 - Test method names describe behaviour:
   `it('locks the account after five failed attempts')`.
@@ -494,5 +494,5 @@ Rules:
 | Direct `Cache::` / `Log::` / `DB::` facade calls in a service | Inject the resolved dependency via `#[Cache]` / `#[Log]` / `#[DB]` container attribute                                                         |
 | `event(new SomethingCreated(...))` inside a `DB::transaction` | `implements ShouldDispatchAfterCommit` on the event                                                                                            |
 | Registering a route in a `routes/*.php` file (there are none) | Controller declares its route via `#[AsController]` + `#[Prefix]` + `#[Get]` / `#[Post]` / ... — Routing package auto-discovers it             |
-| Extending `Illuminate\Routing\Controller` directly            | Extend `Academorix\Routing\BaseController` — brings the `InteractsWith*` traits                                                                |
+| Extending `Illuminate\Routing\Controller` directly            | Extend `Stackra\Routing\BaseController` — brings the `InteractsWith*` traits                                                                |
 | Manually building an OpenAPI spec file                        | Fill in `summary` / `tags` / `responseSchema` / `responseCode` on the HTTP-verb attribute; Scramble + the Routing package emit OpenAPI at boot |

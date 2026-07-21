@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Actions\Tenant;
+namespace Stackra\Newsletter\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Newsletter\Contracts\Services\NewsletterServiceInterface;
-use Academorix\Newsletter\Data\NewsletterCampaignData;
-use Academorix\Newsletter\Data\Requests\CancelCampaignRequestData;
-use Academorix\Newsletter\Enums\NewsletterPermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Newsletter\Contracts\Services\NewsletterServiceInterface;
+use Stackra\Newsletter\Data\NewsletterCampaignData;
+use Stackra\Newsletter\Data\Requests\CancelCampaignRequestData;
+use Stackra\Newsletter\Enums\NewsletterPermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `POST /api/v1/newsletters/{newsletter}/campaigns/{campaign}/cancel`

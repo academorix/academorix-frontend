@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "localization",
   "alias": "localization",
-  "namespace": "Academorix\\Localization",
+  "namespace": "Stackra\\Localization",
   "description": "Multilingual substrate on top of Laravel's built-in localization. Owns four entities — PlatformLanguage (platform catalogue of BCP 47 locale tags with script + platform state; REFERENCES `geography::Language` for ISO-639 base metadata + optionally `geography::Country` for regional variants), TenantLocale (per-tenant enabled locales with default + fallback), Translation (persistent cache of resolved key→value bindings per tenant + locale, indexed for fast lookup), TranslationJob (async bulk-translation audit). Resolves the caller's active locale from user preference → tenant setting → Accept-Language header → subdomain → app default. Publishes override helpers (`t()`, `__()`, `trans()`, `trans_choice()`) that pass through to Laravel's translator but consult our DB cache first + optionally auto-translate via configured driver (OpenAI, Google Cloud Translation, DeepL, AWS Translate, Azure Translator). Ships #[Translatable] attribute for Eloquent property translation. RTL-aware. Wave 5 refactor: `Language` renamed → `PlatformLanguage`; table renamed `languages` → `platform_languages` to end the collision with the vendor-owned `languages` table (`nnjeim/world`, geography module); ISO-639 + ISO-3166 fields dropped and replaced with FKs to geography.",
   "keywords": [
     "localization",
@@ -19,7 +19,7 @@
     "azure-translator"
   ],
   "priority": 66,
-  "providers": ["Academorix\\Localization\\Providers\\LocalizationServiceProvider"],
+  "providers": ["Stackra\\Localization\\Providers\\LocalizationServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "activity", "entitlements", "geography"],
   "extendedBy": [],

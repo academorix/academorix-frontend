@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Services;
+namespace Stackra\Forms\Services;
 
-use Academorix\Forms\Contracts\Data\FormVersionInterface;
-use Academorix\Forms\Contracts\Services\FieldTypeRegistryInterface;
-use Academorix\Forms\Contracts\Services\FormValidatorInterface;
-use Academorix\Forms\Data\FieldTypeDefinitionData;
-use Academorix\Forms\Data\FormValidationResultData;
-use Academorix\Forms\Models\FormVersion;
+use Stackra\Forms\Contracts\Data\FormVersionInterface;
+use Stackra\Forms\Contracts\Services\FieldTypeRegistryInterface;
+use Stackra\Forms\Contracts\Services\FormValidatorInterface;
+use Stackra\Forms\Data\FieldTypeDefinitionData;
+use Stackra\Forms\Data\FormValidationResultData;
+use Stackra\Forms\Models\FormVersion;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Contracts\Validation\Factory as ValidatorFactory;

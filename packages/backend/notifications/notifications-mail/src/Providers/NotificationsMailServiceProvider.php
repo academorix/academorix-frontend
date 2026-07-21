@@ -18,15 +18,15 @@
  *   - Actions: `#[AsAction]` + verb attribute + `#[Middleware]` +
  *     `#[RequirePermission]`.
  *   - Middleware: `#[AsMiddleware]` on
- *     {@see \Academorix\Notifications\Mail\Middleware\VerifyMailWebhookMiddleware}.
+ *     {@see \Stackra\Notifications\Mail\Middleware\VerifyMailWebhookMiddleware}.
  *   - Console commands: `#[AsCommand]` extending `BaseCommand`.
  *   - Seeder: `#[AsSeeder(priority: 47)]` composes
- *     {@see \Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
+ *     {@see \Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
  *   - Events: `#[AsEvent]` on every event class.
  *   - Observers: `#[ObservedBy]` on the model.
  *   - Policies: `#[UsePolicy]` on the model.
  *   - Channel driver: `#[AsNotificationChannel]` on
- *     {@see \Academorix\Notifications\Mail\Channels\MailChannel}.
+ *     {@see \Stackra\Notifications\Mail\Channels\MailChannel}.
  *     The parent notifications module's channel registry is
  *     expected to consume this attribute via its own
  *     `#[HydratesFrom]` binding when landed. Until then, the
@@ -36,11 +36,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Providers;
+namespace Stackra\Notifications\Mail\Providers;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * notifications-mail module service provider.

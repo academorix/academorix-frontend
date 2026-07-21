@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Services;
+namespace Stackra\Entitlements\Services;
 
-use Academorix\Entitlements\Contracts\Data\EntitlementInterface;
-use Academorix\Entitlements\Contracts\Services\EnforcerInterface;
-use Academorix\Entitlements\Contracts\Services\EntitlementResolverInterface;
-use Academorix\Entitlements\Contracts\Services\UsageRecorderInterface;
-use Academorix\Entitlements\Events\EntitlementExceeded;
+use Stackra\Entitlements\Contracts\Data\EntitlementInterface;
+use Stackra\Entitlements\Contracts\Services\EnforcerInterface;
+use Stackra\Entitlements\Contracts\Services\EntitlementResolverInterface;
+use Stackra\Entitlements\Contracts\Services\UsageRecorderInterface;
+use Stackra\Entitlements\Events\EntitlementExceeded;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\Scoped;
 

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/storage/subprocessors",
+  "id": "stackra://modules/storage/subprocessors",
   "$version": 1,
   "title": "storage \u2014 subprocessors",
   "description": "Third-party vendors that receive or process file data on our behalf. Self-hosted deployments of any of these components move them out of the subprocessor list (they become transport, not processing) but require the deployment-specific compliance record to be updated.",
@@ -68,7 +68,7 @@
       "data_processed": [
         "file bytes (scanned in-memory or via streaming; not persisted by ClamAV itself)"
       ],
-      "location": "Same infrastructure as the Academorix workers",
+      "location": "Same infrastructure as the Stackra workers",
       "legal_basis": "NOT A SUBPROCESSOR when self-hosted \u2014 we control it entirely.",
       "when_engaged": "config('storage.antivirus.driver') = 'clamav'. Default in dev + production self-hosted deployments."
     },

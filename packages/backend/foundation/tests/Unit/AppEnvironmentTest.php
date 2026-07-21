@@ -5,7 +5,7 @@
  *
  * @description
  * Locks in the safe-defaults behaviour of the
- * {@see \Academorix\Foundation\Enums\AppEnvironment} enum.
+ * {@see \Stackra\Foundation\Enums\AppEnvironment} enum.
  *
  * ## Why this matters
  *
@@ -26,7 +26,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Foundation\Enums\AppEnvironment;
+use Stackra\Foundation\Enums\AppEnvironment;
 use Orchestra\Testbench\TestCase;
 
 uses(TestCase::class);

@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Services;
+namespace Stackra\Referrals\Services;
 
-use Academorix\Referrals\Contracts\Services\FraudDetectorInterface;
+use Stackra\Referrals\Contracts\Services\FraudDetectorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Referrals\Contracts\Repositories\ReferralCodeRepositoryInterface;
+use Stackra\Referrals\Contracts\Repositories\ReferralCodeRepositoryInterface;
 
 /**
  * Concrete service — FraudDetector.

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Exceptions;
+namespace Stackra\Notifications\Mail\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised by
- * {@see \Academorix\Notifications\Mail\Middleware\VerifyMailWebhookMiddleware}
+ * {@see \Stackra\Notifications\Mail\Middleware\VerifyMailWebhookMiddleware}
  * when a provider webhook fails signature verification.
  *
  * Rejected BEFORE the action runs. The exception renders as HTTP
@@ -25,7 +25,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MailWebhookSignatureFailedException extends AcademorixException
+final class MailWebhookSignatureFailedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

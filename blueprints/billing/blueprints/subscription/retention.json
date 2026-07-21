@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/subscription/retention",
+  "id": "stackra://modules/subscription/retention",
   "$version": 1,
   "title": "subscription \u2014 retention windows",
   "description": "SubscriptionEvent retained 7y for SOX 404 revenue recognition. Plan + Subscription rows soft-deleted; hard delete only on TenantErased.",

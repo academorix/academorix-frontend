@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/coupon/settings",
+  "id": "stackra://modules/coupon/settings",
   "$version": 1,
   "title": "coupon — settings",
   "description": "Tenant-facing preferences (per-tenant coupon defaults + rate-limit thresholds + retention window override). No user-level preferences — coupons are admin-authored artifacts, never a user preference surface.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "coupon",
-      "class": "Academorix\\Finance\\Coupon\\Settings\\CouponSettings",
+      "class": "Stackra\\Finance\\Coupon\\Settings\\CouponSettings",
       "label": "Coupons",
       "description": "Tenant-wide defaults for coupon issuance + validation.",
       "icon": "ticket",

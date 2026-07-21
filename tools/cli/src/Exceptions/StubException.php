@@ -2,15 +2,15 @@
 
 /**
  * @file StubException.php
- * @module Academorix\Cli\Exceptions
+ * @module Stackra\Cli\Exceptions
  * @description Stub-specific errors. Thrown by
- *   {@see \Academorix\Cli\Stubs\StubRenderer} and
- *   {@see \Academorix\Cli\Stubs\StubRegistry}.
+ *   {@see \Stackra\Cli\Stubs\StubRenderer} and
+ *   {@see \Stackra\Cli\Stubs\StubRegistry}.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Exceptions;
+namespace Stackra\Cli\Exceptions;
 
 /**
  * Named factories for every stub error the CLI raises.

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tasks/schemas/task-comment",
+  "id": "stackra://modules/tasks/schemas/task-comment",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "TaskComment",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "tcm_",
     "incrementing": false,
-    "model": "Academorix\\Workflow\\Tasks\\Models\\TaskComment",
-    "interface": "Academorix\\Workflow\\Tasks\\Contracts\\Data\\TaskCommentInterface",
-    "implements": ["Academorix\\Workflow\\Tasks\\Contracts\\Data\\TaskCommentInterface"],
+    "model": "Stackra\\Workflow\\Tasks\\Models\\TaskComment",
+    "interface": "Stackra\\Workflow\\Tasks\\Contracts\\Data\\TaskCommentInterface",
+    "implements": ["Stackra\\Workflow\\Tasks\\Contracts\\Data\\TaskCommentInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

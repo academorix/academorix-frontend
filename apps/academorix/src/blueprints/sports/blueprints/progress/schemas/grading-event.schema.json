@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/progress/schemas/grading-event",
+  "id": "stackra://modules/progress/schemas/grading-event",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "GradingEvent",

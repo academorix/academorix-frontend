@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Wallet\Database\Factories;
+namespace Stackra\Wallet\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Wallet\Contracts\Data\WalletInterface;
-use Academorix\Wallet\Models\Wallet;
+use Stackra\Wallet\Contracts\Data\WalletInterface;
+use Stackra\Wallet\Models\Wallet;
 
 /**
- * Factory for {@see \Academorix\Wallet\Models\Wallet}.
+ * Factory for {@see \Stackra\Wallet\Models\Wallet}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Wallet\Models\Wallet>
+ * @extends Factory<\Stackra\Wallet\Models\Wallet>
  *
  * @category Wallet
  *

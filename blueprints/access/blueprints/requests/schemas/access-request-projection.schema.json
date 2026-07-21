@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/access/requests/schemas/access-request-projection",
+  "id": "stackra://modules/access/requests/schemas/access-request-projection",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "AccessRequest (DTO projection)",
@@ -15,9 +15,9 @@
       "access/grants.access_grants",
       "user.users"
     ],
-    "presenter": "Academorix\\AccessRequest\\Presenters\\AccessRequestPresenter",
-    "dtoClass": "Academorix\\AccessRequest\\Data\\AccessRequestData",
-    "dtoInterface": "Academorix\\AccessRequest\\Contracts\\Data\\AccessRequestInterface",
+    "presenter": "Stackra\\AccessRequest\\Presenters\\AccessRequestPresenter",
+    "dtoClass": "Stackra\\AccessRequest\\Data\\AccessRequestData",
+    "dtoInterface": "Stackra\\AccessRequest\\Contracts\\Data\\AccessRequestInterface",
     "note": "The `id` of an access request is ALWAYS the underlying approval_instance.id. Consumers who address the request by id are addressing the approval instance."
   },
   "required": [

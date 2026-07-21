@@ -13,11 +13,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformApplicationSdk\Requests\BusinessTypes;
+namespace Stackra\PlatformApplicationSdk\Requests\BusinessTypes;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\PlatformApplicationSdk\Data\BusinessTypeData;
-use Academorix\PlatformApplicationSdk\Payloads\BusinessTypes\UpdateBusinessTypePayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\PlatformApplicationSdk\Data\BusinessTypeData;
+use Stackra\PlatformApplicationSdk\Payloads\BusinessTypes\UpdateBusinessTypePayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

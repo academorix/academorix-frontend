@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/storage/observers",
+  "id": "stackra://modules/storage/observers",
   "$version": 1,
   "title": "storage \u2014 Eloquent observers",
   "description": "Three observers hooking the three primary entities. FileObserver handles the upload lifecycle + refcount management. FileVariantObserver keeps tenant_id denormalised in sync. ChunkedUploadObserver enforces the state machine + reservation lifecycle.",
   "observers": [
     {
       "model": "storage::File",
-      "class": "Academorix\\Storage\\Observers\\FileObserver",
+      "class": "Stackra\\Storage\\Observers\\FileObserver",
       "hooks": {
         "creating": "Stamp tenant_id from RequestContext when absent. Generate ULID with prefix `fil_`. Compute + store sha256 by streaming the byte payload. Determine + store `disk` + `path` per the ContentAddressableStore routing. Increment reference_count on the physical blob if already present.",
         "created": "Fire FileUploading (afterCommit=false variant) so same-transaction subs land atomically. Queue ScanFileForVirusesJob + GenerateFileVariantsJob (afterCommit).",
@@ -16,7 +16,7 @@
     },
     {
       "model": "storage::FileVariant",
-      "class": "Academorix\\Storage\\Observers\\FileVariantObserver",
+      "class": "Stackra\\Storage\\Observers\\FileVariantObserver",
       "hooks": {
         "creating": "Stamp tenant_id from parent File. Generate ULID with prefix `fvr_`.",
         "created": "Append variant_key to parent File.generated_variant_keys. Fire FileVariantGenerated. Check if every variant in the file's kind recipe is present; if yes, fire FileVariantsCompleted.",
@@ -25,7 +25,7 @@
     },
     {
       "model": "storage::ChunkedUpload",
-      "class": "Academorix\\Storage\\Observers\\ChunkedUploadObserver",
+      "class": "Stackra\\Storage\\Observers\\ChunkedUploadObserver",
       "hooks": {
         "creating": "Stamp tenant_id + owner_id from RequestContext. Generate ULID with prefix `cup_`. Reserve total_size_bytes against `storage.bytes.consumed` entitlement (fails-fast on overquota).",
         "created": "Fire ChunkedUploadInitiated.",

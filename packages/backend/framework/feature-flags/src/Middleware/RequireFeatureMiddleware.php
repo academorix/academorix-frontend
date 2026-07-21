@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Middleware;
+namespace Stackra\FeatureFlags\Middleware;
 
-use Academorix\FeatureFlags\Contracts\FeatureCheckerInterface;
-use Academorix\FeatureFlags\Exceptions\FeatureDisabledException;
-use Academorix\Routing\Attributes\AsMiddleware;
+use Stackra\FeatureFlags\Contracts\FeatureCheckerInterface;
+use Stackra\FeatureFlags\Exceptions\FeatureDisabledException;
+use Stackra\Routing\Attributes\AsMiddleware;
 use Closure;
 use Illuminate\Http\Request;
 

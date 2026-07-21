@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Contracts\Repositories;
+namespace Stackra\Payment\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Payment\Models\Payment}.
+ * Repository contract for {@see Stackra\Payment\Models\Payment}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `PaymentRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Payment\Models\Payment>
+ * @extends RepositoryInterface<\Stackra\Payment\Models\Payment>
  *
  * @category Payment
  *

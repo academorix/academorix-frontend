@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\People\Events;
+namespace Stackra\People\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
- * New PersonIdentity committed with academorix_id assigned. Fires on both self-registration (via central signup) and admin creation.
+ * New PersonIdentity committed with stackra_id assigned. Fires on both self-registration (via central signup) and admin creation.
  *
  * ## Consumers
  *
@@ -26,13 +26,13 @@ final readonly class PersonRegistered implements ShouldDispatchAfterCommit
 {
     /**
      * @param  string  $personIdentityId  ULID (pin_*)
-     * @param  string  $academorixId  string (AX-XXXX-YYYY)
+     * @param  string  $stackraId  string (AX-XXXX-YYYY)
      * @param  string  $registeredAt  ISO 8601
      * @param  string  $registeredByUserId  ULID | null (self-registered when null)
      */
     public function __construct(
         public readonly string $personIdentityId,
-        public readonly string $academorixId,
+        public readonly string $stackraId,
         public readonly string $registeredAt,
         public readonly string $registeredByUserId,
     ) {

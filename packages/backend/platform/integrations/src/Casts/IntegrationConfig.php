@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Casts;
+namespace Stackra\Integrations\Casts;
 
-use Academorix\Integrations\Contracts\Services\IntegrationSecretsCipherInterface;
+use Stackra\Integrations\Contracts\Services\IntegrationSecretsCipherInterface;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 

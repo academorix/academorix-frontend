@@ -5,7 +5,7 @@
 ## What landed
 
 - `Application` model + interface — the top of the tenancy tree. One row per
-  Academorix product (Sports, Marketplace, Federation, ...). Carries `slug`,
+  Stackra product (Sports, Marketplace, Federation, ...). Carries `slug`,
   `name`, `description`, `is_enabled`, plus the JWT signing key rotation table
   (`application_jwt_signing_keys`).
 - Existing scaffolding covers CRUD action stubs for the platform-admin surface
@@ -35,7 +35,7 @@
 - `ApplicationKeypairRotator` — generates a fresh HS256 key (or RS256 keypair
   when the module upgrades to asymmetric signing) + persists it encrypted via
   Laravel Encrypter.
-- `ApplicationRegistrar` — boot-time registrar that seeds the Academorix-shipped
+- `ApplicationRegistrar` — boot-time registrar that seeds the Stackra-shipped
   Applications (Sports, Marketplace, Federation, Academy, Gym) on `db:seed`.
   `#[AsSeeder]` priority 10.
 

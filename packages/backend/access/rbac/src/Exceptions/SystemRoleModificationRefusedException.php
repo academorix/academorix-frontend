@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Exceptions;
+namespace Stackra\Rbac\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Someone tried to rename / delete / modify permissions on an `is_system=true` role.

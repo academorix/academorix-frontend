@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Listeners\Domain;
+namespace Stackra\Geography\Listeners\Domain;
 
-use Academorix\Geography\Events\Domain\LanguageCreated;
+use Stackra\Geography\Events\Domain\LanguageCreated;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Container\Attributes\Cache;
 

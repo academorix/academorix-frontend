@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Exceptions;
+namespace Stackra\Coaching\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * primary_sport_id must resolve to an is_active=true row in sports_registry.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CoachingProfileInvalidPrimarySportException extends AcademorixException
+final class CoachingProfileInvalidPrimarySportException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

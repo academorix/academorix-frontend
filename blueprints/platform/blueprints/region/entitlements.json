@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/region/entitlements",
+  "id": "stackra://modules/region/entitlements",
   "$version": 1,
   "title": "region — declared entitlements",
   "description": "Three entitlement keys. `region_slot` gates the quantity of Regions per tenant (matches hierarchy.md §7 tier matrix). `region_custom_tax_rules` gates the multi-rate tax_config.rates[] array. `region_time_travel` gates retroactive tax_config edits — Enterprise-only + heavily audited.",

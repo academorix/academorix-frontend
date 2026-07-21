@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Actions\Tenant;
+namespace Stackra\Webhook\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Webhook\Contracts\Services\WebhookDestinationRegistryInterface;
-use Academorix\Webhook\Enums\WebhookPermission;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Webhook\Contracts\Services\WebhookDestinationRegistryInterface;
+use Stackra\Webhook\Enums\WebhookPermission;
 
 /**
  * `GET /api/v1/tenant/webhook/destinations` — destination drivers

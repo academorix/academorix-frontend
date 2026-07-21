@@ -4,14 +4,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Enums;
+namespace Stackra\Theme\Enums;
 
-use Academorix\Authorization\Contracts\PermissionEnum;
-use Academorix\Authorization\Enums\Guard;
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Authorization\Contracts\PermissionEnum;
+use Stackra\Authorization\Enums\Guard;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
  * Permissions the Theme module contributes.
@@ -62,7 +62,7 @@ enum ThemePermission: string implements PermissionEnum
      * `platform.theme.manage-presets` — CRUD on platform-provided ThemePreset rows (tenant_id = NULL).
      */
     #[Label('CRUD on platform-provided ThemePreset rows (tenant_id = NULL)')]
-    #[Description('CRUD on platform-provided ThemePreset rows (tenant_id = NULL). Academorix staff only. Every write triggers MigrateThemeTokensOnPresetUpdateJob for tenants referencing the preset.')]
+    #[Description('CRUD on platform-provided ThemePreset rows (tenant_id = NULL). Stackra staff only. Every write triggers MigrateThemeTokensOnPresetUpdateJob for tenants referencing the preset.')]
     case PlatformThemeManagePresets = 'platform.theme.manage-presets';
 
     /**

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attributes\Repositories;
+namespace Stackra\Attributes\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Attributes\Contracts\Data\AttributeGroupInterface;
-use Academorix\Attributes\Contracts\Repositories\AttributeGroupRepositoryInterface;
-use Academorix\Attributes\Models\AttributeGroup;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Attributes\Contracts\Data\AttributeGroupInterface;
+use Stackra\Attributes\Contracts\Repositories\AttributeGroupRepositoryInterface;
+use Stackra\Attributes\Models\AttributeGroup;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Attributes\Models\AttributeGroup}.
+ * Attribute-first Eloquent repository for {@see Stackra\Attributes\Models\AttributeGroup}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AttributeGroupInterface::class)]` which resolves to
  * `AttributeGroup` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Attributes\Models\AttributeGroup>
+ * @extends Repository<\Stackra\Attributes\Models\AttributeGroup>
  *
  * @category Attributes
  *

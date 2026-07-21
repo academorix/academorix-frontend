@@ -6,7 +6,7 @@
  * @description
  * Source rule: every concrete class in an `**\/Events/**\/*.php`
  * path must carry `#[AsEvent]` from
- * `Academorix\Events\Attributes\AsEvent`.
+ * `Stackra\Events\Attributes\AsEvent`.
  *
  * ## Why (ADR 0010)
  *
@@ -34,11 +34,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Support\SourceFile;
-use Academorix\Architecture\Violations\Severity;
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Support\SourceFile;
+use Stackra\Architecture\Violations\Severity;
+use Stackra\Architecture\Violations\Violation;
 
 /**
  * Enforce `#[AsEvent]` on every event class.
@@ -54,7 +54,7 @@ final class EventsCarryAsEventAttributeRule extends AbstractRule
 
     public function description(): string
     {
-        return 'Every class under `Events/` must carry `#[AsEvent]` from `academorix/events` — the event catalog + audit tooling key off it.';
+        return 'Every class under `Events/` must carry `#[AsEvent]` from `stackra/events` — the event catalog + audit tooling key off it.';
     }
 
     protected function defaultSeverity(): Severity
@@ -81,7 +81,7 @@ final class EventsCarryAsEventAttributeRule extends AbstractRule
         }
 
         $fqcn = $file->classFqcn ?? '';
-        if (str_starts_with($fqcn, 'Academorix\\Events\\')) {
+        if (str_starts_with($fqcn, 'Stackra\\Events\\')) {
             return [];
         }
 
@@ -98,7 +98,7 @@ final class EventsCarryAsEventAttributeRule extends AbstractRule
                     $fqcn !== '' ? $fqcn : $file->className,
                 ),
                 line: null,
-                hint: 'Run `php dev-tools/migrations/bin/academorix-migrate events --apply` to fix every violation of this rule automatically.',
+                hint: 'Run `php dev-tools/migrations/bin/stackra-migrate events --apply` to fix every violation of this rule automatically.',
             ),
         ];
     }

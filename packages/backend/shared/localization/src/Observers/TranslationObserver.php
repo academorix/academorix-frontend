@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Observers;
+namespace Stackra\Localization\Observers;
 
-use Academorix\Localization\Contracts\Data\PlatformLanguageInterface;
-use Academorix\Localization\Contracts\Data\TranslationInterface;
-use Academorix\Localization\Contracts\Services\TranslationCacheInterface;
-use Academorix\Localization\Enums\TranslationSource;
-use Academorix\Localization\Events\TranslationOverridden;
-use Academorix\Localization\Models\PlatformLanguage;
-use Academorix\Localization\Models\Translation;
+use Stackra\Localization\Contracts\Data\PlatformLanguageInterface;
+use Stackra\Localization\Contracts\Data\TranslationInterface;
+use Stackra\Localization\Contracts\Services\TranslationCacheInterface;
+use Stackra\Localization\Enums\TranslationSource;
+use Stackra\Localization\Events\TranslationOverridden;
+use Stackra\Localization\Models\PlatformLanguage;
+use Stackra\Localization\Models\Translation;
 
 /**
  * Lifecycle side effects for {@see Translation}.

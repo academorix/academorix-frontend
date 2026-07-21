@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/analytics/data/providers/google_analytics_4",
+  "id": "stackra://modules/analytics/data/providers/google_analytics_4",
   "$version": 1,
   "provider": "google_analytics_4",
   "displayName": "Google Analytics 4",

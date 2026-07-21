@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payout\Concerns;
+namespace Stackra\Payout\Concerns;
 
 /**
  * Trait — HasPayouts.

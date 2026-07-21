@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/storage/routes",
+  "id": "stackra://modules/storage/routes",
   "$version": 1,
   "title": "storage \u2014 HTTP routes",
   "description": "Three host groups. Tenant host owns the upload + download + attachment CRUD surface. Platform-admin owns cross-tenant inspection + antivirus dashboard + signed-URL audit read + emergency quarantine. Central host owns signed-URL redemption (unauthenticated \u2014 the signature is the credential).",
@@ -20,7 +20,7 @@
         {
           "method": "POST",
           "path": "/files",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\UploadFileController@store",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\UploadFileController@store",
           "permission": "files.upload",
           "middleware": [
             "storage.mime.validate",
@@ -33,7 +33,7 @@
         {
           "method": "POST",
           "path": "/files/chunked",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\InitiateChunkedUploadController@store",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\InitiateChunkedUploadController@store",
           "permission": "files.upload",
           "middleware": ["storage.quota.enforce"],
           "description": "Initiate a chunked upload. Body: filename, total_size_bytes, declared_mime_type, target_kind, optional declared_sha256 + target_fileable_type/id. Returns the ChunkedUpload row + `upload_url` (only on this response \u2014 hidden on subsequent reads)."
@@ -41,14 +41,14 @@
         {
           "method": "GET",
           "path": "/files/chunked/{upload}",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\GetChunkedUploadController@show",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\GetChunkedUploadController@show",
           "permission": "files.upload",
           "description": "Read the current ChunkedUpload state \u2014 used on resume-after-crash to know which chunks are missing."
         },
         {
           "method": "PATCH",
           "path": "/files/chunked/{upload}",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\PatchChunkedUploadController@update",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\PatchChunkedUploadController@update",
           "permission": "files.upload",
           "middleware": ["storage.size.validate"],
           "description": "Upload a single chunk. Client PATCHes with chunk bytes + Chunk-Index + Chunk-SHA256 headers (tus.io style). Server appends to the ledger."
@@ -56,77 +56,77 @@
         {
           "method": "POST",
           "path": "/files/chunked/{upload}/finalize",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\FinalizeChunkedUploadController@store",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\FinalizeChunkedUploadController@store",
           "permission": "files.upload",
           "description": "Finalise. Server verifies reconstructed SHA-256 against declared_sha256 (if set) + validates MIME sniff + fires FileUploaded + queues antivirus scan. Returns the created File."
         },
         {
           "method": "DELETE",
           "path": "/files/chunked/{upload}",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\AbortChunkedUploadController@destroy",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\AbortChunkedUploadController@destroy",
           "permission": "files.upload",
           "description": "Abort an in-flight upload. Sets state=aborted, cleans up provider-side chunks, reclaims quota reservation."
         },
         {
           "method": "GET",
           "path": "/files",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\ListFilesController@index",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\ListFilesController@index",
           "permission": "files.viewAny",
           "description": "spatie/laravel-query-builder list. Filters: kind, fileable_type, fileable_id, mime_type, virus_scan_state, visibility. Includes: variants, owner, fileable."
         },
         {
           "method": "GET",
           "path": "/files/{file}",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\ShowFileController@show",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\ShowFileController@show",
           "permission": "files.view",
           "description": "Single file with a freshly-signed `url` + `variants` map."
         },
         {
           "method": "PATCH",
           "path": "/files/{file}",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\UpdateFileController@update",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\UpdateFileController@update",
           "permission": "files.update",
           "description": "Update display name, visibility, metadata. Cannot change kind / fileable / size / mime."
         },
         {
           "method": "DELETE",
           "path": "/files/{file}",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\DeleteFileController@destroy",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\DeleteFileController@destroy",
           "permission": "files.delete",
           "description": "Soft-delete. Blob stays until retention window elapses (see retention.json)."
         },
         {
           "method": "POST",
           "path": "/files/{file}/signed-url",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\IssueSignedUrlController@store",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\IssueSignedUrlController@store",
           "permission": "files.view",
           "description": "Issue an explicit signed URL. Body: reason (download|preview|share|admin_action), ttl_seconds (bounded by plan tier), optional ip_lock CIDR + user_lock ULID + one_time_use. Writes a SignedUrlAudit."
         },
         {
           "method": "DELETE",
           "path": "/files/{file}/signed-urls",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\RevokeSignedUrlsController@destroy",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\RevokeSignedUrlsController@destroy",
           "permission": "files.admin",
           "description": "Bulk-revoke every active signed URL for this file. Sets revoked_at + revoked_reason=admin_bulk_revoke on every SignedUrlAudit row."
         },
         {
           "method": "POST",
           "path": "/files/{file}/reprocess-variants",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\ReprocessVariantsController@store",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\ReprocessVariantsController@store",
           "permission": "files.admin",
           "description": "Force async regeneration of every variant declared by the file's kind. Idempotent \u2014 existing variants are overwritten."
         },
         {
           "method": "GET",
           "path": "/files/{file}/variants",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\ListVariantsController@index",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\ListVariantsController@index",
           "permission": "files.view",
           "description": "List all FileVariants for this File with fresh signed URLs."
         },
         {
           "method": "GET",
           "path": "/files/{file}/download",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\DownloadFileController@show",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\DownloadFileController@show",
           "permission": "files.view",
           "description": "Convenience redirect \u2014 issues a short-lived signed URL + 302s. Same effect as POST /signed-url + follow. Writes a SignedUrlAudit with reason=download."
         }
@@ -147,63 +147,63 @@
         {
           "method": "GET",
           "path": "/files",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\Platform\\ListFilesController@index",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\Platform\\ListFilesController@index",
           "permission": "platform.storage.view",
           "description": "Cross-tenant file inspection. Filters: tenant_id, virus_scan_state, kind."
         },
         {
           "method": "GET",
           "path": "/files/{file}",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\Platform\\ShowFileController@show",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\Platform\\ShowFileController@show",
           "permission": "platform.storage.view",
           "description": "Full file detail including hidden internals (path, sha256, disk, reference_count) with `?include=storage_internals`."
         },
         {
           "method": "GET",
           "path": "/files/quarantined",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\Platform\\QuarantinedFilesController@index",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\Platform\\QuarantinedFilesController@index",
           "permission": "platform.storage.view",
           "description": "Antivirus dashboard \u2014 every file with virus_scan_state IN (infected, quarantined, scan_failed)."
         },
         {
           "method": "POST",
           "path": "/files/{file}/rescan",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\Platform\\RescanFileController@store",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\Platform\\RescanFileController@store",
           "permission": "platform.storage.manage",
           "description": "Requeue ScanFileForVirusesJob for the file. Useful after AV signature update."
         },
         {
           "method": "POST",
           "path": "/files/{file}/quarantine",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\Platform\\QuarantineFileController@store",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\Platform\\QuarantineFileController@store",
           "permission": "platform.storage.manage",
           "description": "Manually move a file to quarantine (e.g. abuse report). Sets virus_scan_state=quarantined + revokes all signed URLs + fires FileVirusFound with signature=`manual`."
         },
         {
           "method": "DELETE",
           "path": "/files/{file}",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\Platform\\HardDeleteFileController@destroy",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\Platform\\HardDeleteFileController@destroy",
           "permission": "platform.storage.manage",
           "description": "Immediate hard-delete bypassing retention window. Compliance surface for takedown notices + DSAR erasure. Cascades to variants + audits. Decrements blob refcount."
         },
         {
           "method": "GET",
           "path": "/health",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\Platform\\HealthController@show",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\Platform\\HealthController@show",
           "permission": "platform.storage.view",
           "description": "Live storage pipeline status: driver reachability, AV scanner heartbeat, variant queue depth, chunked-upload count by state."
         },
         {
           "method": "GET",
           "path": "/signed-url-audits",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\Platform\\ListSignedUrlAuditsController@index",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\Platform\\ListSignedUrlAuditsController@index",
           "permission": "platform.storage.view",
           "description": "Cross-tenant signed-URL audit trail. Filter by tenant_id + file_id + reason + issued_at range. High-cardinality endpoint \u2014 paginated 50 rows/page default."
         },
         {
           "method": "POST",
           "path": "/reconcile-quota/{tenant}",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\Platform\\ReconcileQuotaController@store",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\Platform\\ReconcileQuotaController@store",
           "permission": "platform.storage.manage",
           "description": "Force reconciliation of storage.bytes.consumed for a tenant (SUM of File.size_bytes vs recorded entitlement usage). Corrects drift."
         }
@@ -228,14 +228,14 @@
         {
           "method": "GET",
           "path": "/{signature}",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\Central\\RedeemFileSignatureController@show",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\Central\\RedeemFileSignatureController@show",
           "permission": null,
           "description": "Redeem a signed URL against the parent File. Signature encodes (file_id, expires_at, hash)."
         },
         {
           "method": "GET",
           "path": "/{signature}/{variant}",
-          "controller": "Academorix\\Storage\\Http\\Controllers\\Central\\RedeemVariantSignatureController@show",
+          "controller": "Stackra\\Storage\\Http\\Controllers\\Central\\RedeemVariantSignatureController@show",
           "permission": null,
           "description": "Redeem a signed URL against a specific FileVariant. Signature encodes (variant_id, expires_at, hash)."
         }

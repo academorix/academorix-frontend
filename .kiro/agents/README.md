@@ -1,6 +1,6 @@
 # Agent directory
 
-Kiro sub-agents that operate inside the Academorix stack. Every `.md` file in
+Kiro sub-agents that operate inside the Stackra stack. Every `.md` file in
 this folder is a specialised agent with its own tools, orient-first reading
 list, scope, out-of-scope, and required output shape.
 
@@ -16,13 +16,13 @@ under [`../../docs/contracts/`](../../docs/contracts/) when present.
 
 ## Cross-repo strategy
 
-Academorix spans three repos with overlapping agent needs (frontend, backend, AI
+Stackra spans three repos with overlapping agent needs (frontend, backend, AI
 service). The canonical directory model is defined in
 [`../../docs/adr/0026-agent-canonical-directory.md`](../../docs/adr/0026-agent-canonical-directory.md).
 Three tiers govern where a given charter lives:
 
 1. **Truly cross-repo agents** (product, security, docs, delivery leads;
-   translator; docs stewards) live in the parent `academorix/.kiro/agents/` with
+   translator; docs stewards) live in the parent `stackra/.kiro/agents/` with
    sub-repo symlinks. This directory carries the live copies until the parent is
    bootstrapped; ADR-0026 covers the migration.
 2. **Repo-specific agents** live in this repo's `.kiro/agents/`
@@ -63,7 +63,7 @@ charter files here (or in a sibling repo for AI-service specialists).
 | Slug                      | Role                         | Phases | Charter present |
 | ------------------------- | ---------------------------- | ------ | --------------- |
 | `spec-intake-analyst`     | Intake analyst               | 0, 1   | yes             |
-| `academorix-product`      | Product manager (enterprise) | 1, 2   | yes (existing)  |
+| `stackra-product`      | Product manager (enterprise) | 1, 2   | yes (existing)  |
 | `ux-research-lead`        | UX research lead             | 1      | directory-only  |
 | `market-research-analyst` | Market research analyst      | 1      | directory-only  |
 
@@ -170,8 +170,8 @@ sub-agent invocation; every column is a phase.
 | Step                                           | Phase | Sub-agent(s)                                                        |
 | ---------------------------------------------- | ----- | ------------------------------------------------------------------- |
 | Convert PDF/DOCX brief to `brief.md`           | 0     | `spec-intake-analyst`                                               |
-| Personas + JTBD + competitive matrix           | 1     | `academorix-product`, `ux-research-lead`, `market-research-analyst` |
-| PRD + INVEST stories + v1/v2/later             | 2     | `academorix-product`                                                |
+| Personas + JTBD + competitive matrix           | 1     | `stackra-product`, `ux-research-lead`, `market-research-analyst` |
+| PRD + INVEST stories + v1/v2/later             | 2     | `stackra-product`                                                |
 | Cross-cutting ADRs                             | 3     | `solution-architect`                                                |
 | API contracts (`docs/contracts/*.schema.json`) | 3     | `api-contract-designer`                                             |
 | ERD + row-attribution                          | 3     | `data-modeler`                                                      |
@@ -244,11 +244,11 @@ emits
 Phase 0 closes.
 
 **Day 2.** Ifeoma opens Phase 1. Supervisor invokes three sub-agents in
-parallel: `academorix-product` (persona + JTBD synthesis), `ux-research-lead`
+parallel: `stackra-product` (persona + JTBD synthesis), `ux-research-lead`
 (user-interview plan), `market-research-analyst` (competitive matrix). Each
 writes its artefact under `.kiro/product/intake/<slug>/`. Phase 1 closes.
 
-**Day 5.** Rohan opens Phase 2. Supervisor invokes `academorix-product` alone.
+**Day 5.** Rohan opens Phase 2. Supervisor invokes `stackra-product` alone.
 PRD lands with locked v1 scope, INVEST stories, deferred v2/later. Phase 2
 closes.
 
@@ -313,7 +313,7 @@ Plus two AI-service-specific concerns:
 
 Every charter follows the same shape. Copy-paste template lives in
 `AGENT_ROSTER.md §Appendix B`; also see any existing charter in this folder for
-a live example (`laravel-feature-builder.md`, `academorix-product.md` are the
+a live example (`laravel-feature-builder.md`, `stackra-product.md` are the
 canonical references).
 
 ### Required frontmatter fields

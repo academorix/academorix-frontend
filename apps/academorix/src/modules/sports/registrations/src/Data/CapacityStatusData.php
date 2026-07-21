@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registrations\Data;
+namespace Stackra\Registrations\Data;
 
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
@@ -12,7 +12,7 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
  * Result of a capacity computation.
  *
  * Emitted by
- * {@see \Academorix\Registrations\Services\CapacityResolver::statusFor}
+ * {@see \Stackra\Registrations\Services\CapacityResolver::statusFor}
  * and consumed by RegistrationOrchestrator (routes new registrations
  * to enrolled path vs waitlist path) + AutoOfferer (decides when to
  * fire the next offer when a seat frees up).

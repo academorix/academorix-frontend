@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/coupon/events",
+  "id": "stackra://modules/coupon/events",
   "$version": 1,
   "title": "coupon — published events",
-  "namespace": "Academorix\\Finance\\Coupon\\Events",
+  "namespace": "Stackra\\Finance\\Coupon\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Two events are CRITICAL: `CouponClawbackRequested` (P1 signal — financial reversal that Finance module must process) and `CouponUsageCapReached` (P2 signal — the campaign ran out and admins likely want to top up OR launch a follow-up). Financial events (`CouponRedeemed` / `CouponRedemptionReversed` / `CouponClawbackCompleted`) additionally fan out to finance::invoice (Wave 4) for line-item discount application + revenue-recognition adjustment. `CouponRedeemed` fires a marketing event downstream when `issuance_source IN ('referral', 'marketing_campaign')` for ad-network conversion attribution.",
   "events": [
     {
       "name": "CouponCreated",
-      "class": "Academorix\\Finance\\Coupon\\Events\\CouponCreated",
+      "class": "Stackra\\Finance\\Coupon\\Events\\CouponCreated",
       "trigger": "CouponRepository finished a successful create. Fires exactly once per (tenant_id, code) tuple. Distinct from `CouponIssuedManually` / `CouponIssuedByReferralProgram` — those carry issuance-context; this fires unconditionally.",
       "queue": "coupons",
       "consumers": [
@@ -36,7 +36,7 @@
     },
     {
       "name": "CouponUpdated",
-      "class": "Academorix\\Finance\\Coupon\\Events\\CouponUpdated",
+      "class": "Stackra\\Finance\\Coupon\\Events\\CouponUpdated",
       "trigger": "CouponRepository committed an update to a coupon (name, description, valid_until, usage_cap, per_customer_limit, is_stackable, applicable_plan_ids). NOT fired for `discount_type` / `discount_amount` / `discount_currency` mutations — those refuse post-redemption via observer.",
       "queue": "coupons",
       "consumers": [
@@ -53,7 +53,7 @@
     },
     {
       "name": "CouponActivated",
-      "class": "Academorix\\Finance\\Coupon\\Events\\CouponActivated",
+      "class": "Stackra\\Finance\\Coupon\\Events\\CouponActivated",
       "trigger": "Coupon.is_active transitioned false -> true. Common paths: manual reactivation before expiry OR admin-initiated activate after a `deactivate` reversal.",
       "queue": "coupons",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -66,7 +66,7 @@
     },
     {
       "name": "CouponDeactivated",
-      "class": "Academorix\\Finance\\Coupon\\Events\\CouponDeactivated",
+      "class": "Stackra\\Finance\\Coupon\\Events\\CouponDeactivated",
       "trigger": "Coupon.is_active transitioned true -> false. Causes: admin manual, usage_cap_reached auto-deactivate, applicable_plan_archived cascade, referral program archived cascade.",
       "queue": "coupons",
       "consumers": [
@@ -84,7 +84,7 @@
     },
     {
       "name": "CouponExpired",
-      "class": "Academorix\\Finance\\Coupon\\Events\\CouponExpired",
+      "class": "Stackra\\Finance\\Coupon\\Events\\CouponExpired",
       "trigger": "Coupon.valid_until has passed AND coupon still shows is_active=true. Detected by ExpireCouponsJob nightly sweep OR by CouponValidator.canRedeem() refusing an expired code and firing this event. Idempotent — fires exactly once per coupon.",
       "queue": "coupons",
       "consumers": [
@@ -104,14 +104,14 @@
     },
     {
       "name": "CouponUsageCapReached",
-      "class": "Academorix\\Finance\\Coupon\\Events\\CouponUsageCapReached",
+      "class": "Stackra\\Finance\\Coupon\\Events\\CouponUsageCapReached",
       "trigger": "Coupon.usage_count reached Coupon.usage_cap. Fires from CouponObserver.updated when the increment crosses the threshold. P2 signal — the campaign ran out.",
       "queue": "coupons-critical",
       "consumers": [
         "audit::WriteToAuditLog",
         "activity::WriteToActivityLog",
         "notifications::DispatchCouponUsageCapReachedNotification (owner + marketing role)",
-        "observability::MetricsCollector (academorix.coupons.usage_cap_reached_total)"
+        "observability::MetricsCollector (stackra.coupons.usage_cap_reached_total)"
       ],
       "payload": {
         "coupon_id": "ULID",
@@ -124,7 +124,7 @@
     },
     {
       "name": "CouponRedeemed",
-      "class": "Academorix\\Finance\\Coupon\\Events\\CouponRedeemed",
+      "class": "Stackra\\Finance\\Coupon\\Events\\CouponRedeemed",
       "trigger": "CouponRedeemer::redeem() successfully committed a CouponRedemption row + incremented Coupon.usage_count inside the enclosing invoice-creation transaction. Fires after commit.",
       "queue": "coupons-critical",
       "consumers": [
@@ -157,13 +157,13 @@
     },
     {
       "name": "CouponRedemptionRefused",
-      "class": "Academorix\\Finance\\Coupon\\Events\\CouponRedemptionRefused",
+      "class": "Stackra\\Finance\\Coupon\\Events\\CouponRedemptionRefused",
       "trigger": "CouponRedeemer::redeem() or CouponValidator::canRedeem() rejected the redemption attempt. Fires with the specific refusal reason. Audit-critical — supports customer support triage.",
       "queue": "coupons",
       "consumers": [
         "audit::WriteToAuditLog",
         "activity::WriteToActivityLog (staff-visible for support triage)",
-        "observability::MetricsCollector (academorix.coupons.redemption_refusals_total labelled by refusal_reason)"
+        "observability::MetricsCollector (stackra.coupons.redemption_refusals_total labelled by refusal_reason)"
       ],
       "payload": {
         "coupon_id": "ULID | null (null when code doesn't exist)",
@@ -179,7 +179,7 @@
     },
     {
       "name": "CouponIssuedByReferralProgram",
-      "class": "Academorix\\Finance\\Coupon\\Events\\CouponIssuedByReferralProgram",
+      "class": "Stackra\\Finance\\Coupon\\Events\\CouponIssuedByReferralProgram",
       "trigger": "CouponIssuer::issueForReferral() successfully created a Coupon row with issuance_source='referral'. Called by growth::referrals when a ReferralReward.status transitioned to vested with a discount-type reward.",
       "queue": "coupons",
       "consumers": [
@@ -203,7 +203,7 @@
     },
     {
       "name": "CouponIssuedManually",
-      "class": "Academorix\\Finance\\Coupon\\Events\\CouponIssuedManually",
+      "class": "Stackra\\Finance\\Coupon\\Events\\CouponIssuedManually",
       "trigger": "CouponIssuer::issueManually() or CouponIssuer::bulkIssue() successfully created one or more Coupon rows with issuance_source IN ('manual', 'marketing_campaign', 'import', 'api'). Fires per created row.",
       "queue": "coupons",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -220,7 +220,7 @@
     },
     {
       "name": "CouponClawbackRequested",
-      "class": "Academorix\\Finance\\Coupon\\Events\\CouponClawbackRequested",
+      "class": "Stackra\\Finance\\Coupon\\Events\\CouponClawbackRequested",
       "trigger": "finance::RefundIssued or finance::ChargebackFiled fires for an invoice that carried a CouponRedemption. ProcessCouponClawbackJob is dispatched. P1 signal — every clawback is a financial reversal.",
       "queue": "coupons-critical",
       "consumers": [
@@ -238,7 +238,7 @@
     },
     {
       "name": "CouponClawbackCompleted",
-      "class": "Academorix\\Finance\\Coupon\\Events\\CouponClawbackCompleted",
+      "class": "Stackra\\Finance\\Coupon\\Events\\CouponClawbackCompleted",
       "trigger": "ProcessCouponClawbackJob finished — CouponRedemption.reversed_at set + Coupon.usage_count decremented atomically.",
       "queue": "coupons-critical",
       "consumers": [
@@ -260,7 +260,7 @@
     },
     {
       "name": "CouponRedemptionReversed",
-      "class": "Academorix\\Finance\\Coupon\\Events\\CouponRedemptionReversed",
+      "class": "Stackra\\Finance\\Coupon\\Events\\CouponRedemptionReversed",
       "trigger": "Admin manually reversed a redemption via POST /coupons/redemptions/{redemption}/reverse (correction path — not a refund-cascade). Distinct from CouponClawbackCompleted which flows from a Finance refund.",
       "queue": "coupons",
       "consumers": [
@@ -281,7 +281,7 @@
     },
     {
       "name": "CouponReportGenerated",
-      "class": "Academorix\\Finance\\Coupon\\Events\\CouponReportGenerated",
+      "class": "Stackra\\Finance\\Coupon\\Events\\CouponReportGenerated",
       "trigger": "GenerateCouponUsageReportJob finished — the weekly per-tenant report is stored + available for download.",
       "queue": "coupons",
       "consumers": [

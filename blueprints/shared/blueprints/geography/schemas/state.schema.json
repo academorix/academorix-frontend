@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geography/schemas/state",
+  "id": "stackra://modules/geography/schemas/state",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "State",
@@ -19,9 +19,9 @@
     "keyType": "int",
     "incrementing": true,
     "timestamps": false,
-    "model": "Academorix\\Geography\\Models\\State",
-    "interface": "Academorix\\Geography\\Contracts\\Data\\StateInterface",
-    "implements": ["Academorix\\Geography\\Contracts\\Data\\StateInterface"],
+    "model": "Stackra\\Geography\\Models\\State",
+    "interface": "Stackra\\Geography\\Contracts\\Data\\StateInterface",
+    "implements": ["Stackra\\Geography\\Contracts\\Data\\StateInterface"],
     "traits": ["HasFactory", "Filterable"],
     "observers": ["StateObserver"]
   },
@@ -63,6 +63,6 @@
     "envelope": "spatie-data",
     "wrap": "data",
     "mapper": "SnakeCaseMapper",
-    "resource_class": "Academorix\\Geography\\Data\\Resources\\StateResourceData"
+    "resource_class": "Stackra\\Geography\\Data\\Resources\\StateResourceData"
   }
 }

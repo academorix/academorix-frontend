@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\MarketplaceFee\Attributes;
+namespace Stackra\MarketplaceFee\Attributes;
 
 use Attribute;
 

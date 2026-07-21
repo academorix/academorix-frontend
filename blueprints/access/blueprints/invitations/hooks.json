@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/invitations/hooks",
+  "id": "stackra://modules/invitations/hooks",
   "$version": 1,
   "title": "invitations — tenancy hooks",
   "description": "Per-tenant lifecycle callbacks (#[AsTenancyHook]) this module contributes. Currently none — invitations do not need to set request-scoped state beyond what the tenancy substrate already provides (log context + cache prefix). This file exists for uniform module shape; add hooks here if a future feature needs per-tenant warming (e.g. a preloaded rate-limit budget per tenant).",
-  "contract": "Academorix\\ServiceProvider\\Contracts\\TenancyHookInterface",
-  "dispatcher": "Academorix\\ServiceProvider\\Dispatchers\\TenancyHookDispatcher",
-  "registry": "Academorix\\ServiceProvider\\Registry\\TenancyHookRegistry",
+  "contract": "Stackra\\ServiceProvider\\Contracts\\TenancyHookInterface",
+  "dispatcher": "Stackra\\ServiceProvider\\Dispatchers\\TenancyHookDispatcher",
+  "registry": "Stackra\\ServiceProvider\\Registry\\TenancyHookRegistry",
   "hooks": [],
   "notes": [
     "The `throttle.invitations` middleware reads rate-limit budgets from `settings.json` per tenant. If we later find those reads are hot, we can add a warming hook here to preload the tenant's budgets into the cache on tenant init."

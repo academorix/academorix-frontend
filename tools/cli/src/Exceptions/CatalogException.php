@@ -2,17 +2,17 @@
 
 /**
  * @file CatalogException.php
- * @module Academorix\Cli\Exceptions
+ * @module Stackra\Cli\Exceptions
  * @description Catalog-specific errors. Thrown by
- *   {@see \Academorix\Cli\Catalog\CatalogReader} and
- *   {@see \Academorix\Cli\Catalog\CatalogQuery} when a catalogue entry
+ *   {@see \Stackra\Cli\Catalog\CatalogReader} and
+ *   {@see \Stackra\Cli\Catalog\CatalogQuery} when a catalogue entry
  *   is missing, malformed, or the workspace has zero catalogue entries
  *   at all.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Exceptions;
+namespace Stackra\Cli\Exceptions;
 
 /**
  * Named factories for every catalogue error the CLI raises.
@@ -26,7 +26,7 @@ final class CatalogException extends CliException
             sprintf('No catalog.json entry named "%s" was found in the workspace.', $pkgName),
             [
                 'Verify the package name is spelled correctly.',
-                'Run `academorix catalog:list` to see every known package.',
+                'Run `stackra catalog:list` to see every known package.',
                 'If the package is new, add a catalog.json alongside its package.json.',
             ],
             2,
@@ -58,7 +58,7 @@ final class CatalogException extends CliException
                 count($searchRoots),
             ),
             [
-                'Confirm you are inside an Academorix workspace.',
+                'Confirm you are inside an Stackra workspace.',
                 'Confirm packages/backend/** or packages/frontend/** carries at least one package.',
                 'Roots walked: '.implode(', ', $searchRoots),
             ],

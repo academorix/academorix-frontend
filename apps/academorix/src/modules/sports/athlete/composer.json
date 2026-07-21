@@ -1,10 +1,10 @@
 {
-  "name": "academorix/athlete",
+  "name": "stackra/athlete",
   "type": "library",
-  "description": "Academorix Athlete module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/athlete/`. Complements the wire SDK at `academorix-sports/athlete-sdk`.",
+  "description": "Stackra Athlete module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/athlete/`. Complements the wire SDK at `stackra-sports/athlete-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "sports",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-sports/athlete-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-sports/athlete-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Athlete\\": "src/"
+      "Stackra\\Athlete\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Athlete\\Tests\\": "tests/"
+      "Stackra\\Athlete\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Athlete\\Providers\\AthleteServiceProvider"
+        "Stackra\\Athlete\\Providers\\AthleteServiceProvider"
       ],
       "aliases": {}
     }

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/staff/data-classes",
+  "id": "stackra://modules/staff/data-classes",
   "$version": 1,
   "title": "staff — field classification",
   "description": "Staff carries three tiers of sensitivity: public employment metadata (position, department, is_branch_manager), internal operational data (employment_type, status, started_at, weekly_hours, availability), and two locked-away clusters — CONFIDENTIAL (emergency contact + tax_id_last4, gated by `staff.view.emergency_contact`) and REGULATED_FINANCIAL (compensation columns, gated by `staff.view.compensation`, 7-year retention in the dedicated staff_compensation_history table). Coach carries mostly public / internal data (bio + rating + primary sport visible on the tenant's public directory); certifications are internal-tier unless verified via HR (then they become public-tier when the coach_certifications_verified entitlement is on). The redactor pipeline applies the field-level gates on egress — a caller with `staff.view` but WITHOUT `staff.view.compensation` sees a Staff object with compensation_* keys entirely stripped from the JSON.",

@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/entitlements/events",
+  "id": "stackra://modules/entitlements/events",
   "$version": 1,
   "title": "entitlements \u2014 published events",
-  "namespace": "Academorix\\Entitlements\\Events",
+  "namespace": "Stackra\\Entitlements\\Events",
   "dispatchMode": "afterCommit",
   "events": [
     {
       "name": "EntitlementResolved",
-      "class": "Academorix\\Entitlements\\Events\\EntitlementResolved",
+      "class": "Stackra\\Entitlements\\Events\\EntitlementResolved",
       "trigger": "New Entitlement row upserted (tenant creation or plan sync).",
       "queue": "notifications",
       "consumers": ["activity::WarmActivityFeedListener"],
@@ -21,7 +21,7 @@
     },
     {
       "name": "EntitlementConsumed",
-      "class": "Academorix\\Entitlements\\Events\\EntitlementConsumed",
+      "class": "Stackra\\Entitlements\\Events\\EntitlementConsumed",
       "trigger": "Enforcer::consume() succeeded. Fires afterCommit on the EntitlementUsage row.",
       "queue": "notifications",
       "wire_contract_file": "contracts/entitlement-consumed.v1.json",
@@ -39,7 +39,7 @@
     },
     {
       "name": "EntitlementExceeded",
-      "class": "Academorix\\Entitlements\\Events\\EntitlementExceeded",
+      "class": "Stackra\\Entitlements\\Events\\EntitlementExceeded",
       "trigger": "Enforcer::enforce() rejected because value_used + delta > value_cap.",
       "queue": "notifications-critical",
       "consumers": [
@@ -57,7 +57,7 @@
     },
     {
       "name": "EntitlementApproachingCap",
-      "class": "Academorix\\Entitlements\\Events\\EntitlementApproachingCap",
+      "class": "Stackra\\Entitlements\\Events\\EntitlementApproachingCap",
       "trigger": "value_used crossed the warn threshold (default 80% of value_cap). Fires once per period.",
       "queue": "notifications",
       "consumers": ["notifications::DispatchQuotaApproachingNotification"],
@@ -70,7 +70,7 @@
     },
     {
       "name": "EntitlementReset",
-      "class": "Academorix\\Entitlements\\Events\\EntitlementReset",
+      "class": "Stackra\\Entitlements\\Events\\EntitlementReset",
       "trigger": "ResetPeriodicUsageJob or platform-admin manual reset. value_used \u2192 0.",
       "queue": "notifications",
       "consumers": ["notifications::DispatchEntitlementResetNotification"],
@@ -85,7 +85,7 @@
     },
     {
       "name": "EntitlementOverridden",
-      "class": "Academorix\\Entitlements\\Events\\EntitlementOverridden",
+      "class": "Stackra\\Entitlements\\Events\\EntitlementOverridden",
       "trigger": "Platform admin manually set value_cap via PATCH endpoint.",
       "queue": "notifications",
       "consumers": ["compliance::AuditListener"],
@@ -101,14 +101,14 @@
     },
     {
       "name": "EntitlementSyncStarted",
-      "class": "Academorix\\Entitlements\\Events\\EntitlementSyncStarted",
+      "class": "Stackra\\Entitlements\\Events\\EntitlementSyncStarted",
       "trigger": "SyncEntitlementsFromPlanJob picked up a subscription plan change.",
       "queue": "notifications",
       "payload": { "tenant_id": "ULID", "from_plan_id": "ULID | null", "to_plan_id": "ULID" }
     },
     {
       "name": "EntitlementSyncCompleted",
-      "class": "Academorix\\Entitlements\\Events\\EntitlementSyncCompleted",
+      "class": "Stackra\\Entitlements\\Events\\EntitlementSyncCompleted",
       "trigger": "SyncEntitlementsFromPlanJob finished successfully.",
       "queue": "notifications",
       "consumers": ["observability::MetricsCollector"],
@@ -116,7 +116,7 @@
     },
     {
       "name": "UsageReportedToBilling",
-      "class": "Academorix\\Entitlements\\Events\\UsageReportedToBilling",
+      "class": "Stackra\\Entitlements\\Events\\UsageReportedToBilling",
       "trigger": "ExportUsageForBillingJob pushed a metered-billing entitlement's usage to Stripe/Paddle.",
       "queue": "notifications",
       "payload": {

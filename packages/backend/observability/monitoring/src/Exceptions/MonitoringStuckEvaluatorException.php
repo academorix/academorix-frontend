@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Exceptions;
+namespace Stackra\Monitoring\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * EvaluateAlertPoliciesJob has not run in > 5 minutes.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MonitoringStuckEvaluatorException extends AcademorixException
+final class MonitoringStuckEvaluatorException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Contracts\Services;
+namespace Stackra\Auth\Contracts\Services;
 
-use Academorix\Auth\Services\CompliantAgePolicy;
+use Stackra\Auth\Services\CompliantAgePolicy;
 use Illuminate\Container\Attributes\Bind;
 
 /**

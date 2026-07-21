@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/platform-user/rules",
+  "id": "stackra://modules/platform-user/rules",
   "$version": 1,
   "title": "platform-user \u2014 validation rules",
   "description": "Custom Laravel validation rules published by `PlatformUserServiceProvider::boot()`. All four rules are consumed by the HirePlatformUserInput, UpdatePlatformProfileInput, and ReassignManagerInput data classes. Two of them (valid_e164_phone, valid_iana_timezone) mirror rules the tenant-plane user module ships but are re-declared here so the platform-user module has no soft-dependency on `identity/user` beyond the Identity substrate.",
-  "namespace": "Academorix\\PlatformUser\\Rules",
+  "namespace": "Stackra\\PlatformUser\\Rules",
   "rules": [
     {
       "name": "valid_e164_phone",
-      "class": "Academorix\\PlatformUser\\Rules\\ValidE164Phone",
+      "class": "Stackra\\PlatformUser\\Rules\\ValidE164Phone",
       "signature": "valid_e164_phone",
       "description": "Ensures the value is a valid E.164-formatted phone number. Uses `giggsey/libphonenumber-for-php` under the hood. Required for PlatformProfile.phone_e164 because the on-call escalation resolver dials this number \u2014 an invalid value would cause a page to fail silently at 3am. Format: leading `+`, country code, subscriber number (up to 15 digits total). Example: `+14155552671`. Rejects: `(415) 555-2671`, `4155552671`, `+1 415 555 2671` (whitespace).",
       "params": [],
@@ -17,7 +17,7 @@
     },
     {
       "name": "valid_iana_timezone",
-      "class": "Academorix\\PlatformUser\\Rules\\ValidIanaTimezone",
+      "class": "Stackra\\PlatformUser\\Rules\\ValidIanaTimezone",
       "signature": "valid_iana_timezone",
       "description": "Ensures the value is a valid IANA timezone identifier (e.g. `America/New_York`, `Europe/London`, `Asia/Tokyo`). Validates against PHP's built-in `DateTimeZone::listIdentifiers()`. Used for PlatformProfile.timezone which drives the on-call rotation's local-time display + shift-handoff computation.",
       "params": [],
@@ -27,9 +27,9 @@
     },
     {
       "name": "valid_department",
-      "class": "Academorix\\PlatformUser\\Rules\\ValidDepartment",
+      "class": "Stackra\\PlatformUser\\Rules\\ValidDepartment",
       "signature": "valid_department",
-      "description": "Ensures the value is a member of the Academorix\\PlatformUser\\Enums\\PlatformDepartment enum. The canonical set is seeded from `data/departments.json` at boot. Validated against a runtime cache so a mistyped department in an admin CLI invocation fails fast with a helpful error listing the valid values.",
+      "description": "Ensures the value is a member of the Stackra\\PlatformUser\\Enums\\PlatformDepartment enum. The canonical set is seeded from `data/departments.json` at boot. Validated against a runtime cache so a mistyped department in an admin CLI invocation fails fast with a helpful error listing the valid values.",
       "params": [],
       "example_field_rule": "department: [required, valid_department]",
       "error_message_key": "platform-user::validation.valid_department",
@@ -37,7 +37,7 @@
     },
     {
       "name": "manager_belongs_to_platform",
-      "class": "Academorix\\PlatformUser\\Rules\\ManagerBelongsToPlatform",
+      "class": "Stackra\\PlatformUser\\Rules\\ManagerBelongsToPlatform",
       "signature": "manager_belongs_to_platform[:allow_self]",
       "description": "Ensures the value (a PlatformUser id) references an active or suspended PlatformUser (not offboarded, not soft-deleted). Rejects self-references (a PlatformUser cannot manage themselves) unless the `allow_self` argument is passed \u2014 that flag exists for the top-of-tree seeding case where the founder / CEO has themselves as their `manager_id` placeholder before the org chart is initialised, and is NEVER used in normal operation.",
       "params": [

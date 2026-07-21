@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Events;
+namespace Stackra\Marketing\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -15,7 +15,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * ## Consumers
  *
  * - audit::WriteToAuditLog (compliance record — every suppressed capture is a consent-honored event)
- * - monitoring::MetricsCollector (increments academorix.marketing.events.suppressed_by_consent_total; spike drives MarketingConsentSuppressionSpikeNotification)
+ * - monitoring::MetricsCollector (increments stackra.marketing.events.suppressed_by_consent_total; spike drives MarketingConsentSuppressionSpikeNotification)
  *
  * @category Marketing
  *

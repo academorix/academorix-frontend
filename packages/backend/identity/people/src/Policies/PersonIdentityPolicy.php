@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\People\Policies;
+namespace Stackra\People\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\People\Models\PersonIdentity;
+use Stackra\User\Models\User;
+use Stackra\People\Models\PersonIdentity;
 
 /**
- * Authorization policy for {@see \Academorix\People\Models\PersonIdentity}.
+ * Authorization policy for {@see \Stackra\People\Models\PersonIdentity}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

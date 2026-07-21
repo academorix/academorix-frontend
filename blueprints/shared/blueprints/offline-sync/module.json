@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "offline-sync",
   "alias": "offline-sync",
-  "namespace": "Academorix\\OfflineSync",
+  "namespace": "Stackra\\OfflineSync",
   "description": "Sync engine for offline-first mobile flows (pitch-side attendance) per blueprint §10.16. Ships ONE owned entity: `SyncCursor` (per-device per-entity high-water-mark; ephemeral 30-day rolling). Client-side change queue + pull/push sync + conflict resolution (last-write-wins for scalar; merge for attendance). Per-tenant sync tokens; idempotent replay. Primary consumer is sports/attendance for coach offline check-in on the field. Mobile app (Capacitor) consumes REST + this sync channel.",
   "keywords": [
     "offline-sync",
@@ -14,7 +14,7 @@
     "wave-4"
   ],
   "priority": 91,
-  "providers": ["Academorix\\OfflineSync\\Providers\\OfflineSyncServiceProvider"],
+  "providers": ["Stackra\\OfflineSync\\Providers\\OfflineSyncServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Exceptions;
+namespace Stackra\Auth\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Session lookup by id refused — either the id doesn't exist OR the caller doesn't own the session.

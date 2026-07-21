@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Policies;
+namespace Stackra\Registry\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Registry\Models\Discipline;
+use Stackra\User\Models\User;
+use Stackra\Registry\Models\Discipline;
 
 /**
- * Authorization policy for {@see \Academorix\Registry\Models\Discipline}.
+ * Authorization policy for {@see \Stackra\Registry\Models\Discipline}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

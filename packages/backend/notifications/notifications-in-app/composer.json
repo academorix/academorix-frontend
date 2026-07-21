@@ -1,10 +1,10 @@
 {
-  "name": "academorix/notifications-in-app",
+  "name": "stackra/notifications-in-app",
   "type": "library",
-  "description": "In-app notification channel for Academorix. Registers the `in_app` channel with the core NotificationChannelRegistry + subscribes to NotificationDispatched events. On dispatch: writes a NotificationDelivery row (state=delivered) synchronously and emits a Reverb broadcast on `user.{id}.notifications` for live inbox updates. Owns two aggregates: `InAppMessage` (denormalised inbox row for the user's bell UI) and `InAppMessageRead` (per-view read/dismissed state). Attribute-driven channel discovery via `#[AsNotificationChannel]` on the driver class. Priority 25 — loads after notifications core (20).",
+  "description": "In-app notification channel for Stackra. Registers the `in_app` channel with the core NotificationChannelRegistry + subscribes to NotificationDispatched events. On dispatch: writes a NotificationDelivery row (state=delivered) synchronously and emits a Reverb broadcast on `user.{id}.notifications` for live inbox updates. Owns two aggregates: `InAppMessage` (denormalised inbox row for the user's bell UI) and `InAppMessageRead` (per-view read/dismissed state). Attribute-driven channel discovery via `#[AsNotificationChannel]` on the driver class. Priority 25 — loads after notifications core (20).",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "laravel",
     "notifications",
     "in-app",
@@ -16,21 +16,21 @@
   ],
   "require": {
     "php": "^8.3",
-    "academorix/application": "@dev",
-    "academorix/authorization": "@dev",
-    "academorix/console": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/database": "@dev",
-    "academorix/enum": "@dev",
-    "academorix/events": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
-    "academorix/notifications": "@dev",
-    "academorix/retention": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix/tenancy": "@dev",
+    "stackra/application": "@dev",
+    "stackra/authorization": "@dev",
+    "stackra/console": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/database": "@dev",
+    "stackra/enum": "@dev",
+    "stackra/events": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/notifications": "@dev",
+    "stackra/retention": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra/tenancy": "@dev",
     "illuminate/broadcasting": "^13.0",
     "illuminate/bus": "^13.0",
     "illuminate/contracts": "^13.0",
@@ -51,20 +51,20 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Notifications\\InApp\\": "src/",
-      "Academorix\\Notifications\\InApp\\Database\\Factories\\": "database/factories/",
-      "Academorix\\Notifications\\InApp\\Database\\Seeders\\": "database/seeders/"
+      "Stackra\\Notifications\\InApp\\": "src/",
+      "Stackra\\Notifications\\InApp\\Database\\Factories\\": "database/factories/",
+      "Stackra\\Notifications\\InApp\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Notifications\\InApp\\Tests\\": "tests/"
+      "Stackra\\Notifications\\InApp\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Notifications\\InApp\\Providers\\NotificationsInAppServiceProvider"
+        "Stackra\\Notifications\\InApp\\Providers\\NotificationsInAppServiceProvider"
       ],
       "aliases": {}
     }

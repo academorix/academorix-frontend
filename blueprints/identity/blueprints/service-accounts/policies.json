@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/service-accounts/policies",
+  "id": "stackra://modules/service-accounts/policies",
   "$version": 1,
   "title": "service-accounts \u2014 authorization policies",
   "description": "Only ONE policy exists: `ServiceAccountPolicy`. Every ability is gated behind the `platform_admin` guard \u2014 the tenant-audience `sanctum` guard NEVER interacts with SA rows directly. Tenant callers reach the SA substrate ONLY when their own tenant's SAs (webhook signers, etc.) are provisioned on their behalf by a platform_admin \u2014 the tenant never sees the SA row itself. The token-exchange endpoint is unauthenticated and does NOT flow through this policy.",
   "policies": [
     {
       "model": "ServiceAccount",
-      "class": "Academorix\\ServiceAccount\\Policies\\ServiceAccountPolicy",
+      "class": "Stackra\\ServiceAccount\\Policies\\ServiceAccountPolicy",
       "guard": "platform_admin",
       "abilities": [
         {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsAnnouncementsSdk\Requests\Announcements;
+namespace Stackra\NotificationsAnnouncementsSdk\Requests\Announcements;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\NotificationsAnnouncementsSdk\Data\AnnouncementData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\NotificationsAnnouncementsSdk\Data\AnnouncementData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

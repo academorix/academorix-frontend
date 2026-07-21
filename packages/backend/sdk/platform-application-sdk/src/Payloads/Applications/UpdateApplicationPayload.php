@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformApplicationSdk\Payloads\Applications;
+namespace Stackra\PlatformApplicationSdk\Payloads\Applications;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\Max;
@@ -36,8 +36,8 @@ use Spatie\LaravelData\Optional;
  * ```php
  * // Change the name without touching anything else — the wire payload
  * // has exactly one key.
- * $patch = new UpdateApplicationPayload(name: 'Academorix (EU)');
- * $patch->toArray();  // ['name' => 'Academorix (EU)']
+ * $patch = new UpdateApplicationPayload(name: 'Stackra (EU)');
+ * $patch->toArray();  // ['name' => 'Stackra (EU)']
  * ```
  *
  * @category PlatformApplicationSdk

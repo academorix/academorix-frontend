@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceProvider\Registry;
+namespace Stackra\ServiceProvider\Registry;
 
-use Academorix\ServiceProvider\Attributes\AsBootstrapper;
-use Academorix\ServiceProvider\Bootstrappers\AbstractBootstrapper;
-use Academorix\ServiceProvider\Contracts\BootstrapperInterface;
-use Academorix\ServiceProvider\Support\BootstrapperRunner;
+use Stackra\ServiceProvider\Attributes\AsBootstrapper;
+use Stackra\ServiceProvider\Bootstrappers\AbstractBootstrapper;
+use Stackra\ServiceProvider\Contracts\BootstrapperInterface;
+use Stackra\ServiceProvider\Support\BootstrapperRunner;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Contracts\Container\Container;
 use ReflectionClass;

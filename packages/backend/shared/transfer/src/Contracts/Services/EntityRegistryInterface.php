@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Contracts\Services;
+namespace Stackra\Transfer\Contracts\Services;
 
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
-use Academorix\Transfer\Attributes\Exportable;
-use Academorix\Transfer\Attributes\Importable;
-use Academorix\Transfer\Attributes\SampleData;
-use Academorix\Transfer\Services\EntityRegistry;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Transfer\Attributes\Exportable;
+use Stackra\Transfer\Attributes\Importable;
+use Stackra\Transfer\Attributes\SampleData;
+use Stackra\Transfer\Services\EntityRegistry;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -18,7 +18,7 @@ use Illuminate\Container\Attributes\Bind;
  * screen.
  *
  * Hydrated at boot by the framework's generic
- * {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ * {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  * via the `#[HydratesFrom]` attributes on {@see register()}.
  *
  * @category Transfer

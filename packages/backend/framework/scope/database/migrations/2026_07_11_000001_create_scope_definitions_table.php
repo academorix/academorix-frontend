@@ -14,7 +14,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Scope\Contracts\Data\ScopeDefinitionInterface;
+use Stackra\Scope\Contracts\Data\ScopeDefinitionInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

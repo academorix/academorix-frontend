@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transaction\Exceptions;
+namespace Stackra\Transaction\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to insert a new ledger entry on a transaction already in status='posted'.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class LedgerEntryParentTransactionPostedException extends AcademorixException
+final class LedgerEntryParentTransactionPostedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

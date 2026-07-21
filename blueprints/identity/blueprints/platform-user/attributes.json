@@ -1,20 +1,20 @@
 {
-  "id": "academorix://modules/platform-user/attributes",
+  "id": "stackra://modules/platform-user/attributes",
   "$version": 1,
   "title": "platform-user \u2014 PHP attribute contracts",
   "description": "One attribute. `#[AsPlatformUserListener]` marks a class as a subscriber to PlatformUser-lifecycle events (hired, activated, suspended, offboarded, restored, manager-reassigned, department-changed, profile-updated). Discovered at boot by `PlatformUserServiceProvider` so internal services under `access/rbac`, `access/delegation`, `notifications`, `observability`, and the future on-call `escalation` module react without hard-coded event bindings.",
-  "namespace": "Academorix\\PlatformUser\\Attributes",
+  "namespace": "Stackra\\PlatformUser\\Attributes",
   "attributes": [
     {
       "name": "AsPlatformUserListener",
-      "class": "Academorix\\PlatformUser\\Attributes\\AsPlatformUserListener",
+      "class": "Stackra\\PlatformUser\\Attributes\\AsPlatformUserListener",
       "targets": ["class"],
       "params": [
         {
           "name": "events",
           "type": "array<string>",
           "default": ["*"],
-          "description": "Which PlatformUser events this class reacts to. Wildcard `*` = every event under `Academorix\\PlatformUser\\Events\\*`. Specific list e.g. `['PlatformUserHired', 'PlatformUserOffboarded']` subscribes to those only. Validated against the events map at boot; typos abort application boot."
+          "description": "Which PlatformUser events this class reacts to. Wildcard `*` = every event under `Stackra\\PlatformUser\\Events\\*`. Specific list e.g. `['PlatformUserHired', 'PlatformUserOffboarded']` subscribes to those only. Validated against the events map at boot; typos abort application boot."
         },
         {
           "name": "queue",

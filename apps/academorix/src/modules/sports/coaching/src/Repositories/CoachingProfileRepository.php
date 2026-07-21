@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Repositories;
+namespace Stackra\Coaching\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Coaching\Contracts\Data\CoachingProfileInterface;
-use Academorix\Coaching\Contracts\Repositories\CoachingProfileRepositoryInterface;
-use Academorix\Coaching\Models\CoachingProfile;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Coaching\Contracts\Data\CoachingProfileInterface;
+use Stackra\Coaching\Contracts\Repositories\CoachingProfileRepositoryInterface;
+use Stackra\Coaching\Models\CoachingProfile;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Coaching\Models\CoachingProfile}.
+ * Attribute-first Eloquent repository for {@see Stackra\Coaching\Models\CoachingProfile}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(CoachingProfileInterface::class)]` which resolves to
  * `CoachingProfile` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Coaching\Models\CoachingProfile>
+ * @extends Repository<\Stackra\Coaching\Models\CoachingProfile>
  *
  * @category Coaching
  *

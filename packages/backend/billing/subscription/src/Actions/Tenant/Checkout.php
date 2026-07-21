@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Actions\Tenant;
+namespace Stackra\Subscription\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Subscription\Contracts\Repositories\PlanRepositoryInterface;
-use Academorix\Subscription\Contracts\Services\BillingServiceInterface;
-use Academorix\Subscription\Data\Requests\CheckoutRequestData;
-use Academorix\Subscription\Enums\SubscriptionPermission;
-use Academorix\Subscription\Exceptions\CheckoutProviderErrorException;
-use Academorix\Subscription\Exceptions\PlanNotFoundException;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Subscription\Contracts\Repositories\PlanRepositoryInterface;
+use Stackra\Subscription\Contracts\Services\BillingServiceInterface;
+use Stackra\Subscription\Data\Requests\CheckoutRequestData;
+use Stackra\Subscription\Enums\SubscriptionPermission;
+use Stackra\Subscription\Exceptions\CheckoutProviderErrorException;
+use Stackra\Subscription\Exceptions\PlanNotFoundException;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Illuminate\Http\JsonResponse;
 
 /**

@@ -102,7 +102,7 @@
               "props": {
                 "variant": "warning",
                 "title": "Data processing agreement",
-                "description": "Adding this provider means Academorix will forward customer address data to the provider. Please confirm you have accepted the provider's DPA."
+                "description": "Adding this provider means Stackra will forward customer address data to the provider. Please confirm you have accepted the provider's DPA."
               },
               "bindings": { "hidden": { "$expr": "form.provider === 'native_calculator'" } }
             },

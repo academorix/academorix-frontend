@@ -1,6 +1,6 @@
-# academorix/invitations
+# stackra/invitations
 
-Agnostic invitation substrate for Academorix. Owns the `Invitation` and
+Agnostic invitation substrate for Stackra. Owns the `Invitation` and
 `InvitationEvent` aggregates plus the `HasInvitations` / `BelongsToInvitation`
 traits every downstream module composes.
 

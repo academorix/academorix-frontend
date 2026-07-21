@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Observers;
+namespace Stackra\Tenancy\Observers;
 
-use Academorix\Tenancy\Contracts\Data\TenantInterface;
-use Academorix\Tenancy\Enums\TenantStatus;
-use Academorix\Tenancy\Events\TenantArchived;
-use Academorix\Tenancy\Events\TenantResumed;
-use Academorix\Tenancy\Events\TenantSettingsUpdated;
-use Academorix\Tenancy\Events\TenantSuspended;
-use Academorix\Tenancy\Exceptions\SystemTenantException;
-use Academorix\Tenancy\Models\Tenant;
+use Stackra\Tenancy\Contracts\Data\TenantInterface;
+use Stackra\Tenancy\Enums\TenantStatus;
+use Stackra\Tenancy\Events\TenantArchived;
+use Stackra\Tenancy\Events\TenantResumed;
+use Stackra\Tenancy\Events\TenantSettingsUpdated;
+use Stackra\Tenancy\Events\TenantSuspended;
+use Stackra\Tenancy\Exceptions\SystemTenantException;
+use Stackra\Tenancy\Models\Tenant;
 use Carbon\CarbonImmutable;
 
 /**

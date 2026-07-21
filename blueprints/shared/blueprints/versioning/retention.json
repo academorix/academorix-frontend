@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/versioning/retention",
+  "id": "stackra://modules/versioning/retention",
   "$version": 1,
   "title": "versioning \u2014 retention windows",
   "description": "ApiVersion + DeprecationNotice rows are lifecycle records \u2014 kept indefinitely for regulatory evidence + platform archaeology. Only soft-deleted drafts are hard-purged after a short window.",

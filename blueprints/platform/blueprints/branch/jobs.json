@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/branch/jobs",
+  "id": "stackra://modules/branch/jobs",
   "$version": 1,
   "title": "branch — background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Branch\\Jobs\\GeocodeAddressJob",
+      "class": "Stackra\\Branch\\Jobs\\GeocodeAddressJob",
       "queue": "notifications",
       "purpose": "Resolve `Branch.address` → `Branch.coordinates` via the configured geocoding subprocessor. Dispatched by the BranchObserver on BranchCreated + BranchAddressUpdated (when coordinates.source === 'geocoded'), by the `POST /branches/{branch}/geocode` endpoint, and by the `branch:geocode` command.",
       "steps": [
@@ -26,14 +26,14 @@
       "backoff": [30, 120, 600]
     },
     {
-      "class": "Academorix\\Branch\\Jobs\\ReconcileDefaultBranchInvariantJob",
+      "class": "Stackra\\Branch\\Jobs\\ReconcileDefaultBranchInvariantJob",
       "queue": "low",
       "purpose": "Nightly integrity job. Scans every `(tenant, organization)` tuple + verifies the default-branch invariant holds: exactly one `is_default = true` Branch per (tenant, organization). Fixes drift by promoting the oldest non-closed Branch to default when a tuple has zero defaults, and by demoting all-but-one when a tuple has multiple (should be impossible via observer, but partial unique index race conditions during a bulk operation could theoretically slip past).",
       "steps": [
         "SELECT tenant_id, organization_id, COUNT(*) FILTER (WHERE is_default=true) FROM branches WHERE deleted_at IS NULL AND status != 'closed' GROUP BY tenant_id, organization_id.",
         "For each tuple with default_count = 0: promote the oldest by created_at.",
         "For each tuple with default_count > 1: demote all but the first (by created_at); fire BranchDefaultChanged for each change.",
-        "Emit `academorix.branch.reconcile.corrections` metric per tenant + write a compliance-severity audit row when > 0 corrections."
+        "Emit `stackra.branch.reconcile.corrections` metric per tenant + write a compliance-severity audit row when > 0 corrections."
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -42,14 +42,14 @@
       "notes": "Killable via `branch.reconcile_default_invariant` feature flag during large data-migration windows where the invariant is temporarily violated by design."
     },
     {
-      "class": "Academorix\\Branch\\Jobs\\NotifyStaffOfBranchClosureJob",
+      "class": "Stackra\\Branch\\Jobs\\NotifyStaffOfBranchClosureJob",
       "queue": "notifications",
       "purpose": "On BranchClosed, notify every Staff / Coach / Reception User currently assigned to this Branch. Batched — one job per closure, iterates the affected users internally + dispatches individual `BranchClosedNotification` mails. Deferred from the BranchClosed listener because the recipient enumeration is DB-heavy (joins across staff / coaches / tenant_members) + can produce thousands of recipients on a large chain-gym branch closure.",
       "steps": [
         "SELECT user_id FROM staff / coaches / tenant_members WHERE branch_id = :branch_id AND deleted_at IS NULL.",
         "DISTINCT — one recipient per unique User even when they hold multiple roles at the branch.",
         "For each recipient: dispatch BranchClosedNotification via the configured notification channels (default: mail).",
-        "Emit `academorix.branch.closure_notification.fanout_size` histogram."
+        "Emit `stackra.branch.closure_notification.fanout_size` histogram."
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,

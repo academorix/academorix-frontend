@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/auth/schemas/auth-jwt-signing-key",
+  "id": "stackra://modules/auth/schemas/auth-jwt-signing-key",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "JwtSigningKey",
@@ -13,7 +13,7 @@
     "keyType": "string",
     "keyPrefix": "ajk_",
     "incrementing": false,
-    "model": "Academorix\\Auth\\Models\\JwtSigningKey",
+    "model": "Stackra\\Auth\\Models\\JwtSigningKey",
     "traits": [
       "HasFactory",
       "HasUlids",

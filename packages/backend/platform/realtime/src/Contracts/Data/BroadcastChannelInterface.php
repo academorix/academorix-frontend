@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Realtime\Contracts\Data;
+namespace Stackra\Realtime\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Realtime\Models\BroadcastChannel;
+use Stackra\Realtime\Models\BroadcastChannel;
 
 /**
  * Table shape for the `broadcast_channels` table.

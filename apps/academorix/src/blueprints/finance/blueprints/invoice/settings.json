@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/invoice/settings",
+  "id": "stackra://modules/invoice/settings",
   "$version": 1,
   "title": "invoice — settings",
   "description": "Tenant-facing invoice configuration + per-user preferences for report subscriptions. The invoices table is NOT settings — this file declares tenant-level defaults (numbering series, dunning cadence overrides, notification routing) + per-user preferences (aging report subscription).",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "invoice",
-      "class": "Academorix\\Finance\\Invoice\\Settings\\InvoiceSettings",
+      "class": "Stackra\\Finance\\Invoice\\Settings\\InvoiceSettings",
       "label": "Invoicing",
       "description": "Tenant-wide defaults for invoice numbering, delivery, and dunning.",
       "icon": "document-text",
@@ -191,7 +191,7 @@
     },
     {
       "key": "invoice_user",
-      "class": "Academorix\\Finance\\Invoice\\Settings\\InvoiceUserSettings",
+      "class": "Stackra\\Finance\\Invoice\\Settings\\InvoiceUserSettings",
       "label": "My invoicing preferences",
       "description": "Per-user preferences for invoice reports + alerts.",
       "icon": "user-circle",

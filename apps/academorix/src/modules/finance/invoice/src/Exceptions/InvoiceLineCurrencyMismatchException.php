@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invoice\Exceptions;
+namespace Stackra\Invoice\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Line currency must match parent invoice currency.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvoiceLineCurrencyMismatchException extends AcademorixException
+final class InvoiceLineCurrencyMismatchException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

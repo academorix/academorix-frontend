@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/athlete-enrollment/features",
+  "id": "stackra://modules/athlete-enrollment/features",
   "$version": 1,
   "title": "athlete-enrollment — feature keys",
   "reference": {

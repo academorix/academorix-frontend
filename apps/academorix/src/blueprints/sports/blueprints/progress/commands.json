@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/progress/commands",
+  "id": "stackra://modules/progress/commands",
   "$version": 1,
   "title": "progress — Artisan commands",
   "description": "Console commands this module ships.",

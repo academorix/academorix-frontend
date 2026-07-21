@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/marketing/broadcasts",
+  "id": "stackra://modules/marketing/broadcasts",
   "$version": 1,
   "title": "marketing — realtime broadcast channels",
   "description": "Three broadcast channel families for live UI updates. Tenant-level channel for cross-provider marketing dashboards; provider-scoped channel for the per-provider health widget + circuit-breaker state indicator; dead-letter channel for the ops queue. Reverb driver (Laravel Reverb) is the default transport; the notifications module handles fanout.",
   "channels": [
     {
       "name": "tenant.{tenantId}.marketing",
-      "class": "Academorix\\Growth\\Marketing\\Broadcasts\\TenantMarketingChannel",
+      "class": "Stackra\\Growth\\Marketing\\Broadcasts\\TenantMarketingChannel",
       "description": "Tenant-wide marketing activity stream. Sink for the marketing dashboard showing event capture + delivery lifecycle.",
       "authorization": "sanctum::authed AND tenant_matches AND (marketing role OR admin OR owner)",
       "events": [
@@ -22,7 +22,7 @@
     },
     {
       "name": "tenant.{tenantId}.marketing.providers",
-      "class": "Academorix\\Growth\\Marketing\\Broadcasts\\TenantMarketingProvidersChannel",
+      "class": "Stackra\\Growth\\Marketing\\Broadcasts\\TenantMarketingProvidersChannel",
       "description": "Provider-scoped health + config activity. Powers the per-provider status chip + circuit-breaker state indicator in the marketing dashboard.",
       "authorization": "sanctum::authed AND tenant_matches AND (marketing role OR admin OR owner)",
       "events": [
@@ -40,7 +40,7 @@
     },
     {
       "name": "tenant.{tenantId}.marketing.dead-letters",
-      "class": "Academorix\\Growth\\Marketing\\Broadcasts\\TenantMarketingDeadLettersChannel",
+      "class": "Stackra\\Growth\\Marketing\\Broadcasts\\TenantMarketingDeadLettersChannel",
       "description": "Dead-letter queue live updates. Powers the ops queue view showing new dead-letters + replay outcomes.",
       "authorization": "sanctum::authed AND tenant_matches AND (marketing role OR admin OR owner)",
       "events": [

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlagsSdk\Connectors;
+namespace Stackra\FeatureFlagsSdk\Connectors;
 
 use Saloon\Http\Auth\TokenAuthenticator;
 use Saloon\Http\Connector;

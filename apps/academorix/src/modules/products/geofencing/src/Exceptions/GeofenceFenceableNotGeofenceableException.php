@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Exceptions;
+namespace Stackra\Geofencing\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The resolved class does not implement the Geofenceable interface.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GeofenceFenceableNotGeofenceableException extends AcademorixException
+final class GeofenceFenceableNotGeofenceableException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

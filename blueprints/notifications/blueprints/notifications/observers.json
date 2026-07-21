@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/notifications/observers",
+  "id": "stackra://modules/notifications/observers",
   "$version": 1,
   "title": "notifications core \u2014 Eloquent observers",
   "description": "Model observers that live in this module. They translate lifecycle hooks into events + cache invalidations + audit rows. Each observer is registered in NotificationsServiceProvider via `Model::observe(ObserverClass::class)`.",
   "observers": [
     {
       "model": "Notification",
-      "observer": "Academorix\\Notifications\\Observers\\NotificationObserver",
+      "observer": "Stackra\\Notifications\\Observers\\NotificationObserver",
       "handles": [
         "created \u2192 fire NotificationDispatched (only if state=queued at persist time)",
         "updated (state=sent) \u2192 fire NotificationSent",
@@ -19,7 +19,7 @@
     },
     {
       "model": "NotificationDelivery",
-      "observer": "Academorix\\Notifications\\Observers\\NotificationDeliveryObserver",
+      "observer": "Stackra\\Notifications\\Observers\\NotificationDeliveryObserver",
       "handles": [
         "created \u2192 fire NotificationQueued for observability",
         "updated (state transitions) \u2192 update parent Notification.state via a small state-projection routine (Delivery state is per-channel; Notification.state is the aggregate)",
@@ -29,7 +29,7 @@
     },
     {
       "model": "NotificationTemplate",
-      "observer": "Academorix\\Notifications\\Observers\\NotificationTemplateObserver",
+      "observer": "Stackra\\Notifications\\Observers\\NotificationTemplateObserver",
       "handles": [
         "created \u2192 write audit row with template_key + version + channel + locale (SOC 2 CC8.1 change management evidence)",
         "updated (state \u2192 published) \u2192 fire TemplatePublished",
@@ -40,7 +40,7 @@
     },
     {
       "model": "NotificationPreference",
-      "observer": "Academorix\\Notifications\\Observers\\NotificationPreferenceObserver",
+      "observer": "Stackra\\Notifications\\Observers\\NotificationPreferenceObserver",
       "handles": [
         "created \u2192 fire PreferenceUpdated with source=user_settings (or from listener source)",
         "updated \u2192 fire PreferenceUpdated + invalidate user's preference cache",
@@ -49,7 +49,7 @@
     },
     {
       "model": "NotificationCategory",
-      "observer": "Academorix\\Notifications\\Observers\\NotificationCategoryObserver",
+      "observer": "Stackra\\Notifications\\Observers\\NotificationCategoryObserver",
       "handles": [
         "created \u2192 fire CategoryRegistered",
         "updated \u2192 invalidate category registry cache",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/theme/schedule",
+  "id": "stackra://modules/theme/schedule",
   "$version": 1,
   "title": "theme — scheduled tasks",
   "entries": [

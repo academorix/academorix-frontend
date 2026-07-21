@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-push/config",
+  "id": "stackra://modules/notifications-push/config",
   "$version": 1,
   "title": "notifications-push \u2014 developer configuration",
   "configFile": "config/notifications-push.php",

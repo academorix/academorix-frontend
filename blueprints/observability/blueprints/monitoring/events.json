@@ -1,20 +1,20 @@
 {
-  "id": "academorix://modules/monitoring/events",
+  "id": "stackra://modules/monitoring/events",
   "$version": 1,
   "title": "monitoring — published events",
-  "namespace": "Academorix\\Observability\\Monitoring\\Events",
+  "namespace": "Stackra\\Observability\\Monitoring\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. MonitoringAlertFired (P1 severity) + MonitoringIncidentOpened + MonitoringProviderCircuitBreakerOpened are the CRITICAL events of the module — every fire pages on-call. MonitoringIncidentEscalated is the escalation signal (unacknowledged past SLA). MonitoringHealthCheckPersistentlyFailingNotification signals a persistently unhealthy check that has not yet crossed an alert threshold — a leading indicator.",
   "events": [
     {
       "name": "HealthCheckCreated",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\HealthCheckCreated",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\HealthCheckCreated",
       "trigger": "HealthCheckObserver.created committed a new health_checks row.",
       "queue": "monitoring",
       "consumers": [
         "audit::WriteToAuditLog (retention: 7 years — infrastructure config is compliance-relevant)",
         "monitoring::ScheduleFirstRun (dispatches RunHealthCheckJob delayed by interval_seconds/2 so the check doesn't fire at boot burst)",
-        "monitoring::MetricsCollector (increments academorix.monitoring.health_checks.created_total)"
+        "monitoring::MetricsCollector (increments stackra.monitoring.health_checks.created_total)"
       ],
       "payload": {
         "health_check_id": "ULID (hck_*)",
@@ -29,7 +29,7 @@
     },
     {
       "name": "HealthCheckUpdated",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\HealthCheckUpdated",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\HealthCheckUpdated",
       "trigger": "HealthCheckObserver.updated committed changes to a health_checks row. Interval or target changes require re-scheduling.",
       "queue": "monitoring",
       "consumers": [
@@ -47,7 +47,7 @@
     },
     {
       "name": "HealthCheckEnabled",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\HealthCheckEnabled",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\HealthCheckEnabled",
       "trigger": "HealthCheckObserver.updated detected is_enabled transition false → true.",
       "queue": "monitoring",
       "consumers": ["audit::WriteToAuditLog", "monitoring::ScheduleFirstRun"],
@@ -60,7 +60,7 @@
     },
     {
       "name": "HealthCheckDisabled",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\HealthCheckDisabled",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\HealthCheckDisabled",
       "trigger": "HealthCheckObserver.updated detected is_enabled transition true → false.",
       "queue": "monitoring",
       "consumers": [
@@ -77,13 +77,13 @@
     },
     {
       "name": "HealthCheckRun",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\HealthCheckRun",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\HealthCheckRun",
       "trigger": "HealthCheckRunObserver.created inserted a new health_check_runs row. High-volume — one fire per (health_check × interval_seconds).",
       "queue": "monitoring",
       "consumers": [
         "monitoring::EvaluateAlertPolicies (checks whether this run triggers any threshold breaches)",
         "monitoring::UpdateHealthCheckDenormalizedState (updates last_run_at + last_run_status + consecutive_failure_count on the parent)",
-        "monitoring::MetricsCollector (increments academorix.monitoring.health_check_runs.total{status=...})"
+        "monitoring::MetricsCollector (increments stackra.monitoring.health_check_runs.total{status=...})"
       ],
       "payload": {
         "health_check_run_id": "ULID (hcr_*)",
@@ -96,7 +96,7 @@
     },
     {
       "name": "HealthCheckStatusChanged",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\HealthCheckStatusChanged",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\HealthCheckStatusChanged",
       "trigger": "HealthCheckRunObserver.created detected the new run's status differs from the parent's last_run_status. Signals a transition (healthy → degraded, unhealthy → healthy, …).",
       "queue": "monitoring",
       "consumers": [
@@ -115,7 +115,7 @@
     },
     {
       "name": "MonitoringAlertPolicyCreated",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\MonitoringAlertPolicyCreated",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\MonitoringAlertPolicyCreated",
       "trigger": "MonitoringAlertPolicyObserver.created committed a new monitoring_alert_policies row.",
       "queue": "monitoring",
       "consumers": [
@@ -139,7 +139,7 @@
     },
     {
       "name": "MonitoringAlertPolicyUpdated",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\MonitoringAlertPolicyUpdated",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\MonitoringAlertPolicyUpdated",
       "trigger": "MonitoringAlertPolicyObserver.updated committed changes to a monitoring_alert_policies row.",
       "queue": "monitoring",
       "consumers": ["audit::WriteToAuditLog", "monitoring::InvalidateEvaluatorCache"],
@@ -153,7 +153,7 @@
     },
     {
       "name": "MonitoringAlertPolicySuppressed",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\MonitoringAlertPolicySuppressed",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\MonitoringAlertPolicySuppressed",
       "trigger": "MonitoringAlertPolicyObserver.updated detected suppression_config.silenced_until was set OR after_hours_suppress / weekend_suppress toggled.",
       "queue": "monitoring",
       "consumers": [
@@ -171,7 +171,7 @@
     },
     {
       "name": "MonitoringAlertFired",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\MonitoringAlertFired",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\MonitoringAlertFired",
       "trigger": "CRITICAL. MonitoringAlertObserver.created inserted a new monitoring_alerts row with status='firing'. The AlertPolicyEvaluator detected a threshold breach that met the policy's consecutive_breaches_required. Every P1 fire pages on-call.",
       "queue": "monitoring-critical",
       "consumers": [
@@ -179,7 +179,7 @@
         "monitoring::GroupIntoIncident (dispatches GroupAlertsIntoIncidentJob to attach or open an incident)",
         "monitoring::NotifyProviders (dispatches NotifyProvidersJob for the policy's notify_provider_configs)",
         "notifications::DispatchMonitoringAlertFiredNotification (P1: page on-call, P2: alert primary, P3+P4: dashboard-only)",
-        "monitoring::MetricsCollector (increments academorix.monitoring.alerts.fired_total{severity=...})"
+        "monitoring::MetricsCollector (increments stackra.monitoring.alerts.fired_total{severity=...})"
       ],
       "payload": {
         "monitoring_alert_id": "ULID (mal_*)",
@@ -195,7 +195,7 @@
     },
     {
       "name": "MonitoringAlertAcknowledged",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\MonitoringAlertAcknowledged",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\MonitoringAlertAcknowledged",
       "trigger": "MonitoringAlertObserver.updated detected status transition firing → acknowledged. A human took ownership.",
       "queue": "monitoring",
       "consumers": [
@@ -213,13 +213,13 @@
     },
     {
       "name": "MonitoringAlertResolved",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\MonitoringAlertResolved",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\MonitoringAlertResolved",
       "trigger": "MonitoringAlertObserver.updated detected status transition to 'resolved'. Either signal cleared (auto-resolve) or ops manually resolved.",
       "queue": "monitoring",
       "consumers": [
         "audit::WriteToAuditLog",
         "monitoring::MaybeResolveIncident (if this was the last firing alert in its incident → transition incident.status = 'resolved')",
-        "monitoring::MetricsCollector (increments academorix.monitoring.alerts.resolved_total{resolved_by=auto|manual})"
+        "monitoring::MetricsCollector (increments stackra.monitoring.alerts.resolved_total{resolved_by=auto|manual})"
       ],
       "payload": {
         "monitoring_alert_id": "ULID",
@@ -232,12 +232,12 @@
     },
     {
       "name": "MonitoringAlertSuppressed",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\MonitoringAlertSuppressed",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\MonitoringAlertSuppressed",
       "trigger": "MonitoringAlertObserver.created inserted a row with status='suppressed'. The threshold breached but the policy's suppression_config matched (after-hours, weekend, silenced_until).",
       "queue": "monitoring",
       "consumers": [
         "audit::WriteToAuditLog (compliance record — 'we saw this signal but chose not to page')",
-        "monitoring::MetricsCollector (increments academorix.monitoring.alerts.suppressed_total{reason=...})"
+        "monitoring::MetricsCollector (increments stackra.monitoring.alerts.suppressed_total{reason=...})"
       ],
       "payload": {
         "monitoring_alert_id": "ULID",
@@ -250,7 +250,7 @@
     },
     {
       "name": "MonitoringIncidentOpened",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\MonitoringIncidentOpened",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\MonitoringIncidentOpened",
       "trigger": "CRITICAL. MonitoringIncidentObserver.created inserted a new monitoring_incidents row with status='open'. GroupAlertsIntoIncidentJob determined the fired alert did not attach to any existing incident + opened a new one.",
       "queue": "monitoring-critical",
       "consumers": [
@@ -258,7 +258,7 @@
         "notifications::DispatchMonitoringIncidentOpenedNotification (P1: page on-call via oncall_page_config; P2+: notify primary; P3+: dashboard-only)",
         "monitoring::NotifyProviders (dispatches NotifyProvidersJob for the incident's oncall_page_config)",
         "monitoring::ScheduleEscalation (dispatches EscalateIncidentJob delayed by the severity's SLA)",
-        "monitoring::MetricsCollector (increments academorix.monitoring.incidents.opened_total{severity=...})"
+        "monitoring::MetricsCollector (increments stackra.monitoring.incidents.opened_total{severity=...})"
       ],
       "payload": {
         "monitoring_incident_id": "ULID (mci_*)",
@@ -272,7 +272,7 @@
     },
     {
       "name": "MonitoringIncidentAcknowledged",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\MonitoringIncidentAcknowledged",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\MonitoringIncidentAcknowledged",
       "trigger": "MonitoringIncidentObserver.updated detected status transition open → acknowledged. A human took ownership.",
       "queue": "monitoring",
       "consumers": [
@@ -290,7 +290,7 @@
     },
     {
       "name": "MonitoringIncidentStatusUpdated",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\MonitoringIncidentStatusUpdated",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\MonitoringIncidentStatusUpdated",
       "trigger": "MonitoringIncidentObserver.updated detected status transition to investigating / mitigating / postmortem. Not fired for open / acknowledged / resolved — those have dedicated events.",
       "queue": "monitoring",
       "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
@@ -305,13 +305,13 @@
     },
     {
       "name": "MonitoringIncidentResolved",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\MonitoringIncidentResolved",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\MonitoringIncidentResolved",
       "trigger": "MonitoringIncidentObserver.updated detected status transition to 'resolved'. Either every alert in the incident resolved (auto) or ops manually resolved.",
       "queue": "monitoring",
       "consumers": [
         "audit::WriteToAuditLog (retention: 7 years)",
         "monitoring::MaybeSchedulePostmortem (when severity=p1: fire MonitoringPostmortemRequiredNotification + transition status to 'postmortem' if not already)",
-        "monitoring::MetricsCollector (increments academorix.monitoring.incidents.resolved_total)"
+        "monitoring::MetricsCollector (increments stackra.monitoring.incidents.resolved_total)"
       ],
       "payload": {
         "monitoring_incident_id": "ULID",
@@ -325,7 +325,7 @@
     },
     {
       "name": "MonitoringProviderConfigured",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\MonitoringProviderConfigured",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\MonitoringProviderConfigured",
       "trigger": "MonitoringProviderConfigObserver.created committed a new provider_configs row.",
       "queue": "monitoring",
       "consumers": [
@@ -344,7 +344,7 @@
     },
     {
       "name": "MonitoringProviderDeactivated",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\MonitoringProviderDeactivated",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\MonitoringProviderDeactivated",
       "trigger": "MonitoringProviderConfigObserver.updated detected is_active → false OR row soft-deleted.",
       "queue": "monitoring",
       "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
@@ -359,14 +359,14 @@
     },
     {
       "name": "MonitoringProviderCircuitBreakerOpened",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\MonitoringProviderCircuitBreakerOpened",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\MonitoringProviderCircuitBreakerOpened",
       "trigger": "CRITICAL. consecutive_failure_count on a provider_config reached failure_threshold. Sets circuit_breaker_open_until = now() + open_duration_seconds. Blocks all subsequent notifications until the timer elapses. Every fire is a P1 signal — the tenant's monitoring is telling them their monitoring is broken.",
       "queue": "monitoring-critical",
       "consumers": [
         "audit::WriteToAuditLog",
         "notifications::DispatchMonitoringProviderCircuitBreakerOpenedNotification (cannot-opt-out — pages ops + notifies tenant owner + falls back to alternate paging provider)",
         "monitoring::FailoverToAlternateProvider (if this was PagerDuty: fail over to Opsgenie for pending notifications; if Opsgenie: fail over to PagerDuty)",
-        "monitoring::MetricsCollector (increments academorix.monitoring.circuit_breakers.opened_total)"
+        "monitoring::MetricsCollector (increments stackra.monitoring.circuit_breakers.opened_total)"
       ],
       "payload": {
         "tenant_id": "ULID",
@@ -381,7 +381,7 @@
     },
     {
       "name": "MonitoringProviderCircuitBreakerClosed",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\MonitoringProviderCircuitBreakerClosed",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\MonitoringProviderCircuitBreakerClosed",
       "trigger": "Provider recovered — half-open probe succeeded OR ops manually reset via monitoring:reset-circuit-breaker command / POST endpoint.",
       "queue": "monitoring",
       "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
@@ -396,7 +396,7 @@
     },
     {
       "name": "MonitoringProviderTestSent",
-      "class": "Academorix\\Observability\\Monitoring\\Events\\MonitoringProviderTestSent",
+      "class": "Stackra\\Observability\\Monitoring\\Events\\MonitoringProviderTestSent",
       "trigger": "POST /providers/{provider}/test invoked OR test_mode=true on a new config. Dispatches a synthetic alert via the provider's sandbox / test endpoint.",
       "queue": "monitoring",
       "consumers": [

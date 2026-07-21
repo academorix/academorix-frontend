@@ -27,14 +27,14 @@
  *     the JSON API surface. This is the default guard for
  *     `#[RequirePermission]` and friends.
  *
- * @see \Academorix\Authorization\Attributes\RequirePermission Consumers of this enum.
+ * @see \Stackra\Authorization\Attributes\RequirePermission Consumers of this enum.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Authorization\Enums;
+namespace Stackra\Authorization\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 enum Guard: string
 {

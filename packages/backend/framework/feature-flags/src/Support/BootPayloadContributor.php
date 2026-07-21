@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Support;
+namespace Stackra\FeatureFlags\Support;
 
-use Academorix\FeatureFlags\Contracts\FeatureCheckerInterface;
-use Academorix\FeatureFlags\Registry\FeatureFlagRegistry;
-use Academorix\Tenancy\Models\Tenant;
-use Academorix\User\Models\User;
+use Stackra\FeatureFlags\Contracts\FeatureCheckerInterface;
+use Stackra\FeatureFlags\Registry\FeatureFlagRegistry;
+use Stackra\Tenancy\Models\Tenant;
+use Stackra\User\Models\User;
 use Illuminate\Container\Attributes\Config;
 use Psr\Log\LoggerInterface;
 use Throwable;

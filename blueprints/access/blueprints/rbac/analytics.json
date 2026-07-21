@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/rbac/analytics",
+  "id": "stackra://modules/rbac/analytics",
   "$version": 1,
   "title": "rbac \u2014 product analytics",
   "sink": "segment",
@@ -78,7 +78,7 @@
         "custom_role_slot_used",
         "custom_role_slot_cap"
       ],
-      "description": "A tenant admin created a NEW custom role (not shipped by Academorix). Feeds the tier-adoption dashboard."
+      "description": "A tenant admin created a NEW custom role (not shipped by Stackra). Feeds the tier-adoption dashboard."
     },
     {
       "name": "Custom Role Deleted",

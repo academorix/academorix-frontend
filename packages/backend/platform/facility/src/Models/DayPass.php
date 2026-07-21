@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Models;
+namespace Stackra\Facility\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Facility\Contracts\Data\DayPassInterface;
-use Academorix\Facility\Database\Factories\DayPassFactory;
-use Academorix\Branch\Concerns\BelongsToBranch;
-use Academorix\Facility\Enums\DayPassPaymentMethod;
-use Academorix\Facility\Policies\DayPassPolicy;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Facility\Contracts\Data\DayPassInterface;
+use Stackra\Facility\Database\Factories\DayPassFactory;
+use Stackra\Branch\Concerns\BelongsToBranch;
+use Stackra\Facility\Enums\DayPassPaymentMethod;
+use Stackra\Facility\Policies\DayPassPolicy;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

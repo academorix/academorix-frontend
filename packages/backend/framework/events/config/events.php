@@ -6,7 +6,7 @@
  * @description
  * Configuration for the events package. Merged into the host app's
  * config as `events.*` by
- * {@see \Academorix\Events\Providers\EventsServiceProvider}.
+ * {@see \Stackra\Events\Providers\EventsServiceProvider}.
  *
  * ## Consumers at a glance
  *
@@ -27,7 +27,7 @@
  *                           attribute-collector manifest).
  *
  *   - `broadcast.default_channel_type` — Channel type used by
- *                                        {@see \Academorix\Events\Attributes\BroadcastOn}
+ *                                        {@see \Stackra\Events\Attributes\BroadcastOn}
  *                                        when the event class did
  *                                        not declare an explicit
  *                                        `channelType` on its
@@ -79,7 +79,7 @@ return [
         |
         | Absolute filesystem path to the on-disk manifest cache.
         | Read via `#[Config('events.discovery.cache_path')]` on
-        | {@see \Academorix\Events\Support\EventDiscovery}'s
+        | {@see \Stackra\Events\Support\EventDiscovery}'s
         | constructor so the value is snapshotted at boot; no
         | per-request container reach.
         |
@@ -105,7 +105,7 @@ return [
     |----------------------------------------------------------------------
     |
     | `default_channel_type` — Channel type applied by
-    | {@see \Academorix\Events\Support\BroadcastConfigurator} when
+    | {@see \Stackra\Events\Support\BroadcastConfigurator} when
     | resolving the channels named by `#[BroadcastOn]` on an event
     | class that did not declare its own `channelType` on
     | `#[Broadcastable]`. One of `public`, `private`, or `presence`.

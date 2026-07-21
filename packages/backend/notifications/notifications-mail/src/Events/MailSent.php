@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Events;
+namespace Stackra\Notifications\Mail\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 
 /**
- * Dispatched when {@see \Academorix\Notifications\Mail\Jobs\SendMailJob}
+ * Dispatched when {@see \Stackra\Notifications\Mail\Jobs\SendMailJob}
  * has handed the mail to Laravel's `MailManager` without exception
  * and captured the provider's message id (when available).
  *

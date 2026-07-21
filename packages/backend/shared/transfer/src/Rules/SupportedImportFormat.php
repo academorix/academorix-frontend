@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Rules;
+namespace Stackra\Transfer\Rules;
 
-use Academorix\Transfer\Enums\ImportFormat;
+use Stackra\Transfer\Enums\ImportFormat;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 

@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Attributes;
+namespace Stackra\Auth\Attributes;
 
 use Attribute;
 

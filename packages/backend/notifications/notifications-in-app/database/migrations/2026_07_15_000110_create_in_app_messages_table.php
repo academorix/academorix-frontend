@@ -7,7 +7,7 @@
  * Create the `in_app_messages` table.
  *
  * Denormalised inbox row for the user's bell UI. Carries a snapshot
- * of the parent {@see \Academorix\Notifications\Models\Notification}'s
+ * of the parent {@see \Stackra\Notifications\Models\Notification}'s
  * summary fields so the inbox list can render without a join.
  *
  * Composite indexes on `(tenant_id, addressee_id, created_at)` for
@@ -17,7 +17,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Notifications\InApp\Contracts\Data\InAppMessageInterface;
+use Stackra\Notifications\InApp\Contracts\Data\InAppMessageInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

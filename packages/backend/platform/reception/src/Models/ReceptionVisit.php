@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Reception\Models;
+namespace Stackra\Reception\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Reception\Contracts\Data\ReceptionVisitInterface;
-use Academorix\Reception\Database\Factories\ReceptionVisitFactory;
-use Academorix\Branch\Concerns\BelongsToBranch;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Reception\Contracts\Data\ReceptionVisitInterface;
+use Stackra\Reception\Database\Factories\ReceptionVisitFactory;
+use Stackra\Branch\Concerns\BelongsToBranch;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;

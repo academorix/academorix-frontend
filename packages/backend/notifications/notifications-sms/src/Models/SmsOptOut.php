@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Models;
+namespace Stackra\Notifications\Sms\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Notifications\Sms\Contracts\Data\SmsOptOutInterface;
-use Academorix\Notifications\Sms\Database\Factories\SmsOptOutFactory;
-use Academorix\Notifications\Sms\Enums\SmsOptOutReason;
-use Academorix\Notifications\Sms\Enums\SmsProvider;
-use Academorix\Notifications\Sms\Observers\SmsOptOutObserver;
-use Academorix\Notifications\Sms\Policies\SmsOptOutPolicy;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Notifications\Sms\Contracts\Data\SmsOptOutInterface;
+use Stackra\Notifications\Sms\Database\Factories\SmsOptOutFactory;
+use Stackra\Notifications\Sms\Enums\SmsOptOutReason;
+use Stackra\Notifications\Sms\Enums\SmsProvider;
+use Stackra\Notifications\Sms\Observers\SmsOptOutObserver;
+use Stackra\Notifications\Sms\Policies\SmsOptOutPolicy;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

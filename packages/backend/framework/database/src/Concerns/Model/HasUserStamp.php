@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Database\Concerns\Model;
+namespace Stackra\Database\Concerns\Model;
 
 use Mattiverse\Userstamps\Traits\Userstamps;
 
@@ -10,12 +10,12 @@ use Mattiverse\Userstamps\Traits\Userstamps;
  * @file HasUserStamp.php
  *
  * @description
- * Academorix-side wrapper around {@see Userstamps} from
+ * Stackra-side wrapper around {@see Userstamps} from
  * `mattiverse/userstamps`. Publishes ONE canonical userstamps trait
- * across every Academorix model so consumers depend on
- * `Academorix\Database\Concerns\Model\HasUserStamp` and never touch
+ * across every Stackra model so consumers depend on
+ * `Stackra\Database\Concerns\Model\HasUserStamp` and never touch
  * the vendor namespace directly. The `mattiverse/userstamps`
- * dependency is declared once — in `academorix/database`'s
+ * dependency is declared once — in `stackra/database`'s
  * `composer.json` — and every module inherits it transitively.
  *
  * ## Behaviour (inherited from Mattiverse)
@@ -37,13 +37,13 @@ use Mattiverse\Userstamps\Traits\Userstamps;
  *    the model composes `Illuminate\Database\Eloquent\SoftDeletes`.**
  *
  * Use the paired `UserStampBlueprint` macro from
- * {@see \Academorix\Database\Schema\UserStampBlueprint} to add
+ * {@see \Stackra\Database\Schema\UserStampBlueprint} to add
  * these columns in migrations.
  *
  * ## Usage
  *
  * ```php
- * use Academorix\Database\Concerns\Model\HasUserStamp;
+ * use Stackra\Database\Concerns\Model\HasUserStamp;
  * use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * final class Post extends Model
@@ -63,7 +63,7 @@ use Mattiverse\Userstamps\Traits\Userstamps;
  * @since    3.0.0
  *
  * @see \Mattiverse\Userstamps\Traits\Userstamps
- * @see \Academorix\Database\Schema\UserStampBlueprint
+ * @see \Stackra\Database\Schema\UserStampBlueprint
  */
 trait HasUserStamp
 {

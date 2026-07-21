@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Actions\Platform;
+namespace Stackra\Branding\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Branding\Contracts\Data\BrandingInterface;
-use Academorix\Branding\Enums\BrandingPermission;
-use Academorix\Branding\Exceptions\LastDefaultBrandingException;
-use Academorix\Branding\Models\Branding;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Delete;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\WhereUlid;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Branding\Contracts\Data\BrandingInterface;
+use Stackra\Branding\Enums\BrandingPermission;
+use Stackra\Branding\Exceptions\LastDefaultBrandingException;
+use Stackra\Branding\Models\Branding;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Delete;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\WhereUlid;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\Response;
 
 /**

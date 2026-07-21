@@ -13,11 +13,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Services;
+namespace Stackra\Scope\Services;
 
-use Academorix\Scope\Contracts\ScopeResolverChainInterface;
-use Academorix\Scope\Contracts\ScopeResolverInterface;
-use Academorix\Scope\Data\ScopeContextData;
+use Stackra\Scope\Contracts\ScopeResolverChainInterface;
+use Stackra\Scope\Contracts\ScopeResolverInterface;
+use Stackra\Scope\Data\ScopeContextData;
 use Illuminate\Http\Request;
 
 /**

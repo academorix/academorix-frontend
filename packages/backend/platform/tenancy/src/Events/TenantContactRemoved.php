@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Events;
+namespace Stackra\Tenancy\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 
 /**
- * Dispatched when a {@see \Academorix\Tenancy\Models\TenantContact} is soft-deleted.
+ * Dispatched when a {@see \Stackra\Tenancy\Models\TenantContact} is soft-deleted.
  *
  * Carries plain scalars (contact id + kind + owning tenant) rather
  * than the model because the row is now in the tombstone state.

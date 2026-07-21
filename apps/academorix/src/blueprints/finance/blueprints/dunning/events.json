@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/dunning/events",
+  "id": "stackra://modules/dunning/events",
   "$version": 1,
   "title": "dunning — published events",
-  "namespace": "Academorix\\Finance\\Dunning\\Events",
+  "namespace": "Stackra\\Finance\\Dunning\\Events",
   "dispatchMode": "afterCommit",
   "description": "State-machine transitions + step-level events. DunningRunExhausted is the load-bearing signal — feeds entitlement revocation, membership suspension, subscription lapse.",
   "events": [
     {
       "name": "DunningPlanCreated",
-      "class": "Academorix\\Finance\\Dunning\\Events\\DunningPlanCreated",
+      "class": "Stackra\\Finance\\Dunning\\Events\\DunningPlanCreated",
       "trigger": "New DunningPlan committed.",
       "queue": "dunning",
       "consumers": ["audit::WriteToAuditLog"],
@@ -16,7 +16,7 @@
     },
     {
       "name": "DunningPlanUpdated",
-      "class": "Academorix\\Finance\\Dunning\\Events\\DunningPlanUpdated",
+      "class": "Stackra\\Finance\\Dunning\\Events\\DunningPlanUpdated",
       "trigger": "DunningPlan updated.",
       "queue": "dunning",
       "consumers": ["audit::WriteToAuditLog"],
@@ -24,7 +24,7 @@
     },
     {
       "name": "DunningPlanDeleted",
-      "class": "Academorix\\Finance\\Dunning\\Events\\DunningPlanDeleted",
+      "class": "Stackra\\Finance\\Dunning\\Events\\DunningPlanDeleted",
       "trigger": "DunningPlan soft-deleted.",
       "queue": "dunning",
       "consumers": ["audit::WriteToAuditLog"],
@@ -32,7 +32,7 @@
     },
     {
       "name": "DunningRunStarted",
-      "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunStarted",
+      "class": "Stackra\\Finance\\Dunning\\Events\\DunningRunStarted",
       "trigger": "New DunningRun row committed. Triggered by a failed charge.",
       "queue": "dunning-critical",
       "consumers": ["audit::WriteToAuditLog", "activity::LogActivity"],
@@ -47,7 +47,7 @@
     },
     {
       "name": "DunningStepReached",
-      "class": "Academorix\\Finance\\Dunning\\Events\\DunningStepReached",
+      "class": "Stackra\\Finance\\Dunning\\Events\\DunningStepReached",
       "trigger": "TickDunningStepJob advanced current_step. Fires the step's configured action (notify / retry / escalate).",
       "queue": "dunning",
       "consumers": [
@@ -63,7 +63,7 @@
     },
     {
       "name": "DunningRetryAttempted",
-      "class": "Academorix\\Finance\\Dunning\\Events\\DunningRetryAttempted",
+      "class": "Stackra\\Finance\\Dunning\\Events\\DunningRetryAttempted",
       "trigger": "AttemptDunningRetryJob dispatched a charge attempt to the gateway.",
       "queue": "dunning",
       "consumers": ["audit::WriteToAuditLog"],
@@ -71,7 +71,7 @@
     },
     {
       "name": "DunningRetrySucceeded",
-      "class": "Academorix\\Finance\\Dunning\\Events\\DunningRetrySucceeded",
+      "class": "Stackra\\Finance\\Dunning\\Events\\DunningRetrySucceeded",
       "trigger": "Retry attempt succeeded. Triggers DunningRunResolved next.",
       "queue": "dunning-critical",
       "consumers": [
@@ -82,7 +82,7 @@
     },
     {
       "name": "DunningRetryFailed",
-      "class": "Academorix\\Finance\\Dunning\\Events\\DunningRetryFailed",
+      "class": "Stackra\\Finance\\Dunning\\Events\\DunningRetryFailed",
       "trigger": "Retry attempt failed. Schedule advances to next step.",
       "queue": "dunning",
       "consumers": ["audit::WriteToAuditLog"],
@@ -95,7 +95,7 @@
     },
     {
       "name": "DunningRunEscalated",
-      "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunEscalated",
+      "class": "Stackra\\Finance\\Dunning\\Events\\DunningRunEscalated",
       "trigger": "Step advanced to escalation tier (harsher email + suspend eligibility).",
       "queue": "dunning",
       "consumers": ["notifications::DispatchDunningReminderNotificationListener"],
@@ -103,7 +103,7 @@
     },
     {
       "name": "DunningRunPaused",
-      "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunPaused",
+      "class": "Stackra\\Finance\\Dunning\\Events\\DunningRunPaused",
       "trigger": "Manual pause (support intervention).",
       "queue": "dunning",
       "consumers": ["audit::WriteToAuditLog"],
@@ -111,7 +111,7 @@
     },
     {
       "name": "DunningRunResumed",
-      "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunResumed",
+      "class": "Stackra\\Finance\\Dunning\\Events\\DunningRunResumed",
       "trigger": "Manual resume.",
       "queue": "dunning",
       "consumers": ["audit::WriteToAuditLog"],
@@ -119,7 +119,7 @@
     },
     {
       "name": "DunningRunCancelled",
-      "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunCancelled",
+      "class": "Stackra\\Finance\\Dunning\\Events\\DunningRunCancelled",
       "trigger": "Manual cancel (refund issued, dispute resolved externally).",
       "queue": "dunning",
       "consumers": ["audit::WriteToAuditLog"],
@@ -127,7 +127,7 @@
     },
     {
       "name": "DunningRunExhausted",
-      "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunExhausted",
+      "class": "Stackra\\Finance\\Dunning\\Events\\DunningRunExhausted",
       "trigger": "All retries failed and last step reached. LOAD-BEARING — triggers entitlement revocation.",
       "queue": "dunning-critical",
       "consumers": [
@@ -147,7 +147,7 @@
     },
     {
       "name": "DunningRunResolved",
-      "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunResolved",
+      "class": "Stackra\\Finance\\Dunning\\Events\\DunningRunResolved",
       "trigger": "Payment succeeded (mid-run retry OR out-of-band manual payment).",
       "queue": "dunning-critical",
       "consumers": [

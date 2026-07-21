@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Contracts\Data;
+namespace Stackra\Monitoring\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Monitoring\Models\HealthCheck;
+use Stackra\Monitoring\Models\HealthCheck;
 
 /**
  * Table shape for the `health_checks` table.

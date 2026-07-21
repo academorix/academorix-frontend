@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformFormsSdk\Requests\Forms;
+namespace Stackra\PlatformFormsSdk\Requests\Forms;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\PlatformFormsSdk\Data\FormData;
-use Academorix\PlatformFormsSdk\Payloads\Forms\UpdateFormPayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\PlatformFormsSdk\Data\FormData;
+use Stackra\PlatformFormsSdk\Payloads\Forms\UpdateFormPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

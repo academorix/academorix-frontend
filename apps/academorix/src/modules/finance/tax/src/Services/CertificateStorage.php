@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Services;
+namespace Stackra\Tax\Services;
 
-use Academorix\Tax\Contracts\Services\CertificateStorageInterface;
+use Stackra\Tax\Contracts\Services\CertificateStorageInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Tax\Contracts\Repositories\TaxCalculationRepositoryInterface;
+use Stackra\Tax\Contracts\Repositories\TaxCalculationRepositoryInterface;
 
 /**
  * Concrete service — CertificateStorage.

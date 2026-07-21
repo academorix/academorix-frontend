@@ -12,12 +12,12 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Crud\Scopes;
+namespace Stackra\Crud\Scopes;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
-use Academorix\Crud\Attributes\AsScope;
+use Stackra\Crud\Attributes\AsScope;
 
 /**
  * Of Type Scope.

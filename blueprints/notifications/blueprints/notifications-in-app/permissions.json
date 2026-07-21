@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/notifications-in-app/permissions",
+  "id": "stackra://modules/notifications-in-app/permissions",
   "$version": 1,
   "title": "notifications-in-app \u2014 permissions",
-  "seeder": "Academorix\\NotificationsInApp\\Database\\Seeders\\NotificationsInAppPermissionSeeder",
+  "seeder": "Stackra\\NotificationsInApp\\Database\\Seeders\\NotificationsInAppPermissionSeeder",
   "isSystem": true,
   "description": "The in-app transport reuses the base notifications permissions \u2014 tenant users need `notifications.viewOwn` to see the bell + list their own deliveries. This file declares transport-specific permissions ONLY: nothing today. Marker file with an explanation.",
   "permissions": [],

@@ -1,6 +1,6 @@
 ---
 description: >-
-  Threat Modeler for Academorix — runs STRIDE + attack-tree passes at Phase 3
+  Threat Modeler for Stackra — runs STRIDE + attack-tree passes at Phase 3
   and emits a threat-model doc that security-compliance-reviewer verifies in
   Phase 5. Sponsored by security-lead. Advisory + document authoring only — does
   not modify source.

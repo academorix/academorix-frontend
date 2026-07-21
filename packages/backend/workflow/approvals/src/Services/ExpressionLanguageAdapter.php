@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Services;
+namespace Stackra\Approvals\Services;
 
-use Academorix\Approvals\Contracts\Services\ExpressionLanguageAdapterInterface;
-use Academorix\Approvals\Exceptions\ApprovalExpressionInvalidException;
-use Academorix\Approvals\Exceptions\ApprovalExpressionTimeoutException;
+use Stackra\Approvals\Contracts\Services\ExpressionLanguageAdapterInterface;
+use Stackra\Approvals\Exceptions\ApprovalExpressionInvalidException;
+use Stackra\Approvals\Exceptions\ApprovalExpressionTimeoutException;
 use Illuminate\Container\Attributes\Cache;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\Log;
@@ -20,7 +20,7 @@ use Throwable;
 
 /**
  * Reference implementation of
- * {@see \Academorix\Approvals\Contracts\Services\ExpressionLanguageAdapterInterface}.
+ * {@see \Stackra\Approvals\Contracts\Services\ExpressionLanguageAdapterInterface}.
  *
  * Wraps `symfony/expression-language` and layers on:
  *

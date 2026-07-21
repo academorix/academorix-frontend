@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Database\Factories;
+namespace Stackra\Transfer\Database\Factories;
 
-use Academorix\Transfer\Contracts\Data\XferMappingProfileInterface;
-use Academorix\Transfer\Models\XferMappingProfile;
+use Stackra\Transfer\Contracts\Data\XferMappingProfileInterface;
+use Stackra\Transfer\Models\XferMappingProfile;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

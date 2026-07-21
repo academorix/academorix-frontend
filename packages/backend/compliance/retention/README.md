@@ -1,14 +1,14 @@
-# academorix/retention
+# stackra/retention
 
-Retention scanner for the Academorix monorepo — walks every Eloquent model
+Retention scanner for the Stackra monorepo — walks every Eloquent model
 carrying `#[AsRetentionPolicy]`, computes the retention cutoff via the injected
 `Clock`, and applies the declared action (`delete` / `archive` / `anonymize`) on
 a scheduled cadence.
 
 Framework-tier package: no domain knowledge, no per-app coupling. Sits alongside
-`packages/compliance/architecture/` and consumes `academorix/foundation`,
-`academorix/console`, `academorix/scheduling`, and
-`academorix/service-provider`.
+`packages/compliance/architecture/` and consumes `stackra/foundation`,
+`stackra/console`, `stackra/scheduling`, and
+`stackra/service-provider`.
 
 ## Installation
 
@@ -17,14 +17,14 @@ Already wired into every app via the monorepo's path repositories
 to a consuming app / module via:
 
 ```bash
-composer require academorix/retention:'@dev'
+composer require stackra/retention:'@dev'
 ```
 
 Then declare a retention policy on any Eloquent model:
 
 ```php
-use Academorix\Retention\Attributes\AsRetentionPolicy;
-use Academorix\Retention\Enums\RetentionAction;
+use Stackra\Retention\Attributes\AsRetentionPolicy;
+use Stackra\Retention\Enums\RetentionAction;
 
 #[AsRetentionPolicy(
     key: 'ai.run',
@@ -49,8 +49,8 @@ for the base contract.
 ### Marker attribute
 
 ```php
-use Academorix\Retention\Attributes\AsRetentionPolicy;
-use Academorix\Retention\Enums\RetentionAction;
+use Stackra\Retention\Attributes\AsRetentionPolicy;
+use Stackra\Retention\Enums\RetentionAction;
 
 #[AsRetentionPolicy(
     key: 'notifications.digest',
@@ -70,10 +70,10 @@ final class DigestNotification extends Model
 ### Discovery contract
 
 Discovery lives in
-`Academorix\Retention\Bootstrappers\RetentionPolicyBootstrapper`:
+`Stackra\Retention\Bootstrappers\RetentionPolicyBootstrapper`:
 
 1. Walks every `#[AsRetentionPolicy]` via
-   `Academorix\Foundation\Contracts\DiscoversAttributes` (the shared monorepo
+   `Stackra\Foundation\Contracts\DiscoversAttributes` (the shared monorepo
    seam over `olvlvl/composer-attribute-collector`).
 2. Skips entries where `enabled === false`.
 3. Verifies each target is a subclass of `Illuminate\Database\Eloquent\Model`
@@ -85,10 +85,10 @@ Discovery lives in
 
 ### Runner contract
 
-Runner lives in `Academorix\Retention\Runner\RetentionRunner`:
+Runner lives in `Stackra\Retention\Runner\RetentionRunner`:
 
 - `run(RetentionPolicyDescriptor $descriptor, bool $dryRun = false): RetentionRunReport`
-- Computes cutoff via the injected `Academorix\Foundation\Contracts\Clock`
+- Computes cutoff via the injected `Stackra\Foundation\Contracts\Clock`
 - Branches on `descriptor->action`:
   - `Delete` → `Model::query()->where($dateColumn, '<', $cutoff)->delete()` (or
     `->count()` on dry-run)

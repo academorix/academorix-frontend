@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Exceptions;
+namespace Stackra\Search\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the engine does not respond within
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SearchEngineTimeoutException extends AcademorixException
+final class SearchEngineTimeoutException extends StackraException
 {
     public const CODE = 'SEARCH_ENGINE_TIMEOUT';
 

@@ -1,69 +1,69 @@
 {
-  "id": "academorix://modules/theme/rules",
+  "id": "stackra://modules/theme/rules",
   "$version": 1,
   "title": "theme — validation rules",
   "description": "Named validation rules the module registers via Validator::extend. Applied by observers + form requests before persistence.",
-  "namespace": "Academorix\\Platform\\Theme\\Rules",
+  "namespace": "Stackra\\Platform\\Theme\\Rules",
   "rules": [
     {
       "name": "valid_token_key",
-      "class": "Academorix\\Platform\\Theme\\Rules\\ValidTokenKey",
+      "class": "Stackra\\Platform\\Theme\\Rules\\ValidTokenKey",
       "purpose": "The token_key must match the canonical vocabulary in data/token-vocabulary.json. Structure: ^(color|spacing|typography|radius|shadow|motion|opacity|z_index)(\\.[a-z0-9_-]+)+$. The prefix maps to a ThemeTokenType enum case; the tail path must exist under that category's key catalog.",
       "message": "The :attribute is not a canonical theme token key. See data/token-vocabulary.json for the allowed vocabulary.",
       "cross_reference": "data/token-vocabulary.json"
     },
     {
       "name": "valid_token_value_for_type",
-      "class": "Academorix\\Platform\\Theme\\Rules\\ValidTokenValueForType",
+      "class": "Stackra\\Platform\\Theme\\Rules\\ValidTokenValueForType",
       "purpose": "The token_value must match the token_type's value schema. Per type: color → hex (#RRGGBB / #RRGGBBAA), rgb/rgba, hsl/hsla, or oklch(); dimension → number + unit (px|rem|em|%); typography.family → font-family string (max 500 chars); typography.weight → 100|200|...|900; typography.size → dimension; radius → dimension; shadow → box-shadow string; motion.duration → number + ms|s; motion.easing → cubic-bezier() or CSS keyword; opacity → 0..1 decimal; z_index → integer.",
       "message": "The :attribute value :value is not valid for token_type :type.",
       "cross_reference": "data/token-vocabulary.json + valid_hex_color + valid_dimension_unit"
     },
     {
       "name": "valid_mode",
-      "class": "Academorix\\Platform\\Theme\\Rules\\ValidMode",
+      "class": "Stackra\\Platform\\Theme\\Rules\\ValidMode",
       "purpose": "Enforce ThemeMode enum: 'light' | 'dark'.",
       "message": "The :attribute must be 'light' or 'dark'."
     },
     {
       "name": "valid_category",
-      "class": "Academorix\\Platform\\Theme\\Rules\\ValidCategory",
+      "class": "Stackra\\Platform\\Theme\\Rules\\ValidCategory",
       "purpose": "Enforce ThemePresetCategory enum: 'platform_default' | 'tenant_custom' | 'brand_forward' | 'high_contrast' | 'minimal'.",
       "message": "The :attribute must be one of platform_default | tenant_custom | brand_forward | high_contrast | minimal."
     },
     {
       "name": "valid_hex_color",
-      "class": "Academorix\\Platform\\Theme\\Rules\\ValidHexColor",
+      "class": "Stackra\\Platform\\Theme\\Rules\\ValidHexColor",
       "purpose": "Standalone color format check — hex 6 (#RRGGBB), hex 8 (#RRGGBBAA), rgb()/rgba(), hsl()/hsla(), oklch(). Used inline in schemas + composed into valid_token_value_for_type when token_type=color.",
       "message": "The :attribute is not a valid CSS color (accepted: hex, rgb/rgba, hsl/hsla, oklch)."
     },
     {
       "name": "valid_dimension_unit",
-      "class": "Academorix\\Platform\\Theme\\Rules\\ValidDimensionUnit",
+      "class": "Stackra\\Platform\\Theme\\Rules\\ValidDimensionUnit",
       "purpose": "Dimension values must be a number followed by a supported unit: px | rem | em | %. Zero is allowed unit-less. Used inline in schemas + composed into valid_token_value_for_type when token_type=dimension.",
       "message": "The :attribute must be a number followed by px, rem, em, or %; zero is allowed unit-less."
     },
     {
       "name": "valid_accessibility_flags_shape",
-      "class": "Academorix\\Platform\\Theme\\Rules\\ValidAccessibilityFlagsShape",
+      "class": "Stackra\\Platform\\Theme\\Rules\\ValidAccessibilityFlagsShape",
       "purpose": "The accessibility_flags jsonb must be an object with exactly the four keys: high_contrast (bool), reduced_motion (bool), larger_text (bool), focus_visible_always (bool). No extra keys allowed.",
       "message": "The :attribute must be an object with only these boolean keys: high_contrast, reduced_motion, larger_text, focus_visible_always."
     },
     {
       "name": "unique_active_theme_per_tenant_per_mode",
-      "class": "Academorix\\Platform\\Theme\\Rules\\UniqueActiveThemePerTenantPerMode",
+      "class": "Stackra\\Platform\\Theme\\Rules\\UniqueActiveThemePerTenantPerMode",
       "purpose": "Enforced by a partial unique index at the DB layer + application-level check inside ThemeObserver::updating. Refuses activating a second theme in the same (tenant_id, mode) without first deactivating the prior one. Observer handles the deactivation transactionally.",
       "message": "A theme is already active for this tenant + mode. Deactivate the current theme first, or activate this one via /themes/{theme}/activate which handles the swap atomically."
     },
     {
       "name": "unique_slug_per_tenant_namespace",
-      "class": "Academorix\\Platform\\Theme\\Rules\\UniqueSlugPerTenantNamespace",
+      "class": "Stackra\\Platform\\Theme\\Rules\\UniqueSlugPerTenantNamespace",
       "purpose": "Preset slugs are unique within their namespace: platform (tenant_id NULL) presets share one namespace; each tenant's custom presets share their own namespace. Enforced by composite unique (COALESCE(tenant_id, 'platform'), slug) partial WHERE deleted_at IS NULL.",
       "message": "A preset with slug :value already exists in the :namespace namespace."
     },
     {
       "name": "contrast_ratio_wcag_aa",
-      "class": "Academorix\\Platform\\Theme\\Rules\\ContrastRatioWcagAa",
+      "class": "Stackra\\Platform\\Theme\\Rules\\ContrastRatioWcagAa",
       "purpose": "For color pairs (foreground/background), compute WCAG 2.2 relative-luminance contrast ratio; ≥ 4.5:1 for body text / ≥ 3:1 for large text (18pt+ or 14pt+ bold). RULE IS INFORMATIONAL — never blocks a write; surfaces findings as ThemeAccessibilityRecommendationNotification.",
       "message": "Color pair :foreground / :background has contrast ratio :ratio which is below WCAG AA (:required required). Consider adjusting or add high-contrast preset.",
       "audit_severity": "warn",

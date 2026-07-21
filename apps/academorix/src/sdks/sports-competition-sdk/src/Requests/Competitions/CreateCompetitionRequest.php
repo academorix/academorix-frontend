@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsCompetitionSdk\Requests\Competitions;
+namespace Stackra\SportsCompetitionSdk\Requests\Competitions;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsCompetitionSdk\Data\CompetitionData;
-use Academorix\SportsCompetitionSdk\Payloads\Competitions\CreateCompetitionPayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsCompetitionSdk\Data\CompetitionData;
+use Stackra\SportsCompetitionSdk\Payloads\Competitions\CreateCompetitionPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

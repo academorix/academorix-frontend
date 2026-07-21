@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Console;
+namespace Stackra\FeatureFlags\Console;
 
-use Academorix\FeatureFlags\Contracts\FeatureCheckerInterface;
-use Academorix\FeatureFlags\Registry\FeatureFlagRegistry;
+use Stackra\FeatureFlags\Contracts\FeatureCheckerInterface;
+use Stackra\FeatureFlags\Registry\FeatureFlagRegistry;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;

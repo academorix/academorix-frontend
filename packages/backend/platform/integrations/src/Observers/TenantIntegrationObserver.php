@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Observers;
+namespace Stackra\Integrations\Observers;
 
-use Academorix\Integrations\Contracts\Data\TenantIntegrationInterface;
-use Academorix\Integrations\Enums\IntegrationKind;
-use Academorix\Integrations\Events\IntegrationConfigured;
-use Academorix\Integrations\Events\IntegrationDisabled;
-use Academorix\Integrations\Events\IntegrationRemoved;
-use Academorix\Integrations\Jobs\PurgeDisabledIntegrationJob;
-use Academorix\Integrations\Jobs\SyncIntegrationJob;
-use Academorix\Integrations\Models\TenantIntegration;
+use Stackra\Integrations\Contracts\Data\TenantIntegrationInterface;
+use Stackra\Integrations\Enums\IntegrationKind;
+use Stackra\Integrations\Events\IntegrationConfigured;
+use Stackra\Integrations\Events\IntegrationDisabled;
+use Stackra\Integrations\Events\IntegrationRemoved;
+use Stackra\Integrations\Jobs\PurgeDisabledIntegrationJob;
+use Stackra\Integrations\Jobs\SyncIntegrationJob;
+use Stackra\Integrations\Models\TenantIntegration;
 
 /**
  * Lifecycle side effects on {@see TenantIntegration}.

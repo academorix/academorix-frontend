@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/monitoring/middleware",
+  "id": "stackra://modules/monitoring/middleware",
   "$version": 1,
   "title": "monitoring — HTTP middleware",
   "middleware": [
     {
       "alias": "monitoring.rate_limit",
-      "class": "Academorix\\Observability\\Monitoring\\Http\\Middleware\\MonitoringRateLimit",
+      "class": "Stackra\\Observability\\Monitoring\\Http\\Middleware\\MonitoringRateLimit",
       "priority": 46,
       "description": "Rate limits the two write endpoints that dispatch external side-effects: POST /health-checks/{h}/run + POST /providers/{p}/test. Prevents test spam that would DDoS the tenant's own infrastructure OR the tenant's monitoring provider. Default: 1 request per (route, resource_id) per 60s. Response includes Retry-After header on 429.",
       "auto_applied": false,

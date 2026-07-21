@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/announcements/events",
+  "id": "stackra://modules/announcements/events",
   "$version": 1,
   "title": "announcements — published events",
-  "namespace": "Academorix\\Notifications\\Announcements\\Events",
+  "namespace": "Stackra\\Notifications\\Announcements\\Events",
   "dispatchMode": "afterCommit",
   "description": "One-way broadcast surface. Tenant-wide / org / branch / team announcements delivered via chosen channels (in_app / email / push / sms). Fan-out is asynchronous via jobs; per-recipient delivery tracked for read receipts.",
   "events": [

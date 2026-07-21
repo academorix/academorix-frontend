@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Concerns;
+namespace Stackra\Geography\Concerns;
 
 use Illuminate\Support\Facades\Lang;
 

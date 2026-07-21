@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Crud\Attributes;
+namespace Stackra\Crud\Attributes;
 
 use Attribute;
 
@@ -20,7 +20,7 @@ use Attribute;
  * AsRepository Attribute.
  *
  * Marks a class as a repository for automatic discovery via
- * academorix/discovery. The HasDiscovery trait scans for
+ * stackra/discovery. The HasDiscovery trait scans for
  * classes with this attribute and pre-resolves all their configuration
  * attributes (#[UseModel], #[WithRelations], #[OrderBy], etc.) into
  * the RepositoryConfigRegistry at boot time.

@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/admin-console/features",
+  "id": "stackra://modules/admin-console/features",
   "$version": 1,
   "title": "admin-console — feature keys",
   "features": [
     {
       "key": "admin-console.core",
       "displayName": "Platform admin console",
-      "description": "Master feature. Academorix internal use only.",
+      "description": "Master feature. Stackra internal use only.",
       "defaultEnabled": true,
       "planTiers": []
     },

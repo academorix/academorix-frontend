@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Contracts\Services;
+namespace Stackra\Storage\Contracts\Services;
 
-use Academorix\Storage\Services\PassThroughCdnUrlRewriter;
+use Stackra\Storage\Services\PassThroughCdnUrlRewriter;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -1,4 +1,4 @@
-# academorix/feature-flags
+# stackra/feature-flags
 
 Production-grade, multi-tenant feature-flag layer on top of Laravel Pennant.
 Exposes four flag kinds evaluated in a single, fixed precedence chain —
@@ -42,8 +42,8 @@ declare(strict_types=1);
 
 namespace App\Flags;
 
-use Academorix\FeatureFlags\Attributes\AsFeatureFlag;
-use Academorix\FeatureFlags\Enums\FlagKind;
+use Stackra\FeatureFlags\Attributes\AsFeatureFlag;
+use Stackra\FeatureFlags\Enums\FlagKind;
 
 #[AsFeatureFlag(
     name: 'billing.new_flow',
@@ -70,8 +70,8 @@ declare(strict_types=1);
 
 namespace App\Flags;
 
-use Academorix\FeatureFlags\Attributes\AsFeatureFlag;
-use Academorix\FeatureFlags\Enums\FlagKind;
+use Stackra\FeatureFlags\Attributes\AsFeatureFlag;
+use Stackra\FeatureFlags\Enums\FlagKind;
 
 #[AsFeatureFlag(
     name: 'beta.opt_in',
@@ -100,8 +100,8 @@ declare(strict_types=1);
 
 namespace App\Flags;
 
-use Academorix\FeatureFlags\Attributes\AsFeatureFlag;
-use Academorix\FeatureFlags\Enums\FlagKind;
+use Stackra\FeatureFlags\Attributes\AsFeatureFlag;
+use Stackra\FeatureFlags\Enums\FlagKind;
 
 #[AsFeatureFlag(
     name: 'admin.new_dashboard',
@@ -188,11 +188,11 @@ checker exception hides the tool.
 
 ## Related
 
-- `academorix/feature-flags-sdk` — Saloon client at `sdk/` for cross-service
+- `stackra/feature-flags-sdk` — Saloon client at `sdk/` for cross-service
   consumers.
-- `academorix/scope` — hierarchy source of truth. See
+- `stackra/scope` — hierarchy source of truth. See
   `docs/scope-integration.md`.
-- `academorix/entitlements` — plan-gate entitlement lookup.
+- `stackra/entitlements` — plan-gate entitlement lookup.
 - ADR 0006 — attribute-first DI.
 - ADR 0016 — actions-only.
 - ADR 0017 — tenancy terminology (no `Workspace`, no `TenantMembership`).

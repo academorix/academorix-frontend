@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/localization/attributes",
+  "id": "stackra://modules/localization/attributes",
   "$version": 1,
   "title": "localization \u2014 PHP attribute contracts",
   "description": "Two attributes. #[Translatable] marks Eloquent properties for per-locale storage in a `translations` JSONB column. #[AsTranslation] on class marks the container.",
-  "namespace": "Academorix\\Localization\\Attributes",
+  "namespace": "Stackra\\Localization\\Attributes",
   "attributes": [
     {
       "name": "Translatable",
-      "class": "Academorix\\Localization\\Attributes\\Translatable",
+      "class": "Stackra\\Localization\\Attributes\\Translatable",
       "targets": ["property"],
       "params": [
         {
@@ -44,7 +44,7 @@
     },
     {
       "name": "AsTranslation",
-      "class": "Academorix\\Localization\\Attributes\\AsTranslation",
+      "class": "Stackra\\Localization\\Attributes\\AsTranslation",
       "targets": ["class"],
       "params": [
         {

@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branch\Database\Factories;
+namespace Stackra\Branch\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Branch\Contracts\Data\BranchInterface;
-use Academorix\Branch\Models\Branch;
+use Stackra\Branch\Contracts\Data\BranchInterface;
+use Stackra\Branch\Models\Branch;
 
 /**
- * Factory for {@see \Academorix\Branch\Models\Branch}.
+ * Factory for {@see \Stackra\Branch\Models\Branch}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Branch\Models\Branch>
+ * @extends Factory<\Stackra\Branch\Models\Branch>
  *
  * @category Branch
  *

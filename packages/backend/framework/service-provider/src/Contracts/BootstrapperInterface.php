@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceProvider\Contracts;
+namespace Stackra\ServiceProvider\Contracts;
 
-use Academorix\ServiceProvider\Bootstrappers\AbstractBootstrapper;
-use Academorix\ServiceProvider\Support\BootstrapperRunner;
+use Stackra\ServiceProvider\Bootstrappers\AbstractBootstrapper;
+use Stackra\ServiceProvider\Support\BootstrapperRunner;
 
 /**
  * Contract every app-boot bootstrapper honors.

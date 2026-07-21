@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/rbac/features",
+  "id": "stackra://modules/rbac/features",
   "$version": 1,
   "title": "rbac \u2014 feature keys",
   "reference": {

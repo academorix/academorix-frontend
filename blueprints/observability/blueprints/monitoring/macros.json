@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/monitoring/macros",
+  "id": "stackra://modules/monitoring/macros",
   "$version": 1,
   "title": "monitoring — published macros",
   "description": "The monitoring module publishes ZERO framework macros. Every consumer touches the monitoring surface via injected services (MonitoringProviderManager, HealthCheckExecutor, AlertPolicyEvaluator) or the #[AsMonitoringListener] / #[AsMonitoringProvider] / #[AsHealthCheckStrategy] discovery paths.",

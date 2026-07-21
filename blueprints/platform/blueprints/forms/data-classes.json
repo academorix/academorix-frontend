@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/forms/data-classes",
+  "id": "stackra://modules/forms/data-classes",
   "$version": 1,
   "title": "forms — column classification",
   "description": "Every column across this module's schemas classified by foundation's 5-tier taxonomy (public / internal / confidential / restricted / secret).",

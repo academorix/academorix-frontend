@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Attributes;
+namespace Stackra\Compliance\Attributes;
 
 use Attribute;
 
@@ -10,7 +10,7 @@ use Attribute;
  * Marks an action or class as gated on a specific consent category.
  *
  * Enforced by the
- * {@see \Academorix\Compliance\Middleware\ConsentGateMiddleware}
+ * {@see \Stackra\Compliance\Middleware\ConsentGateMiddleware}
  * on routes and by the `ConsentGate` facade at method entry.
  * Requests / jobs targeting a subject without the required consent
  * get a `ConsentRequiredException` mapped to HTTP 451.

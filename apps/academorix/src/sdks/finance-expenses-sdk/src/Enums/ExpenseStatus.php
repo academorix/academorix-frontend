@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FinanceExpensesSdk\Enums;
+namespace Stackra\FinanceExpensesSdk\Enums;
 
 /**
  * Wire-visible backed enum for `expense.status`.

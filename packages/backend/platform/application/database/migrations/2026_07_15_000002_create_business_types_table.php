@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Application\Contracts\Data\BusinessTypeInterface;
+use Stackra\Application\Contracts\Data\BusinessTypeInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

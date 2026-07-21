@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/branch/traits",
+  "id": "stackra://modules/branch/traits",
   "$version": 1,
   "title": "branch — trait composition",
   "description": "One owned trait. `BelongsToBranch` — mixed into every downstream domain model that carries a `branch_id` FK (Facility, Team, Athlete, Staff, Coach, Session, Booking, Membership, …). Adds the belongsTo relation + a per-branch global scope + auto-fill from RequestContext on save. The FK-central nature of Branch means the trait order matters — see composition_order below.",
   "owned": [
     {
-      "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch",
+      "trait": "Stackra\\Branch\\Concerns\\BelongsToBranch",
       "description": "Adds `branch()` belongsTo relation, `scopeForBranch($branchId)` local scope, an OPTIONAL global scope that filters to `RequestContext::branch()` when the caller carries an active-branch header, and a `booted()` hook that auto-fills `branch_id` on `creating` from `RequestContext::branch()`. Refuses save when the target Branch's `tenant_id` differs from the row's `tenant_id` (defence in depth on top of the observer + DB FK).",
       "public": true,
       "usedBy": [
@@ -32,19 +32,19 @@
       { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasSlug" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasSystemFlag" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasSlug" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
-    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
-    "organization": [{ "trait": "Academorix\\Organization\\Concerns\\BelongsToOrganization" }],
-    "region": [{ "trait": "Academorix\\Region\\Concerns\\BelongsToRegion" }],
+    "tenants": [{ "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "organization": [{ "trait": "Stackra\\Organization\\Concerns\\BelongsToOrganization" }],
+    "region": [{ "trait": "Stackra\\Region\\Concerns\\BelongsToRegion" }],
     "audit": [{ "trait": "OwenIt\\Auditing\\Auditable" }],
-    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
+    "activity": [{ "trait": "Stackra\\Activity\\Concerns\\HasActivityLog" }]
   },
   "composition": {
     "branch": {

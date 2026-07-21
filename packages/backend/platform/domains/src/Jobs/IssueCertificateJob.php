@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Jobs;
+namespace Stackra\Domains\Jobs;
 
-use Academorix\Domains\Contracts\Data\DomainInterface;
-use Academorix\Domains\Contracts\Repositories\DomainRepositoryInterface;
-use Academorix\Domains\Contracts\Services\CertificateProvisionerInterface;
-use Academorix\Domains\Events\CertificateIssued;
+use Stackra\Domains\Contracts\Data\DomainInterface;
+use Stackra\Domains\Contracts\Repositories\DomainRepositoryInterface;
+use Stackra\Domains\Contracts\Services\CertificateProvisionerInterface;
+use Stackra\Domains\Events\CertificateIssued;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

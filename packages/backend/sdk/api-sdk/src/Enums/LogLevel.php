@@ -11,9 +11,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Enums;
+namespace Stackra\ApiSdk\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * How much the SDK emits to the configured log channel.

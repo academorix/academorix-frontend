@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PublicSite\Repositories;
+namespace Stackra\PublicSite\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\PublicSite\Contracts\Data\PublicPageInterface;
-use Academorix\PublicSite\Contracts\Repositories\PublicPageRepositoryInterface;
-use Academorix\PublicSite\Models\PublicPage;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\PublicSite\Contracts\Data\PublicPageInterface;
+use Stackra\PublicSite\Contracts\Repositories\PublicPageRepositoryInterface;
+use Stackra\PublicSite\Models\PublicPage;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\PublicSite\Models\PublicPage}.
+ * Attribute-first Eloquent repository for {@see Stackra\PublicSite\Models\PublicPage}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(PublicPageInterface::class)]` which resolves to
  * `PublicPage` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\PublicSite\Models\PublicPage>
+ * @extends Repository<\Stackra\PublicSite\Models\PublicPage>
  *
  * @category PublicSite
  *

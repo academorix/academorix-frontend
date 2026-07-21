@@ -4,10 +4,10 @@
  * @file packages/architecture/tests/Unit/LayerResolverTest.php
  *
  * @description
- * Behaviour tests for {@see \Academorix\Architecture\Support\LayerResolver}.
+ * Behaviour tests for {@see \Stackra\Architecture\Support\LayerResolver}.
  *
  * The resolver classifies each parsed source file into exactly one
- * {@see \Academorix\Architecture\Enums\LayerType}. Its priority
+ * {@see \Stackra\Architecture\Enums\LayerType}. Its priority
  * order is documented on the class:
  *
  *   1. Configured test / infrastructure path prefixes.
@@ -23,9 +23,9 @@
 
 declare(strict_types=1);
 
-use Academorix\Architecture\Enums\LayerType;
-use Academorix\Architecture\Support\LayerResolver;
-use Academorix\Architecture\Support\SourceFileParser;
+use Stackra\Architecture\Enums\LayerType;
+use Stackra\Architecture\Support\LayerResolver;
+use Stackra\Architecture\Support\SourceFileParser;
 
 /**
  * Build a resolver preloaded with the same defaults the shipped

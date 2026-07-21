@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Exceptions;
+namespace Stackra\Geography\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the submitted IP is private / loopback / reserved.
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GeographyGeolocatePrivateIpException extends AcademorixException
+final class GeographyGeolocatePrivateIpException extends StackraException
 {
     public const CODE = 'GEOGRAPHY_GEOLOCATE_PRIVATE_IP';
 

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-mail/relations",
+  "id": "stackra://modules/notifications-mail/relations",
   "$version": 1,
   "title": "notifications-mail \u2014 model relationships",
   "description": "One entity: MailSuppression. Relates outward to Tenant + optionally to the source NotificationDelivery that triggered the suppression.",

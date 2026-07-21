@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/foundation/compliance",
+  "id": "stackra://modules/foundation/compliance",
   "$version": 1,
   "title": "foundation — base compliance regime taxonomy",
   "description": "The regime taxonomy every downstream module's `compliance.json` references. Foundation itself produces no compliance evidence (it holds no personal data) — this file DEFINES the regimes + the control-language conventions, then every downstream module cites specific articles + evidence artefacts under these regimes.",
@@ -115,7 +115,7 @@
         { "article": "§99.32", "principle": "record of disclosures" }
       ],
       "commonEvidencePatterns": [
-        "DPA template establishing Academorix as a school official under direct control",
+        "DPA template establishing Stackra as a school official under direct control",
         "Disclosure log per athlete → parent inspection view",
         "Written parental consent flow for cross-tenant disclosures (rare)"
       ]
@@ -153,7 +153,7 @@
       "name": "Health Insurance Portability and Accountability Act — adjacent controls",
       "regulation": "45 CFR Parts 160, 162, 164",
       "jurisdiction": "United States (covered entities + business associates)",
-      "applicableWhen": "Currently NOT applicable — Academorix is not a HIPAA covered entity + no BAA is signed with any tenant. `regulated_health` data-class tier reserved for future v2 when a physical-therapy or sports-medicine vertical lands.",
+      "applicableWhen": "Currently NOT applicable — Stackra is not a HIPAA covered entity + no BAA is signed with any tenant. `regulated_health` data-class tier reserved for future v2 when a physical-therapy or sports-medicine vertical lands.",
       "strategicPosition": "Deliberately avoid covered-entity status in v1. Model safeguarding health fields as `regulated_health` data class → encrypted at rest, restricted access, mandatory audit trail, NEVER exported to marketing analytics."
     },
     "wcag_2_2_aa": {

@@ -10,10 +10,10 @@ declare(strict_types=1);
  * any host with access to the service container) and pre-resolves the
  * per-repository attribute configuration into the
  * {@see RepositoryConfigRegistry}. Resolves the unified
- * {@see \Academorix\Foundation\Contracts\DiscoversAttributes} contract
+ * {@see \Stackra\Foundation\Contracts\DiscoversAttributes} contract
  * — no direct dependency on the underlying attribute-manifest backend
  * (currently `olvlvl/composer-attribute-collector`, wrapped by
- * {@see \Academorix\Foundation\Discovery\AttributeDiscovery}).
+ * {@see \Stackra\Foundation\Discovery\AttributeDiscovery}).
  *
  * ## Two-layer attribute read
  *
@@ -41,22 +41,22 @@ declare(strict_types=1);
  * @since 2.0.0
  */
 
-namespace Academorix\Crud\Concerns\Discovery;
+namespace Stackra\Crud\Concerns\Discovery;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\OrderBy;
-use Academorix\Crud\Attributes\UseCriteria;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Attributes\UseQueryScope;
-use Academorix\Crud\Attributes\UseScope;
-use Academorix\Crud\Attributes\WithCount;
-use Academorix\Crud\Attributes\WithRelations;
-use Academorix\Crud\Registries\RepositoryConfigRegistry;
-use Academorix\Database\Attributes\Searchable;
-use Academorix\Database\Attributes\Sortable;
-use Academorix\Database\Attributes\Translatable;
-use Academorix\Foundation\Contracts\DiscoversAttributes;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\OrderBy;
+use Stackra\Crud\Attributes\UseCriteria;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Attributes\UseQueryScope;
+use Stackra\Crud\Attributes\UseScope;
+use Stackra\Crud\Attributes\WithCount;
+use Stackra\Crud\Attributes\WithRelations;
+use Stackra\Crud\Registries\RepositoryConfigRegistry;
+use Stackra\Database\Attributes\Searchable;
+use Stackra\Database\Attributes\Sortable;
+use Stackra\Database\Attributes\Translatable;
+use Stackra\Foundation\Contracts\DiscoversAttributes;
 use ReflectionClass;
 use Throwable;
 

@@ -1,56 +1,56 @@
 {
-  "id": "academorix://modules/region/commands",
+  "id": "stackra://modules/region/commands",
   "$version": 1,
   "title": "region — Artisan commands",
   "commands": [
     {
       "signature": "region:list {--tenant=} {--status=} {--country=} {--default} {--limit=50}",
-      "class": "Academorix\\Region\\Console\\Commands\\ListRegionsCommand",
+      "class": "Stackra\\Region\\Console\\Commands\\ListRegionsCommand",
       "purpose": "Enumerate Regions. Filter by tenant / status / country_code / is_default. Prints a table with id, tenant, name, country_code, currency, timezone, status, is_default, sort_order. Ops tooling only."
     },
     {
       "signature": "region:describe {region : ULID or slug} {--tenant=} {--include-tax-config} {--include-audit-history}",
-      "class": "Academorix\\Region\\Console\\Commands\\DescribeRegionCommand",
+      "class": "Stackra\\Region\\Console\\Commands\\DescribeRegionCommand",
       "purpose": "Print the resolution trace for one Region: full row + resolved defaults from country-defaults.json (side-by-side, so overrides are visible) + inbound reference counts (Branch, Membership, Invoice, Transaction) + last 10 audit rows when --include-audit-history. --include-tax-config expands the tax_config blob (requires the operator's account to hold regions.view.tax_registration)."
     },
     {
       "signature": "region:create {tenant : ULID or slug} {country_code} {--name=} {--slug=} {--currency=} {--timezone=} {--locale=} {--default} {--fiscal-year-start=1}",
-      "class": "Academorix\\Region\\Console\\Commands\\CreateRegionCommand",
+      "class": "Stackra\\Region\\Console\\Commands\\CreateRegionCommand",
       "purpose": "CLI create with country-defaults auto-fill. Only `tenant` + `country_code` are required — every other field defaults from `data/country-defaults.json`. --default sets is_default=true (auto-demotes the previous default). Consumes 1 region_slot entitlement unless --system is set (reserved for the migration path)."
     },
     {
       "signature": "region:set-default {region : ULID or slug}",
-      "class": "Academorix\\Region\\Console\\Commands\\SetDefaultRegionCommand",
+      "class": "Stackra\\Region\\Console\\Commands\\SetDefaultRegionCommand",
       "purpose": "Flip is_default=true on the given Region + auto-demote the previous default in same transaction. Fires RegionDefaultChanged. Refused when the Region's status is not active."
     },
     {
       "signature": "region:pause {region : ULID or slug} {--reason=} {--resume-at=}",
-      "class": "Academorix\\Region\\Console\\Commands\\PauseRegionCommand",
+      "class": "Stackra\\Region\\Console\\Commands\\PauseRegionCommand",
       "purpose": "Set status=paused + fire RegionPaused. --resume-at accepts an ISO 8601 timestamp; the scheduler auto-resumes at the boundary. Refused when is_default=true."
     },
     {
       "signature": "region:resume {region : ULID or slug}",
-      "class": "Academorix\\Region\\Console\\Commands\\ResumeRegionCommand",
+      "class": "Stackra\\Region\\Console\\Commands\\ResumeRegionCommand",
       "purpose": "Set status=active + fire RegionResumed. Reverse of pause."
     },
     {
       "signature": "region:archive {region : ULID or slug} {--reason=} {--force}",
-      "class": "Academorix\\Region\\Console\\Commands\\ArchiveRegionCommand",
+      "class": "Stackra\\Region\\Console\\Commands\\ArchiveRegionCommand",
       "purpose": "Soft-archive the Region + fire RegionArchived. Refused when is_default=true. Refused when any inbound row references this Region (unless --force is set + operator confirms; --force bypasses the FK check but does NOT delete referring rows — it leaves them pointing at a now-archived Region, which they can survive for 730 days)."
     },
     {
       "signature": "region:reconcile-defaults {--tenant=} {--auto-heal} {--dry-run}",
-      "class": "Academorix\\Region\\Console\\Commands\\ReconcileDefaultsCommand",
+      "class": "Stackra\\Region\\Console\\Commands\\ReconcileDefaultsCommand",
       "purpose": "Force-run the ReconcileDefaultRegionInvariantJob. --tenant scopes to a single tenant; without it, scans every tenant. --auto-heal enables the healing steps (promote-oldest OR re-seed-from-country_code); without it, the command just reports drift. --dry-run reports the planned actions without persisting."
     },
     {
       "signature": "region:audit-tax-config {region : ULID or slug} {--include-history} {--history-days=90}",
-      "class": "Academorix\\Region\\Console\\Commands\\AuditTaxConfigCommand",
+      "class": "Stackra\\Region\\Console\\Commands\\AuditTaxConfigCommand",
       "purpose": "Dump the tax_config blob for compliance review. --include-history reads the last N days of RegionTaxConfigUpdated audit rows + prints the diff sequence. Handy during pre-invoice financial audits."
     },
     {
       "signature": "region:seed-defaults-for-legacy-tenants {--limit=100} {--dry-run}",
-      "class": "Academorix\\Region\\Console\\Commands\\SeedDefaultsForLegacyTenantsCommand",
+      "class": "Stackra\\Region\\Console\\Commands\\SeedDefaultsForLegacyTenantsCommand",
       "purpose": "One-shot: at Wave 2a deploy time, iterate every existing tenant that lacks a default Region + dispatch SeedDefaultRegionForTenantJob for each. --limit chunks the run to avoid dispatching thousands of jobs at once. --dry-run reports the target list without dispatching. Idempotent — re-running is safe."
     }
   ]

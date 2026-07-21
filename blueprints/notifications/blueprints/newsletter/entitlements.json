@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/newsletter/entitlements",
+  "id": "stackra://modules/newsletter/entitlements",
   "$version": 1,
   "title": "newsletter \u2014 entitlements",
   "reference": {

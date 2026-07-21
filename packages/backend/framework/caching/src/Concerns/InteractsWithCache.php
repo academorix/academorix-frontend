@@ -7,8 +7,8 @@
  * Convenience trait for repositories, services, and other
  * long-lived classes that read + write through the cache
  * frequently. Exposes three thin helpers that route every call
- * through {@see \Academorix\Caching\Support\TaggableCacheGuard}
- * and {@see \Academorix\Caching\Support\CacheTagBuilder} so the
+ * through {@see \Stackra\Caching\Support\TaggableCacheGuard}
+ * and {@see \Stackra\Caching\Support\CacheTagBuilder} so the
  * consumer never touches `Cache::` directly.
  *
  * ## Why a trait
@@ -30,7 +30,7 @@
  * ## Example
  *
  * ```php
- * use Academorix\Caching\Concerns\InteractsWithCache;
+ * use Stackra\Caching\Concerns\InteractsWithCache;
  *
  * final class AthleteRepository
  * {
@@ -56,10 +56,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Caching\Concerns;
+namespace Stackra\Caching\Concerns;
 
-use Academorix\Caching\Support\CacheTagBuilder;
-use Academorix\Caching\Support\TaggableCacheGuard;
+use Stackra\Caching\Support\CacheTagBuilder;
+use Stackra\Caching\Support\TaggableCacheGuard;
 use Closure;
 
 /**

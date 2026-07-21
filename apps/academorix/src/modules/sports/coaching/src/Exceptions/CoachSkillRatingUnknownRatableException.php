@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Exceptions;
+namespace Stackra\Coaching\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * ratable_id does not resolve to an is_active=true row in the referenced registry table.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CoachSkillRatingUnknownRatableException extends AcademorixException
+final class CoachSkillRatingUnknownRatableException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

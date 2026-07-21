@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Enums;
+namespace Stackra\Notifications\Sms\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
- * Why a {@see \Academorix\Notifications\Sms\Models\SmsOptOut} row exists.
+ * Why a {@see \Stackra\Notifications\Sms\Models\SmsOptOut} row exists.
  *
  * ## Cases
  *

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Exceptions;
+namespace Stackra\Monitoring\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Manual /run endpoint invoked too frequently.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MonitoringHealthCheckRateLimitedException extends AcademorixException
+final class MonitoringHealthCheckRateLimitedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

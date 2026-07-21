@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/user/macros",
+  "id": "stackra://modules/user/macros",
   "$version": 1,
   "title": "user \u2014 published macros",
   "description": "No Blueprint macros. The user module does NOT publish schema-level composition helpers \u2014 tenant / user FKs are added via the tenancy `Blueprint::tenantable()` macro (from tenancy module) and per-model composition. Two runtime macros are published on `Illuminate\\Http\\Request` for `me`-flavoured helpers on inbound requests.",
@@ -8,7 +8,7 @@
     {
       "name": "Request::me",
       "signature": "Request::me(): ?User",
-      "description": "Fluent alias for `$request->user('sanctum')`. Returns the authenticated Sanctum principal cast to `Academorix\\User\\Models\\User` (via container binding) or null.",
+      "description": "Fluent alias for `$request->user('sanctum')`. Returns the authenticated Sanctum principal cast to `Stackra\\User\\Models\\User` (via container binding) or null.",
       "usage_example": "$user = $request->me();\nif ($user === null) throw new Unauthenticated();"
     },
     {
@@ -18,6 +18,6 @@
       "usage_example": "$tenantId = $request->activeTenantId();\nif ($tenantId === null) throw new NoActiveTenant();"
     }
   ],
-  "registered_by": "Academorix\\User\\Providers\\UserServiceProvider::boot()",
+  "registered_by": "Stackra\\User\\Providers\\UserServiceProvider::boot()",
   "registration_order": "Registered during the standard boot phase. Depends on tenancy having booted first so the User model's `BelongsToTenant` scope is already registered when the macros run \u2014 tenancy priority (14) < user priority (18) so ordering is safe by construction."
 }

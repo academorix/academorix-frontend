@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Database\Factories;
+namespace Stackra\Branding\Database\Factories;
 
-use Academorix\Branding\Contracts\Data\BrandingInterface;
-use Academorix\Branding\Enums\BrandingTheme;
-use Academorix\Branding\Models\Branding;
+use Stackra\Branding\Contracts\Data\BrandingInterface;
+use Stackra\Branding\Enums\BrandingTheme;
+use Stackra\Branding\Models\Branding;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

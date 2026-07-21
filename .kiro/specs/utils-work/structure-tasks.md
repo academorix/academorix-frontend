@@ -361,7 +361,7 @@ Restored in `peerDependencies` as `workspace:^`.
 
 `packages/contracts-app/` → `packages/frontend/contracts/`. Its own
 `package.json` name field probably says `@stackra/contracts` already — verify.
-If it's still `@academorix/contracts` or another legacy scope, leave the name
+If it's still `@stackra/contracts` or another legacy scope, leave the name
 alone (this file doesn't own package name changes) and flag for a follow-up.
 
 Any workspace file that references `packages/contracts-app` needs a one-shot

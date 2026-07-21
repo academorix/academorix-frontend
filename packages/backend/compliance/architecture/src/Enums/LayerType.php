@@ -46,14 +46,14 @@
  *     see `Unknown` should default to permissive to avoid false
  *     positives on tooling / build-generated code.
  *
- * @see \Academorix\Architecture\Support\LayerResolver Resolver.
+ * @see \Stackra\Architecture\Support\LayerResolver Resolver.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Enums;
+namespace Stackra\Architecture\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * The canonical set of architectural layers.

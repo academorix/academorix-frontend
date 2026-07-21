@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Organization\Models;
+namespace Stackra\Organization\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Organization\Contracts\Data\OrganizationInterface;
-use Academorix\Organization\Database\Factories\OrganizationFactory;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Organization\Policies\OrganizationPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Organization\Contracts\Data\OrganizationInterface;
+use Stackra\Organization\Database\Factories\OrganizationFactory;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Organization\Policies\OrganizationPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -90,8 +90,8 @@ final class Organization extends Model implements OrganizationInterface, Auditab
         OrganizationInterface::ATTR_SORT_ORDER => 'integer',
         OrganizationInterface::ATTR_TREE_DEPTH => 'integer',
         OrganizationInterface::ATTR_ESTABLISHED_DATE => 'date',
-        OrganizationInterface::ATTR_CATEGORY => \Academorix\Organization\Enums\OrganizationCategory::class,
-        OrganizationInterface::ATTR_STATUS => \Academorix\Organization\Enums\OrganizationStatus::class,
+        OrganizationInterface::ATTR_CATEGORY => \Stackra\Organization\Enums\OrganizationCategory::class,
+        OrganizationInterface::ATTR_STATUS => \Stackra\Organization\Enums\OrganizationStatus::class,
         OrganizationInterface::ATTR_METADATA => 'array',
     ];
 }

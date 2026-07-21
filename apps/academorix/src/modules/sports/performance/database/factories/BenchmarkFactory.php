@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Performance\Database\Factories;
+namespace Stackra\Performance\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Performance\Contracts\Data\BenchmarkInterface;
-use Academorix\Performance\Models\Benchmark;
+use Stackra\Performance\Contracts\Data\BenchmarkInterface;
+use Stackra\Performance\Models\Benchmark;
 
 /**
- * Factory for {@see \Academorix\Performance\Models\Benchmark}.
+ * Factory for {@see \Stackra\Performance\Models\Benchmark}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Performance\Models\Benchmark>
+ * @extends Factory<\Stackra\Performance\Models\Benchmark>
  *
  * @category Performance
  *

@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/auth/health",
+  "id": "stackra://modules/auth/health",
   "$version": 1,
   "title": "auth \u2014 health probes",
   "probes": [
     {
       "name": "auth-db-writable",
-      "class": "Academorix\\Auth\\Health\\Probes\\DbWritableProbe",
+      "class": "Stackra\\Auth\\Health\\Probes\\DbWritableProbe",
       "category": "startup",
       "critical": true,
       "description": "auth_refresh_tokens + auth_password_resets + auth_email_verifications + auth_mfa_challenges + auth_cross_app_grants + auth_jwt_deny_list + auth_jwt_signing_keys all writable. Performs no-op INSERT + ROLLBACK on each table to verify DDL / DML privileges. Boot aborts on failure \u2014 auth is a write-heavy substrate.",
@@ -13,7 +13,7 @@
     },
     {
       "name": "auth-schema-current",
-      "class": "Academorix\\Auth\\Health\\Probes\\SchemaCurrentProbe",
+      "class": "Stackra\\Auth\\Health\\Probes\\SchemaCurrentProbe",
       "category": "startup",
       "critical": true,
       "description": "Every auth-owned table has the columns the module expects. Catches unmigrated environments before they crash on first login.",
@@ -21,7 +21,7 @@
     },
     {
       "name": "auth-redis-reachable",
-      "class": "Academorix\\Auth\\Health\\Probes\\RedisReachableProbe",
+      "class": "Stackra\\Auth\\Health\\Probes\\RedisReachableProbe",
       "category": "startup",
       "critical": true,
       "description": "Redis reachable for MFA challenge state (idn:mfa_challenge:*), rate-limit buckets (idn:rate_limit_login:*), and JWKS cache. Boot aborts on failure \u2014 the module cannot serve login without Redis.",
@@ -29,7 +29,7 @@
     },
     {
       "name": "auth-jwt-signing-key-reachable",
-      "class": "Academorix\\Auth\\Health\\Probes\\JwtSigningKeyReachableProbe",
+      "class": "Stackra\\Auth\\Health\\Probes\\JwtSigningKeyReachableProbe",
       "category": "readiness",
       "critical": true,
       "description": "At least ONE active signing key exists AND its ciphertext decrypts successfully via the configured KMS/Vault backend. Failure blocks new JWT issuance; existing verifications continue via cached JWKS. Sustained unavailability blocks new sessions.",
@@ -37,7 +37,7 @@
     },
     {
       "name": "auth-jwks-response-cacheable",
-      "class": "Academorix\\Auth\\Health\\Probes\\JwksResponseCacheableProbe",
+      "class": "Stackra\\Auth\\Health\\Probes\\JwksResponseCacheableProbe",
       "category": "readiness",
       "critical": false,
       "description": "The /.well-known/jwks.json endpoint responds within 100ms + has Cache-Control per auth.jwt.jwks_cache_control. Slower responses indicate signing_keys table needs an index tune.",
@@ -45,7 +45,7 @@
     },
     {
       "name": "auth-kms-reachable",
-      "class": "Academorix\\Auth\\Health\\Probes\\KmsReachableProbe",
+      "class": "Stackra\\Auth\\Health\\Probes\\KmsReachableProbe",
       "category": "readiness",
       "critical": true,
       "description": "KMS reachable for signing-key decryption. Alias of the identity-kms-reachable probe on the auth-service side (the identity substrate cares about MFA-secret KMS; the auth module cares about JWT-signing-key KMS).",
@@ -53,7 +53,7 @@
     },
     {
       "name": "auth-refresh-purge-scheduler-alive",
-      "class": "Academorix\\Auth\\Health\\Probes\\RefreshPurgeSchedulerAliveProbe",
+      "class": "Stackra\\Auth\\Health\\Probes\\RefreshPurgeSchedulerAliveProbe",
       "category": "readiness",
       "critical": false,
       "description": "PurgeExpiredRefreshTokensJob has run within the last 2 hours. Missed runs risk unbounded auth_refresh_tokens growth.",
@@ -61,7 +61,7 @@
     },
     {
       "name": "auth-mfa-challenge-purge-scheduler-alive",
-      "class": "Academorix\\Auth\\Health\\Probes\\MfaChallengePurgeSchedulerAliveProbe",
+      "class": "Stackra\\Auth\\Health\\Probes\\MfaChallengePurgeSchedulerAliveProbe",
       "category": "readiness",
       "critical": false,
       "description": "PurgeExpiredMfaChallengesJob has run within the last 10 minutes. Missed runs risk unbounded MFA-challenge growth (short TTL, high volume).",
@@ -69,7 +69,7 @@
     },
     {
       "name": "auth-jwt-rotation-current",
-      "class": "Academorix\\Auth\\Health\\Probes\\JwtRotationCurrentProbe",
+      "class": "Stackra\\Auth\\Health\\Probes\\JwtRotationCurrentProbe",
       "category": "readiness",
       "critical": false,
       "description": "Every Application (and the global slot) has a signing key rotated within the last 45 days. Missed rotations indicate the monthly RotateJwtSigningKeyJob is stuck.",
@@ -77,7 +77,7 @@
     },
     {
       "name": "auth-deny-list-size-bounded",
-      "class": "Academorix\\Auth\\Health\\Probes\\DenyListSizeBoundedProbe",
+      "class": "Stackra\\Auth\\Health\\Probes\\DenyListSizeBoundedProbe",
       "category": "readiness",
       "critical": false,
       "description": "auth_jwt_deny_list has fewer than 100K rows. Larger indicates PurgeExpiredJwtDenyListJob is behind OR mass revocation event ongoing.",

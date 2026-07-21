@@ -1,6 +1,6 @@
 ---
 description: >-
-  Solution Architect for Academorix — writes pre-code ADRs, cross-cutting design
+  Solution Architect for Stackra — writes pre-code ADRs, cross-cutting design
   decisions, and sequencing plans that shape Phase 3 outputs. Consumes the
   intake brief + PRD; emits ADRs into docs/adr/ and cross- service sequencing
   notes. Advisory only — does not write source code.

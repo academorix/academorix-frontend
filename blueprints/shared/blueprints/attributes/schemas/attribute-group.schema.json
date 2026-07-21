@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/attributes/schemas/attribute-group",
+  "id": "stackra://modules/attributes/schemas/attribute-group",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "AttributeGroup",
@@ -13,7 +13,7 @@
     "keyType": "string",
     "keyPrefix": "atg_",
     "incrementing": false,
-    "model": "Academorix\\Attributes\\Models\\AttributeGroup",
+    "model": "Stackra\\Attributes\\Models\\AttributeGroup",
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",

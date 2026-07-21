@@ -1,4 +1,4 @@
-# academorix/facility
+# stackra/facility
 
 Server-side Laravel package for the `facility` module. Auto-generated from the
 blueprint at `modules/platform/blueprints/facility/`.
@@ -49,6 +49,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-platform/facility-sdk` under `sdk/platform-facility-sdk/`. Consumers
+`stackra-platform/facility-sdk` under `sdk/platform-facility-sdk/`. Consumers
 cross the service boundary through the SDK; this package is the SERVER-side
 owner of the domain.

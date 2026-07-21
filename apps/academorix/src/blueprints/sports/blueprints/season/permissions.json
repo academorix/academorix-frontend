@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/season/permissions",
+  "id": "stackra://modules/season/permissions",
   "$version": 1,
   "title": "season — permissions",
-  "seeder": "Academorix\\Sports\\Season\\Database\\Seeders\\SeasonPermissionSeeder",
+  "seeder": "Stackra\\Sports\\Season\\Database\\Seeders\\SeasonPermissionSeeder",
   "isSystem": true,
   "scope_suffix_convention": "Every read permission may be seeded WITH a scope suffix (`.any`, `.tenant`). The base permission (no suffix) is the highest-tier variant, effectively `.tenant`. The ScopeSuffixResolver (shipped by the user module, consumed by every base repository) applies the corresponding WHERE clause at query build time. Season has no `.branch` / `.org` variants because a season is tenant-scoped by construction — org / branch scoping is on the row itself, not on the reader's authority.",
   "permissions": [

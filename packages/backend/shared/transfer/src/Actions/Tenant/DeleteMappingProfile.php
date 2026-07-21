@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Actions\Tenant;
+namespace Stackra\Transfer\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Delete;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\WhereUlid;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Transfer\Enums\TransferPermission;
-use Academorix\Transfer\Models\XferMappingProfile;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Delete;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\WhereUlid;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Transfer\Enums\TransferPermission;
+use Stackra\Transfer\Models\XferMappingProfile;
 use Illuminate\Http\Response;
 
 /**

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Contracts\Services;
+namespace Stackra\Auth\Contracts\Services;
 
-use Academorix\Auth\Services\PasswordResetTokenIssuer;
+use Stackra\Auth\Services\PasswordResetTokenIssuer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

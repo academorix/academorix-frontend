@@ -6,7 +6,7 @@
  * @description
  * Aggregator service that composes {@see ScopeContextInterface} +
  * {@see ScopeResolutionInterface} + {@see ScopeEmulatorInterface}
- * into the single surface the {@see \Academorix\Scope\Facades\Scope}
+ * into the single surface the {@see \Stackra\Scope\Facades\Scope}
  * facade points at. Follows the "manager class = facade target"
  * pattern used across framework facades in this monorepo
  * (`Json` → `JsonInterface`, `Serializer` → `SerializerInterface`).
@@ -14,16 +14,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Services;
+namespace Stackra\Scope\Services;
 
-use Academorix\Scope\Contracts\ScopeContextInterface;
-use Academorix\Scope\Contracts\ScopeEmulatorInterface;
-use Academorix\Scope\Contracts\ScopeResolutionInterface;
-use Academorix\Scope\Data\ResolvedScopeValue;
-use Academorix\Scope\Data\ScopeContextData;
-use Academorix\Scope\Exceptions\ScopeContextRequiredException;
-use Academorix\Scope\Facades\Scope;
-use Academorix\Scope\Models\ScopeNode;
+use Stackra\Scope\Contracts\ScopeContextInterface;
+use Stackra\Scope\Contracts\ScopeEmulatorInterface;
+use Stackra\Scope\Contracts\ScopeResolutionInterface;
+use Stackra\Scope\Data\ResolvedScopeValue;
+use Stackra\Scope\Data\ScopeContextData;
+use Stackra\Scope\Exceptions\ScopeContextRequiredException;
+use Stackra\Scope\Facades\Scope;
+use Stackra\Scope\Models\ScopeNode;
 use Illuminate\Container\Attributes\Scoped;
 
 /**

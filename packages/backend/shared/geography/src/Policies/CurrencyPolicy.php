@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Policies;
+namespace Stackra\Geography\Policies;
 
-use Academorix\Geography\Enums\GeographyPermission;
-use Academorix\Geography\Models\Currency;
+use Stackra\Geography\Enums\GeographyPermission;
+use Stackra\Geography\Models\Currency;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

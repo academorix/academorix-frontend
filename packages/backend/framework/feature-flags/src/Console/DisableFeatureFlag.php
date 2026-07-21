@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Console;
+namespace Stackra\FeatureFlags\Console;
 
-use Academorix\FeatureFlags\Contracts\Data\FeatureKillSwitchInterface;
-use Academorix\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureKillSwitchRepositoryInterface;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureOverrideRepositoryInterface;
-use Academorix\FeatureFlags\Enums\OverrideDecision;
-use Academorix\FeatureFlags\Registry\FeatureFlagRegistry;
+use Stackra\FeatureFlags\Contracts\Data\FeatureKillSwitchInterface;
+use Stackra\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureKillSwitchRepositoryInterface;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureOverrideRepositoryInterface;
+use Stackra\FeatureFlags\Enums\OverrideDecision;
+use Stackra\FeatureFlags\Registry\FeatureFlagRegistry;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;

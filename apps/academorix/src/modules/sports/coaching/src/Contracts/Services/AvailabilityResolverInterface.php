@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Contracts\Services;
+namespace Stackra\Coaching\Contracts\Services;
 
-use Academorix\Coaching\Services\AvailabilityResolver;
+use Stackra\Coaching\Services\AvailabilityResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

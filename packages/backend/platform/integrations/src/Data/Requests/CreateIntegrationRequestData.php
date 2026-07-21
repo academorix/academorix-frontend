@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Data\Requests;
+namespace Stackra\Integrations\Data\Requests;
 
-use Academorix\Integrations\Enums\IntegrationKind;
-use Academorix\Integrations\Rules\ValidIntegrationProvider;
+use Stackra\Integrations\Enums\IntegrationKind;
+use Stackra\Integrations\Rules\ValidIntegrationProvider;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\ArrayType;
 use Spatie\LaravelData\Attributes\Validation\Enum;

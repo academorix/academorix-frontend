@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/service-accounts/traits",
+  "id": "stackra://modules/service-accounts/traits",
   "$version": 1,
   "title": "service-accounts \u2014 trait composition",
   "description": "One owned trait. `IsServiceAccount` is a marker composed by the ServiceAccount model itself. Ships no accessor / mutator / scope of its own \u2014 those live on the model directly \u2014 but participates in reflection-based tooling (audit redactors, seeders, factories) that need to enumerate every SA-shaped row without hard-coding the class. NO BelongsToTenant (service accounts OPTIONALLY carry tenant_id but the global scope is deliberately absent \u2014 platform-admin surfaces need to see cross-tenant SAs). NO HasCredentialLifecycle (the Identity substrate's lifecycle is human-centric; SAs have their own SecretRotator-driven flow instead).",
   "owned": [
     {
-      "trait": "Academorix\\ServiceAccount\\Concerns\\IsServiceAccount",
+      "trait": "Stackra\\ServiceAccount\\Concerns\\IsServiceAccount",
       "description": "Marker trait composed by the ServiceAccount model. Provides the shared shape identifier for reflection-based tooling. Adds no accessor / mutator / scope of its own \u2014 accessors live directly on the model. Used by ServiceAccountFingerprinter to identify SA-shaped principals at the audit middleware layer.",
       "public": true,
       "usedBy": ["service-accounts::ServiceAccount"],
@@ -28,14 +28,14 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
-    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }],
-    "audit": [{ "trait": "Academorix\\Audit\\Concerns\\HasAudit" }]
+    "activity": [{ "trait": "Stackra\\Activity\\Concerns\\HasActivityLog" }],
+    "audit": [{ "trait": "Stackra\\Audit\\Concerns\\HasAudit" }]
   },
   "composition": {
     "service_account": {

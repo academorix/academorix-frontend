@@ -11,7 +11,7 @@ declare(strict_types=1);
  *
  * ## Usage:
  * ```php
- * use Academorix\Console\Attributes\AsCommand;
+ * use Stackra\Console\Attributes\AsCommand;
  *
  * // Simple command (same as Symfony's AsCommand)
  * #[AsCommand(name: 'my:command', description: 'My command')]
@@ -33,7 +33,7 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Console\Attributes;
+namespace Stackra\Console\Attributes;
 
 use Attribute;
 

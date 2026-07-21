@@ -11,7 +11,7 @@ declare(strict_types=1);
  *
  * This attribute is OPTIONAL. When absent, module identity is auto-derived
  * from the provider class name by the AsModuleProvider trait:
- *   - HorizonServiceProvider → name: 'Horizon', namespace: 'Academorix\Horizon'
+ *   - HorizonServiceProvider → name: 'Horizon', namespace: 'Stackra\Horizon'
  *
  * Use #[AsModule] when you need to:
  *   - Set a custom name different from the class basename
@@ -25,7 +25,7 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\ServiceProvider\Attributes;
+namespace Stackra\ServiceProvider\Attributes;
 
 use Attribute;
 
@@ -37,7 +37,7 @@ use Attribute;
  *
  * Usage (minimal — name auto-derived, no attribute needed):
  *   class TenancyServiceProvider extends ServiceProvider { ... }
- *   // auto-derived: name='Tenancy', namespace='Academorix\Tenancy'
+ *   // auto-derived: name='Tenancy', namespace='Stackra\Tenancy'
  *
  * Usage (explicit name):
  *   #[AsModule(name: 'Tenancy')]

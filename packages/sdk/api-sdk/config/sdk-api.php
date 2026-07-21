@@ -4,7 +4,7 @@
  * @file packages/sdk/api-sdk/config/sdk-api.php
  *
  * @description
- * Runtime configuration for `academorix/api-sdk`. Every value is
+ * Runtime configuration for `stackra/api-sdk`. Every value is
  * env-driven so containers, CI, and per-tenant deployments can
  * override without editing config files.
  *
@@ -16,8 +16,8 @@
 
 declare(strict_types=1);
 
-use Academorix\ApiSdk\Enums\AuthStrategy;
-use Academorix\ApiSdk\Enums\LogLevel;
+use Stackra\ApiSdk\Enums\AuthStrategy;
+use Stackra\ApiSdk\Enums\LogLevel;
 
 return [
 
@@ -30,11 +30,11 @@ return [
     | include the scheme + host + optional path prefix; the SDK
     | appends every Request's `resolveEndpoint()` to this base.
     |
-    | Local dev:  http://api.academorix.test
-    | Production: https://api.academorix.com
+    | Local dev:  http://api.stackra.test
+    | Production: https://api.stackra.com
     |
     */
-    'base_url' => env('SDK_API_BASE_URL', 'http://api.academorix.test'),
+    'base_url' => env('SDK_API_BASE_URL', 'http://api.stackra.test'),
 
     /*
     |----------------------------------------------------------------
@@ -103,7 +103,7 @@ return [
     |----------------------------------------------------------------
     |
     | When enabled, the SDK adds the current request's
-    | correlation id (read from `Academorix\Foundation\Support\CorrelationId`)
+    | correlation id (read from `Stackra\Foundation\Support\CorrelationId`)
     | as a header on every outbound SDK call. `apps/api` echoes
     | it back so logs across services align.
     |
@@ -159,7 +159,7 @@ return [
     'headers' => [
         'Accept'       => 'application/json',
         'Content-Type' => 'application/json',
-        'User-Agent'   => env('SDK_API_USER_AGENT', 'academorix-api-sdk/1.0'),
+        'User-Agent'   => env('SDK_API_USER_AGENT', 'stackra-api-sdk/1.0'),
     ],
 
     /*
@@ -182,7 +182,7 @@ return [
     |----------------------------------------------------------------
     |
     | When `true`, the container binds `ApiClient` to
-    | `Academorix\ApiSdk\Testing\ApiFake`. Test suites toggle this
+    | `Stackra\ApiSdk\Testing\ApiFake`. Test suites toggle this
     | via `config(['sdk.api.fake' => true])` or by calling the
     | fake facade — every real HTTP dispatch is intercepted.
     |

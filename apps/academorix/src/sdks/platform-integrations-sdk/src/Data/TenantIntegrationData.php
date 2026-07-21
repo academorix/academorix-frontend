@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformIntegrationsSdk\Data;
+namespace Stackra\PlatformIntegrationsSdk\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Wire-visible response DTO for {@see \Academorix\Integrations\Models\TenantIntegration}.
+ * Wire-visible response DTO for {@see \Stackra\Integrations\Models\TenantIntegration}.
  *
  * Mirrors `schemas/tenant-integration.schema.json` column-for-column, minus
  * the fields declared under `x-wire.hidden` which never leave the
@@ -26,7 +26,7 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
  * ## Example
  *
  * ```php
- * use Academorix\PlatformSdk\Client\PlatformSdk;
+ * use Stackra\PlatformSdk\Client\PlatformSdk;
  *
  * $row = app(PlatformSdk::class)->integrations()->tenantIntegrations()->show($id);
  * ```

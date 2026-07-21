@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/geofencing/permissions",
+  "id": "stackra://modules/geofencing/permissions",
   "$version": 1,
   "title": "geofencing \u2014 permissions",
-  "seeder": "Academorix\\Geofencing\\Database\\Seeders\\GeofencingPermissionSeeder",
+  "seeder": "Stackra\\Geofencing\\Database\\Seeders\\GeofencingPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

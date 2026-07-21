@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Contracts\Services;
+namespace Stackra\Versioning\Contracts\Services;
 
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
-use Academorix\Versioning\Attributes\AsApiSurface;
-use Academorix\Versioning\Models\ApiVersion;
-use Academorix\Versioning\Services\ApiVersionRegistry;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Versioning\Attributes\AsApiSurface;
+use Stackra\Versioning\Models\ApiVersion;
+use Stackra\Versioning\Services\ApiVersionRegistry;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Singleton;
 
@@ -21,7 +21,7 @@ use Illuminate\Container\Attributes\Singleton;
  *     pass.
  *   - Attribute-driven via {@see registerSurface()} — the framework's
  *     generic
- *     {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ *     {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  *     scans every class carrying `#[AsApiSurface]` at boot and hands
  *     each hit to `registerSurface()`, which fans out to `register()`
  *     for every version slug the surface declares.

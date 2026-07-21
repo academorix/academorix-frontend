@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Contracts\Services;
+namespace Stackra\Mfa\Contracts\Services;
 
-use Academorix\Mfa\Services\MfaEnrollmentPreviewIssuer;
+use Stackra\Mfa\Services\MfaEnrollmentPreviewIssuer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

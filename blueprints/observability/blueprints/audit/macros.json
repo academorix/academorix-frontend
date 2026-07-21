@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/audit/macros",
+  "id": "stackra://modules/audit/macros",
   "$version": 1,
   "title": "audit — published macros",
   "description": "The audit module publishes ZERO framework macros. Every consumer touches the audit surface via injected services (AuditRepository, AuditRetentionPolicyRepository, AuditQuery) or via the vendor `owen-it/laravel-auditing` package's Auditable trait on their own models. There is no request-level state that needs to be surfaced as a Request macro.",

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Season\Contracts\Data;
+namespace Stackra\Season\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Season\Models\Season;
+use Stackra\Season\Models\Season;
 
 /**
  * Table shape for the `seasons` table.

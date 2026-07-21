@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Exceptions;
+namespace Stackra\Search\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised (or surfaced) when `SearchIndex.config_hash` diverges from the
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SearchConfigHashDriftException extends AcademorixException
+final class SearchConfigHashDriftException extends StackraException
 {
     public const CODE = 'SEARCH_CONFIG_HASH_DRIFT';
 

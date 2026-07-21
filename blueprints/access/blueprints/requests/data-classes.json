@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/access/requests/data-classes-classification",
+  "id": "stackra://modules/access/requests/data-classes-classification",
   "$version": 1,
   "title": "requests \u2014 field-level data classification (DTO wire fields)",
   "description": "This module owns NO tables and therefore has no direct row-level data to classify. The tables it PROJECTS FROM are owned by workflow/approvals + access/grants, which own their own data-classes declarations. This file classifies the FIELDS surfaced on the wire via the AccessRequestData DTO so the compliance module's DSAR + right-to-erasure orchestrators know what to include when a subject requests their access-request activity.",

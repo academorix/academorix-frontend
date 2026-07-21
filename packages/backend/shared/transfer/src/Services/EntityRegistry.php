@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Services;
+namespace Stackra\Transfer\Services;
 
-use Academorix\Transfer\Attributes\Exportable;
-use Academorix\Transfer\Attributes\Importable;
-use Academorix\Transfer\Attributes\SampleData;
-use Academorix\Transfer\Contracts\Services\EntityRegistryInterface;
+use Stackra\Transfer\Attributes\Exportable;
+use Stackra\Transfer\Attributes\Importable;
+use Stackra\Transfer\Attributes\SampleData;
+use Stackra\Transfer\Contracts\Services\EntityRegistryInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**
  * In-memory implementation of {@see EntityRegistryInterface}.
  *
  * Hydrated at boot by the framework's generic hydration pump
- * ({@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper})
+ * ({@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper})
  * via the `#[HydratesFrom]` declarations on {@see EntityRegistryInterface::register()}.
  *
  * `#[Singleton]` because the registry is a pure function of the

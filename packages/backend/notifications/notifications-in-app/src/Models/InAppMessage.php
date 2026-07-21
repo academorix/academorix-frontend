@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Models;
+namespace Stackra\Notifications\InApp\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Notifications\InApp\Contracts\Data\InAppMessageInterface;
-use Academorix\Notifications\InApp\Contracts\Data\InAppMessageReadInterface;
-use Academorix\Notifications\InApp\Database\Factories\InAppMessageFactory;
-use Academorix\Notifications\InApp\Policies\InAppMessagePolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Notifications\InApp\Contracts\Data\InAppMessageInterface;
+use Stackra\Notifications\InApp\Contracts\Data\InAppMessageReadInterface;
+use Stackra\Notifications\InApp\Database\Factories\InAppMessageFactory;
+use Stackra\Notifications\InApp\Policies\InAppMessagePolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -29,7 +29,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  *
  * Denormalised inbox row for the user's bell UI — one row per
  * `(tenant, notification, addressee)`. The parent
- * {@see \Academorix\Notifications\Models\Notification} carries the
+ * {@see \Stackra\Notifications\Models\Notification} carries the
  * canonical payload; this row carries the snapshot fields the inbox
  * list renders (title, body preview, action URL, category, priority)
  * so the list page renders without a join.

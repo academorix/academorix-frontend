@@ -51,9 +51,9 @@ The table below is the canonical layout every module and package converges to.
 | `Database/Migrations/`    | Migration                       | ✅                    | Anonymous-class migrations with `@file` header.                                                                                          |
 | `Database/Seeders/`       | Seeder                          | ✅                    | `AsSeeder`-attributed seeders.                                                                                                           |
 | `Dispatchers/`            | Runtime dispatcher              | ✅                    | Classes that iterate a `Registry/` and fire the referenced primitive (e.g. `TenancyHookDispatcher`).                                     |
-| `Enums/`                  | Backed enum                     | ✅                    | Composes `Academorix\Enum\Enum` trait.                                                                                                   |
+| `Enums/`                  | Backed enum                     | ✅                    | Composes `Stackra\Enum\Enum` trait.                                                                                                   |
 | `Events/`                 | Domain event                    | ✅                    | `AsEvent`-attributed readonly classes.                                                                                                   |
-| `Exceptions/`             | Package exception               | ✅                    | Every exception extends `AcademorixException`.                                                                                           |
+| `Exceptions/`             | Package exception               | ✅                    | Every exception extends `StackraException`.                                                                                           |
 | `Http/Middleware/`        | HTTP middleware                 | **Anti-pattern**      | Use flat `Middleware/` — no `Http/` nesting per package-architecture §2.                                                                 |
 | `Jobs/`                   | Queued job                      | ✅                    | Tenant-aware.                                                                                                                            |
 | `Listeners/`              | Event listener                  | ✅                    | `OnEvent` / `ListensFor` attributed.                                                                                                     |
@@ -63,7 +63,7 @@ The table below is the canonical layout every module and package converges to.
 | `Notifications/`          | Notification                    | ✅                    | Emits structured payload; frontend renders.                                                                                              |
 | `Observers/`              | Model observer                  | ✅                    | Wired via `#[ObservedBy]`.                                                                                                               |
 | `Policies/`               | Authorization policy            | ✅                    | Wired via `#[UsePolicy]`.                                                                                                                |
-| `Providers/`              | Service provider                | ✅                    | One per package — extends `Academorix\ServiceProvider\Providers\ServiceProvider` (or composes `AsModuleProvider`).                       |
+| `Providers/`              | Service provider                | ✅                    | One per package — extends `Stackra\ServiceProvider\Providers\ServiceProvider` (or composes `AsModuleProvider`).                       |
 | `Registry/`               | Attribute-driven registry       | ✅                    | Subclasses of `AbstractRegistry`. Every registry lives here — none in `Support/`, none in `Services/`.                                   |
 | `Repositories/`           | Eloquent repository             | ✅                    | `Eloquent<Model>Repository implements <Model>RepositoryInterface`.                                                                       |
 | `Runner/`                 | Executor                        | ✅                    | Classes that execute one registered primitive against its target (e.g. `RetentionRunner`).                                               |
@@ -99,7 +99,7 @@ See `.kiro/steering/php-attributes.md` for the attribute catalogue.
 ### `Bootstrappers/`
 
 App-boot bootstrappers — subclasses of
-`Academorix\ServiceProvider\Bootstrappers\AbstractBootstrapper`. Fire ONCE per
+`Stackra\ServiceProvider\Bootstrappers\AbstractBootstrapper`. Fire ONCE per
 framework boot, hydrate a `Registry/` class, cache the payload under
 `bootstrapper.*` for the next boot to skip discovery. Includes
 attribute-discovery bootstrappers (the former `<Domain>DiscoveryBootstrapper`
@@ -119,7 +119,7 @@ here; those live in `Support/`.
 
 Artisan commands, flat under `src/Console/*Command.php` — one file per command,
 no nested `Commands/` subfolder. Namespace mirrors the path:
-`Academorix\<Package>\Console\<Name>Command`. Every command carries
+`Stackra\<Package>\Console\<Name>Command`. Every command carries
 `#[AsCommand]` and, when scheduled, `#[Cron]` + `#[WithoutOverlapping]` +
 `#[OnOneServer]` + `#[ScheduleName]` per the scheduling package.
 
@@ -156,7 +156,7 @@ appropriate moment. `TenancyHookDispatcher` walks `TenancyHookRegistry` on
 
 ### `Enums/`
 
-Backed enums composing `Academorix\Enum\Enum`. Use `#[Meta]` + `#[Label]` +
+Backed enums composing `Stackra\Enum\Enum`. Use `#[Meta]` + `#[Label]` +
 `#[Description]` when consumers need human-readable labels.
 
 ### `Events/` / `Listeners/`
@@ -178,14 +178,14 @@ Eloquent models — attribute-first. `#[Table]`, `#[Fillable]`, `#[UseFactory]`,
 ### `Providers/`
 
 One provider per package — extends
-`Academorix\ServiceProvider\Providers\ServiceProvider` OR composes
+`Stackra\ServiceProvider\Providers\ServiceProvider` OR composes
 `AsModuleProvider` when a vendor base must be extended. See
 `package-architecture.md` §3 for the composition rules.
 
 ### `Registry/`
 
 Every attribute-driven registry in the monorepo. Subclasses of
-`Academorix\ServiceProvider\Registry\AbstractRegistry` — pure PHP arrays for
+`Stackra\ServiceProvider\Registry\AbstractRegistry` — pure PHP arrays for
 storage, memoized sort for Octane-safe hot-path reads, `#[Singleton]` binding.
 
 See `.kiro/steering/discovery.md` and this file's parent section "Locked folder
@@ -231,7 +231,7 @@ primitives all have their own folders.
 ### `TenancyHooks/`
 
 Per-tenant lifecycle hooks — classes implementing
-`Academorix\ServiceProvider\Contracts\TenancyHookInterface`. Fire on every
+`Stackra\ServiceProvider\Contracts\TenancyHookInterface`. Fire on every
 tenant init / end, symmetric revert on end, `#[AsTenancyHook]` for
 auto-discovery.
 
@@ -272,9 +272,9 @@ Every entry here was a real bug before Phase 2.D shipped this convention:
   to `src/Console/*Command.php`. 864 files already follow the flat shape; 12
   stragglers (SMS / Push / Products / geofencing) need the housekeep move. See
   `.kiro/steering/console-commands.md` §"Where commands live".
-- ❌ **Doubled-namespace `Academorix\Console\Console\Commands\BaseCommand`.**
+- ❌ **Doubled-namespace `Stackra\Console\Console\Commands\BaseCommand`.**
   Legacy autoload accident — the base class lives at
-  `Academorix\Console\Commands\BaseCommand` (flat, single `Console`). Every
+  `Stackra\Console\Commands\BaseCommand` (flat, single `Console`). Every
   consumer import that uses the doubled form is stale. **Fix**: mechanical
   find/replace across the workspace.
 - ❌ **Contracts in top-level `Contracts/` when they should be under

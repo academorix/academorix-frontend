@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Ai\Database\Factories;
+namespace Stackra\Ai\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Ai\Contracts\Data\AiToolCallInterface;
-use Academorix\Ai\Models\AiToolCall;
+use Stackra\Ai\Contracts\Data\AiToolCallInterface;
+use Stackra\Ai\Models\AiToolCall;
 
 /**
- * Factory for {@see \Academorix\Ai\Models\AiToolCall}.
+ * Factory for {@see \Stackra\Ai\Models\AiToolCall}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Ai\Models\AiToolCall>
+ * @extends Factory<\Stackra\Ai\Models\AiToolCall>
  *
  * @category Ai
  *

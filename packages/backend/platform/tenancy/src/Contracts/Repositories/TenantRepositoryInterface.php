@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Contracts\Repositories;
+namespace Stackra\Tenancy\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Tenancy\Models\Tenant;
-use Academorix\Tenancy\Repositories\EloquentTenantRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Tenancy\Models\Tenant;
+use Stackra\Tenancy\Repositories\EloquentTenantRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 
 /**
  * Repository contract for {@see Tenant}.
  *
- * CRUD comes from {@see RepositoryInterface} (via `academorix/crud`'s
+ * CRUD comes from {@see RepositoryInterface} (via `stackra/crud`'s
  * `Repository` base). Domain finders below cover host resolution +
  * per-application enumeration + per-user "my tenants" lookups.
  *

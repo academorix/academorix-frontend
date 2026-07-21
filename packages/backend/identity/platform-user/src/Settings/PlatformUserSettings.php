@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformUser\Settings;
+namespace Stackra\PlatformUser\Settings;
 
-use Academorix\Settings\Attributes\AsSetting;
-use Academorix\Settings\Attributes\SettingField;
-use Academorix\Settings\Attributes\SettingGroup;
-use Academorix\Settings\Enums\ControlType;
+use Stackra\Settings\Attributes\AsSetting;
+use Stackra\Settings\Attributes\SettingField;
+use Stackra\Settings\Attributes\SettingGroup;
+use Stackra\Settings\Enums\ControlType;
 use Spatie\LaravelSettings\Settings;
 
 /**
  * PlatformUserSettings — Platform staff.
  *
- * Company-wide policies for Academorix internal staff management.
+ * Company-wide policies for Stackra internal staff management.
  *
  * Every field is a public typed property; the property default IS
  * the source of truth (§2 of the `settings` steering rule). Storage
@@ -29,7 +29,7 @@ use Spatie\LaravelSettings\Settings;
 #[AsSetting(
     group: 'platform_user',
     label: 'Platform staff',
-    description: 'Company-wide policies for Academorix internal staff management.',
+    description: 'Company-wide policies for Stackra internal staff management.',
     icon: 'user-group',
     scope: 'platform',
     permission: 'platform.platform_users.viewAny',

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Contracts\Services;
+namespace Stackra\Chargeback\Contracts\Services;
 
-use Academorix\Chargeback\Data\ChargebackRateData;
-use Academorix\Chargeback\Services\ChargebackRateCalculator;
+use Stackra\Chargeback\Data\ChargebackRateData;
+use Stackra\Chargeback\Services\ChargebackRateCalculator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

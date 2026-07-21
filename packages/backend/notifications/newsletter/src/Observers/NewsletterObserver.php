@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Observers;
+namespace Stackra\Newsletter\Observers;
 
-use Academorix\Newsletter\Contracts\Data\NewsletterInterface;
-use Academorix\Newsletter\Enums\NewsletterStatus;
-use Academorix\Newsletter\Events\NewsletterArchived;
-use Academorix\Newsletter\Events\NewsletterCreated;
-use Academorix\Newsletter\Events\NewsletterUpdated;
-use Academorix\Newsletter\Models\Newsletter;
+use Stackra\Newsletter\Contracts\Data\NewsletterInterface;
+use Stackra\Newsletter\Enums\NewsletterStatus;
+use Stackra\Newsletter\Events\NewsletterArchived;
+use Stackra\Newsletter\Events\NewsletterCreated;
+use Stackra\Newsletter\Events\NewsletterUpdated;
+use Stackra\Newsletter\Models\Newsletter;
 use Illuminate\Support\Str;
 
 /**

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Telemetry\Exceptions;
+namespace Stackra\Telemetry\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Downgraded to warn — backpressure drops spans, doesn't fail requests.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TelemetryOtelExporterUnreachableException extends AcademorixException
+final class TelemetryOtelExporterUnreachableException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

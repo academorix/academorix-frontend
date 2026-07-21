@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Actions\Central;
+namespace Stackra\Newsletter\Actions\Central;
 
-use Academorix\Newsletter\Contracts\Services\NewsletterServiceInterface;
-use Academorix\Newsletter\Data\NewsletterSubscriptionData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Newsletter\Contracts\Services\NewsletterServiceInterface;
+use Stackra\Newsletter\Data\NewsletterSubscriptionData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `GET /newsletters/{newsletter}/confirm/{token}` — public
@@ -17,7 +17,7 @@ use Academorix\Routing\Concerns\AsController;
  *
  * Validates the signed token synchronously and flips the
  * subscription to `active`. On unknown or expired tokens the
- * service throws {@see \Academorix\Newsletter\Exceptions\InvalidUnsubscribeTokenException}
+ * service throws {@see \Stackra\Newsletter\Exceptions\InvalidUnsubscribeTokenException}
  * which the framework renders as HTTP 404 (defeats enumeration).
  *
  * @category Newsletter

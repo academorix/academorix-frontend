@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/analytics/subprocessors",
+  "id": "stackra://modules/analytics/subprocessors",
   "$version": 1,
   "title": "analytics — subprocessors (GDPR Art. 28)",
-  "description": "Third-party analytics providers that process tenant subject data on behalf of Academorix. Each requires a signed DPA + is disclosed on the Trust Center. Tenants see this list on the Compliance Center screen; DPO exports via DSAR orchestrator.",
+  "description": "Third-party analytics providers that process tenant subject data on behalf of Stackra. Each requires a signed DPA + is disclosed on the Trust Center. Tenants see this list on the Compliance Center screen; DPO exports via DSAR orchestrator.",
   "regulatoryBasis": ["gdpr Art. 28", "uk_gdpr Art. 28", "ccpa §1798.140(w) service provider"],
   "subprocessors": [
     {
@@ -110,5 +110,5 @@
       "note": "Google Analytics 4 appears in both `analytics` and `marketing` module subprocessors. Same processor, different event categories."
     }
   ],
-  "custom_webhook_note": "The `custom_webhook` provider driver dispatches to caller-configured endpoints. It is NOT a first-party subprocessor \u2014 the tenant is the controller of whatever endpoint they configure. Compliance responsibility for that endpoint's data handling lies with the tenant, not Academorix. Egress domain validation (tenant.allowed_egress_domains) is the tenant's guardrail."
+  "custom_webhook_note": "The `custom_webhook` provider driver dispatches to caller-configured endpoints. It is NOT a first-party subprocessor \u2014 the tenant is the controller of whatever endpoint they configure. Compliance responsibility for that endpoint's data handling lies with the tenant, not Stackra. Egress domain validation (tenant.allowed_egress_domains) is the tenant's guardrail."
 }

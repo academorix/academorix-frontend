@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Services;
+namespace Stackra\Storage\Services;
 
-use Academorix\Storage\Contracts\Services\CdnUrlRewriterInterface;
+use Stackra\Storage\Contracts\Services\CdnUrlRewriterInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

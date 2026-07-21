@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Reception\Contracts\Repositories;
+namespace Stackra\Reception\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Reception\Models\ReceptionVisit}.
+ * Repository contract for {@see Stackra\Reception\Models\ReceptionVisit}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `ReceptionVisitRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Reception\Models\ReceptionVisit>
+ * @extends RepositoryInterface<\Stackra\Reception\Models\ReceptionVisit>
  *
  * @category Reception
  *

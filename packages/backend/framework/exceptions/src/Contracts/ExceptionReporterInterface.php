@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Contracts;
+namespace Stackra\Exceptions\Contracts;
 
 use Throwable;
 
@@ -19,13 +19,13 @@ use Throwable;
  *
  * Shipped implementations:
  *
- *   - {@see \Academorix\Exceptions\Reporters\LogReporter}
+ *   - {@see \Stackra\Exceptions\Reporters\LogReporter}
  *     — Writes a structured, masked, PSR-3-aware log line.
- *   - {@see \Academorix\Exceptions\Reporters\SentryReporter}
+ *   - {@see \Stackra\Exceptions\Reporters\SentryReporter}
  *     — Enriches Sentry scope with structured error metadata.
  *
  * Applications can register their own by tagging them
- * `academorix.exception.reporters` in the container.
+ * `stackra.exception.reporters` in the container.
  */
 interface ExceptionReporterInterface
 {

@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/teams/traits",
+  "id": "stackra://modules/teams/traits",
   "$version": 1,
   "title": "teams — trait composition",
   "description": "Five owned traits. `BelongsToTeam` is the FK trait for downstream models (Wave 3 sports Session, Wave 3 attendance Visit). `HasTeamMembers` / `HasTeamTrials` / `HasEventParticipation` are inverse-side conveniences on the Team model. `PolymorphicTeamMember` is the reverse-polymorphic trait — mixed into Athlete / Coach / Staff / User so those models expose `->teams()` via a reverse-polymorphic query. Order matters when composed with `BelongsToTenant` / `BelongsToBranch` — tenant MUST come first so the scope chain observes the tenant context in their `booted()` hooks.",
   "owned": [
     {
-      "trait": "Academorix\\Teams\\Concerns\\BelongsToTeam",
+      "trait": "Stackra\\Teams\\Concerns\\BelongsToTeam",
       "description": "Mixed into any domain model that carries a `team_id` FK. Adds the `team()` belongsTo relation, a `resolveInTeam(?Team)` query scope that filters `WHERE team_id = ?` (falling back to the caller's `Request::activeTeam()` when the arg is omitted), and a `booted()` hook that fills `team_id = active_team_id()` on `creating` when the field is null AND the current request carries a resolved active team. Refuses to save a row whose `team_id` points at a Team in a different tenant than the row itself (defense-in-depth against cross-tenant FK smuggling).",
       "public": true,
       "usedBy": [
@@ -23,25 +23,25 @@
       ]
     },
     {
-      "trait": "Academorix\\Teams\\Concerns\\HasTeamMembers",
+      "trait": "Stackra\\Teams\\Concerns\\HasTeamMembers",
       "description": "Composed onto the Team model. Adds `->members()` (hasMany over TeamMember), `->activeMembers()` (scope filter status='active'), `->membersByType(string $type)` (filter member_type), `->athletes()` (shortcut for membersByType('athlete')), `->coaches()` (shortcut for membersByType('coach')), `->users()` (shortcut for membersByType('user')), `->rosterCount()` (cheap cached active-count read).",
       "public": true,
       "usedBy": ["teams::Team"]
     },
     {
-      "trait": "Academorix\\Teams\\Concerns\\HasTeamTrials",
+      "trait": "Stackra\\Teams\\Concerns\\HasTeamTrials",
       "description": "Composed onto the Team model. Adds `->trials()` (hasMany over TeamTrial), `->scheduledTrials()` (scope filter status='scheduled'), `->completedTrials()` (scope filter status IN ('completed', 'converted', 'rejected')), `->pendingDecisionTrials()` (scope filter status='completed' — awaiting coach's convert/reject decision).",
       "public": true,
       "usedBy": ["teams::Team"]
     },
     {
-      "trait": "Academorix\\Teams\\Concerns\\HasEventParticipation",
+      "trait": "Stackra\\Teams\\Concerns\\HasEventParticipation",
       "description": "Composed onto the Team model. Adds `->eventTeams()` (hasMany over EventTeam), `->upcomingEventTeams()` (scope filter withdrew_at IS NULL AND (event.starts_at > now() OR event.starts_at IS NULL for Wave 2)), `->pastEventTeams()`, `->currentSeasonEventTeams()` (Wave 3 addition).",
       "public": true,
       "usedBy": ["teams::Team"]
     },
     {
-      "trait": "Academorix\\Teams\\Concerns\\PolymorphicTeamMember",
+      "trait": "Stackra\\Teams\\Concerns\\PolymorphicTeamMember",
       "description": "The REVERSE-POLYMORPHIC trait. Mixed into any model that CAN be a team member (Athlete, Coach, Staff, User). Adds `->teams()` — a Collection<Team> resolved via a reverse-polymorphic query on team_members where (member_type = this model's polymorphism key, member_id = this.id, status='active'). Also adds `->historicTeams()` for the terminal-state variant. The trait consults `config('teams.polymorphism.member_type_registry')` for the reverse mapping — polymorphism registration is bi-directional.",
       "public": true,
       "usedBy": [
@@ -66,31 +66,31 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasSlug",
+        "trait": "Stackra\\Foundation\\Concerns\\HasSlug",
         "reason": "Team only — unique per (tenant_id, branch_id)."
       }
     ],
     "tenants": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
         "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
       }
     ],
     "organization": [
       {
-        "trait": "Academorix\\Organization\\Concerns\\BelongsToOrganization",
+        "trait": "Stackra\\Organization\\Concerns\\BelongsToOrganization",
         "reason": "Team carries organization_id directly (structural sub-brand context). Other rows cascade through team_id."
       }
     ],
     "branch": [
       {
-        "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch",
+        "trait": "Stackra\\Branch\\Concerns\\BelongsToBranch",
         "reason": "Team only — carries branch_id. Other owned rows cascade through team."
       }
     ],
@@ -102,7 +102,7 @@
     ],
     "activity": [
       {
-        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
         "reason": "Roster changes + trial lifecycle + event participation feed the staff-visible activity feed."
       }
     ]

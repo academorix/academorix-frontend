@@ -4,7 +4,7 @@
  * @file modules/notifications/newsletter/lang/en/newsletter.php
  *
  * @description
- * English translations for the `academorix/newsletter` module.
+ * English translations for the `stackra/newsletter` module.
  */
 
 declare(strict_types=1);

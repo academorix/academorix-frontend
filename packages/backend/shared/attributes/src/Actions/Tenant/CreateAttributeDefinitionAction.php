@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attributes\Actions\Tenant;
+namespace Stackra\Attributes\Actions\Tenant;
 
-use Academorix\Attributes\Contracts\Repositories\AttributeDefinitionRepositoryInterface;
-use Academorix\Attributes\Data\AttributeDefinitionData;
-use Academorix\Attributes\Data\Requests\CreateAttributeDefinitionRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Attributes\Contracts\Repositories\AttributeDefinitionRepositoryInterface;
+use Stackra\Attributes\Data\AttributeDefinitionData;
+use Stackra\Attributes\Data\Requests\CreateAttributeDefinitionRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/attribute-definitions` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Attributes

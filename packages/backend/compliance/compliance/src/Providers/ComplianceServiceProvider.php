@@ -25,18 +25,18 @@
  *     variants for legal-hold + DSAR throttle + tenant-scope.
  *   - Attribute registries: `#[HydratesFrom]` on the registry
  *     interfaces' `register()` methods so the framework's
- *     {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ *     {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  *     scans every class carrying the source attribute and calls the
  *     matching registry at boot.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Providers;
+namespace Stackra\Compliance\Providers;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * Compliance module service provider.

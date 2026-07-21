@@ -87,7 +87,7 @@ stable, the URL surface is settled, but PR polish is pending.
 
 Emitted by `php artisan route:list --except-vendor`. Grouped by concern:
 
-### Tenant-scoped API (served on `{slug}.academorix.app`, prefix `/api`)
+### Tenant-scoped API (served on `{slug}.stackra.app`, prefix `/api`)
 
 | Method   | URI                                                      | Auth                                     | Purpose                                                  |
 | -------- | -------------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------- |
@@ -295,7 +295,7 @@ Same envelope, different body:
   "user": {
     "id": 12,
     "name": "Grace Hopper",
-    "email": "grace@academorix.app",
+    "email": "grace@stackra.app",
     "two_factor_enabled": true,
     "last_login_at": "2026-07-02T09:47:11+00:00"
   },
@@ -398,32 +398,32 @@ Priority-ordered from the FE-integration point of view:
 
 ## 8. Environment / local setup
 
-Docker stack (`backend/docker-compose.yml`), compose project name `academorix`:
+Docker stack (`backend/docker-compose.yml`), compose project name `stackra`:
 
 | Container              | Image                    | Host port   | Purpose                                         |
 | ---------------------- | ------------------------ | ----------- | ----------------------------------------------- |
-| `academorix_app`       | `academorix-dev:local`   | 8000        | PHP 8.4 + artisan serve (`--no-reload`)         |
-| `academorix_queue`     | `academorix-dev:local`   | —           | `queue:work`                                    |
-| `academorix_scheduler` | `academorix-dev:local`   | —           | `schedule:work`                                 |
-| `academorix_reverb`    | `academorix-dev:local`   | 8080        | WebSockets                                      |
-| `academorix_postgres`  | `postgres:18-alpine`     | 5432        | database                                        |
-| `academorix_redis`     | `valkey/valkey:8-alpine` | 6379        | cache + queue + session (renamed from `valkey`) |
-| `academorix_minio`     | `minio/minio:latest`     | 9000 / 9001 | S3-compatible object store                      |
-| `academorix_pgadmin`   | `dpage/pgadmin4:latest`  | 5150        | DB browser (`admin@example.com` / `admin`)      |
+| `stackra_app`       | `stackra-dev:local`   | 8000        | PHP 8.4 + artisan serve (`--no-reload`)         |
+| `stackra_queue`     | `stackra-dev:local`   | —           | `queue:work`                                    |
+| `stackra_scheduler` | `stackra-dev:local`   | —           | `schedule:work`                                 |
+| `stackra_reverb`    | `stackra-dev:local`   | 8080        | WebSockets                                      |
+| `stackra_postgres`  | `postgres:18-alpine`     | 5432        | database                                        |
+| `stackra_redis`     | `valkey/valkey:8-alpine` | 6379        | cache + queue + session (renamed from `valkey`) |
+| `stackra_minio`     | `minio/minio:latest`     | 9000 / 9001 | S3-compatible object store                      |
+| `stackra_pgadmin`   | `dpage/pgadmin4:latest`  | 5150        | DB browser (`admin@example.com` / `admin`)      |
 
 Bring the stack up:
 
 ```
 cd backend
 docker compose up -d --build
-docker exec academorix_app php artisan migrate --force
+docker exec stackra_app php artisan migrate --force
 ```
 
 Frontend origin should be added to backend `.env`:
 
 ```
-CORS_ALLOWED_ORIGINS=http://localhost:3000,https://academorix.vercel.app
-CORS_ALLOWED_ORIGINS_PATTERNS=^https://[a-z0-9-]+\.academorix\.app$
+CORS_ALLOWED_ORIGINS=http://localhost:3000,https://stackra.vercel.app
+CORS_ALLOWED_ORIGINS_PATTERNS=^https://[a-z0-9-]+\.stackra\.app$
 ```
 
 CORS exposed headers now include `X-Api-Version`, `Retry-After`, `Deprecation`,
@@ -456,7 +456,7 @@ effort:
    `/api/billing/{pause,resume,cancel}`.
 7. **Wire the entitlements matrix screen** against `/api/entitlements/usage`.
 8. **Cross-tenant workspace switcher** consumes `me.tenants[]`. When the caller
-   picks a tenant, redirect to `https://{slug}.academorix.app` with a
+   picks a tenant, redirect to `https://{slug}.stackra.app` with a
    re-authentication step (each subdomain gets its own bearer token — do not
    reuse tokens across tenants).
 9. **`/features` page** — wait for backend G10 to land, then wire against
@@ -469,7 +469,7 @@ effort:
 - Backend API contract questions: reference
   `frontend/.kiro/specs/backend-frontend-alignment/API_CONTRACT.md` first.
 - Endpoint URL / method / auth stack: check
-  `docker exec academorix_app php artisan route:list --except-vendor` (source of
+  `docker exec stackra_app php artisan route:list --except-vendor` (source of
   truth).
 - DTO field-by-field shape: read the `*Data.php` file the endpoint returns —
   every property has a docblock line.

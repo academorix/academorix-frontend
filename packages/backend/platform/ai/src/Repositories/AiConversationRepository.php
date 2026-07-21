@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Ai\Repositories;
+namespace Stackra\Ai\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Ai\Contracts\Data\AiConversationInterface;
-use Academorix\Ai\Contracts\Repositories\AiConversationRepositoryInterface;
-use Academorix\Ai\Models\AiConversation;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Ai\Contracts\Data\AiConversationInterface;
+use Stackra\Ai\Contracts\Repositories\AiConversationRepositoryInterface;
+use Stackra\Ai\Models\AiConversation;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Ai\Models\AiConversation}.
+ * Attribute-first Eloquent repository for {@see Stackra\Ai\Models\AiConversation}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AiConversationInterface::class)]` which resolves to
  * `AiConversation` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Ai\Models\AiConversation>
+ * @extends Repository<\Stackra\Ai\Models\AiConversation>
  *
  * @category Ai
  *

@@ -12,13 +12,13 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Foundation\Middlewares\Response;
+namespace Stackra\Foundation\Middlewares\Response;
 
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Support\CaseConverter;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Support\CaseConverter;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -42,7 +42,7 @@ use Symfony\Component\HttpFoundation\Response;
  * ```php
  * // In app/Http/Kernel.php
  * protected $middleware = [
- *     \Academorix\Foundation\Middlewares\CamelCaseMiddleware::class,
+ *     \Stackra\Foundation\Middlewares\CamelCaseMiddleware::class,
  * ];
  * ```
  *
@@ -50,7 +50,7 @@ use Symfony\Component\HttpFoundation\Response;
  * ```php
  * // In app/Http/Kernel.php
  * protected $middlewareAliases = [
- *     'camelcase' => \Academorix\Foundation\Middlewares\CamelCaseMiddleware::class,
+ *     'camelcase' => \Stackra\Foundation\Middlewares\CamelCaseMiddleware::class,
  * ];
  *
  * // In routes

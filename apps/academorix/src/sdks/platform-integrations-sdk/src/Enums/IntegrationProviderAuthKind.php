@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformIntegrationsSdk\Enums;
+namespace Stackra\PlatformIntegrationsSdk\Enums;
 
 /**
  * Wire-visible backed enum for `integration-provider.auth_kind`.

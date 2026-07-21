@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/mfa/observers",
+  "id": "stackra://modules/mfa/observers",
   "$version": 1,
   "title": "mfa — Eloquent observers",
   "observers": [
     {
       "model": "WebauthnCredential",
-      "observer": "Academorix\\Mfa\\Observers\\WebauthnCredentialObserver",
+      "observer": "Stackra\\Mfa\\Observers\\WebauthnCredentialObserver",
       "handles": [
         "creating → populate ULID prefix `wac_`",
         "creating → refuse when config('mfa.webauthn.enabled') is false OR the `mfa_webauthn` entitlement is not held by the referring User's tenant",
@@ -24,11 +24,11 @@
     },
     {
       "model": "MfaChallenge (proxy — the row is owned by identity/auth's auth_mfa_challenges table; this observer runs on the model class this module exposes over the shared table)",
-      "observer": "Academorix\\Mfa\\Observers\\MfaChallengeObserver",
+      "observer": "Stackra\\Mfa\\Observers\\MfaChallengeObserver",
       "handles": [
         "created → fire MfaChallengeIssued",
         "updating (attempts_remaining dirty AND decreasing) → fire MfaChallengeFailed with the reason resolved from the update context (code_mismatch / assertion_signature_invalid / sign_count_replay / recovery_code_invalid)",
-        "updating (attempts_remaining just reached 0) → fire MfaChallengeFailed with reason='attempts_exhausted' + emit the `academorix.mfa.challenge` counter with outcome=attempts_exhausted",
+        "updating (attempts_remaining just reached 0) → fire MfaChallengeFailed with reason='attempts_exhausted' + emit the `stackra.mfa.challenge` counter with outcome=attempts_exhausted",
         "updating (state transitions to 'succeeded') → fire MfaChallengeSucceeded",
         "updating (state transitions to 'expired') → NO event (the 5-minute TTL elapsing without action is not a security event — the caller simply abandoned the flow; only recorded as a metric increment)",
         "deleted → NO event (challenges are transient; hard-delete on TTL is the norm and does not warrant a lifecycle event)"
@@ -37,7 +37,7 @@
   ],
   "notes": [
     "The observer is registered by MfaServiceProvider::boot(). It runs BEFORE HasActivityLog + HasAudit hooks so audit trails see the fully-normalised row.",
-    "Every `refuse` case throws a subclass of `Academorix\\Mfa\\Exceptions\\MfaViolationException` — mapped to the errors in `errors.json`. In particular, `sign_count` monotonic invariant violations throw `SignCountReplayException` which the observer catches, records a critical audit entry, then re-throws so the request fails hard (never silently accepts a replayed assertion).",
+    "Every `refuse` case throws a subclass of `Stackra\\Mfa\\Exceptions\\MfaViolationException` — mapped to the errors in `errors.json`. In particular, `sign_count` monotonic invariant violations throw `SignCountReplayException` which the observer catches, records a critical audit entry, then re-throws so the request fails hard (never silently accepts a replayed assertion).",
     "The sign_count check is the primary WebAuthn security invariant this module enforces (beyond the assertion signature itself). It protects against cloned authenticators — if two authenticators claim to be the same credential_id, one of them WILL emit a stale sign_count, and this observer refuses the assertion + deletes the credential so subsequent attempts must re-register."
   ]
 }

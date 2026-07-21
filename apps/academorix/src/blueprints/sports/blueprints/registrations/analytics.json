@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/registrations/analytics",
+  "id": "stackra://modules/registrations/analytics",
   "$version": 1,
   "title": "registrations — product-analytics events",
   "description": "PostHog / Mixpanel / Segment events this module emits.",

@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/notifications-mail/permissions",
+  "id": "stackra://modules/notifications-mail/permissions",
   "$version": 1,
   "title": "notifications-mail \u2014 permissions",
   "description": "Suppression list admin permissions on sanctum guard. Provider webhook receivers bypass auth (signature IS the auth).",
-  "seeder": "Academorix\\Notifications\\Mail\\Database\\Seeders\\NotificationsMailPermissionSeeder",
+  "seeder": "Stackra\\Notifications\\Mail\\Database\\Seeders\\NotificationsMailPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

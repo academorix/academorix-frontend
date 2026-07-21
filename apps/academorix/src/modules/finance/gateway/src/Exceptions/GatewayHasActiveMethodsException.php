@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Gateway\Exceptions;
+namespace Stackra\Gateway\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Cannot delete a gateway with active payment_methods.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GatewayHasActiveMethodsException extends AcademorixException
+final class GatewayHasActiveMethodsException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Services;
+namespace Stackra\Referrals\Services;
 
-use Academorix\Referrals\Contracts\Services\VestingSchedulerInterface;
+use Stackra\Referrals\Contracts\Services\VestingSchedulerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Referrals\Contracts\Repositories\ReferralCodeRepositoryInterface;
+use Stackra\Referrals\Contracts\Repositories\ReferralCodeRepositoryInterface;
 
 /**
  * Concrete service — VestingScheduler.

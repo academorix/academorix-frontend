@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Models;
+namespace Stackra\Subscription\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Subscription\Contracts\Data\PlanInterface;
-use Academorix\Subscription\Database\Factories\PlanFactory;
-use Academorix\Subscription\Enums\BillingCycle;
-use Academorix\Subscription\Enums\BillingMode;
-use Academorix\Subscription\Enums\PlanTier;
-use Academorix\Subscription\Observers\PlanObserver;
-use Academorix\Subscription\Policies\PlanPolicy;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Subscription\Contracts\Data\PlanInterface;
+use Stackra\Subscription\Database\Factories\PlanFactory;
+use Stackra\Subscription\Enums\BillingCycle;
+use Stackra\Subscription\Enums\BillingMode;
+use Stackra\Subscription\Enums\PlanTier;
+use Stackra\Subscription\Observers\PlanObserver;
+use Stackra\Subscription\Policies\PlanPolicy;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -120,7 +120,7 @@ final class Plan extends Model implements AuditableContract, PlanInterface
     {
         return $this->hasMany(
             Subscription::class,
-            \Academorix\Subscription\Contracts\Data\SubscriptionInterface::ATTR_PLAN_ID,
+            \Stackra\Subscription\Contracts\Data\SubscriptionInterface::ATTR_PLAN_ID,
         );
     }
 

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Performance\Repositories;
+namespace Stackra\Performance\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Performance\Contracts\Data\PerformanceTestResultInterface;
-use Academorix\Performance\Contracts\Repositories\PerformanceTestResultRepositoryInterface;
-use Academorix\Performance\Models\PerformanceTestResult;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Performance\Contracts\Data\PerformanceTestResultInterface;
+use Stackra\Performance\Contracts\Repositories\PerformanceTestResultRepositoryInterface;
+use Stackra\Performance\Models\PerformanceTestResult;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Performance\Models\PerformanceTestResult}.
+ * Attribute-first Eloquent repository for {@see Stackra\Performance\Models\PerformanceTestResult}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(PerformanceTestResultInterface::class)]` which resolves to
  * `PerformanceTestResult` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Performance\Models\PerformanceTestResult>
+ * @extends Repository<\Stackra\Performance\Models\PerformanceTestResult>
  *
  * @category Performance
  *

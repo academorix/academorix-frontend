@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Analytics\Concerns;
+namespace Stackra\Analytics\Concerns;
 
 /**
  * Trait — EmitsAnalyticsEvent.

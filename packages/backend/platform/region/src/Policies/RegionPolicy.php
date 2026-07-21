@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Region\Policies;
+namespace Stackra\Region\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Region\Models\Region;
+use Stackra\User\Models\User;
+use Stackra\Region\Models\Region;
 
 /**
- * Authorization policy for {@see \Academorix\Region\Models\Region}.
+ * Authorization policy for {@see \Stackra\Region\Models\Region}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

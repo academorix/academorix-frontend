@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "forms",
   "alias": "forms",
-  "namespace": "Academorix\\Platform\\Forms",
+  "namespace": "Stackra\\Platform\\Forms",
   "description": "Serious form management for academy-specific intake — season registrations, medical questionnaires, waiver renewals, custom surveys. Ships THREE owned entities: `Form` (fom_) root, `FormVersion` (fmv_) immutable snapshot per publish, `FormSubmission` (fms_) one completed submission tied to a FormVersion. Sports-native field types (`athlete_data`, `guardian_pair`, `consent_bundle`, `medical_upload`, `team_preference` with age gate, `waiver`, `photo_consent`) — these are the reason the platform builds forms itself rather than delegating to HubSpot / Typeform / Google Forms. Bound to `sports/season` via `season.form_id`: on Season transition to `registration_open`, the bound form goes live at the tenant's public URL. Save-and-resume via signed session URLs. Multi-language + tenant-branded. Bidirectional handoff — a submission carries `handoff_module + handoff_entity_id` (e.g. `registrations::Registration.id`) so the platform can wire form intake into any domain flow. See ADR 0024 (enrollment funnel not a CRM).",
   "keywords": [
     "form",
@@ -23,7 +23,7 @@
     "wave-2"
   ],
   "priority": 34,
-  "providers": ["Academorix\\Platform\\Forms\\Providers\\FormsServiceProvider"],
+  "providers": ["Stackra\\Platform\\Forms\\Providers\\FormsServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

@@ -13,10 +13,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformApplicationSdk\Requests\Applications;
+namespace Stackra\PlatformApplicationSdk\Requests\Applications;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\PlatformApplicationSdk\Data\ApplicationData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\PlatformApplicationSdk\Data\ApplicationData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

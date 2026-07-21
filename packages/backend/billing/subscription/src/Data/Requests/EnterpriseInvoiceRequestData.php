@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Data\Requests;
+namespace Stackra\Subscription\Data\Requests;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Date;

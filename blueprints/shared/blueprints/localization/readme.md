@@ -101,7 +101,7 @@ When code calls `t('users.title')`, our decorated Translator runs this chain
 1. **DB Translation** matching `(tenant_id, locale, namespace, key)` — the
    tenant-specific cache
 2. **DB Translation** matching `(null, locale, namespace, key)` — platform
-   defaults (Academorix-shipped)
+   defaults (Stackra-shipped)
 3. **File-based** `lang/{locale}/{namespace}.php` and `lang/{locale}.json`
    (Laravel's native lookup)
 4. **Fallback locale** — repeat 1–3 for `config('localization.fallback_locale')`
@@ -148,7 +148,7 @@ value). Admin editors that need round-trip access to every locale pass
 We do not replace Laravel's `Translator` — we decorate it. The Laravel helper
 functions (`__()`, `trans()`, `trans_choice()`) are automatically routed through
 our decorator because we bind our
-`Academorix\Localization\Translation\Translator` as `translator`.
+`Stackra\Localization\Translation\Translator` as `translator`.
 
 Additionally we publish a short `t()` helper:
 

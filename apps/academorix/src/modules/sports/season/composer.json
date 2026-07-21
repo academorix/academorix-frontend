@@ -1,10 +1,10 @@
 {
-  "name": "academorix/season",
+  "name": "stackra/season",
   "type": "library",
-  "description": "Academorix Season module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/season/`. Complements the wire SDK at `academorix-sports/season-sdk`.",
+  "description": "Stackra Season module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/season/`. Complements the wire SDK at `stackra-sports/season-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "sports",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-sports/season-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-sports/season-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Season\\": "src/"
+      "Stackra\\Season\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Season\\Tests\\": "tests/"
+      "Stackra\\Season\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Season\\Providers\\SeasonServiceProvider"
+        "Stackra\\Season\\Providers\\SeasonServiceProvider"
       ],
       "aliases": {}
     }

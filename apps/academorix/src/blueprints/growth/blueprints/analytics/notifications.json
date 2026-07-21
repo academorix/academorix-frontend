@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/analytics/notifications",
+  "id": "stackra://modules/analytics/notifications",
   "$version": 1,
   "title": "analytics — notifications",
   "description": "Four notifications covering circuit-breaker + batch backpressure + high drop rate + identity merge lifecycle. Wired via the `notifications` core module. Category slugs live under the `analytics.*` namespace.",
-  "seeder": "Academorix\\Growth\\Analytics\\Database\\Seeders\\AnalyticsNotificationCategorySeeder",
+  "seeder": "Stackra\\Growth\\Analytics\\Database\\Seeders\\AnalyticsNotificationCategorySeeder",
   "categories": [
     {
       "slug": "analytics.circuit-breaker",
@@ -44,7 +44,7 @@
   ],
   "notifications": [
     {
-      "class": "Academorix\\Growth\\Analytics\\Notifications\\AnalyticsProviderCircuitBreakerOpenedNotification",
+      "class": "Stackra\\Growth\\Analytics\\Notifications\\AnalyticsProviderCircuitBreakerOpenedNotification",
       "category": "analytics.circuit-breaker",
       "channels": ["mail", "in_app"],
       "audience": ["tenant.admin", "tenant.owner", "platform.on_call"],
@@ -52,7 +52,7 @@
       "trigger": "AnalyticsProviderCircuitBreakerOpened event"
     },
     {
-      "class": "Academorix\\Growth\\Analytics\\Notifications\\AnalyticsBatchBackpressureNotification",
+      "class": "Stackra\\Growth\\Analytics\\Notifications\\AnalyticsBatchBackpressureNotification",
       "category": "analytics.batch-backpressure",
       "channels": ["mail"],
       "audience": ["platform.on_call"],
@@ -60,7 +60,7 @@
       "trigger": "SamplingRateReconcilerJob + a batch-depth-monitor probe (batch queue depth > threshold for 5 min)"
     },
     {
-      "class": "Academorix\\Growth\\Analytics\\Notifications\\AnalyticsHighDropRateNotification",
+      "class": "Stackra\\Growth\\Analytics\\Notifications\\AnalyticsHighDropRateNotification",
       "category": "analytics.high-drop-rate",
       "channels": ["mail", "in_app"],
       "audience": ["tenant.admin", "tenant.owner"],
@@ -68,7 +68,7 @@
       "trigger": "SamplingRateReconcilerJob detects drop rate > 5% over past 24h across events NOT explicitly sampled or consent-suppressed"
     },
     {
-      "class": "Academorix\\Growth\\Analytics\\Notifications\\AnalyticsIdentityMergeCompletedNotification",
+      "class": "Stackra\\Growth\\Analytics\\Notifications\\AnalyticsIdentityMergeCompletedNotification",
       "category": "analytics.identity-merge-completed",
       "channels": ["in_app"],
       "audience": ["tenant.admin (the initiator)"],

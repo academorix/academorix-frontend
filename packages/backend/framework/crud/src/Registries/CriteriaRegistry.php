@@ -12,11 +12,11 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Crud\Registries;
+namespace Stackra\Crud\Registries;
 
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Support\Arr;
-use Academorix\Crud\Contracts\CriteriaInterface;
+use Stackra\Crud\Contracts\CriteriaInterface;
 use RuntimeException;
 
 /**

@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Performance\Concerns;
+namespace Stackra\Performance\Concerns;
 
 /**
  * Trait — HasPerformanceResults.

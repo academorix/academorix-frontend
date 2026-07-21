@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/coaching/config",
+  "id": "stackra://modules/coaching/config",
   "$version": 1,
   "title": "coaching — developer configuration",
   "configFile": "config/coaching.php",

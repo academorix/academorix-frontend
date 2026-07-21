@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/monitoring/schemas/health-check",
+  "id": "stackra://modules/monitoring/schemas/health-check",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "HealthCheck",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "hck_",
     "incrementing": false,
-    "model": "Academorix\\Observability\\Monitoring\\Models\\HealthCheck",
-    "interface": "Academorix\\Observability\\Monitoring\\Contracts\\Data\\HealthCheckInterface",
-    "implements": ["Academorix\\Observability\\Monitoring\\Contracts\\Data\\HealthCheckInterface"],
+    "model": "Stackra\\Observability\\Monitoring\\Models\\HealthCheck",
+    "interface": "Stackra\\Observability\\Monitoring\\Contracts\\Data\\HealthCheckInterface",
+    "implements": ["Stackra\\Observability\\Monitoring\\Contracts\\Data\\HealthCheckInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

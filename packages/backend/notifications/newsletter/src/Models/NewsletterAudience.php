@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Models;
+namespace Stackra\Newsletter\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Newsletter\Casts\AudienceExpressionCast;
-use Academorix\Newsletter\Contracts\Data\NewsletterAudienceInterface;
-use Academorix\Newsletter\Contracts\Data\NewsletterInterface;
-use Academorix\Newsletter\Database\Factories\NewsletterAudienceFactory;
-use Academorix\Newsletter\Observers\NewsletterAudienceObserver;
-use Academorix\Newsletter\Policies\NewsletterAudiencePolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Newsletter\Casts\AudienceExpressionCast;
+use Stackra\Newsletter\Contracts\Data\NewsletterAudienceInterface;
+use Stackra\Newsletter\Contracts\Data\NewsletterInterface;
+use Stackra\Newsletter\Database\Factories\NewsletterAudienceFactory;
+use Stackra\Newsletter\Observers\NewsletterAudienceObserver;
+use Stackra\Newsletter\Policies\NewsletterAudiencePolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

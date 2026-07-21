@@ -7,9 +7,9 @@ declare(strict_types=1);
  *
  * @description
  * Reads the two attributes a CRUD controller declares —
- * {@see \Academorix\Crud\Attributes\UseData} and
- * {@see \Academorix\Crud\Attributes\UsePolicy} — and exposes cached
- * resolvers the base {@see \Academorix\Crud\Controllers\CrudController}
+ * {@see \Stackra\Crud\Attributes\UseData} and
+ * {@see \Stackra\Crud\Attributes\UsePolicy} — and exposes cached
+ * resolvers the base {@see \Stackra\Crud\Controllers\CrudController}
  * uses inside `store()` / `update()` / `index()` / `show()` /
  * `destroy()`.
  *
@@ -60,10 +60,10 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Crud\Concerns\Controller;
+namespace Stackra\Crud\Concerns\Controller;
 
-use Academorix\Crud\Attributes\UseData;
-use Academorix\Crud\Attributes\UsePolicy;
+use Stackra\Crud\Attributes\UseData;
+use Stackra\Crud\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Model;
 use ReflectionClass;
 use RuntimeException;
@@ -73,7 +73,7 @@ use Spatie\LaravelData\Data;
  * Reads `#[UseData]` + `#[UsePolicy]` off the concrete controller
  * class and caches the results for the request lifetime.
  *
- * Consumed by {@see \Academorix\Crud\Controllers\CrudController}.
+ * Consumed by {@see \Stackra\Crud\Controllers\CrudController}.
  */
 trait InteractsWithCrudDeclarations
 {
@@ -167,7 +167,7 @@ trait InteractsWithCrudDeclarations
 
         if ($attribute === null) {
             throw new RuntimeException(sprintf(
-                'CRUD controller [%s] must declare #[Academorix\Crud\Attributes\UseData(...)] '
+                'CRUD controller [%s] must declare #[Stackra\Crud\Attributes\UseData(...)] '
                 . '— every store/update/resource action reads its Data class from that attribute.',
                 static::class,
             ));

@@ -38,7 +38,7 @@ Global reference catalog + IP geolocation. Wraps
 We own:
 
 - **Subclass models**
-  (`Academorix\Geography\Models\{Country, State, City, Currency, Language, Timezone}`)
+  (`Stackra\Geography\Models\{Country, State, City, Currency, Language, Timezone}`)
   rebinding via `config('world.models.*')` in
   `GeographyServiceProvider::register()`. Vendor relations (`Country::states`,
   `State::cities`, ...) return our subclasses.

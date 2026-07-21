@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Data;
+namespace Stackra\Auth\Data;
 
-use Academorix\Auth\Enums\JwtPayloadPurpose;
+use Stackra\Auth\Enums\JwtPayloadPurpose;
 use Spatie\LaravelData\Attributes\Validation\ArrayType;
 use Spatie\LaravelData\Attributes\Validation\Enum;
 use Spatie\LaravelData\Attributes\Validation\IntegerType;
@@ -42,7 +42,7 @@ use Spatie\LaravelData\Data;
 final class JwtPayloadData extends Data
 {
     /**
-     * @param  string             $iss          Issuer URL (e.g. `https://identity.academorix.com`).
+     * @param  string             $iss          Issuer URL (e.g. `https://identity.stackra.com`).
      * @param  list<string>       $aud          Intended recipient hostnames. At least one entry.
      * @param  string             $sub          Subject id (ULID `usr_...` / `plu_...` / `svc_...`).
      * @param  string             $app          Application slug ULID (`app_...`) or a slug ("app_sports").

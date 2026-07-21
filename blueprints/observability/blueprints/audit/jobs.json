@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/audit/jobs",
+  "id": "stackra://modules/audit/jobs",
   "$version": 1,
   "title": "audit — background jobs",
   "description": "5 queued jobs covering the one-shot tenant_id backfill (module install / vendor-row migration), nightly per-tenant retention purge, nightly retention-override expiry sweep, weekly hot-to-cold archive migration, and monthly regulator compliance report generation.",
   "jobs": [
     {
-      "class": "Academorix\\Observability\\Audit\\Jobs\\BackfillAuditTenantIdFromJsonbJob",
+      "class": "Stackra\\Observability\\Audit\\Jobs\\BackfillAuditTenantIdFromJsonbJob",
       "queue": "audit",
       "purpose": "One-shot on module install (or subsequent runs if new vendor rows landed without tenant_id column). Reads audit rows where tenant_id IS NULL, extracts the value from new_values.tenant_id (fallback: old_values.tenant_id for delete events), and populates the new column. Batched (10k rows/batch by default, pause 200ms between batches to keep pressure off the hot read path). Idempotent — re-runs skip already-populated rows.",
       "steps": [
@@ -25,7 +25,7 @@
       "notes": "Consumers invoke via `php artisan audit:backfill-tenant-id` (which dispatches this job) or manually via Horizon. The command supports `--tenant=<slug>` to backfill a single tenant + `--all` to sweep every tenant + `--dry-run` for a count-only preview."
     },
     {
-      "class": "Academorix\\Observability\\Audit\\Jobs\\PurgeExpiredAuditsJob",
+      "class": "Stackra\\Observability\\Audit\\Jobs\\PurgeExpiredAuditsJob",
       "queue": "audit-critical",
       "purpose": "Nightly per-tenant retention purge. Reads the active AuditRetentionPolicy (or falls back to config.audit.retention.default_years=7). Computes cutoff = now() - retention_years. Hard-deletes rows with created_at < cutoff. Writes a summary meta-audit ('audit.purged { tenant_id, cutoff_at, row_count }') so the trail records itself being purged.",
       "steps": [
@@ -49,7 +49,7 @@
       "critical_note": "Runs on the `audit-critical` queue to prevent contention with non-critical audit jobs (export, backfill). Purge must complete on schedule to keep compliance windows honored."
     },
     {
-      "class": "Academorix\\Observability\\Audit\\Jobs\\ExpireRetentionOverridesJob",
+      "class": "Stackra\\Observability\\Audit\\Jobs\\ExpireRetentionOverridesJob",
       "queue": "audit",
       "purpose": "Nightly retention-override expiry sweep. Scans every AuditRetentionPolicy where override_ends_at <= now() AND soft_deleted_at IS NULL. Resets retention_years to config.audit.retention.default_years (7), soft-deletes the policy (deleted_at = override_ends_at), and fires AuditRetentionExtensionExpired. Also fires AuditRetentionExtensionExpiringSoonNotification 30 days ahead of expiry.",
       "steps": [
@@ -65,7 +65,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Observability\\Audit\\Jobs\\ExportAuditsToArchiveJob",
+      "class": "Stackra\\Observability\\Audit\\Jobs\\ExportAuditsToArchiveJob",
       "queue": "audit",
       "purpose": "Weekly Sunday 05:00 UTC. Enterprise tenants only (implicit via audit_capture_advanced flag). Writes tenant-scoped audit rows past 90d to a jsonl.gz file in the archive S3 bucket (`AUDIT_ARCHIVE_S3_BUCKET`). Prunes the hot-table rows after successful S3 upload verification (HEAD check). Idempotent — re-runs against the same window skip already-archived rows.",
       "steps": [
@@ -84,7 +84,7 @@
       "backoff": [600, 3600, 7200]
     },
     {
-      "class": "Academorix\\Observability\\Audit\\Jobs\\GenerateComplianceReportJob",
+      "class": "Stackra\\Observability\\Audit\\Jobs\\GenerateComplianceReportJob",
       "queue": "audit",
       "purpose": "Monthly on the 1st of each month. Runs per-tenant. Produces a regulator-shaped export (jsonl format by default, per config.audit.export.format) covering the past month's audit rows. Composed of: (a) a manifest jsonl with SHA-256 of the payload + row count + tenant/application ids + date range + signing timestamp; (b) the payload jsonl.gz with every audit row grouped by auditable_type. Uploaded to the archive bucket with object-lock (compliance mode, 7y retention).",
       "steps": [

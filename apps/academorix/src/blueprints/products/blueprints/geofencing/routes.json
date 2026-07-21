@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geofencing/routes",
+  "id": "stackra://modules/geofencing/routes",
   "$version": 1,
   "title": "geofencing \u2014 HTTP routes",
   "description": "Four groups. Preflight + fence edit endpoints are model-agnostic \u2014 they take a `{fenceable_type, fenceable_id}` pair in the body or URL rather than hardcoding a `/branches/{branch}/geofence` path.",
@@ -22,7 +22,7 @@
         {
           "method": "POST",
           "path": "/preflight",
-          "controller": "Academorix\\Geofencing\\Http\\Controllers\\GeofencePreflightController@__invoke",
+          "controller": "Stackra\\Geofencing\\Http\\Controllers\\GeofencePreflightController@__invoke",
           "permission": "geofence.preflight",
           "description": "Body: EvaluateGeofenceData carrying { fenceable_type, fenceable_id, lat, lng, accuracy_m, subject_type, subject_id }. Returns GeofenceCheckResultData with checkId=null.",
           "rate_limit": "60,1"
@@ -47,14 +47,14 @@
         {
           "method": "GET",
           "path": "/{fenceableType}/{fenceableId}",
-          "controller": "Academorix\\Geofencing\\Http\\Controllers\\FenceController@show",
+          "controller": "Stackra\\Geofencing\\Http\\Controllers\\FenceController@show",
           "permission": "geofence.fences.view",
           "description": "Returns FenceableGeometry value object."
         },
         {
           "method": "PATCH",
           "path": "/{fenceableType}/{fenceableId}",
-          "controller": "Academorix\\Geofencing\\Http\\Controllers\\FenceController@update",
+          "controller": "Stackra\\Geofencing\\Http\\Controllers\\FenceController@update",
           "permission": "geofence.fences.update",
           "description": "Body: { geofence_polygon?, location_point?, geofence_radius_m?, geofence_accuracy_tolerance_m?, geofence_enforcement_enabled? }. WKT + GeoJSON accepted for polygon."
         }
@@ -78,7 +78,7 @@
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Geofencing\\Http\\Controllers\\GeofenceOverrideController@store",
+          "controller": "Stackra\\Geofencing\\Http\\Controllers\\GeofenceOverrideController@store",
           "permission": "geofence.overrides.request",
           "description": "Body: { original_check_id, reason (>= 10 chars) }. Returns { approval_task_id }."
         }
@@ -102,14 +102,14 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Geofencing\\Http\\Controllers\\GeofenceCheckController@index",
+          "controller": "Stackra\\Geofencing\\Http\\Controllers\\GeofenceCheckController@index",
           "permission": "geofence.checks.viewAny",
           "description": "filter[result], filter[mode], filter[fenceable_type], filter[fenceable_id], filter[subject_type], filter[subject_id], filter[evaluated_at]"
         },
         {
           "method": "GET",
           "path": "/{check}",
-          "controller": "Academorix\\Geofencing\\Http\\Controllers\\GeofenceCheckController@show",
+          "controller": "Stackra\\Geofencing\\Http\\Controllers\\GeofenceCheckController@show",
           "permission": "geofence.checks.view"
         }
       ]
@@ -131,33 +131,33 @@
         {
           "method": "GET",
           "path": "/checks",
-          "controller": "Academorix\\Geofencing\\Http\\Controllers\\Platform\\GeofenceCheckController@index",
+          "controller": "Stackra\\Geofencing\\Http\\Controllers\\Platform\\GeofenceCheckController@index",
           "permission": "platform.geofence.checks.viewAny"
         },
         {
           "method": "GET",
           "path": "/checks/{check}",
-          "controller": "Academorix\\Geofencing\\Http\\Controllers\\Platform\\GeofenceCheckController@show",
+          "controller": "Stackra\\Geofencing\\Http\\Controllers\\Platform\\GeofenceCheckController@show",
           "permission": "platform.geofence.checks.view"
         },
         {
           "method": "GET",
           "path": "/overrides",
-          "controller": "Academorix\\Geofencing\\Http\\Controllers\\Platform\\GeofenceOverrideController@index",
+          "controller": "Stackra\\Geofencing\\Http\\Controllers\\Platform\\GeofenceOverrideController@index",
           "permission": "platform.geofence.overrides.viewAny",
           "description": "Every override applied across all tenants \u2014 compliance surface."
         },
         {
           "method": "GET",
           "path": "/fenceable-aliases",
-          "controller": "Academorix\\Geofencing\\Http\\Controllers\\Platform\\FenceableAliasController@index",
+          "controller": "Stackra\\Geofencing\\Http\\Controllers\\Platform\\FenceableAliasController@index",
           "permission": "platform.geofence.checks.viewAny",
           "description": "Lists every registered #[Geofenceable] alias in the codebase + the class that owns it. Debug surface."
         },
         {
           "method": "POST",
           "path": "/checks/{check}/purge",
-          "controller": "Academorix\\Geofencing\\Http\\Controllers\\Platform\\GeofenceCheckController@purge",
+          "controller": "Stackra\\Geofencing\\Http\\Controllers\\Platform\\GeofenceCheckController@purge",
           "permission": "platform.geofence.checks.purge",
           "description": "GDPR retention path. Soft-deletes. Every use audit-logged with reason."
         }

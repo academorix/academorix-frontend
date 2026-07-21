@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\MarketplaceFee\Services;
+namespace Stackra\MarketplaceFee\Services;
 
-use Academorix\MarketplaceFee\Contracts\Services\FeeScheduleInterface;
+use Stackra\MarketplaceFee\Contracts\Services\FeeScheduleInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\MarketplaceFee\Contracts\Repositories\FeeApplicationRepositoryInterface;
+use Stackra\MarketplaceFee\Contracts\Repositories\FeeApplicationRepositoryInterface;
 
 /**
  * Concrete service — FeeSchedule.

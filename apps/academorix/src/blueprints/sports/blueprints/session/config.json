@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/session/config",
+  "id": "stackra://modules/session/config",
   "$version": 1,
   "title": "session — developer configuration",
   "configFile": "config/session.php",

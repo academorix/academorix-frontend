@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/compliance/relations",
+  "id": "stackra://modules/compliance/relations",
   "$version": 1,
   "title": "compliance — model relationships",
   "description": "Eight owned entities with a tight internal graph. External graph is intentionally minimal: the module publishes traits + attributes so downstream models opt in without adding foreign keys back to this module. DSAR artefacts point at storage::File; consent + legal-hold + safeguarding are polymorphic on subject (subject_type + subject_id).",

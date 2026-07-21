@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/rbac/schemas/role",
+  "id": "stackra://modules/rbac/schemas/role",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Role",
-  "description": "Spatie's `roles` table augmented with Academorix scope columns (application_id, tenant_id, is_system, description, sort_order). Wave 1b materialises the D-A2 decision: RBAC is spatie-extended \u2014 no reimplementation, only column additions. Composite unique on (application_id, tenant_id, name, guard_name).",
+  "description": "Spatie's `roles` table augmented with Stackra scope columns (application_id, tenant_id, is_system, description, sort_order). Wave 1b materialises the D-A2 decision: RBAC is spatie-extended \u2014 no reimplementation, only column additions. Composite unique on (application_id, tenant_id, name, guard_name).",
   "type": "object",
   "x-module": "rbac",
   "x-eloquent": {
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "rol_",
     "incrementing": false,
-    "model": "Academorix\\Rbac\\Models\\Role",
-    "interface": "Academorix\\Rbac\\Contracts\\Data\\RoleInterface",
-    "implements": ["Academorix\\Rbac\\Contracts\\Data\\RoleInterface"],
+    "model": "Stackra\\Rbac\\Models\\Role",
+    "interface": "Stackra\\Rbac\\Contracts\\Data\\RoleInterface",
+    "implements": ["Stackra\\Rbac\\Contracts\\Data\\RoleInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -39,7 +39,7 @@
   },
   "x-database": {
     "engine": "postgres",
-    "description": "Extends spatie/laravel-permission's shipped roles table with the Academorix scope columns. The spatie migration creates `id / name / guard_name / created_at / updated_at`; our migration ADDS `application_id / tenant_id / is_system / description / sort_order / metadata / deleted_at / audit columns` and swaps `id` type from bigint to string(64) via a config toggle.",
+    "description": "Extends spatie/laravel-permission's shipped roles table with the Stackra scope columns. The spatie migration creates `id / name / guard_name / created_at / updated_at`; our migration ADDS `application_id / tenant_id / is_system / description / sort_order / metadata / deleted_at / audit columns` and swaps `id` type from bigint to string(64) via a config toggle.",
     "columns": {
       "id": {
         "type": "string",
@@ -69,7 +69,7 @@
           "onUpdate": "cascade",
           "onDelete": "cascade"
         },
-        "description": "FK to tenants.id. NULL = system role (shipped by Academorix). Non-null = tenant-created custom role."
+        "description": "FK to tenants.id. NULL = system role (shipped by Stackra). Non-null = tenant-created custom role."
       },
       "name": {
         "type": "string",
@@ -88,7 +88,7 @@
         "type": "boolean",
         "nullable": false,
         "default": false,
-        "description": "True = shipped by Academorix (immutable). False = tenant-created custom role. Modifications on is_system=true rows raise SystemRoleModificationRefused."
+        "description": "True = shipped by Stackra (immutable). False = tenant-created custom role. Modifications on is_system=true rows raise SystemRoleModificationRefused."
       },
       "description": {
         "type": "text",

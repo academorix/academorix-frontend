@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformIntegrationsSdk\Requests\TenantIntegrations;
+namespace Stackra\PlatformIntegrationsSdk\Requests\TenantIntegrations;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\PlatformIntegrationsSdk\Data\TenantIntegrationData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\PlatformIntegrationsSdk\Data\TenantIntegrationData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

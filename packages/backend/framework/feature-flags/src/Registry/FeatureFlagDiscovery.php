@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Registry;
+namespace Stackra\FeatureFlags\Registry;
 
-use Academorix\FeatureFlags\Attributes\AsFeatureFlag;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureRepositoryInterface;
+use Stackra\FeatureFlags\Attributes\AsFeatureFlag;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureRepositoryInterface;
 use Laravel\Pennant\Feature as PennantFeature;
 use ReflectionClass;
 

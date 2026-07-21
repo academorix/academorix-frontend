@@ -5,7 +5,7 @@
  *
  * @description
  * Behaviour tests for
- * {@see \Academorix\Architecture\Rules\NoRoutesFolderRule}.
+ * {@see \Stackra\Architecture\Rules\NoRoutesFolderRule}.
  *
  * Route files are forbidden — every URL is declared on a
  * controller via routing attributes. This suite builds real
@@ -26,7 +26,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Architecture\Rules\NoRoutesFolderRule;
+use Stackra\Architecture\Rules\NoRoutesFolderRule;
 
 /**
  * Build the rule with the shipped config defaults. Kept as a

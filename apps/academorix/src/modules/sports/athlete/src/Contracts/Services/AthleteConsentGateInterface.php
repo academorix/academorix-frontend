@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Athlete\Contracts\Services;
+namespace Stackra\Athlete\Contracts\Services;
 
-use Academorix\Athlete\Models\Athlete;
-use Academorix\Athlete\Services\AthleteConsentGate;
+use Stackra\Athlete\Models\Athlete;
+use Stackra\Athlete\Services\AthleteConsentGate;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -18,7 +18,7 @@ use Illuminate\Container\Attributes\Bind;
  *   - **Adult athlete** — the athlete themselves (matching User row)
  *     OR an admin acting on their behalf.
  *   - **Minor athlete** — an active, non-revoked
- *     {@see \Academorix\AthleteGuardian\Models\AthleteGuardian}
+ *     {@see \Stackra\AthleteGuardian\Models\AthleteGuardian}
  *     row with `has_legal_custody = true` (the "consent" bit of the
  *     bundle) linked to the recorder's User id.
  *
@@ -39,8 +39,8 @@ interface AthleteConsentGateInterface
      * Assert that `$recorderUserId` is authorised to record consent
      * for `$athlete`. Throws on refusal.
      *
-     * @throws \Academorix\Athlete\Exceptions\AthleteConsentRecorderUnauthorisedException
-     * @throws \Academorix\Athlete\Exceptions\UserIsMinorConsentRecorderException  When
+     * @throws \Stackra\Athlete\Exceptions\AthleteConsentRecorderUnauthorisedException
+     * @throws \Stackra\Athlete\Exceptions\UserIsMinorConsentRecorderException  When
      *         the recorder is themselves a minor athlete (indirect: recorder is a
      *         User row that is ALSO an Athlete row < 18).
      */

@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/notifications/contracts/notification-dispatched.v1",
+  "id": "stackra://modules/notifications/contracts/notification-dispatched.v1",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "title": "notification-dispatched event \u2014 v1 wire contract",
   "description": "FROZEN wire shape for the `notifications::NotificationDispatched` event. This is the primary observability + fan-out event of the notifications substrate \u2014 every channel module (mail / push / sms / in-app) subscribes to it. The event is event-carried-state: the payload includes everything a channel module needs to deliver without a callback into notifications core. Every consumer reads this shape unchanged; breaking changes require a v2 per the versioning policy in `foundation/readme.md` \u00a712.",
-  "x-emitter": "Academorix\\Notifications\\Events\\NotificationDispatched",
+  "x-emitter": "Stackra\\Notifications\\Events\\NotificationDispatched",
   "x-owning-module": "notifications",
   "x-event-name": "notifications.notification.dispatched",
   "x-version": "v1",

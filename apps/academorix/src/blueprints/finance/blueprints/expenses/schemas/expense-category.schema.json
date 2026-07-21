@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/expenses/schemas/expense-category",
+  "id": "stackra://modules/expenses/schemas/expense-category",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ExpenseCategory",

@@ -2,14 +2,14 @@
 
 /**
  * @file CatalogListCommand.php
- * @module Academorix\Cli\Commands
- * @description `academorix catalog:list [--tier=<t>] [--surface=<s>]` —
+ * @module Stackra\Cli\Commands
+ * @description `stackra catalog:list [--tier=<t>] [--surface=<s>]` —
  *   lists every catalogue entry, optionally filtered by tier or surface.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Commands;
+namespace Stackra\Cli\Commands;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;

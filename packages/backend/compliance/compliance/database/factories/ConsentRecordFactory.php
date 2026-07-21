@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Database\Factories;
+namespace Stackra\Compliance\Database\Factories;
 
-use Academorix\Compliance\Contracts\Data\ConsentRecordInterface;
-use Academorix\Compliance\Enums\ConsentDecision;
-use Academorix\Compliance\Models\ConsentRecord;
+use Stackra\Compliance\Contracts\Data\ConsentRecordInterface;
+use Stackra\Compliance\Enums\ConsentDecision;
+use Stackra\Compliance\Models\ConsentRecord;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

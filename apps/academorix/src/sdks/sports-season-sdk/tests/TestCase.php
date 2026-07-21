@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsSeasonSdk\Tests;
+namespace Stackra\SportsSeasonSdk\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix-sports/season-sdk.
+ * Base test case for stackra-sports/season-sdk.
  *
  * @category SeasonSdk
  *

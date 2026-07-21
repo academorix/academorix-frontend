@@ -2,7 +2,7 @@
 
 /**
  * @file UsesGit.php
- * @module Academorix\Cli\Concerns
+ * @module Stackra\Cli\Concerns
  * @description Read-only git wrappers plus `git init` for new-project
  *   scaffolding. The CLI NEVER commits, pushes, stashes, or resets — those
  *   are supervisor-turn decisions.
@@ -10,15 +10,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Concerns;
+namespace Stackra\Cli\Concerns;
 
-use Academorix\Cli\Support\ProcessRunner;
+use Stackra\Cli\Support\ProcessRunner;
 use Symfony\Component\Process\Process;
 
 /**
- * Composed by every command through {@see \Academorix\Cli\Commands\AbstractCommand}.
+ * Composed by every command through {@see \Stackra\Cli\Commands\AbstractCommand}.
  *
- * @property \Academorix\Cli\Container $container populated by {@see \Academorix\Cli\Commands\AbstractCommand}
+ * @property \Stackra\Cli\Container $container populated by {@see \Stackra\Cli\Commands\AbstractCommand}
  */
 trait UsesGit
 {

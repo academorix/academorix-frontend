@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/attributes/relations",
+  "id": "stackra://modules/attributes/relations",
   "$version": 1,
   "title": "attributes — model relationships",
   "description": "Three owned entities. Internal graph: AttributeGroup belongsTo AttributeSet (cascade); AttributeSet references definitions via ordered JSONB array (definition_order), not FK. External graph: hosts opt in via traits — no FK from host to AttributeSet by default (except when historic rendering demands set_id snapshot on the host).",

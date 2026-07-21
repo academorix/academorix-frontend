@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Exceptions;
+namespace Stackra\Chargeback\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Direct mutation of rdr_eligible refused — the flag is computed at creation from network + amount + entitlement + payment history.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ChargebackRdrEligibilityMismatchException extends AcademorixException
+final class ChargebackRdrEligibilityMismatchException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

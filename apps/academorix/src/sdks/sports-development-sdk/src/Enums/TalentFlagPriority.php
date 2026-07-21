@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDevelopmentSdk\Enums;
+namespace Stackra\SportsDevelopmentSdk\Enums;
 
 /**
  * Wire-visible backed enum for `talent-flag.priority`.

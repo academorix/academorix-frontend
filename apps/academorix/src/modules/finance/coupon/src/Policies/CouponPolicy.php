@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Policies;
+namespace Stackra\Coupon\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Coupon\Models\Coupon;
+use Stackra\User\Models\User;
+use Stackra\Coupon\Models\Coupon;
 
 /**
- * Authorization policy for {@see \Academorix\Coupon\Models\Coupon}.
+ * Authorization policy for {@see \Stackra\Coupon\Models\Coupon}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

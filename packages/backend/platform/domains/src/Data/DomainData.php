@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Data;
+namespace Stackra\Domains\Data;
 
-use Academorix\Domains\Contracts\Data\DomainInterface;
-use Academorix\Domains\Enums\DomainKind;
-use Academorix\Domains\Enums\DomainVerificationMethod;
-use Academorix\Domains\Enums\SslStatus;
-use Academorix\Domains\Models\Domain;
+use Stackra\Domains\Contracts\Data\DomainInterface;
+use Stackra\Domains\Enums\DomainKind;
+use Stackra\Domains\Enums\DomainVerificationMethod;
+use Stackra\Domains\Enums\SslStatus;
+use Stackra\Domains\Models\Domain;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Actions\KillSwitches;
+namespace Stackra\FeatureFlags\Actions\KillSwitches;
 
-use Academorix\Authorization\Attributes\RequireRole;
-use Academorix\FeatureFlags\Contracts\Data\FeatureKillSwitchInterface;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureKillSwitchRepositoryInterface;
-use Academorix\FeatureFlags\Data\FeatureKillSwitchData;
-use Academorix\FeatureFlags\Data\Requests\UpdateKillSwitchRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Put;
-use Academorix\Routing\Attributes\WhereUlid;
+use Stackra\Authorization\Attributes\RequireRole;
+use Stackra\FeatureFlags\Contracts\Data\FeatureKillSwitchInterface;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureKillSwitchRepositoryInterface;
+use Stackra\FeatureFlags\Data\FeatureKillSwitchData;
+use Stackra\FeatureFlags\Data\Requests\UpdateKillSwitchRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Put;
+use Stackra\Routing\Attributes\WhereUlid;
 
 /**
  * `PUT /api/v1/feature-flags/kill-switches/{id}` — update a kill switch.
@@ -53,7 +53,7 @@ final class UpdateKillSwitch
             static fn ($v): bool => $v !== null,
         );
 
-        /** @var \Academorix\FeatureFlags\Models\FeatureKillSwitch $row */
+        /** @var \Stackra\FeatureFlags\Models\FeatureKillSwitch $row */
         $row = $this->repository->update($id, $patch);
 
         return FeatureKillSwitchData::fromModel($row);

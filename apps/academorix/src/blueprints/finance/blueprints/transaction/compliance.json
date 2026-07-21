@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transaction/compliance",
+  "id": "stackra://modules/transaction/compliance",
   "$version": 1,
   "title": "transaction — compliance evidence",
   "description": "Transaction is the load-bearing financial-record module of the entire platform. SOX Section 404 (internal control over financial reporting) + Sarbanes-Oxley Section 802 (retention of audit records) + GAAP + IFRS (double-entry principle) + AML (anti-money-laundering record retention) + VAT reporting (tax_payable account export shape) all trace back to this module's guarantees. PCI-DSS scope is strictly excluded — no card data ever touches transaction rows.",

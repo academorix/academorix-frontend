@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Credentials\Contracts\Data;
+namespace Stackra\Credentials\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Credentials\Models\Gate;
+use Stackra\Credentials\Models\Gate;
 
 /**
  * Table shape for the `gates` table.

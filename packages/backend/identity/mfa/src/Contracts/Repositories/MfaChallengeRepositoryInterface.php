@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Contracts\Repositories;
+namespace Stackra\Mfa\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Mfa\Models\MfaChallenge}.
+ * Repository contract for {@see Stackra\Mfa\Models\MfaChallenge}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `MfaChallengeRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Mfa\Models\MfaChallenge>
+ * @extends RepositoryInterface<\Stackra\Mfa\Models\MfaChallenge>
  *
  * @category Mfa
  *

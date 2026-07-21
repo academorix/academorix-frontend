@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Credentials\Database\Factories;
+namespace Stackra\Credentials\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Credentials\Contracts\Data\CheckinLogInterface;
-use Academorix\Credentials\Models\CheckinLog;
+use Stackra\Credentials\Contracts\Data\CheckinLogInterface;
+use Stackra\Credentials\Models\CheckinLog;
 
 /**
- * Factory for {@see \Academorix\Credentials\Models\CheckinLog}.
+ * Factory for {@see \Stackra\Credentials\Models\CheckinLog}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Credentials\Models\CheckinLog>
+ * @extends Factory<\Stackra\Credentials\Models\CheckinLog>
  *
  * @category Credentials
  *

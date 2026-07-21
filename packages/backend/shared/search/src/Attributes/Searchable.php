@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Attributes;
+namespace Stackra\Search\Attributes;
 
-use Academorix\Search\Enums\SearchEngine;
+use Stackra\Search\Enums\SearchEngine;
 use Attribute;
 
 /**
@@ -12,7 +12,7 @@ use Attribute;
  *
  * Discovered at boot by the framework's generic hydration pump via
  * the `#[HydratesFrom(Searchable::class)]` declaration on
- * {@see \Academorix\Search\Contracts\Services\EngineRegistryInterface::register()}.
+ * {@see \Stackra\Search\Contracts\Services\EngineRegistryInterface::register()}.
  * The registry mirrors each hit into a `search_indexes` row + wires
  * the model's Scout observers.
  *

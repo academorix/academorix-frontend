@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDevelopmentSdk\Resources;
+namespace Stackra\SportsDevelopmentSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsDevelopmentSdk\Data\PathwayStageData;
-use Academorix\SportsDevelopmentSdk\Requests\PathwayStages\CreatePathwayStageRequest;
-use Academorix\SportsDevelopmentSdk\Requests\PathwayStages\ListPathwayStagesRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsDevelopmentSdk\Data\PathwayStageData;
+use Stackra\SportsDevelopmentSdk\Requests\PathwayStages\CreatePathwayStageRequest;
+use Stackra\SportsDevelopmentSdk\Requests\PathwayStages\ListPathwayStagesRequest;
 use Saloon\Http\Response;
 
 /**
@@ -55,7 +55,7 @@ final readonly class PathwayStagesResource
      *
      * @return PathwayStageData
      */
-    public function create(\Academorix\SportsDevelopmentSdk\Payloads\PathwayStages\CreatePathwayStagePayload $payload, ?string $idempotencyKey = null): PathwayStageData
+    public function create(\Stackra\SportsDevelopmentSdk\Payloads\PathwayStages\CreatePathwayStagePayload $payload, ?string $idempotencyKey = null): PathwayStageData
     {
         return $this->connector->send(new CreatePathwayStageRequest($payload, $idempotencyKey))->dto();
     }

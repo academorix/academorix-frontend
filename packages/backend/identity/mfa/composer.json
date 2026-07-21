@@ -1,10 +1,10 @@
 {
-  "name": "academorix/mfa",
+  "name": "stackra/mfa",
   "type": "library",
-  "description": "Academorix Mfa module — server-side Laravel package emitted from the module blueprint at `modules/identity/blueprints/mfa/`. Complements the wire SDK at `academorix-identity/mfa-sdk`.",
+  "description": "Stackra Mfa module — server-side Laravel package emitted from the module blueprint at `modules/identity/blueprints/mfa/`. Complements the wire SDK at `stackra-identity/mfa-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "identity",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-identity/mfa-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-identity/mfa-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Mfa\\": "src/"
+      "Stackra\\Mfa\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Mfa\\Tests\\": "tests/"
+      "Stackra\\Mfa\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Mfa\\Providers\\MfaServiceProvider"
+        "Stackra\\Mfa\\Providers\\MfaServiceProvider"
       ],
       "aliases": {}
     }

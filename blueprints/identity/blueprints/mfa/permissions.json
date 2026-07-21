@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/mfa/permissions",
+  "id": "stackra://modules/mfa/permissions",
   "$version": 1,
   "title": "mfa — permissions",
-  "seeder": "Academorix\\Mfa\\Database\\Seeders\\MfaPermissionSeeder",
+  "seeder": "Stackra\\Mfa\\Database\\Seeders\\MfaPermissionSeeder",
   "isSystem": true,
   "description": "Two permission namespaces: `mfa.*` on the `sanctum` guard for tenant users managing their own MFA, and `platform.mfa.*` on the `platform_admin` guard for support + emergency operations. Guard-namespace isolation is enforced at the RBAC layer — a `sanctum` role can never grant a `platform.mfa.*` permission (identity/access's GuardMismatch 422).",
   "permissions": [

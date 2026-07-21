@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Services;
+namespace Stackra\Foundation\Services;
 
-use Academorix\Foundation\Contracts\Services\ModuleRouteLoaderInterface;
+use Stackra\Foundation\Contracts\Services\ModuleRouteLoaderInterface;
 use Illuminate\Container\Attributes\Scoped;
 
 

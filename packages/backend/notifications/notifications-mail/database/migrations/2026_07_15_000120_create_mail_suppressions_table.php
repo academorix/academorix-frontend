@@ -24,7 +24,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Notifications\Mail\Contracts\Data\MailSuppressionInterface;
+use Stackra\Notifications\Mail\Contracts\Data\MailSuppressionInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

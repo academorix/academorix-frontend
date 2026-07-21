@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Policies;
+namespace Stackra\Marketing\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Marketing\Models\MarketingDelivery;
+use Stackra\User\Models\User;
+use Stackra\Marketing\Models\MarketingDelivery;
 
 /**
- * Authorization policy for {@see \Academorix\Marketing\Models\MarketingDelivery}.
+ * Authorization policy for {@see \Stackra\Marketing\Models\MarketingDelivery}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

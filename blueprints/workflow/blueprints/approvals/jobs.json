@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/workflow/approvals/jobs",
+  "id": "stackra://modules/workflow/approvals/jobs",
   "$version": 1,
   "title": "approvals — background jobs",
   "description": "Seven jobs cover the async surface of the engine. Two sweepers (ExpireOverdueApprovalsJob, DispatchApprovalRemindersJob) run on Horizon cron cadences to enforce the timeout + reminder contract. Two dispatchers (NotifyApproversJob, NotifyRequesterOfDecisionJob) fan out notifications on lifecycle events. One purger + one reconciler + one report-generator round out the schedule.",
   "jobs": [
     {
-      "class": "Academorix\\Approval\\Jobs\\ExpireOverdueApprovalsJob",
+      "class": "Stackra\\Approval\\Jobs\\ExpireOverdueApprovalsJob",
       "queue": "approvals-critical",
       "purpose": "Sweeper — every 5 minutes finds `approval_instances` past expires_at with status='pending' and transitions each per its template's on_timeout behaviour. This is the ONLY code path that transitions a pending instance to a terminal state without a human approve/reject/withdraw.",
       "steps": [
@@ -27,7 +27,7 @@
       "notes": "Runs unconditionally under the platform-wide sweep — no per-tenant batching (would leave a small tenant's overdue instance stuck if the batch loop stopped early). Batch size configurable; a spike of overdue instances processes across multiple invocations until drained."
     },
     {
-      "class": "Academorix\\Approval\\Jobs\\DispatchApprovalRemindersJob",
+      "class": "Stackra\\Approval\\Jobs\\DispatchApprovalRemindersJob",
       "queue": "notifications",
       "purpose": "Sweeper — hourly finds `approval_requirements` in status='pending' where the elapsed time since instance.requested_at (OR the last reminder for this approver, whichever is later) crosses a threshold from template.reminder_config.intervals_hours AND we haven't hit max_reminders. Dispatches ApprovalReminderNotification + writes approval_reminders row (dedup via composite unique).",
       "steps": [
@@ -52,7 +52,7 @@
       "notes": "The composite-unique constraint on `approval_reminders(requirement_id, approver_id, reminder_number)` is the de-dup seatbelt — even if this job double-runs, INSERT ON CONFLICT DO NOTHING keeps the dispatch idempotent. `approvals.throttle_reminders` middleware provides the same guard for on-demand test dispatches."
     },
     {
-      "class": "Academorix\\Approval\\Jobs\\PurgeExpiredApprovalsJob",
+      "class": "Stackra\\Approval\\Jobs\\PurgeExpiredApprovalsJob",
       "queue": "approvals-retention",
       "purpose": "Daily — hard-deletes `approval_instances` in terminal states past the 90-day retention hold (rejected + expired + cancelled) OR past the 7-year executed hold (SOC 2 evidence). Cascades approval_requirements + approval_decisions + approval_reminders via FK.",
       "steps": [
@@ -69,7 +69,7 @@
       "notes": "Never touches approval_templates or approval_template_approvers or approvable_actions — those are governance rows retained indefinitely."
     },
     {
-      "class": "Academorix\\Approval\\Jobs\\NotifyApproversJob",
+      "class": "Stackra\\Approval\\Jobs\\NotifyApproversJob",
       "queue": "notifications",
       "purpose": "Synchronous fanout listener on ApprovalRequested. Loads the instance's requirements, unions resolved_approvers across pending requirements (only sort_order=min groups initially), dispatches one ApprovalRequestedNotification per approver. Idempotent — the notification's dedup key is `(instance_id, approver_id)`.",
       "steps": [
@@ -86,7 +86,7 @@
       "backoff": [10, 60, 300]
     },
     {
-      "class": "Academorix\\Approval\\Jobs\\NotifyRequesterOfDecisionJob",
+      "class": "Stackra\\Approval\\Jobs\\NotifyRequesterOfDecisionJob",
       "queue": "notifications",
       "purpose": "Fires on ApprovalGranted / ApprovalRejected / ApprovalExpired / ApprovalCancelled. Dispatches the appropriate notification to the original requester.",
       "steps": [
@@ -102,7 +102,7 @@
       "backoff": [10, 60, 300]
     },
     {
-      "class": "Academorix\\Approval\\Jobs\\ReconcileTemplateVersionsJob",
+      "class": "Stackra\\Approval\\Jobs\\ReconcileTemplateVersionsJob",
       "queue": "approvals-retention",
       "purpose": "Nightly — verifies invariants that observers enforce at write-time (defensive drift detection). (1) Exactly one is_active=true per (tenant, application, action_key, name). (2) Every approval_instance.approval_template_id resolves to an existing row. (3) resolved_approvers[] contains user_ids that still exist + are not soft-deleted. (4) Delegation-touched instances re-evaluated → dispatches supplementary reminders if a delegate changed since instance-create.",
       "steps": [
@@ -118,7 +118,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Approval\\Jobs\\AuditReportGenerationJob",
+      "class": "Stackra\\Approval\\Jobs\\AuditReportGenerationJob",
       "queue": "approvals-reports",
       "purpose": "On-demand — generates a compliance snapshot (SOC 2 CC6.3 + ISO 27001 A.9.2 evidence) for a period + filter set. Streams result to a signed URL via S3-compatible storage; email link to the requester when complete.",
       "steps": [

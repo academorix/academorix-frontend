@@ -4,7 +4,7 @@
  * @file modules/notifications/notifications-sms/config/notifications-sms.php
  *
  * @description
- * Runtime knobs for the `academorix/notifications-sms` module. Merged under
+ * Runtime knobs for the `stackra/notifications-sms` module. Merged under
  * the `notifications-sms.*` key by the base ServiceProvider's LoadsResources
  * concern. Every secret reference lives in Doppler; every default value is
  * safe for local dev.

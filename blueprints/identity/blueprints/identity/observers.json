@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/identity/observers",
+  "id": "stackra://modules/identity/observers",
   "$version": 1,
   "title": "identity \u2014 Eloquent observers",
   "observers": [
     {
       "model": "Identity",
-      "observer": "Academorix\\Identity\\Observers\\IdentityObserver",
+      "observer": "Stackra\\Identity\\Observers\\IdentityObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `idn_`",
         "creating \u2192 normalise email via CITEXT (Postgres does this at DB level; the observer additionally lowercases + trims for consistency)",
@@ -22,7 +22,7 @@
         "updating (locked_until transition NULL \u2192 non-null) \u2192 fire IdentityLocked with computed lockout_number",
         "updating (locked_until transition non-null \u2192 NULL) \u2192 fire IdentityUnlocked with trigger resolved from the update context (auto_expiry vs admin_action)",
         "updating (email_verified_at transition NULL \u2192 non-null) \u2192 fire IdentityEmailVerified",
-        "deleting (soft) \u2192 emit `academorix.identity.erasure.soft_delete` metric; fire IdentityErased(erasure_phase='soft_delete'); write compliance-audit entry with the actor + reason",
+        "deleting (soft) \u2192 emit `stackra.identity.erasure.soft_delete` metric; fire IdentityErased(erasure_phase='soft_delete'); write compliance-audit entry with the actor + reason",
         "restoring \u2192 refuse when hold-period has elapsed (must-be-hard-deleted by then); clear deleted_at; write audit entry",
         "forceDeleted \u2192 fire IdentityErased(erasure_phase='hard_delete') AFTER the row is actually gone (via afterCommit)"
       ]
@@ -30,7 +30,7 @@
   ],
   "notes": [
     "The observer is registered by IdentityServiceProvider::boot(). It runs BEFORE HasActivityLog + HasAudit hooks so audit trails see the fully-normalised row.",
-    "Every `refuse` case throws a subclass of `Academorix\\Identity\\Exceptions\\IdentityViolationException` \u2014 mapped to the errors in `errors.json`.",
+    "Every `refuse` case throws a subclass of `Stackra\\Identity\\Exceptions\\IdentityViolationException` \u2014 mapped to the errors in `errors.json`.",
     "The `updating (password_hash dirty)` branch is idempotent: pushing the same hash twice within the same transaction is a no-op (the hash lookup dedupes)."
   ]
 }

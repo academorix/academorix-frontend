@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/versioning/permissions",
+  "id": "stackra://modules/versioning/permissions",
   "$version": 1,
   "title": "versioning \u2014 permissions",
   "description": "Two guards. sanctum-guard permissions are minimal (read-only tenant catalog). platform_admin-guard permissions gate all mutations.",
-  "seeder": "Academorix\\Versioning\\Database\\Seeders\\VersioningPermissionSeeder",
+  "seeder": "Stackra\\Versioning\\Database\\Seeders\\VersioningPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

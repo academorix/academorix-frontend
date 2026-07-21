@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/analytics/schemas/analytics-provider-config",
+  "id": "stackra://modules/analytics/schemas/analytics-provider-config",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "AnalyticsProviderConfig",
@@ -12,10 +12,10 @@
     "keyType": "string",
     "keyPrefix": "apc_",
     "incrementing": false,
-    "model": "Academorix\\Growth\\Analytics\\Models\\AnalyticsProviderConfig",
-    "interface": "Academorix\\Growth\\Analytics\\Contracts\\Data\\AnalyticsProviderConfigInterface",
+    "model": "Stackra\\Growth\\Analytics\\Models\\AnalyticsProviderConfig",
+    "interface": "Stackra\\Growth\\Analytics\\Contracts\\Data\\AnalyticsProviderConfigInterface",
     "implements": [
-      "Academorix\\Growth\\Analytics\\Contracts\\Data\\AnalyticsProviderConfigInterface"
+      "Stackra\\Growth\\Analytics\\Contracts\\Data\\AnalyticsProviderConfigInterface"
     ],
     "traits": [
       "HasFactory",

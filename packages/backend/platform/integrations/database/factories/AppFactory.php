@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Database\Factories;
+namespace Stackra\Integrations\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Integrations\Contracts\Data\AppInterface;
-use Academorix\Integrations\Models\App;
+use Stackra\Integrations\Contracts\Data\AppInterface;
+use Stackra\Integrations\Models\App;
 
 /**
- * Factory for {@see \Academorix\Integrations\Models\App}.
+ * Factory for {@see \Stackra\Integrations\Models\App}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Integrations\Models\App>
+ * @extends Factory<\Stackra\Integrations\Models\App>
  *
  * @category Integrations
  *

@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Telemetry\Attributes;
+namespace Stackra\Telemetry\Attributes;
 
 use Attribute;
 

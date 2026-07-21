@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Database\Factories;
+namespace Stackra\Coupon\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Coupon\Contracts\Data\CouponInterface;
-use Academorix\Coupon\Models\Coupon;
+use Stackra\Coupon\Contracts\Data\CouponInterface;
+use Stackra\Coupon\Models\Coupon;
 
 /**
- * Factory for {@see \Academorix\Coupon\Models\Coupon}.
+ * Factory for {@see \Stackra\Coupon\Models\Coupon}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Coupon\Models\Coupon>
+ * @extends Factory<\Stackra\Coupon\Models\Coupon>
  *
  * @category Coupon
  *

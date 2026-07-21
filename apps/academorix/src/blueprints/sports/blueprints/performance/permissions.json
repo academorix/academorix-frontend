@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/performance/permissions",
+  "id": "stackra://modules/performance/permissions",
   "$version": 1,
   "title": "performance — permissions",
-  "seeder": "Academorix\\Sports\\Performance\\Database\\Seeders\\PerformancePermissionSeeder",
+  "seeder": "Stackra\\Sports\\Performance\\Database\\Seeders\\PerformancePermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

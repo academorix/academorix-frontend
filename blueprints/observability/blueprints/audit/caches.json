@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/audit/caches",
+  "id": "stackra://modules/audit/caches",
   "$version": 1,
   "title": "audit — cache keys + tags",
   "description": "Redis caches for tenant retention policy resolution + audited-events catalog + purge-liveness marker.",

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Events;
+namespace Stackra\FeatureFlags\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 
 /**
  * Fired after an override, rollout, or kill-switch takes a flag off for a tenant.

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Contracts\Repositories;
+namespace Stackra\Geography\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Geography\Models\Language;
-use Academorix\Geography\Repositories\EloquentLanguageRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Geography\Models\Language;
+use Stackra\Geography\Repositories\EloquentLanguageRepository;
 use Illuminate\Container\Attributes\Bind;
 
 /**

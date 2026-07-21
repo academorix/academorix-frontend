@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/notifications-push/settings",
+  "id": "stackra://modules/notifications-push/settings",
   "$version": 1,
   "title": "notifications-push \u2014 settings",
   "description": "Push channel settings. Canonical group/section/field taxonomy. One #[AsSetting] class \u2014 `PushSettings` \u2014 group key `push`.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "push",
-      "class": "Academorix\\Notifications\\Push\\Settings\\PushSettings",
+      "class": "Stackra\\Notifications\\Push\\Settings\\PushSettings",
       "label": "Push notifications",
       "description": "Provider routing + rich notification features + quiet-hours interaction.",
       "icon": "device-phone-mobile",

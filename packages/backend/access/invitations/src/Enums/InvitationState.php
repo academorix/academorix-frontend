@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Enums;
+namespace Stackra\Invitations\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `state` on `invitation`.

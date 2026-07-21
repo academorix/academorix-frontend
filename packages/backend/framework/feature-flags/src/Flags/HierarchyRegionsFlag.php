@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Flags;
+namespace Stackra\FeatureFlags\Flags;
 
-use Academorix\FeatureFlags\Attributes\AsFeatureFlag;
-use Academorix\FeatureFlags\Enums\FlagKind;
+use Stackra\FeatureFlags\Attributes\AsFeatureFlag;
+use Stackra\FeatureFlags\Enums\FlagKind;
 
 /**
  * `hierarchy.regions` — enables the optional Regions layer in the tenant hierarchy.

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Services;
+namespace Stackra\Application\Services;
 
-use Academorix\Application\Contracts\Repositories\ApplicationRepositoryInterface;
-use Academorix\Application\Models\Application;
+use Stackra\Application\Contracts\Repositories\ApplicationRepositoryInterface;
+use Stackra\Application\Models\Application;
 use Illuminate\Container\Attributes\Scoped;
 
 /**
  * Request-scoped Application context.
  *
- * Populated by {@see \Academorix\Application\Middleware\ResolveApplication}
+ * Populated by {@see \Stackra\Application\Middleware\ResolveApplication}
  * on every request that carries a resolvable host / `X-Application-Id`
  * header. Every domain module reads through this resolver — never
  * `request()->attribute` scans, never facade lookups.

@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Database\Factories;
+namespace Stackra\Audit\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Audit\Contracts\Data\AuditRetentionPolicyInterface;
-use Academorix\Audit\Models\AuditRetentionPolicy;
+use Stackra\Audit\Contracts\Data\AuditRetentionPolicyInterface;
+use Stackra\Audit\Models\AuditRetentionPolicy;
 
 /**
- * Factory for {@see \Academorix\Audit\Models\AuditRetentionPolicy}.
+ * Factory for {@see \Stackra\Audit\Models\AuditRetentionPolicy}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Audit\Models\AuditRetentionPolicy>
+ * @extends Factory<\Stackra\Audit\Models\AuditRetentionPolicy>
  *
  * @category Audit
  *

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Settings\Attributes;
+namespace Stackra\Settings\Attributes;
 
 use Attribute;
 
 /**
  * Marker attribute for a Spatie Settings class managed by the
- * Academorix settings platform.
+ * Stackra settings platform.
  *
  * Place on a class extending `Spatie\LaravelSettings\Settings` to
- * register the class with the {@see \Academorix\Settings\Registry\SettingsRegistry}.
+ * register the class with the {@see \Stackra\Settings\Registry\SettingsRegistry}.
  * The registry is hydrated at boot via the shared
- * `Academorix\Foundation\Contracts\DiscoversAttributes` seam
+ * `Stackra\Foundation\Contracts\DiscoversAttributes` seam
  * (no runtime reflection in hot paths).
  *
  * The `scope` field controls hierarchy resolution:

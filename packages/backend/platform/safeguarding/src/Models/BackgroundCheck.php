@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Safeguarding\Models;
+namespace Stackra\Safeguarding\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Safeguarding\Contracts\Data\BackgroundCheckInterface;
-use Academorix\Safeguarding\Database\Factories\BackgroundCheckFactory;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Staff\Concerns\BelongsToStaff;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Safeguarding\Contracts\Data\BackgroundCheckInterface;
+use Stackra\Safeguarding\Database\Factories\BackgroundCheckFactory;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Staff\Concerns\BelongsToStaff;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;

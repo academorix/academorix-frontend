@@ -1,10 +1,10 @@
 {
-  "name": "academorix/announcements",
+  "name": "stackra/announcements",
   "type": "library",
-  "description": "Academorix Announcements module — server-side Laravel package emitted from the module blueprint at `modules/notifications/blueprints/announcements/`. Complements the wire SDK at `academorix-notifications/announcements-sdk`.",
+  "description": "Stackra Announcements module — server-side Laravel package emitted from the module blueprint at `modules/notifications/blueprints/announcements/`. Complements the wire SDK at `stackra-notifications/announcements-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "notifications",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-notifications/announcements-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-notifications/announcements-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Announcements\\": "src/"
+      "Stackra\\Announcements\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Announcements\\Tests\\": "tests/"
+      "Stackra\\Announcements\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Announcements\\Providers\\AnnouncementsServiceProvider"
+        "Stackra\\Announcements\\Providers\\AnnouncementsServiceProvider"
       ],
       "aliases": {}
     }
@@ -68,7 +68,7 @@
   "repositories": [
     {
       "type": "path",
-      "url": "../../../../apps/academorix/src/sdks/notifications-announcements-sdk",
+      "url": "../../../../apps/stackra/src/sdks/notifications-announcements-sdk",
       "options": {
         "symlink": true
       }

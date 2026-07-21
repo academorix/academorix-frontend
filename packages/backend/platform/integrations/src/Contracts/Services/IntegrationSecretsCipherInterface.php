@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Contracts\Services;
+namespace Stackra\Integrations\Contracts\Services;
 
-use Academorix\Integrations\Services\NullIntegrationSecretsCipher;
+use Stackra\Integrations\Services\NullIntegrationSecretsCipher;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -12,7 +12,7 @@ use Illuminate\Container\Attributes\Bind;
  *
  * The blob NEVER stores plaintext secrets — every read + write of the
  * `config` column routes through this contract via
- * {@see \Academorix\Integrations\Casts\IntegrationConfig}.
+ * {@see \Stackra\Integrations\Casts\IntegrationConfig}.
  *
  * The default {@see NullIntegrationSecretsCipher} is a pass-through
  * so the module boots without a KMS backend. PRODUCTION MUST OVERRIDE

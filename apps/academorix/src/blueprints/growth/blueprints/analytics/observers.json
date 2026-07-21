@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/analytics/observers",
+  "id": "stackra://modules/analytics/observers",
   "$version": 1,
   "title": "analytics — Eloquent observers",
   "description": "Four observers \u2014 one per owned entity. The event + provider-config + identity observers handle the load-bearing validation + snapshot + gate work; the delivery observer handles the delivered_provider_count aggregation on parent events.",
   "observers": [
     {
       "model": "AnalyticsEvent",
-      "observer": "Academorix\\Growth\\Analytics\\Observers\\AnalyticsEventObserver",
+      "observer": "Stackra\\Growth\\Analytics\\Observers\\AnalyticsEventObserver",
       "handles": [
         "creating \u2014 snapshot attribution via AttributionContext (frozen jsonb into attribution column)",
         "creating \u2014 snapshot consent via ConsentGate::has(subject, 'analytics') into consent_snapshot column; refuse creation when analytics consent missing AND category NOT IN ('essential-funnel-steps whitelist') \u2014 fires AnalyticsEventSuppressedByConsent instead of persisting",
@@ -22,7 +22,7 @@
     },
     {
       "model": "AnalyticsProviderConfig",
-      "observer": "Academorix\\Growth\\Analytics\\Observers\\AnalyticsProviderConfigObserver",
+      "observer": "Stackra\\Growth\\Analytics\\Observers\\AnalyticsProviderConfigObserver",
       "handles": [
         "creating \u2014 refuse when tenant has no `analytics_provider_slot` entitlement remaining",
         "creating \u2014 validate provider-specific config shape against schemas/providers/{provider}.provider.json",
@@ -42,7 +42,7 @@
     },
     {
       "model": "AnalyticsIdentity",
-      "observer": "Academorix\\Growth\\Analytics\\Observers\\AnalyticsIdentityObserver",
+      "observer": "Stackra\\Growth\\Analytics\\Observers\\AnalyticsIdentityObserver",
       "handles": [
         "creating \u2014 enforce unique (tenant_id, anonymous_id) among non-deleted rows (Postgres unique index catches the race; this observer refuses proactively)",
         "creating \u2014 set first_seen_at + last_seen_at to now() if not caller-set",
@@ -56,7 +56,7 @@
     },
     {
       "model": "AnalyticsDelivery",
-      "observer": "Academorix\\Growth\\Analytics\\Observers\\AnalyticsDeliveryObserver",
+      "observer": "Stackra\\Growth\\Analytics\\Observers\\AnalyticsDeliveryObserver",
       "handles": [
         "creating \u2014 denormalise provider column from the referenced AnalyticsProviderConfig for query performance",
         "updated \u2014 when status transitions TO 'delivered', increment parent AnalyticsEvent.delivered_provider_count atomically; when delivered_provider_count reaches eligible_provider_count, transition parent AnalyticsEvent.status \u2192 'delivered' + fire AnalyticsEventDelivered",

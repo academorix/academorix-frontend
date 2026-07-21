@@ -13,14 +13,14 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  *
- * @see \Academorix\Nightwatch\Contracts\NightwatchRedactor
- * @see \Academorix\Nightwatch\Compiler\NightwatchCompiler
+ * @see \Stackra\Nightwatch\Contracts\NightwatchRedactor
+ * @see \Stackra\Nightwatch\Compiler\NightwatchCompiler
  */
 
-namespace Academorix\Nightwatch\Attributes;
+namespace Stackra\Nightwatch\Attributes;
 
 use Attribute;
-use Academorix\Nightwatch\Enums\NightwatchEventType;
+use Stackra\Nightwatch\Enums\NightwatchEventType;
 
 /**
  * Nightwatch Redactor Attribute.
@@ -42,7 +42,7 @@ use Academorix\Nightwatch\Enums\NightwatchEventType;
  * }
  * ```
  *
- * @see \Academorix\Nightwatch\Contracts\NightwatchRedactor
+ * @see \Stackra\Nightwatch\Contracts\NightwatchRedactor
  */
 #[Attribute(Attribute::TARGET_CLASS)]
 final readonly class AsNightwatchRedactor

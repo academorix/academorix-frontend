@@ -7,7 +7,7 @@
 ## 1. Overview
 
 The identity tier owns every principal that can authenticate against an
-Academorix Application, plus the credentials and flows that make authentication
+Stackra Application, plus the credentials and flows that make authentication
 work. It is the **single root of trust** for every downstream service.
 
 Six modules ship in Wave 1a:
@@ -16,7 +16,7 @@ Six modules ship in Wave 1a:
 | ---------------------------- | -------- | --------------------------------------------------------------------------------- |
 | `identity/identity/`         | 15       | Global credential record (email + password + MFA + email verification + lockout)  |
 | `identity/user/`             | 18       | Per-Application projection of an Identity, plus Profile + TenantMember            |
-| `identity/platform-user/`    | 19       | Academorix staff principal (cross-tenant, cross-application)                      |
+| `identity/platform-user/`    | 19       | Stackra staff principal (cross-tenant, cross-application)                      |
 | `identity/mfa/`              | 20       | TOTP + WebAuthn + recovery codes (composed from auth)                             |
 | `identity/service-accounts/` | 24       | Machine credentials for inter-service calls                                       |
 | `identity/auth/`             | 25       | Login/refresh/logout, JWT signing + JWKS, session lifecycle, cross-app SSO grants |
@@ -153,7 +153,7 @@ Per-Application projection of an Identity.
 
 ### `platform_users` (owned by `identity/platform-user/`)
 
-Academorix-staff principal.
+Stackra-staff principal.
 
 | Column             | Type   | Notes                                                           |
 | ------------------ | ------ | --------------------------------------------------------------- |
@@ -300,7 +300,7 @@ Framework defaults (config/*.php in the owning module)
     ↓ overridden by
 Business-type defaults (seeded from business_types.default_config)
     ↓ overridden by
-Tenant settings (admin UI in academorix/settings, per-tenant DB rows)
+Tenant settings (admin UI in stackra/settings, per-tenant DB rows)
     ↓ overridden by
 Region overrides (if tenant operates across regions)
 
@@ -354,7 +354,7 @@ return [
     ],
     'jwt' => [
         'algorithm' => 'HS256',
-        'issuer' => env('JWT_ISSUER', 'https://identity.academorix.com'),
+        'issuer' => env('JWT_ISSUER', 'https://identity.stackra.com'),
         'ttl_seconds' => 900,
         'refresh_ttl_seconds' => 60 * 60 * 24 * 30,
         'kid_current' => env('JWT_KID_CURRENT'),
@@ -374,7 +374,7 @@ return [
     'required_for_roles' => ['owner', 'admin', 'billing_manager', 'super_admin'],
     'grace_days_after_enrollment' => 7,
     'totp' => [
-        'issuer' => env('MFA_TOTP_ISSUER', 'Academorix'),
+        'issuer' => env('MFA_TOTP_ISSUER', 'Stackra'),
         'digits' => 6,
         'period_seconds' => 30,
         'algorithm' => 'SHA1',
@@ -567,8 +567,8 @@ HS256, signed by identity-service with per-application secret. Sample:
 
 ```json
 {
-  "iss": "https://identity.academorix.com",
-  "aud": ["sports.academorix.com"],
+  "iss": "https://identity.stackra.com",
+  "aud": ["sports.stackra.com"],
   "sub": "usr_01H...",
   "app": "app_sports",
   "tid": "tnt_01H...",

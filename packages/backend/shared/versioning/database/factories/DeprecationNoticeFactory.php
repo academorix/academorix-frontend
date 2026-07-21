@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Database\Factories;
+namespace Stackra\Versioning\Database\Factories;
 
-use Academorix\Versioning\Contracts\Data\DeprecationNoticeInterface;
-use Academorix\Versioning\Enums\DeprecationSurface;
-use Academorix\Versioning\Models\ApiVersion;
-use Academorix\Versioning\Models\DeprecationNotice;
+use Stackra\Versioning\Contracts\Data\DeprecationNoticeInterface;
+use Stackra\Versioning\Enums\DeprecationSurface;
+use Stackra\Versioning\Models\ApiVersion;
+use Stackra\Versioning\Models\DeprecationNotice;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

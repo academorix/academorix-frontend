@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Exceptions;
+namespace Stackra\Approvals\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 
 /**
  * Raised when a rule-engine evaluation exceeds the 250 ms hard cap
  * enforced by
- * {@see \Academorix\Approvals\Services\ExpressionLanguageAdapter}.
+ * {@see \Stackra\Approvals\Services\ExpressionLanguageAdapter}.
  *
  * The cap protects approval intake latency from a runaway
  * template. Writer path: rejects the offending `when_expression` /
@@ -34,7 +34,7 @@ use Academorix\Exceptions\Enums\ErrorSeverity;
  *
  * @since    0.1.0
  */
-final class ApprovalExpressionTimeoutException extends AcademorixException
+final class ApprovalExpressionTimeoutException extends StackraException
 {
     public const CODE = 'approvals.expression.timeout';
     public const TRANSLATION_KEY = 'approvals::errors.expression_timeout';

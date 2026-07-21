@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Console;
+namespace Stackra\Activity\Console;
 
-use Academorix\Activity\Jobs\PruneActivityLogJob;
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Activity\Jobs\PruneActivityLogJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan activity:prune` — dispatch {@see PruneActivityLogJob}

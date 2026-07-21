@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/age-group/helpers",
+  "id": "stackra://modules/age-group/helpers",
   "$version": 1,
   "title": "age-group — helper functions",
   "description": "Three published helpers for common age-group-flavoured lookups from any layer (controller, action, listener, blade template, artisan command). Age groups are NOT a request-scoped context axis (there is no `X-Age-Group-Id` header), so the helpers accept explicit arguments rather than reading from request state.",
-  "namespace": "Academorix\\Sports\\AgeGroup\\Support",
+  "namespace": "Stackra\\Sports\\AgeGroup\\Support",
   "helpers": [
     {
       "signature": "resolve_age_group(string $dob, ?string $sport_key = null, ?string $organization_id = null, ?string $on_date = null): ?AgeGroup",

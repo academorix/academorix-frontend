@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Observers;
+namespace Stackra\Notifications\InApp\Observers;
 
-use Academorix\Notifications\Contracts\Data\NotificationDeliveryInterface;
-use Academorix\Notifications\InApp\Events\InAppMessageDelivered;
-use Academorix\Notifications\Models\NotificationDelivery;
+use Stackra\Notifications\Contracts\Data\NotificationDeliveryInterface;
+use Stackra\Notifications\InApp\Events\InAppMessageDelivered;
+use Stackra\Notifications\Models\NotificationDelivery;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -25,7 +25,7 @@ use Psr\Log\LoggerInterface;
  *   - `created` — queue the WebSocket broadcast for the recipient
  *                 + increment the per-user unread-count cache.
  *   - `updated` — on `read_at`  null → non-null: fire
- *                 {@see \Academorix\Notifications\InApp\Events\InAppMessageRead}
+ *                 {@see \Stackra\Notifications\InApp\Events\InAppMessageRead}
  *                 + decrement the unread-count cache.
  *                 On `dismissed_at` null → non-null: fire the
  *                 dismissed event (planned).

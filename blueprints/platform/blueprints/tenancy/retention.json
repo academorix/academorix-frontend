@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tenancy/retention",
+  "id": "stackra://modules/tenancy/retention",
   "$version": 1,
   "title": "tenants — data retention windows",
   "description": "Data retention windows per model. Drives the retention jobs in `schedule.json` (tenancy:hard-delete-archived + the compliance module's retention orchestrator). All durations are ISO-8601 (`P30D` = 30 days). Compliance tier drives DSAR + erasure behaviour — see `data-classes.json` for the field-level classification and `compliance.json` for the regime × control mapping.",

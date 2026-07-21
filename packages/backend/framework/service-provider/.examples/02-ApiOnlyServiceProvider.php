@@ -20,11 +20,11 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Api\Providers;
+namespace Stackra\Api\Providers;
 
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * API module service provider.
@@ -34,7 +34,7 @@ use Academorix\ServiceProvider\Providers\ServiceProvider;
  */
 #[AsModule(
     name: 'Api',
-    namespace: 'Academorix\\Api',
+    namespace: 'Stackra\\Api',
 )]
 #[LoadsResources(
     views: false,

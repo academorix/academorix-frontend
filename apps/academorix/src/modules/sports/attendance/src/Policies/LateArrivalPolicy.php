@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attendance\Policies;
+namespace Stackra\Attendance\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Attendance\Models\LateArrival;
+use Stackra\User\Models\User;
+use Stackra\Attendance\Models\LateArrival;
 
 /**
- * Authorization policy for {@see \Academorix\Attendance\Models\LateArrival}.
+ * Authorization policy for {@see \Stackra\Attendance\Models\LateArrival}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

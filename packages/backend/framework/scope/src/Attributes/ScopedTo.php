@@ -7,7 +7,7 @@
  * Marker attribute that opts an Eloquent model into automatic
  * hierarchical-scope filtering by the scope PLATFORM. When a model
  * carries this attribute AND its table has a `scope_node_id`
- * column, {@see \Academorix\Scope\Scopes\ScopedGlobalScope}
+ * column, {@see \Stackra\Scope\Scopes\ScopedGlobalScope}
  * appends `WHERE scope_node_id IN (<ancestor chain of Scope::current()>)`
  * to every query.
  *
@@ -21,12 +21,12 @@
  *     filtering." The concrete `Scope` implementation is fixed
  *     (`ScopedGlobalScope`); no parameter picks a specific class.
  *
- *   - `#[Academorix\Crud\Attributes\UseScope(ScopeClass::class)]`
+ *   - `#[Stackra\Crud\Attributes\UseScope(ScopeClass::class)]`
  *     — declares MECHANISM: "apply this SPECIFIC Eloquent
  *     `Scope` class to my queries." Takes a class-string. The
  *     model can carry many of these to compose scopes.
  *
- *   - `#[Academorix\Crud\Attributes\AsScope(name: '…')]` —
+ *   - `#[Stackra\Crud\Attributes\AsScope(name: '…')]` —
  *     declares CLASSIFICATION: "I AM a Scope implementation
  *     discoverable by name." Marks a class that IMPLEMENTS
  *     Laravel's `Scope` interface. Consumed by CRUD's scope
@@ -47,7 +47,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Attributes;
+namespace Stackra\Scope\Attributes;
 
 use Attribute;
 
@@ -58,7 +58,7 @@ use Attribute;
  * ## Basic usage
  *
  * ```php
- * use Academorix\Scope\Attributes\ScopedTo;
+ * use Stackra\Scope\Attributes\ScopedTo;
  * use Illuminate\Database\Eloquent\Model;
  *
  * #[ScopedTo]

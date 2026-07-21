@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Settings\Data;
+namespace Stackra\Settings\Data;
 
-use Academorix\Settings\Contracts\SettingsRegistryInterface;
+use Stackra\Settings\Contracts\SettingsRegistryInterface;
 use Illuminate\Support\Facades\Route;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Support\Validation\ValidationContext;

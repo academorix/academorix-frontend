@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Reporting\Console;
+namespace Stackra\Reporting\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan reporting:purge-stale-runs` — Purge stale runs — reporting command.

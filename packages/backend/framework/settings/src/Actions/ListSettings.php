@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Settings\Actions;
+namespace Stackra\Settings\Actions;
 
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Settings\Contracts\SettingsRegistryInterface;
-use Academorix\Settings\Contracts\SettingsServiceInterface;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Settings\Contracts\SettingsRegistryInterface;
+use Stackra\Settings\Contracts\SettingsServiceInterface;
 
 /**
  * `GET /api/v1/settings` — list every registered group with its

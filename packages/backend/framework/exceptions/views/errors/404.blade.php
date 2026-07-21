@@ -67,12 +67,12 @@
 * - May indicate broken internal links to fix
 *
 * ## Related Files:
-* @see src/academorix/Common/resources/views/errors/404.blade.php - Published/customizable version
+* @see src/stackra/Common/resources/views/errors/404.blade.php - Published/customizable version
 *
 * @extends foundation::layouts.app
 * @section title - Page title for browser tab
 * @section content - Main error page content
-* @package Academorix\Foundation
+* @package Stackra\Foundation
 */
 --}}
 @extends('foundation::layouts.app')

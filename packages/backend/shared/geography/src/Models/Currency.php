@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Models;
+namespace Stackra\Geography\Models;
 
-use Academorix\Geography\Contracts\Data\CurrencyInterface;
-use Academorix\Geography\Database\Factories\CurrencyFactory;
-use Academorix\Geography\Observers\CurrencyObserver;
-use Academorix\Geography\Policies\CurrencyPolicy;
+use Stackra\Geography\Contracts\Data\CurrencyInterface;
+use Stackra\Geography\Database\Factories\CurrencyFactory;
+use Stackra\Geography\Observers\CurrencyObserver;
+use Stackra\Geography\Policies\CurrencyPolicy;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;

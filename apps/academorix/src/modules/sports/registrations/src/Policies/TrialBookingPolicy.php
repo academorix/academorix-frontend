@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registrations\Policies;
+namespace Stackra\Registrations\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Registrations\Models\TrialBooking;
+use Stackra\User\Models\User;
+use Stackra\Registrations\Models\TrialBooking;
 
 /**
- * Authorization policy for {@see \Academorix\Registrations\Models\TrialBooking}.
+ * Authorization policy for {@see \Stackra\Registrations\Models\TrialBooking}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

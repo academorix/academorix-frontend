@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Formations\Actions\Tenant;
+namespace Stackra\Formations\Actions\Tenant;
 
-use Academorix\Formations\Contracts\Repositories\FormationRepositoryInterface;
-use Academorix\Formations\Data\FormationData;
-use Academorix\Formations\Data\Requests\CreateFormationRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Formations\Contracts\Repositories\FormationRepositoryInterface;
+use Stackra\Formations\Data\FormationData;
+use Stackra\Formations\Data\Requests\CreateFormationRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/formations` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Formations

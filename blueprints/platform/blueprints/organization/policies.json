@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/organization/policies",
+  "id": "stackra://modules/organization/policies",
   "$version": 1,
   "title": "organization — authorization policies",
   "policies": [
     {
       "model": "Organization",
-      "class": "Academorix\\Organization\\Policies\\OrganizationPolicy",
+      "class": "Stackra\\Organization\\Policies\\OrganizationPolicy",
       "abilities": [
         {
           "action": "viewAny",

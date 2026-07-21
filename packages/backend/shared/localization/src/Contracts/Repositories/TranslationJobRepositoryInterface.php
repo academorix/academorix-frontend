@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Contracts\Repositories;
+namespace Stackra\Localization\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Localization\Models\TranslationJob;
-use Academorix\Localization\Repositories\EloquentTranslationJobRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Localization\Models\TranslationJob;
+use Stackra\Localization\Repositories\EloquentTranslationJobRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

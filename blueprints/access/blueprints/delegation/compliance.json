@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/delegation/compliance",
+  "id": "stackra://modules/delegation/compliance",
   "$version": 1,
   "title": "delegation — compliance evidence",
   "description": "Impersonation is the module's compliance-heavy surface. Every impersonation session is evidence for SOC 2 CC6.1 + CC6.7 (privileged access audit) + PCI-DSS 8.5 (no shared / group / generic accounts — impersonation is the exception, and the audit stream is the compensating control). Delegation is compliance-lighter — a User handing a role to another User is a routine business event captured under standard activity logging.",
@@ -40,7 +40,7 @@
         {
           "requirement": "8.5",
           "principle": "do not use group / shared / generic accounts / passwords",
-          "evidence": "Impersonation is Academorix's LEGITIMATE exception to shared-account use — a support agent operating under a customer's identity for troubleshooting. The compensating controls are: (a) MFA-mandatory on the initiating platform_admin session, (b) short TTL (max 60 minutes default), (c) reason-required (40 chars minimum), (d) mandatory customer notice (cannot-opt-out impersonation.session_started notification), (e) full audit trail preserved 7 years. Every impersonation session is documented as a compliance evidence artefact."
+          "evidence": "Impersonation is Stackra's LEGITIMATE exception to shared-account use — a support agent operating under a customer's identity for troubleshooting. The compensating controls are: (a) MFA-mandatory on the initiating platform_admin session, (b) short TTL (max 60 minutes default), (c) reason-required (40 chars minimum), (d) mandatory customer notice (cannot-opt-out impersonation.session_started notification), (e) full audit trail preserved 7 years. Every impersonation session is documented as a compliance evidence artefact."
         },
         {
           "requirement": "10.2",
@@ -60,7 +60,7 @@
         {
           "article": "Art. 13",
           "principle": "information provided when data is collected from the data subject",
-          "evidence": "The cannot-opt-out ImpersonationSessionStartedNotification is the Art. 13 notice: it informs the impersonated User that their account is being processed by an Academorix staff member + provides the identity + basis + retention information."
+          "evidence": "The cannot-opt-out ImpersonationSessionStartedNotification is the Art. 13 notice: it informs the impersonated User that their account is being processed by an Stackra staff member + provides the identity + basis + retention information."
         },
         {
           "article": "Art. 17",

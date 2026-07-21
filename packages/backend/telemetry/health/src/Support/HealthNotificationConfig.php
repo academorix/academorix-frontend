@@ -40,7 +40,7 @@
  *         ],
  *         HealthNotificationChannel::Email->value => [
  *             'driver' => 'mail',
- *             'to' => env('HEALTH_EMAIL_TO', 'ops@academorix.test'),
+ *             'to' => env('HEALTH_EMAIL_TO', 'ops@stackra.test'),
  *         ],
  *     ],
  * ];
@@ -69,9 +69,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Health\Support;
+namespace Stackra\Health\Support;
 
-use Academorix\Health\Enums\HealthNotificationChannel;
+use Stackra\Health\Enums\HealthNotificationChannel;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 
 final class HealthNotificationConfig

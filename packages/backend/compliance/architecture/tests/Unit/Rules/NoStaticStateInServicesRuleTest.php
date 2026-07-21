@@ -5,7 +5,7 @@
  *
  * @description
  * Behaviour tests for
- * {@see \Academorix\Architecture\Rules\NoStaticStateInServicesRule}.
+ * {@see \Stackra\Architecture\Rules\NoStaticStateInServicesRule}.
  *
  * The rule forbids writable static properties on classes in the
  * configured `targeted_layers`. Rationale: under Laravel Octane,
@@ -17,9 +17,9 @@
 
 declare(strict_types=1);
 
-use Academorix\Architecture\Rules\NoStaticStateInServicesRule;
-use Academorix\Architecture\Support\LayerResolver;
-use Academorix\Architecture\Support\SourceFileParser;
+use Stackra\Architecture\Rules\NoStaticStateInServicesRule;
+use Stackra\Architecture\Support\LayerResolver;
+use Stackra\Architecture\Support\SourceFileParser;
 
 /**
  * Build the rule + resolver combo, letting each test tune the

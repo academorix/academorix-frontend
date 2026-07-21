@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Repositories;
+namespace Stackra\Application\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Application\Contracts\Data\ApplicationInterface;
-use Academorix\Application\Contracts\Repositories\ApplicationRepositoryInterface;
-use Academorix\Application\Models\Application;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Application\Contracts\Data\ApplicationInterface;
+use Stackra\Application\Contracts\Repositories\ApplicationRepositoryInterface;
+use Stackra\Application\Models\Application;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Application\Models\Application}.
+ * Attribute-first Eloquent repository for {@see Stackra\Application\Models\Application}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ApplicationInterface::class)]` which resolves to
  * `Application` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Application\Models\Application>
+ * @extends Repository<\Stackra\Application\Models\Application>
  *
  * @category Application
  *

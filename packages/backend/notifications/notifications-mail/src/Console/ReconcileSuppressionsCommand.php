@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Console;
+namespace Stackra\Notifications\Mail\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Notifications\Mail\Jobs\ReconcileSuppressionsJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Notifications\Mail\Jobs\ReconcileSuppressionsJob;
 
 /**
  * `php artisan notifications:mail:reconcile-suppressions` — pull

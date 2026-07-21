@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/grants/schemas/access-grant",
+  "id": "stackra://modules/grants/schemas/access-grant",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "AccessGrant",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "agr_",
     "incrementing": false,
-    "model": "Academorix\\Grant\\Models\\AccessGrant",
-    "interface": "Academorix\\Grant\\Contracts\\Data\\AccessGrantInterface",
-    "implements": ["Academorix\\Grant\\Contracts\\Data\\AccessGrantInterface"],
+    "model": "Stackra\\Grant\\Models\\AccessGrant",
+    "interface": "Stackra\\Grant\\Contracts\\Data\\AccessGrantInterface",
+    "implements": ["Stackra\\Grant\\Contracts\\Data\\AccessGrantInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

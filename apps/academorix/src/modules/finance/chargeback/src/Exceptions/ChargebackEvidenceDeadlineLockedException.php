@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Exceptions;
+namespace Stackra\Chargeback\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * evidence_due_by can only be extended (never shortened) and only while status='pending_evidence'.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ChargebackEvidenceDeadlineLockedException extends AcademorixException
+final class ChargebackEvidenceDeadlineLockedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

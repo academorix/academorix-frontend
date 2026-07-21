@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/chargeback/routes",
+  "id": "stackra://modules/chargeback/routes",
   "$version": 1,
   "title": "chargeback — HTTP routes",
   "description": "Tenant-facing admin+finance surfaces only — customers NEVER interact with chargebacks over the tenant HTTP surface. Chargebacks are bank-initiated + customer-driven at the bank; surfacing chargeback state to the customer may violate some card network rules. Admin+finance surfaces cover list, detail, evidence view + submission, RDR accept, manual mark-lost, pending-evidence queue, chargeback-rate report. Platform-plane cross-tenant read exists for support intervention + regulator-facing reporting + merchant-account risk monitoring (rate-threshold alerts). Every tenant route carries `entitlement.enforce:chargeback_management`; evidence submission additionally carries `entitlement.enforce:chargeback_evidence_submission`. RDR accept additionally carries `entitlement.enforce:chargeback_rdr`.",
@@ -24,28 +24,28 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Finance\\Chargeback\\Http\\Controllers\\Tenant\\Admin\\ChargebackController@index",
+          "controller": "Stackra\\Finance\\Chargeback\\Http\\Controllers\\Tenant\\Admin\\ChargebackController@index",
           "permission": "chargebacks.viewAny",
           "description": "filter[status], filter[network], filter[reason_category], filter[reason_code], filter[provider], filter[rdr_eligible] (bool), filter[ce3_eligible] (bool), filter[filed_at.gte/lte], filter[amount_cents.gte/lte], filter[payment_id], filter[invoice_id], filter[evidence_due_by.lte] (surfaces approaching-deadline chargebacks). include=payment_dispute,transaction,fee_transaction,refund,latest_evidence,payment,invoice. Full-tenant chargeback ledger."
         },
         {
           "method": "GET",
           "path": "/{chargeback}",
-          "controller": "Academorix\\Finance\\Chargeback\\Http\\Controllers\\Tenant\\Admin\\ChargebackController@show",
+          "controller": "Stackra\\Finance\\Chargeback\\Http\\Controllers\\Tenant\\Admin\\ChargebackController@show",
           "permission": "chargebacks.view",
           "description": "Single chargeback detail. Response includes: base fields + parent payment + parent invoice + linked payment_dispute + linked transaction (loss offset) + linked fee_transaction (network fee) + linked refund (when RDR path) + latest chargeback_evidence + reconciliation history + downstream clawback status (referral + coupon)."
         },
         {
           "method": "GET",
           "path": "/{chargeback}/evidence",
-          "controller": "Academorix\\Finance\\Chargeback\\Http\\Controllers\\Tenant\\Admin\\ChargebackEvidenceController@index",
+          "controller": "Stackra\\Finance\\Chargeback\\Http\\Controllers\\Tenant\\Admin\\ChargebackEvidenceController@index",
           "permission": "chargebacks.view-evidence",
           "description": "Every ChargebackEvidence submission for a specific chargeback (all submission attempts, ordered by submission_attempt_number ASC). Evidence bundles may contain customer PII — segregated permission (chargebacks.view-evidence) required beyond chargebacks.view."
         },
         {
           "method": "POST",
           "path": "/{chargeback}/evidence",
-          "controller": "Academorix\\Finance\\Chargeback\\Http\\Controllers\\Tenant\\Admin\\ChargebackEvidenceController@store",
+          "controller": "Stackra\\Finance\\Chargeback\\Http\\Controllers\\Tenant\\Admin\\ChargebackEvidenceController@store",
           "permission": "chargebacks.submit-evidence",
           "requires_entitlement": "chargeback_evidence_submission",
           "description": "Body: ChargebackEvidenceCreateData { invoice_evidence, receipt_evidence, service_documentation, refund_policy, communication_log, shipping_docs?, customer_signature_evidence, uncategorized_text? }. Auto-increments submission_attempt_number. Refuses when parent chargeback.status NOT IN ('pending_evidence', 'evidence_submitted') OR evidence_due_by < NOW(). Refuses when evidence body contains PAN patterns (PCI-DSS Req 3.4). Dispatches SubmitChargebackEvidenceJob async — the observer creates the row, the job sends to the bank."
@@ -53,7 +53,7 @@
         {
           "method": "POST",
           "path": "/{chargeback}/accept",
-          "controller": "Academorix\\Finance\\Chargeback\\Http\\Controllers\\Tenant\\Admin\\ChargebackController@accept",
+          "controller": "Stackra\\Finance\\Chargeback\\Http\\Controllers\\Tenant\\Admin\\ChargebackController@accept",
           "permission": "chargebacks.accept",
           "requires_entitlement": "chargeback_rdr",
           "description": "RDR path — auto-refund below threshold. Body: { notes? }. Only allowed when parent chargeback.rdr_eligible=true AND status='pending_evidence'. Delegates to RdrHandler::accept which creates a Refund via refund::RefundOrchestrator. On RefundSucceeded, chargeback transitions to accepted_refund (terminal). Fires ChargebackAcceptedRefund. Cheapest defense — no network fee, no rate impact."
@@ -61,14 +61,14 @@
         {
           "method": "POST",
           "path": "/{chargeback}/mark-lost",
-          "controller": "Academorix\\Finance\\Chargeback\\Http\\Controllers\\Tenant\\Admin\\ChargebackController@markLost",
+          "controller": "Stackra\\Finance\\Chargeback\\Http\\Controllers\\Tenant\\Admin\\ChargebackController@markLost",
           "permission": "chargebacks.mark-lost",
           "description": "Admin escape hatch — force-mark a chargeback as lost when ops determined defense is not viable. Body: { decision_reason (256 char, required), notes? }. Only allowed when status IN ('pending_evidence', 'evidence_submitted', 'under_bank_review'). Dispatches FinalizeChargebackJob + fires ChargebackLost. Chargebacks in provider-side won/lost states cannot be manually overridden — those are provider-authoritative."
         },
         {
           "method": "GET",
           "path": "/pending-evidence",
-          "controller": "Academorix\\Finance\\Chargeback\\Http\\Controllers\\Tenant\\Admin\\ChargebackPendingEvidenceController@index",
+          "controller": "Stackra\\Finance\\Chargeback\\Http\\Controllers\\Tenant\\Admin\\ChargebackPendingEvidenceController@index",
           "permission": "chargebacks.submit-evidence",
           "description": "Chargebacks in status='pending_evidence' sorted by evidence_due_by ASC (soonest deadlines first). filter[days_remaining_lte]. filter[days_remaining_gte]. Includes days_remaining + current_evidence_completeness_percent + assigned_defenders (from metadata.evidence_notification) for triage."
         }
@@ -93,7 +93,7 @@
         {
           "method": "GET",
           "path": "/chargeback-rate",
-          "controller": "Academorix\\Finance\\Chargeback\\Http\\Controllers\\Tenant\\Admin\\ChargebackRateReportController@show",
+          "controller": "Stackra\\Finance\\Chargeback\\Http\\Controllers\\Tenant\\Admin\\ChargebackRateReportController@show",
           "permission": "chargebacks.view-report",
           "description": "Per-tenant chargeback rate rollup. Query params: period_start, period_end (default: last 60 days — matches rate-monitoring rolling window). Response: { rolling_rate_by_network (map<network,percent>), threshold_by_network, threshold_status (below / approaching / exceeded), total_chargebacks, total_lost, total_won, total_fees_cents, reason_category_distribution, reason_code_top_10, provider_distribution, rdr_acceptance_count, ce3_evidence_submission_count, median_days_to_decision, win_rate_percent }. Confidential financial fields redacted when caller lacks chargebacks.view-financials."
         }
@@ -116,16 +116,16 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Finance\\Chargeback\\Http\\Controllers\\Platform\\ChargebackController@index",
+          "controller": "Stackra\\Finance\\Chargeback\\Http\\Controllers\\Platform\\ChargebackController@index",
           "permission": "platform.chargebacks.viewAny",
           "description": "filter[tenant_id], filter[status], filter[network], filter[reason_category], filter[filed_at.gte/lte]. Cross-tenant scan."
         },
         {
           "method": "GET",
           "path": "/rate-threshold-alerts",
-          "controller": "Academorix\\Finance\\Chargeback\\Http\\Controllers\\Platform\\ChargebackRateAlertsController@index",
+          "controller": "Stackra\\Finance\\Chargeback\\Http\\Controllers\\Platform\\ChargebackRateAlertsController@index",
           "permission": "platform.chargebacks.view-rate-alerts",
-          "description": "Cross-tenant merchant-account risk monitoring. Surfaces every tenant with current rate exceeding the network's VDMP/MDMP threshold (0.9% Visa / 1.5% Mastercard / 1.0% Amex / 1.0% Discover). filter[network]. filter[days_over_threshold_gte]. Actionable — Academorix ops must intervene when tenants sustain over-threshold rates (fraud review, policy update, RDR enrollment recommendation, or in extreme cases account termination)."
+          "description": "Cross-tenant merchant-account risk monitoring. Surfaces every tenant with current rate exceeding the network's VDMP/MDMP threshold (0.9% Visa / 1.5% Mastercard / 1.0% Amex / 1.0% Discover). filter[network]. filter[days_over_threshold_gte]. Actionable — Stackra ops must intervene when tenants sustain over-threshold rates (fraud review, policy update, RDR enrollment recommendation, or in extreme cases account termination)."
         }
       ]
     },

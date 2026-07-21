@@ -4,8 +4,8 @@
  * @file packages/exceptions/tests/Unit/TranslatesMessagesTest.php
  *
  * @description
- * Unit coverage for {@see \Academorix\Exceptions\Concerns\TranslatesMessages},
- * the trait every {@see \Academorix\Exceptions\AcademorixException}
+ * Unit coverage for {@see \Stackra\Exceptions\Concerns\TranslatesMessages},
+ * the trait every {@see \Stackra\Exceptions\StackraException}
  * subclass mixes in via the base class.
  *
  * ## What the trait promises
@@ -43,7 +43,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 use Illuminate\Contracts\Translation\Translator;
 use Orchestra\Testbench\TestCase;
 
@@ -55,7 +55,7 @@ uses(TestCase::class);
  * file scope (guarded so re-inclusion is safe).
  */
 if (! class_exists('TranslatesMessagesFixture', false)) {
-    class TranslatesMessagesFixture extends AcademorixException
+    class TranslatesMessagesFixture extends StackraException
     {
         public const CODE = 'test.translates_messages_fixture';
 
@@ -94,9 +94,9 @@ it('translationKey falls back to class constant after withTranslationKey(null)',
 
 it('translationKey returns null when the class constant is empty and no override is set', function (): void {
     // Anonymous subclass with an empty TRANSLATION_KEY — mimics a
-    // rare case where a caller extends AcademorixException without
+    // rare case where a caller extends StackraException without
     // declaring one.
-    $anon = new class extends AcademorixException
+    $anon = new class extends StackraException
     {
         public const CODE = 'test.no_key';
 
@@ -199,7 +199,7 @@ it('userMessage returns the translated string when a translation exists for the 
 it('userMessage returns null when translationKey is null (no class default, no override)', function (): void {
     // The `null` key path — the trait short-circuits before
     // touching the translator.
-    $anon = new class extends AcademorixException
+    $anon = new class extends StackraException
     {
         public const CODE = 'test.no_key';
 

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/refund/analytics",
+  "id": "stackra://modules/refund/analytics",
   "$version": 1,
   "title": "refund — product analytics",
   "lane": "analytics",

@@ -1,10 +1,10 @@
 {
-  "name": "academorix/caching",
+  "name": "stackra/caching",
   "type": "library",
   "description": "Framework primitive: attribute-driven cache composition. Ships #[Cacheable], #[CacheEvict], #[CachePut], #[CacheKey], #[CacheTag], #[CacheTtl], and #[AsCacheTagResolver], plus a driver-agnostic tag builder (CacheTagBuilder), a driver-capability guard (TaggableCacheGuard), a deterministic key composer (CacheKeyBuilder), the CacheTagResolver contract, and a boot-time discovery pass that hydrates a resolver registry via olvlvl/composer-attribute-collector. No knowledge of tenancy, no Eloquent dependency — this package is the cache substrate every other layer builds on.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "laravel",
     "caching",
     "attributes",
@@ -13,8 +13,8 @@
   ],
   "require": {
     "php": "^8.3",
-    "academorix/foundation": "@dev",
-    "academorix/service-provider": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/service-provider": "@dev",
     "illuminate/cache": "^13.0",
     "illuminate/contracts": "^13.0",
     "illuminate/support": "^13.0",
@@ -29,18 +29,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Caching\\": "src/"
+      "Stackra\\Caching\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Caching\\Tests\\": "tests/"
+      "Stackra\\Caching\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Caching\\Providers\\CachingServiceProvider"
+        "Stackra\\Caching\\Providers\\CachingServiceProvider"
       ],
       "aliases": {}
     }

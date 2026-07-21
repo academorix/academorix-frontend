@@ -2,8 +2,8 @@
 """Fix double-backslash PSR-4 keys in backend-packages/*/*/composer.json.
 
 Pre-existing bug in emit_composer_json produced autoload keys like
-`Academorix\\\\Foo\\\\` in JSON (two literal backslashes per separator)
-instead of the correct `Academorix\\Foo\\` (one). PSR-4 autoload silently
+`Stackra\\\\Foo\\\\` in JSON (two literal backslashes per separator)
+instead of the correct `Stackra\\Foo\\` (one). PSR-4 autoload silently
 fails for every affected module. This one-off pass rewrites every
 composer.json under backend-packages/ so the psr-4 keys use single
 backslashes.

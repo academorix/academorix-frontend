@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Ai\Database\Factories;
+namespace Stackra\Ai\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Ai\Contracts\Data\AiConversationInterface;
-use Academorix\Ai\Models\AiConversation;
+use Stackra\Ai\Contracts\Data\AiConversationInterface;
+use Stackra\Ai\Models\AiConversation;
 
 /**
- * Factory for {@see \Academorix\Ai\Models\AiConversation}.
+ * Factory for {@see \Stackra\Ai\Models\AiConversation}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Ai\Models\AiConversation>
+ * @extends Factory<\Stackra\Ai\Models\AiConversation>
  *
  * @category Ai
  *

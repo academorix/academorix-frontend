@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/user/notifications",
+  "id": "stackra://modules/user/notifications",
   "$version": 1,
   "title": "user \u2014 notification classes + categories",
-  "namespace": "Academorix\\User\\Notifications",
+  "namespace": "Stackra\\User\\Notifications",
   "notifications": [
     "UserProvisionedNotification",
     "UserSuspendedNotification",

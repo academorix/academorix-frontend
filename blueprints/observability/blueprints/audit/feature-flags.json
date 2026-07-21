@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/audit/feature-flags",
+  "id": "stackra://modules/audit/feature-flags",
   "$version": 1,
   "title": "audit — kill switches + rollout controls",
   "description": "Kill switches for audit capture + purge + export. All default ON. Turning capture off is EMERGENCY-ONLY — requires compliance-officer approval + a signed security audit row for the disablement.",

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Exceptions;
+namespace Stackra\Monitoring\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * signal_source does not reference a real subject.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MonitoringInvalidSignalSourceException extends AcademorixException
+final class MonitoringInvalidSignalSourceException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

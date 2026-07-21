@@ -4,14 +4,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Enums;
+namespace Stackra\Rbac\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `model_type` on `model-has-roles`.
  *
- * Fully-qualified class name: `Academorix\User\Models\User` / `Academorix\PlatformUser\Models\PlatformUser` / `Academorix\ServiceAccounts\Models\ServiceAccount`.
+ * Fully-qualified class name: `Stackra\User\Models\User` / `Stackra\PlatformUser\Models\PlatformUser` / `Stackra\ServiceAccounts\Models\ServiceAccount`.
  *
  * @category Rbac
  *
@@ -21,7 +21,7 @@ enum ModelHasRolesModelType: string
 {
     use Enum;
 
-    case AcademorixUserModelsUser = 'Academorix\User\Models\User';
-    case AcademorixPlatformUserModelsPlatformUser = 'Academorix\PlatformUser\Models\PlatformUser';
-    case AcademorixServiceAccountsModelsServiceAccount = 'Academorix\ServiceAccounts\Models\ServiceAccount';
+    case AcademorixUserModelsUser = 'Stackra\User\Models\User';
+    case AcademorixPlatformUserModelsPlatformUser = 'Stackra\PlatformUser\Models\PlatformUser';
+    case AcademorixServiceAccountsModelsServiceAccount = 'Stackra\ServiceAccounts\Models\ServiceAccount';
 }

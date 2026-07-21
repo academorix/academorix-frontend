@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/newsletter/data-classes",
+  "id": "stackra://modules/newsletter/data-classes",
   "$version": 1,
   "title": "newsletter \u2014 field classification",
   "reference": "foundation::data-classes.json.tiers",

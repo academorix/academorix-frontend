@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-push/schemas/push-subscription",
+  "id": "stackra://modules/notifications-push/schemas/push-subscription",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "PushSubscription",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "psub_",
     "incrementing": false,
-    "model": "Academorix\\Notifications\\Push\\Models\\PushSubscription",
-    "interface": "Academorix\\Notifications\\Push\\Contracts\\Data\\PushSubscriptionInterface",
-    "implements": ["Academorix\\Notifications\\Push\\Contracts\\Data\\PushSubscriptionInterface"],
+    "model": "Stackra\\Notifications\\Push\\Models\\PushSubscription",
+    "interface": "Stackra\\Notifications\\Push\\Contracts\\Data\\PushSubscriptionInterface",
+    "implements": ["Stackra\\Notifications\\Push\\Contracts\\Data\\PushSubscriptionInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

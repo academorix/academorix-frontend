@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/delegation/config",
+  "id": "stackra://modules/delegation/config",
   "$version": 1,
   "title": "delegation — developer configuration",
   "configFile": "config/delegation.php",

@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "reception",
   "alias": "reception",
-  "namespace": "Academorix\\Reception",
+  "namespace": "Stackra\\Reception",
   "description": "Front-desk operational surface per blueprint §10.20. Ships ONE owned entity: `ReceptionVisit` (walk-in visitor record — visitor name + purpose + expected_end_at + host_user_id + check_in/out timestamps; wristband issued via credentials linkage). Coordinates walk-in registration + trial signup + day-pass sale + wristband issuance + check-in monitor + reception approval queue. The APPROVAL QUEUE lives in `workflow/approvals` — this module composes it. DAY PASSES live in `platform/facility` — this module surfaces them for reception UI. The reception module owns the FRONT-DESK VIEW + operational workflows, not the domain data.",
   "keywords": [
     "reception",
@@ -15,7 +15,7 @@
     "wave-2"
   ],
   "priority": 75,
-  "providers": ["Academorix\\Reception\\Providers\\ReceptionServiceProvider"],
+  "providers": ["Stackra\\Reception\\Providers\\ReceptionServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

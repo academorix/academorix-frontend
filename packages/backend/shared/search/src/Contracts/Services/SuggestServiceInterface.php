@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Contracts\Services;
+namespace Stackra\Search\Contracts\Services;
 
-use Academorix\Search\Services\DefaultSuggestService;
+use Stackra\Search\Services\DefaultSuggestService;
 use Illuminate\Container\Attributes\Bind;
 
 /**

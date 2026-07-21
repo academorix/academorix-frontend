@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @file packages/exceptions/tests/Unit/AcademorixExceptionTest.php
+ * @file packages/exceptions/tests/Unit/StackraExceptionTest.php
  *
  * @description
- * Unit coverage for {@see \Academorix\Exceptions\AcademorixException},
+ * Unit coverage for {@see \Stackra\Exceptions\StackraException},
  * the root of the whole exception hierarchy.
  *
  * ## Surface under test
@@ -35,7 +35,7 @@
  *
  * ## Test fixture
  *
- * We define a small subclass `AcademorixExceptionTestFixture` so
+ * We define a small subclass `StackraExceptionTestFixture` so
  * assertions don't couple to any shipping subclass's defaults. The
  * fixture picks a `TRANSLATION_KEY` on the split-layout
  * (`exceptions::test.fixture`) so translation-key assertions stay
@@ -44,11 +44,11 @@
 
 declare(strict_types=1);
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Auth\ForbiddenException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
-use Academorix\Foundation\Support\CorrelationId;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Auth\ForbiddenException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
+use Stackra\Foundation\Support\CorrelationId;
 
 afterEach(function (): void {
     // Correlation id is a request-scoped static — leaking it across
@@ -61,8 +61,8 @@ afterEach(function (): void {
  * Declared once — the `class_exists` guard makes the test file
  * safe to re-include if Pest's runner ever picks it up twice.
  */
-if (! class_exists('AcademorixExceptionTestFixture', false)) {
-    class AcademorixExceptionTestFixture extends AcademorixException
+if (! class_exists('StackraExceptionTestFixture', false)) {
+    class StackraExceptionTestFixture extends StackraException
     {
         public const CODE = 'test.fixture';
 
@@ -82,11 +82,11 @@ it('::make preserves the concrete subclass type', function (): void {
     $e = ForbiddenException::make('boom');
 
     expect($e)->toBeInstanceOf(ForbiddenException::class)
-        ->and($e)->toBeInstanceOf(AcademorixException::class);
+        ->and($e)->toBeInstanceOf(StackraException::class);
 });
 
 it('::make on a bare subclass uses the class default message when passed empty', function (): void {
-    $e = AcademorixExceptionTestFixture::make();
+    $e = StackraExceptionTestFixture::make();
 
     // When the caller supplies an empty string, `defaultMessage()`
     // returns the CODE constant — an at-least-searchable literal.
@@ -95,7 +95,7 @@ it('::make on a bare subclass uses the class default message when passed empty',
 });
 
 it('::make forwards the developer message unchanged when provided', function (): void {
-    $e = AcademorixExceptionTestFixture::make('specific dev message');
+    $e = StackraExceptionTestFixture::make('specific dev message');
 
     expect($e->getMessage())->toBe('specific dev message');
 });
@@ -104,7 +104,7 @@ it('::make attaches a previous throwable', function (): void {
     // `$previous` chaining is critical for reporters — Sentry needs
     // the original stack, not just the wrapper.
     $cause = new RuntimeException('root cause');
-    $e = AcademorixExceptionTestFixture::make('wrapper', $cause);
+    $e = StackraExceptionTestFixture::make('wrapper', $cause);
 
     expect($e->getPrevious())->toBe($cause);
 });
@@ -116,7 +116,7 @@ it('::make attaches a previous throwable', function (): void {
 it('withContext merges keys without wiping earlier ones', function (): void {
     // Merge semantics are load-bearing: named factories often set a
     // baseline context that later callers augment.
-    $e = AcademorixExceptionTestFixture::make()
+    $e = StackraExceptionTestFixture::make()
         ->withContext(['a' => 1, 'b' => 2])
         ->withContext(['b' => 20, 'c' => 3]);
 
@@ -124,7 +124,7 @@ it('withContext merges keys without wiping earlier ones', function (): void {
 });
 
 it('withContextValue sets a single key', function (): void {
-    $e = AcademorixExceptionTestFixture::make()
+    $e = StackraExceptionTestFixture::make()
         ->withContextValue('user_id', 42)
         ->withContextValue('role', 'admin');
 
@@ -132,7 +132,7 @@ it('withContextValue sets a single key', function (): void {
 });
 
 it('withUserMessage sets the literal fallback string', function (): void {
-    $e = AcademorixExceptionTestFixture::make()
+    $e = StackraExceptionTestFixture::make()
         ->withUserMessage('Nope, try again.');
 
     // Without a translator booted, the literal wins — that's the
@@ -141,7 +141,7 @@ it('withUserMessage sets the literal fallback string', function (): void {
 });
 
 it('withUserMessage(null) clears the literal fallback', function (): void {
-    $e = AcademorixExceptionTestFixture::make()
+    $e = StackraExceptionTestFixture::make()
         ->withUserMessage('something')
         ->withUserMessage(null);
 
@@ -149,7 +149,7 @@ it('withUserMessage(null) clears the literal fallback', function (): void {
 });
 
 it('withTranslationKey overrides the class-level TRANSLATION_KEY per instance', function (): void {
-    $e = AcademorixExceptionTestFixture::make()
+    $e = StackraExceptionTestFixture::make()
         ->withTranslationKey('exceptions::custom.key');
 
     expect($e->translationKey())->toBe('exceptions::custom.key');
@@ -157,10 +157,10 @@ it('withTranslationKey overrides the class-level TRANSLATION_KEY per instance', 
 
 it('withTranslationKey does not leak to sibling instances', function (): void {
     // Instance-level override must not corrupt the class constant.
-    AcademorixExceptionTestFixture::make()
+    StackraExceptionTestFixture::make()
         ->withTranslationKey('exceptions::overridden');
 
-    $fresh = AcademorixExceptionTestFixture::make();
+    $fresh = StackraExceptionTestFixture::make();
 
     expect($fresh->translationKey())->toBe('exceptions::test.fixture');
 });
@@ -168,7 +168,7 @@ it('withTranslationKey does not leak to sibling instances', function (): void {
 it('withTranslationParameters merges without wiping earlier ones', function (): void {
     // Same merge semantics as `withContext` — critical for named
     // factories that seed base parameters before the caller adds more.
-    $e = AcademorixExceptionTestFixture::make()
+    $e = StackraExceptionTestFixture::make()
         ->withTranslationParameters(['role' => 'admin', 'plan' => 'pro'])
         ->withTranslationParameters(['plan' => 'enterprise', 'seats' => 5]);
 
@@ -180,25 +180,25 @@ it('withTranslationParameters merges without wiping earlier ones', function (): 
 });
 
 it('withSeverity changes severity', function (): void {
-    $e = AcademorixExceptionTestFixture::make()->withSeverity(ErrorSeverity::Critical);
+    $e = StackraExceptionTestFixture::make()->withSeverity(ErrorSeverity::Critical);
 
     expect($e->severity())->toBe(ErrorSeverity::Critical);
 });
 
 it('withCategory changes category', function (): void {
-    $e = AcademorixExceptionTestFixture::make()->withCategory(ErrorCategory::Security);
+    $e = StackraExceptionTestFixture::make()->withCategory(ErrorCategory::Security);
 
     expect($e->category())->toBe(ErrorCategory::Security);
 });
 
 it('withHttpStatus overrides the HTTP status', function (): void {
-    $e = AcademorixExceptionTestFixture::make()->withHttpStatus(418);
+    $e = StackraExceptionTestFixture::make()->withHttpStatus(418);
 
     expect($e->httpStatus())->toBe(418);
 });
 
 it('withRetryAfter sets and clears the retry-after hint', function (): void {
-    $e = AcademorixExceptionTestFixture::make()->withRetryAfter(60);
+    $e = StackraExceptionTestFixture::make()->withRetryAfter(60);
 
     expect($e->retryAfter())->toBe(60);
 
@@ -219,7 +219,7 @@ it('snapshots the correlation id at construction time', function (): void {
     // been reset.
     CorrelationId::set('req_construct');
 
-    $e = AcademorixExceptionTestFixture::make();
+    $e = StackraExceptionTestFixture::make();
 
     CorrelationId::forget();
 
@@ -230,7 +230,7 @@ it('falls back to the current static id when construction happened outside a req
     // When no id was set at construction, `correlationId()` looks
     // up the static on demand — supports test setups that seed the
     // id after throw.
-    $e = AcademorixExceptionTestFixture::make();
+    $e = StackraExceptionTestFixture::make();
 
     CorrelationId::set('req_later');
 
@@ -239,14 +239,14 @@ it('falls back to the current static id when construction happened outside a req
 
 it('withCorrelationId overrides the snapshot', function (): void {
     CorrelationId::set('req_original');
-    $e = AcademorixExceptionTestFixture::make()->withCorrelationId('req_override');
+    $e = StackraExceptionTestFixture::make()->withCorrelationId('req_override');
 
     expect($e->correlationId())->toBe('req_override');
 });
 
 it('withCorrelationId(null) resets to reading from the static current', function (): void {
     CorrelationId::set('req_original');
-    $e = AcademorixExceptionTestFixture::make();
+    $e = StackraExceptionTestFixture::make();
 
     $e->withCorrelationId(null);
     CorrelationId::forget();
@@ -265,7 +265,7 @@ it('toArray exposes every documented key', function (): void {
     // uses `toEqual` (not `toMatchArray`) to catch extra keys too.
     CorrelationId::set('req_json');
 
-    $e = AcademorixExceptionTestFixture::make('dev message')
+    $e = StackraExceptionTestFixture::make('dev message')
         ->withUserMessage('user-facing')
         ->withContext(['a' => 1])
         ->withTranslationParameters(['x' => 'y'])
@@ -290,7 +290,7 @@ it('toArray exposes every documented key', function (): void {
 });
 
 it('jsonSerialize mirrors toArray', function (): void {
-    $e = AcademorixExceptionTestFixture::make('dev')->withRetryAfter(1);
+    $e = StackraExceptionTestFixture::make('dev')->withRetryAfter(1);
 
     // These two views must never diverge — `jsonSerialize` is what
     // reporters see when they `json_encode` the throwable.
@@ -302,14 +302,14 @@ it('jsonSerialize mirrors toArray', function (): void {
 // -----------------------------------------------------------------
 
 it('userMessage returns the literal fallback when no translator is available', function (): void {
-    $e = AcademorixExceptionTestFixture::make()
+    $e = StackraExceptionTestFixture::make()
         ->withUserMessage('Fallback literal only.');
 
     expect($e->userMessage())->toBe('Fallback literal only.');
 });
 
 it('userMessage returns null when neither translation nor literal are set', function (): void {
-    $e = AcademorixExceptionTestFixture::make();
+    $e = StackraExceptionTestFixture::make();
 
     // Null is the fourth-tier fallback — the JSON formatter picks
     // it up and substitutes a generic title.
@@ -319,7 +319,7 @@ it('userMessage returns null when neither translation nor literal are set', func
 it('userMessage interpolates :placeholder tokens into the literal fallback', function (): void {
     // The literal path uses `strtr` on `:placeholder` tokens so the
     // behaviour is identical whether translations are loaded or not.
-    $e = AcademorixExceptionTestFixture::make()
+    $e = StackraExceptionTestFixture::make()
         ->withUserMessage('You need the :role role to :ability.')
         ->withTranslationParameters(['role' => 'admin', 'ability' => 'delete']);
 
@@ -338,7 +338,7 @@ it('userMessage interpolation coerces stringable and null replacements', functio
         }
     };
 
-    $e = AcademorixExceptionTestFixture::make()
+    $e = StackraExceptionTestFixture::make()
         ->withUserMessage('a=:a b=:b c=:c')
         ->withTranslationParameters([
             'a' => $stringable,
@@ -354,13 +354,13 @@ it('userMessage interpolation coerces stringable and null replacements', functio
 // -----------------------------------------------------------------
 
 it('errorCode returns the class CODE constant', function (): void {
-    expect(AcademorixExceptionTestFixture::make()->errorCode())->toBe('test.fixture');
+    expect(StackraExceptionTestFixture::make()->errorCode())->toBe('test.fixture');
 });
 
 it('translationKey defaults to the class TRANSLATION_KEY constant', function (): void {
     // The fixture uses split-layout — matches the convention every
     // shipping exception now follows.
-    expect(AcademorixExceptionTestFixture::make()->translationKey())
+    expect(StackraExceptionTestFixture::make()->translationKey())
         ->toBe('exceptions::test.fixture');
 });
 

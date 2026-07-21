@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Exceptions;
+namespace Stackra\Tax\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * country_code is not a valid ISO 3166-1 alpha-2 code.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TaxJurisdictionInvalidCountryException extends AcademorixException
+final class TaxJurisdictionInvalidCountryException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

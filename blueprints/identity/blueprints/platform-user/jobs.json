@@ -1,19 +1,19 @@
 {
-  "id": "academorix://modules/platform-user/jobs",
+  "id": "stackra://modules/platform-user/jobs",
   "$version": 1,
   "title": "platform-user \u2014 background jobs",
   "jobs": [
     {
-      "class": "Academorix\\PlatformUser\\Jobs\\RevokePlatformUserAccessJob",
+      "class": "Stackra\\PlatformUser\\Jobs\\RevokePlatformUserAccessJob",
       "queue": "notifications-critical",
-      "purpose": "Asynchronous offboarding fan-out. Dispatched by the PlatformUserOffboarded event listener. Revokes every active Sanctum PAT on the platform_admin guard, invalidates every JWT signed for this PlatformUser (by adding the jti to the deny-list cache), terminates every active impersonation session, and unregisters from every on-call rotation. Runs the full sequence inside 24 hours of the offboard event to satisfy the SOC2 access-removal SLA. Emits `academorix.platform_user.offboarding.access_revoked` metric with a `duration_seconds` label so a compliance dashboard can prove the SLA.",
+      "purpose": "Asynchronous offboarding fan-out. Dispatched by the PlatformUserOffboarded event listener. Revokes every active Sanctum PAT on the platform_admin guard, invalidates every JWT signed for this PlatformUser (by adding the jti to the deny-list cache), terminates every active impersonation session, and unregisters from every on-call rotation. Runs the full sequence inside 24 hours of the offboard event to satisfy the SOC2 access-removal SLA. Emits `stackra.platform_user.offboarding.access_revoked` metric with a `duration_seconds` label so a compliance dashboard can prove the SLA.",
       "steps": [
         "Resolve the PlatformUser row (must exist, may be soft-deleted \u2014 offboarding may soft-delete before this job runs).",
         "Iterate personal_access_tokens where tokenable_type = App\\PlatformUser\\Models\\PlatformUser AND tokenable_id = <id>; DELETE each row (Sanctum revocation).",
         "Query auth::JwtDenyList and INSERT jti + exp for every JWT currently outstanding for this PlatformUser (12h TTL matches the JWT ttl_seconds).",
         "Query access::PlatformImpersonationSession WHERE impersonator_platform_user_id = <id> AND ended_at IS NULL; call access::TerminateImpersonation on each (marks ended_at + emits ImpersonationTerminated event).",
         "If PlatformUser.on_call_rotation_key IS NOT NULL: call OnCallResolver::unregister(<key>) which posts to the external provider (PagerDuty) OR removes the row from the internal rotation table.",
-        "Emit `academorix.platform_user.offboarding.access_revoked` metric with duration_seconds label (must be < 86400 to satisfy the SLA).",
+        "Emit `stackra.platform_user.offboarding.access_revoked` metric with duration_seconds label (must be < 86400 to satisfy the SLA).",
         "Write a `platform_user.access_revoked` activity_log entry with correlation id shared with the triggering PlatformUserOffboarded event."
       ],
       "shouldQueue": true,
@@ -30,15 +30,15 @@
       }
     },
     {
-      "class": "Academorix\\PlatformUser\\Jobs\\PurgeOffboardedPlatformUsersJob",
+      "class": "Stackra\\PlatformUser\\Jobs\\PurgeOffboardedPlatformUsersJob",
       "queue": "notifications",
       "purpose": "Hard-delete PlatformUser rows whose `deleted_at` is older than the retention hold-period (default 90 days, configurable via `platform-user.retention.hold_days`). Cascades PlatformProfile purge in the same transaction. Audit rows referencing this PlatformUser are RETAINED with an anonymised actor placeholder \u2014 audit is compliance evidence + preserves cross-tenant traceability.",
       "steps": [
         "SELECT id FROM platform_users WHERE deleted_at IS NOT NULL AND status = 'offboarded' AND deleted_at + (config('platform-user.retention.hold_days') || ' days')::interval < now() LIMIT 100.",
         "For each: check RevokePlatformUserAccessJob completed successfully (metric emission recorded in observability store).",
-        "If access-revocation did not complete: skip + emit `academorix.platform_user.retention.blocked` warning metric + write compliance-alert audit entry (points at the ops rotation).",
+        "If access-revocation did not complete: skip + emit `stackra.platform_user.retention.blocked` warning metric + write compliance-alert audit entry (points at the ops rotation).",
         "Otherwise: BEGIN TRANSACTION; DELETE FROM platform_profiles WHERE id = <profile_id>; DELETE FROM platform_users WHERE id = <id>; UPDATE audits SET user_id = '[REDACTED]' + anonymise user_type where user_id = <id> (post-hard-delete audit rows keep a resolvable placeholder); COMMIT.",
-        "Emit `academorix.platform_user.retention.purged` metric.",
+        "Emit `stackra.platform_user.retention.purged` metric.",
         "The Identity row is NOT touched \u2014 identity_id becomes dangling but the identity row is preserved. It may live on as a tenant User's credential OR be erased separately via identity::PurgeSoftDeletedIdentitiesJob when no downstream principals reference it."
       ],
       "shouldQueue": true,

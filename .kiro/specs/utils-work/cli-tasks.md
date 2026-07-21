@@ -21,8 +21,8 @@ sub-files.
 
 ```json
 {
-  "name": "academorix/cli",
-  "description": "Academorix workspace CLI — scaffolds projects, packages, and modules.",
+  "name": "stackra/cli",
+  "description": "Stackra workspace CLI — scaffolds projects, packages, and modules.",
   "type": "library",
   "license": "proprietary",
   "require": {
@@ -43,17 +43,17 @@ sub-files.
     "phpunit/phpunit": "^11.0"
   },
   "autoload": {
-    "psr-4": { "Academorix\\Cli\\": "src/" },
+    "psr-4": { "Stackra\\Cli\\": "src/" },
     "files": ["src/helpers.php"]
   },
-  "bin": ["bin/academorix"]
+  "bin": ["bin/stackra"]
 }
 ```
 
 The `src/helpers.php` file is authored by `omniterm-tasks.md` (contains the
 global `view()` helper).
 
-### 1.2 `tools/cli/bin/academorix`
+### 1.2 `tools/cli/bin/stackra`
 
 PHP entry point, executable (`chmod +x`).
 
@@ -69,7 +69,7 @@ if (!file_exists($autoload)) {
 }
 require $autoload;
 
-use Academorix\Cli\Application;
+use Stackra\Cli\Application;
 
 exit((new Application())->run());
 ```
@@ -98,7 +98,7 @@ Standard PHPUnit XML. Test suite `Unit` at `tests/Unit`, `Feature` at
 
 Extends `Symfony\Component\Console\Application`. Responsibilities:
 
-- Set name `"Academorix CLI"`, version `"0.1.0"`
+- Set name `"Stackra CLI"`, version `"0.1.0"`
 - Instantiate the DI container in constructor
 - Register all 10 commands (§12) via `add()`
 - Handle uncaught exceptions with `HandlesErrors` trait renderer
@@ -108,7 +108,7 @@ Constructor signature:
 ```php
 public function __construct()
 {
-    parent::__construct('Academorix CLI', '0.1.0');
+    parent::__construct('Stackra CLI', '0.1.0');
     $this->container = new Container();
     foreach ($this->buildCommands() as $command) {
         $this->add($command);
@@ -124,12 +124,12 @@ interfaces + concretes):
 | Binding                                    | Concrete           |
 | ------------------------------------------ | ------------------ |
 | `Illuminate\Filesystem\Filesystem`         | itself (singleton) |
-| `Academorix\Cli\Catalog\CatalogReader`     | itself             |
-| `Academorix\Cli\Catalog\CatalogQuery`      | itself             |
-| `Academorix\Cli\Stubs\StubRegistry`        | itself             |
-| `Academorix\Cli\Stubs\StubRenderer`        | itself             |
-| `Academorix\Cli\Templates\TemplateManager` | itself             |
-| `Academorix\Cli\Blueprint\BlueprintReader` | itself             |
+| `Stackra\Cli\Catalog\CatalogReader`     | itself             |
+| `Stackra\Cli\Catalog\CatalogQuery`      | itself             |
+| `Stackra\Cli\Stubs\StubRegistry`        | itself             |
+| `Stackra\Cli\Stubs\StubRenderer`        | itself             |
+| `Stackra\Cli\Templates\TemplateManager` | itself             |
+| `Stackra\Cli\Blueprint\BlueprintReader` | itself             |
 
 Constructor runs `Bootstrap\ViewBootstrapper::boot($this)` — see
 `omniterm-tasks.md`. The View factory + omniterm view namespace are wired here
@@ -184,8 +184,8 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
 
 ### 3.1 `RendersBrandArt.php`
 
-Owns the ACADEMORIX ASCII banner + 11 gradient palettes. The banner is 6
-block-figlet lines spelling ACADEMORIX. Per-line color drawn from a palette
+Owns the STACKRA ASCII banner + 11 gradient palettes. The banner is 6
+block-figlet lines spelling STACKRA. Per-line color drawn from a palette
 picked at random. Palettes to include (11):
 
 - `red`, `gray`, `ocean`, `vaporwave`, `sunset`, `aurora`, `ember`, `cyberpunk`,
@@ -425,7 +425,7 @@ Named factories:
 
 Read-only DTO. Fields mapping the `catalog.v1.json` schema exactly:
 
-- `name: string` — `academorix/foo` or `@stackra/foo`
+- `name: string` — `stackra/foo` or `@stackra/foo`
 - `tier: 'foundation' | 'framework' | 'saas' | 'domain'`
 - `surfaces: string[]` — subset of `['core', 'react', 'native', 'testing']`
 - `kind: 'framework-plumbing' | 'sdk' | 'feature' | 'tooling'`
@@ -649,8 +649,8 @@ from `pdphilip/omniterm` v3 (see `omniterm-tasks.md`).
 #### `NewProjectCommand.php`
 
 - **Signature**:
-  `academorix new <name> [--preset=<business-type>] [--no-banner]`
-- **Purpose**: Bootstrap a new Academorix project.
+  `stackra new <name> [--preset=<business-type>] [--no-banner]`
+- **Purpose**: Bootstrap a new Stackra project.
 - **Flow**:
   1. Validate project name (`ValidatesInput::assertValidProjectName`)
   2. Assert destination doesn't exist
@@ -671,7 +671,7 @@ from `pdphilip/omniterm` v3 (see `omniterm-tasks.md`).
 #### `MakeActionCommand.php`
 
 - **Signature**:
-  `academorix make:action <ClassName> --module=<tier/name> --verb=<Http> --route=<path>`
+  `stackra make:action <ClassName> --module=<tier/name> --verb=<Http> --route=<path>`
 - **Purpose**: Emit a single Laravel action from `php/action.stub`.
 - **Flow**:
   1. Validate module (`ValidatesInput::assertValidModuleName`)
@@ -684,7 +684,7 @@ from `pdphilip/omniterm` v3 (see `omniterm-tasks.md`).
 
 #### `CatalogListCommand.php`
 
-- **Signature**: `academorix catalog:list [--tier=<t>] [--surface=<s>]`
+- **Signature**: `stackra catalog:list [--tier=<t>] [--surface=<s>]`
 - **Purpose**: List every catalog entry.
 - **Flow**:
   1. Read catalog via `CatalogReader::all()`
@@ -696,7 +696,7 @@ from `pdphilip/omniterm` v3 (see `omniterm-tasks.md`).
 
 #### `CatalogSearchCommand.php`
 
-- **Signature**: `academorix catalog:search <query> [--tier=<t>]`
+- **Signature**: `stackra catalog:search <query> [--tier=<t>]`
 - **Purpose**: Search by capability substring.
 - **Flow**:
   1. `CatalogQuery::resolvePackages([...])` with the query
@@ -711,35 +711,35 @@ returns exit code 0.
 
 #### `PackageAddCommand.php`
 
-- **Signature**: `academorix package:add <name>`
+- **Signature**: `stackra package:add <name>`
 - **v0.2 goal**: Resolve `<name>` against catalog + install via composer or
   pnpm + wire ServiceProvider/AppModule registration
 
 #### `ModuleNewCommand.php`
 
-- **Signature**: `academorix module:new <tier/name>`
+- **Signature**: `stackra module:new <tier/name>`
 - **v0.2 goal**: Interactive blueprint scaffold (30 JSON files) + validate
 
 #### `ModuleGenerateCommand.php`
 
-- **Signature**: `academorix module:generate <tier/name>`
+- **Signature**: `stackra module:generate <tier/name>`
 - **v0.2 goal**: Regenerate the module across backend + frontend + mobile from
   its blueprint
 
 #### `MakeModelCommand.php`
 
-- **Signature**: `academorix make:model <ClassName> --module=<tier/name>`
+- **Signature**: `stackra make:model <ClassName> --module=<tier/name>`
 - **v0.2 goal**: 4-file quartet — Interface + Model + Migration + Factory
 
 #### `MakePageCommand.php`
 
-- **Signature**: `academorix make:page <resource> --domain=<name>`
+- **Signature**: `stackra make:page <resource> --domain=<name>`
 - **v0.2 goal**: Refine page set — list + create + edit + show + columns +
   form + module manifest
 
 #### `MakeNativeScreenCommand.php`
 
-- **Signature**: `academorix make:native-screen <name> --domain=<x>`
+- **Signature**: `stackra make:native-screen <name> --domain=<x>`
 - **v0.2 goal**: heroui-native-pro screen wired through Expo Router
 
 ---
@@ -751,7 +751,7 @@ returns exit code 0.
 find tools/cli -maxdepth 3 -type f | sort | head -40
 
 # Executable bit on the binary
-ls -la tools/cli/bin/academorix
+ls -la tools/cli/bin/stackra
 
 # PHP lint passes for every source file
 find tools/cli/src -name '*.php' -print0 | xargs -0 -n1 php -l 2>&1 | \
@@ -761,8 +761,8 @@ find tools/cli/src -name '*.php' -print0 | xargs -0 -n1 php -l 2>&1 | \
 cd tools/cli && composer install --no-interaction --no-progress 2>&1 | tail -5
 
 # CLI runs
-tools/cli/bin/academorix --version   # → Academorix CLI 0.1.0
-tools/cli/bin/academorix list        # → all 10 commands appear
+tools/cli/bin/stackra --version   # → Stackra CLI 0.1.0
+tools/cli/bin/stackra list        # → all 10 commands appear
 ```
 
 ---

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/telemetry/data-classes",
+  "id": "stackra://modules/telemetry/data-classes",
   "$version": 1,
   "title": "telemetry \u2014 field classification",
   "description": "Data that ships out of the application via OTLP (spans + metrics) OR Monolog sinks (log records). Classified per what appears in span attributes / metric labels / log records.",
@@ -26,20 +26,20 @@
       "source.line"
     ],
     "internal": [
-      "academorix.tenant_id",
-      "academorix.request_id",
-      "academorix.correlation_id",
+      "stackra.tenant_id",
+      "stackra.request_id",
+      "stackra.correlation_id",
       "trace_id",
       "span_id"
     ],
     "confidential": [
-      "academorix.causer_id",
-      "academorix.user_id",
+      "stackra.causer_id",
+      "stackra.user_id",
       "exception.message (may reference domain identifiers)",
       "exception.trace"
     ],
     "restricted": [
-      "academorix.causer_email (only when explicitly enabled + redacted after audit review)",
+      "stackra.causer_email (only when explicitly enabled + redacted after audit review)",
       "*.email (redacted unless pii_in_dev enabled)",
       "*.phone (redacted unless pii_in_dev)",
       "http.request.header.authorization (always redacted)",

@@ -18,7 +18,7 @@ declare(strict_types=1);
  *
  * ## Usage:
  * ```php
- * use Academorix\Database\Concerns\Model\HasTags;
+ * use Stackra\Database\Concerns\Model\HasTags;
  *
  * class Post extends Model
  * {
@@ -49,7 +49,7 @@ declare(strict_types=1);
  * @see \Illuminate\Database\Eloquent\Relations\MorphToMany
  */
 
-namespace Academorix\Database\Concerns\Model;
+namespace Stackra\Database\Concerns\Model;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -72,9 +72,9 @@ trait HasTags
     {
         // Read attribute configuration (if present)
         $config = null;
-        $forClass = \Academorix\Database\Support\AttributeReader::forClass(static::class);
+        $forClass = \Stackra\Database\Support\AttributeReader::forClass(static::class);
         foreach ($forClass->classAttributes as $attr) {
-            if ($attr instanceof \Academorix\Database\Attributes\Taggable) {
+            if ($attr instanceof \Stackra\Database\Attributes\Taggable) {
                 $config = $attr;
                 break;
             }
@@ -347,7 +347,7 @@ trait HasTags
      */
     protected function tagModelClass(): string
     {
-        return \Academorix\Crud\Models\Tag::class;
+        return \Stackra\Crud\Models\Tag::class;
     }
 
     /**
@@ -357,9 +357,9 @@ trait HasTags
      */
     protected function resolveTagModelClass(): string
     {
-        $forClass = \Academorix\Database\Support\AttributeReader::forClass(static::class);
+        $forClass = \Stackra\Database\Support\AttributeReader::forClass(static::class);
         foreach ($forClass->classAttributes as $attr) {
-            if ($attr instanceof \Academorix\Database\Attributes\Taggable) {
+            if ($attr instanceof \Stackra\Database\Attributes\Taggable) {
                 return $attr->tagModel;
             }
         }

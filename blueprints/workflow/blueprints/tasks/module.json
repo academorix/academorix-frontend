@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "tasks",
   "alias": "tasks",
-  "namespace": "Academorix\\Workflow\\Tasks",
+  "namespace": "Stackra\\Workflow\\Tasks",
   "description": "Human-in-loop work queue. Wraps a domain event (a lead needs a follow-up call, a payment failed and someone should call the parent, a coach didn't submit attendance) in a Task with an assignee + due date + status. Complements workflow/approvals (formal approve/deny cycles) — tasks are the lightweight side. Owns three tables: tasks (the work item with polymorphic subject_type/subject_id — Athlete / Order / Payment / Lead), task_assignments (N-to-N users with role: assignee / collaborator / watcher), task_comments (chronological comment thread with @-mentions + file attachments via platform/storage). Cross-integrates with growth/leads (auto-creates follow-up tasks), finance/payment (failed-charge tasks), sports/coaching (staff task queue), notifications/notifications (TaskAssignedNotification + TaskCommentMentionedNotification + TaskDueSoonNotification). Includes TaskAutomationRule engine (per-tenant configurable — 'when a lead sits >48h, create a follow-up task for its owner') via #[AsTaskAutomation] attribute.",
   "keywords": [
     "tasks",
@@ -17,7 +17,7 @@
     "task-subject"
   ],
   "priority": 42,
-  "providers": ["Academorix\\Workflow\\Tasks\\Providers\\TasksServiceProvider"],
+  "providers": ["Stackra\\Workflow\\Tasks\\Providers\\TasksServiceProvider"],
   "dependencies": ["foundation", "tenancy", "application", "storage", "notifications"],
   "extendedBy": [],
   "contributes": {

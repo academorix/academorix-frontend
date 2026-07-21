@@ -1,4 +1,4 @@
-# academorix/caching
+# stackra/caching
 
 Attribute-driven cache composition. The substrate every other package builds on
 when it needs read-through caching, tag-based invalidation, or tenant-scoped
@@ -63,7 +63,7 @@ That's it. Every attribute is either discovered at boot
 ## Programmatic use
 
 ```php
-use Academorix\Caching\Support\CacheTagBuilder;
+use Stackra\Caching\Support\CacheTagBuilder;
 
 final class AthleteRepository
 {
@@ -82,7 +82,7 @@ final class AthleteRepository
 Or purely declaratively:
 
 ```php
-use Academorix\Caching\Attributes\Cacheable;
+use Stackra\Caching\Attributes\Cacheable;
 
 final class AthleteService
 {

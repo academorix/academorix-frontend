@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/notifications-mail/observers",
+  "id": "stackra://modules/notifications-mail/observers",
   "$version": 1,
   "title": "notifications-mail \u2014 Eloquent observers",
   "description": "One observer on MailSuppression. Emits MailSuppressed / MailSuppressionRevoked events + refuses delete on is_system rows.",
   "observers": [
     {
       "model": "MailSuppression",
-      "observer": "Academorix\\Notifications\\Mail\\Observers\\MailSuppressionObserver",
+      "observer": "Stackra\\Notifications\\Mail\\Observers\\MailSuppressionObserver",
       "handles": [
         "created \u2192 fire MailSuppressed",
         "deleted \u2192 fire MailSuppressionRevoked",

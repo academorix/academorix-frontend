@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Grants\Services;
+namespace Stackra\Grants\Services;
 
-use Academorix\Grants\Contracts\Services\GrantIssuerInterface;
+use Stackra\Grants\Contracts\Services\GrantIssuerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Grants\Contracts\Repositories\AccessGrantRepositoryInterface;
+use Stackra\Grants\Contracts\Repositories\AccessGrantRepositoryInterface;
 
 /**
  * Concrete service — GrantIssuer.

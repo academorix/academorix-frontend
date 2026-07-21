@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/identity",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/identity",
   "tier": "saas",
   "surfaces": ["core"],
   "kind": "feature",
@@ -14,14 +14,14 @@
     "Consumed by auth module for token issuance"
   ],
   "when_to_use": "Storing the cross-Application credential record — the central-plane row a user authenticates against.",
-  "when_not_to_use": "For per-Application User rows (Identity × Application × Tenant), reach for the sibling academorix/user package.",
+  "when_not_to_use": "For per-Application User rows (Identity × Application × Tenant), reach for the sibling stackra/user package.",
   "peer_deps": [
-    "academorix-identity/identity-sdk",
-    "academorix/crud",
-    "academorix/foundation",
-    "academorix/routing",
-    "academorix/service-provider",
-    "academorix/support",
+    "stackra-identity/identity-sdk",
+    "stackra/crud",
+    "stackra/foundation",
+    "stackra/routing",
+    "stackra/service-provider",
+    "stackra/support",
     "spatie/laravel-data"
   ],
   "backend_pair": null,

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Services;
+namespace Stackra\Forms\Services;
 
-use Academorix\Forms\Contracts\Services\SessionSignatureMinterInterface;
+use Stackra\Forms\Contracts\Services\SessionSignatureMinterInterface;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\Singleton;
 

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Jobs;
+namespace Stackra\Audit\Jobs;
 
-use Academorix\Audit\Contracts\Repositories\AuditRepositoryInterface;
-use Academorix\Audit\Data\AuditData;
-use Academorix\Audit\Exceptions\AuditExportFailedException;
+use Stackra\Audit\Contracts\Repositories\AuditRepositoryInterface;
+use Stackra\Audit\Data\AuditData;
+use Stackra\Audit\Exceptions\AuditExportFailedException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Contracts\Queue\ShouldQueue;

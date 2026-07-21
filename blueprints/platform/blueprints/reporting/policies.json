@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/reporting/policies",
+  "id": "stackra://modules/reporting/policies",
   "$version": 1,
   "title": "reporting — authorization policies",
   "description": "Reporting reads across every module. Every report inherits the SENSITIVITY LEVEL of its most-sensitive data source; readers must hold the equivalent module permission (e.g. viewing a report containing medical clearances requires medical.viewAny). Sharing a dashboard grants implicit read to its underlying data.",
   "policies": [
     {
       "model": "Report",
-      "class": "Academorix\\Platform\\Reporting\\Policies\\ReportPolicy",
+      "class": "Stackra\\Platform\\Reporting\\Policies\\ReportPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "reporting.reports.viewAny" },
         {
@@ -39,7 +39,7 @@
     },
     {
       "model": "Dashboard",
-      "class": "Academorix\\Platform\\Reporting\\Policies\\DashboardPolicy",
+      "class": "Stackra\\Platform\\Reporting\\Policies\\DashboardPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "reporting.dashboards.viewAny" },
         {

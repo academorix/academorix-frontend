@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Exceptions;
+namespace Stackra\Newsletter\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Refuse cancelling a campaign whose send-batch jobs have finished.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NewsletterCampaignAlreadyInProgressException extends AcademorixException
+final class NewsletterCampaignAlreadyInProgressException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Contracts\Data;
+namespace Stackra\Notifications\InApp\Contracts\Data;
 
-use Academorix\Notifications\InApp\Models\InAppMessageRead;
+use Stackra\Notifications\InApp\Models\InAppMessageRead;
 use Illuminate\Container\Attributes\Bind;
 
 /**

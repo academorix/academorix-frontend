@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FinanceExpensesSdk\Resources;
+namespace Stackra\FinanceExpensesSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\FinanceExpensesSdk\Data\PayrollRunData;
-use Academorix\FinanceExpensesSdk\Requests\PayrollRuns\CreatePayrollRunRequest;
-use Academorix\FinanceExpensesSdk\Requests\PayrollRuns\ListPayrollRunsRequest;
-use Academorix\FinanceExpensesSdk\Requests\PayrollRuns\ShowPayrollRunRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\FinanceExpensesSdk\Data\PayrollRunData;
+use Stackra\FinanceExpensesSdk\Requests\PayrollRuns\CreatePayrollRunRequest;
+use Stackra\FinanceExpensesSdk\Requests\PayrollRuns\ListPayrollRunsRequest;
+use Stackra\FinanceExpensesSdk\Requests\PayrollRuns\ShowPayrollRunRequest;
 use Saloon\Http\Response;
 
 /**
@@ -56,7 +56,7 @@ final readonly class PayrollRunsResource
      *
      * @return PayrollRunData
      */
-    public function create(\Academorix\FinanceExpensesSdk\Payloads\PayrollRuns\CreatePayrollRunPayload $payload, ?string $idempotencyKey = null): PayrollRunData
+    public function create(\Stackra\FinanceExpensesSdk\Payloads\PayrollRuns\CreatePayrollRunPayload $payload, ?string $idempotencyKey = null): PayrollRunData
     {
         return $this->connector->send(new CreatePayrollRunRequest($payload, $idempotencyKey))->dto();
     }

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsPerformanceSdk\Resources;
+namespace Stackra\SportsPerformanceSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsPerformanceSdk\Data\TestBatteryData;
-use Academorix\SportsPerformanceSdk\Requests\TestBatteries\CreateTestBatteryRequest;
-use Academorix\SportsPerformanceSdk\Requests\TestBatteries\ListTestBatteriesRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsPerformanceSdk\Data\TestBatteryData;
+use Stackra\SportsPerformanceSdk\Requests\TestBatteries\CreateTestBatteryRequest;
+use Stackra\SportsPerformanceSdk\Requests\TestBatteries\ListTestBatteriesRequest;
 use Saloon\Http\Response;
 
 /**
@@ -55,7 +55,7 @@ final readonly class TestBatteriesResource
      *
      * @return TestBatteryData
      */
-    public function create(\Academorix\SportsPerformanceSdk\Payloads\TestBatteries\CreateTestBatteryPayload $payload, ?string $idempotencyKey = null): TestBatteryData
+    public function create(\Stackra\SportsPerformanceSdk\Payloads\TestBatteries\CreateTestBatteryPayload $payload, ?string $idempotencyKey = null): TestBatteryData
     {
         return $this->connector->send(new CreateTestBatteryRequest($payload, $idempotencyKey))->dto();
     }

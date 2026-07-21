@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Observers;
+namespace Stackra\Storage\Observers;
 
-use Academorix\Storage\Contracts\Data\FileVariantInterface;
-use Academorix\Storage\Events\FileVariantGenerated;
-use Academorix\Storage\Models\FileVariant;
+use Stackra\Storage\Contracts\Data\FileVariantInterface;
+use Stackra\Storage\Events\FileVariantGenerated;
+use Stackra\Storage\Models\FileVariant;
 use Illuminate\Support\Facades\Storage;
 
 /**

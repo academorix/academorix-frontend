@@ -14,7 +14,7 @@ sibling_docs:
 # Agent Quickstart — Day-1 Playbook
 
 Six recipes for turning ambient input into a shipping product using the
-Academorix agent stack. Every recipe is a copy-paste block a human or an
+Stackra agent stack. Every recipe is a copy-paste block a human or an
 orchestrator agent can run.
 
 ## When to read this vs `AGENT_ROSTER.md`
@@ -27,7 +27,7 @@ orchestrator agent can run.
 
 ## Recipes
 
-- [Recipe 0 — Bootstrap a new workspace with `academorix new`](#recipe-0--bootstrap-a-new-workspace-day--1)
+- [Recipe 0 — Bootstrap a new workspace with `stackra new`](#recipe-0--bootstrap-a-new-workspace-day--1)
 - [Recipe 1 — Intake a PDF and emit a project blueprint](#recipe-1--intake-a-pdf-day-0)
 - [Recipe 2 — Turn a brief into a PRD + INVEST stories](#recipe-2--brief--prd-day-1-3)
 - [Recipe 3 — Design phase (5 specialists in rounds)](#recipe-3--design-phase-day-4-7)
@@ -38,7 +38,7 @@ orchestrator agent can run.
 
 ## Recipe 0 — Bootstrap a new workspace (Day -1)
 
-**Goal:** Turn `academorix new my-project` into a running workspace with
+**Goal:** Turn `stackra new my-project` into a running workspace with
 frontend + backend + native templates wired up.
 
 **Duration:** 10 minutes.
@@ -57,19 +57,19 @@ frontend + backend + native templates wired up.
 
 Global (recommended once the CLI is published):
 ```sh
-composer global require academorix/cli
+composer global require stackra/cli
 ```
 
 Workspace-local (works today, from inside this monorepo):
 ```sh
-pnpm --filter tools/cli exec ./bin/academorix --version
+pnpm --filter tools/cli exec ./bin/stackra --version
 # Or:
-cd tools/cli && ./bin/academorix --version
+cd tools/cli && ./bin/stackra --version
 ```
 
 **2. Create the workspace.**
 ```sh
-academorix new my-project
+stackra new my-project
 ```
 
 This clones the three templates (`apps/laravel-template`, `apps/vite-template`,
@@ -199,11 +199,11 @@ ls .kiro/product/intake/<slug>/
 
 Flip Phase 1 checkboxes.
 
-**3. Invoke `academorix-product`** to write the PRD.
+**3. Invoke `stackra-product`** to write the PRD.
 
 ```
 invoke_sub_agent(
-  name: 'academorix-product',
+  name: 'stackra-product',
   prompt: 'Feature <slug> has cleared Phase 1 discovery. Write the Phase 2
            PRD at `.kiro/product/prds/<slug>.md` with INVEST stories,
            v1/v2/later scope, and business-type surface strategy.',
@@ -481,7 +481,7 @@ workspace runs gets a Phase 7 block on Day 1 — no exceptions.
 
 | Task                             | Command                                                                       |
 | -------------------------------- | ----------------------------------------------------------------------------- |
-| Bootstrap a workspace            | `academorix new my-project`                                                   |
+| Bootstrap a workspace            | `stackra new my-project`                                                   |
 | Kick off a feature intake        | Copy Per-feature template into `tasks-intake-discovery-definition.md`         |
 | Fire Phase 0                     | `invoke_sub_agent(name: 'spec-intake-analyst', ...)`                          |
 | Fire Phase 1-2                   | `invoke_sub_agent(name: 'product-lead', ...)`                                 |

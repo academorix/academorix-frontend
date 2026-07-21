@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Enums;
+namespace Stackra\Storage\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
  * Well-known top-level file kinds.
@@ -15,7 +15,7 @@ use Academorix\Enum\Enum;
  * The kind taxonomy the module ships. Downstream modules extend the
  * catalogue at runtime via the `#[FileKind]` class attribute, which
  * registers a per-key recipe with
- * {@see \Academorix\Storage\Contracts\Services\FileKindRegistryInterface}.
+ * {@see \Stackra\Storage\Contracts\Services\FileKindRegistryInterface}.
  *
  * ## Cases
  *

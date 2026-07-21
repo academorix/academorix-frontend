@@ -1,10 +1,10 @@
 {
-  "name": "academorix/branding",
+  "name": "stackra/branding",
   "type": "library",
   "description": "White-label branding profile per Tenant — theme, palette, logo variants, typography, custom CSS variables. Cache-heavy (100:1 read/write) so it warrants its own module + cache lifecycle. Publishes the `BrandingResolver` (per-domain resolution) + `OgImageRenderer` (open-graph card renderer) bindings — default `Null*` implementations ship; consumer apps override.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "laravel",
     "branding",
     "theme",
@@ -16,19 +16,19 @@
   ],
   "require": {
     "php": "^8.3",
-    "academorix/authorization": "@dev",
-    "academorix/console": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/database": "@dev",
-    "academorix/enum": "@dev",
-    "academorix/events": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
-    "academorix/retention": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix/tenancy": "@dev",
+    "stackra/authorization": "@dev",
+    "stackra/console": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/database": "@dev",
+    "stackra/enum": "@dev",
+    "stackra/events": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/retention": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra/tenancy": "@dev",
     "illuminate/contracts": "^13.0",
     "illuminate/database": "^13.0",
     "illuminate/events": "^13.0",
@@ -47,20 +47,20 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Branding\\": "src/",
-      "Academorix\\Branding\\Database\\Factories\\": "database/factories/",
-      "Academorix\\Branding\\Database\\Seeders\\": "database/seeders/"
+      "Stackra\\Branding\\": "src/",
+      "Stackra\\Branding\\Database\\Factories\\": "database/factories/",
+      "Stackra\\Branding\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Branding\\Tests\\": "tests/"
+      "Stackra\\Branding\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Branding\\Providers\\BrandingServiceProvider"
+        "Stackra\\Branding\\Providers\\BrandingServiceProvider"
       ],
       "aliases": {}
     }

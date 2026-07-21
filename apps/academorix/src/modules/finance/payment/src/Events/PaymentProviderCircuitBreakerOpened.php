@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Events;
+namespace Stackra\Payment\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog
  * - notifications::DispatchPaymentProviderCircuitBreakerOpenedNotification (cannot-opt-out — pages ops + notifies tenant owner)
- * - monitoring::MetricsCollector (increments academorix.payment.circuit_breakers.opened_total)
+ * - monitoring::MetricsCollector (increments stackra.payment.circuit_breakers.opened_total)
  *
  * @category Payment
  *

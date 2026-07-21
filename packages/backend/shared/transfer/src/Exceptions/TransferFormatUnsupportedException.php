@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Exceptions;
+namespace Stackra\Transfer\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the requested format is not in the entity's
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TransferFormatUnsupportedException extends AcademorixException
+final class TransferFormatUnsupportedException extends StackraException
 {
     public const CODE = 'TRANSFER_FORMAT_UNSUPPORTED';
 

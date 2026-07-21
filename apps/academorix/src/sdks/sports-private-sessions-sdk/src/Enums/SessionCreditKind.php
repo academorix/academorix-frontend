@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsPrivateSessionsSdk\Enums;
+namespace Stackra\SportsPrivateSessionsSdk\Enums;
 
 /**
  * Wire-visible backed enum for `session-credit.kind`.

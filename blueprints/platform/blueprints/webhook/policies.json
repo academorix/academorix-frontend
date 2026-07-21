@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/webhook/policies",
+  "id": "stackra://modules/webhook/policies",
   "$version": 1,
   "title": "webhook \u2014 authorization policies",
   "description": "Two policies. Tenant admins manage their own subscriptions + deliveries. Platform admins have cross-tenant visibility + emergency-pause powers. Signing secrets never exposed in any policy \u2014 rotation surfaces + one-time reveal only.",
   "policies": [
     {
       "model": "WebhookSubscription",
-      "class": "Academorix\\Webhook\\Policies\\WebhookSubscriptionPolicy",
+      "class": "Stackra\\Webhook\\Policies\\WebhookSubscriptionPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -49,7 +49,7 @@
     },
     {
       "model": "WebhookDelivery",
-      "class": "Academorix\\Webhook\\Policies\\WebhookDeliveryPolicy",
+      "class": "Stackra\\Webhook\\Policies\\WebhookDeliveryPolicy",
       "abilities": [
         {
           "action": "viewAny",

@@ -4,23 +4,23 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Models;
+namespace Stackra\Payment\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Payment\Contracts\Data\PaymentDisputeInterface;
-use Academorix\Payment\Database\Factories\PaymentDisputeFactory;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Payment\Enums\PaymentDisputeOutcome;
-use Academorix\Payment\Enums\PaymentDisputeReason;
-use Academorix\Payment\Enums\PaymentDisputeStatus;
-use Academorix\Payment\Enums\PaymentProvider;
-use Academorix\Payment\Policies\PaymentDisputePolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Payment\Contracts\Data\PaymentDisputeInterface;
+use Stackra\Payment\Database\Factories\PaymentDisputeFactory;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Payment\Enums\PaymentDisputeOutcome;
+use Stackra\Payment\Enums\PaymentDisputeReason;
+use Stackra\Payment\Enums\PaymentDisputeStatus;
+use Stackra\Payment\Enums\PaymentProvider;
+use Stackra\Payment\Policies\PaymentDisputePolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

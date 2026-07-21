@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/competition/policies",
+  "id": "stackra://modules/competition/policies",
   "$version": 1,
   "title": "competition — authorization policies",
   "description": "Five policies. Result amendments require special permission. Public read of standings + brackets is signed-URL-only for external league pages.",
   "policies": [
     {
       "model": "Competition",
-      "class": "Academorix\\Sports\\Competition\\Policies\\CompetitionPolicy",
+      "class": "Stackra\\Sports\\Competition\\Policies\\CompetitionPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "competition.viewAny" },
         { "action": "view", "permission": "competition.view" },
@@ -35,7 +35,7 @@
     },
     {
       "model": "CompetitionTeam",
-      "class": "Academorix\\Sports\\Competition\\Policies\\CompetitionTeamPolicy",
+      "class": "Stackra\\Sports\\Competition\\Policies\\CompetitionTeamPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "competition-teams.viewAny" },
         { "action": "view", "permission": "competition-teams.view" },
@@ -54,7 +54,7 @@
     },
     {
       "model": "CompetitionFixture",
-      "class": "Academorix\\Sports\\Competition\\Policies\\CompetitionFixturePolicy",
+      "class": "Stackra\\Sports\\Competition\\Policies\\CompetitionFixturePolicy",
       "abilities": [
         { "action": "viewAny", "permission": "competition-fixtures.viewAny" },
         { "action": "view", "permission": "competition-fixtures.view" },
@@ -78,7 +78,7 @@
     },
     {
       "model": "StandingRow",
-      "class": "Academorix\\Sports\\Competition\\Policies\\StandingRowPolicy",
+      "class": "Stackra\\Sports\\Competition\\Policies\\StandingRowPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -90,7 +90,7 @@
     },
     {
       "model": "BracketNode",
-      "class": "Academorix\\Sports\\Competition\\Policies\\BracketNodePolicy",
+      "class": "Stackra\\Sports\\Competition\\Policies\\BracketNodePolicy",
       "abilities": [
         {
           "action": "viewAny",

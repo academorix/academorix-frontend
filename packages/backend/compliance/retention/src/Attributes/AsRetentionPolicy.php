@@ -11,7 +11,7 @@
  * previously lived at
  * `apps/ai-service/src/modules/ai/src/Attributes/AsRetentionPolicy.php`.
  * Every domain module now imports from
- * `Academorix\Retention\Attributes\AsRetentionPolicy` so a
+ * `Stackra\Retention\Attributes\AsRetentionPolicy` so a
  * single, cross-package retention scanner can discover every
  * marker in the monorepo.
  *
@@ -27,30 +27,30 @@
  *
  * ## Discovery
  *
- * {@see \Academorix\Retention\Bootstrappers\RetentionPolicyBootstrapper}
+ * {@see \Stackra\Retention\Bootstrappers\RetentionPolicyBootstrapper}
  * walks every class carrying this attribute via the shared
- * {@see \Academorix\Foundation\Contracts\DiscoversAttributes}
+ * {@see \Stackra\Foundation\Contracts\DiscoversAttributes}
  * seam and emits a
- * {@see \Academorix\Retention\Support\RetentionPolicyDescriptor}
+ * {@see \Stackra\Retention\Support\RetentionPolicyDescriptor}
  * into the
- * {@see \Academorix\Retention\Registry\RetentionPolicyRegistry}.
+ * {@see \Stackra\Retention\Registry\RetentionPolicyRegistry}.
  *
  * ## Actions
  *
- * See {@see \Academorix\Retention\Enums\RetentionAction}. The
+ * See {@see \Stackra\Retention\Enums\RetentionAction}. The
  * `Delete` case is the only one with a working v1 implementation;
  * `Archive` and `Anonymize` are legitimate deferrals that log a
  * warning and no-op until per-model transform logic ships.
  *
- * @see \Academorix\Retention\Enums\RetentionAction Backing enum for the `action` argument.
- * @see \Academorix\Retention\Registry\RetentionPolicyRegistry Discovery target.
+ * @see \Stackra\Retention\Enums\RetentionAction Backing enum for the `action` argument.
+ * @see \Stackra\Retention\Registry\RetentionPolicyRegistry Discovery target.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Retention\Attributes;
+namespace Stackra\Retention\Attributes;
 
-use Academorix\Retention\Enums\RetentionAction;
+use Stackra\Retention\Enums\RetentionAction;
 use Attribute;
 
 /**

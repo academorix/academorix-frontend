@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "marketing",
   "alias": "marketing",
-  "namespace": "Academorix\\Growth\\Marketing",
+  "namespace": "Stackra\\Growth\\Marketing",
   "description": "Server-side ad-network conversion event forwarder. Answers 'which ad campaigns delivered which conversions?'. Captures business-level milestone events (signup, trial_started, subscription_started, membership_purchased, athlete_enrolled, session_booked, event_registered, subscription_upgraded, subscription_cancelled, refund_issued, chargeback_filed, ...) via domain-event listeners + fans out to N ad-network providers per-tenant. Loss tolerance ZERO — every event affects ad-spend optimization + attribution reporting. Ships FOUR tables: `marketing_events` (canonical event ledger, 7-year retention for financial audit), `marketing_deliveries` (per-provider-per-attempt delivery log, 2-year retention), `marketing_provider_configs` (per-tenant encrypted provider credentials + enabled_event_types filter + circuit-breaker state + test-mode flag), `marketing_dead_letters` (max-attempts-exceeded events for manual replay). MultipleInstanceManager pattern via `MarketingProviderManager` with 9 provider drivers day-1: Meta CAPI, Google Ads Enhanced Conversions, Google Analytics 4 Measurement Protocol, Google Tag Manager Server, TikTok Events API, LinkedIn Insight Tag, Snapchat Conversions API, Pinterest Conversions API, Custom Webhook (generic HMAC-signed JSON escape hatch). Per-provider payload transformation handles PII hashing (Meta CAPI requires SHA256 email/phone; Google Ads requires gclid + click_time_utc; GA4 requires session_id + engagement_time_msec). Per-provider retry with exponential backoff (1m/5m/30m/2h/12h/24h; max 6 attempts) + per-tenant-per-provider circuit breaker (opens after N consecutive failures, TTL-based auto-close). Consent-gated at BOTH capture time (snapshotted) AND dispatch time (re-checked) via `marketing` + `advertising` consent categories. Attribution snapshot pulled from `attribution` module at event-CREATE time (frozen). Test-mode per-provider dispatches to sandbox endpoints for tenant onboarding validation. Domain code stays marketing-agnostic — `MarketingEventCapturer` listener maps domain events to marketing events via a mapping registry.",
   "keywords": [
     "marketing",
@@ -42,7 +42,7 @@
     "wave-5"
   ],
   "priority": 65,
-  "providers": ["Academorix\\Growth\\Marketing\\Providers\\MarketingServiceProvider"],
+  "providers": ["Stackra\\Growth\\Marketing\\Providers\\MarketingServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

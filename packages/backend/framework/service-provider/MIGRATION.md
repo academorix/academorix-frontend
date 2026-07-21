@@ -1,6 +1,6 @@
-# Migration notes — `academorix/service-provider`
+# Migration notes — `stackra/service-provider`
 
-Mechanical port of the `academorix/service-provider` package with a few known
+Mechanical port of the `stackra/service-provider` package with a few known
 adaptations captured below. Every TODO in the source tree maps to an entry in
 this document. The goal is that when the missing integration points land, the
 resolution is textual — search for the `TODO(...)` marker and follow the shape
@@ -12,20 +12,20 @@ Applied to every ported file:
 
 | From                                         | To                                                      |
 | -------------------------------------------- | ------------------------------------------------------- |
-| `Academorix\ServiceProvider\`                | `Academorix\ServiceProvider\`                           |
-| `Academorix\Enum\`                           | `Academorix\Enum\`                                      |
-| `Academorix\Support\Reflection`              | inline `\ReflectionClass(...)` (no monorepo equivalent) |
-| `Academorix\Routing\Attributes\AsController` | removed — pending `academorix/routing`                  |
-| `Academorix\Routing\Attributes\AsMiddleware` | removed — pending `academorix/routing`                  |
-| `Academorix\Routing\RouteRegistrar`          | removed — pending `academorix/routing`                  |
-| `Academorix\Blog\Providers\...` (examples)   | `Academorix\Blog\Providers\...`                         |
-| `Academorix\Tenancy\...` (examples)          | `Academorix\Tenancy\...`                                |
+| `Stackra\ServiceProvider\`                | `Stackra\ServiceProvider\`                           |
+| `Stackra\Enum\`                           | `Stackra\Enum\`                                      |
+| `Stackra\Support\Reflection`              | inline `\ReflectionClass(...)` (no monorepo equivalent) |
+| `Stackra\Routing\Attributes\AsController` | removed — pending `stackra/routing`                  |
+| `Stackra\Routing\Attributes\AsMiddleware` | removed — pending `stackra/routing`                  |
+| `Stackra\Routing\RouteRegistrar`          | removed — pending `stackra/routing`                  |
+| `Stackra\Blog\Providers\...` (examples)   | `Stackra\Blog\Providers\...`                         |
+| `Stackra\Tenancy\...` (examples)          | `Stackra\Tenancy\...`                                |
 | `Pixielity\Discovery\Facades\Discovery`      | `olvlvl\ComposerAttributeCollector\Attributes`          |
 
 ## Structural improvements applied
 
 1. **`#[LoadsResources]` defaults**. The original constructor defaulted every
-   flag to `false`, so a bare `#[LoadsResources]` loaded nothing. The Academorix
+   flag to `false`, so a bare `#[LoadsResources]` loaded nothing. The Stackra
    constructor turns on the six most common resources — `migrations`, `config`,
    `translations`, `routes`, `commands`, `publishables` — matching Laravel's own
    conventions. Rarer integrations (`views`, `seeders`, `middleware`,
@@ -43,7 +43,7 @@ Applied to every ported file:
 3. **Discovery is attribute-only**. The old
    `DiscoversResources::discoverAndRegisterListeners()` used
    `Discovery::directories([$listenersPath])->classes()` to sweep every file in
-   `src/Listeners/`. Academorix drops that pattern — a class without
+   `src/Listeners/`. Stackra drops that pattern — a class without
    `#[AsListener]` is inert regardless of where it lives.
 
 ## Discovery rewrites (Pixielity → olvlvl)
@@ -81,7 +81,7 @@ Rewritten call sites:
 
 Every `TODO(...)` marker in the ported source is captured here.
 
-### `TODO(package-routing)` — `academorix/routing` not yet in the monorepo
+### `TODO(package-routing)` — `stackra/routing` not yet in the monorepo
 
 Locations:
 
@@ -89,16 +89,16 @@ Locations:
 - `src/Concerns/DiscoversResources.php::discoverAndRegisterMiddleware()`
 
 **Why**: the old backend depended on
-`Academorix\Routing\Attributes\AsController`,
-`Academorix\Routing\Attributes\AsMiddleware`, and
-`Academorix\Routing\RouteRegistrar`. The Academorix monorepo does have a
+`Stackra\Routing\Attributes\AsController`,
+`Stackra\Routing\Attributes\AsMiddleware`, and
+`Stackra\Routing\RouteRegistrar`. The Stackra monorepo does have a
 `packages/routing/` package, but it does not yet expose those specific
 attributes. Rather than couple this package to whatever shape they eventually
 take, both methods are kept as scaffolding — the call sites in
 `discoverResources()` and the gating by `LoadsResources::ATTR_ROUTES` /
 `LoadsResources::ATTR_MIDDLEWARE` are intact, but the bodies are inert.
 
-**Resolution**: once `academorix/routing` defines `#[AsController]`,
+**Resolution**: once `stackra/routing` defines `#[AsController]`,
 `#[AsMiddleware]`, and a `RouteRegistrar` service:
 
 ```php
@@ -141,11 +141,11 @@ None. Every source file has a target:
 ## Auto-discovered service provider
 
 The consumer-facing surface is unchanged: concrete providers extend
-`Academorix\ServiceProvider\Providers\ServiceProvider` and get auto-registered
+`Stackra\ServiceProvider\Providers\ServiceProvider` and get auto-registered
 the standard Laravel way.
 
 Additionally, the package auto-registers
-`Academorix\ServiceProvider\Providers\ServiceProviderServiceProvider` via
+`Stackra\ServiceProvider\Providers\ServiceProviderServiceProvider` via
 `extra.laravel.providers`. Its only job is to include `vendor/attributes.php` at
 register-time so olvlvl's runtime lookups have a `Collection` provider. The
 pattern mirrors
@@ -155,7 +155,7 @@ pattern mirrors
 
 Phase 2.D moved every registry in the monorepo out of `Support/` into
 `Registry/` and introduced the shared framework base class
-`Academorix\ServiceProvider\Registry\AbstractRegistry` — see
+`Stackra\ServiceProvider\Registry\AbstractRegistry` — see
 `.kiro/steering/folder-conventions.md` for the locked per-folder ownership rule
 and the anti-pattern catalogue.
 
@@ -163,8 +163,8 @@ and the anti-pattern catalogue.
 
 | Old path                               | New path                                | Notes                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | -------------------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/Support/BootstrapperRegistry.php` | `src/Registry/BootstrapperRegistry.php` | Namespace: `Academorix\ServiceProvider\Support` → `Academorix\ServiceProvider\Registry`. Now extends `AbstractRegistry`; every duplicated internal (`$entries`, `$order`, `$cursor`, `register`, `all`, `has`, `count`, `clear`) removed. Bespoke priority-derivation (attribute → container → `DEFAULT_PRIORITY`) migrated to the base's `resolvePriorityFor(string $key, int $providedPriority): int` protected hook. |
-| `src/Support/TenancyHookRegistry.php`  | `src/Registry/TenancyHookRegistry.php`  | Namespace: `Academorix\ServiceProvider\Support` → `Academorix\ServiceProvider\Registry`. Now extends `AbstractRegistry`; class body is empty — the base's `all()` + `allReversed()` cover the symmetric-init/teardown pattern out of the box.                                                                                                                                                                           |
+| `src/Support/BootstrapperRegistry.php` | `src/Registry/BootstrapperRegistry.php` | Namespace: `Stackra\ServiceProvider\Support` → `Stackra\ServiceProvider\Registry`. Now extends `AbstractRegistry`; every duplicated internal (`$entries`, `$order`, `$cursor`, `register`, `all`, `has`, `count`, `clear`) removed. Bespoke priority-derivation (attribute → container → `DEFAULT_PRIORITY`) migrated to the base's `resolvePriorityFor(string $key, int $providedPriority): int` protected hook. |
+| `src/Support/TenancyHookRegistry.php`  | `src/Registry/TenancyHookRegistry.php`  | Namespace: `Stackra\ServiceProvider\Support` → `Stackra\ServiceProvider\Registry`. Now extends `AbstractRegistry`; class body is empty — the base's `all()` + `allReversed()` cover the symmetric-init/teardown pattern out of the box.                                                                                                                                                                           |
 
 ### Files that stayed in `Support/`
 
@@ -206,20 +206,20 @@ Every consumer already resolves the registries via container DI, so the
 namespace change is a plain import rewrite:
 
 - `Support/BootstrapperRunner.php` — imports
-  `Academorix\ServiceProvider\Registry\BootstrapperRegistry`.
+  `Stackra\ServiceProvider\Registry\BootstrapperRegistry`.
 - `Bootstrappers/BootstrapperDiscoveryBootstrapper.php` — same.
 - `Bootstrappers/TenancyHookBootstrapper.php` — imports
-  `Academorix\ServiceProvider\Registry\TenancyHookRegistry`.
+  `Stackra\ServiceProvider\Registry\TenancyHookRegistry`.
 - `Dispatchers/TenancyHookDispatcher.php` — imports
-  `Academorix\ServiceProvider\Registry\TenancyHookRegistry`.
+  `Stackra\ServiceProvider\Registry\TenancyHookRegistry`.
 - `Console/BootstrapCacheCommand.php`, `Console/BootstrapClearCommand.php` —
-  import `Academorix\ServiceProvider\Registry\BootstrapperRegistry`.
+  import `Stackra\ServiceProvider\Registry\BootstrapperRegistry`.
 - `Concerns/AsModuleProvider.php` — imports
-  `Academorix\ServiceProvider\Registry\BootstrapperRegistry`.
+  `Stackra\ServiceProvider\Registry\BootstrapperRegistry`.
 - `Attributes/AsBootstrapper.php`, `Attributes/AsTenancyHook.php` — `@see`
   docblock references.
 - `Providers/ServiceProviderServiceProvider.php` — imports
-  `Academorix\ServiceProvider\Registry\BootstrapperRegistry`.
+  `Stackra\ServiceProvider\Registry\BootstrapperRegistry`.
 
 ### Tests
 

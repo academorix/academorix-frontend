@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Development\Actions\Tenant;
+namespace Stackra\Development\Actions\Tenant;
 
-use Academorix\Development\Contracts\Repositories\GoalRepositoryInterface;
-use Academorix\Development\Data\GoalData;
-use Academorix\Development\Data\Requests\CreateGoalRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Development\Contracts\Repositories\GoalRepositoryInterface;
+use Stackra\Development\Data\GoalData;
+use Stackra\Development\Data\Requests\CreateGoalRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/goals` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Development

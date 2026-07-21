@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transaction/errors",
+  "id": "stackra://modules/transaction/errors",
   "$version": 1,
   "title": "transaction — error codes",
   "namespace": "transaction",

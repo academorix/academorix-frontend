@@ -1,6 +1,6 @@
 <?php return array(
     'root' => array(
-        'name' => 'academorix/architecture',
+        'name' => 'stackra/architecture',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
         'reference' => 'b4856bb48c6551fe1d5b04aa389dec85e0c4e435',
@@ -10,7 +10,7 @@
         'dev' => true,
     ),
     'versions' => array(
-        'academorix/architecture' => array(
+        'stackra/architecture' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
             'reference' => 'b4856bb48c6551fe1d5b04aa389dec85e0c4e435',
@@ -19,30 +19,30 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-        'academorix/enum' => array(
+        'stackra/enum' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
             'reference' => '0f75a5f2b69ae03f1359b200eb1168a607d18c84',
             'type' => 'library',
-            'install_path' => __DIR__ . '/../academorix/enum',
+            'install_path' => __DIR__ . '/../stackra/enum',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-        'academorix/exceptions' => array(
+        'stackra/exceptions' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
             'reference' => '9cc665f9fdc598b8133fcd8f02f78d9c22a71155',
             'type' => 'library',
-            'install_path' => __DIR__ . '/../academorix/exceptions',
+            'install_path' => __DIR__ . '/../stackra/exceptions',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-        'academorix/foundation' => array(
+        'stackra/foundation' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
             'reference' => '1fa723df8878133d161ee692d2c999bada4a5e28',
             'type' => 'library',
-            'install_path' => __DIR__ . '/../academorix/foundation',
+            'install_path' => __DIR__ . '/../stackra/foundation',
             'aliases' => array(),
             'dev_requirement' => false,
         ),

@@ -2,7 +2,7 @@
 
 /**
  * @file BlueprintReader.php
- * @module Academorix\Cli\Blueprint
+ * @module Stackra\Cli\Blueprint
  * @description Reads every `*.json` under `blueprints/<moduleName>/`
  *   and merges into a single associative array keyed by basename.
  *   `module.json` becomes `'module' => [...]`; `routes.json` becomes
@@ -11,11 +11,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Blueprint;
+namespace Stackra\Cli\Blueprint;
 
-use Academorix\Cli\Exceptions\BlueprintException;
-use Academorix\Cli\Exceptions\CliException;
-use Academorix\Cli\Support\PathResolver;
+use Stackra\Cli\Exceptions\BlueprintException;
+use Stackra\Cli\Exceptions\CliException;
+use Stackra\Cli\Support\PathResolver;
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 

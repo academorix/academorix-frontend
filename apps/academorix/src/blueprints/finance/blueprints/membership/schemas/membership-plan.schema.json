@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/membership/schemas/membership-plan",
+  "id": "stackra://modules/membership/schemas/membership-plan",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "MembershipPlan",
@@ -13,8 +13,8 @@
     "keyType": "string",
     "keyPrefix": "mbp_",
     "incrementing": false,
-    "model": "Academorix\\Finance\\Membership\\Models\\MembershipPlan",
-    "interface": "Academorix\\Finance\\Membership\\Contracts\\Data\\MembershipPlanInterface",
+    "model": "Stackra\\Finance\\Membership\\Models\\MembershipPlan",
+    "interface": "Stackra\\Finance\\Membership\\Contracts\\Data\\MembershipPlanInterface",
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",

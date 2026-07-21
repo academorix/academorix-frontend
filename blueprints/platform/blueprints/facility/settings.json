@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/facility/settings",
+  "id": "stackra://modules/facility/settings",
   "$version": 1,
   "title": "facility — settings",
   "description": "Tenant-facing preferences (branch-level facility defaults) + user-level preferences (booking notification opt-outs).",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "facility",
-      "class": "Academorix\\Facility\\Settings\\FacilitySettings",
+      "class": "Stackra\\Facility\\Settings\\FacilitySettings",
       "label": "Facilities & Bookings",
       "description": "Tenant-wide defaults for facility creation + booking policy.",
       "icon": "map-pin",
@@ -151,7 +151,7 @@
     },
     {
       "key": "facility_user",
-      "class": "Academorix\\Facility\\Settings\\FacilityUserSettings",
+      "class": "Stackra\\Facility\\Settings\\FacilityUserSettings",
       "label": "My bookings",
       "description": "Per-user booking preferences.",
       "icon": "user-circle",

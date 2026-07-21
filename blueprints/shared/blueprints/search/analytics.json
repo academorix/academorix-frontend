@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/search/analytics",
+  "id": "stackra://modules/search/analytics",
   "$version": 1,
   "title": "search \u2014 product analytics events",
   "description": "Product-analytics events emitted from the tenant surface. Volume-level telemetry lives in metrics.json + search_analytics_events (row-level). This file is for behaviour signals sent to Segment / Amplitude (feature usage, drop-off, funnels).",

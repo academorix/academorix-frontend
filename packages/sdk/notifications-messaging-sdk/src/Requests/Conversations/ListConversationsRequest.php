@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsMessagingSdk\Requests\Conversations;
+namespace Stackra\NotificationsMessagingSdk\Requests\Conversations;
 
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\ApiSdk\Data\PaginationLinks;
-use Academorix\ApiSdk\Data\PaginationMeta;
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\NotificationsMessagingSdk\Data\ConversationData;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\ApiSdk\Data\PaginationLinks;
+use Stackra\ApiSdk\Data\PaginationMeta;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\NotificationsMessagingSdk\Data\ConversationData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

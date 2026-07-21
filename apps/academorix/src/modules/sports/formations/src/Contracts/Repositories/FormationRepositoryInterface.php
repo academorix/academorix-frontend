@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Formations\Contracts\Repositories;
+namespace Stackra\Formations\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Formations\Models\Formation}.
+ * Repository contract for {@see Stackra\Formations\Models\Formation}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `FormationRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Formations\Models\Formation>
+ * @extends RepositoryInterface<\Stackra\Formations\Models\Formation>
  *
  * @category Formations
  *

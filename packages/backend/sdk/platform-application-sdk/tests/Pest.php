@@ -13,6 +13,6 @@
 
 declare(strict_types=1);
 
-use Academorix\PlatformApplicationSdk\Tests\TestCase;
+use Stackra\PlatformApplicationSdk\Tests\TestCase;
 
 uses(TestCase::class)->in(__DIR__);

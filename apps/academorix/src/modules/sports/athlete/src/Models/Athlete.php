@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Athlete\Models;
+namespace Stackra\Athlete\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Athlete\Contracts\Data\AthleteInterface;
-use Academorix\Athlete\Database\Factories\AthleteFactory;
-use Academorix\Athlete\Enums\AthleteDominantHand;
-use Academorix\Athlete\Enums\AthleteGender;
-use Academorix\Athlete\Enums\AthleteStatus;
-use Academorix\Athlete\Policies\AthletePolicy;
-use Academorix\Branch\Concerns\BelongsToBranch;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
-use Academorix\User\Concerns\BelongsToUser;
+use Stackra\Athlete\Contracts\Data\AthleteInterface;
+use Stackra\Athlete\Database\Factories\AthleteFactory;
+use Stackra\Athlete\Enums\AthleteDominantHand;
+use Stackra\Athlete\Enums\AthleteGender;
+use Stackra\Athlete\Enums\AthleteStatus;
+use Stackra\Athlete\Policies\AthletePolicy;
+use Stackra\Branch\Concerns\BelongsToBranch;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
+use Stackra\User\Concerns\BelongsToUser;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;

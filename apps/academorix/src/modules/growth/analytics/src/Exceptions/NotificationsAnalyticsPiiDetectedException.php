@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Analytics\Exceptions;
+namespace Stackra\Analytics\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * PropertyValidator refused the event — a value or property name matched a PII regex (email, phone, credit card, national ID).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsAnalyticsPiiDetectedException extends AcademorixException
+final class NotificationsAnalyticsPiiDetectedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

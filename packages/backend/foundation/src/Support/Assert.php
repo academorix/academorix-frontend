@@ -7,10 +7,10 @@
  * Guard-clause helpers for defensive checks at the top of methods.
  * Throws `\InvalidArgumentException` on failure — a plain SPL type,
  * chosen deliberately so `foundation` can stay independent of
- * `academorix/exceptions` (which depends on foundation itself).
+ * `stackra/exceptions` (which depends on foundation itself).
  *
  * The exceptions package layers its own richer guards on top of these
- * (`Academorix\Exceptions\Guard::...`) that throw
+ * (`Stackra\Exceptions\Guard::...`) that throw
  * `InvariantViolationException` with structured context. Use those in
  * domain code. Use `Assert::...` in leaf utilities that must not pull
  * in the exceptions package.
@@ -25,7 +25,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Support;
+namespace Stackra\Foundation\Support;
 
 use InvalidArgumentException;
 

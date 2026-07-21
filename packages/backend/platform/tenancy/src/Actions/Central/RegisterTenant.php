@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Actions\Central;
+namespace Stackra\Tenancy\Actions\Central;
 
-use Academorix\Application\Contracts\Repositories\ApplicationRepositoryInterface;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Actions\Support\ProvisionTenant;
-use Academorix\Tenancy\Data\Requests\CreateTenantRequestData;
-use Academorix\Tenancy\Data\Requests\RegisterTenantRequestData;
-use Academorix\Tenancy\Data\TenantData;
-use Academorix\Tenancy\Jobs\ProvisionTenantJob;
+use Stackra\Application\Contracts\Repositories\ApplicationRepositoryInterface;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Actions\Support\ProvisionTenant;
+use Stackra\Tenancy\Data\Requests\CreateTenantRequestData;
+use Stackra\Tenancy\Data\Requests\RegisterTenantRequestData;
+use Stackra\Tenancy\Data\TenantData;
+use Stackra\Tenancy\Jobs\ProvisionTenantJob;
 
 /**
  * `POST /api/v1/tenants/register` — public self-serve registration

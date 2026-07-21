@@ -105,19 +105,19 @@ def emit_composer_json(m: Module) -> str:
 
     Backslashes flow straight through — json.dumps handles PSR-4 escaping.
     Double-escaping (`ns.replace('\\\\', '\\\\\\\\')`) here caused the JSON
-    autoload prefixes to render as `Academorix\\\\Foo\\\\` (double
+    autoload prefixes to render as `Stackra\\\\Foo\\\\` (double
     backslashes) and PSR-4 to silently fail for every module.
     """
     provider = f"{m.ns_module_root}\\Providers\\{m.studly_name}ServiceProvider"
     # Disambiguation map for module-vs-shared duplicates.
     # `shared/audit` + `shared/activity` are hand-tuned real-impl packages
-    # under the framework `academorix/audit` + `academorix/activity` names;
+    # under the framework `stackra/audit` + `stackra/activity` names;
     # the `observability/*` blueprint-emitted equivalents own the storage
     # schema adaptation and MUST live under a distinct composer name to
-    # coexist. Every other module keeps the default flat `academorix/<name>`.
+    # coexist. Every other module keeps the default flat `stackra/<name>`.
     composer_name_overrides = {
-        ("observability", "audit"): "academorix-observability/audit",
-        ("observability", "activity"): "academorix-observability/activity",
+        ("observability", "audit"): "stackra-observability/audit",
+        ("observability", "activity"): "stackra-observability/activity",
     }
     composer_name = composer_name_overrides.get(
         (m.tier, m.name), m.composer_module_name,
@@ -126,14 +126,14 @@ def emit_composer_json(m: Module) -> str:
         "name": composer_name,
         "type": "library",
         "description": (
-            f"Academorix {m.studly_name} module — server-side Laravel package "
+            f"Stackra {m.studly_name} module — server-side Laravel package "
             f"emitted from the module blueprint at "
             f"`modules/{m.tier}/blueprints/{m.name}/`. Complements the wire "
             f"SDK at `{m.composer_name}`."
         ),
         "license": "proprietary",
         "keywords": [
-            "academorix", "module", "laravel", m.tier, m.name,
+            "stackra", "module", "laravel", m.tier, m.name,
         ],
         "require": {
             "php": "^8.3",
@@ -142,11 +142,11 @@ def emit_composer_json(m: Module) -> str:
             "illuminate/container": "^13.0",
             "illuminate/contracts": "^13.0",
             "spatie/laravel-data": "^4.11",
-            "academorix/foundation": "@dev",
-            "academorix/crud": "@dev",
-            "academorix/routing": "@dev",
-            "academorix/service-provider": "@dev",
-            "academorix/support": "@dev",
+            "stackra/foundation": "@dev",
+            "stackra/crud": "@dev",
+            "stackra/routing": "@dev",
+            "stackra/service-provider": "@dev",
+            "stackra/support": "@dev",
             f"{m.composer_name}": "@dev",
         },
         "require-dev": {
@@ -356,7 +356,7 @@ def emit_service_provider(m: Module) -> str:
     events = _load_aux(module_dir, "events.json").get("events", []) or []
     if events:
         discoverables.append(
-            "  - Events: `#[AsEvent]` (discovered by `academorix/events`)."
+            "  - Events: `#[AsEvent]` (discovered by `stackra/events`)."
         )
 
     # Policies from policies.json.
@@ -420,9 +420,9 @@ declare(strict_types=1);
 
 namespace {ns};
 
-use Academorix\\ServiceProvider\\Attributes\\AsModule;
-use Academorix\\ServiceProvider\\Attributes\\LoadsResources;
-use Academorix\\ServiceProvider\\Providers\\ServiceProvider;
+use Stackra\\ServiceProvider\\Attributes\\AsModule;
+use Stackra\\ServiceProvider\\Attributes\\LoadsResources;
+use Stackra\\ServiceProvider\\Providers\\ServiceProvider;
 
 {class_doc}
 #[AsModule(name: '{m.studly_name}', priority: {priority})]
@@ -900,13 +900,13 @@ _TRAIT_MAP: dict[str, tuple[str, str]] = {
     "SoftDeletes":    ("Illuminate\\Database\\Eloquent\\SoftDeletes", "SoftDeletes"),
     "Notifiable":     ("Illuminate\\Notifications\\Notifiable", "Notifiable"),
     "HasApiTokens":   ("Laravel\\Sanctum\\HasApiTokens", "HasApiTokens"),
-    # Framework — Academorix.
-    "HasPrefixedUlid":     ("Academorix\\Foundation\\Concerns\\HasPrefixedUlid", "HasPrefixedUlid"),
-    "HasMetadata":         ("Academorix\\Foundation\\Concerns\\HasMetadata", "HasMetadata"),
-    "Filterable":          ("Academorix\\Foundation\\Concerns\\Filterable", "Filterable"),
-    "HasSystemFlag":       ("Academorix\\Database\\Concerns\\HasSystemFlag", "HasSystemFlag"),
-    "EncryptsSensitiveFields": ("Academorix\\Foundation\\Concerns\\EncryptsSensitiveFields", "EncryptsSensitiveFields"),
-    "IsRetentionAware":    ("Academorix\\Foundation\\Concerns\\IsRetentionAware", "IsRetentionAware"),
+    # Framework — Stackra.
+    "HasPrefixedUlid":     ("Stackra\\Foundation\\Concerns\\HasPrefixedUlid", "HasPrefixedUlid"),
+    "HasMetadata":         ("Stackra\\Foundation\\Concerns\\HasMetadata", "HasMetadata"),
+    "Filterable":          ("Stackra\\Foundation\\Concerns\\Filterable", "Filterable"),
+    "HasSystemFlag":       ("Stackra\\Database\\Concerns\\HasSystemFlag", "HasSystemFlag"),
+    "EncryptsSensitiveFields": ("Stackra\\Foundation\\Concerns\\EncryptsSensitiveFields", "EncryptsSensitiveFields"),
+    "IsRetentionAware":    ("Stackra\\Foundation\\Concerns\\IsRetentionAware", "IsRetentionAware"),
     # Third-party — Spatie, OwenIt, Mattiverse.
     "HasSlug":             ("Spatie\\Sluggable\\HasSlug", "HasSlug"),
     "Sluggable":           ("Spatie\\Sluggable\\HasSlug", "HasSlug"),
@@ -929,26 +929,26 @@ _TRAIT_MAP: dict[str, tuple[str, str]] = {
     "HasActivityLog":      ("Spatie\\Activitylog\\Traits\\LogsActivity", "LogsActivity"),
     "LogsActivity":        ("Spatie\\Activitylog\\Traits\\LogsActivity", "LogsActivity"),
     # Tenancy + hierarchy.
-    "BelongsToTenant":         ("Academorix\\Tenancy\\Concerns\\BelongsToTenant", "BelongsToTenant"),
-    "BelongsToTenantOptional": ("Academorix\\Tenancy\\Concerns\\BelongsToTenantOptional", "BelongsToTenantOptional"),
-    "BelongsToApplication":    ("Academorix\\Application\\Concerns\\BelongsToApplication", "BelongsToApplication"),
-    "BelongsToOrganization":   ("Academorix\\Organization\\Concerns\\BelongsToOrganization", "BelongsToOrganization"),
-    "BelongsToBranch":         ("Academorix\\Branch\\Concerns\\BelongsToBranch", "BelongsToBranch"),
-    "BelongsToRegion":         ("Academorix\\Region\\Concerns\\BelongsToRegion", "BelongsToRegion"),
-    "BelongsToUser":           ("Academorix\\User\\Concerns\\BelongsToUser", "BelongsToUser"),
+    "BelongsToTenant":         ("Stackra\\Tenancy\\Concerns\\BelongsToTenant", "BelongsToTenant"),
+    "BelongsToTenantOptional": ("Stackra\\Tenancy\\Concerns\\BelongsToTenantOptional", "BelongsToTenantOptional"),
+    "BelongsToApplication":    ("Stackra\\Application\\Concerns\\BelongsToApplication", "BelongsToApplication"),
+    "BelongsToOrganization":   ("Stackra\\Organization\\Concerns\\BelongsToOrganization", "BelongsToOrganization"),
+    "BelongsToBranch":         ("Stackra\\Branch\\Concerns\\BelongsToBranch", "BelongsToBranch"),
+    "BelongsToRegion":         ("Stackra\\Region\\Concerns\\BelongsToRegion", "BelongsToRegion"),
+    "BelongsToUser":           ("Stackra\\User\\Concerns\\BelongsToUser", "BelongsToUser"),
     # Sports.
-    "BelongsToAthlete":            ("Academorix\\Athlete\\Concerns\\BelongsToAthlete", "BelongsToAthlete"),
-    "BelongsToAthleteEnrollment":  ("Academorix\\AthleteEnrollment\\Concerns\\BelongsToAthleteEnrollment", "BelongsToAthleteEnrollment"),
-    "BelongsToStaff":              ("Academorix\\Staff\\Concerns\\BelongsToStaff", "BelongsToStaff"),
-    "BelongsToSeason":             ("Academorix\\Season\\Concerns\\BelongsToSeason", "BelongsToSeason"),
-    "BelongsToEvent":              ("Academorix\\Event\\Concerns\\BelongsToEvent", "BelongsToEvent"),
-    "BelongsToSession":            ("Academorix\\Session\\Concerns\\BelongsToSession", "BelongsToSession"),
-    "BelongsToTeam":               ("Academorix\\Teams\\Concerns\\BelongsToTeam", "BelongsToTeam"),
-    "BelongsToMembership":         ("Academorix\\Membership\\Concerns\\BelongsToMembership", "BelongsToMembership"),
-    "BelongsToInvoice":            ("Academorix\\Invoice\\Concerns\\BelongsToInvoice", "BelongsToInvoice"),
-    "HasEventFacilities":          ("Academorix\\Event\\Concerns\\HasEventFacilities", "HasEventFacilities"),
-    "BelongsToCoachingProfile":    ("Academorix\\Coaching\\Concerns\\BelongsToCoachingProfile", "BelongsToCoachingProfile"),
-    "HasAttributeSet":             ("Academorix\\Attributes\\Concerns\\HasAttributeSet", "HasAttributeSet"),
+    "BelongsToAthlete":            ("Stackra\\Athlete\\Concerns\\BelongsToAthlete", "BelongsToAthlete"),
+    "BelongsToAthleteEnrollment":  ("Stackra\\AthleteEnrollment\\Concerns\\BelongsToAthleteEnrollment", "BelongsToAthleteEnrollment"),
+    "BelongsToStaff":              ("Stackra\\Staff\\Concerns\\BelongsToStaff", "BelongsToStaff"),
+    "BelongsToSeason":             ("Stackra\\Season\\Concerns\\BelongsToSeason", "BelongsToSeason"),
+    "BelongsToEvent":              ("Stackra\\Event\\Concerns\\BelongsToEvent", "BelongsToEvent"),
+    "BelongsToSession":            ("Stackra\\Session\\Concerns\\BelongsToSession", "BelongsToSession"),
+    "BelongsToTeam":               ("Stackra\\Teams\\Concerns\\BelongsToTeam", "BelongsToTeam"),
+    "BelongsToMembership":         ("Stackra\\Membership\\Concerns\\BelongsToMembership", "BelongsToMembership"),
+    "BelongsToInvoice":            ("Stackra\\Invoice\\Concerns\\BelongsToInvoice", "BelongsToInvoice"),
+    "HasEventFacilities":          ("Stackra\\Event\\Concerns\\HasEventFacilities", "HasEventFacilities"),
+    "BelongsToCoachingProfile":    ("Stackra\\Coaching\\Concerns\\BelongsToCoachingProfile", "BelongsToCoachingProfile"),
+    "HasAttributeSet":             ("Stackra\\Attributes\\Concerns\\HasAttributeSet", "HasAttributeSet"),
 }
 
 # Traits that require the model to `implements` a contract in addition
@@ -1270,7 +1270,7 @@ declare(strict_types=1);
 
 namespace {ns};
 
-use Academorix\\Crud\\Contracts\\RepositoryInterface;
+use Stackra\\Crud\\Contracts\\RepositoryInterface;
 
 {class_doc}
 interface {e.class_name}RepositoryInterface extends RepositoryInterface
@@ -1305,11 +1305,11 @@ declare(strict_types=1);
 
 namespace {ns};
 
-use Academorix\\Crud\\Attributes\\AsRepository;
-use Academorix\\Crud\\Attributes\\Cacheable;
-use Academorix\\Crud\\Attributes\\Filterable;
-use Academorix\\Crud\\Attributes\\UseModel;
-use Academorix\\Crud\\Repositories\\Repository;
+use Stackra\\Crud\\Attributes\\AsRepository;
+use Stackra\\Crud\\Attributes\\Cacheable;
+use Stackra\\Crud\\Attributes\\Filterable;
+use Stackra\\Crud\\Attributes\\UseModel;
+use Stackra\\Crud\\Repositories\\Repository;
 use {interface_ns}\\Data\\{e.class_name}Interface;
 use {interface_ns}\\Repositories\\{e.class_name}RepositoryInterface;
 use {m.ns_module_root}\\Models\\{e.class_name};
@@ -1525,9 +1525,9 @@ def emit_policy(m: Module, e: Entity, policy_spec: dict[str, Any]) -> str:
     actor_import_alias = "AuthUser" if e.class_name == "User" else "User"
     actor_type = actor_import_alias
     actor_import_line = (
-        f"use Academorix\\User\\Models\\User as {actor_import_alias};"
+        f"use Stackra\\User\\Models\\User as {actor_import_alias};"
         if actor_import_alias != "User"
-        else "use Academorix\\User\\Models\\User;"
+        else "use Stackra\\User\\Models\\User;"
     )
 
     return f"""<?php
@@ -1588,7 +1588,7 @@ def emit_event(m: Module, event_spec: dict[str, Any]) -> tuple[str, str]:
     ctor_doc = _php_docblock(ctor_doc_lines, indent="    ") if ctor_doc_lines else ""
     props_block = "\n".join(prop_lines) if prop_lines else ""
 
-    # `#[AsEvent]` marks the class for discovery by `academorix/events`'s
+    # `#[AsEvent]` marks the class for discovery by `stackra/events`'s
     # `EventDiscovery` per ADR-0010. Without it, listeners registered via
     # `#[OnEvent(Class::class)]` cannot resolve the fully-qualified name
     # from a reflection scan — the class ships but nobody hears it fire.
@@ -1600,7 +1600,7 @@ declare(strict_types=1);
 
 namespace {ns};
 
-use Academorix\\Events\\Attributes\\AsEvent;
+use Stackra\\Events\\Attributes\\AsEvent;
 use Illuminate\\Contracts\\Events\\ShouldDispatchAfterCommit;
 
 {_php_docblock(doc_lines)}
@@ -1769,7 +1769,7 @@ def emit_action(m: Module, route: Route) -> tuple[str, str]:
         f"`{verb} {route.path}` — {op} action ({route.audience or 'unscoped'} audience).",
         "",
         f"Single-invoke controller wired via `#[AsAction]` + `#[{verb_attr}(...)]`",
-        f"+ `#[Middleware(...)]` from `Academorix\\Routing`. Discovered by the routing",
+        f"+ `#[Middleware(...)]` from `Stackra\\Routing`. Discovered by the routing",
         f"package's boot-time `RouteRegistrar` — no route file needed.",
         "",
         f"@category {m.studly_name}",
@@ -1837,12 +1837,12 @@ def _routing_uses_for(verb_attr: str | None) -> str:
     brings the `InteractsWith*` helpers.
     """
     imports = [
-        "use Academorix\\Routing\\Attributes\\AsAction;",
-        "use Academorix\\Routing\\Attributes\\Middleware;",
-        "use Academorix\\Routing\\Concerns\\AsController;",
+        "use Stackra\\Routing\\Attributes\\AsAction;",
+        "use Stackra\\Routing\\Attributes\\Middleware;",
+        "use Stackra\\Routing\\Concerns\\AsController;",
     ]
     if verb_attr:
-        imports.append(f"use Academorix\\Routing\\Attributes\\{verb_attr};")
+        imports.append(f"use Stackra\\Routing\\Attributes\\{verb_attr};")
     return "\n".join(imports)
 
 
@@ -2283,7 +2283,7 @@ declare(strict_types=1);
 
 namespace {ns};
 
-use Academorix\\Enum\\Enum;
+use Stackra\\Enum\\Enum;
 
 {doc}
 enum {class_name}: string
@@ -2359,7 +2359,7 @@ def emit_permission_enum(m: Module, permissions: list[dict[str, Any]]) -> tuple[
     Matches the `shared/activity/src/Enums/ActivityPermission.php` shape:
     implements `PermissionEnum`, uses `#[Meta([Label, Description])]`,
     per-case `#[Label]` + `#[Description]`, and provides a `guard()`
-    method returning the correct `Academorix\\Authorization\\Enums\\Guard`
+    method returning the correct `Stackra\\Authorization\\Enums\\Guard`
     case based on each permission's declared guard.
     """
     if not permissions:
@@ -2445,12 +2445,12 @@ declare(strict_types=1);
 
 namespace {ns};
 
-use Academorix\\Authorization\\Contracts\\PermissionEnum;
-use Academorix\\Authorization\\Enums\\Guard;
-use Academorix\\Enum\\Attributes\\Description;
-use Academorix\\Enum\\Attributes\\Label;
-use Academorix\\Enum\\Attributes\\Meta;
-use Academorix\\Enum\\Enum;
+use Stackra\\Authorization\\Contracts\\PermissionEnum;
+use Stackra\\Authorization\\Enums\\Guard;
+use Stackra\\Enum\\Attributes\\Description;
+use Stackra\\Enum\\Attributes\\Label;
+use Stackra\\Enum\\Attributes\\Meta;
+use Stackra\\Enum\\Enum;
 
 {class_doc}
 #[Meta([Label::class, Description::class])]
@@ -2480,7 +2480,7 @@ def emit_permission_seeder(m: Module, permissions: list[dict[str, Any]]) -> tupl
     """Emit `database/seeders/<StudlyName>PermissionSeeder.php`.
 
     Uses the shared `SeedsPermissionEnum` trait from
-    `academorix/authorization` — six-line trait-based shape. Matches
+    `stackra/authorization` — six-line trait-based shape. Matches
     `shared/activity/database/seeders/ActivityPermissionSeeder.php`.
     """
     if not permissions:
@@ -2538,8 +2538,8 @@ declare(strict_types=1);
 namespace {ns};
 
 use {enum_ns}\\{enum_class};
-use Academorix\\Authorization\\Database\\Seeders\\Concerns\\SeedsPermissionEnum;
-use Academorix\\ServiceProvider\\Attributes\\AsSeeder;
+use Stackra\\Authorization\\Database\\Seeders\\Concerns\\SeedsPermissionEnum;
+use Stackra\\ServiceProvider\\Attributes\\AsSeeder;
 use Illuminate\\Database\\Seeder;
 
 {class_doc}
@@ -2591,10 +2591,10 @@ declare(strict_types=1);
 
 namespace {ns};
 
-use Academorix\\Exceptions\\AcademorixException;
+use Stackra\\Exceptions\\StackraException;
 
 {doc}
-final class {class_name} extends AcademorixException
+final class {class_name} extends StackraException
 {{
     /**
      * Stable machine-readable error code emitted on the JSON envelope.
@@ -2656,8 +2656,8 @@ declare(strict_types=1);
 
 namespace {ns};
 
-use Academorix\\Console\\Attributes\\AsCommand;
-use Academorix\\Console\\Console\\Commands\\BaseCommand;
+use Stackra\\Console\\Attributes\\AsCommand;
+use Stackra\\Console\\Console\\Commands\\BaseCommand;
 
 {doc}
 #[AsCommand(
@@ -3278,8 +3278,8 @@ def emit_settings_group(m: Module, group: dict[str, Any], ns_override: str | Non
     class_name = class_fqcn.rsplit("\\", 1)[-1]
     # The module.json `namespace` field is authoritative — it matches the
     # module's composer.json PSR-4 autoload. Real-impl packages often use
-    # tier-prefixed namespaces (`Academorix\Notifications\Mail`) which the
-    # generator's `ns_module_root` (`Academorix\NotificationsMail`) does not
+    # tier-prefixed namespaces (`Stackra\Notifications\Mail`) which the
+    # generator's `ns_module_root` (`Stackra\NotificationsMail`) does not
     # produce. Callers pass the resolved namespace via `ns_override`.
     module_ns = ns_override or m.ns_module_root
     ns = f"{module_ns}\\Settings"
@@ -3433,10 +3433,10 @@ declare(strict_types=1);
 
 namespace {ns};
 
-use Academorix\\Settings\\Attributes\\AsSetting;
-use Academorix\\Settings\\Attributes\\SettingField;
-use Academorix\\Settings\\Attributes\\SettingGroup;
-use Academorix\\Settings\\Enums\\ControlType;
+use Stackra\\Settings\\Attributes\\AsSetting;
+use Stackra\\Settings\\Attributes\\SettingField;
+use Stackra\\Settings\\Attributes\\SettingGroup;
+use Stackra\\Settings\\Enums\\ControlType;
 use Spatie\\LaravelSettings\\Settings;
 
 {class_doc}
@@ -3720,7 +3720,7 @@ def write_module(m: Module, out_root: Path, *, force: bool, dry_run: bool) -> tu
     # namespaces the generator's `ns_module_root` does not compute. When the
     # composer.json is emitted by the generator it uses `ns_module_root`;
     # when the composer.json is hand-tuned it may declare a different prefix
-    # (like `Academorix\Notifications\Mail\` for notifications-mail).
+    # (like `Stackra\Notifications\Mail\` for notifications-mail).
     # Either way, the settings namespace must match the autoload prefix so
     # PSR-4 resolves the emitted class.
     module_ns_override: str | None = None

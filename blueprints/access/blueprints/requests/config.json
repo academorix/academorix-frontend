@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/access/requests/config",
+  "id": "stackra://modules/access/requests/config",
   "$version": 1,
   "title": "requests \u2014 developer configuration",
   "description": "Developer / operator configuration. Mirrors `config/access-requests.php`. Static per deploy; changing requires redeploy + `config:cache`. This module intentionally does not ship tenant-editable settings \u2014 tenant-side approver-flow configuration goes through `workflow/approvals` templates.",

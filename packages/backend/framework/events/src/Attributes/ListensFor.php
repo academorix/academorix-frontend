@@ -6,7 +6,7 @@
  * @description
  * Method-level, repeatable attribute that binds a specific listener
  * method to an event class. It's the sibling of
- * {@see \Academorix\Events\Attributes\OnEvent} — same semantics,
+ * {@see \Stackra\Events\Attributes\OnEvent} — same semantics,
  * different placement: `#[OnEvent]` sits on the class and hooks into
  * `handle()`, whereas `#[ListensFor]` sits on a method and lets one
  * class subscribe to several events via distinct entry points.
@@ -35,7 +35,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Events\Attributes;
+namespace Stackra\Events\Attributes;
 
 use Attribute;
 

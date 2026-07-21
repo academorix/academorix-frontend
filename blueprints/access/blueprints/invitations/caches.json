@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invitations/caches",
+  "id": "stackra://modules/invitations/caches",
   "$version": 1,
   "title": "invitations — cache keys",
   "description": "Cache keys this module owns. Namespaced per tenant by CachePrefixTenantHook for tenant-scoped keys; un-prefixed keys called out explicitly.",

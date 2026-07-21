@@ -5,11 +5,11 @@
  *
  * @description
  * Path rule: forbids the Laravel-default `app/` directory at
- * the root of any Academorix app.
+ * the root of any Stackra app.
  *
  * ## Why
  *
- * Academorix apps use `src/` as their source root — the same
+ * Stackra apps use `src/` as their source root — the same
  * convention every package in the monorepo follows. Wiring is
  * done in `bootstrap/app.php` via:
  *
@@ -40,9 +40,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Violations\Violation;
 
 /**
  * Enforce "use src/, never app/, as the source root".
@@ -64,7 +64,7 @@ final class NoAppFolderRule extends AbstractPathRule
      */
     public function description(): string
     {
-        return 'Academorix apps use src/ as the source root — a Laravel-style app/ directory is forbidden.';
+        return 'Stackra apps use src/ as the source root — a Laravel-style app/ directory is forbidden.';
     }
 
     /**
@@ -103,7 +103,7 @@ final class NoAppFolderRule extends AbstractPathRule
                     filePath: $fullPath,
                     offender: $basename,
                     message: sprintf(
-                        'Forbidden directory "%s" exists in %s — Academorix apps use src/ as the source root.',
+                        'Forbidden directory "%s" exists in %s — Stackra apps use src/ as the source root.',
                         $basename,
                         $appRoot,
                     ),

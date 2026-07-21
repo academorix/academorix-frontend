@@ -1,6 +1,6 @@
 ---
 description: >-
-  Delivery Lead for Academorix — owns Phase 4 BUILD across four repos (backend,
+  Delivery Lead for Stackra — owns Phase 4 BUILD across four repos (backend,
   frontend web, frontend native, AI service). Manages the builder + steward +
   test-writer ensembles. Enforces steward-first per-file compliance in overlap
   with each builder. Advisory only — does not write code.

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Exceptions;
+namespace Stackra\Transfer\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the download signature is invalid or tampered.
@@ -13,7 +13,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TransferArtifactLinkInvalidException extends AcademorixException
+final class TransferArtifactLinkInvalidException extends StackraException
 {
     public const CODE = 'TRANSFER_ARTIFACT_LINK_INVALID';
 

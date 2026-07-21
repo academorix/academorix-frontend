@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/audit/errors",
+  "id": "stackra://modules/audit/errors",
   "$version": 1,
   "title": "audit — error codes",
   "description": "Audit-scoped error codes. Namespace: NOTIFICATIONS_AUDIT_* to match the notifications family convention. Every code maps to an HTTP status + retryability flag + user-facing bit + audit severity. Most codes fire against the retention-policy or export surfaces; the audit row itself has narrow error surface (immutable, no CRUD over HTTP).",

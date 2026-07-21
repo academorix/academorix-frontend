@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Actions\Tenant\Translations;
+namespace Stackra\Localization\Actions\Tenant\Translations;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Localization\Contracts\Data\TranslationInterface;
-use Academorix\Localization\Data\Requests\UpdateTranslationRequestData;
-use Academorix\Localization\Data\Resources\TranslationData;
-use Academorix\Localization\Enums\LocalizationPermission;
-use Academorix\Localization\Models\Translation;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Patch;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Localization\Contracts\Data\TranslationInterface;
+use Stackra\Localization\Data\Requests\UpdateTranslationRequestData;
+use Stackra\Localization\Data\Resources\TranslationData;
+use Stackra\Localization\Enums\LocalizationPermission;
+use Stackra\Localization\Models\Translation;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Patch;
+use Stackra\Routing\Concerns\AsController;
 use Spatie\LaravelData\Optional;
 
 /**

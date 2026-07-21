@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Contracts\Data;
+namespace Stackra\Compliance\Contracts\Data;
 
-use Academorix\Compliance\Models\LegalHold;
+use Stackra\Compliance\Models\LegalHold;
 use Illuminate\Container\Attributes\Bind;
 
 /**

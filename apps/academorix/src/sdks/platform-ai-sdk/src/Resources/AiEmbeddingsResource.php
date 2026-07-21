@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformAiSdk\Resources;
+namespace Stackra\PlatformAiSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\PlatformAiSdk\Data\AiEmbeddingData;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\PlatformAiSdk\Data\AiEmbeddingData;
 use Saloon\Http\Response;
 
 /**

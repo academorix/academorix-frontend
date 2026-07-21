@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Nightwatch\Samplers;
 
 use Illuminate\Http\Request;
-use Academorix\Nightwatch\Attributes\AsNightwatchSampler;
-use Academorix\Nightwatch\Contracts\NightwatchSampler;
+use Stackra\Nightwatch\Attributes\AsNightwatchSampler;
+use Stackra\Nightwatch\Contracts\NightwatchSampler;
 
 /**
  * Example: Admin Sampler.

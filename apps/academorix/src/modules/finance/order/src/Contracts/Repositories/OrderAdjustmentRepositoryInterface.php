@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Order\Contracts\Repositories;
+namespace Stackra\Order\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Order\Models\OrderAdjustment}.
+ * Repository contract for {@see Stackra\Order\Models\OrderAdjustment}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `OrderAdjustmentRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Order\Models\OrderAdjustment>
+ * @extends RepositoryInterface<\Stackra\Order\Models\OrderAdjustment>
  *
  * @category Order
  *

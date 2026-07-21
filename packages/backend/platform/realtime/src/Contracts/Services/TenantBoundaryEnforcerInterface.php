@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Realtime\Contracts\Services;
+namespace Stackra\Realtime\Contracts\Services;
 
-use Academorix\Realtime\Services\TenantBoundaryEnforcer;
+use Stackra\Realtime\Services\TenantBoundaryEnforcer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

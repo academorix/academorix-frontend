@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Observers;
+namespace Stackra\Application\Observers;
 
-use Academorix\Application\Contracts\Data\BusinessTypeInterface;
-use Academorix\Application\Events\BusinessTypeAdded;
-use Academorix\Application\Events\BusinessTypeArchived;
-use Academorix\Application\Exceptions\SystemRowImmutableException;
-use Academorix\Application\Models\BusinessType;
+use Stackra\Application\Contracts\Data\BusinessTypeInterface;
+use Stackra\Application\Events\BusinessTypeAdded;
+use Stackra\Application\Events\BusinessTypeArchived;
+use Stackra\Application\Exceptions\SystemRowImmutableException;
+use Stackra\Application\Models\BusinessType;
 use Illuminate\Support\Facades\Event;
 
 /**

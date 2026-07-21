@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Contracts\Repositories;
+namespace Stackra\Compliance\Contracts\Repositories;
 
-use Academorix\Compliance\Models\SafeguardingIncident;
-use Academorix\Compliance\Repositories\EloquentSafeguardingIncidentRepository;
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Compliance\Models\SafeguardingIncident;
+use Stackra\Compliance\Repositories\EloquentSafeguardingIncidentRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
 use DateTimeInterface;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;

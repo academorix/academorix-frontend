@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/digital-passes/schemas/wallet-pass",
+  "id": "stackra://modules/digital-passes/schemas/wallet-pass",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "WalletPass",

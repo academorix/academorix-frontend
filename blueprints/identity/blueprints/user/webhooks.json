@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/user/webhooks",
+  "id": "stackra://modules/user/webhooks",
   "$version": 1,
   "title": "user \u2014 outbound webhooks",
   "description": "Tenant admins can subscribe to user-lifecycle events via the webhook module (shared/webhooks, Wave 4). This blueprint declares the event types this module publishes. Payload shapes mirror the corresponding entries in `events.json` \u2014 the webhook module wraps them in the standard envelope.",

@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/marketing/helpers",
+  "id": "stackra://modules/marketing/helpers",
   "$version": 1,
   "title": "marketing — helper functions",
   "description": "Ergonomic helpers for capturing marketing events, resolving providers, and hashing PII. All helpers are thin wrappers around bound services — never business logic. Callers who need the wire-shape of events use the DomainEventMapper attribute path; helpers here are for imperative flows (support tools, tests, ad-hoc scripts).",
-  "namespace": "Academorix\\Growth\\Marketing\\Support",
+  "namespace": "Stackra\\Growth\\Marketing\\Support",
   "helpers": [
     {
       "signature": "capture_marketing_event(string $eventType, Model $subject, ?int $valueAmountCents = null, ?string $valueCurrency = null, array $metadata = []): ?MarketingEvent",

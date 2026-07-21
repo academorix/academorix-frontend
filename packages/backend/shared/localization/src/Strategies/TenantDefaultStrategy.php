@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Strategies;
+namespace Stackra\Localization\Strategies;
 
-use Academorix\Localization\Attributes\AsLocaleResolutionStrategy;
-use Academorix\Localization\Contracts\Data\PlatformLanguageInterface;
-use Academorix\Localization\Contracts\Repositories\TenantLocaleRepositoryInterface;
-use Academorix\Localization\Contracts\Services\LocaleResolutionStrategyInterface;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Localization\Attributes\AsLocaleResolutionStrategy;
+use Stackra\Localization\Contracts\Data\PlatformLanguageInterface;
+use Stackra\Localization\Contracts\Repositories\TenantLocaleRepositoryInterface;
+use Stackra\Localization\Contracts\Services\LocaleResolutionStrategyInterface;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Http\Request;
 

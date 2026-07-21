@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/rbac/schemas/permission",
+  "id": "stackra://modules/rbac/schemas/permission",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Permission",
-  "description": "Spatie's `permissions` table augmented with Academorix scope columns (application_id, tenant_id, is_system, description, module_slug, sort_order). Dot-notated names with scope-suffix (`invoices.viewAny.tenant`). Composite unique on (application_id, tenant_id, name, guard_name).",
+  "description": "Spatie's `permissions` table augmented with Stackra scope columns (application_id, tenant_id, is_system, description, module_slug, sort_order). Dot-notated names with scope-suffix (`invoices.viewAny.tenant`). Composite unique on (application_id, tenant_id, name, guard_name).",
   "type": "object",
   "x-module": "rbac",
   "x-eloquent": {
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "per_",
     "incrementing": false,
-    "model": "Academorix\\Rbac\\Models\\Permission",
-    "interface": "Academorix\\Rbac\\Contracts\\Data\\PermissionInterface",
-    "implements": ["Academorix\\Rbac\\Contracts\\Data\\PermissionInterface"],
+    "model": "Stackra\\Rbac\\Models\\Permission",
+    "interface": "Stackra\\Rbac\\Contracts\\Data\\PermissionInterface",
+    "implements": ["Stackra\\Rbac\\Contracts\\Data\\PermissionInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

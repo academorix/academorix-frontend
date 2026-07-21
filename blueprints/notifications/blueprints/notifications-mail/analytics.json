@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-mail/analytics",
+  "id": "stackra://modules/notifications-mail/analytics",
   "$version": 1,
   "title": "notifications-mail \u2014 product analytics events",
   "description": "Mail-specific analytics. Delegated open/click aggregation to notifications core; this file publishes mail-only signal (bounce classifications, suppression additions, provider selections).",

@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/foundation/data/ulid-prefixes",
+  "id": "stackra://modules/foundation/data/ulid-prefixes",
   "$version": 1,
   "title": "foundation — canonical ULID prefix registry",
-  "description": "Authoritative mapping of every ULID prefix used in Academorix. A prefix is a short (3–4 char) semantic tag preceding the 26-char base32 ULID body, forming a primary key like `plt_01HXYZ...` (TenantLocale). The pattern is enforced by every model's `keyPrefix` in x-eloquent + the corresponding JSON Schema `pattern` in properties. Every prefix must be UNIQUE across the platform; this file is the source of truth. Prefix rules: 3–4 lowercase letters + trailing underscore, ASCII only, no vowel-only sequences that read as English words (avoid `and_`, `for_`, `not_` is intentional).",
+  "description": "Authoritative mapping of every ULID prefix used in Stackra. A prefix is a short (3–4 char) semantic tag preceding the 26-char base32 ULID body, forming a primary key like `plt_01HXYZ...` (TenantLocale). The pattern is enforced by every model's `keyPrefix` in x-eloquent + the corresponding JSON Schema `pattern` in properties. Every prefix must be UNIQUE across the platform; this file is the source of truth. Prefix rules: 3–4 lowercase letters + trailing underscore, ASCII only, no vowel-only sequences that read as English words (avoid `and_`, `for_`, `not_` is intentional).",
   "constraints": {
     "min_length": 3,
     "max_length": 4,
@@ -563,7 +563,7 @@
     "plu_": {
       "module": "platform-user",
       "entity": "PlatformUser",
-      "description": "Academorix-staff principal on the `platform_admin` guard. Cross-tenant + cross-application by construction."
+      "description": "Stackra-staff principal on the `platform_admin` guard. Cross-tenant + cross-application by construction."
     },
     "pmt_": {
       "module": "payment",
@@ -603,7 +603,7 @@
     "rdf_": {
       "module": "rbac",
       "entity": "RoleDefinition",
-      "description": "Academorix metadata layer for system roles - business_type default provisioning, i18n labels, min-tier gating."
+      "description": "Stackra metadata layer for system roles - business_type default provisioning, i18n labels, min-tier gating."
     },
     "ref_": {
       "module": "referrals",
@@ -933,7 +933,7 @@
     "pin_": {
       "module": "people",
       "entity": "PersonIdentity",
-      "description": "CENTRAL-PLANE global identity carrying the Academorix ID (AX-XXXX-XXXX). Cross-academy shared profile substrate (blueprint 2.2). NO tenant_id — central connection. Minimal PII. Tenant Athletes + Staff optionally reference via person_identity_id."
+      "description": "CENTRAL-PLANE global identity carrying the Stackra ID (AX-XXXX-XXXX). Cross-academy shared profile substrate (blueprint 2.2). NO tenant_id — central connection. Minimal PII. Tenant Athletes + Staff optionally reference via person_identity_id."
     },
     "pgl_": {
       "module": "people",
@@ -1358,7 +1358,7 @@
     "ipd_": {
       "module": "integrations",
       "entity": "IntegrationProvider",
-      "description": "Allowlist catalog of every provider Academorix supports (stripe / paddle / pipedrive / hubspot / twilio / zoom / apple_wallet / google_wallet / etc). System rows only — added via #[AsIntegrationProvider] discovery + upsert seeder. Adding a provider is a code deploy."
+      "description": "Allowlist catalog of every provider Stackra supports (stripe / paddle / pipedrive / hubspot / twilio / zoom / apple_wallet / google_wallet / etc). System rows only — added via #[AsIntegrationProvider] discovery + upsert seeder. Adding a provider is a code deploy."
     },
     "apk_": {
       "module": "integrations",

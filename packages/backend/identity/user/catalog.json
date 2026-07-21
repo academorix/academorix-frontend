@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/user",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/user",
   "tier": "saas",
   "surfaces": ["core"],
   "kind": "feature",
@@ -14,14 +14,14 @@
     "Fortify-compatible identifiers surface"
   ],
   "when_to_use": "Every request that authenticates a tenant-audience caller resolves through a User row here.",
-  "when_not_to_use": "For the global credential record (email + password + MFA), reach for the sibling academorix/identity package.",
+  "when_not_to_use": "For the global credential record (email + password + MFA), reach for the sibling stackra/identity package.",
   "peer_deps": [
-    "academorix-identity/user-sdk",
-    "academorix/crud",
-    "academorix/foundation",
-    "academorix/routing",
-    "academorix/service-provider",
-    "academorix/support",
+    "stackra-identity/user-sdk",
+    "stackra/crud",
+    "stackra/foundation",
+    "stackra/routing",
+    "stackra/service-provider",
+    "stackra/support",
     "spatie/laravel-data"
   ],
   "backend_pair": null,

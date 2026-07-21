@@ -4,7 +4,7 @@
  * @file packages/events/tests/Unit/OnEventTest.php
  *
  * @description
- * Unit coverage for the {@see \Academorix\Events\Attributes\OnEvent}
+ * Unit coverage for the {@see \Stackra\Events\Attributes\OnEvent}
  * attribute. Every knob on the attribute has to survive the trip
  * from PHP source → reflection → downstream discovery, so these
  * tests validate the value-object surface — construction, default
@@ -13,7 +13,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Events\Attributes\OnEvent;
+use Stackra\Events\Attributes\OnEvent;
 
 it('captures the event class and defaults', function (): void {
     $attribute = new OnEvent(event: 'App\\Events\\UserRegistered');

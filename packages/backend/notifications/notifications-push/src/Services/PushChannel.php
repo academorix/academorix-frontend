@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsPush\Services;
+namespace Stackra\NotificationsPush\Services;
 
-use Academorix\NotificationsPush\Contracts\Services\PushChannelInterface;
+use Stackra\NotificationsPush\Contracts\Services\PushChannelInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\NotificationsPush\Contracts\Repositories\PushSubscriptionRepositoryInterface;
+use Stackra\NotificationsPush\Contracts\Repositories\PushSubscriptionRepositoryInterface;
 
 /**
  * Concrete service — PushChannel.

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Contracts\Data;
+namespace Stackra\Transfer\Contracts\Data;
 
-use Academorix\Transfer\Models\XferArtifact;
+use Stackra\Transfer\Models\XferArtifact;
 use Illuminate\Container\Attributes\Bind;
 
 /**

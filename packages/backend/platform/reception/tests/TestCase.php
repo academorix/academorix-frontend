@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Reception\Tests;
+namespace Stackra\Reception\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/reception.
+ * Base test case for stackra/reception.
  *
  * @category Reception
  *

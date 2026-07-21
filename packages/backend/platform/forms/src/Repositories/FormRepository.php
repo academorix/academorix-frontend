@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Repositories;
+namespace Stackra\Forms\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Forms\Contracts\Data\FormInterface;
-use Academorix\Forms\Contracts\Repositories\FormRepositoryInterface;
-use Academorix\Forms\Models\Form;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Forms\Contracts\Data\FormInterface;
+use Stackra\Forms\Contracts\Repositories\FormRepositoryInterface;
+use Stackra\Forms\Models\Form;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Forms\Models\Form}.
+ * Attribute-first Eloquent repository for {@see Stackra\Forms\Models\Form}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(FormInterface::class)]` which resolves to
  * `Form` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Forms\Models\Form>
+ * @extends Repository<\Stackra\Forms\Models\Form>
  *
  * @category Forms
  *

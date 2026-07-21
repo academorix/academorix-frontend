@@ -12,9 +12,9 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Support\Traits;
+namespace Stackra\Support\Traits;
 
-use Academorix\Enum\Enum as BaseEnum;
+use Stackra\Enum\Enum as BaseEnum;
 
 /**
  * Base Enum Trait.
@@ -33,9 +33,9 @@ use Academorix\Enum\Enum as BaseEnum;
  *
  * ## Usage:
  * ```php
- * use Academorix\Enum\Enum;
- * use Academorix\Enum\Attributes\Description;
- * use Academorix\Enum\Attributes\Label;
+ * use Stackra\Enum\Enum;
+ * use Stackra\Enum\Attributes\Description;
+ * use Stackra\Enum\Attributes\Label;
  *
  * #[Meta([Description::class, Label::class])]
  * enum Status: string
@@ -61,7 +61,7 @@ use Academorix\Enum\Enum as BaseEnum;
  * Status::ACTIVE()->label();       // Returns translated label
  * ```
  *
- * @author  Academorix Development Team
+ * @author  Stackra Development Team
  *
  * @since   1.0.0
  */

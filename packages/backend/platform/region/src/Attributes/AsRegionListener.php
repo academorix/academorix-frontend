@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Region\Attributes;
+namespace Stackra\Region\Attributes;
 
 use Attribute;
 

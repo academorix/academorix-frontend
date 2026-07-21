@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Contracts\Data;
+namespace Stackra\Transfer\Contracts\Data;
 
-use Academorix\Transfer\Models\XferMappingProfile;
+use Stackra\Transfer\Models\XferMappingProfile;
 use Illuminate\Container\Attributes\Bind;
 
 /**

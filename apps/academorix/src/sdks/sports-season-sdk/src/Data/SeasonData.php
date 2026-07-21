@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsSeasonSdk\Data;
+namespace Stackra\SportsSeasonSdk\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Wire-visible response DTO for {@see \Academorix\Sports\Season\Models\Season}.
+ * Wire-visible response DTO for {@see \Stackra\Sports\Season\Models\Season}.
  *
  * Mirrors `schemas/season.schema.json` column-for-column, minus
  * the fields declared under `x-wire.hidden` which never leave the
@@ -26,7 +26,7 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
  * ## Example
  *
  * ```php
- * use Academorix\SportsSdk\Client\SportsSdk;
+ * use Stackra\SportsSdk\Client\SportsSdk;
  *
  * $row = app(SportsSdk::class)->season()->seasons()->show($id);
  * ```

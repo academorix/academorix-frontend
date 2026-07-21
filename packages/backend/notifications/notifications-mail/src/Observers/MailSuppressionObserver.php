@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Observers;
+namespace Stackra\Notifications\Mail\Observers;
 
-use Academorix\Notifications\Mail\Contracts\Data\MailSuppressionInterface;
-use Academorix\Notifications\Mail\Events\MailSuppressed;
-use Academorix\Notifications\Mail\Events\MailSuppressionRevoked;
-use Academorix\Notifications\Mail\Exceptions\MailSuppressionNotFoundException;
-use Academorix\Notifications\Mail\Models\MailSuppression;
+use Stackra\Notifications\Mail\Contracts\Data\MailSuppressionInterface;
+use Stackra\Notifications\Mail\Events\MailSuppressed;
+use Stackra\Notifications\Mail\Events\MailSuppressionRevoked;
+use Stackra\Notifications\Mail\Exceptions\MailSuppressionNotFoundException;
+use Stackra\Notifications\Mail\Models\MailSuppression;
 
 /**
  * Observer on {@see MailSuppression}.

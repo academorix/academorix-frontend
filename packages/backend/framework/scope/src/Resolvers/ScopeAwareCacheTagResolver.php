@@ -16,11 +16,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Resolvers;
+namespace Stackra\Scope\Resolvers;
 
-use Academorix\Caching\Attributes\AsCacheTagResolver;
-use Academorix\Caching\Contracts\CacheTagResolver;
-use Academorix\Scope\Contracts\ScopeContextInterface;
+use Stackra\Caching\Attributes\AsCacheTagResolver;
+use Stackra\Caching\Contracts\CacheTagResolver;
+use Stackra\Scope\Contracts\ScopeContextInterface;
 
 /**
  * Scope-aware cache tag resolver.

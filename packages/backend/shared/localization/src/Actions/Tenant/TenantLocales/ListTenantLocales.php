@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Actions\Tenant\TenantLocales;
+namespace Stackra\Localization\Actions\Tenant\TenantLocales;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Localization\Contracts\Repositories\TenantLocaleRepositoryInterface;
-use Academorix\Localization\Data\Resources\TenantLocaleData;
-use Academorix\Localization\Enums\LocalizationPermission;
-use Academorix\Localization\Models\TenantLocale;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Localization\Contracts\Repositories\TenantLocaleRepositoryInterface;
+use Stackra\Localization\Data\Resources\TenantLocaleData;
+use Stackra\Localization\Enums\LocalizationPermission;
+use Stackra\Localization\Models\TenantLocale;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Spatie\LaravelData\DataCollection;
 
 /**

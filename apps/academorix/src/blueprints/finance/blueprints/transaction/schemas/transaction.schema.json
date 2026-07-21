@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transaction/schemas/transaction",
+  "id": "stackra://modules/transaction/schemas/transaction",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Transaction",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "trx_",
     "incrementing": false,
-    "model": "Academorix\\Finance\\Transaction\\Models\\Transaction",
-    "interface": "Academorix\\Finance\\Transaction\\Contracts\\Data\\TransactionInterface",
-    "implements": ["Academorix\\Finance\\Transaction\\Contracts\\Data\\TransactionInterface"],
+    "model": "Stackra\\Finance\\Transaction\\Models\\Transaction",
+    "interface": "Stackra\\Finance\\Transaction\\Contracts\\Data\\TransactionInterface",
+    "implements": ["Stackra\\Finance\\Transaction\\Contracts\\Data\\TransactionInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

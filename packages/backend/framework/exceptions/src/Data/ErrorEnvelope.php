@@ -12,7 +12,7 @@
  *
  *   {
  *     "error": {
- *       "type":       "https://errors.academorix.com/http.validation",
+ *       "type":       "https://errors.stackra.com/http.validation",
  *       "code":       "http.validation",
  *       "title":      "Validation failed.",
  *       "status":     422,
@@ -30,7 +30,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Data;
+namespace Stackra\Exceptions\Data;
 
 use JsonSerializable;
 
@@ -59,7 +59,7 @@ final class ErrorEnvelope implements JsonSerializable
     public function jsonSerialize(): array
     {
         $error = [
-            'type' => $this->type ?? "urn:academorix:error:{$this->code}",
+            'type' => $this->type ?? "urn:stackra:error:{$this->code}",
             'code' => $this->code,
             'title' => $this->title,
             'status' => $this->status,

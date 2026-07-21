@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Channels;
+namespace Stackra\Notifications\Mail\Channels;
 
-use Academorix\Notifications\Contracts\Data\NotificationInterface;
-use Academorix\Notifications\Mail\Attributes\AsNotificationChannel;
-use Academorix\Notifications\Mail\Contracts\Repositories\MailSuppressionRepositoryInterface;
-use Academorix\Notifications\Mail\Contracts\Services\MailChannelInterface;
-use Academorix\Notifications\Mail\Events\MailSent;
-use Academorix\Notifications\Models\Notification;
+use Stackra\Notifications\Contracts\Data\NotificationInterface;
+use Stackra\Notifications\Mail\Attributes\AsNotificationChannel;
+use Stackra\Notifications\Mail\Contracts\Repositories\MailSuppressionRepositoryInterface;
+use Stackra\Notifications\Mail\Contracts\Services\MailChannelInterface;
+use Stackra\Notifications\Mail\Events\MailSent;
+use Stackra\Notifications\Models\Notification;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Contracts\Mail\Factory as MailFactory;
@@ -159,10 +159,10 @@ final class MailChannel implements MailChannelInterface
                     // webhook path so we can match callbacks back
                     // to the originating notification / tenant.
                     $headers = $message->getHeaders();
-                    $headers->addTextHeader('X-Academorix-Notification-Id', $notificationId);
-                    $headers->addTextHeader('X-Academorix-Tenant-Id', $tenantId);
+                    $headers->addTextHeader('X-Stackra-Notification-Id', $notificationId);
+                    $headers->addTextHeader('X-Stackra-Tenant-Id', $tenantId);
                     if ($categorySlug !== '') {
-                        $headers->addTextHeader('X-Academorix-Category', $categorySlug);
+                        $headers->addTextHeader('X-Stackra-Category', $categorySlug);
                     }
 
                     // RFC 8058 one-click List-Unsubscribe — required
@@ -186,7 +186,7 @@ final class MailChannel implements MailChannelInterface
 
             // MailManager doesn't expose a captured message id
             // uniformly across transports. Consumers correlate via
-            // the X-Academorix-Notification-Id header we injected
+            // the X-Stackra-Notification-Id header we injected
             // above; providers that ship native ids surface them
             // via their own webhook.
         } catch (\Throwable $e) {

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Jobs;
+namespace Stackra\Webhook\Jobs;
 
-use Academorix\Webhook\Contracts\Data\WebhookDeliveryInterface;
-use Academorix\Webhook\Contracts\Data\WebhookSubscriptionInterface;
-use Academorix\Webhook\Contracts\Repositories\WebhookDeliveryRepositoryInterface;
-use Academorix\Webhook\Contracts\Repositories\WebhookSubscriptionRepositoryInterface;
-use Academorix\Webhook\Contracts\Services\BackoffStrategyResolverInterface;
-use Academorix\Webhook\Contracts\Services\WebhookDestinationRegistryInterface;
-use Academorix\Webhook\Enums\WebhookDeliveryStatus;
-use Academorix\Webhook\Enums\WebhookSubscriptionStatus;
-use Academorix\Webhook\Events\WebhookDelivered;
-use Academorix\Webhook\Events\WebhookDeliveryFailed;
-use Academorix\Webhook\Events\WebhookDeliveryFailedPermanent;
+use Stackra\Webhook\Contracts\Data\WebhookDeliveryInterface;
+use Stackra\Webhook\Contracts\Data\WebhookSubscriptionInterface;
+use Stackra\Webhook\Contracts\Repositories\WebhookDeliveryRepositoryInterface;
+use Stackra\Webhook\Contracts\Repositories\WebhookSubscriptionRepositoryInterface;
+use Stackra\Webhook\Contracts\Services\BackoffStrategyResolverInterface;
+use Stackra\Webhook\Contracts\Services\WebhookDestinationRegistryInterface;
+use Stackra\Webhook\Enums\WebhookDeliveryStatus;
+use Stackra\Webhook\Enums\WebhookSubscriptionStatus;
+use Stackra\Webhook\Events\WebhookDelivered;
+use Stackra\Webhook\Events\WebhookDeliveryFailed;
+use Stackra\Webhook\Events\WebhookDeliveryFailedPermanent;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -26,7 +26,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\RateLimiter;
 
 /**
- * Send one {@see \Academorix\Webhook\Models\WebhookDelivery} attempt
+ * Send one {@see \Stackra\Webhook\Models\WebhookDelivery} attempt
  * to its destination.
  *
  * `#[Tries(1)]` — the queue does NOT retry. Retries are scheduled by
@@ -188,8 +188,8 @@ final class DispatchWebhookJob implements ShouldQueue
      * counter, and emit {@see WebhookDelivered}.
      */
     private function markDelivered(
-        \Academorix\Webhook\Models\WebhookDelivery $delivery,
-        \Academorix\Webhook\Models\WebhookSubscription $subscription,
+        \Stackra\Webhook\Models\WebhookDelivery $delivery,
+        \Stackra\Webhook\Models\WebhookSubscription $subscription,
         int $httpStatus,
         int $latencyMs,
     ): void {
@@ -214,8 +214,8 @@ final class DispatchWebhookJob implements ShouldQueue
      * @param  array<string, mixed>  $result
      */
     private function handleRetryable(
-        \Academorix\Webhook\Models\WebhookDelivery $delivery,
-        \Academorix\Webhook\Models\WebhookSubscription $subscription,
+        \Stackra\Webhook\Models\WebhookDelivery $delivery,
+        \Stackra\Webhook\Models\WebhookSubscription $subscription,
         array $result,
         BackoffStrategyResolverInterface $backoff,
     ): void {
@@ -258,7 +258,7 @@ final class DispatchWebhookJob implements ShouldQueue
         }
 
         // Create the next attempt row and schedule its dispatch.
-        /** @var \Academorix\Webhook\Models\WebhookDelivery $next */
+        /** @var \Stackra\Webhook\Models\WebhookDelivery $next */
         $next = $delivery->newInstance();
         $next->forceFill([
             WebhookDeliveryInterface::ATTR_TENANT_ID       => $delivery->{WebhookDeliveryInterface::ATTR_TENANT_ID},
@@ -280,7 +280,7 @@ final class DispatchWebhookJob implements ShouldQueue
      * Mark the delivery `failed_permanent` + emit the event.
      */
     private function markFailedPermanent(
-        \Academorix\Webhook\Models\WebhookDelivery $delivery,
+        \Stackra\Webhook\Models\WebhookDelivery $delivery,
         ?int $httpStatus,
         ?string $error,
     ): void {
@@ -298,7 +298,7 @@ final class DispatchWebhookJob implements ShouldQueue
      * Flip the subscription to `disabled` and record the reason.
      */
     private function autoDisable(
-        \Academorix\Webhook\Models\WebhookSubscription $subscription,
+        \Stackra\Webhook\Models\WebhookSubscription $subscription,
         string $reason,
     ): void {
         $subscription->update([

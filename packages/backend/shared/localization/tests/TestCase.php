@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Tests;
+namespace Stackra\Localization\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/localization.
+ * Base test case for stackra/localization.
  *
  * @category Localization
  *

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/event/schemas/event-invitation",
+  "id": "stackra://modules/event/schemas/event-invitation",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "EventInvitation",

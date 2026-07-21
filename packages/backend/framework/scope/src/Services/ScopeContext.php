@@ -16,11 +16,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Services;
+namespace Stackra\Scope\Services;
 
-use Academorix\Scope\Contracts\ScopeContextInterface;
-use Academorix\Scope\Data\ScopeContextData;
-use Academorix\Scope\Exceptions\ScopeContextRequiredException;
+use Stackra\Scope\Contracts\ScopeContextInterface;
+use Stackra\Scope\Data\ScopeContextData;
+use Stackra\Scope\Exceptions\ScopeContextRequiredException;
 
 /**
  * Stack-based scope context.

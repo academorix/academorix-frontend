@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Attributes;
+namespace Stackra\Coupon\Attributes;
 
 use Attribute;
 

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/feature-flags",
+  "id": "stackra://modules/notifications/feature-flags",
   "$version": 1,
   "title": "notifications core \u2014 kill switches + rollout controls",
   "description": "Runtime toggles resolved via Laravel Pennant. Kill switches default ON \u2014 flipping OFF is an incident-response action. Rollout flags default OFF and progress via a Pennant scope function (percentage / cohort / tenant).",

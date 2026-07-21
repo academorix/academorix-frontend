@@ -1,15 +1,15 @@
 {
-  "id": "academorix://modules/people/events",
+  "id": "stackra://modules/people/events",
   "$version": 1,
   "title": "people — published events",
-  "namespace": "Academorix\\People\\Events",
+  "namespace": "Stackra\\People\\Events",
   "dispatchMode": "afterCommit",
   "description": "CENTRAL-plane events — dispatched on the central connection's queue. LinkRequested is the load-bearing signal that fires guardian consent notifications. LinkApproved triggers tenant-side prefill of the local Athlete/Staff record with the consented shareable subset. PersonVerified elevates the identity so future lookups return verified=true; frozen identities refuse all new link requests.",
   "events": [
     {
       "name": "PersonRegistered",
-      "class": "Academorix\\People\\Events\\PersonRegistered",
-      "trigger": "New PersonIdentity committed with academorix_id assigned. Fires on both self-registration (via central signup) and admin creation.",
+      "class": "Stackra\\People\\Events\\PersonRegistered",
+      "trigger": "New PersonIdentity committed with stackra_id assigned. Fires on both self-registration (via central signup) and admin creation.",
       "queue": "people",
       "consumers": [
         "audit::WriteToAuditLog (central retention: 10 years)",
@@ -17,14 +17,14 @@
       ],
       "payload": {
         "person_identity_id": "ULID (pin_*)",
-        "academorix_id": "string (AX-XXXX-YYYY)",
+        "stackra_id": "string (AX-XXXX-YYYY)",
         "registered_at": "ISO 8601",
         "registered_by_user_id": "ULID | null (self-registered when null)"
       }
     },
     {
       "name": "PersonVerified",
-      "class": "Academorix\\People\\Events\\PersonVerified",
+      "class": "Stackra\\People\\Events\\PersonVerified",
       "trigger": "PersonIdentity.verification_status flipped to 'verified' by platform staff. All active tenant link references gain verified=true in their next resolution.",
       "queue": "people",
       "consumers": [
@@ -41,7 +41,7 @@
     },
     {
       "name": "PersonUpdated",
-      "class": "Academorix\\People\\Events\\PersonUpdated",
+      "class": "Stackra\\People\\Events\\PersonUpdated",
       "trigger": "PersonIdentity mutated (legal_name / dob / nationality). Notifies all tenants with active links so they can refresh their local prefill.",
       "queue": "people",
       "consumers": [
@@ -56,7 +56,7 @@
     },
     {
       "name": "LinkRequested",
-      "class": "Academorix\\People\\Events\\LinkRequested",
+      "class": "Stackra\\People\\Events\\LinkRequested",
       "trigger": "P1 event. Tenant filed a TenantLinkRequest for a PersonIdentity. Fires consent notification to guardians via central-URL.",
       "queue": "notifications-critical",
       "consumers": [
@@ -75,7 +75,7 @@
     },
     {
       "name": "LinkApproved",
-      "class": "Academorix\\People\\Events\\LinkApproved",
+      "class": "Stackra\\People\\Events\\LinkApproved",
       "trigger": "P1 event. Guardian approved a TenantLinkRequest + selected shareable fields. Cascades to the requesting tenant's local Athlete/Staff prefill.",
       "queue": "notifications-critical",
       "consumers": [
@@ -94,7 +94,7 @@
     },
     {
       "name": "LinkDeclined",
-      "class": "Academorix\\People\\Events\\LinkDeclined",
+      "class": "Stackra\\People\\Events\\LinkDeclined",
       "trigger": "Guardian declined a TenantLinkRequest. Tenant may proceed with fresh local Athlete/Staff without link.",
       "queue": "people",
       "consumers": [
@@ -111,7 +111,7 @@
     },
     {
       "name": "LinkRevoked",
-      "class": "Academorix\\People\\Events\\LinkRevoked",
+      "class": "Stackra\\People\\Events\\LinkRevoked",
       "trigger": "P1 event. Guardian revoked a previously-approved link. Stops future sync but preserves what the receiving tenant already created (per GDPR + local retention).",
       "queue": "notifications-critical",
       "consumers": [
@@ -130,7 +130,7 @@
     },
     {
       "name": "GuardianLinkAdded",
-      "class": "Academorix\\People\\Events\\GuardianLinkAdded",
+      "class": "Stackra\\People\\Events\\GuardianLinkAdded",
       "trigger": "New PersonGuardianLink committed between two PersonIdentities. Cross-tenant portable — every tenant with either identity linked sees the guardian relationship on next resolution.",
       "queue": "people",
       "consumers": [
@@ -146,7 +146,7 @@
     },
     {
       "name": "GuardianLinkRemoved",
-      "class": "Academorix\\People\\Events\\GuardianLinkRemoved",
+      "class": "Stackra\\People\\Events\\GuardianLinkRemoved",
       "trigger": "PersonGuardianLink revoked. Cross-tenant propagation — active links may be affected.",
       "queue": "notifications-critical",
       "consumers": [

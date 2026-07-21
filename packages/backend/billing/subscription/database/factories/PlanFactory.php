@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Database\Factories;
+namespace Stackra\Subscription\Database\Factories;
 
-use Academorix\Subscription\Contracts\Data\PlanInterface;
-use Academorix\Subscription\Enums\BillingCycle;
-use Academorix\Subscription\Enums\BillingMode;
-use Academorix\Subscription\Enums\PlanTier;
-use Academorix\Subscription\Models\Plan;
+use Stackra\Subscription\Contracts\Data\PlanInterface;
+use Stackra\Subscription\Enums\BillingCycle;
+use Stackra\Subscription\Enums\BillingMode;
+use Stackra\Subscription\Enums\PlanTier;
+use Stackra\Subscription\Models\Plan;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

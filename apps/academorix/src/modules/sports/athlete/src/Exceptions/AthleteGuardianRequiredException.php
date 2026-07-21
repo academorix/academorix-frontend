@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Athlete\Exceptions;
+namespace Stackra\Athlete\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a create / update / consent write is attempted against
  * a minor athlete with no active, non-revoked
- * {@see \Academorix\AthleteGuardian\Models\AthleteGuardian} row on file.
+ * {@see \Stackra\AthleteGuardian\Models\AthleteGuardian} row on file.
  *
  * Per `.kiro/steering/hierarchy.md` §17 and the P0 finding from
  * `security-compliance-reviewer`, every write that touches a minor
@@ -22,7 +22,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AthleteGuardianRequiredException extends AcademorixException
+final class AthleteGuardianRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

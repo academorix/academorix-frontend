@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Identity\Contracts\Data;
+namespace Stackra\Identity\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Identity\Models\Identity;
+use Stackra\Identity\Models\Identity;
 
 /**
  * Table shape for the `identities` table.

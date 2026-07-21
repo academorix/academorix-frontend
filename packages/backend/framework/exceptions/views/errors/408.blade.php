@@ -12,7 +12,7 @@
 * - Server timeout configuration exceeded
 *
 * @extends foundation::layouts.app
-* @package Academorix\Foundation
+* @package Stackra\Foundation
 */
 --}}
 @extends('foundation::layouts.app')

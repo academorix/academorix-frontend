@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to `academorix/notifications-push`.
+All notable changes to `stackra/notifications-push`.
 
 ## [Unreleased]
 
@@ -12,7 +12,7 @@ All notable changes to `academorix/notifications-push`.
   registry).
 - `PushSubscription` model + migration + factory + policy + observer.
 - FCM / APNs / Expo / OneSignal provider drivers under
-  `Academorix\Notifications\Push\Transports\`.
+  `Stackra\Notifications\Push\Transports\`.
 - Signature strategies for provider webhooks: `FcmSignatureStrategy`,
   `ApnsFeedbackStrategy`, `OneSignalSignatureStrategy`.
 - Attribute + registry for provider drivers so downstream apps can plug in

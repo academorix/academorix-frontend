@@ -1,6 +1,6 @@
-# `academorix/notifications-sms`
+# `stackra/notifications-sms`
 
-SMS notification channel for Academorix — Twilio, MessageBird, Vonage, Plivo,
+SMS notification channel for Stackra — Twilio, MessageBird, Vonage, Plivo,
 and AWS SNS. Enterprise-day-1 shape: attribute-first DI, `#[Bind]` on
 interfaces, `#[UseModel]` on repositories, `#[Cacheable]` + `#[Filterable]`
 config, `SeedsPermissionEnum` trait, no property arrays on the provider.
@@ -24,7 +24,7 @@ config, `SeedsPermissionEnum` trait, no property arrays on the provider.
 ## Non-goals
 
 - SMS templating — the notifications core module owns the template surface.
-- Provider webhook receiver — delegated to `academorix/webhook`. This module
+- Provider webhook receiver — delegated to `stackra/webhook`. This module
   ships only the per-provider signature strategies + inbound-message handler.
 
 ## Compliance

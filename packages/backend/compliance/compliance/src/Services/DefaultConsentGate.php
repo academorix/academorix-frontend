@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Services;
+namespace Stackra\Compliance\Services;
 
-use Academorix\Compliance\Contracts\Repositories\ConsentRecordRepositoryInterface;
-use Academorix\Compliance\Contracts\Services\ConsentGateInterface;
-use Academorix\Compliance\Enums\ConsentDecision;
+use Stackra\Compliance\Contracts\Repositories\ConsentRecordRepositoryInterface;
+use Stackra\Compliance\Contracts\Services\ConsentGateInterface;
+use Stackra\Compliance\Enums\ConsentDecision;
 use Illuminate\Container\Attributes\Cache;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Contracts\Cache\Repository;
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Cache\Repository;
  *
  * Cache-wrapped read of the latest consent decision. TTL comes from
  * `compliance.consent.cache_ttl_seconds`; invalidation happens in
- * {@see \Academorix\Compliance\Observers\ConsentRecordObserver}.
+ * {@see \Stackra\Compliance\Observers\ConsentRecordObserver}.
  *
  * `#[Scoped]` — the cache repository is bound per-request; sharing
  * as `#[Singleton]` would leak the request-scoped store between
@@ -50,7 +50,7 @@ final class DefaultConsentGate implements ConsentGateInterface
                 return false;
             }
 
-            $decision = $latest->{\Academorix\Compliance\Contracts\Data\ConsentRecordInterface::ATTR_DECISION};
+            $decision = $latest->{\Stackra\Compliance\Contracts\Data\ConsentRecordInterface::ATTR_DECISION};
             $value    = $decision instanceof ConsentDecision ? $decision->value : (string) $decision;
 
             return $value === ConsentDecision::Granted->value;

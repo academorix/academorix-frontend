@@ -2,9 +2,9 @@
 inclusion: always
 ---
 
-# Academorix — Frontend Module Architecture Standard
+# Stackra — Frontend Module Architecture Standard
 
-The canonical architecture, layering, and conventions for the Academorix web
+The canonical architecture, layering, and conventions for the Stackra web
 frontend (pnpm + Turborepo, Vite 8 + React 19, Refine headless on TanStack
 Query, HeroUI + HeroUI Pro, React Router v7). This is the source of truth for
 frontend work and mirrors the backend `php-module-architecture.md` so the two
@@ -19,7 +19,7 @@ codebases stay conceptually 1:1.
    - **Every change keeps all quality gates green** (`pnpm quality` +
      `pnpm test` + `pnpm size`).
 2. `AGENTS.md` still applies (pnpm only; versions via the catalog; HeroUI via
-   `@academorix/ui`; `onPress` not `onClick`; `Separator` not `Divider`).
+   `@stackra/ui`; `onPress` not `onClick`; `Separator` not `Divider`).
 3. **Consistency first:** match existing module patterns; this standard is the
    target every module migrates toward.
 
@@ -167,7 +167,7 @@ resources.
 
 ```ts
 // src/lib/module/module.ts
-import type { IconType } from "@academorix/ui/icons";
+import type { IconType } from "@stackra/ui/icons";
 import type { ResourceProps } from "@refinedev/core";
 import type { ReactElement } from "react";
 
@@ -184,7 +184,7 @@ export interface AppModuleRoute {
   element: ReactElement;
 }
 
-/** Extra, Academorix-specific resource metadata (on `ResourceProps.meta`). */
+/** Extra, Stackra-specific resource metadata (on `ResourceProps.meta`). */
 export interface AppResourceMeta {
   label: string;
   /** Icon *component* (heroicons-compatible `IconType`), not a rendered element. */
@@ -214,7 +214,7 @@ export interface AppModule {
 
 ```tsx
 // src/modules/sports/athletes/athletes.module.tsx
-import { AcademicCapIcon } from "@academorix/ui/icons/outline";
+import { AcademicCapIcon } from "@stackra/ui/icons/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";
@@ -313,7 +313,7 @@ src/components/refine/
 
 ### Theme switching — `components/theme/`
 
-Dark mode uses **HeroUI's native `useTheme`** (`@academorix/ui/react`), not
+Dark mode uses **HeroUI's native `useTheme`** (`@stackra/ui/react`), not
 `next-themes`: HeroUI v3 ships `useTheme` for Vite/CRA apps — it persists to
 `localStorage`, resolves `"system"`, and writes both `class` + `data-theme` to
 `<html>`. The `ThemeSwitcher` lives in the navbar; the body carries
@@ -333,7 +333,7 @@ There is no `src/app/` directory.
 ### Icons — `IconType` from the UI package
 
 Resource icons are **components**, typed as `IconType` from
-`@academorix/ui/icons` (heroicons-compatible). Manifests pass the component
+`@stackra/ui/icons` (heroicons-compatible). Manifests pass the component
 (`icon: AcademicCapIcon`); the layout renders it with consistent sizing. Never
 pass a pre-rendered element.
 
@@ -428,14 +428,14 @@ Rules:
 
 ### Tenancy, hosts, and workspaces (Wave 6)
 
-Academorix ships **one** SPA build served under three host kinds, matching the
+Stackra ships **one** SPA build served under three host kinds, matching the
 backend's `stancl/tenancy` identification model:
 
-- **Central** (`academorix.app`) — workspace picker, marketing, self-serve
+- **Central** (`stackra.app`) — workspace picker, marketing, self-serve
   tenant creation.
-- **Central admin** (`admin.academorix.app`) — Academorix staff surface;
+- **Central admin** (`admin.stackra.app`) — Stackra staff surface;
   `platform.domain` middleware rejects tenant hosts.
-- **Tenant** (`{slug}.academorix.app`, custom domains, dev localhost) — every
+- **Tenant** (`{slug}.stackra.app`, custom domains, dev localhost) — every
   tenant-scoped screen.
 
 `src/lib/http/host.ts` resolves the active context at boot; `src/lib/tenancy/`
@@ -511,8 +511,8 @@ Canonical response contract (the backend uses `spatie/laravel-data` with
 
 ## 7. Screens & styling
 
-- Import UI from `@academorix/ui/react`; icons from
-  `@academorix/ui/icons/{outline,solid,mini,micro}`. Never `@heroui/*` directly.
+- Import UI from `@stackra/ui/react`; icons from
+  `@stackra/ui/icons/{outline,solid,mini,micro}`. Never `@heroui/*` directly.
 - **Compose the Refine UI kit** (`@/components/refine`):
   `ListView`/`CreateView`/ `EditView`/`ShowView` for scaffolding, the action
   buttons, and `ResourceDataGrid` for tables. Do not hand-roll table plumbing or

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Database\Factories;
+namespace Stackra\Geography\Database\Factories;
 
-use Academorix\Geography\Contracts\Data\CurrencyInterface;
-use Academorix\Geography\Models\Currency;
+use Stackra\Geography\Contracts\Data\CurrencyInterface;
+use Stackra\Geography\Models\Currency;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

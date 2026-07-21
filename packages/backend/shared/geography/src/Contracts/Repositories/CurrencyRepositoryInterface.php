@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Contracts\Repositories;
+namespace Stackra\Geography\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Geography\Models\Currency;
-use Academorix\Geography\Repositories\EloquentCurrencyRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Geography\Models\Currency;
+use Stackra\Geography\Repositories\EloquentCurrencyRepository;
 use Illuminate\Container\Attributes\Bind;
 
 /**

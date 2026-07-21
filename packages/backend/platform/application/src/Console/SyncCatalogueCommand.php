@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Console;
+namespace Stackra\Application\Console;
 
-use Academorix\Application\Database\Seeders\BusinessTypeSeeder;
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Application\Database\Seeders\BusinessTypeSeeder;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan application:sync-catalogue` — idempotent mirror of

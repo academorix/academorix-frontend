@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Database\Factories;
+namespace Stackra\Rbac\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Rbac\Contracts\Data\ModelHasRolesInterface;
-use Academorix\Rbac\Models\ModelHasRoles;
+use Stackra\Rbac\Contracts\Data\ModelHasRolesInterface;
+use Stackra\Rbac\Models\ModelHasRoles;
 
 /**
- * Factory for {@see \Academorix\Rbac\Models\ModelHasRoles}.
+ * Factory for {@see \Stackra\Rbac\Models\ModelHasRoles}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Rbac\Models\ModelHasRoles>
+ * @extends Factory<\Stackra\Rbac\Models\ModelHasRoles>
  *
  * @category Rbac
  *
@@ -40,7 +40,7 @@ final class ModelHasRolesFactory extends Factory
     {
         return [
             ModelHasRolesInterface::ATTR_ROLE_ID => fake()->sentence(3),
-            ModelHasRolesInterface::ATTR_MODEL_TYPE => fake()->randomElement(['Academorix\User\Models\User', 'Academorix\PlatformUser\Models\PlatformUser', 'Academorix\ServiceAccounts\Models\ServiceAccount']),
+            ModelHasRolesInterface::ATTR_MODEL_TYPE => fake()->randomElement(['Stackra\User\Models\User', 'Stackra\PlatformUser\Models\PlatformUser', 'Stackra\ServiceAccounts\Models\ServiceAccount']),
             ModelHasRolesInterface::ATTR_MODEL_ID => fake()->sentence(3),
             ModelHasRolesInterface::ATTR_APPLICATION_ID => null,
             ModelHasRolesInterface::ATTR_ASSIGNED_BY => null,

@@ -1,8 +1,8 @@
 {
-  "name": "academorix-monorepo",
+  "name": "stackra-monorepo",
   "version": "0.0.0",
   "private": true,
-  "description": "Academorix frontend monorepo — @stackra framework packages, app templates, and shared configs.",
+  "description": "Stackra frontend monorepo — @stackra framework packages, app templates, and shared configs.",
   "type": "module",
   "packageManager": "pnpm@10.33.0",
   "engines": {
@@ -45,10 +45,10 @@
     "prepare": "husky || true"
   },
   "devDependencies": {
-    "@academorix/config-eslint": "workspace:*",
-    "@academorix/config-prettier": "workspace:*",
-    "@academorix/config-tsconfig": "workspace:*",
-    "@academorix/config-tsup": "workspace:*",
+    "@stackra/config-eslint": "workspace:*",
+    "@stackra/config-prettier": "workspace:*",
+    "@stackra/config-tsconfig": "workspace:*",
+    "@stackra/config-tsup": "workspace:*",
     "@changesets/cli": "catalog:",
     "@commitlint/cli": "catalog:",
     "@commitlint/config-conventional": "catalog:",

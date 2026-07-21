@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformReceptionSdk\Tests;
+namespace Stackra\PlatformReceptionSdk\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix-platform/reception-sdk.
+ * Base test case for stackra-platform/reception-sdk.
  *
  * @category ReceptionSdk
  *

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsProgressSdk\Requests\ProgressAssessments;
+namespace Stackra\SportsProgressSdk\Requests\ProgressAssessments;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsProgressSdk\Data\ProgressAssessmentData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsProgressSdk\Data\ProgressAssessmentData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

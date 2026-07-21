@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/monitoring/entitlements",
+  "id": "stackra://modules/monitoring/entitlements",
   "$version": 1,
   "title": "monitoring — declared entitlements",
   "description": "Nine entitlement keys. `monitoring_capture` is the boolean master gate. `monitoring_health_check_slot` / `monitoring_provider_slot` / `monitoring_alert_policy_slot` are integer capacity gates. `monitoring_paging` unlocks PagerDuty + Opsgenie on Medium+. `monitoring_apm` unlocks Datadog on Medium+. `monitoring_extended_retention` extends hot/cold windows on Enterprise. `monitoring_custom_metrics` unlocks custom_script + custom_metric signals on Enterprise. `monitoring_prometheus` unlocks the Prometheus pushgateway + AlertManager webhook on Enterprise.",

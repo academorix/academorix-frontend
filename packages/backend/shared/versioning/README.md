@@ -5,7 +5,7 @@ Public interface versioning substrate. Wave 1 shared infrastructure.
 Handles four surfaces of version lifecycle:
 
 - **REST endpoints** — `/api/v1/...` vs `/api/v2/...`
-- **Content-negotiated payloads** — `Accept: application/vnd.academorix.v2+json`
+- **Content-negotiated payloads** — `Accept: application/vnd.stackra.v2+json`
 - **Webhook payloads** — `WebhookSubscription.api_version` pinning + payload
   transformer chains
 - **GraphQL schema** — `@api(version: v2)` operation directive + `@deprecated`
@@ -39,7 +39,7 @@ Inbound request
    URL resolver           /api/v1/... → 'v1'
      │  (miss)
      ▼
-   Header resolver         Accept: application/vnd.academorix.v2+json → 'v2'
+   Header resolver         Accept: application/vnd.stackra.v2+json → 'v2'
      │  (miss)
      ▼
    Webhook resolver         (outbound dispatch context) WebhookSubscription.api_version → 'v1'
@@ -189,7 +189,7 @@ state + emits response headers:
 - `X-API-Version: v1` — the version served.
 - `Deprecation: true` — when the resolved version is in `deprecated` state.
 - `Sunset: Wed, 30 Jun 2025 23:59:59 GMT` — RFC 8594.
-- `Link: <https://docs.academorix.com/migration/v1-to-v2>; rel="successor-version"`
+- `Link: <https://docs.stackra.com/migration/v1-to-v2>; rel="successor-version"`
   — migration guide URL from the DeprecationNotice.
 
 Foundation's canonical priority order includes `versioning.resolve` at priority

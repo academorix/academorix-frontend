@@ -14,12 +14,12 @@
  *     `#[RequirePermission]`.
  *   - Console commands: `#[AsCommand]` extending `BaseCommand`.
  *   - Seeder: `#[AsSeeder(priority: 48)]` — composes
- *     {@see \Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
+ *     {@see \Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
  *   - Events: `#[AsEvent]` on every class.
  *   - Observer: `#[ObservedBy]` on the model.
  *   - Policy: `#[UsePolicy]` on the model.
  *   - Provider drivers: `#[AsSmsProvider(name: '...')]` — populated into
- *     {@see \Academorix\Notifications\Sms\Contracts\Services\SmsOptOutRegistryInterface}
+ *     {@see \Stackra\Notifications\Sms\Contracts\Services\SmsOptOutRegistryInterface}
  *     via `#[HydratesFrom]` on the registry's `register()`.
  *   - Service implementations: interfaces carry `#[Bind]` pointing at the
  *     default concrete; consumer apps override by binding their own concrete.
@@ -27,11 +27,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Providers;
+namespace Stackra\Notifications\Sms\Providers;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * notifications-sms module service provider.

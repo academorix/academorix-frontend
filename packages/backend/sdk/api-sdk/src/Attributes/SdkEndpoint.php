@@ -43,7 +43,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Attributes;
+namespace Stackra\ApiSdk\Attributes;
 
 use Attribute;
 use InvalidArgumentException;
@@ -65,9 +65,9 @@ use InvalidArgumentException;
  * ```php
  * // On the SERVER side:
  *
- * use Academorix\ApiSdk\Attributes\SdkEndpoint;
- * use Academorix\Routing\Attributes\Post;
- * use Academorix\Routing\Attributes\AsController;
+ * use Stackra\ApiSdk\Attributes\SdkEndpoint;
+ * use Stackra\Routing\Attributes\Post;
+ * use Stackra\Routing\Attributes\AsController;
  * use Illuminate\Routing\Controllers\HasMiddleware;
  *
  * #[AsController]

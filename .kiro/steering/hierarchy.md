@@ -4,7 +4,7 @@ inclusion: always
 
 # Platform hierarchy & tier boundaries
 
-Canonical structural model for every module across every Academorix application.
+Canonical structural model for every module across every Stackra application.
 This document is authoritative — when in doubt about naming, ordering, or tier
 gating, this file wins. Contradict it only with an explicit design note in the
 relevant spec.
@@ -61,7 +61,7 @@ canonical class name; synonyms are rejected in review.
 | Employed/engaged person, wraps a User with employment metadata                          | **Staff**                | Employee, StaffMember                                 |
 | A Staff row acting as a coach with a sport-specific profile                             | **Coach**                | Trainer, Instructor                                   |
 | The parent's paid subscription enrolling an Athlete on a plan (renewing money contract) | **Membership** (Finance) | Enrolment, Signup, Subscription (that's the SaaS one) |
-| The academy's SaaS subscription to Academorix (money the tenant owes Academorix)        | **TenantSubscription**   | Subscription (ambiguous with Membership)              |
+| The academy's SaaS subscription to Stackra (money the tenant owes Stackra)        | **TenantSubscription**   | Subscription (ambiguous with Membership)              |
 | A single admission/visit a Membership entitles the Athlete to                           | **Pass**                 | Ticket, Voucher, Credit                               |
 | 1:1 PII satellite of a User (name, phone, avatar, locale, tz)                           | **Profile**              | UserProfile (redundant), Details                      |
 | Polymorphic roster row on a Team (usually points at an AthleteEnrollment)               | **TeamMember**           | Roster, Player, TeamPlayer                            |
@@ -110,7 +110,7 @@ Six axes total. Application sits between Platform and Tenant. Organization,
 Region, and Branch are three orthogonal axes below Tenant that meet at Branch.
 
 ```
-Platform (Academorix Inc. — always one)
+Platform (Stackra Inc. — always one)
    │
    └── Application (one of N products, e.g. Sports, Marketplace, ...)
          │
@@ -206,7 +206,7 @@ configurable and drives cascading resolution for every configuration-owning
 consumer (settings, permissions overlay, feature flags, pricing, notification
 prefs).
 
-Default Academorix shape:
+Default Stackra shape:
 
 ```
 global → application → tenant → organization → region → branch → team → user
@@ -548,12 +548,12 @@ the parent's module. If it's a new domain, spin up a new module under
   `use AsController;`. (Supersedes ADR-0013.)
 - ADR-0017 — Tenancy terminology (no `Workspace`, no `TenantMembership`,
   distinguished `Membership` vs `TenantMember`).
-- ADR-0019 — Tenant settings go through `academorix/settings`.
+- ADR-0019 — Tenant settings go through `stackra/settings`.
 - ADR-0020 — Bootstrapper vs TenancyHook are two different concepts.
 
 Architecture rules the aggregate must satisfy:
-`EnumUsesAcademorixEnumTraitRule`, `ServiceProviderHasModuleAttributeRule`,
-`ExceptionsExtendAcademorixBaseRule`, `ActionHasAsActionAttributeRule`,
+`EnumUsesStackraEnumTraitRule`, `ServiceProviderHasModuleAttributeRule`,
+`ExceptionsExtendStackraBaseRule`, `ActionHasAsActionAttributeRule`,
 `NoServiceLayerRule`, `NoBaseControllerRule`, `NoWorkspaceInBackendRule`,
 `NoTenantMembershipTokenRule`.
 
@@ -622,9 +622,9 @@ queries per month (Entitlements)".
 
 Yes, totally.
 
-- `TenantSubscription` = the **academy pays Academorix** (SaaS billing).
+- `TenantSubscription` = the **academy pays Stackra** (SaaS billing).
 - `Finance\Membership` = the **parent pays the academy** for their athlete's
-  enrolment. Runs on the academy's Stripe/Paddle account, not Academorix's.
+  enrolment. Runs on the academy's Stripe/Paddle account, not Stackra's.
 
 **Q: What renames from the workspace terminology cleanup?**
 

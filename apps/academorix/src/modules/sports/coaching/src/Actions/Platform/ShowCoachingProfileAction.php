@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Actions\Platform;
+namespace Stackra\Coaching\Actions\Platform;
 
-use Academorix\Coaching\Contracts\Repositories\CoachingProfileRepositoryInterface;
-use Academorix\Coaching\Data\CoachingProfileData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Coaching\Contracts\Repositories\CoachingProfileRepositoryInterface;
+use Stackra\Coaching\Data\CoachingProfileData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 
 /**
  * `GET /api/v1/platform/coaching-profiles/{profile}` — show action (platform-admin audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Coaching

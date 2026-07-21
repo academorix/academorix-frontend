@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PrivateSessions\Contracts\Services;
+namespace Stackra\PrivateSessions\Contracts\Services;
 
-use Academorix\PrivateSessions\Services\CoachMatchmaker;
+use Stackra\PrivateSessions\Services\CoachMatchmaker;
 use Illuminate\Container\Attributes\Bind;
 
 /**

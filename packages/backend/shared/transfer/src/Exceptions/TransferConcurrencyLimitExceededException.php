@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Exceptions;
+namespace Stackra\Transfer\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the tenant already has `max_concurrent_jobs` in flight.
@@ -13,7 +13,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TransferConcurrencyLimitExceededException extends AcademorixException
+final class TransferConcurrencyLimitExceededException extends StackraException
 {
     public const CODE = 'TRANSFER_CONCURRENCY_LIMIT_EXCEEDED';
 

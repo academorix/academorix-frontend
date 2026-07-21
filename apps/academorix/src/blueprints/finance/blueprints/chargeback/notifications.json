@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/chargeback/notifications",
+  "id": "stackra://modules/chargeback/notifications",
   "$version": 1,
   "title": "chargeback — notification classes + categories",
-  "namespace": "Academorix\\Finance\\Chargeback\\Notifications",
+  "namespace": "Stackra\\Finance\\Chargeback\\Notifications",
   "notifications": [
     "ChargebackFiledNotification",
     "ChargebackEvidenceOverdueNotification",
@@ -56,7 +56,7 @@
     {
       "slug": "chargeback.rate_threshold_exceeded",
       "display_name": "Chargeback rate threshold exceeded",
-      "description": "Admin-facing + Academorix platform ops. P1. Sent when the tenant's rolling 60-day chargeback rate crosses the network's VDMP/MDMP threshold (0.9% Visa / 1.5% Mastercard / 1.0% Amex / 1.0% Discover). Merchant-account termination risk if sustained. Includes current_rate + threshold + chargebacks_count + transactions_count + days_over_threshold + prevention recommendations. Actionable — ops must intervene (fraud review, policy update, RDR enrollment for eligible tenants).",
+      "description": "Admin-facing + Stackra platform ops. P1. Sent when the tenant's rolling 60-day chargeback rate crosses the network's VDMP/MDMP threshold (0.9% Visa / 1.5% Mastercard / 1.0% Amex / 1.0% Discover). Merchant-account termination risk if sustained. Includes current_rate + threshold + chargebacks_count + transactions_count + days_over_threshold + prevention recommendations. Actionable — ops must intervene (fraud review, policy update, RDR enrollment for eligible tenants).",
       "default_channels": ["mail", "in_app", "push"],
       "priority": "transactional",
       "consent_tier": "transactional_required",

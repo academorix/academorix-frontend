@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/analytics",
+  "id": "stackra://modules/notifications/analytics",
   "$version": 1,
   "title": "notifications core \u2014 product analytics events",
   "description": "User-facing analytics events for the product analytics sink. Distinct from metrics.json (OpenTelemetry / ops signals). These feed engagement funnels + preference change patterns. All events respect the user's analytics-consent tier \u2014 events with `consent_required: analytics` are dropped for users who haven't consented.",

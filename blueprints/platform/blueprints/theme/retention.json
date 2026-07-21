@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/theme/retention",
+  "id": "stackra://modules/theme/retention",
   "$version": 1,
   "title": "theme — retention windows",
   "description": "Themes are retained while active + last-N activations for rollback (N=5 default, N=20 Enterprise via theme_rollback_extended). Platform presets retained indefinitely; tenant custom presets retained while their tenant is active. Overrides co-terminous with their parent theme. TenantErased cascade deletes everything.",

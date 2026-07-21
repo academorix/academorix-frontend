@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Contracts\Repositories;
+namespace Stackra\Notifications\Mail\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Notifications\Mail\Models\MailSuppression;
-use Academorix\Notifications\Mail\Repositories\EloquentMailSuppressionRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Notifications\Mail\Models\MailSuppression;
+use Stackra\Notifications\Mail\Repositories\EloquentMailSuppressionRepository;
 use DateTimeInterface;
 use Illuminate\Container\Attributes\Bind;
 
 /**
  * Repository contract for {@see MailSuppression}.
  *
- * Adds the hot-path finder the {@see \Academorix\Notifications\Mail\Channels\MailChannel}
+ * Adds the hot-path finder the {@see \Stackra\Notifications\Mail\Channels\MailChannel}
  * consults before every send (`isSuppressed(...)`), plus the pruner
  * scan for retention. Consumers type-hint the interface, not the
  * concrete repository, so the container can swap in a stub for

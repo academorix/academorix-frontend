@@ -1,10 +1,10 @@
 {
-  "name": "academorix/notifications",
+  "name": "stackra/notifications",
   "type": "library",
-  "description": "Notification substrate core for Academorix. Owns six aggregates: `Notification` (the universal delivery record), `NotificationDelivery` (per-channel attempt audit trail), `NotificationTemplate` (versioned reusable templates), `NotificationPreference` (per-user opt-in per category per channel), `NotificationCategory` (module-fed registry with is_system+tenant-override rows) and `NotificationDigest` (batched daily/weekly delivery). Channel-agnostic: the single dispatch entry point (`DispatchGatewayInterface`) fires an event-carried state payload to the send queue; channel modules subscribe and translate to their transport. Attribute-driven consumer registration (`#[Notifiable]`, `#[HasPreferences]`) + attribute-first discovery + framework-swappable services + HTTP surface for tenant inbox, tenant preferences, tenant admin templates, RFC 8058 one-click unsubscribe, and cross-tenant platform diagnostics.",
+  "description": "Notification substrate core for Stackra. Owns six aggregates: `Notification` (the universal delivery record), `NotificationDelivery` (per-channel attempt audit trail), `NotificationTemplate` (versioned reusable templates), `NotificationPreference` (per-user opt-in per category per channel), `NotificationCategory` (module-fed registry with is_system+tenant-override rows) and `NotificationDigest` (batched daily/weekly delivery). Channel-agnostic: the single dispatch entry point (`DispatchGatewayInterface`) fires an event-carried state payload to the send queue; channel modules subscribe and translate to their transport. Attribute-driven consumer registration (`#[Notifiable]`, `#[HasPreferences]`) + attribute-first discovery + framework-swappable services + HTTP surface for tenant inbox, tenant preferences, tenant admin templates, RFC 8058 one-click unsubscribe, and cross-tenant platform diagnostics.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "laravel",
     "notifications",
     "delivery-log",
@@ -19,21 +19,21 @@
   ],
   "require": {
     "php": "^8.3",
-    "academorix/application": "@dev",
-    "academorix/authorization": "@dev",
-    "academorix/console": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/database": "@dev",
-    "academorix/enum": "@dev",
-    "academorix/events": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
-    "academorix/retention": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/serializer": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix/tenancy": "@dev",
+    "stackra/application": "@dev",
+    "stackra/authorization": "@dev",
+    "stackra/console": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/database": "@dev",
+    "stackra/enum": "@dev",
+    "stackra/events": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/retention": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/serializer": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra/tenancy": "@dev",
     "illuminate/bus": "^13.0",
     "illuminate/contracts": "^13.0",
     "illuminate/database": "^13.0",
@@ -53,20 +53,20 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Notifications\\": "src/",
-      "Academorix\\Notifications\\Database\\Factories\\": "database/factories/",
-      "Academorix\\Notifications\\Database\\Seeders\\": "database/seeders/"
+      "Stackra\\Notifications\\": "src/",
+      "Stackra\\Notifications\\Database\\Factories\\": "database/factories/",
+      "Stackra\\Notifications\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Notifications\\Tests\\": "tests/"
+      "Stackra\\Notifications\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Notifications\\Providers\\NotificationsServiceProvider"
+        "Stackra\\Notifications\\Providers\\NotificationsServiceProvider"
       ],
       "aliases": {}
     }

@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/chargeback/attributes",
+  "id": "stackra://modules/chargeback/attributes",
   "$version": 1,
   "title": "chargeback — PHP attribute contracts",
   "description": "Two class-level attributes for listener discovery. `AsChargebackListener` subscribes to chargeback lifecycle events (filed / evidence_requested / evidence_submitted / under_review / won / lost / expired / accepted_refund / evidence_overdue / rate_threshold_exceeded / webhook_received / reconciled). `AsChargebackEvidenceListener` subscribes to chargeback_evidence events (submitted). Discovery loader picks up each class at boot + wires the declared events. No property-level attributes: the two owned rows use ordinary Eloquent + spatie/laravel-data class attributes shipped by foundation.",
-  "namespace": "Academorix\\Finance\\Chargeback\\Attributes",
+  "namespace": "Stackra\\Finance\\Chargeback\\Attributes",
   "attributes": [
     {
       "name": "AsChargebackListener",
-      "class": "Academorix\\Finance\\Chargeback\\Attributes\\AsChargebackListener",
+      "class": "Stackra\\Finance\\Chargeback\\Attributes\\AsChargebackListener",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a service as a subscriber to chargeback lifecycle events (ChargebackFiled / ChargebackEvidenceRequested / ChargebackEvidenceSubmitted / ChargebackUnderReview / ChargebackWon / ChargebackLost / ChargebackExpired / ChargebackAcceptedRefund / ChargebackEvidenceOverdue / ChargebackClawbackReferral / ChargebackClawbackCoupon / ChargebackNetworkFeeRecorded / ChargebackTransactionRecorded / ChargebackWebhookReceived / ChargebackReconciled / ChargebackRateThresholdExceeded).",
@@ -34,7 +34,7 @@
     },
     {
       "name": "AsChargebackEvidenceListener",
-      "class": "Academorix\\Finance\\Chargeback\\Attributes\\AsChargebackEvidenceListener",
+      "class": "Stackra\\Finance\\Chargeback\\Attributes\\AsChargebackEvidenceListener",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a service as a subscriber to chargeback_evidence lifecycle events (ChargebackEvidenceSubmitted). Evidence rows are immutable at creation — no update / delete events fire.",

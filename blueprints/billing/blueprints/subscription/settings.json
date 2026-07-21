@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/subscription/settings",
+  "id": "stackra://modules/subscription/settings",
   "$version": 1,
   "title": "subscription \u2014 settings",
   "description": "Tenant-facing subscription preferences. One #[AsSetting] class published under group key `subscription`.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "subscription",
-      "class": "Academorix\\Subscription\\Settings\\SubscriptionSettings",
+      "class": "Stackra\\Subscription\\Settings\\SubscriptionSettings",
       "label": "Billing preferences",
       "description": "How the tenant handles subscription lifecycle events.",
       "icon": "credit-card",

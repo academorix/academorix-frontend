@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/membership/errors",
+  "id": "stackra://modules/membership/errors",
   "$version": 1,
   "title": "membership — error codes",
   "namespace": "membership",

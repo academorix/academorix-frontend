@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/coupon/helpers",
+  "id": "stackra://modules/coupon/helpers",
   "$version": 1,
   "title": "coupon — helper functions",
   "description": "Ergonomic helpers for resolving coupons by code, computing hypothetical discounts, generating unique codes, and reading redemption counts. All helpers are thin wrappers around bound services — never business logic.",
-  "namespace": "Academorix\\Finance\\Coupon\\Support",
+  "namespace": "Stackra\\Finance\\Coupon\\Support",
   "helpers": [
     {
       "signature": "resolve_coupon(string $code, string $tenantId): ?Coupon",

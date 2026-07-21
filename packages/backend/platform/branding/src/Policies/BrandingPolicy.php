@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Policies;
+namespace Stackra\Branding\Policies;
 
-use Academorix\Branding\Contracts\Data\BrandingInterface;
-use Academorix\Branding\Enums\BrandingPermission;
-use Academorix\Branding\Models\Branding;
+use Stackra\Branding\Contracts\Data\BrandingInterface;
+use Stackra\Branding\Enums\BrandingPermission;
+use Stackra\Branding\Models\Branding;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

@@ -1,51 +1,51 @@
 {
-  "id": "academorix://modules/delegation/commands",
+  "id": "stackra://modules/delegation/commands",
   "$version": 1,
   "title": "delegation — Artisan commands",
   "commands": [
     {
       "signature": "delegations:list {--tenant=} {--delegator=} {--delegate=} {--state=} {--role=}",
-      "class": "Academorix\\Delegation\\Console\\Commands\\ListDelegationsCommand",
+      "class": "Stackra\\Delegation\\Console\\Commands\\ListDelegationsCommand",
       "purpose": "List role_delegations. --state filters to pending / active / expired / revoked. --role filters to a specific role_id. Ops surface for troubleshooting delegation issues + drafting evidence for compliance queries."
     },
     {
       "signature": "delegations:describe {delegation}",
-      "class": "Academorix\\Delegation\\Console\\Commands\\DescribeDelegationCommand",
+      "class": "Stackra\\Delegation\\Console\\Commands\\DescribeDelegationCommand",
       "purpose": "Print full detail for one delegation: identity, role, dates, reason, revocation state, and the audit trail (last N rows from HasActivityLog + HasAudit). Useful when a delegate reports 'why can't I do X'."
     },
     {
       "signature": "delegations:create --delegator= --delegate= {--role=} --starts-at= --ends-at= --reason= {--type=oof}",
-      "class": "Academorix\\Delegation\\Console\\Commands\\CreateDelegationCommand",
+      "class": "Stackra\\Delegation\\Console\\Commands\\CreateDelegationCommand",
       "purpose": "Create a delegation via CLI (ops break-glass — the tenant admin surface is the primary path). Goes through the same observer + rules pipeline as the HTTP surface — no fast-path, no observer bypass. --type is one of oof / handover / emergency; emergency requires the delegator to hold the emergency_delegation entitlement."
     },
     {
       "signature": "delegations:revoke {delegation} --reason= {--by=}",
-      "class": "Academorix\\Delegation\\Console\\Commands\\RevokeDelegationCommand",
+      "class": "Stackra\\Delegation\\Console\\Commands\\RevokeDelegationCommand",
       "purpose": "Revoke a delegation early via CLI. --by defaults to the CLI operator's PlatformUser id (audited as an admin revocation)."
     },
     {
       "signature": "delegations:audit-oof-usage --tenant= {--since=} {--until=} {--role=}",
-      "class": "Academorix\\Delegation\\Console\\Commands\\AuditOofUsageCommand",
+      "class": "Stackra\\Delegation\\Console\\Commands\\AuditOofUsageCommand",
       "purpose": "Report of delegation usage per tenant + role over a time window. Reads the ApproverResolved-derived usage rows written by RecordDelegationUsageInApproverResolution listener. Answers 'how often did role X's OOF trigger in the last quarter'. Feeds product-team analytics on OOF adoption + friction."
     },
     {
       "signature": "impersonation:list-active {--tenant=} {--operator=}",
-      "class": "Academorix\\Delegation\\Console\\Commands\\ListActiveImpersonationCommand",
+      "class": "Stackra\\Delegation\\Console\\Commands\\ListActiveImpersonationCommand",
       "purpose": "List currently-active impersonation sessions. Ops + security tool for real-time visibility. --tenant filters to a target tenant; --operator filters to a specific PlatformUser."
     },
     {
       "signature": "impersonation:describe {session}",
-      "class": "Academorix\\Delegation\\Console\\Commands\\DescribeImpersonationCommand",
+      "class": "Stackra\\Delegation\\Console\\Commands\\DescribeImpersonationCommand",
       "purpose": "Print full detail for one session: impersonator (live join OR snapshot fields), impersonated User, target tenant + application, duration, end trigger, audit trail. Also lists every audit row written during the session (via correlation_id join) — the operator's 'blast radius' during the session."
     },
     {
       "signature": "impersonation:audit-report {--tenant=} --since= --until= {--operator=} {--department=} {--end-trigger=}",
-      "class": "Academorix\\Delegation\\Console\\Commands\\ImpersonationAuditReportCommand",
+      "class": "Stackra\\Delegation\\Console\\Commands\\ImpersonationAuditReportCommand",
       "purpose": "The compliance evidence report. Cross-tenant summary of impersonation activity over the window. Groups by operator + department. Highlights force-terminated sessions + refused attempts. Emits CSV + JSON for downstream SOC 2 evidence submission. This command is what auditors run during evidence review — the same read as the /api/v1/platform/impersonation/audit endpoint, from the CLI."
     },
     {
       "signature": "impersonation:force-end {session} --reason=",
-      "class": "Academorix\\Delegation\\Console\\Commands\\ForceEndImpersonationCommand",
+      "class": "Stackra\\Delegation\\Console\\Commands\\ForceEndImpersonationCommand",
       "purpose": "Emergency CLI-driven force-termination — mirrors POST /impersonation/{session}/force-terminate. Fires ImpersonationSessionForcedTerminate with end_trigger=security_lockdown. Requires --reason (min 40 chars). Used when the HTTP surface is unavailable (rare — SEV-1 scenarios)."
     }
   ]

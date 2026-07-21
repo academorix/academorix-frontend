@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/auth/permissions",
+  "id": "stackra://modules/auth/permissions",
   "$version": 1,
   "title": "auth \u2014 permissions",
-  "seeder": "Academorix\\Auth\\Database\\Seeders\\AuthPermissionSeeder",
+  "seeder": "Stackra\\Auth\\Database\\Seeders\\AuthPermissionSeeder",
   "isSystem": true,
   "description": "Permissions on the auth surface split by guard. Tenant-plane permissions (guard: sanctum) gate the self-service session-management surface (view own sessions, revoke own sessions, issue cross-app grants). Platform-plane permissions (guard: platform_admin) gate the identity CRUD + JWT-key management + impersonation. NEVER cross the guard boundary.",
   "permissions": [

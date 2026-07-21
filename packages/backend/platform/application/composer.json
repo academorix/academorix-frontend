@@ -1,10 +1,10 @@
 {
-  "name": "academorix/application",
+  "name": "stackra/application",
   "type": "library",
-  "description": "Application (product-catalogue) domain module — the global cross-tenant registry of Academorix products (Sports, Marketplace, Ticketing, Venue, Education) plus the BusinessType catalogue (academy, sports_center, school, gym, federation, club). Every Tenant belongs to exactly one Application; `application_id` cascades through the tenancy hierarchy via the `BelongsToApplication` trait (owned here). BusinessType is dual-source per .kiro/steering/enum-db-seed-dual-source.md — code-primary via `BusinessTypeEnum`, DB mirror in `business_types` for admin visibility + tenant-defined customs.",
+  "description": "Application (product-catalogue) domain module — the global cross-tenant registry of Stackra products (Sports, Marketplace, Ticketing, Venue, Education) plus the BusinessType catalogue (academy, sports_center, school, gym, federation, club). Every Tenant belongs to exactly one Application; `application_id` cascades through the tenancy hierarchy via the `BelongsToApplication` trait (owned here). BusinessType is dual-source per .kiro/steering/enum-db-seed-dual-source.md — code-primary via `BusinessTypeEnum`, DB mirror in `business_types` for admin visibility + tenant-defined customs.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "laravel",
     "application",
     "product-catalogue",
@@ -15,19 +15,19 @@
   ],
   "require": {
     "php": "^8.3",
-    "academorix-platform/application-sdk": "@dev",
-    "academorix/authorization": "@dev",
-    "academorix/console": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/database": "@dev",
-    "academorix/enum": "@dev",
-    "academorix/events": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
-    "academorix/retention": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
+    "stackra-platform/application-sdk": "@dev",
+    "stackra/authorization": "@dev",
+    "stackra/console": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/database": "@dev",
+    "stackra/enum": "@dev",
+    "stackra/events": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/retention": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
     "illuminate/auth": "^13.0",
     "illuminate/contracts": "^13.0",
     "illuminate/database": "^13.0",
@@ -46,20 +46,20 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Application\\": "src/",
-      "Academorix\\Application\\Database\\Factories\\": "database/factories/",
-      "Academorix\\Application\\Database\\Seeders\\": "database/seeders/"
+      "Stackra\\Application\\": "src/",
+      "Stackra\\Application\\Database\\Factories\\": "database/factories/",
+      "Stackra\\Application\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Application\\Tests\\": "tests/"
+      "Stackra\\Application\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Application\\Providers\\ApplicationServiceProvider"
+        "Stackra\\Application\\Providers\\ApplicationServiceProvider"
       ],
       "aliases": {}
     }

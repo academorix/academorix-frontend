@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/branch/schemas/branch",
+  "id": "stackra://modules/branch/schemas/branch",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Branch",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "brn_",
     "incrementing": false,
-    "model": "Academorix\\Branch\\Models\\Branch",
-    "interface": "Academorix\\Branch\\Contracts\\Data\\BranchInterface",
-    "implements": ["Academorix\\Branch\\Contracts\\Data\\BranchInterface"],
+    "model": "Stackra\\Branch\\Models\\Branch",
+    "interface": "Stackra\\Branch\\Contracts\\Data\\BranchInterface",
+    "implements": ["Stackra\\Branch\\Contracts\\Data\\BranchInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

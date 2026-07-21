@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/transaction/permissions",
+  "id": "stackra://modules/transaction/permissions",
   "$version": 1,
   "title": "transaction — permissions",
-  "seeder": "Academorix\\Finance\\Transaction\\Database\\Seeders\\TransactionPermissionSeeder",
+  "seeder": "Stackra\\Finance\\Transaction\\Database\\Seeders\\TransactionPermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — read by owner + admin + finance role; reversal by owner + admin ONLY (finance role does NOT hold reverse — reversal is regulator-critical + admin-only). NO create / update / delete permissions on tenant plane — transactions are recorded via internal service (TransactionRecorder) called by invoice / payment / refund / chargeback modules. Platform plane (platform_admin) — cross-tenant support tooling for ops + support + super_admin.",
   "permissions": [

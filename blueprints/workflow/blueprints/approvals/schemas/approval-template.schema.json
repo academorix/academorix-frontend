@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/schemas/approval-template",
+  "id": "stackra://modules/workflow/approvals/schemas/approval-template",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ApprovalTemplate",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "apt_",
     "incrementing": false,
-    "model": "Academorix\\Approval\\Models\\ApprovalTemplate",
-    "interface": "Academorix\\Approval\\Contracts\\Data\\ApprovalTemplateInterface",
-    "implements": ["Academorix\\Approval\\Contracts\\Data\\ApprovalTemplateInterface"],
+    "model": "Stackra\\Approval\\Models\\ApprovalTemplate",
+    "interface": "Stackra\\Approval\\Contracts\\Data\\ApprovalTemplateInterface",
+    "implements": ["Stackra\\Approval\\Contracts\\Data\\ApprovalTemplateInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/access/requests/permissions",
+  "id": "stackra://modules/access/requests/permissions",
   "$version": 1,
   "title": "requests \u2014 permissions",
-  "description": "Permission strings this module publishes. Seeded by `AccessRequestPermissionSeeder` with `is_system=true`. Split by guard: `sanctum` for tenant users; `platform_admin` for Academorix cross-tenant ops.",
-  "seeder": "Academorix\\AccessRequest\\Database\\Seeders\\AccessRequestPermissionSeeder",
+  "description": "Permission strings this module publishes. Seeded by `AccessRequestPermissionSeeder` with `is_system=true`. Split by guard: `sanctum` for tenant users; `platform_admin` for Stackra cross-tenant ops.",
+  "seeder": "Stackra\\AccessRequest\\Database\\Seeders\\AccessRequestPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {
@@ -61,7 +61,7 @@
     {
       "name": "access-requests.manage_any",
       "guard": "platform_admin",
-      "description": "Cross-tenant read for Academorix ops (abuse investigation, compliance reporting, support tickets). Scoped to a small platform-admin role tier.",
+      "description": "Cross-tenant read for Stackra ops (abuse investigation, compliance reporting, support tickets). Scoped to a small platform-admin role tier.",
       "grantsPolicies": ["AccessRequestPolicy@viewAnyPlatform", "AccessRequestPolicy@viewPlatform"],
       "seededOn": ["super_admin", "compliance_officer"]
     }

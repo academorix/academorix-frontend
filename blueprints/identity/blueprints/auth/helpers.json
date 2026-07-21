@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/auth/helpers",
+  "id": "stackra://modules/auth/helpers",
   "$version": 1,
   "title": "auth \u2014 helper functions",
   "description": "Three global helpers. Everything else exposed by auth is behind DI / facades \u2014 helpers here cover the very-hot request-scoped lookups downstream modules would otherwise repeat in every file.",
-  "namespace": "Academorix\\Auth\\Support",
+  "namespace": "Stackra\\Auth\\Support",
   "helpers": [
     {
       "signature": "current_user_or_platform_user(): User|PlatformUser|null",

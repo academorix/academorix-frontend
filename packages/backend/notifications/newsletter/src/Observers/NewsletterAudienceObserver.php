@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Observers;
+namespace Stackra\Newsletter\Observers;
 
-use Academorix\Newsletter\Contracts\Data\NewsletterAudienceInterface;
-use Academorix\Newsletter\Events\NewsletterAudienceCreated;
-use Academorix\Newsletter\Models\NewsletterAudience;
+use Stackra\Newsletter\Contracts\Data\NewsletterAudienceInterface;
+use Stackra\Newsletter\Events\NewsletterAudienceCreated;
+use Stackra\Newsletter\Models\NewsletterAudience;
 use Illuminate\Support\Str;
 
 /**

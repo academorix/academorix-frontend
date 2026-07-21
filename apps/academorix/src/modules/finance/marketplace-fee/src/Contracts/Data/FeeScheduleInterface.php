@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\MarketplaceFee\Contracts\Data;
+namespace Stackra\MarketplaceFee\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\MarketplaceFee\Models\FeeSchedule;
+use Stackra\MarketplaceFee\Models\FeeSchedule;
 
 /**
  * Table shape for the `fee_schedules` table.

@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/facility/traits",
+  "id": "stackra://modules/facility/traits",
   "$version": 1,
   "title": "facility — trait composition",
   "description": "Four owned traits. `BelongsToFacility` is the FK trait for downstream models (ResourceBooking today; Session/EventTeam bookings in Wave 3). `HasBookings` / `HasDayPasses` / `HasPasses` are inverse-side conveniences on the Facility model itself, exposing scoped query helpers (`->activeBookings()`, `->overlappingBookings($window)`, `->activePasses()`). Order matters when composed with `BelongsToTenant` / `BelongsToBranch` / `BelongsToRegion` — tenant MUST come first so the scope chain observes the tenant context; branch precedes region because the branch FK is the cascade path for region attribution (facilities cascade region through branch per hierarchy.md §2).",
   "owned": [
     {
-      "trait": "Academorix\\Facility\\Concerns\\BelongsToFacility",
+      "trait": "Stackra\\Facility\\Concerns\\BelongsToFacility",
       "description": "Mixed into any domain model that carries a `facility_id` FK. Adds the `facility()` belongsTo relation, a `resolveInFacility(?Facility)` query scope that filters `WHERE facility_id = ?` (falling back to the caller's `Request::activeFacility()` when the arg is omitted), and a `booted()` hook that fills `facility_id = active_facility_id()` on `creating` when the field is null AND the current request carries a resolved active facility. Refuses to save a row whose `facility_id` points at a Facility in a different tenant than the row itself (defense-in-depth against cross-tenant FK smuggling — the compliance-auditor would catch a bad schema, this catches a bad write).",
       "public": true,
       "usedBy": [
@@ -21,19 +21,19 @@
       ]
     },
     {
-      "trait": "Academorix\\Facility\\Concerns\\HasBookings",
+      "trait": "Stackra\\Facility\\Concerns\\HasBookings",
       "description": "Composed onto the Facility model itself. Adds `->bookings()` (hasMany over ResourceBooking), `->activeBookings()` (scope filter status IN ['pending', 'confirmed']), `->futureBookings()` (scope filter starts_at > now()), `->overlappingBookings(Carbon $starts, Carbon $ends)` (index-driven overlap query using the covering index on (facility_id, starts_at, ends_at)). The overlap query is the read side of the write-time SERIALIZABLE overlap-detection observer — same predicate, same index.",
       "public": true,
       "usedBy": ["facility::Facility"]
     },
     {
-      "trait": "Academorix\\Facility\\Concerns\\HasDayPasses",
+      "trait": "Stackra\\Facility\\Concerns\\HasDayPasses",
       "description": "Composed onto the Branch model (NOT the Facility — day passes are branch-scoped, not facility-scoped). Adds `->dayPasses()`, `->dayPassesOnDate(Carbon $date)` (scope filter valid_on_date = ?), `->activeDayPasses()` (scope filter valid_on_date >= today()). Not composed on Facility because a walk-in visitor buys a day pass to the *branch* (they can use any facility their pass tier grants).",
       "public": true,
       "usedBy": ["branch::Branch"]
     },
     {
-      "trait": "Academorix\\Facility\\Concerns\\HasPasses",
+      "trait": "Stackra\\Facility\\Concerns\\HasPasses",
       "description": "Composed onto the Membership model (Wave 4 — placeholder relation today) AND the Facility model. On Membership: `->passes()` (hasMany over Pass). On Facility: `->passes()` (hasMany filtered on facility_id = self.id OR facility_id IS NULL AND branch_id = self.branch_id — passes that are facility-specific OR any-facility-in-branch). The dual-composition is why the trait is one abstraction: same relation shape, different scoping predicate.",
       "public": true,
       "usedBy": [
@@ -52,37 +52,37 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasSlug",
+        "trait": "Stackra\\Foundation\\Concerns\\HasSlug",
         "reason": "Facility only — unique per (tenant_id, branch_id)."
       }
     ],
     "tenants": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
         "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
       }
     ],
     "branch": [
       {
-        "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch",
+        "trait": "Stackra\\Branch\\Concerns\\BelongsToBranch",
         "reason": "Facility, DayPass, Pass all carry branch_id directly. ResourceBooking does NOT — it cascades through facility.branch_id."
       }
     ],
     "audit": [
       {
-        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "trait": "Stackra\\Audit\\Concerns\\Auditable",
         "reason": "Every write to facilities / resource_bookings / day_passes / passes is compliance-relevant (financial-record retention 7 years)."
       }
     ],
     "activity": [
       {
-        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
         "reason": "Booking lifecycle transitions + pass credit consumption feed the staff-visible activity feed. NOT on DayPass — POS-issued rows are high-volume + already covered by receipt_number."
       }
     ]

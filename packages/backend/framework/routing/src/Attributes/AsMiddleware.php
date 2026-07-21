@@ -11,7 +11,7 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 
@@ -112,9 +112,9 @@ use Attribute;
  * ## Discovery:
  * Middleware classes with this attribute are automatically
  * discovered at boot by
- * {@see \Academorix\Routing\Providers\RoutingServiceProvider} via
+ * {@see \Stackra\Routing\Providers\RoutingServiceProvider} via
  * the unified
- * {@see \Academorix\Foundation\Contracts\DiscoversAttributes}
+ * {@see \Stackra\Foundation\Contracts\DiscoversAttributes}
  * contract. The provider:
  * 1. Scans for classes with #[AsMiddleware] attribute
  * 2. Aliases each under `alias` on the router
@@ -144,12 +144,12 @@ use Attribute;
  * - Test middleware order thoroughly
  *
  * ## Related:
- * - {@see \Academorix\Routing\Providers\RoutingServiceProvider} — Attribute-driven registrar.
- * - {@see \Academorix\Foundation\Contracts\DiscoversAttributes} — Unified discovery contract.
+ * - {@see \Stackra\Routing\Providers\RoutingServiceProvider} — Attribute-driven registrar.
+ * - {@see \Stackra\Foundation\Contracts\DiscoversAttributes} — Unified discovery contract.
  * - {@see \Illuminate\Routing\Router} — Laravel's routing system.
  *
- * @see \Academorix\Routing\Providers\RoutingServiceProvider
- * @see \Academorix\Foundation\Contracts\DiscoversAttributes
+ * @see \Stackra\Routing\Providers\RoutingServiceProvider
+ * @see \Stackra\Foundation\Contracts\DiscoversAttributes
  *
  * @since 1.0.0
  */

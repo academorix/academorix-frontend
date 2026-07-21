@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/referrals/entitlements",
+  "id": "stackra://modules/referrals/entitlements",
   "$version": 1,
   "title": "referrals — declared entitlements",
   "description": "Nine entitlement keys. `referrals_capture` is the boolean master gate for the module (on for every tier). `referrals_program_slot` caps the number of referral programs per tenant. `referrals_code_slot` caps campaign codes only — user-scoped codes are always free. `referrals_advanced_reward_types` (Medium+) enables free_months, free_sessions, credits, point_award — Small only allows percent_discount + fixed_amount. `referrals_double_sided` (Medium+) enables double-sided programs. `referrals_fraud_detection` (Medium+) enables the FraudDetector rule surface. `referrals_program_budget_cap` (Medium+) enables max_rewards_per_program. `referrals_manual_override` (Enterprise) enables admin force-vest + admin fraud override. `referrals_extended_retention` (Enterprise) extends 7y -> 10y for financial audit alignment.",

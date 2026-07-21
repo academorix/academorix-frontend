@@ -1,16 +1,16 @@
-# academorix/access-sdk
+# stackra/access-sdk
 
 Typed Saloon SDK for the Access service — roles, permissions, policies, scopes,
 groups, invitations.
 
-Per-service umbrella SDK built on the shared kernel (`academorix/api-sdk`). It
+Per-service umbrella SDK built on the shared kernel (`stackra/api-sdk`). It
 owns the Access service connector (config `sdk.access.*`), a typed `AccessSdk`
 client, and a discovery pass scoped to `#[AsSdkResource(service: 'access')]`.
 
 ## Usage
 
 ```php
-use Academorix\AccessSdk\Client\AccessSdk;
+use Stackra\AccessSdk\Client\AccessSdk;
 
 $access = app(AccessSdk::class);
 $access->someResource()->find($id);

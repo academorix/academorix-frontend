@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/branch/routes",
+  "id": "stackra://modules/branch/routes",
   "$version": 1,
   "title": "branch — HTTP routes",
   "description": "Tenant-facing branch CRUD + lifecycle transitions + hours + is-open probe + platform-admin cross-tenant read.",
@@ -25,119 +25,119 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Branch\\Http\\Controllers\\Tenant\\BranchController@index",
+          "controller": "Stackra\\Branch\\Http\\Controllers\\Tenant\\BranchController@index",
           "permission": "branches.viewAny",
           "description": "filter[organization_id], filter[region_id], filter[status], filter[has_amenities], filter[created_after], sort[]=sort_order, include=organization,region,facilities_count,active_teams_count,default_default"
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Branch\\Http\\Controllers\\Tenant\\BranchController@store",
+          "controller": "Stackra\\Branch\\Http\\Controllers\\Tenant\\BranchController@store",
           "permission": "branches.create",
           "description": "Body: { organization_id, region_id, name, slug?, code?, description?, logo_url?, address?, coordinates?, phone?, email?, website_url?, opening_hours?, capacity?, amenities?, is_default?, sort_order? }. Consumes 1 `branch_slot` entitlement."
         },
         {
           "method": "GET",
           "path": "/{branch}",
-          "controller": "Academorix\\Branch\\Http\\Controllers\\Tenant\\BranchController@show",
+          "controller": "Stackra\\Branch\\Http\\Controllers\\Tenant\\BranchController@show",
           "permission": "branches.view",
           "description": "include=organization,region,facilities_count,active_teams_count,is_open_now"
         },
         {
           "method": "PATCH",
           "path": "/{branch}",
-          "controller": "Academorix\\Branch\\Http\\Controllers\\Tenant\\BranchController@update",
+          "controller": "Stackra\\Branch\\Http\\Controllers\\Tenant\\BranchController@update",
           "permission": "branches.update",
           "description": "Body: any of { name, slug, code, description, logo_url, phone, email, website_url, sort_order }. Address / coordinates / opening_hours / capacity / amenities go via the specific PATCH sub-routes below OR pass through this route when the caller carries the corresponding fine-grained permission. `organization_id` / `region_id` / `tenant_id` writes are refused (immutable)."
         },
         {
           "method": "DELETE",
           "path": "/{branch}",
-          "controller": "Academorix\\Branch\\Http\\Controllers\\Tenant\\BranchController@destroy",
+          "controller": "Stackra\\Branch\\Http\\Controllers\\Tenant\\BranchController@destroy",
           "permission": null,
           "description": "Always returns 403 `BRANCH_PUBLIC_DELETE_FORBIDDEN` with guidance to use `POST /{branch}/close`. Kept in the routes list so callers get the guided response rather than a bare 405."
         },
         {
           "method": "PATCH",
           "path": "/{branch}/address",
-          "controller": "Academorix\\Branch\\Http\\Controllers\\Tenant\\BranchAddressController@update",
+          "controller": "Stackra\\Branch\\Http\\Controllers\\Tenant\\BranchAddressController@update",
           "permission": "branches.update_address",
           "description": "Body: full structured-address blob. Server-side re-computes the `formatted` field per branch.region.timezone locale."
         },
         {
           "method": "PATCH",
           "path": "/{branch}/coordinates",
-          "controller": "Academorix\\Branch\\Http\\Controllers\\Tenant\\BranchCoordinatesController@update",
+          "controller": "Stackra\\Branch\\Http\\Controllers\\Tenant\\BranchCoordinatesController@update",
           "permission": "branches.update_coordinates",
           "description": "Body: { lat, lng, accuracy_m?, source? }. `source` defaults to 'manual' — auto-geocoding writes flow through the job, not this endpoint."
         },
         {
           "method": "PATCH",
           "path": "/{branch}/hours",
-          "controller": "Academorix\\Branch\\Http\\Controllers\\Tenant\\BranchHoursController@update",
+          "controller": "Stackra\\Branch\\Http\\Controllers\\Tenant\\BranchHoursController@update",
           "permission": "branches.update_hours",
           "description": "Body: full opening_hours blob (7 day keys + exceptions). Refuses multi-period days when tenant lacks `branch_multi_period_hours` entitlement."
         },
         {
           "method": "PATCH",
           "path": "/{branch}/capacity",
-          "controller": "Academorix\\Branch\\Http\\Controllers\\Tenant\\BranchCapacityController@update",
+          "controller": "Stackra\\Branch\\Http\\Controllers\\Tenant\\BranchCapacityController@update",
           "permission": "branches.update_capacity",
           "description": "Body: { capacity: int | null }. Null clears the cap. Fires BranchCapacityChanged."
         },
         {
           "method": "POST",
           "path": "/{branch}/set-default",
-          "controller": "Academorix\\Branch\\Http\\Controllers\\Tenant\\BranchController@setDefault",
+          "controller": "Stackra\\Branch\\Http\\Controllers\\Tenant\\BranchController@setDefault",
           "permission": "branches.set_default",
           "description": "Idempotent. Auto-demotes the previous default row for the same (tenant, organization). Fires BranchDefaultChanged."
         },
         {
           "method": "POST",
           "path": "/{branch}/pause",
-          "controller": "Academorix\\Branch\\Http\\Controllers\\Tenant\\BranchController@pause",
+          "controller": "Stackra\\Branch\\Http\\Controllers\\Tenant\\BranchController@pause",
           "permission": "branches.pause",
           "description": "Body: { reason?, resume_scheduled_for? }. Refuses when status !== 'active'."
         },
         {
           "method": "POST",
           "path": "/{branch}/resume",
-          "controller": "Academorix\\Branch\\Http\\Controllers\\Tenant\\BranchController@resume",
+          "controller": "Stackra\\Branch\\Http\\Controllers\\Tenant\\BranchController@resume",
           "permission": "branches.resume",
           "description": "Refuses when status !== 'paused'."
         },
         {
           "method": "POST",
           "path": "/{branch}/close",
-          "controller": "Academorix\\Branch\\Http\\Controllers\\Tenant\\BranchController@close",
+          "controller": "Stackra\\Branch\\Http\\Controllers\\Tenant\\BranchController@close",
           "permission": "branches.close",
           "description": "Body: { reason, closed_date?, successor_branch_id? }. Refuses when active downstream rows reference the branch (BRANCH_IN_USE, 409)."
         },
         {
           "method": "POST",
           "path": "/{branch}/reopen",
-          "controller": "Academorix\\Branch\\Http\\Controllers\\Tenant\\BranchController@reopen",
+          "controller": "Stackra\\Branch\\Http\\Controllers\\Tenant\\BranchController@reopen",
           "permission": "branches.reopen",
           "description": "Refuses when a successor branch was created under the same (tenant, organization) post-close (BRANCH_SUCCESSOR_EXISTS, 409)."
         },
         {
           "method": "POST",
           "path": "/{branch}/geocode",
-          "controller": "Academorix\\Branch\\Http\\Controllers\\Tenant\\BranchController@geocode",
+          "controller": "Stackra\\Branch\\Http\\Controllers\\Tenant\\BranchController@geocode",
           "permission": "branches.geocode",
           "description": "Dispatches GeocodeAddressJob for re-resolution. Returns 402 `BRANCH_GEOCODING_UNAVAILABLE` when tenant lacks `branch_geocoding` entitlement. Idempotent — the job de-duplicates on (branch_id, address_hash)."
         },
         {
           "method": "GET",
           "path": "/{branch}/hours",
-          "controller": "Academorix\\Branch\\Http\\Controllers\\Tenant\\BranchHoursController@show",
+          "controller": "Stackra\\Branch\\Http\\Controllers\\Tenant\\BranchHoursController@show",
           "permission": "branches.view",
           "description": "Returns opening_hours + current-status metadata: is_open_now, next_open_at, next_close_at, computed in `branch.region.timezone` (caller's tz optionally overrides via ?tz= param)."
         },
         {
           "method": "GET",
           "path": "/{branch}/is-open",
-          "controller": "Academorix\\Branch\\Http\\Controllers\\Tenant\\BranchHoursController@isOpen",
+          "controller": "Stackra\\Branch\\Http\\Controllers\\Tenant\\BranchHoursController@isOpen",
           "permission": "branches.view",
           "description": "Boolean + reason. Response: { is_open: bool, reason: 'active'|'paused'|'closed'|'outside_hours'|'exception_day', next_transition_at: ISO-8601 }."
         }
@@ -160,20 +160,20 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Branch\\Http\\Controllers\\Platform\\BranchController@index",
+          "controller": "Stackra\\Branch\\Http\\Controllers\\Platform\\BranchController@index",
           "permission": "platform.branches.viewAny",
           "description": "Cross-tenant filterable list. filter[tenant_id], filter[organization_id], filter[region_id], filter[status], filter[country_code]."
         },
         {
           "method": "GET",
           "path": "/{branch}",
-          "controller": "Academorix\\Branch\\Http\\Controllers\\Platform\\BranchController@show",
+          "controller": "Stackra\\Branch\\Http\\Controllers\\Platform\\BranchController@show",
           "permission": "platform.branches.view"
         },
         {
           "method": "POST",
           "path": "/{branch}/force-close",
-          "controller": "Academorix\\Branch\\Http\\Controllers\\Platform\\BranchController@forceClose",
+          "controller": "Stackra\\Branch\\Http\\Controllers\\Platform\\BranchController@forceClose",
           "permission": "platform.branches.force_close",
           "description": "Compliance-forced closure. Bypasses the dependency-check kill switch. Body: { reason, ticket_url }. Fires an alert on every use + writes an audit row with severity=warn. Never used for the ordinary case — the tenant `close` endpoint handles that."
         }

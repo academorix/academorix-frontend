@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Database\Concerns;
+namespace Stackra\Database\Concerns;
 
 use Waad\Metadata\Traits\HasManyMetadata;
 

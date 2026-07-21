@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Contracts\Repositories;
+namespace Stackra\Audit\Contracts\Repositories;
 
-use Academorix\Audit\Models\Audit;
-use Academorix\Audit\Repositories\EloquentAuditRepository;
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Audit\Models\Audit;
+use Stackra\Audit\Repositories\EloquentAuditRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 
@@ -23,7 +23,7 @@ use Illuminate\Support\Collection;
  *     account activity views.
  *   - {@see findForDsar()}     — every audit row referencing a
  *     subject across a date window. Consumed by
- *     {@see \Academorix\Audit\Jobs\ExportAuditForDsarJob}.
+ *     {@see \Stackra\Audit\Jobs\ExportAuditForDsarJob}.
  *   - {@see findChainBreaks()} — every audit row whose stored
  *     `chain_hash` disagrees with the recomputed value at the last
  *     verification run. Consumed by the platform-admin surface.
@@ -84,7 +84,7 @@ interface AuditRepositoryInterface extends RepositoryInterface
      * The verifier marks each verified row's `chain_verified_at`
      * timestamp; broken rows keep it NULL AFTER verification has
      * touched them, so this query relies on the chain-verifier
-     * emitting {@see \Academorix\Audit\Events\AuditChainBroken} rather
+     * emitting {@see \Stackra\Audit\Events\AuditChainBroken} rather
      * than a persisted state column. Returns the rows currently
      * pending re-verification.
      *

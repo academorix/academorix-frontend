@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Foundation\Middlewares\Request;
+namespace Stackra\Foundation\Middlewares\Request;
 
 use Closure;
 use Illuminate\Container\Attributes\Config;
@@ -22,8 +22,8 @@ use function in_array;
 use function microtime;
 use function now;
 
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Support\Str;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 use function time;
@@ -56,7 +56,7 @@ use function time;
  * ```php
  * // In app/Http/Kernel.php
  * protected $middleware = [
- *     \Academorix\Foundation\Middlewares\TimestampMiddleware::class,
+ *     \Stackra\Foundation\Middlewares\TimestampMiddleware::class,
  * ];
  * ```
  *
@@ -64,7 +64,7 @@ use function time;
  * ```php
  * // In app/Http/Kernel.php
  * protected $middlewareAliases = [
- *     'timestamp' => \Academorix\Foundation\Middlewares\TimestampMiddleware::class,
+ *     'timestamp' => \Stackra\Foundation\Middlewares\TimestampMiddleware::class,
  * ];
  * ```
  *

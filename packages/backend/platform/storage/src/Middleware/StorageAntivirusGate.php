@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Middleware;
+namespace Stackra\Storage\Middleware;
 
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Enums\VirusScanState;
-use Academorix\Storage\Models\File;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Enums\VirusScanState;
+use Stackra\Storage\Models\File;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

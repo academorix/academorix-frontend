@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Contracts\Data;
+namespace Stackra\Newsletter\Contracts\Data;
 
-use Academorix\Newsletter\Models\NewsletterCampaign;
+use Stackra\Newsletter\Models\NewsletterCampaign;
 use Illuminate\Container\Attributes\Bind;
 
 /**

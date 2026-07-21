@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Data\Requests;
+namespace Stackra\Branding\Data\Requests;
 
-use Academorix\Branding\Enums\BrandingTheme;
-use Academorix\Branding\Rules\ValidHexColor;
+use Stackra\Branding\Enums\BrandingTheme;
+use Stackra\Branding\Rules\ValidHexColor;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Enum;
 use Spatie\LaravelData\Attributes\Validation\Max;

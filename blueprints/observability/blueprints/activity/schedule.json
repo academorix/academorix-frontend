@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/activity/schedule",
+  "id": "stackra://modules/activity/schedule",
   "$version": 1,
   "title": "activity — scheduled tasks",
   "description": "Cron entries registered by `ActivityServiceProvider::schedule()`. UTC throughout. `runOnOneServer` on every entry so multi-node worker pools do not duplicate work. `withoutOverlapping` where windows may exceed the interval.",
@@ -17,7 +17,7 @@
     {
       "signature": "activity:archive-cold",
       "kind": "job",
-      "class": "Academorix\\Observability\\Activity\\Jobs\\ArchiveActivitiesToColdStorageJob",
+      "class": "Stackra\\Observability\\Activity\\Jobs\\ArchiveActivitiesToColdStorageJob",
       "cron": "0 4 * * 0",
       "timezone": "UTC",
       "description": "Weekly Sunday 04:00 UTC. For tenants with retention > 90d, moves rows in the 90d..retention_days window to cold storage (S3 Parquet). Sunday chosen to avoid weekday performance impact.",
@@ -27,7 +27,7 @@
     {
       "signature": "activity:reconcile-batches",
       "kind": "job",
-      "class": "Academorix\\Observability\\Activity\\Jobs\\ReconcileActivityBatchesJob",
+      "class": "Stackra\\Observability\\Activity\\Jobs\\ReconcileActivityBatchesJob",
       "cron": "30 3 * * *",
       "timezone": "UTC",
       "description": "Daily 03:30 UTC. Closes orphan batches from crashed requests (ActivityBatchStarted with no matching ActivityBatchCompleted, age > 24h). Runs after the purge so orphan cleanup happens on the still-retained hot table.",

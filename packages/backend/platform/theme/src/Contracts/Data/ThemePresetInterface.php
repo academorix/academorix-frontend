@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Contracts\Data;
+namespace Stackra\Theme\Contracts\Data;
 
-use Academorix\Theme\Models\ThemePreset;
+use Stackra\Theme\Models\ThemePreset;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -12,7 +12,7 @@ use Illuminate\Container\Attributes\Bind;
  *
  * Dual-source catalogue (see `.kiro/steering/enum-db-seed-dual-source.md`).
  * System rows carry `is_system = true` and `tenant_id = null` and mirror
- * every non-`Custom` case of {@see \Academorix\Theme\Enums\ThemePresetSlug}.
+ * every non-`Custom` case of {@see \Stackra\Theme\Enums\ThemePresetSlug}.
  * Tenant-authored rows carry `is_system = false` and a non-null
  * `tenant_id` — visible to their owning tenant only.
  *

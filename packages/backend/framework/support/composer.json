@@ -1,6 +1,6 @@
 {
-  "name": "academorix/support",
-  "description": "Support utilities and helpers for Academorix packages: Reflection, Str, Arr, Path, CaseConverter, EmailValidator, Password. Zero-Laravel-runtime dependency where possible; ships tiny helper facades for common formatting + validation tasks.",
+  "name": "stackra/support",
+  "description": "Support utilities and helpers for Stackra packages: Reflection, Str, Arr, Path, CaseConverter, EmailValidator, Password. Zero-Laravel-runtime dependency where possible; ships tiny helper facades for common formatting + validation tasks.",
   "type": "library",
   "license": "proprietary",
   "keywords": [
@@ -8,12 +8,12 @@
     "helpers",
     "utilities",
     "laravel",
-    "academorix"
+    "stackra"
   ],
   "authors": [
     {
-      "name": "Academorix Team",
-      "email": "dev@academorix.com"
+      "name": "Stackra Team",
+      "email": "dev@stackra.com"
     }
   ],
   "require": {
@@ -21,7 +21,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Support\\": "src/"
+      "Stackra\\Support\\": "src/"
     },
     "files": [
       "src/Helpers/Support.php",
@@ -30,7 +30,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Support\\Tests\\": "tests/"
+      "Stackra\\Support\\Tests\\": "tests/"
     }
   },
   "config": {
@@ -46,9 +46,9 @@
     "mockery/mockery": "^1.6",
     "orchestra/testbench": "^10.0"
   },
-  "homepage": "https://github.com/academorix-inc/laravel-framework/support",
+  "homepage": "https://github.com/stackra-inc/laravel-framework/support",
   "support": {
-    "issues": "https://github.com/academorix-inc/laravel-framework/support/-/issues",
-    "source": "https://github.com/academorix-inc/laravel-framework/support"
+    "issues": "https://github.com/stackra-inc/laravel-framework/support/-/issues",
+    "source": "https://github.com/stackra-inc/laravel-framework/support"
   }
 }

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Enums;
+namespace Stackra\Forms\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `handoff_status` on `form-submission`.

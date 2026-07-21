@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/facility/schemas/pricing",
+  "id": "stackra://modules/facility/schemas/pricing",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Facility pricing_json — sub-shape",

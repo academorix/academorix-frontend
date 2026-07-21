@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/attribution/middleware",
+  "id": "stackra://modules/attribution/middleware",
   "$version": 1,
   "title": "attribution — HTTP middleware",
   "middleware": [
     {
       "alias": "attribution.capture",
-      "class": "Academorix\\Growth\\Attribution\\Http\\Middleware\\CaptureAttribution",
+      "class": "Stackra\\Growth\\Attribution\\Http\\Middleware\\CaptureAttribution",
       "priority": 45,
       "description": "The core request-boundary capture. Reads cookies (`_utm`, `_gclid`, `_fbclid`, `_ttclid`, `_msclkid`, `_sccid`, `_session_id`) + query params + Referer header + User-Agent. Runs `ConsentGate::allows('marketing')` — when granted: creates or updates the attributions row + appends an attribution_touchpoints row. When NOT granted: captures ONLY session_id + hashed_ip in an ephemeral in-memory AttributionContext; NO PERSISTENCE + fires AttributionSuppressedByConsent. Publishes the `currentAttribution` + `currentAttributionId` + `attributionSnapshot` macros on the Request class. Runs AFTER auth (needs the authenticated User to identify) but BEFORE any domain writes (so downstream code sees the resolved attribution).",
       "auto_applied": true,
@@ -14,7 +14,7 @@
     },
     {
       "alias": "attribution.resolve_subject",
-      "class": "Academorix\\Growth\\Attribution\\Http\\Middleware\\ResolveAttributionSubject",
+      "class": "Stackra\\Growth\\Attribution\\Http\\Middleware\\ResolveAttributionSubject",
       "priority": 46,
       "description": "Reads attribution_id or (subject_type, subject_id) from the request body (admin routes: merge, reset, import) or the X-Attribution-Id header. Loads the Attribution model, checks tenant scoping (refuses when attribution.tenant_id != request tenant with ATTRIBUTION_RESET_TENANT_MISMATCH), and stores it on RequestContext::attributionSubject() so admin actions operate on the resolved profile. Optional (skipped when the request carries no attribution reference — most read routes).",
       "auto_applied": false,

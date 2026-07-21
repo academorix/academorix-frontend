@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Repositories;
+namespace Stackra\Search\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Search\Contracts\Data\SearchSyncJobInterface;
-use Academorix\Search\Contracts\Repositories\SearchSyncJobRepositoryInterface;
-use Academorix\Search\Models\SearchSyncJob;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Search\Contracts\Data\SearchSyncJobInterface;
+use Stackra\Search\Contracts\Repositories\SearchSyncJobRepositoryInterface;
+use Stackra\Search\Models\SearchSyncJob;
 use DateTimeInterface;
 use Illuminate\Support\Collection;
 

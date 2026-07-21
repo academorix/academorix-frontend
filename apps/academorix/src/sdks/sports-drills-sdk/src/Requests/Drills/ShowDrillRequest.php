@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDrillsSdk\Requests\Drills;
+namespace Stackra\SportsDrillsSdk\Requests\Drills;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsDrillsSdk\Data\DrillData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsDrillsSdk\Data\DrillData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

@@ -252,7 +252,7 @@
       "template_id": "premium_family_package",
       "category": "premium",
       "display_name": "Family package (multi-athlete)",
-      "description": "Family plan with kit included. Note — Academorix models family memberships as ONE MEMBERSHIP PER ATHLETE. This template is applied N times, once per family athlete.",
+      "description": "Family plan with kit included. Note — Stackra models family memberships as ONE MEMBERSHIP PER ATHLETE. This template is applied N times, once per family athlete.",
       "shape": {
         "name": "Family Athlete",
         "slug": "family-athlete",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-mail/routes",
+  "id": "stackra://modules/notifications-mail/routes",
   "$version": 1,
   "title": "notifications-mail \u2014 HTTP routes",
   "description": "Tenant admin suppression list only. Provider webhooks (Mailgun / SendGrid / SES / Postmark / Resend) are received by the universal `webhook` module at `POST /webhooks/inbound/notifications-mail/{provider}`; this module subscribes to `webhook::InboundWebhookReceived` events filtered by namespace to ingest the provider payloads.",
@@ -22,26 +22,26 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Notifications\\Mail\\Http\\Controllers\\Tenant\\MailSuppressionController@index",
+          "controller": "Stackra\\Notifications\\Mail\\Http\\Controllers\\Tenant\\MailSuppressionController@index",
           "permission": "notifications.mail.suppressions.viewAny"
         },
         {
           "method": "GET",
           "path": "/{suppression}",
-          "controller": "Academorix\\Notifications\\Mail\\Http\\Controllers\\Tenant\\MailSuppressionController@show",
+          "controller": "Stackra\\Notifications\\Mail\\Http\\Controllers\\Tenant\\MailSuppressionController@show",
           "permission": "notifications.mail.suppressions.view"
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Notifications\\Mail\\Http\\Controllers\\Tenant\\MailSuppressionController@store",
+          "controller": "Stackra\\Notifications\\Mail\\Http\\Controllers\\Tenant\\MailSuppressionController@store",
           "permission": "notifications.mail.suppressions.create",
           "description": "Admin manually blocks an address (reason=manual)."
         },
         {
           "method": "DELETE",
           "path": "/{suppression}",
-          "controller": "Academorix\\Notifications\\Mail\\Http\\Controllers\\Tenant\\MailSuppressionController@destroy",
+          "controller": "Stackra\\Notifications\\Mail\\Http\\Controllers\\Tenant\\MailSuppressionController@destroy",
           "permission": "notifications.mail.suppressions.delete",
           "description": "Revoke a suppression (soft-delete). Refused for is_system=true entries."
         }
@@ -52,7 +52,7 @@
     "provider_webhooks": {
       "movedTo": "modules/webhook",
       "endpoint": "POST /webhooks/inbound/notifications-mail/{provider}",
-      "handler": "Academorix\\Notifications\\Mail\\Listeners\\IngestMailProviderWebhookListener",
+      "handler": "Stackra\\Notifications\\Mail\\Listeners\\IngestMailProviderWebhookListener",
       "reason": "Universal inbound receiver + signature verification + audit trail owned by webhook module. This module subscribes to webhook::InboundWebhookReceived events filtered by namespace=notifications-mail + normalises the provider-specific payload into MailDelivered/Opened/Clicked/Bounced/Complaint events. Provider signature secrets configured in notifications-mail.webhook_secrets.{provider}."
     }
   }

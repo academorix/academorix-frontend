@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/schemas/approvable-action",
+  "id": "stackra://modules/workflow/approvals/schemas/approvable-action",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ApprovableAction",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "aac_",
     "incrementing": false,
-    "model": "Academorix\\Approval\\Models\\ApprovableAction",
-    "interface": "Academorix\\Approval\\Contracts\\Data\\ApprovableActionInterface",
-    "implements": ["Academorix\\Approval\\Contracts\\Data\\ApprovableActionInterface"],
+    "model": "Stackra\\Approval\\Models\\ApprovableAction",
+    "interface": "Stackra\\Approval\\Contracts\\Data\\ApprovableActionInterface",
+    "implements": ["Stackra\\Approval\\Contracts\\Data\\ApprovableActionInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

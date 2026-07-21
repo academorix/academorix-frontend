@@ -4,7 +4,7 @@
  * @file modules/platform/tenancy/config/tenancy.php
  *
  * @description
- * Runtime knobs for the `academorix/tenancy` module. Merged under the
+ * Runtime knobs for the `stackra/tenancy` module. Merged under the
  * `tenancy.*` key by the base ServiceProvider's LoadsResources concern.
  * Downstream modules read via `config('tenancy.*')` (never `env()`
  * outside this file per Octane-first rules).

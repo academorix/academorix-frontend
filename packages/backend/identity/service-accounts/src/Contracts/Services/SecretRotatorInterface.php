@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceAccounts\Contracts\Services;
+namespace Stackra\ServiceAccounts\Contracts\Services;
 
-use Academorix\ServiceAccounts\Services\SecretRotator;
+use Stackra\ServiceAccounts\Services\SecretRotator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

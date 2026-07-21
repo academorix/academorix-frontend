@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsRegistrationsSdk\Resources;
+namespace Stackra\SportsRegistrationsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsRegistrationsSdk\Data\RegistrationData;
-use Academorix\SportsRegistrationsSdk\Requests\Registrations\CreateRegistrationRequest;
-use Academorix\SportsRegistrationsSdk\Requests\Registrations\ListRegistrationsRequest;
-use Academorix\SportsRegistrationsSdk\Requests\Registrations\ShowRegistrationRequest;
-use Academorix\SportsRegistrationsSdk\Requests\Registrations\UpdateRegistrationRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsRegistrationsSdk\Data\RegistrationData;
+use Stackra\SportsRegistrationsSdk\Requests\Registrations\CreateRegistrationRequest;
+use Stackra\SportsRegistrationsSdk\Requests\Registrations\ListRegistrationsRequest;
+use Stackra\SportsRegistrationsSdk\Requests\Registrations\ShowRegistrationRequest;
+use Stackra\SportsRegistrationsSdk\Requests\Registrations\UpdateRegistrationRequest;
 use Saloon\Http\Response;
 
 /**
@@ -57,7 +57,7 @@ final readonly class RegistrationsResource
      *
      * @return RegistrationData
      */
-    public function create(\Academorix\SportsRegistrationsSdk\Payloads\Registrations\CreateRegistrationPayload $payload, ?string $idempotencyKey = null): RegistrationData
+    public function create(\Stackra\SportsRegistrationsSdk\Payloads\Registrations\CreateRegistrationPayload $payload, ?string $idempotencyKey = null): RegistrationData
     {
         return $this->connector->send(new CreateRegistrationRequest($payload, $idempotencyKey))->dto();
     }
@@ -85,7 +85,7 @@ final readonly class RegistrationsResource
      *
      * @return RegistrationData
      */
-    public function update(string $registration, \Academorix\SportsRegistrationsSdk\Payloads\Registrations\UpdateRegistrationPayload $payload, ?string $idempotencyKey = null): RegistrationData
+    public function update(string $registration, \Stackra\SportsRegistrationsSdk\Payloads\Registrations\UpdateRegistrationPayload $payload, ?string $idempotencyKey = null): RegistrationData
     {
         return $this->connector->send(new UpdateRegistrationRequest($registration, $payload, $idempotencyKey))->dto();
     }
@@ -99,7 +99,7 @@ final readonly class RegistrationsResource
      *
      * @return RegistrationData
      */
-    public function create(\Academorix\SportsRegistrationsSdk\Payloads\Registrations\CreateRegistrationPayload $payload, ?string $idempotencyKey = null): RegistrationData
+    public function create(\Stackra\SportsRegistrationsSdk\Payloads\Registrations\CreateRegistrationPayload $payload, ?string $idempotencyKey = null): RegistrationData
     {
         return $this->connector->send(new CreateRegistrationRequest($payload, $idempotencyKey))->dto();
     }

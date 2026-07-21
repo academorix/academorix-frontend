@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/organization/rules",
+  "id": "stackra://modules/organization/rules",
   "$version": 1,
   "title": "organization — validation rules",
   "description": "Custom Laravel validation rules published by OrganizationServiceProvider::boot() so any FormRequest / Data class can validate Organization writes. All rules can be used inline via the string signature OR as class instances for composition.",
-  "namespace": "Academorix\\Organization\\Rules",
+  "namespace": "Stackra\\Organization\\Rules",
   "rules": [
     {
       "name": "valid_hex_color",
-      "class": "Academorix\\Organization\\Rules\\ValidHexColor",
+      "class": "Stackra\\Organization\\Rules\\ValidHexColor",
       "signature": "valid_hex_color",
       "description": "Enforces a strict 7-character hex color format (`#RRGGBB`). The `#` is required. Uppercase or lowercase A-F. Applied to primary_color + secondary_color on CreateOrganizationAction + UpdateOrganizationAction. Refuses short-form `#RGB` (visually the same but harder to compare programmatically).",
       "params": [],
@@ -18,7 +18,7 @@
     },
     {
       "name": "valid_e164_phone",
-      "class": "Academorix\\Organization\\Rules\\ValidE164Phone",
+      "class": "Stackra\\Organization\\Rules\\ValidE164Phone",
       "signature": "valid_e164_phone",
       "description": "Enforces ITU-T E.164 phone number format: `+` followed by 1..15 digits, no whitespace or punctuation. Applied to support_phone. Refuses formats like `(415) 555-1234` — callers must normalise before submitting.",
       "params": [],
@@ -29,7 +29,7 @@
     },
     {
       "name": "valid_url",
-      "class": "Academorix\\Organization\\Rules\\ValidUrl",
+      "class": "Stackra\\Organization\\Rules\\ValidUrl",
       "signature": "valid_url[:<scheme>]",
       "description": "Enforces full URL with scheme (defaults to allowing http + https). Rejects protocol-relative URLs and bare hostnames. Applied to website_url + logo_url.",
       "params": [
@@ -46,7 +46,7 @@
     },
     {
       "name": "parent_same_tenant",
-      "class": "Academorix\\Organization\\Rules\\ParentSameTenant",
+      "class": "Stackra\\Organization\\Rules\\ParentSameTenant",
       "signature": "parent_same_tenant",
       "description": "Refuses when the proposed parent_id references an Organization belonging to a different tenant. Enforced on both CreateOrganizationAction (initial parent_id) and ReparentOrganizationAction (parent_id change). Defense-in-depth on top of the tenant scope.",
       "params": [],
@@ -56,7 +56,7 @@
     },
     {
       "name": "parent_no_cycle",
-      "class": "Academorix\\Organization\\Rules\\ParentNoCycle",
+      "class": "Stackra\\Organization\\Rules\\ParentNoCycle",
       "signature": "parent_no_cycle:<organization_id>",
       "description": "Cycle-detection rule. Given the current Organization id + proposed parent_id, walks the proposed parent's ancestor chain (via existing tree_path) looking for the current id. Returns the cycle_path array in the validation error for UI visualisation. Applied on ReparentOrganizationAction (create-time parent_id is trivially cycle-safe because the new row has no descendants yet).",
       "params": [
@@ -72,7 +72,7 @@
     },
     {
       "name": "parent_within_depth_cap",
-      "class": "Academorix\\Organization\\Rules\\ParentWithinDepthCap",
+      "class": "Stackra\\Organization\\Rules\\ParentWithinDepthCap",
       "signature": "parent_within_depth_cap:<organization_id>",
       "description": "Refuses when the proposed parent's tree_depth + 1 + (moved node's max descendant depth) would exceed config('organization.hierarchy.max_depth'). Applied on both create (moved node's descendant depth = 0) and reparent (moved node may carry a deep subtree).",
       "params": [
@@ -88,7 +88,7 @@
     },
     {
       "name": "organization_slug_reserved",
-      "class": "Academorix\\Organization\\Rules\\OrganizationSlugReserved",
+      "class": "Stackra\\Organization\\Rules\\OrganizationSlugReserved",
       "signature": "organization_slug_reserved[:allow_system]",
       "description": "Refuses slugs listed in config('organization.validation.reserved_slugs'). The `allow_system` param bypasses the check when the writer is in system context (e.g. SeedDefaultOrganizationForTenantJob writing slug='default').",
       "params": [

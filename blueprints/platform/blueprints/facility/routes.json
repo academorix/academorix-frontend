@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/facility/routes",
+  "id": "stackra://modules/facility/routes",
   "$version": 1,
   "title": "facility — HTTP routes",
   "description": "Tenant-facing facility + booking + day-pass + pass CRUD (30+ routes) + platform-admin cross-tenant support routes. Every tenant-plane route carries `entitlement.enforce:facilities` at minimum; day-pass + pass routes additionally carry `entitlement.enforce:facilities_advanced` (Enterprise-only). Booking write routes attach the `facility.resolve_active` middleware which sets RequestContext::facility() from the request body's facility_id, so downstream services can rely on `Request::activeFacility()` without re-fetching.",
@@ -24,99 +24,99 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\FacilityController@index",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\FacilityController@index",
           "permission": "facilities.viewAny",
           "description": "filter[branch_id], filter[facility_type], filter[sport_category], filter[status], filter[capacity_min], filter[capacity_max]. Scope: caller's active branch narrows results when set."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\FacilityController@store",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\FacilityController@store",
           "permission": "facilities.create",
           "description": "Body: FacilityCreateData. Consumes 1 unit of facility_slot entitlement."
         },
         {
           "method": "GET",
           "path": "/{facility}",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\FacilityController@show",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\FacilityController@show",
           "permission": "facilities.view"
         },
         {
           "method": "PATCH",
           "path": "/{facility}",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\FacilityController@update",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\FacilityController@update",
           "permission": "facilities.update"
         },
         {
           "method": "DELETE",
           "path": "/{facility}",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\FacilityController@destroy",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\FacilityController@destroy",
           "permission": "facilities.delete",
           "description": "Soft-delete. Refused when facility.status != 'retired'. Retire first via POST /{facility}/retire."
         },
         {
           "method": "POST",
           "path": "/{facility}/retire",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\FacilityController@retire",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\FacilityController@retire",
           "permission": "facilities.retire",
           "description": "Body: { reason?, cascade_bookings? }. When cascade_bookings=true, cancels every future booking; otherwise refused when active bookings exist."
         },
         {
           "method": "GET",
           "path": "/{facility}/blackouts",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\FacilityBlackoutController@index",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\FacilityBlackoutController@index",
           "permission": "facilities.view"
         },
         {
           "method": "POST",
           "path": "/{facility}/blackouts",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\FacilityBlackoutController@store",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\FacilityBlackoutController@store",
           "permission": "facilities.manage-blackouts",
           "description": "Body: { starts_at, ends_at, reason? }. Cascades: cancels bookings inside the window."
         },
         {
           "method": "PATCH",
           "path": "/{facility}/blackouts/{blackout}",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\FacilityBlackoutController@update",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\FacilityBlackoutController@update",
           "permission": "facilities.manage-blackouts"
         },
         {
           "method": "DELETE",
           "path": "/{facility}/blackouts/{blackout}",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\FacilityBlackoutController@destroy",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\FacilityBlackoutController@destroy",
           "permission": "facilities.manage-blackouts",
           "description": "Removing a blackout does NOT restore cascade-cancelled bookings."
         },
         {
           "method": "GET",
           "path": "/{facility}/availability",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\FacilityAvailabilityController@show",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\FacilityAvailabilityController@show",
           "permission": "facilities.view"
         },
         {
           "method": "PATCH",
           "path": "/{facility}/availability",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\FacilityAvailabilityController@update",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\FacilityAvailabilityController@update",
           "permission": "facilities.manage-availability",
           "description": "Body: { availability_json: AvailabilityWindow[] }. Refused when new window exceeds parent branch.opening_hours."
         },
         {
           "method": "GET",
           "path": "/{facility}/pricing",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\FacilityPricingController@show",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\FacilityPricingController@show",
           "permission": "facilities.view"
         },
         {
           "method": "PATCH",
           "path": "/{facility}/pricing",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\FacilityPricingController@update",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\FacilityPricingController@update",
           "permission": "facilities.manage-pricing",
           "description": "Body: { pricing_json: PricingModel }. Financial-audit-critical; every change writes to audits with 7-year retention. Existing bookings retain their frozen price."
         },
         {
           "method": "GET",
           "path": "/{facility}/available-slots",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\FacilityAvailableSlotsController@index",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\FacilityAvailableSlotsController@index",
           "permission": "facilities.view",
           "description": "?starts=YYYY-MM-DD&ends=YYYY-MM-DD (max 7-day window). Returns computed available slot list (aligned to booking_slot_step_minutes, excluding blackouts + existing bookings). Feeds the booking-create slot picker widget."
         }
@@ -142,14 +142,14 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\ResourceBookingController@index",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\ResourceBookingController@index",
           "permission": "bookings.viewAny",
           "description": "filter[facility_id], filter[booked_by_user_id], filter[booked_for_user_id], filter[status], filter[starts_at.gte], filter[starts_at.lte], filter[branch_id]. Own-bookings default; bookings.view-all sees everything."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\ResourceBookingController@store",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\ResourceBookingController@store",
           "permission": "bookings.create",
           "middleware_add": ["facility.resolve_active"],
           "description": "Body: ResourceBookingCreateData. Runs the full observer check chain. Returns 201 on confirmed booking, 202 on pending booking."
@@ -157,54 +157,54 @@
         {
           "method": "GET",
           "path": "/{booking}",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\ResourceBookingController@show",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\ResourceBookingController@show",
           "permission": "bookings.view"
         },
         {
           "method": "PATCH",
           "path": "/{booking}",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\ResourceBookingController@update",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\ResourceBookingController@update",
           "permission": "bookings.reschedule",
           "description": "Only starts_at + ends_at + attendees_count + purpose + notes are editable. Status transitions use action routes below."
         },
         {
           "method": "DELETE",
           "path": "/{booking}",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\ResourceBookingController@destroy",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\ResourceBookingController@destroy",
           "permission": "bookings.cancel",
           "description": "Alias for POST /{booking}/cancel with no body — soft-delete after cancellation. Refused on active bookings."
         },
         {
           "method": "POST",
           "path": "/{booking}/cancel",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\ResourceBookingController@cancel",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\ResourceBookingController@cancel",
           "permission": "bookings.cancel",
           "description": "Body: { reason? }. Observer enforces cancellation_notice_hours unless caller has bookings.cancel-any."
         },
         {
           "method": "POST",
           "path": "/{booking}/reschedule",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\ResourceBookingController@reschedule",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\ResourceBookingController@reschedule",
           "permission": "bookings.reschedule",
           "description": "Body: { starts_at, ends_at }. Full overlap + availability + capacity + timing re-check."
         },
         {
           "method": "POST",
           "path": "/{booking}/complete",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\ResourceBookingController@complete",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\ResourceBookingController@complete",
           "permission": "bookings.complete",
           "description": "Manual completion is refused by the observer — only the automated MarkBookingCompletedJob may transition. This route exists so Wave 4 refund flows can call it (still refused today)."
         },
         {
           "method": "POST",
           "path": "/{booking}/mark-no-show",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\ResourceBookingController@markNoShow",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\ResourceBookingController@markNoShow",
           "permission": "bookings.mark-no-show"
         },
         {
           "method": "POST",
           "path": "/{booking}/check-in",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\ResourceBookingController@checkIn",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\ResourceBookingController@checkIn",
           "permission": "bookings.check-in"
         }
       ]
@@ -229,34 +229,34 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\DayPassController@index",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\DayPassController@index",
           "permission": "day_passes.viewAny",
           "description": "filter[branch_id], filter[valid_on_date], filter[payment_method], filter[issued_by_user_id], filter[consumed]"
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\DayPassController@store",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\DayPassController@store",
           "permission": "day_passes.issue",
           "description": "Body: DayPassIssueData. Generates receipt_number. Refuses anonymous walk-in without name+phone."
         },
         {
           "method": "GET",
           "path": "/{dayPass}",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\DayPassController@show",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\DayPassController@show",
           "permission": "day_passes.view"
         },
         {
           "method": "POST",
           "path": "/{dayPass}/consume",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\DayPassController@consume",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\DayPassController@consume",
           "permission": "day_passes.consume",
           "description": "Idempotent. Refused when valid_on_date != today() OR already consumed."
         },
         {
           "method": "POST",
           "path": "/{dayPass}/refund",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\DayPassController@refund",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\DayPassController@refund",
           "permission": "day_passes.refund",
           "description": "Body: { reason, amount_cents? }. Refused when consumed OR outside 30-day refund window."
         }
@@ -282,47 +282,47 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\PassController@index",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\PassController@index",
           "permission": "passes.viewAny",
           "description": "filter[branch_id], filter[facility_id], filter[membership_id], filter[user_id] (matches assignable_user_ids), filter[valid_on_date]"
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\PassController@store",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\PassController@store",
           "permission": "passes.create",
           "description": "Body: PassCreateData. Wave 4 will auto-issue on Membership provisioning; this manual create covers ad-hoc cases."
         },
         {
           "method": "GET",
           "path": "/{pass}",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\PassController@show",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\PassController@show",
           "permission": "passes.view"
         },
         {
           "method": "PATCH",
           "path": "/{pass}",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\PassController@update",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\PassController@update",
           "permission": "passes.update"
         },
         {
           "method": "DELETE",
           "path": "/{pass}",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\PassController@destroy",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\PassController@destroy",
           "permission": "passes.revoke",
           "description": "Alias for POST /{pass}/revoke with default reason."
         },
         {
           "method": "POST",
           "path": "/{pass}/revoke",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\PassController@revoke",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\PassController@revoke",
           "permission": "passes.revoke",
           "description": "Body: { reason }. Soft-delete + revocation_reason. Refunds are Finance module's job."
         },
         {
           "method": "POST",
           "path": "/{pass}/transfer",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Tenant\\PassController@transfer",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Tenant\\PassController@transfer",
           "permission": "passes.transfer",
           "description": "Body: { assignable_user_ids: string[] }. Refused when is_transferable=false."
         }
@@ -345,20 +345,20 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Platform\\FacilityController@index",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Platform\\FacilityController@index",
           "permission": "platform.facilities.viewAny",
           "description": "filter[tenant_id], filter[facility_type], filter[status]. Cross-tenant scan."
         },
         {
           "method": "GET",
           "path": "/{facility}",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Platform\\FacilityController@show",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Platform\\FacilityController@show",
           "permission": "platform.facilities.view"
         },
         {
           "method": "GET",
           "path": "/audit-usage",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Platform\\AuditUsageController@index",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Platform\\AuditUsageController@index",
           "permission": "platform.facilities.view-audit-usage",
           "description": "Per-tenant hourly utilisation + revenue rollup. Powers capacity-planning dashboards for ops."
         }
@@ -381,13 +381,13 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Platform\\BookingController@index",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Platform\\BookingController@index",
           "permission": "platform.bookings.viewAny"
         },
         {
           "method": "POST",
           "path": "/{booking}/force-cancel",
-          "controller": "Academorix\\Facility\\Http\\Controllers\\Platform\\BookingController@forceCancel",
+          "controller": "Stackra\\Facility\\Http\\Controllers\\Platform\\BookingController@forceCancel",
           "permission": "platform.bookings.force-cancel",
           "description": "Support-only escape hatch. Bypasses tenant guards. Notifies tenant admin + writes audit row with 7-year retention. Body: { reason }."
         }

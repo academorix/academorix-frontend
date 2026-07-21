@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/mfa/data-classes",
+  "id": "stackra://modules/mfa/data-classes",
   "$version": 1,
   "title": "mfa — field classification",
   "description": "MFA rows carry two classes of sensitive data: (1) cryptographic material (WebAuthn public keys, credential IDs, TOTP secrets — the latter live on identity/identity's Identity row) — `regulated_secret`; (2) device-recognition metadata (transports, AAGUID, sign_count) — `confidential`. Recovery-code plaintext is EMITTED-ONCE at enrolment / regeneration and thereafter exists only as bcrypt hashes on the Identity row (owned by identity/identity). Every field on the WebauthnCredential row is REDACTED by default at the audit layer.",
@@ -74,34 +74,34 @@
   },
   "input_dtos": [
     {
-      "class": "Academorix\\Mfa\\Data\\EnrollTotpPreviewInput",
+      "class": "Stackra\\Mfa\\Data\\EnrollTotpPreviewInput",
       "shape": {
         "identity_id": "resolved from the authenticated session — never accepted from user input"
       },
       "compliance_gate": "Refused when the caller's tenant does not hold the `mfa_totp` entitlement OR the `mfa.enrollment_enabled` feature flag is off."
     },
     {
-      "class": "Academorix\\Mfa\\Data\\ConfirmTotpEnrollmentInput",
+      "class": "Stackra\\Mfa\\Data\\ConfirmTotpEnrollmentInput",
       "shape": {
         "totp_secret": "string (base32 — echoed back from the preview response; validated against the ephemeral secret held server-side)",
         "totp_confirmation_code": "string (6-digit numeric — proves the user scanned the secret into their authenticator app)"
       }
     },
     {
-      "class": "Academorix\\Mfa\\Data\\WebauthnRegisterOptionsInput",
+      "class": "Stackra\\Mfa\\Data\\WebauthnRegisterOptionsInput",
       "shape": {
         "authenticator_selection": "string ('platform' | 'cross-platform' | 'any') — hint to browsers about which authenticator type to prompt for"
       }
     },
     {
-      "class": "Academorix\\Mfa\\Data\\WebauthnRegisterInput",
+      "class": "Stackra\\Mfa\\Data\\WebauthnRegisterInput",
       "shape": {
         "attestation_response": "object (raw WebAuthn attestation response from navigator.credentials.create)",
         "device_name": "string (user-provided nickname, max 60 chars, validated by valid_device_name rule)"
       }
     },
     {
-      "class": "Academorix\\Mfa\\Data\\VerifyChallengeInput",
+      "class": "Stackra\\Mfa\\Data\\VerifyChallengeInput",
       "shape": {
         "challenge_id": "ULID (`mfc_...`) — resolved from the challenge ledger",
         "method": "enum: totp | webauthn | recovery_code — must match the method the challenge was issued for",
@@ -111,13 +111,13 @@
       }
     },
     {
-      "class": "Academorix\\Mfa\\Data\\RenameWebauthnCredentialInput",
+      "class": "Stackra\\Mfa\\Data\\RenameWebauthnCredentialInput",
       "shape": {
         "device_name": "string (60 chars max)"
       }
     },
     {
-      "class": "Academorix\\Mfa\\Data\\ForceDisableMfaInput",
+      "class": "Stackra\\Mfa\\Data\\ForceDisableMfaInput",
       "shape": {
         "user_id": "string (ULID) — the User whose Identity's MFA should be force-disabled",
         "reason": "string (justification, mandatory in production, audit-logged)"
@@ -126,7 +126,7 @@
   ],
   "output_dtos": [
     {
-      "class": "Academorix\\Mfa\\Data\\MfaMethodsSummary",
+      "class": "Stackra\\Mfa\\Data\\MfaMethodsSummary",
       "purpose": "Response for GET /api/v1/me/mfa. Summarises which methods the caller has enrolled + the recovery-codes remaining.",
       "shape": {
         "totp_enrolled": "boolean",
@@ -138,7 +138,7 @@
       }
     },
     {
-      "class": "Academorix\\Mfa\\Data\\TotpEnrollmentPreview",
+      "class": "Stackra\\Mfa\\Data\\TotpEnrollmentPreview",
       "purpose": "Response for POST /api/v1/me/mfa/totp/enroll/preview. Exposes plaintext secret ONCE — never persisted before round 2.",
       "shape": {
         "totp_secret": "string (base32 — held server-side in a signed short-lived envelope; caller re-submits on confirm)",
@@ -149,7 +149,7 @@
       }
     },
     {
-      "class": "Academorix\\Mfa\\Data\\RecoveryCodesDownload",
+      "class": "Stackra\\Mfa\\Data\\RecoveryCodesDownload",
       "purpose": "Response for POST /api/v1/me/mfa/recovery-codes/regenerate + POST /me/mfa/recovery-codes/download. Emits plaintext codes ONCE.",
       "shape": {
         "codes": "string[] (10 codes, 10 chars each from Crockford base32 alphabet)",
@@ -158,7 +158,7 @@
       }
     },
     {
-      "class": "Academorix\\Mfa\\Data\\WebauthnRegisterOptions",
+      "class": "Stackra\\Mfa\\Data\\WebauthnRegisterOptions",
       "purpose": "Response for POST /api/v1/me/mfa/webauthn/register/options. The browser passes this to navigator.credentials.create().",
       "shape": {
         "challenge_b64url": "string (base64url-encoded 32-byte random challenge, retained server-side in the challenge ledger)",
@@ -172,7 +172,7 @@
       }
     },
     {
-      "class": "Academorix\\Mfa\\Data\\WebauthnCredentialData",
+      "class": "Stackra\\Mfa\\Data\\WebauthnCredentialData",
       "purpose": "Response for GET /api/v1/me/mfa/webauthn/credentials + PATCH updates. Standard wire shape — see wire_projection above."
     }
   ],

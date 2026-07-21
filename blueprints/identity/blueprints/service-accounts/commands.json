@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/service-accounts/commands",
+  "id": "stackra://modules/service-accounts/commands",
   "$version": 1,
   "title": "service-accounts \u2014 Artisan commands",
   "description": "Nine commands cover the machine-credential lifecycle from CLI. Every mutating command respects `service-accounts.commands.require_reason` (default on in staging + prod) which forces `--reason=<text>` capture on the audit row. Every command runs authenticated on the platform_admin guard (via an operator's PAT), never anonymously.",
   "commands": [
     {
       "signature": "service-account:create {application} {name} {--tenant=} {--kid=} {--ttl=90d} {--description=} {--reason=}",
-      "class": "Academorix\\ServiceAccount\\Console\\Commands\\CreateServiceAccountCommand",
+      "class": "Stackra\\ServiceAccount\\Console\\Commands\\CreateServiceAccountCommand",
       "purpose": "Provision a new SA. `application` is the Application id or slug (required); `name` is the human-readable identifier (unique per application). `--tenant` optionally scopes the SA to a tenant (must belong to the same Application \u2014 refused otherwise). `--kid` optionally names an existing signer kid from `auth::jwt_signing_keys`; omitted = provisioner generates a fresh kid via the auth module. `--ttl` accepts `<n>d` (days) or ISO-8601 duration (e.g. `P90D`), default `90d`. Returns the plaintext exchange secret ONCE \u2014 store it immediately (Doppler recommended). Fires `ServiceAccountCreated` on success. Requires `--reason` in staging + prod.",
       "audit_severity": "warn",
       "requires_reason": true,
@@ -18,7 +18,7 @@
     },
     {
       "signature": "service-account:list {--application=} {--tenant=} {--enabled} {--expired} {--dormant} {--per-page=25}",
-      "class": "Academorix\\ServiceAccount\\Console\\Commands\\ListServiceAccountsCommand",
+      "class": "Stackra\\ServiceAccount\\Console\\Commands\\ListServiceAccountsCommand",
       "purpose": "List SAs matching the filters. Redacted \u2014 no secret material appears in CLI output. Every row includes id, name, application_slug, tenant_slug (or NULL), status, expires_at, days_until_expiry, last_used_at, kid.",
       "audit_severity": "info",
       "requires_reason": false,
@@ -31,7 +31,7 @@
     },
     {
       "signature": "service-account:describe {serviceAccount}",
-      "class": "Academorix\\ServiceAccount\\Console\\Commands\\DescribeServiceAccountCommand",
+      "class": "Stackra\\ServiceAccount\\Console\\Commands\\DescribeServiceAccountCommand",
       "purpose": "Print full detail (redacted \u2014 no secret material). Includes rotation history summary (last 5 rotations with timestamp + operator), 30-day usage summary, IP-tuple fingerprint diversity, current lifecycle state. Secret hash never displayed.",
       "audit_severity": "info",
       "requires_reason": false,
@@ -39,7 +39,7 @@
     },
     {
       "signature": "service-account:rotate {serviceAccount} {--ttl=} {--reason=}",
-      "class": "Academorix\\ServiceAccount\\Console\\Commands\\RotateServiceAccountSecretCommand",
+      "class": "Stackra\\ServiceAccount\\Console\\Commands\\RotateServiceAccountSecretCommand",
       "purpose": "Generate a fresh secret, bcrypt-hash it, write to `secret_hash`, update `secret_rotated_at` + `expires_at`. `--ttl` overrides the module-default (`service-accounts.rotation.default_secret_ttl_days`). Returns the plaintext secret ONCE. Fires `ServiceAccountSecretRotated`. Always requires `--reason` in staging + prod. Does NOT rotate `signer_kid` \u2014 use `service-account:describe` to inspect the kid + coordinate with `identity/auth` for a kid rotation event.",
       "audit_severity": "warn",
       "requires_reason": true,
@@ -51,7 +51,7 @@
     },
     {
       "signature": "service-account:disable {serviceAccount} {--reason=}",
-      "class": "Academorix\\ServiceAccount\\Console\\Commands\\DisableServiceAccountCommand",
+      "class": "Stackra\\ServiceAccount\\Console\\Commands\\DisableServiceAccountCommand",
       "purpose": "Set `is_enabled=false`. Existing JWTs signed for this SA remain valid until natural expiry (default 300s) \u2014 to hard-revoke, use `service-account:rotate` + burn the previous kid via the auth module. Fires `ServiceAccountDisabled`. Requires `--reason`.",
       "audit_severity": "warn",
       "requires_reason": true,
@@ -62,7 +62,7 @@
     },
     {
       "signature": "service-account:enable {serviceAccount} {--reason=}",
-      "class": "Academorix\\ServiceAccount\\Console\\Commands\\EnableServiceAccountCommand",
+      "class": "Stackra\\ServiceAccount\\Console\\Commands\\EnableServiceAccountCommand",
       "purpose": "Set `is_enabled=true`. Refuses when `expires_at < now()` \u2014 caller must rotate first. Fires `ServiceAccountEnabled`. Requires `--reason`.",
       "audit_severity": "info",
       "requires_reason": true,
@@ -70,7 +70,7 @@
     },
     {
       "signature": "service-account:delete {serviceAccount} {--reason=} {--confirm}",
-      "class": "Academorix\\ServiceAccount\\Console\\Commands\\DeleteServiceAccountCommand",
+      "class": "Stackra\\ServiceAccount\\Console\\Commands\\DeleteServiceAccountCommand",
       "purpose": "Soft-delete + disable. Starts the retention hold clock (default 90d after `deleted_at`). Actual hard-delete via `PurgeExpiredServiceAccountsJob`. `--confirm` required in production. Fires `ServiceAccountDeleted`.",
       "audit_severity": "critical",
       "requires_reason": true,
@@ -78,7 +78,7 @@
     },
     {
       "signature": "service-account:test-jwt {serviceAccount} {--aud=} {--ttl=} {--decode}",
-      "class": "Academorix\\ServiceAccount\\Console\\Commands\\TestJwtCommand",
+      "class": "Stackra\\ServiceAccount\\Console\\Commands\\TestJwtCommand",
       "purpose": "Issue a test JWT for troubleshooting. `--aud` overrides the SA's default audience(s). `--ttl` overrides the JWT's TTL (bounded by `service-accounts.jwt.min_ttl_seconds` + `max_ttl_seconds`). `--decode` prints the decoded header + payload alongside the encoded token so the operator can verify claims. Fires `ServiceAccountJwtIssued` with a `trigger=test` label so metrics don't count test issues alongside production traffic.",
       "audit_severity": "info",
       "requires_reason": false,
@@ -89,7 +89,7 @@
     },
     {
       "signature": "service-account:audit-usage {serviceAccount} {--window=30d} {--format=json} {--output=}",
-      "class": "Academorix\\ServiceAccount\\Console\\Commands\\AuditUsageCommand",
+      "class": "Stackra\\ServiceAccount\\Console\\Commands\\AuditUsageCommand",
       "purpose": "Emit a usage report for one SA over the window (default 30d, accepts `24h` / `7d` / `30d` / `90d` OR ISO-8601 duration). Includes request-count histogram, unique IP /24 prefixes seen, unique user-agent hashes seen, `jti` reuse detections, average+p95 request duration, distinct destinations (audiences), and the last 100 audit-log entries. `--format` supports json (default), csv, pdf (for compliance filing). `--output` writes to a file path; without `--output`, streams to stdout. Every invocation writes its own audit row so 'who ran a report on which SA' is auditable.",
       "audit_severity": "warn",
       "requires_reason": true,

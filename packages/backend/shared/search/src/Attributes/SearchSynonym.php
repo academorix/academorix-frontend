@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Attributes;
+namespace Stackra\Search\Attributes;
 
-use Academorix\Search\Enums\SynonymKind;
+use Stackra\Search\Enums\SynonymKind;
 use Attribute;
 
 /**

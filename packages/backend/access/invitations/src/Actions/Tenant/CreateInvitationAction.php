@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Actions\Tenant;
+namespace Stackra\Invitations\Actions\Tenant;
 
-use Academorix\Invitations\Contracts\Repositories\InvitationRepositoryInterface;
-use Academorix\Invitations\Data\InvitationData;
-use Academorix\Invitations\Data\Requests\CreateInvitationRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Invitations\Contracts\Repositories\InvitationRepositoryInterface;
+use Stackra\Invitations\Data\InvitationData;
+use Stackra\Invitations\Data\Requests\CreateInvitationRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/tenant/invitations` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Invitations

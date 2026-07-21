@@ -75,7 +75,7 @@ Our extensions (this module's job):
    `(event, tenant_id, created_at DESC)`,
    `(tenant_id, auditable_type, created_at DESC)`.
 4. **Wrap the vendor `Audit` model** — our
-   `Academorix\Observability\Audit\Models\Audit` composes the `BelongsToTenant`
+   `Stackra\Observability\Audit\Models\Audit` composes the `BelongsToTenant`
    trait (global scope + auto-fill), casts `event` to `AuditEventType`, and
    forbids updates via `AuditObserver`.
 5. **`TenantIdBackfiller`** — one-shot migration helper that scans existing
@@ -153,7 +153,7 @@ final class Membership extends Model implements AuditableContract
 
 That's the whole contract. The vendor observer captures create/update/delete via
 Eloquent's model events. The `AuditObserver` in this module (attached to
-`Academorix\Observability\Audit\Models\Audit`) refuses:
+`Stackra\Observability\Audit\Models\Audit`) refuses:
 
 - **Create with null `tenant_id`** — defense-in-depth against vendor drift.
 - **Every update** — the observer's `updating` handler throws

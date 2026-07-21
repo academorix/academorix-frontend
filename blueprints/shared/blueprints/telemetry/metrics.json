@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/telemetry/metrics",
+  "id": "stackra://modules/telemetry/metrics",
   "$version": 1,
   "title": "telemetry \u2014 pipeline meta-metrics",
   "description": "Metrics ABOUT the telemetry pipeline itself. Every application module publishes its own metrics through this module; those live in the module's own metrics.json. Here we only capture pipeline health for the three signals.",
@@ -10,28 +10,28 @@
   },
   "metrics": [
     {
-      "name": "academorix.otel.spans.recorded_total",
+      "name": "stackra.otel.spans.recorded_total",
       "kind": "counter",
       "unit": "spans",
       "labels": ["kind"],
       "description": "Total spans recorded before export. kind = server / client / internal / producer / consumer."
     },
     {
-      "name": "academorix.otel.spans.exported_total",
+      "name": "stackra.otel.spans.exported_total",
       "kind": "counter",
       "unit": "spans",
       "labels": ["outcome"],
       "description": "outcome = success / failure. Failures usually indicate exporter or network issues."
     },
     {
-      "name": "academorix.otel.spans.dropped_total",
+      "name": "stackra.otel.spans.dropped_total",
       "kind": "counter",
       "unit": "spans",
       "labels": ["reason"],
       "description": "Reasons: queue_full / sampler_reject / exporter_reject / kill_switched. queue_full > 0 indicates backpressure."
     },
     {
-      "name": "academorix.otel.export.duration_ms",
+      "name": "stackra.otel.export.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 50, 200, 1000, 5000, 30000],
@@ -39,42 +39,42 @@
       "description": "signal = traces / metrics. Duration of one batch export."
     },
     {
-      "name": "academorix.otel.buffer.depth",
+      "name": "stackra.otel.buffer.depth",
       "kind": "gauge",
       "unit": "spans",
       "labels": ["signal"],
       "description": "Current in-process buffer depth. Observable gauge polled at scrape."
     },
     {
-      "name": "academorix.otel.sampled_ratio",
+      "name": "stackra.otel.sampled_ratio",
       "kind": "gauge",
       "unit": "ratio",
       "labels": [],
       "description": "Rolling ratio of sampled vs total traces over last 5 minutes."
     },
     {
-      "name": "academorix.otel.metrics.emitted_total",
+      "name": "stackra.otel.metrics.emitted_total",
       "kind": "counter",
       "unit": "measurements",
       "labels": ["instrument_kind"],
       "description": "instrument_kind = counter / histogram / gauge / updowncounter."
     },
     {
-      "name": "academorix.logs.records_emitted_total",
+      "name": "stackra.logs.records_emitted_total",
       "kind": "counter",
       "unit": "records",
       "labels": ["level", "channel"],
       "description": "Total records after successful pipeline pass. Grouped by log level + channel."
     },
     {
-      "name": "academorix.logs.records_dropped_total",
+      "name": "stackra.logs.records_dropped_total",
       "kind": "counter",
       "unit": "records",
       "labels": ["reason"],
       "description": "reason = sampled / pipeline_error / sink_error / kill_switched."
     },
     {
-      "name": "academorix.logs.pipeline.duration_ms",
+      "name": "stackra.logs.pipeline.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [0.1, 0.5, 2, 10, 50, 200],
@@ -82,14 +82,14 @@
       "description": "Per-record processor pipeline duration. P99 target < 2ms."
     },
     {
-      "name": "academorix.logs.redactions.applied_total",
+      "name": "stackra.logs.redactions.applied_total",
       "kind": "counter",
       "unit": "redactions",
       "labels": ["rule_kind"],
       "description": "rule_kind = key_match / regex_match / class_attribute. Values 0 in production may indicate misconfigured redaction rules."
     },
     {
-      "name": "academorix.logs.sink.latency_ms",
+      "name": "stackra.logs.sink.latency_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [5, 25, 100, 500, 2000],
@@ -97,7 +97,7 @@
       "description": "Latency to push one record to the configured sink."
     },
     {
-      "name": "academorix.logs.sink.buffer_depth",
+      "name": "stackra.logs.sink.buffer_depth",
       "kind": "gauge",
       "unit": "records",
       "labels": ["sink"],

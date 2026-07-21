@@ -1,118 +1,118 @@
 {
-  "id": "academorix://modules/invoice/rules",
+  "id": "stackra://modules/invoice/rules",
   "$version": 1,
   "title": "invoice — validation rules",
   "description": "Custom Laravel validation rules published by InvoiceServiceProvider::boot(). Every rule is used both by the observer chain (for authoritative refusal on write) AND by FormRequest data classes (for early request-time validation with clear error surfaces).",
-  "namespace": "Academorix\\Finance\\Invoice\\Rules",
+  "namespace": "Stackra\\Finance\\Invoice\\Rules",
   "rules": [
     {
       "name": "valid_invoice_number_pattern",
-      "class": "Academorix\\Finance\\Invoice\\Rules\\ValidInvoiceNumberPattern",
+      "class": "Stackra\\Finance\\Invoice\\Rules\\ValidInvoiceNumberPattern",
       "signature": "valid_invoice_number_pattern",
       "description": "Matches `^(?:[A-Z]{2,8}-)?[0-9]{4}-[0-9]{6}$`. Series prefix optional (2-8 uppercase alpha); year (4 digits); sequential number (6 digits). Examples: `2026-000001`, `INV-2026-000001`, `SO-2026-000001`. The observer generates this — this rule is for API-level early validation.",
       "default_message": "The :attribute must match the invoice number pattern (e.g. 2026-000001 or INV-2026-000001)."
     },
     {
       "name": "valid_credit_note_number_pattern",
-      "class": "Academorix\\Finance\\Invoice\\Rules\\ValidCreditNoteNumberPattern",
+      "class": "Stackra\\Finance\\Invoice\\Rules\\ValidCreditNoteNumberPattern",
       "signature": "valid_credit_note_number_pattern",
       "description": "Matches `^CN-[0-9]{4}-[0-9]{6}$`. Fixed prefix `CN-`; year (4 digits); sequential number (6 digits). Example: `CN-2026-000001`.",
       "default_message": "The :attribute must match the credit note number pattern (e.g. CN-2026-000001)."
     },
     {
       "name": "valid_currency",
-      "class": "Academorix\\Finance\\Invoice\\Rules\\ValidCurrency",
+      "class": "Stackra\\Finance\\Invoice\\Rules\\ValidCurrency",
       "signature": "valid_currency",
       "description": "ISO 4217 3-letter uppercase currency code. Validated against the tax module's currency catalogue (which sources ISO 4217 + adds a few crypto currencies for Enterprise experimentation).",
       "default_message": "The :attribute must be a valid ISO 4217 currency code (e.g. USD, EUR, GBP)."
     },
     {
       "name": "valid_positive_line_quantity",
-      "class": "Academorix\\Finance\\Invoice\\Rules\\ValidPositiveLineQuantity",
+      "class": "Stackra\\Finance\\Invoice\\Rules\\ValidPositiveLineQuantity",
       "signature": "valid_positive_line_quantity",
       "description": "quantity must be > 0 (strict; zero is not a valid line quantity). Decimal precision 10,4 — supports fractional quantities (0.5 for half-hour sessions, 1.25 for 1.25kg apparel).",
       "default_message": "The :attribute (quantity) must be greater than 0. Use item_type='adjustment' with a negative unit_price to model deductions."
     },
     {
       "name": "valid_positive_unit_price",
-      "class": "Academorix\\Finance\\Invoice\\Rules\\ValidPositiveUnitPrice",
+      "class": "Stackra\\Finance\\Invoice\\Rules\\ValidPositiveUnitPrice",
       "signature": "valid_positive_unit_price",
       "description": "unit_price_cents must be >= 0 for most item types. Only `discount_line` and `adjustment` may carry negative unit_price_cents (which represents a deduction from the invoice subtotal).",
       "default_message": "The :attribute (unit_price_cents) must be >= 0 for this item_type. Negative prices are only allowed for item_type IN ('discount_line', 'adjustment')."
     },
     {
       "name": "valid_state_transition",
-      "class": "Academorix\\Finance\\Invoice\\Rules\\ValidStateTransition",
+      "class": "Stackra\\Finance\\Invoice\\Rules\\ValidStateTransition",
       "signature": "valid_state_transition",
       "description": "Enforces the state machine: draft → open (finalize) OR draft → void; open → paid OR open → partially_paid OR open → past_due OR open → void; partially_paid → paid OR partially_paid → past_due; paid → refunded OR paid → disputed; past_due → uncollectible OR past_due → paid OR past_due → written_off; written_off → paid (rare recovery). No other transitions permitted.",
       "default_message": "The :attribute cannot transition from ':from' to ':to'. See invoice state machine documentation."
     },
     {
       "name": "valid_payment_terms",
-      "class": "Academorix\\Finance\\Invoice\\Rules\\ValidPaymentTerms",
+      "class": "Stackra\\Finance\\Invoice\\Rules\\ValidPaymentTerms",
       "signature": "valid_payment_terms",
       "description": "payment_terms must be one of: due_on_receipt / net_15 / net_30 / net_60 / custom. When payment_terms='custom', payment_terms_custom_days must be a positive integer <= 365.",
       "default_message": "The :attribute must be one of: due_on_receipt, net_15, net_30, net_60, custom. When 'custom', payment_terms_custom_days is required (1-365)."
     },
     {
       "name": "valid_credit_note_amount",
-      "class": "Academorix\\Finance\\Invoice\\Rules\\ValidCreditNoteAmount",
+      "class": "Stackra\\Finance\\Invoice\\Rules\\ValidCreditNoteAmount",
       "signature": "valid_credit_note_amount",
       "description": "credit_note.amount_cents must be > 0 AND (amount_cents + SUM(existing_credit_notes.amount_cents for the same original_invoice)) must be <= original_invoice.total_cents. Prevents over-crediting an invoice.",
       "default_message": "The :attribute (amount_cents) plus existing credits exceeds the original invoice total. Max allowed: :remaining cents."
     },
     {
       "name": "unique_invoice_number_per_tenant_year",
-      "class": "Academorix\\Finance\\Invoice\\Rules\\UniqueInvoiceNumberPerTenantYear",
+      "class": "Stackra\\Finance\\Invoice\\Rules\\UniqueInvoiceNumberPerTenantYear",
       "signature": "unique_invoice_number_per_tenant_year",
       "description": "The observer generates invoice_number under a Postgres advisory lock — this rule is a defense-in-depth check at the DB layer. Enforced by the composite unique constraint (tenant_id, invoice_number) partial WHERE deleted_at IS NULL.",
       "default_message": "An invoice with :attribute already exists for this tenant. Sequential numbering guarantees uniqueness — this error indicates concurrent write or advisory-lock failure."
     },
     {
       "name": "unique_credit_note_number_per_tenant_year",
-      "class": "Academorix\\Finance\\Invoice\\Rules\\UniqueCreditNoteNumberPerTenantYear",
+      "class": "Stackra\\Finance\\Invoice\\Rules\\UniqueCreditNoteNumberPerTenantYear",
       "signature": "unique_credit_note_number_per_tenant_year",
       "description": "Same pattern as unique_invoice_number_per_tenant_year, applied to credit_notes.",
       "default_message": "A credit note with :attribute already exists for this tenant."
     },
     {
       "name": "address_snapshot_shape",
-      "class": "Academorix\\Finance\\Invoice\\Rules\\AddressSnapshotShape",
+      "class": "Stackra\\Finance\\Invoice\\Rules\\AddressSnapshotShape",
       "signature": "address_snapshot_shape",
       "description": "billing_address / shipping_address jsonb must match: { name: string (1-256), street: string (1-256), street_2?: string, city: string (1-128), state?: string (max 64), postal_code: string (1-32), country: ISO 3166-1 alpha-2, phone?: E.164, email?: RFC 5322 }. Validated against schemas/address-snapshot.embed.json (embedded in invoice.schema.json).",
       "default_message": "The :attribute is not a valid address snapshot. See schemas/address-snapshot.embed.json for the required shape."
     },
     {
       "name": "invoice_finalization_requires_tax_computed",
-      "class": "Academorix\\Finance\\Invoice\\Rules\\InvoiceFinalizationRequiresTaxComputed",
+      "class": "Stackra\\Finance\\Invoice\\Rules\\InvoiceFinalizationRequiresTaxComputed",
       "signature": "invoice_finalization_requires_tax_computed",
       "description": "On status transition draft → open, every invoice_line with item_type IN ('membership_charge', 'addon', 'setup_fee', 'one_time_service') must have tax_calculation_id set. Tax lines and discount lines skip. Refused otherwise; dispatches CalculateInvoiceTaxJob for missing lines when tax module supports async computation.",
       "default_message": "Invoice cannot be finalized — :missing_lines line(s) are missing tax computation. Tax calculations are dispatched; retry finalize in ~30 seconds."
     },
     {
       "name": "void_only_before_paid",
-      "class": "Academorix\\Finance\\Invoice\\Rules\\VoidOnlyBeforePaid",
+      "class": "Stackra\\Finance\\Invoice\\Rules\\VoidOnlyBeforePaid",
       "signature": "void_only_before_paid",
       "description": "Refuses void transition when previous status IN ('paid', 'partially_paid'). Paid invoices are IMMUTABLE — the only correction path is credit note issuance.",
       "default_message": "Cannot void :attribute — invoice has received payment. Issue a credit note instead."
     },
     {
       "name": "credit_note_only_after_paid",
-      "class": "Academorix\\Finance\\Invoice\\Rules\\CreditNoteOnlyAfterPaid",
+      "class": "Stackra\\Finance\\Invoice\\Rules\\CreditNoteOnlyAfterPaid",
       "signature": "credit_note_only_after_paid",
       "description": "Refuses credit note creation when parent invoice.status NOT IN ('paid', 'partially_paid', 'refunded', 'disputed', 'written_off'). Draft/open/void invoices cannot be credit-noted (void them directly instead).",
       "default_message": "Cannot create credit note against :attribute — parent invoice is not in a paid/refunded/disputed/written_off state."
     },
     {
       "name": "line_quantity_precision",
-      "class": "Academorix\\Finance\\Invoice\\Rules\\LineQuantityPrecision",
+      "class": "Stackra\\Finance\\Invoice\\Rules\\LineQuantityPrecision",
       "signature": "line_quantity_precision",
       "description": "quantity decimal precision cannot exceed 10,4 (10 digits total, 4 after decimal). Prevents floating-point drift accumulating across lines.",
       "default_message": "The :attribute (quantity) precision exceeds 10,4. Max 10 digits total; max 4 after decimal."
     },
     {
       "name": "sum_of_lines_equals_subtotal",
-      "class": "Academorix\\Finance\\Invoice\\Rules\\SumOfLinesEqualsSubtotal",
+      "class": "Stackra\\Finance\\Invoice\\Rules\\SumOfLinesEqualsSubtotal",
       "signature": "sum_of_lines_equals_subtotal",
       "description": "Defense-in-depth check on finalize: SUM(invoice_lines.subtotal_cents) must equal invoice.subtotal_cents. Same for discount_amount_cents and tax_amount_cents. Detects observer/job drift.",
       "default_message": "Invoice totals drift detected — sum of lines does not match invoice header. Regenerate the finalize by re-triggering the FinalizeInvoiceJob."

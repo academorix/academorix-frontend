@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Exceptions;
+namespace Stackra\Audit\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * audit:backfill-tenant-id refused because another backfill invocation is already running (distributed lock held).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsAuditBackfillLockedException extends AcademorixException
+final class NotificationsAuditBackfillLockedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

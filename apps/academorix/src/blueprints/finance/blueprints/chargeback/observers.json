@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/chargeback/observers",
+  "id": "stackra://modules/chargeback/observers",
   "$version": 1,
   "title": "chargeback — Eloquent observers",
   "description": "Two observers enforce this module's write-time invariants. ChargebackObserver validates network + reason_code + amount + currency at creation; snapshots reason fields from parent PaymentDispute when escalated; sets initial status='pending_evidence' + computes evidence_due_by + rdr_eligible + ce3_eligible; increments parent payment.amount_disputed_cents; runs the finalization chain on `lost` / `expired` (two offsetting transactions + invoice state update + clawback fan-out + marketing negative-conversion + fraud signal); REFUSES ALL mutations after terminal status (chargebacks are IMMUTABLE). ChargebackEvidenceObserver enforces submission-attempt monotonicity, refuses submission when the parent chargeback is not in a submitting state, freezes all evidence fields on save (immutable audit trail).",
   "observers": [
     {
       "model": "Chargeback",
-      "observer": "Academorix\\Finance\\Chargeback\\Observers\\ChargebackObserver",
+      "observer": "Stackra\\Finance\\Chargeback\\Observers\\ChargebackObserver",
       "handles": [
         "creating -> populate ULID prefix `cbk_`",
         "creating -> refuse when tenant does NOT hold `chargeback_management` entitlement (returns `CHARGEBACK_MANAGEMENT_NOT_ENTITLED`) — chargebacks still fire regardless because they're bank-forced, but the workflow features gate here",
@@ -48,7 +48,7 @@
     },
     {
       "model": "ChargebackEvidence",
-      "observer": "Academorix\\Finance\\Chargeback\\Observers\\ChargebackEvidenceObserver",
+      "observer": "Stackra\\Finance\\Chargeback\\Observers\\ChargebackEvidenceObserver",
       "handles": [
         "creating -> populate ULID prefix `cev_`",
         "creating -> refuse when parent chargeback.status NOT IN ('pending_evidence', 'evidence_submitted') — evidence can only be submitted before terminal states (returns `CHARGEBACK_EVIDENCE_PARENT_LOCKED`)",

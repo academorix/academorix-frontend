@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registrations\Database\Factories;
+namespace Stackra\Registrations\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Registrations\Contracts\Data\WaitlistEntryInterface;
-use Academorix\Registrations\Models\WaitlistEntry;
+use Stackra\Registrations\Contracts\Data\WaitlistEntryInterface;
+use Stackra\Registrations\Models\WaitlistEntry;
 
 /**
- * Factory for {@see \Academorix\Registrations\Models\WaitlistEntry}.
+ * Factory for {@see \Stackra\Registrations\Models\WaitlistEntry}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Registrations\Models\WaitlistEntry>
+ * @extends Factory<\Stackra\Registrations\Models\WaitlistEntry>
  *
  * @category Registrations
  *

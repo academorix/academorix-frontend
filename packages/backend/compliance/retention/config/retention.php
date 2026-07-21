@@ -4,7 +4,7 @@
  * @file packages/compliance/retention/config/retention.php
  *
  * @description
- * Runtime configuration for `academorix/retention`. Merged into
+ * Runtime configuration for `stackra/retention`. Merged into
  * the consuming app under the `retention.*` key by
  * {@see RetentionServiceProvider}
  * (via the base's `#[LoadsResources(config: true)]` convention).
@@ -29,7 +29,7 @@
  */
 
 declare(strict_types=1);
-use Academorix\Retention\Providers\RetentionServiceProvider;
+use Stackra\Retention\Providers\RetentionServiceProvider;
 
 return [
 

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invoice\Exceptions;
+namespace Stackra\Invoice\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * reason IN ('adjustment', 'customer_dispute_resolved', 'accounting_correction') requires reason_note.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CreditNoteReasonNoteRequiredException extends AcademorixException
+final class CreditNoteReasonNoteRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

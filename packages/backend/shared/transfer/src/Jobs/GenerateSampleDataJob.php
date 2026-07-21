@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Jobs;
+namespace Stackra\Transfer\Jobs;
 
-use Academorix\Transfer\Contracts\Services\SampleDataGeneratorInterface;
-use Academorix\Transfer\Events\SampleDataGenerated;
-use Academorix\Transfer\Models\XferJob;
+use Stackra\Transfer\Contracts\Services\SampleDataGeneratorInterface;
+use Stackra\Transfer\Events\SampleDataGenerated;
+use Stackra\Transfer\Models\XferJob;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

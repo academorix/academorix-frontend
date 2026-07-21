@@ -1,10 +1,10 @@
-# academorix/retention — migration status
+# stackra/retention — migration status
 
 ## Bootstrapper migration (Phase 2.C — 2026)
 
 The retention module ships one discovery bootstrapper. Phase 2.C renamed it to
 fit the framework's canonical
-`Academorix\ServiceProvider\Bootstrappers\AbstractBootstrapper` base per
+`Stackra\ServiceProvider\Bootstrappers\AbstractBootstrapper` base per
 ADR 0020. The framework's `BootstrapperRunner` now iterates the `$bootstrappers`
 array on `RetentionServiceProvider` and drives the bootstrapper through its
 cache-aware lifecycle at boot — the previous
@@ -34,12 +34,12 @@ cache-aware lifecycle at boot — the previous
 
 Phase 2.D moved every registry in the monorepo out of `Support/` into
 `Registry/` and refactored each to extend the shared
-`Academorix\ServiceProvider\Registry\AbstractRegistry` base — see
+`Stackra\ServiceProvider\Registry\AbstractRegistry` base — see
 `.kiro/steering/folder-conventions.md` for the locked per-folder ownership rule.
 
 | Old path                                    | New path                                   | Notes                                                                                                                                                                                                                                                                                                                                                                                                          |
 | ------------------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/Support/RetentionPolicyRegistry.php`   | `src/Registry/RetentionPolicyRegistry.php` | Namespace: `Academorix\Retention\Support` → `Academorix\Retention\Registry`. Extends `AbstractRegistry`. Descriptor payload now lives on the base's metadata slot via `parent::register($key, $priority, $descriptor)` — every internal (`$entries`, `$order`, `$cursor`, `usort`) deleted. Domain writer is `registerDescriptor()`; reader is `resolve()` (via `metadataOf()`) with `find()`/`get()` aliases. |
+| `src/Support/RetentionPolicyRegistry.php`   | `src/Registry/RetentionPolicyRegistry.php` | Namespace: `Stackra\Retention\Support` → `Stackra\Retention\Registry`. Extends `AbstractRegistry`. Descriptor payload now lives on the base's metadata slot via `parent::register($key, $priority, $descriptor)` — every internal (`$entries`, `$order`, `$cursor`, `usort`) deleted. Domain writer is `registerDescriptor()`; reader is `resolve()` (via `metadataOf()`) with `find()`/`get()` aliases. |
 | `src/Support/RetentionPolicyDescriptor.php` | (unchanged — still in `Support/`)          | Readonly VO — `Support/` is the correct home per `folder-conventions.md`. Registries live in `Registry/`; VOs live in `Support/`.                                                                                                                                                                                                                                                                              |
 
 ### API changes

@@ -31,7 +31,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Support;
+namespace Stackra\Architecture\Support;
 
 /**
  * Immutable snapshot of one property declaration.

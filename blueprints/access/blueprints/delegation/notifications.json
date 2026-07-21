@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/delegation/notifications",
+  "id": "stackra://modules/delegation/notifications",
   "$version": 1,
   "title": "delegation — notification classes + categories",
-  "namespace": "Academorix\\Delegation\\Notifications",
+  "namespace": "Stackra\\Delegation\\Notifications",
   "notifications": [
     "DelegationCreatedNotification",
     "DelegationActivatedNotification",
@@ -71,7 +71,7 @@
     {
       "slug": "impersonation.session_started",
       "display_name": "Your account is being impersonated",
-      "description": "CANNOT-OPT-OUT. Regulatory notice sent to the impersonated tenant User the moment their account starts being impersonated by an Academorix staff member. Names the operator + department + reason + support ticket reference (when provided). Regulatory basis: SOC 2 CC6.1 + PCI-DSS 8.5 mandated notice — the tenant User has an inalienable right to know their account is being operated by someone else. is_read_only sessions include a badge on the notification saying 'read-only session'.",
+      "description": "CANNOT-OPT-OUT. Regulatory notice sent to the impersonated tenant User the moment their account starts being impersonated by an Stackra staff member. Names the operator + department + reason + support ticket reference (when provided). Regulatory basis: SOC 2 CC6.1 + PCI-DSS 8.5 mandated notice — the tenant User has an inalienable right to know their account is being operated by someone else. is_read_only sessions include a badge on the notification saying 'read-only session'.",
       "default_channels": ["mail", "in_app"],
       "priority": "transactional",
       "consent_tier": "transactional_required",

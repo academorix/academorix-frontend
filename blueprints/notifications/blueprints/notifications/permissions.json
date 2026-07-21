@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/notifications/permissions",
+  "id": "stackra://modules/notifications/permissions",
   "$version": 1,
   "title": "notifications core \u2014 permissions",
   "description": "Two guards. Sanctum-guard permissions are user-facing (inbox, preferences, tenant admin template management). Platform-admin-guard permissions gate cross-tenant search + delivery retry. Every permission is seeded by `NotificationsPermissionSeeder` with is_system=true.",
-  "seeder": "Academorix\\Notifications\\Database\\Seeders\\NotificationsPermissionSeeder",
+  "seeder": "Stackra\\Notifications\\Database\\Seeders\\NotificationsPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/organization/retention",
+  "id": "stackra://modules/organization/retention",
   "$version": 1,
   "title": "organization — retention windows",
   "description": "Active + paused Organizations never expire. Archived rows hold for 730 days then hard-purge IF no descendants + no branch references. TenantErased cascades hard-delete via FK regardless of retention state.",

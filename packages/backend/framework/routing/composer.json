@@ -1,5 +1,5 @@
 {
-  "name": "academorix/routing",
+  "name": "stackra/routing",
   "description": "Attribute-based routing for Laravel — extends spatie/laravel-route-attributes with a controller base (Response/Request/Auth/Pagination helpers), a RouteRegistrar that discovers `#[AsController]` via the unified DiscoversAttributes contract, and NestJS-style decorators layered on top of Spatie's HTTP verb attributes.",
   "type": "library",
   "license": "proprietary",
@@ -8,13 +8,13 @@
     "routing",
     "attributes",
     "decorators",
-    "academorix"
+    "stackra"
   ],
   "require": {
     "php": "^8.3",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
-    "academorix/service-provider": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/service-provider": "@dev",
     "illuminate/contracts": "^13.0",
     "illuminate/routing": "^13.0",
     "illuminate/support": "^13.0",
@@ -29,19 +29,19 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Routing\\": "src/"
+      "Stackra\\Routing\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Routing\\Tests\\": "tests/"
+      "Stackra\\Routing\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Routing\\Providers\\RoutingServiceProvider",
-        "Academorix\\Routing\\Providers\\ApiVersioningServiceProvider"
+        "Stackra\\Routing\\Providers\\RoutingServiceProvider",
+        "Stackra\\Routing\\Providers\\ApiVersioningServiceProvider"
       ]
     }
   },

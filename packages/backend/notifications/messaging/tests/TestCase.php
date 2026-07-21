@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Messaging\Tests;
+namespace Stackra\Messaging\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/messaging.
+ * Base test case for stackra/messaging.
  *
  * @category Messaging
  *

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Enums;
+namespace Stackra\Newsletter\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `state` on `newsletter-issue`.

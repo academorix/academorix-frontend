@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\DigitalPasses\Enums;
+namespace Stackra\DigitalPasses\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `kind` on `wallet-pass`.

@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/season/jobs",
+  "id": "stackra://modules/season/jobs",
   "$version": 1,
   "title": "season — background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Sports\\Season\\Jobs\\RollSeasonPhaseJob",
+      "class": "Stackra\\Sports\\Season\\Jobs\\RollSeasonPhaseJob",
       "queue": "sports",
       "purpose": "Hourly cron. Walks every active Season + transitions its status based on now() vs its registration + start + playoff + end timestamps. Automated counterpart to the manual action routes; the observer refuses invalid transitions this job never emits. Idempotent — a second run in the same hour is a no-op because the observer no-ops equal-state transitions.",
       "steps": [
@@ -23,15 +23,15 @@
       "note": "This job is the reason status transitions can be traced back to a specific hour boundary. When a tenant asks why the season 'suddenly' entered playoffs at 3am, the answer is the hourly job crossed the `playoff_starts_at` threshold — the RollSeasonPhaseJob run log carries the exact time + the observer wrote a SeasonStatusChanged audit row."
     },
     {
-      "class": "Academorix\\Sports\\Season\\Jobs\\SeedDefaultSeasonForTenantJob",
+      "class": "Stackra\\Sports\\Season\\Jobs\\SeedDefaultSeasonForTenantJob",
       "queue": "notifications",
       "purpose": "Dispatched on tenancy::TenantProvisioned when the tenant subscribes to a seasonal business_type (per data/business-type-defaults.json). Creates the tenant's default Season using the business_type's default template. Idempotent — a second dispatch for the same tenant is a no-op.",
       "steps": [
         "Load the tenant + verify no existing default Season row (idempotency guard on (tenant_id, is_current=true, organization_id IS NULL, branch_id IS NULL, sport_key IS NULL)).",
         "Resolve business_type from Tenant.subscription -> Plan -> BusinessType (via billing module).",
         "Look up business_type default template in data/business-type-defaults.json.",
-        "When business_type is NOT in the seasonal set (e.g. sports_center, gym): skip + log telemetry `academorix.season.seed_skipped.total` with reason='non_seasonal_business_type'.",
-        "When tenant does NOT hold `sports_seasons` entitlement (Small tier): skip + log `academorix.season.seed_skipped.total` with reason='feature_not_entitled'.",
+        "When business_type is NOT in the seasonal set (e.g. sports_center, gym): skip + log telemetry `stackra.season.seed_skipped.total` with reason='non_seasonal_business_type'.",
+        "When tenant does NOT hold `sports_seasons` entitlement (Small tier): skip + log `stackra.season.seed_skipped.total` with reason='feature_not_entitled'.",
         "Otherwise invoke SeasonProvisioner with { tenant, is_system_provisioned=true, is_current=true, ...template } — the is_system_provisioned flag skips the season_slot consumption per the entitlement contract.",
         "Fire TenantDefaultSeasonSeeded with seeded_by='tenant_provisioning'.",
         "The seeded Season is silent — no SeasonCreatedNotification (would noise up the onboarding inbox)."
@@ -45,12 +45,12 @@
       "note": "Runs on the notifications queue because it's part of the tenant-onboarding path — latency is user-visible. Small tenants + non-seasonal business_types skip silently."
     },
     {
-      "class": "Academorix\\Sports\\Season\\Jobs\\ReconcileCurrentSeasonInvariantJob",
+      "class": "Stackra\\Sports\\Season\\Jobs\\ReconcileCurrentSeasonInvariantJob",
       "queue": "low",
       "purpose": "Daily nightly at 03:30 UTC. Verifies the invariant `every tenant + scope tuple has AT MOST one Season with is_current=true`. Alerts on drift; optionally auto-heals per config.",
       "steps": [
         "SELECT tenant_id, COALESCE(organization_id, '_') AS org, COALESCE(branch_id, '_') AS branch, COALESCE(sport_key, '_') AS sport, COUNT(*) AS current_count FROM seasons WHERE is_current=true AND deleted_at IS NULL GROUP BY tenant_id, org, branch, sport HAVING current_count > 1.",
-        "For each drifted tuple: log a telemetry counter `academorix.season.current_invariant_drift.count` + fire the alert per `config('season.reconciliation.alert_on_drift')`.",
+        "For each drifted tuple: log a telemetry counter `stackra.season.current_invariant_drift.count` + fire the alert per `config('season.reconciliation.alert_on_drift')`.",
         "When `config('season.reconciliation.auto_heal')` = true: keep the newest is_current row; flip the older ones to is_current=false. Fire SeasonCurrentChanged for each demotion.",
         "Additionally scan for tenants with 0 current seasons in a tuple that has completed-but-not-archived seasons. This is NOT drift — it's allowed (tenants may legitimately have no current season). Log to the ops dashboard but do NOT alert.",
         "Write a reconciliation report row to audit_events."
@@ -62,7 +62,7 @@
       "note": "Off by default in staging; on in production. Auto-heal is off by default even in production — surface + acknowledge before healing."
     },
     {
-      "class": "Academorix\\Sports\\Season\\Jobs\\CloseExpiredRegistrationsJob",
+      "class": "Stackra\\Sports\\Season\\Jobs\\CloseExpiredRegistrationsJob",
       "queue": "sports",
       "purpose": "Every 15 minutes. Finds registration_open Seasons whose registration_closes_at has passed + transitions them to registration_closed. Also detects Seasons that crossed into the late-registration window + fires SeasonLateRegistrationOpened for downstream notification consumers.",
       "steps": [
@@ -79,7 +79,7 @@
       "backoff": [30, 120, 300]
     },
     {
-      "class": "Academorix\\Sports\\Season\\Jobs\\PurgeArchivedSeasonsJob",
+      "class": "Stackra\\Sports\\Season\\Jobs\\PurgeArchivedSeasonsJob",
       "queue": "low",
       "purpose": "Daily at 04:30 UTC. Hard-deletes soft-deleted (archived) Season rows past `season.retention.archived_seasons_retention_days` (default 2555 = 7 years for financial retention) IF no inbound FK row still references them.",
       "steps": [

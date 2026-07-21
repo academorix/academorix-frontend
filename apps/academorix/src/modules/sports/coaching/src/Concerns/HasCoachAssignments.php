@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Concerns;
+namespace Stackra\Coaching\Concerns;
 
 /**
  * Trait — HasCoachAssignments.

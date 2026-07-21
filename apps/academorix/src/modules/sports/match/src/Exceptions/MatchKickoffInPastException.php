@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Exceptions;
+namespace Stackra\Match\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to schedule / reschedule kickoff_at to a past timestamp.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MatchKickoffInPastException extends AcademorixException
+final class MatchKickoffInPastException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

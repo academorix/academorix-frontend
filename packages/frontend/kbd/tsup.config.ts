@@ -8,7 +8,7 @@
  *   `react` entry pointing at `src/react/index.ts`.
  */
 
-import { defineBaseConfig } from "@academorix/config-tsup";
+import { defineBaseConfig } from "@stackra/config-tsup";
 
 export default defineBaseConfig(
   {

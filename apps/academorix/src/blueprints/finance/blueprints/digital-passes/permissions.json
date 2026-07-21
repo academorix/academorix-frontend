@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/digital-passes/permissions",
+  "id": "stackra://modules/digital-passes/permissions",
   "$version": 1,
   "title": "digital-passes — permissions",
-  "seeder": "Academorix\\Finance\\DigitalPasses\\Database\\Seeders\\DigitalPassesPermissionSeeder",
+  "seeder": "Stackra\\Finance\\DigitalPasses\\Database\\Seeders\\DigitalPassesPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

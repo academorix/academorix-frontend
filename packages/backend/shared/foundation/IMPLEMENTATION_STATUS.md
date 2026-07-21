@@ -32,5 +32,5 @@ Phase-5 test coverage + Phase-6 docs are the appropriate lanes.
 Every other package under `backend-packages/` depends on foundation (either
 directly or transitively via `crud` / `routing` / etc.).
 
-**Note:** this module is renamed to `academorix-shared/foundation` (commit
+**Note:** this module is renamed to `stackra-shared/foundation` (commit
 `6d791aea6`).

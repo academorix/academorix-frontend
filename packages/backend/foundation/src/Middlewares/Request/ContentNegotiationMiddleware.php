@@ -12,16 +12,16 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Foundation\Middlewares\Request;
+namespace Stackra\Foundation\Middlewares\Request;
 
 use Closure;
 use Illuminate\Http\Request;
 
 use function in_array;
 
-use Academorix\Foundation\Exceptions\BadRequestException;
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Support\Arr;
+use Stackra\Foundation\Exceptions\BadRequestException;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Support\Arr;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -61,7 +61,7 @@ use Symfony\Component\HttpFoundation\Response;
  * ```php
  * // In app/Http/Kernel.php
  * protected $middleware = [
- *     \Academorix\Foundation\Middlewares\Request\ContentNegotiationMiddleware::class,
+ *     \Stackra\Foundation\Middlewares\Request\ContentNegotiationMiddleware::class,
  * ];
  * ```
  *

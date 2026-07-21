@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/subscription/observers",
+  "id": "stackra://modules/subscription/observers",
   "$version": 1,
   "title": "subscription \u2014 Eloquent observers",
   "observers": [
     {
       "model": "Plan",
-      "observer": "Academorix\\Subscription\\Observers\\PlanObserver",
+      "observer": "Stackra\\Subscription\\Observers\\PlanObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `pln_`",
         "creating \u2192 refuse if provider_price_id is set but does not exist at Stripe/Paddle (dry-run lookup)",
@@ -16,7 +16,7 @@
     },
     {
       "model": "Subscription",
-      "observer": "Academorix\\Subscription\\Observers\\SubscriptionObserver",
+      "observer": "Stackra\\Subscription\\Observers\\SubscriptionObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `sub_` + denormalise application_id + billing_cycle from Plan",
         "creating \u2192 refuse if tenant already has non-terminal Subscription",
@@ -28,7 +28,7 @@
     },
     {
       "model": "SubscriptionEvent",
-      "observer": "Academorix\\Subscription\\Observers\\SubscriptionEventObserver",
+      "observer": "Stackra\\Subscription\\Observers\\SubscriptionEventObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `sev_`",
         "creating \u2192 refuse duplicate provider_event_id (idempotency)",

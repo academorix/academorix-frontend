@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/webhook/entitlements",
+  "id": "stackra://modules/webhook/entitlements",
   "$version": 1,
   "title": "webhook \u2014 entitlements",
   "description": "Per-tenant metered entitlements. Subscription count (slot) + deliveries per month (pool) + rate limit cap (slot).",

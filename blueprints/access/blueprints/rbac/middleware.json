@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/rbac/middleware",
+  "id": "stackra://modules/rbac/middleware",
   "$version": 1,
   "title": "rbac \u2014 HTTP middleware",
   "middleware": [
     {
       "alias": "rbac.enforce_permission",
-      "class": "Academorix\\Rbac\\Http\\Middleware\\EnforcePermission",
+      "class": "Stackra\\Rbac\\Http\\Middleware\\EnforcePermission",
       "priority": 30,
       "description": "The primary permission gate. Reads `#[RequirePermission('permission.name')]` from the target action (or accepts `permission:permission.name` inline via the route definition), then calls `PermissionResolver::resolve()`. On false: 403 PermissionDefaultDeny. On true: pass through. This is the middleware every gated route uses.",
       "auto_applied": false,
@@ -18,7 +18,7 @@
     },
     {
       "alias": "rbac.enforce_role",
-      "class": "Academorix\\Rbac\\Http\\Middleware\\EnforceRole",
+      "class": "Stackra\\Rbac\\Http\\Middleware\\EnforceRole",
       "priority": 31,
       "description": "Role-based gate. Reads `#[RequireRole('role_name')]` and asserts the caller holds the role. Coarser than permission checks \u2014 useful for admin-console routes where 'owner OR admin' is the natural gate (rather than enumerating every permission the role holds).",
       "auto_applied": false,
@@ -29,7 +29,7 @@
     },
     {
       "alias": "rbac.warm_permission_cache",
-      "class": "Academorix\\Rbac\\Http\\Middleware\\WarmPermissionCache",
+      "class": "Stackra\\Rbac\\Http\\Middleware\\WarmPermissionCache",
       "priority": 25,
       "description": "Ensures the caller's ResolvedPermissionSet is loaded into the process-local cache before the first permission check fires. Skipped when config('rbac.cache.warmup_on_login')=false OR when the request has no authenticated user.",
       "auto_applied": true,

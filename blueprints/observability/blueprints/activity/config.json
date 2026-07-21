@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/activity/config",
+  "id": "stackra://modules/activity/config",
   "$version": 1,
   "title": "activity — developer configuration",
   "description": "Developer / operator configuration. Mirrors `config/activity.php`. Static per deploy; changing requires redeploy + `config:cache`. Distinct from settings.json (tenant-editable at runtime).",
@@ -129,7 +129,7 @@
         {
           "path": "activity.cold.bucket_pattern",
           "type": "string",
-          "default": "academorix-activity-cold/{tenant_id}/{year}/{month}",
+          "default": "stackra-activity-cold/{tenant_id}/{year}/{month}",
           "env": "ACTIVITY_COLD_BUCKET_PATTERN",
           "description": "Object key pattern. `{tenant_id}` / `{year}` / `{month}` interpolated at archive time. Enables per-tenant + per-time-window Glacier lifecycle policies."
         },

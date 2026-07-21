@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invitations/events",
+  "id": "stackra://modules/invitations/events",
   "$version": 1,
   "title": "invitations — domain events",
   "description": "Ten lifecycle events. Every event carries the Invitation model (fresh from the DB, not stale from cache) and mirrors the state machine transitions. All implement ShouldDispatchAfterCommit so listeners never fire against a rolled-back transaction. Consumers subscribe to these to react to acceptance / decline / bounce (user module creates User rows on Accepted, teams module adds TeamMember, notifications module sends inviter-facing confirmations, ...).",
@@ -7,7 +7,7 @@
   "events": [
     {
       "name": "InvitationSent",
-      "class": "Academorix\\Invitations\\Events\\InvitationSent",
+      "class": "Stackra\\Invitations\\Events\\InvitationSent",
       "when": "SendInvitationJob completes: mail transport accepted the message for delivery. Sets `sent_at` on the Invitation + writes an `event=sent` row on InvitationEvent.",
       "afterCommit": true,
       "payload": {
@@ -18,7 +18,7 @@
     },
     {
       "name": "InvitationDelivered",
-      "class": "Academorix\\Invitations\\Events\\InvitationDelivered",
+      "class": "Stackra\\Invitations\\Events\\InvitationDelivered",
       "when": "Mail transport reports `delivered` via inbound webhook. First occurrence per invitation — subsequent deliveries (e.g. redundant delivery signals) are logged as events but do not re-fire this domain event.",
       "afterCommit": true,
       "payload": {
@@ -29,7 +29,7 @@
     },
     {
       "name": "InvitationOpened",
-      "class": "Academorix\\Invitations\\Events\\InvitationOpened",
+      "class": "Stackra\\Invitations\\Events\\InvitationOpened",
       "when": "First `opened` webhook signal (tracking pixel loaded) OR first click on the accept link — whichever comes first. Fires once per invitation.",
       "afterCommit": true,
       "payload": {
@@ -41,7 +41,7 @@
     },
     {
       "name": "InvitationClicked",
-      "class": "Academorix\\Invitations\\Events\\InvitationClicked",
+      "class": "Stackra\\Invitations\\Events\\InvitationClicked",
       "when": "Invitee hits GET /api/invitations/{token} (the preview endpoint). Fires on every hit, unlike Opened which fires only on first click. Used by risk-scoring + funnel analytics.",
       "afterCommit": true,
       "payload": {
@@ -53,7 +53,7 @@
     },
     {
       "name": "InvitationAccepted",
-      "class": "Academorix\\Invitations\\Events\\InvitationAccepted",
+      "class": "Stackra\\Invitations\\Events\\InvitationAccepted",
       "when": "Terminal success. Accept flow completed — the target-registered accept handler created/promoted the User row, assigned the role, applied any grants. `accepted_by_user_id` is set atomically with `state=accepted`.",
       "afterCommit": true,
       "payload": {
@@ -65,7 +65,7 @@
     },
     {
       "name": "InvitationDeclined",
-      "class": "Academorix\\Invitations\\Events\\InvitationDeclined",
+      "class": "Stackra\\Invitations\\Events\\InvitationDeclined",
       "when": "Terminal decline. Invitee explicitly declined via POST /api/invitations/{token}/decline.",
       "afterCommit": true,
       "payload": {
@@ -75,7 +75,7 @@
     },
     {
       "name": "InvitationExpired",
-      "class": "Academorix\\Invitations\\Events\\InvitationExpired",
+      "class": "Stackra\\Invitations\\Events\\InvitationExpired",
       "when": "ExpireInvitationsJob observes `now > expires_at` on a non-terminal invitation. Terminal — no listener can reverse.",
       "afterCommit": true,
       "payload": {
@@ -84,7 +84,7 @@
     },
     {
       "name": "InvitationRevoked",
-      "class": "Academorix\\Invitations\\Events\\InvitationRevoked",
+      "class": "Stackra\\Invitations\\Events\\InvitationRevoked",
       "when": "Inviter (or platform admin) manually revoked. Terminal.",
       "afterCommit": true,
       "payload": {
@@ -96,7 +96,7 @@
     },
     {
       "name": "InvitationBounced",
-      "class": "Academorix\\Invitations\\Events\\InvitationBounced",
+      "class": "Stackra\\Invitations\\Events\\InvitationBounced",
       "when": "Mail transport reports `bounce` (hard/soft) or `complaint` (spam-flagged by recipient). Non-terminal for soft bounces — a RetryBounceJob may re-attempt. Hard bounces + complaints are terminal.",
       "afterCommit": true,
       "payload": {
@@ -109,7 +109,7 @@
     },
     {
       "name": "InvitationResent",
-      "class": "Academorix\\Invitations\\Events\\InvitationResent",
+      "class": "Stackra\\Invitations\\Events\\InvitationResent",
       "when": "Inviter triggered POST .../resend. New token generated (previous invalidated), fresh SendInvitationJob dispatched, `resend_count` incremented.",
       "afterCommit": true,
       "payload": {

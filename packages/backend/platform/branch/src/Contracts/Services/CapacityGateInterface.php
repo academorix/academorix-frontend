@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branch\Contracts\Services;
+namespace Stackra\Branch\Contracts\Services;
 
-use Academorix\Branch\Services\CapacityGate;
+use Stackra\Branch\Services\CapacityGate;
 use Illuminate\Container\Attributes\Bind;
 
 /**

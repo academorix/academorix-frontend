@@ -1,75 +1,75 @@
 {
-  "id": "academorix://modules/coaching/listeners",
+  "id": "stackra://modules/coaching/listeners",
   "$version": 1,
   "title": "coaching — subscribed events",
   "listeners": [
     {
       "event": "staff::StaffOffboardingStarted",
-      "listener": "Academorix\\Sports\\Coaching\\Listeners\\PreventStaffOffboardingWithActiveCoachingProfile",
+      "listener": "Stackra\\Sports\\Coaching\\Listeners\\PreventStaffOffboardingWithActiveCoachingProfile",
       "queue": "coaching",
       "priority": 48,
       "purpose": "Pre-write hook. Refuses Staff offboard when the Staff has an active CoachingProfile unless cascade=true."
     },
     {
       "event": "staff::StaffOffboarded",
-      "listener": "Academorix\\Sports\\Coaching\\Listeners\\DeactivateCoachingProfileOnStaffOffboarded",
+      "listener": "Stackra\\Sports\\Coaching\\Listeners\\DeactivateCoachingProfileOnStaffOffboarded",
       "queue": "coaching",
       "priority": 20,
       "purpose": "Cascade-deactivates the CoachingProfile (fires CoachingProfileDeactivated) when the parent Staff is offboarded."
     },
     {
       "event": "staff::StaffPutOnLeave",
-      "listener": "Academorix\\Sports\\Coaching\\Listeners\\SoftFlagProfileOnStaffLeave",
+      "listener": "Stackra\\Sports\\Coaching\\Listeners\\SoftFlagProfileOnStaffLeave",
       "queue": "coaching",
       "purpose": "Marks profile.metadata.on_leave=true. Existing assignments retain; new assignments refused with is_on_leave-check."
     },
     {
       "event": "staff::StaffReturnedFromLeave",
-      "listener": "Academorix\\Sports\\Coaching\\Listeners\\ClearOnLeaveFlagOnStaffReturn",
+      "listener": "Stackra\\Sports\\Coaching\\Listeners\\ClearOnLeaveFlagOnStaffReturn",
       "queue": "coaching",
       "purpose": "Clears profile.metadata.on_leave."
     },
     {
       "event": "coaching::CoachingProfileDeactivated",
-      "listener": "Academorix\\Sports\\Coaching\\Listeners\\CancelActiveAssignmentsOnCoachingProfileDeactivated",
+      "listener": "Stackra\\Sports\\Coaching\\Listeners\\CancelActiveAssignmentsOnCoachingProfileDeactivated",
       "queue": "coaching",
       "priority": 20,
       "purpose": "Cascade-cancels every active CoachAssignment for the deactivated profile."
     },
     {
       "event": "coaching::CoachCertificationAdded",
-      "listener": "Academorix\\Sports\\Coaching\\Listeners\\ScheduleExpirationNoticesOnCertificationAdded",
+      "listener": "Stackra\\Sports\\Coaching\\Listeners\\ScheduleExpirationNoticesOnCertificationAdded",
       "queue": "coaching",
       "priority": 30,
       "purpose": "Schedules 90/30/7-day expiration checkpoints + 0-day terminal event on the certification's expires_at (when set)."
     },
     {
       "event": "team::TeamArchived",
-      "listener": "Academorix\\Sports\\Coaching\\Listeners\\CancelAssignmentsOnTeamArchived",
+      "listener": "Stackra\\Sports\\Coaching\\Listeners\\CancelAssignmentsOnTeamArchived",
       "queue": "coaching",
       "purpose": "Soft-cancels every open CoachAssignment where assignable_type='Team' AND assignable_id=archived team."
     },
     {
       "event": "event::EventArchived",
-      "listener": "Academorix\\Sports\\Coaching\\Listeners\\CancelAssignmentsOnEventArchived",
+      "listener": "Stackra\\Sports\\Coaching\\Listeners\\CancelAssignmentsOnEventArchived",
       "queue": "coaching",
       "purpose": "Soft-cancels every open CoachAssignment where assignable_type='Event' AND assignable_id=archived event."
     },
     {
       "event": "session::SessionCancelled",
-      "listener": "Academorix\\Sports\\Coaching\\Listeners\\MarkAssignmentAffectedOnSessionCancelled",
+      "listener": "Stackra\\Sports\\Coaching\\Listeners\\MarkAssignmentAffectedOnSessionCancelled",
       "queue": "coaching",
       "purpose": "Assignments are NOT deleted (audit trail). Marks assignment.metadata.affected_by_session_cancellation for coach visibility."
     },
     {
       "event": "session::SessionRescheduled",
-      "listener": "Academorix\\Sports\\Coaching\\Listeners\\RerunAvailabilityConflictOnSessionRescheduled",
+      "listener": "Stackra\\Sports\\Coaching\\Listeners\\RerunAvailabilityConflictOnSessionRescheduled",
       "queue": "coaching",
       "purpose": "Re-runs NotifyCoachAvailabilityConflictJob against the assignment for the new window."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Sports\\Coaching\\Listeners\\PurgeCoachingDataForErasedTenant",
+      "listener": "Stackra\\Sports\\Coaching\\Listeners\\PurgeCoachingDataForErasedTenant",
       "queue": "coaching",
       "purpose": "Cascade delete via FK; writes compliance audit."
     }

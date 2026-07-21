@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Services;
+namespace Stackra\Compliance\Services;
 
-use Academorix\Compliance\Contracts\Services\DsarOrchestratorInterface;
+use Stackra\Compliance\Contracts\Services\DsarOrchestratorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Compliance\Contracts\Repositories\ConsentCategoryRepositoryInterface;
+use Stackra\Compliance\Contracts\Repositories\ConsentCategoryRepositoryInterface;
 
 /**
  * Concrete service — DsarOrchestrator.

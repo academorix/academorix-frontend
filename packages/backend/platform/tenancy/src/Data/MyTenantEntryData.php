@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Data;
+namespace Stackra\Tenancy\Data;
 
-use Academorix\Tenancy\Contracts\Data\TenantInterface;
-use Academorix\Tenancy\Enums\TenantStatus;
-use Academorix\Tenancy\Models\Tenant;
+use Stackra\Tenancy\Contracts\Data\TenantInterface;
+use Stackra\Tenancy\Enums\TenantStatus;
+use Stackra\Tenancy\Models\Tenant;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;

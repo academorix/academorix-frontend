@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Events;
+namespace Stackra\Branding\Events;
 
-use Academorix\Branding\Models\Branding;
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Branding\Models\Branding;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 

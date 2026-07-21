@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\IdentityPeopleSdk\Tests;
+namespace Stackra\IdentityPeopleSdk\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix-identity/people-sdk.
+ * Base test case for stackra-identity/people-sdk.
  *
  * @category PeopleSdk
  *

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Services;
+namespace Stackra\Webhook\Services;
 
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Webhook\Contracts\Data\WebhookDeliveryInterface;
-use Academorix\Webhook\Contracts\Data\WebhookSubscriptionInterface;
-use Academorix\Webhook\Contracts\Repositories\WebhookDeliveryRepositoryInterface;
-use Academorix\Webhook\Contracts\Services\WebhookSenderInterface;
-use Academorix\Webhook\Enums\WebhookDeliveryStatus;
-use Academorix\Webhook\Enums\WebhookSubscriptionStatus;
-use Academorix\Webhook\Exceptions\WebhookSubscriptionDisabledException;
-use Academorix\Webhook\Jobs\DispatchWebhookJob;
-use Academorix\Webhook\Models\WebhookDelivery;
-use Academorix\Webhook\Models\WebhookSubscription;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Webhook\Contracts\Data\WebhookDeliveryInterface;
+use Stackra\Webhook\Contracts\Data\WebhookSubscriptionInterface;
+use Stackra\Webhook\Contracts\Repositories\WebhookDeliveryRepositoryInterface;
+use Stackra\Webhook\Contracts\Services\WebhookSenderInterface;
+use Stackra\Webhook\Enums\WebhookDeliveryStatus;
+use Stackra\Webhook\Enums\WebhookSubscriptionStatus;
+use Stackra\Webhook\Exceptions\WebhookSubscriptionDisabledException;
+use Stackra\Webhook\Jobs\DispatchWebhookJob;
+use Stackra\Webhook\Models\WebhookDelivery;
+use Stackra\Webhook\Models\WebhookSubscription;
 use Illuminate\Container\Attributes\Scoped;
 
 /**
@@ -22,7 +22,7 @@ use Illuminate\Container\Attributes\Scoped;
  *
  * Creates a {@see WebhookDelivery} row for the (subscription, event,
  * payload) tuple then dispatches
- * {@see \Academorix\Webhook\Jobs\DispatchWebhookJob} to actually send.
+ * {@see \Stackra\Webhook\Jobs\DispatchWebhookJob} to actually send.
  * The job owns retry + backoff behaviour; this class is the seam
  * feature modules call from their own event listeners.
  *

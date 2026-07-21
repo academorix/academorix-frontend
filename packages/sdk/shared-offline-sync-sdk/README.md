@@ -1,7 +1,7 @@
-# academorix-shared/offline-sync-sdk
+# stackra-shared/offline-sync-sdk
 
 Wire-visible SDK surface for the `offline-sync` module of the Shared service.
-Auto-discovered by `academorix/shared-sdk` (the service umbrella) via
+Auto-discovered by `stackra/shared-sdk` (the service umbrella) via
 `#[AsSdkResource(name: 'offline-sync', service: 'shared')]`.
 
 ## Aggregates
@@ -24,7 +24,7 @@ src/
 Consumed only over HTTP via the umbrella client:
 
 ```php
-app(\Academorix\SharedSdk\Client\SharedSdk::class)
+app(\Stackra\SharedSdk\Client\SharedSdk::class)
     ->offlineSync()
     ->syncCursors()
     ->list();

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Nightwatch\Tests;
+namespace Stackra\Nightwatch\Tests;
 
 use Orchestra\Testbench\TestCase as BaseTestCase;
-use Academorix\Nightwatch\Providers\NightwatchServiceProvider;
+use Stackra\Nightwatch\Providers\NightwatchServiceProvider;
 
 abstract class TestCase extends BaseTestCase
 {

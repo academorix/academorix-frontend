@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Wallet\Console;
+namespace Stackra\Wallet\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan wallet:show` — Show one wallet.

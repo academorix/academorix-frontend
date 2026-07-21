@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/newsletter/errors",
+  "id": "stackra://modules/newsletter/errors",
   "$version": 1,
   "title": "newsletter \u2014 error codes",
   "namespace": "newsletter",

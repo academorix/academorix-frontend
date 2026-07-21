@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Data;
+namespace Stackra\Storage\Data;
 
-use Academorix\Storage\Contracts\Data\FileVariantInterface;
-use Academorix\Storage\Models\FileVariant;
+use Stackra\Storage\Contracts\Data\FileVariantInterface;
+use Stackra\Storage\Models\FileVariant;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

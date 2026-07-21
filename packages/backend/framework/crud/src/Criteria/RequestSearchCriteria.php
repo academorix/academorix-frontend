@@ -12,13 +12,13 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Crud\Criteria;
+namespace Stackra\Crud\Criteria;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Academorix\Crud\Contracts\CriteriaInterface;
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\CriteriaInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
  * Request Search Criteria.

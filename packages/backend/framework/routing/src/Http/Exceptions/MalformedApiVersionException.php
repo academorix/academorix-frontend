@@ -13,14 +13,14 @@
  *
  *   - `Accept: application/vnd.api+json; version=vX.Y.oops` — the
  *     matched `version=...` param can't be parsed by
- *     {@see \Academorix\Routing\Services\VersionComparator::parse()}.
+ *     {@see \Stackra\Routing\Services\VersionComparator::parse()}.
  *   - `X-API-Version: foo` — header present but not a version string.
  *   - `?api_version=1.0.0-alpha` — query parameter with a
  *     pre-release / metadata segment we don't accept.
  *
  * ## Contract
  *
- * Extends {@see AcademorixException} so the framework Handler
+ * Extends {@see StackraException} so the framework Handler
  * renders it as RFC 7807 problem-details with correlation id,
  * category (`Validation`), severity (`Info`), and machine-readable
  * `error.code`.
@@ -32,14 +32,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Routing\Http\Exceptions;
+namespace Stackra\Routing\Http\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-final class MalformedApiVersionException extends AcademorixException
+final class MalformedApiVersionException extends StackraException
 {
     /**
      * Stable machine-readable code exposed on the wire as

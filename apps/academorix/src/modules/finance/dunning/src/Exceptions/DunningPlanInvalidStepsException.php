@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Dunning\Exceptions;
+namespace Stackra\Dunning\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * steps_json invalid: day_offset must be non-negative and monotonically non-decreasing; each step must have a valid action.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class DunningPlanInvalidStepsException extends AcademorixException
+final class DunningPlanInvalidStepsException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

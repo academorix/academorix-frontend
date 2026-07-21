@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Refund\Repositories;
+namespace Stackra\Refund\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Refund\Contracts\Data\RefundInterface;
-use Academorix\Refund\Contracts\Repositories\RefundRepositoryInterface;
-use Academorix\Refund\Models\Refund;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Refund\Contracts\Data\RefundInterface;
+use Stackra\Refund\Contracts\Repositories\RefundRepositoryInterface;
+use Stackra\Refund\Models\Refund;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Refund\Models\Refund}.
+ * Attribute-first Eloquent repository for {@see Stackra\Refund\Models\Refund}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(RefundInterface::class)]` which resolves to
  * `Refund` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Refund\Models\Refund>
+ * @extends Repository<\Stackra\Refund\Models\Refund>
  *
  * @category Refund
  *

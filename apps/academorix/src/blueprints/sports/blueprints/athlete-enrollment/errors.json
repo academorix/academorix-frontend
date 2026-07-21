@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/athlete-enrollment/errors",
+  "id": "stackra://modules/athlete-enrollment/errors",
   "$version": 1,
   "title": "athlete-enrollment — error codes",
   "namespace": "athlete_enrollment",

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Exceptions;
+namespace Stackra\Coupon\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Discount config (discount_type / discount_amount / applicability) cannot be edited once even one redemption commits.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CouponTermsLockedException extends AcademorixException
+final class CouponTermsLockedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

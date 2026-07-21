@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/auth/traits",
+  "id": "stackra://modules/auth/traits",
   "$version": 1,
   "title": "auth \u2014 trait composition",
   "description": "Two owned traits. `HasScopeSuffixResolution` is a marker on services that resolve `.own` / `.tenant` / `.branch` / `.team` / `.child` / `.any` permission suffixes into query filters. `HasSessionRevocation` is a composable helper for models whose state change must revoke every active PAT for the referring User (e.g. User suspension, role revocation, permission changes with security implications).",
   "owned": [
     {
-      "trait": "Academorix\\Auth\\Concerns\\HasScopeSuffixResolution",
+      "trait": "Stackra\\Auth\\Concerns\\HasScopeSuffixResolution",
       "description": "Marker trait composed by every service that consults `ScopeSuffixResolver` at query-build time. Adds no accessor / mutator / scope of its own \u2014 signals reflection-based tooling (integration tests, static analysis) that the class MUST NOT bypass the resolver. Every base repository in `framework/crud` implicitly composes this via its abstract parent.",
       "public": true,
       "usedBy": [
@@ -17,7 +17,7 @@
       "conflicts_with": []
     },
     {
-      "trait": "Academorix\\Auth\\Concerns\\HasSessionRevocation",
+      "trait": "Stackra\\Auth\\Concerns\\HasSessionRevocation",
       "description": "Composable helper for models that must revoke every active PAT for the referring User(s) when their state mutates. Ships: `->revokeAllSessions(SessionRevocationReason $reason)`, `->revokeSessionsForApplication(string $applicationId, SessionRevocationReason $reason)`. Each method is idempotent, transactional, and fires `AllSessionsRevoked` (bulk) OR `SessionRevoked` (single) after commit. Typical consumers: `user::User` (on suspended \u2192 revoke sessions), `access::Role` (on role deleted \u2014 revoke sessions for holders), `access::Permission` (rare \u2014 on manual permission removal).",
       "public": true,
       "usedBy": [
@@ -41,13 +41,13 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
-    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
+    "activity": [{ "trait": "Stackra\\Activity\\Concerns\\HasActivityLog" }]
   },
   "composition": {
     "auth_refresh_tokens": {

@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Wallet\Attributes;
+namespace Stackra\Wallet\Attributes;
 
 use Attribute;
 

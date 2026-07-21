@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Progress\Contracts\Repositories;
+namespace Stackra\Progress\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Progress\Models\GradingEvent}.
+ * Repository contract for {@see Stackra\Progress\Models\GradingEvent}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `GradingEventRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Progress\Models\GradingEvent>
+ * @extends RepositoryInterface<\Stackra\Progress\Models\GradingEvent>
  *
  * @category Progress
  *

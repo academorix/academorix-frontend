@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Exceptions;
+namespace Stackra\Localization\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a driver rejects a `(source, target)` locale pair —
@@ -17,7 +17,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class DriverUnsupportedLocalePairException extends AcademorixException
+final class DriverUnsupportedLocalePairException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

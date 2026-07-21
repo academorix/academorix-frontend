@@ -34,7 +34,7 @@
  * ## Usage
  *
  * ```php
- * use Academorix\Events\Attributes\AsEvent;
+ * use Stackra\Events\Attributes\AsEvent;
  *
  * /**
  *  * @description
@@ -59,13 +59,13 @@
  * Kafka topics, webhooks, and audit-log entries so the same
  * name flows through every layer.
  *
- * @see \Academorix\Events\Attributes\OnEvent Listener counterpart.
- * @see \Academorix\Events\Support\EventDiscovery Discovery target.
+ * @see \Stackra\Events\Attributes\OnEvent Listener counterpart.
+ * @see \Stackra\Events\Support\EventDiscovery Discovery target.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Events\Attributes;
+namespace Stackra\Events\Attributes;
 
 use Attribute;
 
@@ -87,7 +87,7 @@ final readonly class AsEvent
      *   Hint that this event is also broadcast to WebSocket /
      *   Ably / Pusher subscribers. Purely informational — the
      *   actual broadcast wiring lives on
-     *   {@see \Academorix\Events\Attributes\Broadcastable}.
+     *   {@see \Stackra\Events\Attributes\Broadcastable}.
      */
     public function __construct(
         public ?string $name = null,

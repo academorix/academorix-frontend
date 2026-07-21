@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Leads\Exceptions;
+namespace Stackra\Leads\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Caller lacks the reception / marketing / admin / owner role required to reach the CRM surface.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class LeadInsufficientRoleException extends AcademorixException
+final class LeadInsufficientRoleException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

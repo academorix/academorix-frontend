@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Contracts\Data;
+namespace Stackra\Storage\Contracts\Data;
 
-use Academorix\Storage\Models\ChunkedUpload;
+use Stackra\Storage\Models\ChunkedUpload;
 use Illuminate\Container\Attributes\Bind;
 
 /**

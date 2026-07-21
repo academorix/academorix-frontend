@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Data;
+namespace Stackra\Newsletter\Data;
 
-use Academorix\Newsletter\Contracts\Data\NewsletterInterface;
-use Academorix\Newsletter\Enums\NewsletterCadence;
-use Academorix\Newsletter\Enums\NewsletterStatus;
-use Academorix\Newsletter\Models\Newsletter;
+use Stackra\Newsletter\Contracts\Data\NewsletterInterface;
+use Stackra\Newsletter\Enums\NewsletterCadence;
+use Stackra\Newsletter\Enums\NewsletterStatus;
+use Stackra\Newsletter\Models\Newsletter;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

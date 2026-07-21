@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Console;
+namespace Stackra\Geography\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Geography\Jobs\WarmReferenceCatalogCacheJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Geography\Jobs\WarmReferenceCatalogCacheJob;
 
 /**
  * `php artisan geography:warm-cache` — dispatch

@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\People\Models;
+namespace Stackra\People\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\People\Contracts\Data\PersonGuardianLinkInterface;
-use Academorix\People\Database\Factories\PersonGuardianLinkFactory;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\People\Policies\PersonGuardianLinkPolicy;
+use Stackra\People\Contracts\Data\PersonGuardianLinkInterface;
+use Stackra\People\Database\Factories\PersonGuardianLinkFactory;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\People\Policies\PersonGuardianLinkPolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;

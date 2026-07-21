@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/schedule",
+  "id": "stackra://modules/workflow/approvals/schedule",
   "$version": 1,
   "title": "approvals — scheduled tasks",
   "entries": [

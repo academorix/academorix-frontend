@@ -1,9 +1,9 @@
-# academorix/compliance-sdk
+# stackra/compliance-sdk
 
 Typed Saloon SDK for the Compliance service — DSAR, consent, retention, legal
 holds, subprocessors, safeguarding.
 
-Per-service umbrella SDK built on the shared kernel (`academorix/api-sdk`). It
+Per-service umbrella SDK built on the shared kernel (`stackra/api-sdk`). It
 owns the Compliance service connector (config `sdk.compliance.*`), a typed
 `ComplianceSdk` client, and a discovery pass scoped to
 `#[AsSdkResource(service: 'compliance')]`.
@@ -11,7 +11,7 @@ owns the Compliance service connector (config `sdk.compliance.*`), a typed
 ## Usage
 
 ```php
-use Academorix\ComplianceSdk\Client\ComplianceSdk;
+use Stackra\ComplianceSdk\Client\ComplianceSdk;
 
 $compliance = app(ComplianceSdk::class);
 $compliance->someResource()->find($id);

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Services;
+namespace Stackra\Branding\Services;
 
-use Academorix\Branding\Contracts\Services\OgImageRendererInterface;
-use Academorix\Branding\Models\Branding;
+use Stackra\Branding\Contracts\Services\OgImageRendererInterface;
+use Stackra\Branding\Models\Branding;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

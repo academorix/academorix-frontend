@@ -32,9 +32,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Middleware;
+namespace Stackra\ApiSdk\Middleware;
 
-use Academorix\ApiSdk\Enums\LogLevel;
+use Stackra\ApiSdk\Enums\LogLevel;
 use Psr\Log\LoggerInterface;
 use Saloon\Http\Connector;
 use Saloon\Http\PendingRequest;

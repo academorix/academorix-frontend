@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Order\Tests;
+namespace Stackra\Order\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/order.
+ * Base test case for stackra/order.
  *
  * @category Order
  *

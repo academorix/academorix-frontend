@@ -129,7 +129,7 @@ class Entity:
     class_name: str  # e.g. "Application"
     key_prefix: str  # e.g. "app_"
     description: str
-    server_model_class: str  # e.g. "Academorix\\Application\\Models\\Application"
+    server_model_class: str  # e.g. "Stackra\\Application\\Models\\Application"
     columns: list[Column]
     aggregate: str  # e.g. "applications" (kebab-case plural)
 
@@ -176,30 +176,30 @@ class Module:
     @property
     def ns_root(self) -> str:
         """Namespace prefix for the SDK package."""
-        return f"Academorix\\{studly(self.tier)}{studly(self.name)}Sdk"
+        return f"Stackra\\{studly(self.tier)}{studly(self.name)}Sdk"
 
     @property
     def ns_module_root(self) -> str:
         """Namespace prefix for the server-side module package.
 
-        Matches the framework convention (`Academorix\\Crud`,
-        `Academorix\\Foundation`) — one word, no tier prefix. Module names
+        Matches the framework convention (`Stackra\\Crud`,
+        `Stackra\\Foundation`) — one word, no tier prefix. Module names
         are globally unique across tiers so collision is not a concern.
         """
-        return f"Academorix\\{studly(self.name)}"
+        return f"Stackra\\{studly(self.name)}"
 
     @property
     def composer_name(self) -> str:
-        return f"academorix-{self.tier}/{self.name}-sdk"
+        return f"stackra-{self.tier}/{self.name}-sdk"
 
     @property
     def composer_module_name(self) -> str:
         """Composer name for the server-side module.
 
-        Matches the framework convention (`academorix/crud`,
-        `academorix/foundation`) — single-word, no tier prefix.
+        Matches the framework convention (`stackra/crud`,
+        `stackra/foundation`) — single-word, no tier prefix.
         """
-        return f"academorix/{self.name}"
+        return f"stackra/{self.name}"
 
     @property
     def sdk_dir_name(self) -> str:

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Athlete\Contracts\Services;
+namespace Stackra\Athlete\Contracts\Services;
 
-use Academorix\Athlete\Models\Athlete;
-use Academorix\Athlete\Services\AthleteProvisioner;
+use Stackra\Athlete\Models\Athlete;
+use Stackra\Athlete\Services\AthleteProvisioner;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -49,9 +49,9 @@ interface AthleteProvisionerInterface
      *                                                consent flags.
      * @return Athlete  The persisted row with computed defaults applied.
      *
-     * @throws \Academorix\Athlete\Exceptions\AthleteGuardianRequiredException  Minor with no guardian on file.
-     * @throws \Academorix\Athlete\Exceptions\AthleteDobOutOfBoundsException     DOB in the future or unreasonably old.
-     * @throws \Academorix\Athlete\Exceptions\AthleteConsentRecorderUnauthorisedException  Recorder is not an
+     * @throws \Stackra\Athlete\Exceptions\AthleteGuardianRequiredException  Minor with no guardian on file.
+     * @throws \Stackra\Athlete\Exceptions\AthleteDobOutOfBoundsException     DOB in the future or unreasonably old.
+     * @throws \Stackra\Athlete\Exceptions\AthleteConsentRecorderUnauthorisedException  Recorder is not an
      *                                                                                    authorised guardian.
      */
     public function provision(array $attributes, ?string $recorderUserId = null): Athlete;
@@ -66,8 +66,8 @@ interface AthleteProvisionerInterface
      * @param  string|null           $recorderUserId  Actor from the request scope.
      * @return Athlete  The updated row.
      *
-     * @throws \Academorix\Athlete\Exceptions\AthleteGuardianRequiredException
-     * @throws \Academorix\Athlete\Exceptions\AthleteMedicalPermissionRequiredException
+     * @throws \Stackra\Athlete\Exceptions\AthleteGuardianRequiredException
+     * @throws \Stackra\Athlete\Exceptions\AthleteMedicalPermissionRequiredException
      */
     public function update(Athlete $athlete, array $attributes, ?string $recorderUserId = null): Athlete;
 
@@ -79,7 +79,7 @@ interface AthleteProvisionerInterface
      * transitions, consent recording, medical write, emergency
      * contact write.
      *
-     * @throws \Academorix\Athlete\Exceptions\AthleteGuardianRequiredException
+     * @throws \Stackra\Athlete\Exceptions\AthleteGuardianRequiredException
      */
     public function assertGuardianCoverage(Athlete $athlete): void;
 

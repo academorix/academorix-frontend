@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Jobs;
+namespace Stackra\Notifications\Mail\Jobs;
 
-use Academorix\Notifications\Contracts\Repositories\NotificationRepositoryInterface;
-use Academorix\Notifications\Mail\Contracts\Services\MailChannelInterface;
+use Stackra\Notifications\Contracts\Repositories\NotificationRepositoryInterface;
+use Stackra\Notifications\Mail\Contracts\Services\MailChannelInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -20,7 +20,7 @@ use Illuminate\Queue\SerializesModels;
 use Psr\Log\LoggerInterface;
 
 /**
- * Consume {@see \Academorix\Notifications\Events\NotificationDispatched}
+ * Consume {@see \Stackra\Notifications\Events\NotificationDispatched}
  * for the `mail` channel: load the notification, hand off to the
  * channel driver, and log failures.
  *

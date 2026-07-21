@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/subscription/subprocessors",
+  "id": "stackra://modules/subscription/subprocessors",
   "$version": 1,
   "title": "subscription \u2014 subprocessors",
   "description": "The subscription module engages payment processors as subprocessors of personal data (name, email, billing address, IP, browser fingerprint, tax ID) and cardholder data (which we never see \u2014 provider-side).",

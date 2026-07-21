@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Services;
+namespace Stackra\Forms\Services;
 
-use Academorix\Forms\Contracts\Services\FormRendererInterface;
+use Stackra\Forms\Contracts\Services\FormRendererInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Forms\Contracts\Repositories\FormSubmissionRepositoryInterface;
+use Stackra\Forms\Contracts\Repositories\FormSubmissionRepositoryInterface;
 
 /**
  * Concrete service — FormRenderer.

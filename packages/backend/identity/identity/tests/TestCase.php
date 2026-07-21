@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Identity\Tests;
+namespace Stackra\Identity\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/identity.
+ * Base test case for stackra/identity.
  *
  * @category Identity
  *

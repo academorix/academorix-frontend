@@ -1,10 +1,10 @@
 {
-  "name": "academorix/billing-sdk",
+  "name": "stackra/billing-sdk",
   "type": "library",
   "description": "Typed Saloon SDK for the Billing service — subscriptions, plans, invoices, licenses, usage, entitlements.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "sdk",
     "saloon",
     "api-client",
@@ -12,10 +12,10 @@
   ],
   "require": {
     "php": "^8.3",
-    "academorix/api-sdk": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
-    "academorix/service-provider": "@dev",
+    "stackra/api-sdk": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/service-provider": "@dev",
     "illuminate/contracts": "^13.0",
     "illuminate/support": "^13.0",
     "saloonphp/saloon": "^3.10",
@@ -30,18 +30,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\BillingSdk\\": "src/"
+      "Stackra\\BillingSdk\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\BillingSdk\\Tests\\": "tests/"
+      "Stackra\\BillingSdk\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\BillingSdk\\Providers\\BillingSdkServiceProvider"
+        "Stackra\\BillingSdk\\Providers\\BillingSdkServiceProvider"
       ],
       "aliases": {}
     }

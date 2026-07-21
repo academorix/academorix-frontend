@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/athlete/routes",
+  "id": "stackra://modules/athlete/routes",
   "$version": 1,
   "title": "athlete — HTTP routes",
   "description": "Tenant-facing Athlete CRUD + lifecycle actions + medical + emergency-contact sub-resources (permission-gated at the middleware boundary — unpermissioned callers never touch the DB) + a `me/athletes` guardian surface + platform-admin cross-tenant support routes. Every tenant-plane route carries `auth:sanctum` + `tenant.resolve` + policy check via the route-level `permission` metadata. The `/athletes/{athlete}/medical` and `/athletes/{athlete}/emergency-contact` sub-resources are separate endpoints (not fields on the parent) so we can attach dedicated middleware (`athlete.enforce_medical_permission` + `athlete.enforce_emergency_contact_permission`) that refuses the whole endpoint when the caller lacks the field-level permission — cleaner than embedded redaction on the parent read.",
@@ -25,91 +25,91 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@index",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@index",
           "permission": "athletes.viewAny",
           "description": "filter[branch_id], filter[status], filter[gender], filter[current_age_group_id], filter[dominant_hand], filter[has_user], filter[is_minor] (derived — age_years < config.athlete.minor_min_age), filter[created_after], filter[created_before]. Scope: caller's active branch narrows results when set. Guardians see only their assigned athletes."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@store",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@store",
           "permission": "athletes.create",
           "description": "Body: AthleteCreateData. Consumes 1 unit of athlete_slot entitlement. Medical fields REFUSED unless caller also carries `athlete.manage.medical`. Emergency contact fields REFUSED unless caller carries `athlete.manage.emergency_contact`. Age-group snapshot resolved in-band via SetAgeGroupSnapshotOnAthleteCreated hook."
         },
         {
           "method": "GET",
           "path": "/{athlete}",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@show",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@show",
           "permission": "athletes.view",
           "description": "Medical + emergency contact fields REDACTED unless caller carries the respective `.view.medical` / `.view.emergency_contact` permissions. Self-view via .own suffix returns the caller's OWN row unredacted (for adult athletes viewing themselves)."
         },
         {
           "method": "PATCH",
           "path": "/{athlete}",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@update",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@update",
           "permission": "athletes.update",
           "description": "Body: AthleteUpdateData (excludes user_id [use /link-user], date_of_birth [immutable], branch_id [Wave 3a immutable], status [use dedicated endpoints], current_age_group_id [job-only], medical_*, emergency_contact_*, consent_*). Medical + emergency contact updates use their dedicated sub-resource endpoints. Consent recording uses /consents."
         },
         {
           "method": "DELETE",
           "path": "/{athlete}",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@destroy",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@destroy",
           "permission": "athletes.delete",
           "description": "Soft-delete. Refused unless status='archived'. Hard-delete only via PurgeArchivedAthletesJob after 7-year retention."
         },
         {
           "method": "POST",
           "path": "/{athlete}/link-user",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@linkUser",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@linkUser",
           "permission": "athletes.link-user",
           "description": "Body: { user_id: ULID }. Sets user_id null → non-null (initial link). Refused when the athlete already has user_id set (ATHLETE_USER_ID_IMMUTABLE) or when the target User has another live athlete in this tenant. Fires AthleteLinkedToUser."
         },
         {
           "method": "POST",
           "path": "/{athlete}/pause",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@pause",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@pause",
           "permission": "athletes.pause",
           "description": "Body: { paused_reason (required), expected_return_at? }. Status active → paused. Cascades: pauses future SessionBookings (Wave 4+)."
         },
         {
           "method": "POST",
           "path": "/{athlete}/return-from-pause",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@returnFromPause",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@returnFromPause",
           "permission": "athletes.pause",
           "description": "Status paused → active. Fires AthleteReturnedFromPause."
         },
         {
           "method": "POST",
           "path": "/{athlete}/graduate",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@graduate",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@graduate",
           "permission": "athletes.graduate",
           "description": "Body: { graduated_at?, cascade: bool = false }. Soft-terminal (kept for alumni). When cascade=true, closes active enrollments in one transaction (requires `athletes.graduate.cascade` permission)."
         },
         {
           "method": "POST",
           "path": "/{athlete}/withdraw",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@withdraw",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@withdraw",
           "permission": "athletes.withdraw",
           "description": "Body: { withdrawal_reason (required), withdrawal_notes?, withdrawn_at?, cascade: bool = false, guardian_initiated: bool = false }. Terminal. Fires AthleteWithdrawn."
         },
         {
           "method": "POST",
           "path": "/{athlete}/archive",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@archive",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@archive",
           "permission": "athletes.archive",
           "description": "Body: { reason? }. Alias for the terminal archive transition. Releases 1 unit of athlete_slot."
         },
         {
           "method": "POST",
           "path": "/{athlete}/restore",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@restore",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteController@restore",
           "permission": "athletes.archive",
           "description": "Un-archive. Consumes 1 unit of athlete_slot. Only within retention window (7 years). Refused when the user_id conflicts with another live athlete in the tenant."
         },
         {
           "method": "GET",
           "path": "/{athlete}/medical",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteMedicalController@show",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteMedicalController@show",
           "permission": "athletes.view.medical",
           "middleware_add": ["athlete.enforce_medical_permission"],
           "description": "Dedicated sub-resource so the medical-permission middleware can refuse the whole endpoint. Returns medical_* fields + a paginated history from athlete_medical_history."
@@ -117,7 +117,7 @@
         {
           "method": "PATCH",
           "path": "/{athlete}/medical",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteMedicalController@update",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteMedicalController@update",
           "permission": "athletes.manage.medical",
           "middleware_add": ["athlete.enforce_medical_permission"],
           "description": "Body: MedicalUpdateData. Fires AthleteMedicalUpdated event (private-tier, routes to medical-audit queue). Writes to athlete_medical_history audit table (7-year retention). Refused when `athlete_medical_tracking` entitlement is off for the tenant."
@@ -125,7 +125,7 @@
         {
           "method": "GET",
           "path": "/{athlete}/emergency-contact",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteEmergencyContactController@show",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteEmergencyContactController@show",
           "permission": "athletes.view.emergency_contact",
           "middleware_add": ["athlete.enforce_emergency_contact_permission"],
           "description": "Emergency contact cluster."
@@ -133,7 +133,7 @@
         {
           "method": "PATCH",
           "path": "/{athlete}/emergency-contact",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteEmergencyContactController@update",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteEmergencyContactController@update",
           "permission": "athletes.manage.emergency_contact",
           "middleware_add": ["athlete.enforce_emergency_contact_permission"],
           "description": "Body: EmergencyContactUpdateData. Fires AthleteEmergencyContactUpdated. Payload written to normal audits table (7-year retention for confidential-tier fields)."
@@ -141,28 +141,28 @@
         {
           "method": "GET",
           "path": "/{athlete}/consents",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteConsentController@index",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteConsentController@index",
           "permission": "athletes.view.consents",
           "description": "Consent snapshot + history (when `athlete_consent_workflow` entitlement is on). Returns { current: {…}, expires_at, history: [...] }."
         },
         {
           "method": "POST",
           "path": "/{athlete}/consents",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteConsentController@record",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteConsentController@record",
           "permission": "athletes.manage.consents",
           "description": "Body: ConsentRecordData { consent_photo_release, consent_medical_disclosure, consent_third_party, consent_recorded_by_user_id }. For minors, the recording user MUST be a User with an active AthleteGuardian row + has_legal_custody=true (Wave 3b hard-fail). Fires AthleteConsentRecorded. Sets consent_recorded_at = now()."
         },
         {
           "method": "DELETE",
           "path": "/{athlete}/consents/{consent}",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteConsentController@revoke",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Tenant\\AthleteConsentController@revoke",
           "permission": "athletes.manage.consents",
           "description": "Body: { reason? }. Revokes one of `photo_release` / `medical_disclosure` / `third_party` (the {consent} slug). Fires AthleteConsentRevoked."
         },
         {
           "method": "GET",
           "path": "/me/athletes",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Tenant\\MyAthletesController@index",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Tenant\\MyAthletesController@index",
           "permission": "athletes.view.own",
           "description": "The caller's OWN athletes: (a) the athlete row where user_id = current_user_id (self as adult athlete), PLUS (b) every athlete linked via an active AthleteGuardian row where user_id = current_user_id (Wave 3b — hooked via the guardian module when it lands). Feeds the parent-facing 'my kids' surface. Compensation redaction NOT applied — parents see their own kids' full profiles."
         }
@@ -185,21 +185,21 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Platform\\AthleteController@index",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Platform\\AthleteController@index",
           "permission": "platform.athletes.viewAny",
           "description": "filter[tenant_id], filter[status], filter[branch_id], filter[is_minor]. Cross-tenant scan. Medical + emergency contact ALWAYS stripped. Minor names redacted to initials only."
         },
         {
           "method": "GET",
           "path": "/{athlete}",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Platform\\AthleteController@show",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Platform\\AthleteController@show",
           "permission": "platform.athletes.view",
           "description": "Medical + emergency contact ALWAYS redacted at platform plane regardless of caller permissions. Names stripped for minors except for super_admin."
         },
         {
           "method": "GET",
           "path": "/audit-medical",
-          "controller": "Academorix\\Sports\\Athlete\\Http\\Controllers\\Platform\\AthleteMedicalAuditController@export",
+          "controller": "Stackra\\Sports\\Athlete\\Http\\Controllers\\Platform\\AthleteMedicalAuditController@export",
           "permission": "platform.athletes.audit-medical",
           "description": "Compliance-only export. Emits a signed audit CSV of every medical change in the last N days across all tenants. Every invocation is P1 audit-logged + super_admin-gated. Two-person approval required (audit critical)."
         }

@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/auth/rules",
+  "id": "stackra://modules/auth/rules",
   "$version": 1,
   "title": "auth \u2014 validation rules",
   "description": "Six validation rules. Five validate opaque tokens against their backing tables (constant-time hash comparison + atomic consume). One composes identity's strong_password with auth-flow-specific augmentation (history check via identity, breach-check via config, plus session-revocation warning surfacing).",
-  "namespace": "Academorix\\Auth\\Rules",
+  "namespace": "Stackra\\Auth\\Rules",
   "rules": [
     {
       "name": "valid_refresh_token",
-      "class": "Academorix\\Auth\\Rules\\ValidRefreshToken",
+      "class": "Stackra\\Auth\\Rules\\ValidRefreshToken",
       "signature": "valid_refresh_token",
       "description": "Validates a submitted refresh token against auth_refresh_tokens. Constant-time compares the SHA-256 of the input against every non-consumed, non-revoked, non-expired row's token_hash. On match returns the RefreshToken row for the caller to consume atomically. NEVER consumes on validation \u2014 that's the RefreshAction's responsibility.",
       "params": [],
@@ -18,7 +18,7 @@
     },
     {
       "name": "valid_password_reset_token",
-      "class": "Academorix\\Auth\\Rules\\ValidPasswordResetToken",
+      "class": "Stackra\\Auth\\Rules\\ValidPasswordResetToken",
       "signature": "valid_password_reset_token",
       "description": "Validates a submitted reset token against auth_password_resets. Constant-time comparison. On match returns the PasswordReset row.",
       "params": [],
@@ -28,7 +28,7 @@
     },
     {
       "name": "valid_email_verification_token",
-      "class": "Academorix\\Auth\\Rules\\ValidEmailVerificationToken",
+      "class": "Stackra\\Auth\\Rules\\ValidEmailVerificationToken",
       "signature": "valid_email_verification_token",
       "description": "Validates a submitted verification token against auth_email_verifications. Constant-time comparison. On match returns the EmailVerification row. Idempotent \u2014 already-consumed tokens for an already-verified identity return the identity's `already_verified` signal so the caller can treat it as success.",
       "params": [],
@@ -38,7 +38,7 @@
     },
     {
       "name": "valid_mfa_challenge_id",
-      "class": "Academorix\\Auth\\Rules\\ValidMfaChallengeId",
+      "class": "Stackra\\Auth\\Rules\\ValidMfaChallengeId",
       "signature": "valid_mfa_challenge_id",
       "description": "Validates a submitted challenge_id against auth_mfa_challenges. Refuses when the row is missing, expired, consumed, or has hit auth.mfa.max_attempts_per_challenge.",
       "params": [],
@@ -48,7 +48,7 @@
     },
     {
       "name": "valid_cross_app_grant_token",
-      "class": "Academorix\\Auth\\Rules\\ValidCrossAppGrantToken",
+      "class": "Stackra\\Auth\\Rules\\ValidCrossAppGrantToken",
       "signature": "valid_cross_app_grant_token",
       "description": "Validates a submitted grant token against auth_cross_app_grants. Constant-time comparison. On match returns the CrossAppGrant row (still un-consumed). Refuses if the current request's Application ID doesn't match the grant's target_application_id.",
       "params": [],
@@ -58,7 +58,7 @@
     },
     {
       "name": "strong_password_via_auth",
-      "class": "Academorix\\Auth\\Rules\\StrongPasswordViaAuth",
+      "class": "Stackra\\Auth\\Rules\\StrongPasswordViaAuth",
       "signature": "strong_password_via_auth:<identity_id>",
       "description": "Composes identity::strong_password + identity::not_in_password_history against a specific identity_id. Additionally checks auth.password.rehash_on_verify (soft warning surface) and any auth-flow-specific augmentation (currently just history+breach-check delegation).",
       "params": [

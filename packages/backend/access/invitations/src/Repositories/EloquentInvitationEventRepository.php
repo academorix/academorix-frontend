@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Repositories;
+namespace Stackra\Invitations\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Invitations\Contracts\Data\InvitationEventInterface;
-use Academorix\Invitations\Contracts\Repositories\InvitationEventRepositoryInterface;
-use Academorix\Invitations\Models\InvitationEvent;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Invitations\Contracts\Data\InvitationEventInterface;
+use Stackra\Invitations\Contracts\Repositories\InvitationEventRepositoryInterface;
+use Stackra\Invitations\Models\InvitationEvent;
 use Illuminate\Support\Collection;
 
 /**

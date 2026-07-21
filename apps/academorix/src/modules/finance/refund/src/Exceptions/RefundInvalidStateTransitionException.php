@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Refund\Exceptions;
+namespace Stackra\Refund\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The requested state transition is not permitted by the refund state machine.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class RefundInvalidStateTransitionException extends AcademorixException
+final class RefundInvalidStateTransitionException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

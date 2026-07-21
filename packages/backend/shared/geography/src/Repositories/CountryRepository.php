@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Repositories;
+namespace Stackra\Geography\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Geography\Contracts\Data\CountryInterface;
-use Academorix\Geography\Contracts\Repositories\CountryRepositoryInterface;
-use Academorix\Geography\Models\Country;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Geography\Contracts\Data\CountryInterface;
+use Stackra\Geography\Contracts\Repositories\CountryRepositoryInterface;
+use Stackra\Geography\Models\Country;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Geography\Models\Country}.
+ * Attribute-first Eloquent repository for {@see Stackra\Geography\Models\Country}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(CountryInterface::class)]` which resolves to
  * `Country` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Geography\Models\Country>
+ * @extends Repository<\Stackra\Geography\Models\Country>
  *
  * @category Geography
  *

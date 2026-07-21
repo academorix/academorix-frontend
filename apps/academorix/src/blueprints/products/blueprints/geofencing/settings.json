@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/geofencing/settings",
+  "id": "stackra://modules/geofencing/settings",
   "$version": 1,
   "title": "geofencing \u2014 settings",
   "description": "Tenant-facing geofence preferences. Branch-level fence config (polygon, radius, tolerance, enforcement toggle) is EDITED VIA THE FACILITIES MODULE'S BRANCH CRUD \u2014 not here. This surface covers tenant-wide defaults + retention.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "geofencing",
-      "class": "Academorix\\Geofencing\\Settings\\GeofencingSettings",
+      "class": "Stackra\\Geofencing\\Settings\\GeofencingSettings",
       "label": "Geofencing",
       "description": "Tenant-wide defaults for point-in-polygon evaluation + retention.",
       "icon": "map-pin",

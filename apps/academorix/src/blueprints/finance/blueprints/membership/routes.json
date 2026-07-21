@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/membership/routes",
+  "id": "stackra://modules/membership/routes",
   "$version": 1,
   "title": "membership — HTTP routes",
   "description": "Tenant plane: customer + guardian views of memberships + plans + renewals + passes. Admin manages the plan catalog + reissues passes + generates reports. Platform plane: cross-tenant support tooling for escalations + refund investigations. Explicit /pause + /resume + /cancel endpoints separate state-machine transitions from data updates (no free-form status writes). Session check-in consumes passes via a dedicated /passes/{pass}/consume endpoint gated on the session module's Sanctum token.",
@@ -25,14 +25,14 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipController@index",
+          "controller": "Stackra\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipController@index",
           "permission": "memberships.viewAny",
           "description": "filter[branch_id], filter[athlete_id], filter[membership_plan_id], filter[status], filter[primary_guardian_id], filter[has_open_dunning]. Guardians see only their family's memberships via .own scope. Includes: athlete + plan + primary_guardian + region + branch. Aggregations: revenue_this_period, active_membership_count."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipController@store",
+          "controller": "Stackra\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipController@store",
           "permission": "memberships.create",
           "middleware": ["membership.enforce_guardian_consent"],
           "description": "Body: MembershipCreateData { athlete_id, membership_plan_id, primary_guardian_id?, coupon_code?, payment_method_id }. Consumes membership_slot. Atomic invoice creation. Freezes price/coupon/tax snapshots. Fires MembershipCreated. Returns { membership, invoice, payment_intent }."
@@ -40,56 +40,56 @@
         {
           "method": "GET",
           "path": "/{membership}",
-          "controller": "Academorix\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipController@show",
+          "controller": "Stackra\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipController@show",
           "permission": "memberships.view",
           "description": "Includes: athlete + plan + primary_guardian + region + branch + coupon_snapshot + tax_calculation_snapshot + open_renewal + recent_renewals + passes_current_period + passes_remaining_count + lifetime_value_cents + refund_history."
         },
         {
           "method": "POST",
           "path": "/{membership}/pause",
-          "controller": "Academorix\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipController@pause",
+          "controller": "Stackra\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipController@pause",
           "permission": "memberships.pause",
           "description": "Body: { state_reason?: string }. Transitions active → paused. Freezes renewal + pass consumption. Fires MembershipPaused."
         },
         {
           "method": "POST",
           "path": "/{membership}/resume",
-          "controller": "Academorix\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipController@resume",
+          "controller": "Stackra\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipController@resume",
           "permission": "memberships.resume",
           "description": "Transitions paused → active. Recomputes next_renewal_at from resume date + remaining period. Fires MembershipResumed."
         },
         {
           "method": "POST",
           "path": "/{membership}/cancel",
-          "controller": "Academorix\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipController@cancel",
+          "controller": "Stackra\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipController@cancel",
           "permission": "memberships.cancel",
           "description": "Body: { cancellation_kind: 'soft_period_end'|'hard_immediate', cancellation_reason: string }. Soft (default) → membership ends at period boundary, no refund. Hard (Enterprise gated) → immediate termination + prorated refund via refund module. Fires MembershipCancelled."
         },
         {
           "method": "GET",
           "path": "/{membership}/renewals",
-          "controller": "Academorix\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipRenewalsController@index",
+          "controller": "Stackra\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipRenewalsController@index",
           "permission": "memberships.view",
           "description": "Renewal history for the membership. filter[status]. Chronological with attempt_number visible — customers can see 'attempt 2 of 4' during dunning."
         },
         {
           "method": "POST",
           "path": "/{membership}/reissue-passes",
-          "controller": "Academorix\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipController@reissuePasses",
+          "controller": "Stackra\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipController@reissuePasses",
           "permission": "memberships.reissue-passes",
           "description": "Admin-only. Body: { count: int, pass_type: 'bonus'|'promotional', valid_until?: iso8601 }. Issues extra passes outside the normal per-period grant. Audit-critical — every reissue creates an audit row with admin identity."
         },
         {
           "method": "GET",
           "path": "/{membership}/passes",
-          "controller": "Academorix\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipPassesController@index",
+          "controller": "Stackra\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipPassesController@index",
           "permission": "memberships.view",
           "description": "All passes for the membership. filter[status: available|consumed|expired|refunded], filter[valid_from], filter[valid_until]. Grouped by period."
         },
         {
           "method": "GET",
           "path": "/report",
-          "controller": "Academorix\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipReportController@show",
+          "controller": "Stackra\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipReportController@show",
           "permission": "memberships.report",
           "description": "Admin dashboard. filter[branch_id], filter[period]. Metrics: active_count, MRR (monthly recurring revenue), ARR (annual recurring), churn_rate_last_30d, lapse_rate_last_30d, trial_conversion_rate_last_30d, dunning_recovery_rate. NOT for customer consumption — RBAC gates to admin/owner."
         }
@@ -115,7 +115,7 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Finance\\Membership\\Http\\Controllers\\Tenant\\MyMembershipsController@index",
+          "controller": "Stackra\\Finance\\Membership\\Http\\Controllers\\Tenant\\MyMembershipsController@index",
           "permission": "memberships.view.own",
           "description": "List memberships where athlete belongs to the current user (adult) OR to an athlete via active AthleteGuardian. Includes payment status indicators for dunning awareness."
         }
@@ -142,28 +142,28 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipPlanController@index",
+          "controller": "Stackra\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipPlanController@index",
           "permission": "membership_plans.viewAny",
           "description": "filter[branch_id], filter[age_group_id], filter[is_active], filter[billing_interval]. Public-tier readable: customers see the catalog for the signup flow."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipPlanController@store",
+          "controller": "Stackra\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipPlanController@store",
           "permission": "membership_plans.create",
           "description": "Body: MembershipPlanCreateData. Consumes membership_plan_slot. Validates entitlements (trial_days, addon_config gates). Fires MembershipPlanCreated."
         },
         {
           "method": "PATCH",
           "path": "/{plan}",
-          "controller": "Academorix\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipPlanController@update",
+          "controller": "Stackra\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipPlanController@update",
           "permission": "membership_plans.update",
           "description": "Body: MembershipPlanUpdateData (excludes tenant_id, branch_id, age_group_id, currency + billing_interval when active memberships exist). Price + trial_days + passes_per_period + addon_config are patchable but affect only new memberships."
         },
         {
           "method": "POST",
           "path": "/{plan}/duplicate",
-          "controller": "Academorix\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipPlanController@duplicate",
+          "controller": "Stackra\\Finance\\Membership\\Http\\Controllers\\Tenant\\MembershipPlanController@duplicate",
           "permission": "membership_plans.create",
           "description": "Body: { branch_id?, slug?, name? }. Creates a new plan with the same shape at (default) the same or (optional) a different branch. Slug regenerated if collision."
         }
@@ -188,14 +188,14 @@
         {
           "method": "GET",
           "path": "/mine",
-          "controller": "Academorix\\Finance\\Membership\\Http\\Controllers\\Tenant\\MyPassesController@index",
+          "controller": "Stackra\\Finance\\Membership\\Http\\Controllers\\Tenant\\MyPassesController@index",
           "permission": "passes.view.own",
           "description": "Customer-facing pass wallet — passes belonging to memberships the user is responsible for. Grouped by athlete + membership. Shows remaining count + valid_until for each."
         },
         {
           "method": "POST",
           "path": "/{pass}/consume",
-          "controller": "Academorix\\Finance\\Membership\\Http\\Controllers\\Tenant\\ConsumePassController@store",
+          "controller": "Stackra\\Finance\\Membership\\Http\\Controllers\\Tenant\\ConsumePassController@store",
           "permission": "passes.consume",
           "description": "INTERNAL API. Called by session check-in flow with Sanctum token abilities:['sessions.check-in']. Body: { session_id: ULID }. Idempotent — refuses when consumed_at already set. Fires PassConsumed."
         }
@@ -218,14 +218,14 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Finance\\Membership\\Http\\Controllers\\Platform\\MembershipsController@index",
+          "controller": "Stackra\\Finance\\Membership\\Http\\Controllers\\Platform\\MembershipsController@index",
           "permission": "platform.memberships.viewAny",
           "description": "Cross-tenant. filter[tenant_id], filter[status], filter[has_recent_chargeback]. PII from athletes redacted when minor."
         },
         {
           "method": "GET",
           "path": "/{membership}",
-          "controller": "Academorix\\Finance\\Membership\\Http\\Controllers\\Platform\\MembershipsController@show",
+          "controller": "Stackra\\Finance\\Membership\\Http\\Controllers\\Platform\\MembershipsController@show",
           "permission": "platform.memberships.view",
           "description": "Full membership detail including snapshots + renewal history + refund history. For support case escalations."
         }

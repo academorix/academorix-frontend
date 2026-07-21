@@ -1,15 +1,15 @@
 {
-  "id": "academorix://modules/grants/hooks",
+  "id": "stackra://modules/grants/hooks",
   "$version": 1,
   "title": "grants — tenancy hooks",
   "description": "Per-tenant lifecycle callbacks (#[AsTenancyHook]) this module contributes. One hook: GrantCacheWarmerHook — pre-populates the L2 Redis cache for the tenant on tenant init so the first request of the day is warm.",
-  "contract": "Academorix\\ServiceProvider\\Contracts\\TenancyHookInterface",
-  "dispatcher": "Academorix\\ServiceProvider\\Dispatchers\\TenancyHookDispatcher",
-  "registry": "Academorix\\ServiceProvider\\Registry\\TenancyHookRegistry",
+  "contract": "Stackra\\ServiceProvider\\Contracts\\TenancyHookInterface",
+  "dispatcher": "Stackra\\ServiceProvider\\Dispatchers\\TenancyHookDispatcher",
+  "registry": "Stackra\\ServiceProvider\\Registry\\TenancyHookRegistry",
   "hooks": [
     {
       "name": "GrantCacheWarmerHook",
-      "class": "Academorix\\Grant\\Hooks\\GrantCacheWarmerHook",
+      "class": "Stackra\\Grant\\Hooks\\GrantCacheWarmerHook",
       "when": "tenant.initialized",
       "purpose": "On tenant context init (first request per tenant per worker), read the top-N most-recently-accessed grants for the tenant into the L2 Redis evaluation cache. N configurable via settings.grants.cache.warm_top_grants (default 100). Off-request — fires on the tenant-initialization side channel, doesn't add to request latency.",
       "priority": 50,

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Observers;
+namespace Stackra\Notifications\Observers;
 
-use Academorix\Notifications\Contracts\Data\NotificationDeliveryInterface;
-use Academorix\Notifications\Events\NotificationClicked;
-use Academorix\Notifications\Events\NotificationOpened;
-use Academorix\Notifications\Events\NotificationQueued;
-use Academorix\Notifications\Models\NotificationDelivery;
+use Stackra\Notifications\Contracts\Data\NotificationDeliveryInterface;
+use Stackra\Notifications\Events\NotificationClicked;
+use Stackra\Notifications\Events\NotificationOpened;
+use Stackra\Notifications\Events\NotificationQueued;
+use Stackra\Notifications\Models\NotificationDelivery;
 
 /**
  * Lifecycle side effects on {@see NotificationDelivery}.

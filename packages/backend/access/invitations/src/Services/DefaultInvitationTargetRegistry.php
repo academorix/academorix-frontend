@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Services;
+namespace Stackra\Invitations\Services;
 
-use Academorix\Invitations\Attributes\Invitable;
-use Academorix\Invitations\Contracts\Services\InvitationTargetRegistryInterface;
+use Stackra\Invitations\Attributes\Invitable;
+use Stackra\Invitations\Contracts\Services\InvitationTargetRegistryInterface;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * In-memory implementation of {@see InvitationTargetRegistryInterface}.
  *
  * Hydrated at boot by the framework's generic hydration pump
- * ({@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper})
+ * ({@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper})
  * via the `#[HydratesFrom(Invitable::class)]` declaration on
  * {@see InvitationTargetRegistryInterface::register()}. Every
  * consumer module that owns an invitable target marks its Eloquent

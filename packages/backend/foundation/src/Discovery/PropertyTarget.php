@@ -9,12 +9,12 @@
  *
  * Same rationale as {@see ClassTarget} — see that file's docblock.
  *
- * @see \Academorix\Foundation\Discovery\AttributeDiscovery Producer.
+ * @see \Stackra\Foundation\Discovery\AttributeDiscovery Producer.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Discovery;
+namespace Stackra\Foundation\Discovery;
 
 /**
  * One "property carries attribute" hit.

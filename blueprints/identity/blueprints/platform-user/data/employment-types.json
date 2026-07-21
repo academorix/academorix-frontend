@@ -48,6 +48,6 @@
   "notes": [
     "`eligible_for_on_call` is a HINT, not a hard gate \u2014 a super_admin can still add a contractor to a rotation with explicit override.",
     "`default_pat_ttl_seconds` is read at token-issuance time by the `identity/auth` module. Overrides the module-wide `platform-user.mfa.session_ttl_seconds` config value.",
-    "`retention_hold_days_override` on contractor + temporary rows is deliberately shorter (30d) than the default (90d). Faster hard-delete reduces the compliance footprint for staff whose employment contract explicitly bounds Academorix's data-retention obligations."
+    "`retention_hold_days_override` on contractor + temporary rows is deliberately shorter (30d) than the default (90d). Faster hard-delete reduces the compliance footprint for staff whose employment contract explicitly bounds Stackra's data-retention obligations."
   ]
 }

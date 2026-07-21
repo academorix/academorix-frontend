@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Performance\Repositories;
+namespace Stackra\Performance\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Performance\Contracts\Data\TestBatteryInterface;
-use Academorix\Performance\Contracts\Repositories\TestBatteryRepositoryInterface;
-use Academorix\Performance\Models\TestBattery;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Performance\Contracts\Data\TestBatteryInterface;
+use Stackra\Performance\Contracts\Repositories\TestBatteryRepositoryInterface;
+use Stackra\Performance\Models\TestBattery;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Performance\Models\TestBattery}.
+ * Attribute-first Eloquent repository for {@see Stackra\Performance\Models\TestBattery}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(TestBatteryInterface::class)]` which resolves to
  * `TestBattery` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Performance\Models\TestBattery>
+ * @extends Repository<\Stackra\Performance\Models\TestBattery>
  *
  * @category Performance
  *

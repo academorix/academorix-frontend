@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Medical\Enums;
+namespace Stackra\Medical\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `severity` on `injury`.

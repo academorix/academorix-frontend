@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Concerns;
+namespace Stackra\Audit\Concerns;
 
 use OwenIt\Auditing\Auditable as OwenItAuditable;
 
@@ -21,7 +21,7 @@ use OwenIt\Auditing\Auditable as OwenItAuditable;
  *
  * ## Why our own trait?
  *
- * Composing consumers write `use HasAudit;` — a single Academorix name
+ * Composing consumers write `use HasAudit;` — a single Stackra name
  * — instead of `use OwenItAuditable;`. This buys us the option to
  * layer additional defaults on top (KMS opt-in, default excluded
  * paths, tenant-context assertions) without touching every model that
@@ -29,12 +29,12 @@ use OwenIt\Auditing\Auditable as OwenItAuditable;
  *
  * ## Related
  *
- *   - {@see \Academorix\Audit\Attributes\Auditable} — pair with this
+ *   - {@see \Stackra\Audit\Attributes\Auditable} — pair with this
  *     trait via `#[Auditable(encryptFields: [...])]`. The framework's
  *     generic
- *     {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ *     {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  *     scans the attribute at boot and pushes each hit through
- *     {@see \Academorix\Audit\Contracts\Services\AuditRegistryInterface::register()};
+ *     {@see \Stackra\Audit\Contracts\Services\AuditRegistryInterface::register()};
  *     the trait is what makes the model emit audit rows.
  *   - `OwenIt\Auditing\Contracts\Auditable` — the vendor contract every
  *     composer must ALSO implement. Add

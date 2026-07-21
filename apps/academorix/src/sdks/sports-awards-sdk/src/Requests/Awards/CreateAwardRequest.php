@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsAwardsSdk\Requests\Awards;
+namespace Stackra\SportsAwardsSdk\Requests\Awards;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsAwardsSdk\Data\AwardData;
-use Academorix\SportsAwardsSdk\Payloads\Awards\CreateAwardPayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsAwardsSdk\Data\AwardData;
+use Stackra\SportsAwardsSdk\Payloads\Awards\CreateAwardPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

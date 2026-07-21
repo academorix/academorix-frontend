@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/notifications/data/notification-templates",
+  "id": "stackra://modules/notifications/data/notification-templates",
   "$version": 1,
   "title": "notifications core \u2014 bootstrap NotificationTemplate seed",
   "description": "Platform-default templates for the 5 core system.* categories \u00d7 channels \u00d7 locales (en + ar). Rows point at React Email source paths under this module's emails/ folder. At deploy time, `notifications:seed-templates` reads the render manifest from packages/notifications-emails-renderer's dist/manifest.json and hydrates body_rendered_html. Missing artefact fallback: minimal Blade template with `{{ $subject }}` + `{{ $body }}` + CAN-SPAM footer so system stays degraded-but-working.",
-  "seeder": "Academorix\\Notifications\\Database\\Seeders\\BootstrapSystemTemplatesSeeder",
+  "seeder": "Stackra\\Notifications\\Database\\Seeders\\BootstrapSystemTemplatesSeeder",
   "target_table": "notification_templates",
   "upsertKey": ["tenant_id", "key", "channel", "locale", "version"],
   "rendererManifestPath": "packages/notifications-emails-renderer/dist/manifest.json",
@@ -22,7 +22,7 @@
       "state": "published",
       "is_system": true,
       "tsx_source_path": "modules/notifications/emails/system/digest.tsx",
-      "subject_template": "Your {{ $window }} Academorix digest",
+      "subject_template": "Your {{ $window }} Stackra digest",
       "variables_schema": {
         "type": "object",
         "required": ["items", "window", "recipient", "tenant"],
@@ -38,7 +38,7 @@
       "state": "published",
       "is_system": true,
       "tsx_source_path": "modules/notifications/emails/system/digest.tsx",
-      "subject_template": "\u0645\u0644\u062e\u0635 {{ $window }} \u0645\u0646 Academorix"
+      "subject_template": "\u0645\u0644\u062e\u0635 {{ $window }} \u0645\u0646 Stackra"
     },
     {
       "key": "system.announcement",

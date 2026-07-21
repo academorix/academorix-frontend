@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformFormsSdk\Requests\FormSubmissions;
+namespace Stackra\PlatformFormsSdk\Requests\FormSubmissions;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\PlatformFormsSdk\Data\FormSubmissionData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\PlatformFormsSdk\Data\FormSubmissionData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

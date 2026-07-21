@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/messaging/policies",
+  "id": "stackra://modules/messaging/policies",
   "$version": 1,
   "title": "messaging — authorization policies",
   "description": "Four policies. All conversation writes require caller be an active ConversationMember (or admin/owner). Message deletion by non-author requires safeguarding permission — enforces the safeguarding-first design.",
   "policies": [
     {
       "model": "Conversation",
-      "class": "Academorix\\Notifications\\Messaging\\Policies\\ConversationPolicy",
+      "class": "Stackra\\Notifications\\Messaging\\Policies\\ConversationPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -37,7 +37,7 @@
     },
     {
       "model": "ConversationMember",
-      "class": "Academorix\\Notifications\\Messaging\\Policies\\ConversationMemberPolicy",
+      "class": "Stackra\\Notifications\\Messaging\\Policies\\ConversationMemberPolicy",
       "abilities": [
         {
           "action": "addMember",
@@ -58,7 +58,7 @@
     },
     {
       "model": "Message",
-      "class": "Academorix\\Notifications\\Messaging\\Policies\\MessagePolicy",
+      "class": "Stackra\\Notifications\\Messaging\\Policies\\MessagePolicy",
       "abilities": [
         {
           "action": "view",
@@ -89,7 +89,7 @@
     },
     {
       "model": "MessageReaction",
-      "class": "Academorix\\Notifications\\Messaging\\Policies\\MessageReactionPolicy",
+      "class": "Stackra\\Notifications\\Messaging\\Policies\\MessageReactionPolicy",
       "abilities": [
         {
           "action": "add",

@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/payment/helpers",
+  "id": "stackra://modules/payment/helpers",
   "$version": 1,
   "title": "payment — helper functions",
   "description": "Ergonomic helpers for creating payment intents, tokenizing methods, and reading provider capabilities. All helpers are thin wrappers around bound services — never business logic. Callers who need the wire-shape of intents use the PaymentIntentOrchestrator + PaymentIntentData path; helpers here are for imperative flows (support tools, tests, ad-hoc scripts).",
-  "namespace": "Academorix\\Finance\\Payment\\Support",
+  "namespace": "Stackra\\Finance\\Payment\\Support",
   "helpers": [
     {
       "signature": "create_payment_intent(Invoice $invoice, ?string $providerSlug = null, ?PaymentMethod $method = null, string $captureMethod = 'automatic'): PaymentIntent",

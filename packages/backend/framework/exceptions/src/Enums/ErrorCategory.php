@@ -9,7 +9,7 @@
  *   - Sentry tag routing (each category has its own project / channel).
  *   - Dashboards that group errors ("show me every `integration` error
  *     in the last hour").
- *   - Metric labels (Prometheus `academorix_exceptions_total{category=...}`).
+ *   - Metric labels (Prometheus `stackra_exceptions_total{category=...}`).
  *
  * The category is orthogonal to HTTP status. A single 400 could be
  * validation OR business; a single 500 could be infrastructure OR
@@ -19,9 +19,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Enums;
+namespace Stackra\Exceptions\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 enum ErrorCategory: string
 {

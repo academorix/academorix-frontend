@@ -27,24 +27,24 @@
  * — the choice of authenticator depends on the configured
  * `AuthStrategy`.
  *
- * @see \Academorix\ApiSdk\Middleware\CorrelationIdMiddleware
- * @see \Academorix\ApiSdk\Middleware\ThrowOnFailureMiddleware
- * @see \Academorix\ApiSdk\Middleware\RetryOnServerErrorMiddleware
- * @see \Academorix\ApiSdk\Middleware\LogRequestMiddleware
- * @see \Academorix\ApiSdk\Authentication\ApiKeyAuthenticator
+ * @see \Stackra\ApiSdk\Middleware\CorrelationIdMiddleware
+ * @see \Stackra\ApiSdk\Middleware\ThrowOnFailureMiddleware
+ * @see \Stackra\ApiSdk\Middleware\RetryOnServerErrorMiddleware
+ * @see \Stackra\ApiSdk\Middleware\LogRequestMiddleware
+ * @see \Stackra\ApiSdk\Authentication\ApiKeyAuthenticator
  */
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Client;
+namespace Stackra\ApiSdk\Client;
 
-use Academorix\ApiSdk\Authentication\ApiKeyAuthenticator;
-use Academorix\ApiSdk\Enums\AuthStrategy;
-use Academorix\ApiSdk\Enums\LogLevel;
-use Academorix\ApiSdk\Middleware\CorrelationIdMiddleware;
-use Academorix\ApiSdk\Middleware\LogRequestMiddleware;
-use Academorix\ApiSdk\Middleware\RetryOnServerErrorMiddleware;
-use Academorix\ApiSdk\Middleware\ThrowOnFailureMiddleware;
+use Stackra\ApiSdk\Authentication\ApiKeyAuthenticator;
+use Stackra\ApiSdk\Enums\AuthStrategy;
+use Stackra\ApiSdk\Enums\LogLevel;
+use Stackra\ApiSdk\Middleware\CorrelationIdMiddleware;
+use Stackra\ApiSdk\Middleware\LogRequestMiddleware;
+use Stackra\ApiSdk\Middleware\RetryOnServerErrorMiddleware;
+use Stackra\ApiSdk\Middleware\ThrowOnFailureMiddleware;
 use Psr\Log\LoggerInterface;
 use Saloon\Http\Auth\TokenAuthenticator;
 use Saloon\Http\Connector;

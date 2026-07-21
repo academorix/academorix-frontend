@@ -12,7 +12,7 @@ export interface IApplicationBuilderOptions {
   debug?: boolean;
   /** Register shutdown hooks. Default: true. */
   shutdownHooks?: boolean;
-  /** Global name for window exposure in dev. Default: '__ACADEMORIX__'. */
+  /** Global name for window exposure in dev. Default: '__STACKRA__'. */
   globalName?: string;
   /** Application-level config object (available via APP_CONFIG token). */
   config?: Record<string, unknown>;

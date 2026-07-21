@@ -4,7 +4,7 @@
  * @file packages/exceptions/tests/Unit/TraceCleanerTest.php
  *
  * @description
- * Exercises {@see \Academorix\Exceptions\Support\TraceCleaner}, which
+ * Exercises {@see \Stackra\Exceptions\Support\TraceCleaner}, which
  * turns a raw PHP stack trace into the shape the JSON debug envelope
  * and Ignition solutions providers expect: relative paths, no
  * argument leaks, capped length, optional vendor collapsing.
@@ -37,7 +37,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Exceptions\Support\TraceCleaner;
+use Stackra\Exceptions\Support\TraceCleaner;
 
 /**
  * Helper: build a real Throwable with a synthesised trace payload.

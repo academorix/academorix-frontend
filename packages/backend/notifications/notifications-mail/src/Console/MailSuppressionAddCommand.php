@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsMail\Console;
+namespace Stackra\NotificationsMail\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan notifications:mail:suppression-add` — Mail:suppression add — notifications command.

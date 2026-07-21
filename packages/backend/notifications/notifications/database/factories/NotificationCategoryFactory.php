@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Database\Factories;
+namespace Stackra\Notifications\Database\Factories;
 
-use Academorix\Notifications\Contracts\Data\NotificationCategoryInterface;
-use Academorix\Notifications\Enums\ConsentTier;
-use Academorix\Notifications\Enums\NotificationPriority;
-use Academorix\Notifications\Models\NotificationCategory;
+use Stackra\Notifications\Contracts\Data\NotificationCategoryInterface;
+use Stackra\Notifications\Enums\ConsentTier;
+use Stackra\Notifications\Enums\NotificationPriority;
+use Stackra\Notifications\Models\NotificationCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

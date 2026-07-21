@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/session/schemas/session-attendance",
+  "id": "stackra://modules/session/schemas/session-attendance",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "SessionAttendance",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "sat_",
     "incrementing": false,
-    "model": "Academorix\\Sports\\Session\\Models\\SessionAttendance",
-    "interface": "Academorix\\Sports\\Session\\Contracts\\Data\\SessionAttendanceInterface",
-    "implements": ["Academorix\\Sports\\Session\\Contracts\\Data\\SessionAttendanceInterface"],
+    "model": "Stackra\\Sports\\Session\\Models\\SessionAttendance",
+    "interface": "Stackra\\Sports\\Session\\Contracts\\Data\\SessionAttendanceInterface",
+    "implements": ["Stackra\\Sports\\Session\\Contracts\\Data\\SessionAttendanceInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

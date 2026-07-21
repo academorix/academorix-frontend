@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Ai\Contracts\Repositories;
+namespace Stackra\Ai\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Ai\Models\AiConversation}.
+ * Repository contract for {@see Stackra\Ai\Models\AiConversation}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `AiConversationRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Ai\Models\AiConversation>
+ * @extends RepositoryInterface<\Stackra\Ai\Models\AiConversation>
  *
  * @category Ai
  *

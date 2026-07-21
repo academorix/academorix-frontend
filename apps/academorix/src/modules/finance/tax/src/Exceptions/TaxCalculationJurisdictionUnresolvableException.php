@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Exceptions;
+namespace Stackra\Tax\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * TaxAddressResolver could not resolve a jurisdiction from the customer's address.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TaxCalculationJurisdictionUnresolvableException extends AcademorixException
+final class TaxCalculationJurisdictionUnresolvableException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

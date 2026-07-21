@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Database\Factories;
+namespace Stackra\Search\Database\Factories;
 
-use Academorix\Search\Contracts\Data\SearchSynonymInterface;
-use Academorix\Search\Enums\SynonymKind;
-use Academorix\Search\Models\SearchSynonym;
+use Stackra\Search\Contracts\Data\SearchSynonymInterface;
+use Stackra\Search\Enums\SynonymKind;
+use Stackra\Search\Models\SearchSynonym;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

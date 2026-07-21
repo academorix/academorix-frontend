@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Policies;
+namespace Stackra\Approvals\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Approvals\Models\ApprovableAction;
+use Stackra\User\Models\User;
+use Stackra\Approvals\Models\ApprovableAction;
 
 /**
- * Authorization policy for {@see \Academorix\Approvals\Models\ApprovableAction}.
+ * Authorization policy for {@see \Stackra\Approvals\Models\ApprovableAction}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

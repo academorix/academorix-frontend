@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Actions\Tenant;
+namespace Stackra\Notifications\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Notifications\Contracts\Data\NotificationTemplateInterface;
-use Academorix\Notifications\Data\NotificationTemplateData;
-use Academorix\Notifications\Enums\NotificationsPermission;
-use Academorix\Notifications\Enums\TemplateState;
-use Academorix\Notifications\Models\NotificationTemplate;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Attributes\WhereUlid;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Notifications\Contracts\Data\NotificationTemplateInterface;
+use Stackra\Notifications\Data\NotificationTemplateData;
+use Stackra\Notifications\Enums\NotificationsPermission;
+use Stackra\Notifications\Enums\TemplateState;
+use Stackra\Notifications\Models\NotificationTemplate;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Attributes\WhereUlid;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `POST /api/v1/tenant/notification-templates/{template}/publish` —

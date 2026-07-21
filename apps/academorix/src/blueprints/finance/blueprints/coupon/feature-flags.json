@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/coupon/feature-flags",
+  "id": "stackra://modules/coupon/feature-flags",
   "$version": 1,
   "title": "coupon — kill switches",
   "engine": "laravel/pennant",

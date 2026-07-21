@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Policies;
+namespace Stackra\Geofencing\Policies;
 
-use Academorix\Geofencing\Contracts\Data\GeofenceCheckInterface;
-use Academorix\Geofencing\Enums\GeofencingPermission;
-use Academorix\Geofencing\Models\GeofenceCheck;
+use Stackra\Geofencing\Contracts\Data\GeofenceCheckInterface;
+use Stackra\Geofencing\Enums\GeofencingPermission;
+use Stackra\Geofencing\Models\GeofenceCheck;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 /**

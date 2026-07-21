@@ -88,7 +88,7 @@ Behavior:
 - The provider seeds `allowed` from `/auth/me` (identity carries the caller's
   accessible organizations/branches/seasons) and from list fetches where needed.
 - Active scope is persisted per tenant in `localStorage`
-  (`academorix.scope.<tenant_slug>`), validated on load against `allowed`, and
+  (`stackra.scope.<tenant_slug>`), validated on load against `allowed`, and
   defaulted (default org → default branch → active season).
 - Changing organization re-derives the allowed branches and, if the current
   branch is not under the new org, resets it.

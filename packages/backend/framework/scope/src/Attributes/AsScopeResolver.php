@@ -4,12 +4,12 @@
  * @file src/Attributes/AsScopeResolver.php
  *
  * @description
- * Discovery marker for {@see \Academorix\Scope\Contracts\ScopeResolverInterface}
+ * Discovery marker for {@see \Stackra\Scope\Contracts\ScopeResolverInterface}
  * implementations. Placed on the class body — the
  * `ScopeServiceProvider` calls `olvlvl/composer-attribute-collector`
  * once at boot to enumerate every class carrying this attribute,
  * sorts them by `priority` (descending — higher wins), and hydrates
- * the {@see \Academorix\Scope\Contracts\ScopeResolverChainInterface}.
+ * the {@see \Stackra\Scope\Contracts\ScopeResolverChainInterface}.
  *
  * Follows the same pattern as `#[AsCacheTagResolver]` from the
  * caching package (ADR 0004) so contributors have one convention
@@ -26,9 +26,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Attributes;
+namespace Stackra\Scope\Attributes;
 
-use Academorix\Scope\Enums\ScopeResolverPriority;
+use Stackra\Scope\Enums\ScopeResolverPriority;
 use Attribute;
 
 /**
@@ -37,8 +37,8 @@ use Attribute;
  * ## Usage
  *
  * ```php
- * use Academorix\Scope\Attributes\AsScopeResolver;
- * use Academorix\Scope\Enums\ScopeResolverPriority;
+ * use Stackra\Scope\Attributes\AsScopeResolver;
+ * use Stackra\Scope\Enums\ScopeResolverPriority;
  *
  * #[AsScopeResolver(priority: ScopeResolverPriority::Header->value)]
  * final class HeaderScopeResolver implements ScopeResolverInterface { ... }

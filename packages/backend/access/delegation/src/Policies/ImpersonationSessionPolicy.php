@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Delegation\Policies;
+namespace Stackra\Delegation\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Delegation\Models\ImpersonationSession;
+use Stackra\User\Models\User;
+use Stackra\Delegation\Models\ImpersonationSession;
 
 /**
- * Authorization policy for {@see \Academorix\Delegation\Models\ImpersonationSession}.
+ * Authorization policy for {@see \Stackra\Delegation\Models\ImpersonationSession}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

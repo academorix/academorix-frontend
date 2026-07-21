@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/tenancy/jobs",
+  "id": "stackra://modules/tenancy/jobs",
   "$version": 1,
   "title": "tenants — queued jobs",
   "description": "Queued jobs this module dispatches. Every job runs on the `default` queue unless noted. Retries follow exponential backoff. ShouldBeUnique jobs enforce single-inflight per key. Payloads are hydrated from DTO serialisation; models are re-fetched from the DB on handle to avoid stale-state issues.",
@@ -7,7 +7,7 @@
   "defaultConnection": "redis",
   "jobs": [
     {
-      "class": "Academorix\\Tenancy\\Jobs\\VerifyDomainDnsJob",
+      "class": "Stackra\\Tenancy\\Jobs\\VerifyDomainDnsJob",
       "description": "Diff every DomainRecord row for a Domain against real DNS. Update `status`, `last_seen_value`, `last_check_at`. If every record matches → set Domain.verified_at + dispatch DomainVerified. If exhausted → dispatch DomainVerificationFailed.",
       "queue": "dns",
       "tries": 8,
@@ -19,7 +19,7 @@
       "input": { "domain_id": "string" }
     },
     {
-      "class": "Academorix\\Tenancy\\Jobs\\ProvisionTenantJob",
+      "class": "Stackra\\Tenancy\\Jobs\\ProvisionTenantJob",
       "description": "Async provisioning tail. The synchronous transaction in RegisterTenantController creates the Tenant + owner + default sub-rows and fires TenantProvisioning. This job handles the outbound side (welcome email, index build, DNS record write for the auto-subdomain).",
       "queue": "provisioning",
       "tries": 5,
@@ -28,7 +28,7 @@
       "input": { "tenant_id": "string" }
     },
     {
-      "class": "Academorix\\Tenancy\\Jobs\\HardDeleteArchivedTenantJob",
+      "class": "Stackra\\Tenancy\\Jobs\\HardDeleteArchivedTenantJob",
       "description": "Hard-deletes an archived Tenant AFTER the retention window (30d). Cascades through every tenant_id FK. Emits an audit trail entry pre-delete. Refuses if `is_system=true`.",
       "queue": "retention",
       "tries": 3,
@@ -37,7 +37,7 @@
       "input": { "tenant_id": "string" }
     },
     {
-      "class": "Academorix\\Tenancy\\Jobs\\SyncTenantBrandingJob",
+      "class": "Stackra\\Tenancy\\Jobs\\SyncTenantBrandingJob",
       "description": "Re-denormalises `tenants.branding` JSONB from the primary Branding row. Called by BrandingObserver on save and by the tenancy:seed-defaults command.",
       "queue": "default",
       "tries": 3,
@@ -45,7 +45,7 @@
       "input": { "tenant_id": "string" }
     },
     {
-      "class": "Academorix\\Tenancy\\Jobs\\SyncTenantIntegrationJob",
+      "class": "Stackra\\Tenancy\\Jobs\\SyncTenantIntegrationJob",
       "description": "Runs the provider-specific sync (SCIM pull, HRIS delta, SAML metadata refresh). Reads the TenantIntegration config via the IntegrationConfig cast (decrypts). Sets `last_sync_at`, `last_sync_status`, `next_sync_at`, `sync_cursor`.",
       "queue": "integrations",
       "tries": 4,

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Services;
+namespace Stackra\Newsletter\Services;
 
-use Academorix\Newsletter\Contracts\Data\NewsletterCampaignInterface;
-use Academorix\Newsletter\Contracts\Data\NewsletterInterface;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterCampaignRepositoryInterface;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterRepositoryInterface;
-use Academorix\Newsletter\Contracts\Services\ReputationMonitorInterface;
-use Academorix\Newsletter\Enums\NewsletterStatus;
-use Academorix\Newsletter\Models\Newsletter;
-use Academorix\Newsletter\Models\NewsletterCampaign;
+use Stackra\Newsletter\Contracts\Data\NewsletterCampaignInterface;
+use Stackra\Newsletter\Contracts\Data\NewsletterInterface;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterCampaignRepositoryInterface;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterRepositoryInterface;
+use Stackra\Newsletter\Contracts\Services\ReputationMonitorInterface;
+use Stackra\Newsletter\Enums\NewsletterStatus;
+use Stackra\Newsletter\Models\Newsletter;
+use Stackra\Newsletter\Models\NewsletterCampaign;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Container\Attributes\Singleton;
 use Psr\Log\LoggerInterface;

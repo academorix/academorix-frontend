@@ -20,10 +20,10 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Sentry\Contexts;
+namespace Stackra\Sentry\Contexts;
 
-use Academorix\Sentry\Attributes\AsSentryContext;
-use Academorix\Sentry\Contracts\SentryContext;
+use Stackra\Sentry\Attributes\AsSentryContext;
+use Stackra\Sentry\Contracts\SentryContext;
 use Sentry\State\Scope;
 use Throwable;
 

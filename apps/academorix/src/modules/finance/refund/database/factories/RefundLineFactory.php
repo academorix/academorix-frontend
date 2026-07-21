@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Refund\Database\Factories;
+namespace Stackra\Refund\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Refund\Contracts\Data\RefundLineInterface;
-use Academorix\Refund\Models\RefundLine;
+use Stackra\Refund\Contracts\Data\RefundLineInterface;
+use Stackra\Refund\Models\RefundLine;
 
 /**
- * Factory for {@see \Academorix\Refund\Models\RefundLine}.
+ * Factory for {@see \Stackra\Refund\Models\RefundLine}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Refund\Models\RefundLine>
+ * @extends Factory<\Stackra\Refund\Models\RefundLine>
  *
  * @category Refund
  *

@@ -4,7 +4,7 @@
  * @file packages/authorization/src/Providers/AuthorizationServiceProvider.php
  *
  * @description
- * Root service provider for `academorix/authorization`. Auto-
+ * Root service provider for `stackra/authorization`. Auto-
  * discovered by Laravel via `composer.json`'s
  * `extra.laravel.providers`, so consumer apps get the wiring by
  * simply requiring the package — no manual `bootstrap/providers.php`
@@ -16,10 +16,10 @@
  * attribute-driven or standalone:
  *
  *   - The `authorize.action` middleware alias is registered by
- *     {@see \Academorix\Routing\Providers\RoutingServiceProvider}
+ *     {@see \Stackra\Routing\Providers\RoutingServiceProvider}
  *     through the `#[AsMiddleware(alias: 'authorize.action')]`
  *     attribute on
- *     {@see \Academorix\Authorization\Middleware\AuthorizeControllerAction}.
+ *     {@see \Stackra\Authorization\Middleware\AuthorizeControllerAction}.
  *     No imperative `Router::aliasMiddleware()` call is needed here.
  *   - The attributes are stateless value objects — no DI needed.
  *   - The middleware has a no-arg constructor — Laravel auto-DIs it.
@@ -52,16 +52,16 @@
  * registry hydration, spatie/laravel-permission wiring, super-admin
  * Gate::before, and admin controllers.
  *
- * @see \Academorix\Authorization\Middleware\AuthorizeControllerAction The middleware discovered via #[AsMiddleware].
+ * @see \Stackra\Authorization\Middleware\AuthorizeControllerAction The middleware discovered via #[AsMiddleware].
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Authorization\Providers;
+namespace Stackra\Authorization\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
 
 #[AsModule(name: 'Authorization', priority: 100)]
 #[LoadsResources()]

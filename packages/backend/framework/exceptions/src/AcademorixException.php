@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions;
+namespace Stackra\Exceptions;
 
-use Academorix\Exceptions\Concerns\TranslatesMessages;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
-use Academorix\Foundation\Contracts\Correlatable;
-use Academorix\Foundation\Contracts\HasContext;
-use Academorix\Foundation\Contracts\HasErrorCode;
-use Academorix\Foundation\Contracts\HasUserMessage;
-use Academorix\Foundation\Support\CorrelationId;
+use Stackra\Exceptions\Concerns\TranslatesMessages;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
+use Stackra\Foundation\Contracts\Correlatable;
+use Stackra\Foundation\Contracts\HasContext;
+use Stackra\Foundation\Contracts\HasErrorCode;
+use Stackra\Foundation\Contracts\HasUserMessage;
+use Stackra\Foundation\Support\CorrelationId;
 use JsonSerializable;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 /**
- * Root of every custom exception in the Academorix codebase. Extends
+ * Root of every custom exception in the Stackra codebase. Extends
  * `RuntimeException` (unchecked — PHP has no checked exceptions and
  * pretending otherwise is an anti-pattern) and layers on the
  * metadata every downstream consumer needs.
@@ -42,7 +42,7 @@ use Throwable;
  *    interpolated.
  *
  * 4. **Rendering** — DELEGATED to the container-bound
- *    {@see \Academorix\Exceptions\Handler} which walks the
+ *    {@see \Stackra\Exceptions\Handler} which walks the
  *    formatter chain (JSON / HTML / GraphQL). The base doesn't
  *    implement `Renderable` any more — that's now the handler's
  *    concern, keeping the exception itself free of transport
@@ -53,7 +53,7 @@ use Throwable;
  *    formatter picks fields off it explicitly rather than shipping
  *    the whole thing.
  */
-abstract class AcademorixException extends RuntimeException implements
+abstract class StackraException extends RuntimeException implements
     Correlatable,
     HasContext,
     HasErrorCode,
@@ -68,7 +68,7 @@ abstract class AcademorixException extends RuntimeException implements
      * snake_case. Treat as a public API — never rename without a
      * deprecation window.
      */
-    public const CODE = 'academorix.unexpected';
+    public const CODE = 'stackra.unexpected';
 
     /**
      * Translation key used when the trait resolves `userMessage()`.

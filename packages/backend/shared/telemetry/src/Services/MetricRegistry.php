@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Telemetry\Services;
+namespace Stackra\Telemetry\Services;
 
-use Academorix\Telemetry\Contracts\Services\MetricRegistryInterface;
+use Stackra\Telemetry\Contracts\Services\MetricRegistryInterface;
 use Illuminate\Container\Attributes\Scoped;
 
 

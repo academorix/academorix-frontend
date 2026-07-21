@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Event\Exceptions;
+namespace Stackra\Event\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Athlete registering does not match min_age/max_age/age_group_ids/gender_category.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class EventEligibilityMismatchException extends AcademorixException
+final class EventEligibilityMismatchException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

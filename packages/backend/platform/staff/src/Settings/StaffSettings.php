@@ -4,12 +4,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Staff\Settings;
+namespace Stackra\Staff\Settings;
 
-use Academorix\Settings\Attributes\AsSetting;
-use Academorix\Settings\Attributes\SettingField;
-use Academorix\Settings\Attributes\SettingGroup;
-use Academorix\Settings\Enums\ControlType;
+use Stackra\Settings\Attributes\AsSetting;
+use Stackra\Settings\Attributes\SettingField;
+use Stackra\Settings\Attributes\SettingGroup;
+use Stackra\Settings\Enums\ControlType;
 use Spatie\LaravelSettings\Settings;
 
 /**
@@ -52,7 +52,7 @@ class StaffSettings extends Settings
 
     // ── Compensation tracking ──────────────────────────────────
     #[SettingGroup(label: 'Compensation tracking', description: 'Opt-in to compensation tracking. When enabled, HR + owner can record compensation_* fields; the observer refuses writes without the compensation permission.', icon: 'banknotes', sortOrder: 2)]
-    #[SettingField(controlType: ControlType::Toggle, label: 'Track compensation in Academorix', group: 'Compensation tracking', sortOrder: 1, helpText: 'Enable this to track wage/salary/hourly rate on staff. Data is regulated_financial-tier, retained 7 years. Turning this on writes a compliance audit row + requires re-consent by the tenant admin.')]
+    #[SettingField(controlType: ControlType::Toggle, label: 'Track compensation in Stackra', group: 'Compensation tracking', sortOrder: 1, helpText: 'Enable this to track wage/salary/hourly rate on staff. Data is regulated_financial-tier, retained 7 years. Turning this on writes a compliance audit row + requires re-consent by the tenant admin.')]
     public bool $enable_compensation_tracking = false;
 
     #[SettingField(controlType: ControlType::Number, label: 'Compensation change threshold (%)', group: 'Compensation tracking', sortOrder: 2, min: 5, max: 200, helpText: 'Compensation changes above this percent require the large-delta bypass permission. Guards against payroll fat-finger errors.')]

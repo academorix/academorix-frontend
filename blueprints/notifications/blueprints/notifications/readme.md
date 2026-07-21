@@ -103,7 +103,7 @@ callbacks, no denormalized reads.
     "tenant": {
         "id": "01JC0...",
         "name": "Elite Football Academy",
-        "logo_url": "https://cdn.academorix.com/tenants/01JC0.../logo.png",
+        "logo_url": "https://cdn.stackra.com/tenants/01JC0.../logo.png",
         "primary_color": "#f97316",
         "sender_identity": "Elite FC <no-reply@elite.example>",
         "postal_address": "123 Stadium Way, Chicago, IL 60601 USA"
@@ -280,7 +280,7 @@ import {
   Layout,
   Button,
   Footer,
-} from "@academorix/notifications-emails-shared";
+} from "@stackra/notifications-emails-shared";
 
 export default function InvoicePaid({ variables, tenant, recipient, locale }) {
   return (
@@ -295,7 +295,7 @@ export default function InvoicePaid({ variables, tenant, recipient, locale }) {
 ```
 
 3. Create a `Notification` class extending
-   `Academorix\Notifications\Contracts\BaseNotification`:
+   `Stackra\Notifications\Contracts\BaseNotification`:
 
 ```php
 class InvoicePaidNotification extends BaseNotification {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Exceptions;
+namespace Stackra\Notifications\Push\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a push provider is unknown, disabled, or misconfigured.
@@ -16,7 +16,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PushProviderDisabledException extends AcademorixException
+final class PushProviderDisabledException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

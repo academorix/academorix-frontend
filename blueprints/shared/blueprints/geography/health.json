@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/geography/health",
+  "id": "stackra://modules/geography/health",
   "$version": 1,
   "title": "geography \u2014 health probes",
   "probes": [
     {
       "name": "geography-world-seeded",
-      "class": "Academorix\\Geography\\Health\\WorldSeedCheck",
+      "class": "Stackra\\Geography\\Health\\WorldSeedCheck",
       "category": "startup",
       "critical": true,
       "description": "At least the 6 vendor tables exist AND countries has > 200 rows. If false, `world:install` has not run.",
@@ -13,7 +13,7 @@
     },
     {
       "name": "geography-cache-reachable",
-      "class": "Academorix\\Geography\\Health\\Probes\\CacheReachableProbe",
+      "class": "Stackra\\Geography\\Health\\Probes\\CacheReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "Redis store used by geography.cache middleware reachable. Falls back to array cache on failure.",
@@ -21,7 +21,7 @@
     },
     {
       "name": "geography-maxmind-present",
-      "class": "Academorix\\Geography\\Health\\Probes\\MaxMindPresentProbe",
+      "class": "Stackra\\Geography\\Health\\Probes\\MaxMindPresentProbe",
       "category": "readiness",
       "critical": false,
       "description": "storage/app/geoip/GeoLite2-City.mmdb exists. Fallback to ip-api.com on failure.",
@@ -29,7 +29,7 @@
     },
     {
       "name": "geography-maxmind-fresh",
-      "class": "Academorix\\Geography\\Health\\Probes\\MaxMindFreshProbe",
+      "class": "Stackra\\Geography\\Health\\Probes\\MaxMindFreshProbe",
       "category": "readiness",
       "critical": false,
       "description": "GeoLite2 DB is < 14 days old. Fires MaxMindDatabaseStale event when stale (which triggers refresh).",
@@ -38,7 +38,7 @@
     },
     {
       "name": "geography-ip-api-reachable",
-      "class": "Academorix\\Geography\\Health\\Probes\\IpApiReachableProbe",
+      "class": "Stackra\\Geography\\Health\\Probes\\IpApiReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "ip-api.com fallback reachable. Non-critical when MaxMind is present + fresh.",

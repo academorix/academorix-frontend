@@ -17,7 +17,7 @@ declare(strict_types=1);
  *   - Routes loaded from src/routes/api.php, web.php, channels.php
  *   - Commands discovered from src/Console/Commands/ via #[AsCommand]
  *   - Controllers discovered via #[AsController]
- *     (pending — see academorix/routing TODO in DiscoversResources)
+ *     (pending — see stackra/routing TODO in DiscoversResources)
  *   - Middleware discovered via `#[AsMiddleware]` (routing package)
  *   - Listeners discovered via `#[OnEvent]` + `#[ListensFor]`
  *     (events package)
@@ -67,10 +67,10 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Blog\Providers;
+namespace Stackra\Blog\Providers;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * Blog module service provider.
@@ -80,7 +80,7 @@ use Academorix\ServiceProvider\Providers\ServiceProvider;
  */
 #[AsModule(
     name: 'Blog',
-    namespace: 'Academorix\\Blog',
+    namespace: 'Stackra\\Blog',
 )]
 class BlogServiceProvider extends ServiceProvider
 {

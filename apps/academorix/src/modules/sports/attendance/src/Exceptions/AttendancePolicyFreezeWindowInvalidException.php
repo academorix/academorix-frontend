@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attendance\Exceptions;
+namespace Stackra\Attendance\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * absence_freeze_period_days must be between 7 and 365.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AttendancePolicyFreezeWindowInvalidException extends AcademorixException
+final class AttendancePolicyFreezeWindowInvalidException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

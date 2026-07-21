@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/private-sessions/retention",
+  "id": "stackra://modules/private-sessions/retention",
   "$version": 1,
   "title": "private-sessions — data retention windows",
   "policies": [

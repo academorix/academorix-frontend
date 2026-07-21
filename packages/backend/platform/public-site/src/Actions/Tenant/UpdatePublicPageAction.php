@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PublicSite\Actions\Tenant;
+namespace Stackra\PublicSite\Actions\Tenant;
 
-use Academorix\PublicSite\Contracts\Repositories\PublicPageRepositoryInterface;
-use Academorix\PublicSite\Data\PublicPageData;
-use Academorix\PublicSite\Data\Requests\UpdatePublicPageRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\PublicSite\Contracts\Repositories\PublicPageRepositoryInterface;
+use Stackra\PublicSite\Data\PublicPageData;
+use Stackra\PublicSite\Data\Requests\UpdatePublicPageRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Patch;
 
 /**
  * `PATCH /api/v1/public-pages/{page}` — update action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Patch(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category PublicSite

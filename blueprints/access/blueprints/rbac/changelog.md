@@ -11,9 +11,9 @@ and pins the enforceable surface for the code phase that follows.
 
 ### Structural
 
-- Six blueprint tables — three spatie-shipped tables augmented with Academorix
+- Six blueprint tables — three spatie-shipped tables augmented with Stackra
   scope columns (`roles`, `permissions`, `role_has_permissions`) and three
-  additional Academorix-owned tables (`model_has_roles` +
+  additional Stackra-owned tables (`model_has_roles` +
   `model_has_permissions` extend spatie's pivots; `role_definitions` is entirely
   new).
 - Prefixed ULIDs across the module: `rol_` (Role), `per_` (Permission), `rdf_`

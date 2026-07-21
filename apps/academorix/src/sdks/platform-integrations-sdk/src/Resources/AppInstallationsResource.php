@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformIntegrationsSdk\Resources;
+namespace Stackra\PlatformIntegrationsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\PlatformIntegrationsSdk\Data\AppInstallationData;
-use Academorix\PlatformIntegrationsSdk\Requests\AppInstallations\CreateAppInstallationRequest;
-use Academorix\PlatformIntegrationsSdk\Requests\AppInstallations\ListAppInstallationsAdminRequest;
-use Academorix\PlatformIntegrationsSdk\Requests\AppInstallations\ListAppInstallationsRequest;
-use Academorix\PlatformIntegrationsSdk\Requests\AppInstallations\ShowAppInstallationRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\PlatformIntegrationsSdk\Data\AppInstallationData;
+use Stackra\PlatformIntegrationsSdk\Requests\AppInstallations\CreateAppInstallationRequest;
+use Stackra\PlatformIntegrationsSdk\Requests\AppInstallations\ListAppInstallationsAdminRequest;
+use Stackra\PlatformIntegrationsSdk\Requests\AppInstallations\ListAppInstallationsRequest;
+use Stackra\PlatformIntegrationsSdk\Requests\AppInstallations\ShowAppInstallationRequest;
 use Saloon\Http\Response;
 
 /**
@@ -71,7 +71,7 @@ final readonly class AppInstallationsResource
      *
      * @return AppInstallationData
      */
-    public function create(\Academorix\PlatformIntegrationsSdk\Payloads\AppInstallations\CreateAppInstallationPayload $payload, ?string $idempotencyKey = null): AppInstallationData
+    public function create(\Stackra\PlatformIntegrationsSdk\Payloads\AppInstallations\CreateAppInstallationPayload $payload, ?string $idempotencyKey = null): AppInstallationData
     {
         return $this->connector->send(new CreateAppInstallationRequest($payload, $idempotencyKey))->dto();
     }

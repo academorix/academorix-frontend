@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Contracts\Services;
+namespace Stackra\Attribution\Contracts\Services;
 
-use Academorix\Attribution\Services\CampaignRollupAggregator;
+use Stackra\Attribution\Services\CampaignRollupAggregator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

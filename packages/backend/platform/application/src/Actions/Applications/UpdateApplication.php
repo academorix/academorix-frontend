@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Actions\Applications;
+namespace Stackra\Application\Actions\Applications;
 
-use Academorix\Application\Contracts\Repositories\ApplicationRepositoryInterface;
-use Academorix\Application\Data\ApplicationData;
-use Academorix\Application\Data\Requests\UpdateApplicationRequestData;
-use Academorix\Application\Enums\ApplicationPermission;
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Patch;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Application\Contracts\Repositories\ApplicationRepositoryInterface;
+use Stackra\Application\Data\ApplicationData;
+use Stackra\Application\Data\Requests\UpdateApplicationRequestData;
+use Stackra\Application\Enums\ApplicationPermission;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Patch;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `PATCH /api/v1/platform/applications/{application}` — partial update.

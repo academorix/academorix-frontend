@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Staff\Data;
+namespace Stackra\Staff\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Server-side output DTO for {@see \Academorix\Staff\Models\Coach}.
+ * Server-side output DTO for {@see \Stackra\Staff\Models\Coach}.
  *
  * Consumed by controllers + services on the SERVER side. This is
  * distinct from the wire SDK's DTO (which sits under
- * `Academorix\PlatformStaffSdk\Data`) — the wire DTO travels across the HTTP
+ * `Stackra\PlatformStaffSdk\Data`) — the wire DTO travels across the HTTP
  * boundary; this one stays in-process.
  *
  * @category Staff

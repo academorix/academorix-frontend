@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Events;
+namespace Stackra\Marketing\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog (retention: 7 years — financial audit)
  * - notifications::DispatchMarketingDeadLetterCreatedNotification (cannot-opt-out — pages on-call for financial-critical failures)
- * - monitoring::MetricsCollector (increments academorix.marketing.dead_letters.created_total)
+ * - monitoring::MetricsCollector (increments stackra.marketing.dead_letters.created_total)
  *
  * @category Marketing
  *

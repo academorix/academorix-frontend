@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Attributes;
+namespace Stackra\Activity\Attributes;
 
 use Attribute;
 

@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registrations\Services;
+namespace Stackra\Registrations\Services;
 
-use Academorix\Registrations\Contracts\Services\TrialSlotBookerInterface;
+use Stackra\Registrations\Contracts\Services\TrialSlotBookerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Registrations\Contracts\Repositories\OfferRepositoryInterface;
+use Stackra\Registrations\Contracts\Repositories\OfferRepositoryInterface;
 
 /**
  * Concrete service — TrialSlotBooker.

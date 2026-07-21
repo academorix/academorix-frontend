@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Exceptions;
+namespace Stackra\Transfer\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the inline `/exports/stream` path would exceed the
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TransferSyncThresholdExceededException extends AcademorixException
+final class TransferSyncThresholdExceededException extends StackraException
 {
     public const CODE = 'TRANSFER_SYNC_THRESHOLD_EXCEEDED';
 

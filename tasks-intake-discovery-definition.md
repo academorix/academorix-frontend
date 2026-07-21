@@ -58,7 +58,7 @@ new feature.
 - **Intake artefacts:** `.kiro/product/intake/<slug>/`
 - **PRD:** `.kiro/product/prds/<slug>.md`
 - **Status:** in-progress / handed-off / abandoned
-- **Assigned:** `spec-intake-analyst` (Phase 0) → `academorix-product` (Phase 1-2)
+- **Assigned:** `spec-intake-analyst` (Phase 0) → `stackra-product` (Phase 1-2)
 
 **Phase 0 — Intake**
 
@@ -127,7 +127,7 @@ invoke_sub_agent(
 
 ```
 invoke_sub_agent(
-  name: 'academorix-product',
+  name: 'stackra-product',
   prompt: 'Read the Phase 0 + Phase 1 artefacts under
            `.kiro/product/intake/<slug>/` and write the Phase 2 PRD at
            `.kiro/product/prds/<slug>.md`. Include INVEST stories, v1/v2/later
@@ -167,7 +167,7 @@ Dated entries. Format: `YYYY-MM-DDTHH:MM:SSZ — <slug> — <phase> — <event> 
 ## Cross-references
 
 - **Roster:** `AGENT_ROSTER.md` §Phase 0-2 (spec-intake-analyst, product-lead,
-  academorix-product)
+  stackra-product)
 - **Quickstart recipes:** `AGENT_QUICKSTART.md` §Recipe 1-2
 - **Blueprint reference:** `.ref/DOMAIN_MODULES_BLUEPRINT.md`
 - **Handoff target:** `tasks-design-pipeline.md` (Phase 3)

@@ -4,15 +4,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\People\Contracts\Data;
+namespace Stackra\People\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\People\Models\PersonIdentity;
+use Stackra\People\Models\PersonIdentity;
 
 /**
  * Table shape for the `person_identities` table.
  *
- * CENTRAL-plane global identity carrying the Academorix ID.
+ * CENTRAL-plane global identity carrying the Stackra ID.
  *
  * @category People
  *
@@ -39,7 +39,7 @@ interface PersonIdentityInterface
     // ── Columns ───────────────────────────────────────────────
 
     public const string ATTR_ID                           = 'id';
-    public const string ATTR_ACADEMORIX_ID                = 'academorix_id';
+    public const string ATTR_STACKRA_ID                = 'stackra_id';
     public const string ATTR_LEGAL_NAME                   = 'legal_name';
     public const string ATTR_DATE_OF_BIRTH                = 'date_of_birth';
     public const string ATTR_NATIONALITY                  = 'nationality';

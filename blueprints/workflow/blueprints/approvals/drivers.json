@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/workflow/approvals/drivers",
+  "id": "stackra://modules/workflow/approvals/drivers",
   "$version": 1,
   "title": "approvals — reminder channel driver specifications",
   "description": "The approval engine's `ApprovalReminderNotification` delivers via one of the notifications module's registered channels — mail, in_app, push, slack. This module doesn't ship its own reminder drivers; it delegates to the notifications module's DriverManager. This file documents the CONTRACT the notifications module's channels must honour to serve reminder dispatch correctly, and any approvals-specific channel resolution logic.",
@@ -7,7 +7,7 @@
     "note": "The channels themselves live in the notifications module. Approvals only stipulates the shape of the notification payload + the resolution priority.",
     "payload_shape": {
       "recipient_user_id": "ULID",
-      "notification_class": "Academorix\\Approval\\Notifications\\ApprovalReminderNotification",
+      "notification_class": "Stackra\\Approval\\Notifications\\ApprovalReminderNotification",
       "context": {
         "approval_instance_id": "ULID",
         "approval_requirement_id": "ULID",

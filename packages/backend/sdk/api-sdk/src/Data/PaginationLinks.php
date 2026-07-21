@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Data;
+namespace Stackra\ApiSdk\Data;
 
 use Spatie\LaravelData\Data;
 

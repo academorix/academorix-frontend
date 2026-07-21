@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/audit/permissions",
+  "id": "stackra://modules/audit/permissions",
   "$version": 1,
   "title": "audit — permissions",
   "description": "Read-heavy permission surface. Audit rows are READ-only via the API (only the vendor observer creates them; only the purge job deletes them). Retention policies have CRUD gated by compliance-officer role + Enterprise entitlement. Every audit permission is compliance-officer-scoped — regular admins do NOT read audit trails by default.",
-  "seeder": "Academorix\\Observability\\Audit\\Database\\Seeders\\AuditPermissionSeeder",
+  "seeder": "Stackra\\Observability\\Audit\\Database\\Seeders\\AuditPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

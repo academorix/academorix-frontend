@@ -14,7 +14,7 @@ contracts: `docs/contracts/`.
 
 ## The rule
 
-Academorix is polyglot on purpose — **Laravel for the tenant business API,
+Stackra is polyglot on purpose — **Laravel for the tenant business API,
 Python for AI/ML.** Keep it that way. Do not propose consolidating the backend
 onto Python, and do not propose rewriting it in Go. A new _language_ for a
 service is allowed only with **profiling evidence** that the existing stack
@@ -33,8 +33,8 @@ nothing else:
    own slug, non-empty `iss`/`tenant_id`. Contract:
    `docs/contracts/service-jwt.schema.json`.
 3. **Data** — speak the shared wire shapes only: Kafka topic schemas
-   (`academorix-ai/packages/topics`) + shared DTOs (`packages/domain` /
-   `academorix/*` models). Never reach into another service's database directly.
+   (`stackra-ai/packages/topics`) + shared DTOs (`packages/domain` /
+   `stackra/*` models). Never reach into another service's database directly.
 4. **Observability** — propagate `X-Correlation-Id` (+ `traceparent` on Kafka)
    and emit the standard structured-log shape (`timestamp`, `level`, `service`,
    `tenant_id`, `trace_id`, `span_id`, `message`). Expose `/health` + `/ready`.

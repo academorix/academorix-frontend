@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Exceptions;
+namespace Stackra\Geofencing\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The original check already has an override row that supersedes it.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GeofenceOverrideAlreadyAppliedException extends AcademorixException
+final class GeofenceOverrideAlreadyAppliedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

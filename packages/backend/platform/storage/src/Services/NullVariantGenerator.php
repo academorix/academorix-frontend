@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Services;
+namespace Stackra\Storage\Services;
 
-use Academorix\Storage\Contracts\Services\VariantGeneratorInterface;
-use Academorix\Storage\Models\File;
-use Academorix\Storage\Models\FileVariant;
+use Stackra\Storage\Contracts\Services\VariantGeneratorInterface;
+use Stackra\Storage\Models\File;
+use Stackra\Storage\Models\FileVariant;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

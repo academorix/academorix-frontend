@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsRegistrationsSdk\Requests\Registrations;
+namespace Stackra\SportsRegistrationsSdk\Requests\Registrations;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsRegistrationsSdk\Data\RegistrationData;
-use Academorix\SportsRegistrationsSdk\Payloads\Registrations\UpdateRegistrationPayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsRegistrationsSdk\Data\RegistrationData;
+use Stackra\SportsRegistrationsSdk\Payloads\Registrations\UpdateRegistrationPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

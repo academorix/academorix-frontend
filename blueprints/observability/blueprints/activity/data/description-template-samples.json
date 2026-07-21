@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/activity/data/description-template-samples",
+  "id": "stackra://modules/activity/data/description-template-samples",
   "$version": 1,
   "title": "activity — description-template samples",
   "description": "Twenty-plus example description patterns showing the authoring style consumers should follow when writing `setDescriptionForEvent()` in their models. Descriptions are human-readable narrative — second- or third-person, past-tense, entity names inline. NEVER raw payloads, NEVER stack traces, NEVER unformatted IDs.",

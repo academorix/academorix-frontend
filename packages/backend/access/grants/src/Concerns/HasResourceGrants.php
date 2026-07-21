@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Grants\Concerns;
+namespace Stackra\Grants\Concerns;
 
 /**
  * Trait — HasResourceGrants.

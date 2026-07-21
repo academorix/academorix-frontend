@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/foundation/feature-flags",
+  "id": "stackra://modules/foundation/feature-flags",
   "$version": 1,
   "title": "foundation — kill-switch flags",
   "description": "Kill-switches for foundation's infrastructure. All default ON — flipping to OFF is an incident-response action. Every change to these flags emits an audit event + a PagerDuty alert.",

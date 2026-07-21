@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Tenancy\Models\Tenant;
+use Stackra\Tenancy\Models\Tenant;
 
 it('is a placeholder — replace with actual Tenant unit tests', function (): void {
     expect(Tenant::class)->toBeString();

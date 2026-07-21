@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/branch/relations",
+  "id": "stackra://modules/branch/relations",
   "$version": 1,
   "title": "branch — model relationships",
   "description": "Branch is the FK-central aggregate of the whole platform. Outbound: 3 FKs (tenant + organization + region), all required + immutable. Inbound: every downstream domain aggregate (facility, team, staff, coach, athlete, session, booking, membership, pass, visit) references `branches.id` via `branch_id`. This is where the platform hierarchy actually joins up.",
@@ -66,5 +66,5 @@
       "tenant_slug": "tenant->slug"
     }
   },
-  "note_on_polymorphism": "Every polymorphic FK targeting a Branch stores `subject_type = 'Academorix\\Branch\\Models\\Branch'` (or the class alias `App\\Branch\\Branch` when Laravel's morph map is configured). Downstream modules that filter by branch on a polymorphic table use this — e.g. `activity_log.subject_type = 'Branch' AND activity_log.subject_id = brn_...`."
+  "note_on_polymorphism": "Every polymorphic FK targeting a Branch stores `subject_type = 'Stackra\\Branch\\Models\\Branch'` (or the class alias `App\\Branch\\Branch` when Laravel's morph map is configured). Downstream modules that filter by branch on a polymorphic table use this — e.g. `activity_log.subject_type = 'Branch' AND activity_log.subject_id = brn_...`."
 }

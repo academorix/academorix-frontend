@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Actions\Platform;
+namespace Stackra\Tenancy\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Patch;
-use Academorix\Routing\Attributes\WhereUlid;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
-use Academorix\Tenancy\Data\Requests\UpdateTenantRequestData;
-use Academorix\Tenancy\Data\TenantData;
-use Academorix\Tenancy\Enums\TenancyPermission;
-use Academorix\Tenancy\Models\Tenant;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Patch;
+use Stackra\Routing\Attributes\WhereUlid;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
+use Stackra\Tenancy\Data\Requests\UpdateTenantRequestData;
+use Stackra\Tenancy\Data\TenantData;
+use Stackra\Tenancy\Enums\TenancyPermission;
+use Stackra\Tenancy\Models\Tenant;
 
 /**
  * `PATCH /api/v1/platform/tenants/{tenant}` — update a tenant.

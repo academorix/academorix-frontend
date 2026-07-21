@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Contracts\Repositories;
+namespace Stackra\AgeGroup\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\AgeGroup\Models\AgeGroup}.
+ * Repository contract for {@see Stackra\AgeGroup\Models\AgeGroup}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `AgeGroupRepository`.
  *
- * @extends RepositoryInterface<\Academorix\AgeGroup\Models\AgeGroup>
+ * @extends RepositoryInterface<\Stackra\AgeGroup\Models\AgeGroup>
  *
  * @category AgeGroup
  *

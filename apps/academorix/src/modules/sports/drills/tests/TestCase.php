@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Drills\Tests;
+namespace Stackra\Drills\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/drills.
+ * Base test case for stackra/drills.
  *
  * @category Drills
  *

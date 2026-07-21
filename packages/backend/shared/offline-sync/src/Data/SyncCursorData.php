@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\OfflineSync\Data;
+namespace Stackra\OfflineSync\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Server-side output DTO for {@see \Academorix\OfflineSync\Models\SyncCursor}.
+ * Server-side output DTO for {@see \Stackra\OfflineSync\Models\SyncCursor}.
  *
  * Consumed by controllers + services on the SERVER side. This is
  * distinct from the wire SDK's DTO (which sits under
- * `Academorix\SharedOfflineSyncSdk\Data`) — the wire DTO travels across the HTTP
+ * `Stackra\SharedOfflineSyncSdk\Data`) — the wire DTO travels across the HTTP
  * boundary; this one stays in-process.
  *
  * @category OfflineSync

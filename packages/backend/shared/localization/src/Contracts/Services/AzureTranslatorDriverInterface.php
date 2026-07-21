@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Contracts\Services;
+namespace Stackra\Localization\Contracts\Services;
 
-use Academorix\Localization\Services\AzureTranslatorDriver;
+use Stackra\Localization\Services\AzureTranslatorDriver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Attributes;
+namespace Stackra\Entitlements\Attributes;
 
 use Attribute;
 

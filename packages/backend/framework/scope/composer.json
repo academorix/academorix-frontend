@@ -1,9 +1,9 @@
 {
-  "name": "academorix/scope",
+  "name": "stackra/scope",
   "description": "Dynamic hierarchical scope platform. Per-tenant configurable hierarchy (definitions), materialised-path node graph, namespaced cascading value store, request-context propagation, resolver chain, Eloquent auto-scoping, and cache-tag derivation. Every settings/permissions/flags/pricing consumer registers a namespace and gets uniform resolution semantics.",
   "type": "library",
   "keywords": [
-    "academorix",
+    "stackra",
     "laravel",
     "scope",
     "hierarchy",
@@ -14,18 +14,18 @@
   "license": "MIT",
   "authors": [
     {
-      "name": "Academorix Team",
-      "email": "dev@academorix.com",
-      "homepage": "https://academorix.com"
+      "name": "Stackra Team",
+      "email": "dev@stackra.com",
+      "homepage": "https://stackra.com"
     }
   ],
   "require": {
     "php": "^8.3|^8.4|^8.5",
-    "academorix/caching": "@dev",
-    "academorix/database": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
-    "academorix/service-provider": "@dev",
+    "stackra/caching": "@dev",
+    "stackra/database": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/service-provider": "@dev",
     "illuminate/contracts": "^13.0",
     "illuminate/database": "^13.0",
     "illuminate/http": "^13.0",
@@ -42,14 +42,14 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Scope\\": "src/",
-      "Academorix\\Scope\\Database\\Factories\\": "database/factories/",
-      "Academorix\\Scope\\Database\\Seeders\\": "database/seeders/"
+      "Stackra\\Scope\\": "src/",
+      "Stackra\\Scope\\Database\\Factories\\": "database/factories/",
+      "Stackra\\Scope\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Scope\\Tests\\": "tests/"
+      "Stackra\\Scope\\Tests\\": "tests/"
     }
   },
   "repositories": [
@@ -92,10 +92,10 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Scope\\Providers\\ScopeServiceProvider"
+        "Stackra\\Scope\\Providers\\ScopeServiceProvider"
       ],
       "aliases": {
-        "Scope": "Academorix\\Scope\\Facades\\Scope"
+        "Scope": "Stackra\\Scope\\Facades\\Scope"
       }
     },
     "branch-alias": {

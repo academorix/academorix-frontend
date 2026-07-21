@@ -12,17 +12,17 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Crud\Concerns;
+namespace Stackra\Crud\Concerns;
 
-use Academorix\Crud\Concerns\Discovery\HasDiscoverableCriteria;
-use Academorix\Crud\Concerns\Discovery\HasDiscoverableRepositories;
-use Academorix\Crud\Concerns\Discovery\HasDiscoverableScopes;
+use Stackra\Crud\Concerns\Discovery\HasDiscoverableCriteria;
+use Stackra\Crud\Concerns\Discovery\HasDiscoverableRepositories;
+use Stackra\Crud\Concerns\Discovery\HasDiscoverableScopes;
 
 /**
  * HasDiscovery Trait.
  *
  * Composite trait that provides automatic discovery and registration of
- * Criteria, Scopes, and Repository configurations via academorix/discovery.
+ * Criteria, Scopes, and Repository configurations via stackra/discovery.
  *
  * Delegates to focused sub-traits:
  * - HasDiscoverableCriteria: discovers #[AsCriteria] classes

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformCredentialsSdk\Tests;
+namespace Stackra\PlatformCredentialsSdk\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix-platform/credentials-sdk.
+ * Base test case for stackra-platform/credentials-sdk.
  *
  * @category CredentialsSdk
  *

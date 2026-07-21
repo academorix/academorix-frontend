@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Progress\Policies;
+namespace Stackra\Progress\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Progress\Models\BeltRank;
+use Stackra\User\Models\User;
+use Stackra\Progress\Models\BeltRank;
 
 /**
- * Authorization policy for {@see \Academorix\Progress\Models\BeltRank}.
+ * Authorization policy for {@see \Stackra\Progress\Models\BeltRank}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

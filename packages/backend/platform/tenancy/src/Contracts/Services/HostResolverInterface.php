@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Contracts\Services;
+namespace Stackra\Tenancy\Contracts\Services;
 
-use Academorix\Tenancy\Services\HostResolver;
+use Stackra\Tenancy\Services\HostResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

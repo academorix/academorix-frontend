@@ -5,7 +5,7 @@
  *
  * @description
  * Global scope that, when applied to a model carrying
- * {@see \Academorix\Scope\Attributes\ScopedTo}, appends a
+ * {@see \Stackra\Scope\Attributes\ScopedTo}, appends a
  * `WHERE scope_node_id IN (<ancestor chain>)` clause to every
  * query. The clause uses the active {@see ScopeContextData}'s
  * `ancestorIds()`, so a query executed at a deep leaf sees rows
@@ -14,10 +14,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Scopes;
+namespace Stackra\Scope\Scopes;
 
-use Academorix\Scope\Contracts\ScopeContextInterface;
-use Academorix\Scope\Models\ScopeValue;
+use Stackra\Scope\Contracts\ScopeContextInterface;
+use Stackra\Scope\Models\ScopeValue;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;

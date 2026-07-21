@@ -4,7 +4,7 @@
  * @file modules/notifications/notifications-push/lang/en/notifications-push.php
  *
  * @description
- * English translations for the `academorix/notifications-push` module. Loaded
+ * English translations for the `stackra/notifications-push` module. Loaded
  * under the `notifications-push::` namespace.
  */
 

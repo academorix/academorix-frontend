@@ -41,13 +41,13 @@ export function parseHostOptions(argv: readonly string[]): IHostOptions {
       continue;
     }
     if (token === "--rootDomain") {
-      // Space form: `--rootDomain academorix.app`
+      // Space form: `--rootDomain stackra.app`
       rootDomain = argv[i + 1];
       i += 1;
       continue;
     }
     if (token.startsWith("--rootDomain=")) {
-      // Inline form: `--rootDomain=academorix.app`
+      // Inline form: `--rootDomain=stackra.app`
       rootDomain = token.slice("--rootDomain=".length);
       continue;
     }

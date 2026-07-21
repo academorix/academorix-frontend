@@ -4,24 +4,24 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AthleteEnrollment\Models;
+namespace Stackra\AthleteEnrollment\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\AthleteEnrollment\Contracts\Data\AthleteEnrollmentInterface;
-use Academorix\AthleteEnrollment\Database\Factories\AthleteEnrollmentFactory;
-use Academorix\AthleteEnrollment\Policies\AthleteEnrollmentPolicy;
-use Academorix\Athlete\Concerns\BelongsToAthlete;
-use Academorix\Branch\Concerns\BelongsToBranch;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Season\Concerns\BelongsToSeason;
-use Academorix\Teams\Concerns\BelongsToTeam;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\AthleteEnrollment\Contracts\Data\AthleteEnrollmentInterface;
+use Stackra\AthleteEnrollment\Database\Factories\AthleteEnrollmentFactory;
+use Stackra\AthleteEnrollment\Policies\AthleteEnrollmentPolicy;
+use Stackra\Athlete\Concerns\BelongsToAthlete;
+use Stackra\Branch\Concerns\BelongsToBranch;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Season\Concerns\BelongsToSeason;
+use Stackra\Teams\Concerns\BelongsToTeam;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Teams\Contracts\Services;
+namespace Stackra\Teams\Contracts\Services;
 
-use Academorix\Teams\Services\TeamProvisioner;
+use Stackra\Teams\Services\TeamProvisioner;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -18,7 +18,7 @@
  *
  *   ## Storage schema
  *
- *   `academorix.dashboard.layout.{userId}.v1` — JSON of the shape
+ *   `stackra.dashboard.layout.{userId}.v1` — JSON of the shape
  *   `{ version: 1, items: IDashboardLayoutItem[] }`. The `.v1` suffix
  *   on the key gives us a cheap way to introduce a `.v2` schema later
  *   without migration code (readers ignore unknown-version blobs;
@@ -49,7 +49,7 @@ export const OVERVIEW_GRID_COLUMNS = GRID_COLUMNS.lg;
 export const LAYOUT_SCHEMA_VERSION = 1;
 
 /** Storage-key prefix / suffix around the user id. */
-const STORAGE_KEY_PREFIX = "academorix.dashboard.layout";
+const STORAGE_KEY_PREFIX = "stackra.dashboard.layout";
 const STORAGE_KEY_SUFFIX = "v1";
 
 /**

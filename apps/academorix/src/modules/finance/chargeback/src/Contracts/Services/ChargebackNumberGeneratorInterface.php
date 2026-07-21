@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Contracts\Services;
+namespace Stackra\Chargeback\Contracts\Services;
 
-use Academorix\Chargeback\Services\ChargebackNumberGenerator;
+use Stackra\Chargeback\Services\ChargebackNumberGenerator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

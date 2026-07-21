@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/activity/middleware",
+  "id": "stackra://modules/activity/middleware",
   "$version": 1,
   "title": "activity — HTTP middleware",
   "description": "One middleware this module contributes: `activity.enforce_scope`. Filters list results to entities the caller can access (RBAC-scoped) AND starts an activity batch for the request so downstream writes carry a consistent `batch_uuid`. Also relies on framework + tenants middleware composed on its route groups.",
   "middleware": [
     {
       "alias": "activity.enforce_scope",
-      "class": "Academorix\\Observability\\Activity\\Middleware\\EnforceActivityScope",
+      "class": "Stackra\\Observability\\Activity\\Middleware\\EnforceActivityScope",
       "priority": 60,
       "description": "Two responsibilities: (1) On every tenant-audience request, calls `ActivityBatcher::beginBatch()` — starts a request-scoped batch that any downstream `LogsActivity` write will attach to via `batch_uuid`. On response terminate, calls `ActivityBatcher::completeBatch()`. (2) On list / show requests targeting Activity endpoints, augments the query with an RBAC filter — the caller sees activities on entities they hold viewing permissions for. Uses `AccessGrantResolver` + role-based policies to compute the acceptable `subject_type + subject_id` set; queries with a `filter[subject_type]` unauthorised by the caller are rewritten to return empty.",
       "sideEffects": [

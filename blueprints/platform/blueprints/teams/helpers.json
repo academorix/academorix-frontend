@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/teams/helpers",
+  "id": "stackra://modules/teams/helpers",
   "$version": 1,
   "title": "teams — helper functions",
   "description": "Ergonomic helpers for accessing the active team from the request context, resolving polymorphic members, checking eligibility, computing capacity + waitlist availability. All helpers are thin wrappers around bound services — never business logic.",
-  "namespace": "Academorix\\Teams\\Support",
+  "namespace": "Stackra\\Teams\\Support",
   "helpers": [
     {
       "signature": "active_team(): ?Team",

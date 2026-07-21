@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/membership/macros",
+  "id": "stackra://modules/membership/macros",
   "$version": 1,
   "title": "membership — published macros",
   "description": "No request-level macros — membership context is resolved via route bindings. One Blueprint macro shared with sibling finance modules for the snapshot column family.",

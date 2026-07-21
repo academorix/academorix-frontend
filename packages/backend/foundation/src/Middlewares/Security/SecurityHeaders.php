@@ -11,12 +11,12 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Foundation\Middlewares\Security;
+namespace Stackra\Foundation\Middlewares\Security;
 
 use Closure;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Http\Request;
-use Academorix\Routing\Attributes\AsMiddleware;
+use Stackra\Routing\Attributes\AsMiddleware;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

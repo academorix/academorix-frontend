@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/versioning/data-classes",
+  "id": "stackra://modules/versioning/data-classes",
   "$version": 1,
   "title": "versioning \u2014 field classification",
-  "description": "All versioning fields are public or internal \u2014 versioning is a platform-transparent concern. No PII, no PCI, no PHI. Version catalog IS PUBLIC information (docs.academorix.com surfaces it). Audit rows capture the actor for lifecycle transitions but no restricted material.",
+  "description": "All versioning fields are public or internal \u2014 versioning is a platform-transparent concern. No PII, no PCI, no PHI. Version catalog IS PUBLIC information (docs.stackra.com surfaces it). Audit rows capture the actor for lifecycle transitions but no restricted material.",
   "reference": "foundation::data-classes.json.tiers",
   "classes": {
     "public": [

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/attendance/entitlements",
+  "id": "stackra://modules/attendance/entitlements",
   "$version": 1,
   "title": "attendance — declared entitlements",
   "description": "Nine entitlement keys. `attendance_capture` is the master. Kiosk / QR / freeze-enforcement land on Small+. Geofence + advanced policies + no-show fees + analytics gate to Medium+. Extended retention is Enterprise-only for compliance holds.",
@@ -10,7 +10,7 @@
       "key": "attendance_capture",
       "kind": "boolean",
       "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
-      "description": "Master gate. When OFF (never at Academorix defaults — reserved for support tooling to disable a tenant's attendance surface during an incident), every attendance write returns 403 ATTENDANCE_CAPTURE_NOT_ENTITLED.",
+      "description": "Master gate. When OFF (never at Stackra defaults — reserved for support tooling to disable a tenant's attendance surface during an incident), every attendance write returns 403 ATTENDANCE_CAPTURE_NOT_ENTITLED.",
       "enforcedBy": [
         "AttendanceRecordObserver.creating refuses without this feature",
         "SDUI check-in surfaces hidden when features array does not include 'attendance.capture'"

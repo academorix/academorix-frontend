@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/authorization",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/authorization",
   "tier": "framework",
   "surfaces": ["core"],
   "kind": "framework-plumbing",
@@ -10,17 +10,17 @@
     "#[RequireRole] + #[RequireAnyRole] repeatable role gates",
     "#[AllowGuest] explicit guest bypass",
     "Reflection-cached AuthorizeControllerAction middleware",
-    "Zero DB / migrations — pairs with academorix/access for storage",
+    "Zero DB / migrations — pairs with stackra/access for storage",
     "PermissionContributor + RoleContributor tags for boot-time seeding",
     "Fails 401 / 403 before the controller body runs"
   ],
   "when_to_use": "Every controller declares its permission / role gates via attributes — enforced before the controller body executes.",
-  "when_not_to_use": "For Role + Permission Eloquent models, migrations, and admin CRUD, use the heavier academorix/access package.",
+  "when_not_to_use": "For Role + Permission Eloquent models, migrations, and admin CRUD, use the heavier stackra/access package.",
   "peer_deps": [
-    "academorix/exceptions",
-    "academorix/foundation",
-    "academorix/service-provider",
-    "academorix/support"
+    "stackra/exceptions",
+    "stackra/foundation",
+    "stackra/service-provider",
+    "stackra/support"
   ],
   "backend_pair": null,
   "size_gzip_kb": {},

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Settings\Attributes;
+namespace Stackra\Settings\Attributes;
 
-use Academorix\Settings\Enums\ControlType;
+use Stackra\Settings\Enums\ControlType;
 use Attribute;
 
 /**

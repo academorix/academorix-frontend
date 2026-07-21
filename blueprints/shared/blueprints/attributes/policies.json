@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/attributes/policies",
+  "id": "stackra://modules/attributes/policies",
   "$version": 1,
   "title": "attributes — authorization policies",
   "description": "Three policies — one per aggregate. Attributes are tenant-configurable but require elevated permissions to modify — a bad AttributeSet cascades to every host using it. Values validated on the host's own save path; no direct value-mutation policies here.",
   "policies": [
     {
       "model": "AttributeDefinition",
-      "class": "Academorix\\Attributes\\Policies\\AttributeDefinitionPolicy",
+      "class": "Stackra\\Attributes\\Policies\\AttributeDefinitionPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -43,7 +43,7 @@
     },
     {
       "model": "AttributeSet",
-      "class": "Academorix\\Attributes\\Policies\\AttributeSetPolicy",
+      "class": "Stackra\\Attributes\\Policies\\AttributeSetPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -90,7 +90,7 @@
     },
     {
       "model": "AttributeGroup",
-      "class": "Academorix\\Attributes\\Policies\\AttributeGroupPolicy",
+      "class": "Stackra\\Attributes\\Policies\\AttributeGroupPolicy",
       "abilities": [
         {
           "action": "viewAny",

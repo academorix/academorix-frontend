@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\User\Concerns;
+namespace Stackra\User\Concerns;
 
 /**
  * Trait — IsUserOwnable.

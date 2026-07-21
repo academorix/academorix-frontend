@@ -12,7 +12,7 @@
  * `Illuminate\Container\Attributes\Bind` / `Singleton` /
  * `Scoped` / `Config` attributes. Provider bodies should be
  * zero-body except for boot-hook methods discovered by
- * `academorix/service-provider`.
+ * `stackra/service-provider`.
  *
  * ## What it catches
  *
@@ -32,8 +32,8 @@
  *
  * ## Exceptions
  *
- *   - Framework packages under `Academorix\ServiceProvider\`,
- *     `Academorix\Foundation\` — they define the machinery.
+ *   - Framework packages under `Stackra\ServiceProvider\`,
+ *     `Stackra\Foundation\` — they define the machinery.
  *   - `bind()` calls INSIDE `#[OnRegister]` / `#[OnBoot]` hook
  *     methods are still flagged — even lifecycle-scoped
  *     bindings should be attribute-driven. Consumers wanting to
@@ -51,7 +51,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\PhpStan;
+namespace Stackra\Architecture\PhpStan;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
@@ -94,8 +94,8 @@ final class NoManualBindingsRule implements Rule
      */
     private const array SERVICE_PROVIDER_BASES = [
         'Illuminate\\Support\\ServiceProvider',
-        'Academorix\\ServiceProvider\\Providers\\ServiceProvider',
-        'Academorix\\Foundation\\Providers\\AbstractModuleServiceProvider',
+        'Stackra\\ServiceProvider\\Providers\\ServiceProvider',
+        'Stackra\\Foundation\\Providers\\AbstractModuleServiceProvider',
     ];
 
     public function __construct(
@@ -208,7 +208,7 @@ final class NoManualBindingsRule implements Rule
     private function isFrameworkClass(ClassReflection $current): bool
     {
         $name = $current->getName();
-        return str_starts_with($name, 'Academorix\\ServiceProvider\\')
-            || str_starts_with($name, 'Academorix\\Foundation\\Providers\\');
+        return str_starts_with($name, 'Stackra\\ServiceProvider\\')
+            || str_starts_with($name, 'Stackra\\Foundation\\Providers\\');
     }
 }

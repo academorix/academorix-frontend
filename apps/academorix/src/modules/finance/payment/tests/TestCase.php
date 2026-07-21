@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Tests;
+namespace Stackra\Payment\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/payment.
+ * Base test case for stackra/payment.
  *
  * @category Payment
  *

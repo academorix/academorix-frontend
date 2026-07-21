@@ -14,7 +14,7 @@
  *
  * The final cache key is a concatenation of, in order:
  *
- *   1. the configured `caching.tag_prefix` (`academorix:` by default);
+ *   1. the configured `caching.tag_prefix` (`stackra:` by default);
  *   2. the class + method (`App\Services\Athlete@list`);
  *   3. either the interpolated `$key` template
  *      (`athletes:{tenantId}:{locale}`) OR the string returned by
@@ -24,7 +24,7 @@
  * ## Tag composition
  *
  * Static tags from the `$tags` list are merged with dynamic
- * tags from the registered {@see \Academorix\Caching\Contracts\CacheTagResolver}
+ * tags from the registered {@see \Stackra\Caching\Contracts\CacheTagResolver}
  * chain. Duplicates are removed while preserving order.
  *
  * ## Attribute vs. explicit `Cache::tags(...)->remember(...)`
@@ -48,17 +48,17 @@
  *     read-heavy repositories where the whole surface is
  *     `#[Cacheable]`.
  *
- * @see \Academorix\Caching\Attributes\CacheEvict Invalidation counterpart.
- * @see \Academorix\Caching\Attributes\CachePut  Write-through counterpart.
- * @see \Academorix\Caching\Contracts\CacheKeyGenerator Custom key strategy.
+ * @see \Stackra\Caching\Attributes\CacheEvict Invalidation counterpart.
+ * @see \Stackra\Caching\Attributes\CachePut  Write-through counterpart.
+ * @see \Stackra\Caching\Contracts\CacheKeyGenerator Custom key strategy.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Caching\Attributes;
+namespace Stackra\Caching\Attributes;
 
-use Academorix\Caching\Contracts\CacheKeyGenerator;
-use Academorix\Caching\Enums\CacheStrategy;
+use Stackra\Caching\Contracts\CacheKeyGenerator;
+use Stackra\Caching\Enums\CacheStrategy;
 use Attribute;
 
 /**

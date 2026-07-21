@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsMedicalSdk\Payloads\Injuries;
+namespace Stackra\SportsMedicalSdk\Payloads\Injuries;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\StringType;

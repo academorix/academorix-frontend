@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsAnnouncementsSdk\Payloads\Announcements;
+namespace Stackra\NotificationsAnnouncementsSdk\Payloads\Announcements;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\StringType;

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Events;
+namespace Stackra\Integrations\Events;
 
-use Academorix\Events\Attributes\AsEvent;
-use Academorix\Integrations\Models\TenantIntegration;
+use Stackra\Events\Attributes\AsEvent;
+use Stackra\Integrations\Models\TenantIntegration;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 
 /**
- * Dispatched when {@see \Academorix\Integrations\Jobs\RefreshIntegrationTokenJob}
+ * Dispatched when {@see \Stackra\Integrations\Jobs\RefreshIntegrationTokenJob}
  * rotates the OAuth access token stored in `config`. The row is
  * carried on the payload; the new token itself never leaves the
  * server unencrypted.

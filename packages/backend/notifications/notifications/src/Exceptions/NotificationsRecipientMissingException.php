@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Exceptions;
+namespace Stackra\Notifications\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Dispatch call provided no recipient AND the caller couldn't be inferred (e.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsRecipientMissingException extends AcademorixException
+final class NotificationsRecipientMissingException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "session",
   "alias": "session",
-  "namespace": "Academorix\\Sports\\Session",
+  "namespace": "Stackra\\Sports\\Session",
   "description": "A single practice / lesson / class instance. Composes a ResourceBooking (from facility module) for the physical slot + adds sport-specific fields (head_coach, session_type, attendance_capacity, curriculum_topic). Sessions are ATTACHED to Teams — recurring team practices generate one Session per week per Team. Standalone sessions (private lessons, ad-hoc training) attach directly to Athletes via a session-attendance pivot. Ships: Session model with lifecycle (scheduled -> confirmed -> in_progress -> completed -> cancelled -> rescheduled), attendance tracking via SessionAttendance pivot, coach assignment (head + up to 3 assistants), session ratings feed the Coach.rating aggregator (Wave 2b), booking-cascade on facility retirement (cascade cancels attached sessions). Downstream: Wave 3 attendance module writes to the pivot; Wave 4 finance module attributes revenue per session (private-lesson pricing).",
   "keywords": [
     "session",
@@ -39,7 +39,7 @@
     "wave-3b"
   ],
   "priority": 65,
-  "providers": ["Academorix\\Sports\\Session\\Providers\\SessionServiceProvider"],
+  "providers": ["Stackra\\Sports\\Session\\Providers\\SessionServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

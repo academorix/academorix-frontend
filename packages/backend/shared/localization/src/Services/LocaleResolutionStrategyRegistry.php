@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Services;
+namespace Stackra\Localization\Services;
 
-use Academorix\Localization\Attributes\AsLocaleResolutionStrategy;
-use Academorix\Localization\Contracts\Services\LocaleResolutionStrategyInterface;
-use Academorix\Localization\Contracts\Services\LocaleResolutionStrategyRegistryInterface;
+use Stackra\Localization\Attributes\AsLocaleResolutionStrategy;
+use Stackra\Localization\Contracts\Services\LocaleResolutionStrategyInterface;
+use Stackra\Localization\Contracts\Services\LocaleResolutionStrategyRegistryInterface;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;

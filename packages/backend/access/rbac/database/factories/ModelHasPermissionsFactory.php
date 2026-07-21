@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Database\Factories;
+namespace Stackra\Rbac\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Rbac\Contracts\Data\ModelHasPermissionsInterface;
-use Academorix\Rbac\Models\ModelHasPermissions;
+use Stackra\Rbac\Contracts\Data\ModelHasPermissionsInterface;
+use Stackra\Rbac\Models\ModelHasPermissions;
 
 /**
- * Factory for {@see \Academorix\Rbac\Models\ModelHasPermissions}.
+ * Factory for {@see \Stackra\Rbac\Models\ModelHasPermissions}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Rbac\Models\ModelHasPermissions>
+ * @extends Factory<\Stackra\Rbac\Models\ModelHasPermissions>
  *
  * @category Rbac
  *
@@ -40,7 +40,7 @@ final class ModelHasPermissionsFactory extends Factory
     {
         return [
             ModelHasPermissionsInterface::ATTR_PERMISSION_ID => fake()->sentence(3),
-            ModelHasPermissionsInterface::ATTR_MODEL_TYPE => fake()->randomElement(['Academorix\User\Models\User', 'Academorix\PlatformUser\Models\PlatformUser', 'Academorix\ServiceAccounts\Models\ServiceAccount']),
+            ModelHasPermissionsInterface::ATTR_MODEL_TYPE => fake()->randomElement(['Stackra\User\Models\User', 'Stackra\PlatformUser\Models\PlatformUser', 'Stackra\ServiceAccounts\Models\ServiceAccount']),
             ModelHasPermissionsInterface::ATTR_MODEL_ID => fake()->sentence(3),
             ModelHasPermissionsInterface::ATTR_APPLICATION_ID => null,
         ];

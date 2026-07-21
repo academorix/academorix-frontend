@@ -4,7 +4,7 @@
  * @file packages/exceptions/src/Concerns/TranslatesMessages.php
  *
  * @description
- * Trait that hangs off {@see \Academorix\Exceptions\AcademorixException}
+ * Trait that hangs off {@see \Stackra\Exceptions\StackraException}
  * to give every exception a translation pipeline for its user-facing
  * message. The trait is opt-in per exception (via the base class) so
  * exceptions that never see a client don't pay for a translator
@@ -44,7 +44,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Concerns;
+namespace Stackra\Exceptions\Concerns;
 
 trait TranslatesMessages
 {

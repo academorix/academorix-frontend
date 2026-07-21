@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Progress\Models;
+namespace Stackra\Progress\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Progress\Contracts\Data\GradingResultInterface;
-use Academorix\Progress\Database\Factories\GradingResultFactory;
-use Academorix\AthleteEnrollment\Concerns\BelongsToAthleteEnrollment;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Progress\Policies\GradingResultPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Progress\Contracts\Data\GradingResultInterface;
+use Stackra\Progress\Database\Factories\GradingResultFactory;
+use Stackra\AthleteEnrollment\Concerns\BelongsToAthleteEnrollment;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Progress\Policies\GradingResultPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;

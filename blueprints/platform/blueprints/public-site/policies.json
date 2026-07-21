@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/public-site/policies",
+  "id": "stackra://modules/public-site/policies",
   "$version": 1,
   "title": "public-site — authorization policies",
   "policies": [
     {
       "model": "Page",
-      "class": "Academorix\\Platform\\PublicSite\\Policies\\PagePolicy",
+      "class": "Stackra\\Platform\\PublicSite\\Policies\\PagePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -21,7 +21,7 @@
     },
     {
       "model": "Block",
-      "class": "Academorix\\Platform\\PublicSite\\Policies\\BlockPolicy",
+      "class": "Stackra\\Platform\\PublicSite\\Policies\\BlockPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "public-site.blocks.viewAny" },
         { "action": "view", "permission": "public-site.blocks.view" },
@@ -31,7 +31,7 @@
     },
     {
       "model": "SiteSettings",
-      "class": "Academorix\\Platform\\PublicSite\\Policies\\SiteSettingsPolicy",
+      "class": "Stackra\\Platform\\PublicSite\\Policies\\SiteSettingsPolicy",
       "abilities": [
         { "action": "view", "permission": "public-site.settings.view", "scope": "admin + owner" },
         {

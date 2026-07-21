@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Concerns;
+namespace Stackra\Localization\Concerns;
 
 /**
  * Lightweight trait for services + view composers that need to

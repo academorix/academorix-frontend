@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Support\Traits;
+namespace Stackra\Support\Traits;
 
 /**
  * Singleton trait provides a simple interface for treating a class as a singleton.

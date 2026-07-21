@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/access/requests/errors",
+  "id": "stackra://modules/access/requests/errors",
   "$version": 1,
   "title": "requests \u2014 error catalogue",
   "description": "Error codes this module emits. `user_facing` controls whether the message renders to end users (translated via i18n). `retryable` signals client-side retry. `audit_severity` routes to the correct log channel \u2014 `alert` pages on-call.",

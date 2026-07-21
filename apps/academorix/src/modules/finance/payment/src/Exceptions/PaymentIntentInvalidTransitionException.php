@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Exceptions;
+namespace Stackra\Payment\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted a state transition that violates the intent state machine.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PaymentIntentInvalidTransitionException extends AcademorixException
+final class PaymentIntentInvalidTransitionException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

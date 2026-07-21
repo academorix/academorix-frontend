@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Contracts\Repositories;
+namespace Stackra\Domains\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Domains\Models\Domain;
-use Academorix\Domains\Repositories\EloquentDomainRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Domains\Models\Domain;
+use Stackra\Domains\Repositories\EloquentDomainRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/webhook/retention",
+  "id": "stackra://modules/webhook/retention",
   "$version": 1,
   "title": "webhook \u2014 retention windows",
   "description": "WebhookDelivery retention is entitlement-driven (config default 30d; plans buy more). WebhookSubscription is retained forever while active. Rotation-grace secrets are cleared after grace expires.",

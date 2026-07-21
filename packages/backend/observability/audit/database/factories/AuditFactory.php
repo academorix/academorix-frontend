@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Database\Factories;
+namespace Stackra\Audit\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Audit\Contracts\Data\AuditInterface;
-use Academorix\Audit\Models\Audit;
+use Stackra\Audit\Contracts\Data\AuditInterface;
+use Stackra\Audit\Models\Audit;
 
 /**
- * Factory for {@see \Academorix\Audit\Models\Audit}.
+ * Factory for {@see \Stackra\Audit\Models\Audit}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Audit\Models\Audit>
+ * @extends Factory<\Stackra\Audit\Models\Audit>
  *
  * @category Audit
  *

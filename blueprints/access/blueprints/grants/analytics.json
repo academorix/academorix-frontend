@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/grants/analytics",
+  "id": "stackra://modules/grants/analytics",
   "$version": 1,
   "title": "grants — product analytics events",
   "description": "Product analytics events (Segment / Mixpanel / PostHog). Distinct from `events.json` (server-side pub/sub) and `metrics.json` (ops telemetry). Every event carries a `consent_tier` that gates delivery through the analytics pipeline against the caller's consent state. Grant events are primarily `functional` (help us optimise the share-access flow); a couple are `essential` (feature-adoption funnel that we need to run the product).",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/audit/analytics",
+  "id": "stackra://modules/audit/analytics",
   "$version": 1,
   "title": "audit — analytics event declarations",
   "description": "Audit publishes ZERO analytics events. Analytics is behavioral (Lane 4 per growth-and-observability.md). Audit is compliance (Lane 2). Merging them is the #1 misuse called out in the steering doc — an audit row NEVER becomes an analytics event and vice-versa. This module has no analytics event catalogue by design.",

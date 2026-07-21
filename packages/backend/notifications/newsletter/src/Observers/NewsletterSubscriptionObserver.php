@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Observers;
+namespace Stackra\Newsletter\Observers;
 
-use Academorix\Newsletter\Contracts\Data\NewsletterSubscriptionInterface;
-use Academorix\Newsletter\Enums\NewsletterSubscriptionStatus;
-use Academorix\Newsletter\Events\NewsletterSubscriptionAdded;
-use Academorix\Newsletter\Events\NewsletterSubscriptionConfirmed;
-use Academorix\Newsletter\Events\NewsletterSubscriptionRemoved;
-use Academorix\Newsletter\Models\NewsletterSubscription;
+use Stackra\Newsletter\Contracts\Data\NewsletterSubscriptionInterface;
+use Stackra\Newsletter\Enums\NewsletterSubscriptionStatus;
+use Stackra\Newsletter\Events\NewsletterSubscriptionAdded;
+use Stackra\Newsletter\Events\NewsletterSubscriptionConfirmed;
+use Stackra\Newsletter\Events\NewsletterSubscriptionRemoved;
+use Stackra\Newsletter\Models\NewsletterSubscription;
 
 /**
  * Observer for the {@see NewsletterSubscription} model.

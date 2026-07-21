@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Data;
+namespace Stackra\Application\Data;
 
-use Academorix\Application\Contracts\Data\ApplicationInterface;
-use Academorix\Application\Enums\BusinessTypeEnum;
-use Academorix\Application\Models\Application;
+use Stackra\Application\Contracts\Data\ApplicationInterface;
+use Stackra\Application\Enums\BusinessTypeEnum;
+use Stackra\Application\Models\Application;
 use Spatie\LaravelData\Attributes\Computed;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
@@ -34,7 +34,7 @@ final class ApplicationData extends Data
      * @param  string  $slug  URL-safe identifier.
      * @param  string  $name  Display name.
      * @param  string  $centralHost  Marketing + tenant-picker host.
-     * @param  string  $platformAdminHost  Academorix staff surface host.
+     * @param  string  $platformAdminHost  Stackra staff surface host.
      * @param  string  $defaultLocale  IETF locale tag.
      * @param  string  $defaultTimezone  IANA timezone name.
      * @param  string  $defaultCurrency  ISO-4217 currency code.

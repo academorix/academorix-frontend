@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Messaging\Concerns;
+namespace Stackra\Messaging\Concerns;
 
 /**
  * Trait — ParticipatesInConversation.

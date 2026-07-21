@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/athlete-guardian/policies",
+  "id": "stackra://modules/athlete-guardian/policies",
   "$version": 1,
   "title": "athlete-guardian — authorization policies",
   "description": "One policy, AthleteGuardianPolicy. Composes the .own scope for guardians managing their own guardianships + admin-scope for HR + safeguarding-scope for the verification actions (dispute, revoke). Consent-recording authorisation (used by athlete::consent_recorded_by_authorised_guardian rule) is checked via ConsentDelegationChain, not through the policy — the rule reaches directly into the resolver.",
   "policies": [
     {
       "model": "AthleteGuardian",
-      "class": "Academorix\\Sports\\AthleteGuardian\\Policies\\AthleteGuardianPolicy",
+      "class": "Stackra\\Sports\\AthleteGuardian\\Policies\\AthleteGuardianPolicy",
       "abilities": [
         {
           "action": "viewAny",

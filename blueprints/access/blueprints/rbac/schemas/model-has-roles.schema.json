@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/rbac/schemas/model-has-roles",
+  "id": "stackra://modules/rbac/schemas/model-has-roles",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ModelHasRoles (spatie pivot, augmented)",
@@ -24,7 +24,7 @@
         "type": "string",
         "length": 255,
         "nullable": false,
-        "description": "Fully-qualified class name: `Academorix\\User\\Models\\User` / `Academorix\\PlatformUser\\Models\\PlatformUser` / `Academorix\\ServiceAccounts\\Models\\ServiceAccount`."
+        "description": "Fully-qualified class name: `Stackra\\User\\Models\\User` / `Stackra\\PlatformUser\\Models\\PlatformUser` / `Stackra\\ServiceAccounts\\Models\\ServiceAccount`."
       },
       "model_id": {
         "type": "string",
@@ -102,9 +102,9 @@
     "model_type": {
       "type": "string",
       "enum": [
-        "Academorix\\User\\Models\\User",
-        "Academorix\\PlatformUser\\Models\\PlatformUser",
-        "Academorix\\ServiceAccounts\\Models\\ServiceAccount"
+        "Stackra\\User\\Models\\User",
+        "Stackra\\PlatformUser\\Models\\PlatformUser",
+        "Stackra\\ServiceAccounts\\Models\\ServiceAccount"
       ]
     },
     "model_id": { "type": "string" },

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Contracts\Data;
+namespace Stackra\Coaching\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Coaching\Models\CoachingProfile;
+use Stackra\Coaching\Models\CoachingProfile;
 
 /**
  * Table shape for the `coaching_profiles` table.

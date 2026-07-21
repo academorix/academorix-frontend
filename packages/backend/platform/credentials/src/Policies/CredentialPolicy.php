@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Credentials\Policies;
+namespace Stackra\Credentials\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Credentials\Models\Credential;
+use Stackra\User\Models\User;
+use Stackra\Credentials\Models\Credential;
 
 /**
- * Authorization policy for {@see \Academorix\Credentials\Models\Credential}.
+ * Authorization policy for {@see \Stackra\Credentials\Models\Credential}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

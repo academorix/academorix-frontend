@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/staff/observers",
+  "id": "stackra://modules/staff/observers",
   "$version": 1,
   "title": "staff — Eloquent observers",
   "description": "Two observers enforce the module's write-time invariants: employment lifecycle (StaffObserver — cross-tenant defense, one-active-Staff-per-user-tenant, one-active-branch-manager-per-branch, compensation-write-permission, cascade-check-on-offboard), and coach lifecycle (CoachObserver — parent-staff-must-be-active, one-Coach-per-Staff, certification-shape-validation, rating-write-protection). The compensation write path additionally consults the CompensationGate binding — the observer only knows *whether* the caller carries the permission; the gate encapsulates *how* the check runs (permission + optional secondary-approval flow for large compensation deltas per staff.compensation.max_delta_percent config).",
   "observers": [
     {
       "model": "Staff",
-      "observer": "Academorix\\Staff\\Observers\\StaffObserver",
+      "observer": "Stackra\\Staff\\Observers\\StaffObserver",
       "handles": [
         "creating → populate ULID prefix `stf_`",
         "creating → refuse when tenant does NOT hold `staff` feature (all tiers have this, but the check exists for defense-in-depth when a feature-flag kill-switch is flipped)",
@@ -59,7 +59,7 @@
     },
     {
       "model": "Coach",
-      "observer": "Academorix\\Staff\\Observers\\CoachObserver",
+      "observer": "Stackra\\Staff\\Observers\\CoachObserver",
       "handles": [
         "creating → populate ULID prefix `coa_`",
         "creating → refuse when tenant does NOT hold `staff` feature (defense-in-depth)",

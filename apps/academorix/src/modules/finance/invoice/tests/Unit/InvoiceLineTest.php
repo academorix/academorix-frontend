@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Invoice\Models\InvoiceLine;
+use Stackra\Invoice\Models\InvoiceLine;
 
 it('is a placeholder — replace with actual InvoiceLine unit tests', function (): void {
     expect(InvoiceLine::class)->toBeString();

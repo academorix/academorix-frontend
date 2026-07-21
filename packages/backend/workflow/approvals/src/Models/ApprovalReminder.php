@@ -4,16 +4,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Approvals\Models;
+namespace Stackra\Approvals\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Approvals\Contracts\Data\ApprovalReminderInterface;
-use Academorix\Approvals\Database\Factories\ApprovalReminderFactory;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Approvals\Contracts\Data\ApprovalReminderInterface;
+use Stackra\Approvals\Database\Factories\ApprovalReminderFactory;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use OwenIt\Auditing\Auditable;

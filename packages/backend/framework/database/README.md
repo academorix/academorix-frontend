@@ -1,8 +1,8 @@
-# academorix/database
+# stackra/database
 
-Data-layer building blocks for every Academorix module: base model concerns,
+Data-layer building blocks for every Stackra module: base model concerns,
 schema Blueprint macros, data-shaping attributes, and tenant-aware cache tag
-helpers. Answers **"what the data IS"** — pair with `academorix/crud` for **"how
+helpers. Answers **"what the data IS"** — pair with `stackra/crud` for **"how
 the data is QUERIED"**.
 
 ## Package layout
@@ -124,7 +124,7 @@ Schema::create('projects', function (Blueprint $table) {
 ### Cache tag helpers
 
 ```php
-use Academorix\Database\Cache\CacheTagBuilder;
+use Stackra\Database\Cache\CacheTagBuilder;
 
 final class Repo
 {
@@ -147,7 +147,7 @@ final class Repo
 ### 1. Install
 
 ```bash
-composer require academorix/database
+composer require stackra/database
 ```
 
 The service provider is auto-discovered — nothing to add to
@@ -156,13 +156,13 @@ The service provider is auto-discovered — nothing to add to
 ### 2. Author a model
 
 ```php
-namespace Academorix\Products\Models;
+namespace Stackra\Products\Models;
 
-use Academorix\Database\Attributes\Searchable;
-use Academorix\Database\Attributes\Sluggable;
-use Academorix\Database\Attributes\Translatable;
-use Academorix\Database\Concerns\HasTranslations;
-use Academorix\Database\Concerns\Model\HasSlug;
+use Stackra\Database\Attributes\Searchable;
+use Stackra\Database\Attributes\Sluggable;
+use Stackra\Database\Attributes\Translatable;
+use Stackra\Database\Concerns\HasTranslations;
+use Stackra\Database\Concerns\Model\HasSlug;
 use Illuminate\Database\Eloquent\Model;
 
 #[Sluggable(source: 'name')]
@@ -192,12 +192,12 @@ Schema::create('products', function (Blueprint $table) {
 
 ## Related
 
-- Query surface (repositories, services, controllers): `academorix/crud`
-- Service-provider base: `academorix/foundation`
+- Query surface (repositories, services, controllers): `stackra/crud`
+- Service-provider base: `stackra/foundation`
 - Attribute discovery runtime: `olvlvl/composer-attribute-collector`
 
 ## Testing
 
 ```bash
-pnpm turbo run test --filter=@academorix/database
+pnpm turbo run test --filter=@stackra/database
 ```

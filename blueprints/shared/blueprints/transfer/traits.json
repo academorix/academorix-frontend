@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/transfer/traits",
+  "id": "stackra://modules/transfer/traits",
   "$version": 1,
   "title": "transfer \u2014 trait composition",
   "description": "Owns `HasImportable` + `HasExportable` \u2014 the opt-in traits models pull in alongside their #[Importable] / #[Exportable] attribute. Also owns the trait composition on our own XferJob + XferShard + XferArtifact + XferMappingProfile.",
   "owned": [
     {
-      "trait": "Academorix\\Transfer\\Concerns\\HasImportable",
+      "trait": "Stackra\\Transfer\\Concerns\\HasImportable",
       "description": "Opt-in trait for models registering with the import pipeline. Wires the paired #[Importable] attribute + #[ImportField] / #[TransferField] class-level attributes into the EntityRegistry at compile time; provides `->importScope()` + `->importSchema()` runtime accessors.",
       "public": true,
       "usedBy": [
@@ -19,7 +19,7 @@
       ]
     },
     {
-      "trait": "Academorix\\Transfer\\Concerns\\HasExportable",
+      "trait": "Stackra\\Transfer\\Concerns\\HasExportable",
       "description": "Symmetric opt-in trait for the export pipeline. Wires #[Exportable] + #[ExportField] / #[TransferField] class-level attributes into the EntityRegistry; provides `->exportScope()` + `->exportSchema()` accessors.",
       "public": true,
       "usedBy": ["any domain module opting a model into exports"],
@@ -43,28 +43,28 @@
     ],
     "foundation": [
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasMetadata",
+        "trait": "Stackra\\Foundation\\Concerns\\HasMetadata",
         "usedBy": ["XferJob"],
         "reason": "Free-form platform notes on the operation record."
       }
     ],
     "tenants": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
         "usedBy": ["XferJob", "XferShard", "XferArtifact", "XferMappingProfile"],
         "reason": "Tenant scoping across the module."
       }
     ],
     "activity": [
       {
-        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
         "usedBy": ["XferJob", "XferMappingProfile"],
         "reason": "Every XferJob status transition writes a product-feed row. Mapping-profile CRUD writes too."
       }
     ],
     "audit": [
       {
-        "trait": "Academorix\\Audit\\Concerns\\HasAudit",
+        "trait": "Stackra\\Audit\\Concerns\\HasAudit",
         "usedBy": ["XferJob"],
         "reason": "Every XferJob status transition writes a compliance-grade audit row. Values redact PII per data-classes.json."
       }

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Actions\Tenant;
+namespace Stackra\Domains\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Domains\Contracts\Data\DomainInterface;
-use Academorix\Domains\Contracts\Repositories\DomainRepositoryInterface;
-use Academorix\Domains\Data\DomainData;
-use Academorix\Domains\Data\Requests\CreateDomainRequestData;
-use Academorix\Domains\Enums\DomainsPermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Domains\Contracts\Data\DomainInterface;
+use Stackra\Domains\Contracts\Repositories\DomainRepositoryInterface;
+use Stackra\Domains\Data\DomainData;
+use Stackra\Domains\Data\Requests\CreateDomainRequestData;
+use Stackra\Domains\Enums\DomainsPermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 
 /**
  * `POST /api/v1/tenant/domains` — tenant admin adds a custom domain.

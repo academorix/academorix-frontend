@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/subscription/routes",
+  "id": "stackra://modules/subscription/routes",
   "$version": 1,
   "title": "subscription \u2014 HTTP routes",
   "description": "Tenant owner self-serve + platform admin plan catalogue + Cashier webhook receivers.",
@@ -22,53 +22,53 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Tenant\\SubscriptionController@show",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Tenant\\SubscriptionController@show",
           "permission": "subscription.view"
         },
         {
           "method": "GET",
           "path": "/invoices",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Tenant\\SubscriptionController@invoices",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Tenant\\SubscriptionController@invoices",
           "permission": "subscription.view.invoices"
         },
         {
           "method": "GET",
           "path": "/upcoming-invoice",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Tenant\\SubscriptionController@upcomingInvoice",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Tenant\\SubscriptionController@upcomingInvoice",
           "permission": "subscription.view.invoices"
         },
         {
           "method": "POST",
           "path": "/checkout",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Tenant\\SubscriptionController@checkout",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Tenant\\SubscriptionController@checkout",
           "permission": "subscription.manage",
           "description": "Body: { plan_id }. Returns Cashier checkout session URL (Stripe) or Paddle checkout link. Client redirects."
         },
         {
           "method": "POST",
           "path": "/swap",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Tenant\\SubscriptionController@swap",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Tenant\\SubscriptionController@swap",
           "permission": "subscription.manage",
           "description": "Body: { plan_id, prorate }. Instant plan swap for existing subscription. Fires SubscriptionUpgraded/Downgraded."
         },
         {
           "method": "POST",
           "path": "/cancel",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Tenant\\SubscriptionController@cancel",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Tenant\\SubscriptionController@cancel",
           "permission": "subscription.manage",
           "description": "Body: { at_period_end: bool, reason?: string }. Sets cancel_at_period_end=true or cancels immediately."
         },
         {
           "method": "POST",
           "path": "/resume",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Tenant\\SubscriptionController@resume",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Tenant\\SubscriptionController@resume",
           "permission": "subscription.manage",
           "description": "Reinstate a pending cancellation (cancel_at_period_end=true but not yet effective)."
         },
         {
           "method": "GET",
           "path": "/portal",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Tenant\\SubscriptionController@portal",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Tenant\\SubscriptionController@portal",
           "permission": "subscription.manage",
           "description": "Redirect to Cashier's customer portal (Stripe Customer Portal / Paddle Portal)."
         }
@@ -92,14 +92,14 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Tenant\\PlanController@index",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Tenant\\PlanController@index",
           "permission": "plans.viewAny",
           "description": "Lists is_public=true plans for the tenant's Application."
         },
         {
           "method": "GET",
           "path": "/{plan}",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Tenant\\PlanController@show",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Tenant\\PlanController@show",
           "permission": "plans.view"
         }
       ]
@@ -121,31 +121,31 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Platform\\PlanController@index",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Platform\\PlanController@index",
           "permission": "platform.plans.viewAny"
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Platform\\PlanController@store",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Platform\\PlanController@store",
           "permission": "platform.plans.create"
         },
         {
           "method": "GET",
           "path": "/{plan}",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Platform\\PlanController@show",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Platform\\PlanController@show",
           "permission": "platform.plans.view"
         },
         {
           "method": "PATCH",
           "path": "/{plan}",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Platform\\PlanController@update",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Platform\\PlanController@update",
           "permission": "platform.plans.update"
         },
         {
           "method": "DELETE",
           "path": "/{plan}",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Platform\\PlanController@archive",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Platform\\PlanController@archive",
           "permission": "platform.plans.archive",
           "description": "Soft delete. Refused when active subscriptions exist."
         }
@@ -168,26 +168,26 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Platform\\SubscriptionController@index",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Platform\\SubscriptionController@index",
           "permission": "platform.subscriptions.viewAny"
         },
         {
           "method": "GET",
           "path": "/{subscription}",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Platform\\SubscriptionController@show",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Platform\\SubscriptionController@show",
           "permission": "platform.subscriptions.view"
         },
         {
           "method": "POST",
           "path": "/{tenant}/enterprise-invoice",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Platform\\SubscriptionController@enterpriseInvoice",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Platform\\SubscriptionController@enterpriseInvoice",
           "permission": "platform.subscriptions.enterprise",
           "description": "Body: { plan_id, invoice_number, due_date, notes }. Creates a billing_mode=invoice Subscription without Cashier."
         },
         {
           "method": "POST",
           "path": "/{tenant}/force-state",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Platform\\SubscriptionController@forceState",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Platform\\SubscriptionController@forceState",
           "permission": "platform.subscriptions.force-state",
           "description": "Emergency state override. Every use audit-logged with reason."
         }
@@ -203,13 +203,13 @@
         {
           "method": "POST",
           "path": "/stripe",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Webhook\\StripeWebhookController@handle",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Webhook\\StripeWebhookController@handle",
           "description": "Stripe events. Signature verified via webhook module."
         },
         {
           "method": "POST",
           "path": "/paddle",
-          "controller": "Academorix\\Subscription\\Http\\Controllers\\Webhook\\PaddleWebhookController@handle",
+          "controller": "Stackra\\Subscription\\Http\\Controllers\\Webhook\\PaddleWebhookController@handle",
           "description": "Paddle events."
         }
       ]

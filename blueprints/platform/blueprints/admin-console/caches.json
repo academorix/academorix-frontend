@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/admin-console/caches",
+  "id": "stackra://modules/admin-console/caches",
   "$version": 1,
   "title": "admin-console — cache keys",
   "description": "Cache keys the module owns + TTLs + invalidation triggers + tags.",

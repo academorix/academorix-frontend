@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coaching\Exceptions;
+namespace Stackra\Coaching\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The tenant's tier does not permit cross-branch assignments (Medium+ required).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CoachingMultiBranchNotEnabledException extends AcademorixException
+final class CoachingMultiBranchNotEnabledException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

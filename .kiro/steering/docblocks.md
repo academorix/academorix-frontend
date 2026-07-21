@@ -7,7 +7,7 @@ fileMatchPattern: "**/*.php"
 
 Three files are the canonical references. Match their style:
 
-- **Procedural / config files** → `academorix-backend/apps/api/config/auth.php`
+- **Procedural / config files** → `stackra-backend/apps/api/config/auth.php`
   (file-level `@file` + `@description`, section-comment banners inside)
 - **Factory classes** →
   `old/backend/modules/reviewing/Access/database/factories/PermissionFactory.php`
@@ -18,7 +18,7 @@ Three files are the canonical references. Match their style:
   (class docblock with `## What this class owns`, per-method `{@inheritDoc}` +
   supplement)
 - **Enum with metadata attributes** →
-  `academorix-backend/packages/framework/enum/src/Enum.php` (`@category`,
+  `stackra-backend/packages/framework/enum/src/Enum.php` (`@category`,
   `@since`, `@author` Magento-style tags on shared library code)
 
 Read those before writing anything. Rules below generalise what they codify.
@@ -230,7 +230,7 @@ return [
 
 declare(strict_types=1);
 
-use Academorix\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
+use Stackra\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -275,9 +275,9 @@ is one shape or the other.
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Enums;
+namespace Stackra\FeatureFlags\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Explicit allow/deny decision persisted on `feature_overrides` rows.
@@ -329,12 +329,12 @@ case whenever consumers need a human-readable label or a longer description.
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Enums;
+namespace Stackra\FeatureFlags\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
  * Registry-level classification of a feature flag.
@@ -401,7 +401,7 @@ enum FlagKind: string
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Contracts\Data;
+namespace Stackra\FeatureFlags\Contracts\Data;
 
 /**
  * Table shape for the `feature_overrides` table.
@@ -464,11 +464,11 @@ interface FeatureOverrideInterface
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Contracts\Repositories;
+namespace Stackra\FeatureFlags\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\FeatureFlags\Models\FeatureOverride;
-use Academorix\FeatureFlags\Support\ScopePath;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\FeatureFlags\Models\FeatureOverride;
+use Stackra\FeatureFlags\Support\ScopePath;
 
 /**
  * Repository contract for {@see FeatureOverride}.
@@ -513,9 +513,9 @@ interface FeatureOverrideRepositoryInterface extends RepositoryInterface
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Database\Factories;
+namespace Stackra\FeatureFlags\Database\Factories;
 
-use Academorix\FeatureFlags\Models\FeatureOverride;
+use Stackra\FeatureFlags\Models\FeatureOverride;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -559,13 +559,13 @@ final class FeatureOverrideFactory extends Factory
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Repositories;
+namespace Stackra\FeatureFlags\Repositories;
 
-use Academorix\Crud\Repositories\AbstractEloquentRepository;
-use Academorix\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureOverrideRepositoryInterface;
-use Academorix\FeatureFlags\Models\FeatureOverride;
-use Academorix\FeatureFlags\Support\ScopePath;
+use Stackra\Crud\Repositories\AbstractEloquentRepository;
+use Stackra\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureOverrideRepositoryInterface;
+use Stackra\FeatureFlags\Models\FeatureOverride;
+use Stackra\FeatureFlags\Support\ScopePath;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -628,9 +628,9 @@ final class EloquentFeatureOverrideRepository extends AbstractEloquentRepository
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Resolver;
+namespace Stackra\FeatureFlags\Resolver;
 
-use Academorix\FeatureFlags\Enums\ResolutionSource;
+use Stackra\FeatureFlags\Enums\ResolutionSource;
 
 /**
  * Outcome of a single flag evaluation.
@@ -678,9 +678,9 @@ final readonly class FeatureResolution
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Attributes;
+namespace Stackra\FeatureFlags\Attributes;
 
-use Academorix\FeatureFlags\Enums\FlagKind;
+use Stackra\FeatureFlags\Enums\FlagKind;
 use Attribute;
 
 /**
@@ -723,9 +723,9 @@ final readonly class AsFeatureFlag
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Exceptions;
+namespace Stackra\FeatureFlags\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a required feature is off for the current caller.
@@ -739,7 +739,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class FeatureDisabledException extends AcademorixException
+final class FeatureDisabledException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.
@@ -772,13 +772,13 @@ final class FeatureDisabledException extends AcademorixException
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Models;
+namespace Stackra\FeatureFlags\Models;
 
-use Academorix\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
-use Academorix\FeatureFlags\Database\Factories\FeatureOverrideFactory;
-use Academorix\FeatureFlags\Enums\OverrideDecision;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
+use Stackra\FeatureFlags\Database\Factories\FeatureOverrideFactory;
+use Stackra\FeatureFlags\Enums\OverrideDecision;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -854,7 +854,7 @@ final class FeatureOverride extends Model implements AuditableContract, FeatureO
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Actions\Overrides;
+namespace Stackra\FeatureFlags\Actions\Overrides;
 
 // ...
 
@@ -910,7 +910,7 @@ final class CreateOverride
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Concerns;
+namespace Stackra\FeatureFlags\Concerns;
 
 /**
  * Attach to any AI tool class to gate its visibility behind a feature flag.
@@ -948,7 +948,7 @@ Laravel Data. Every field carries Spatie validation + mapping attributes; no
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Data\Requests;
+namespace Stackra\FeatureFlags\Data\Requests;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Between;
@@ -1012,7 +1012,7 @@ final class CreateOverrideRequestData extends Data
 | Method without docblock (any visibility)                      | 1-line docblock minimum + `@return`                                                               |
 | `public const CODE = 'x'` without docblock                    | Add `/** One-line description. */` — the ONE exception is `ATTR_*` on `Contracts/Data/*Interface` |
 | `protected $model = X::class;` without `@var class-string<X>` | Add `@var class-string<Model>`                                                                    |
-| Enum without `use Enum;`                                      | Every enum composes `Academorix\Enum\Enum`                                                        |
+| Enum without `use Enum;`                                      | Every enum composes `Stackra\Enum\Enum`                                                        |
 | Enum with `#[Label]` on one case but not others               | All-or-nothing rule (§Universal 8)                                                                |
 | `@param string $flag The flag.` restating the signature       | Skip `@param` OR add a constraint / consumer to justify it                                        |
 | `@return Model` without concrete class                        | `@return FeatureOverride                                                                          | null` (concrete + generic) |

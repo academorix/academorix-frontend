@@ -1,10 +1,10 @@
 {
-  "name": "academorix-platform/reporting-sdk",
+  "name": "stackra-platform/reporting-sdk",
   "type": "library",
-  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `reporting` module of the Platform service. Auto-discovered at boot by academorix/platform-sdk via #[AsSdkResource(name: 'reporting', service: 'platform')]; consumed by every cross-service caller strictly over HTTP.",
+  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `reporting` module of the Platform service. Auto-discovered at boot by stackra/platform-sdk via #[AsSdkResource(name: 'reporting', service: 'platform')]; consumed by every cross-service caller strictly over HTTP.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "sdk",
     "saloon",
     "spatie-data",
@@ -16,10 +16,10 @@
   ],
   "require": {
     "php": "^8.3",
-    "academorix/api-sdk": "@dev",
-    "academorix/enum": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
+    "stackra/api-sdk": "@dev",
+    "stackra/enum": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
     "saloonphp/saloon": "^3.10",
     "spatie/laravel-data": "^4.11"
   },
@@ -32,12 +32,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\\\PlatformReportingSdk\\\\": "src/"
+      "Stackra\\\\PlatformReportingSdk\\\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\\\PlatformReportingSdk\\\\Tests\\\\": "tests/"
+      "Stackra\\\\PlatformReportingSdk\\\\Tests\\\\": "tests/"
     }
   },
   "extra": {

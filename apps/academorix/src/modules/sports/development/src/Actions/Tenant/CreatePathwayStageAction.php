@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Development\Actions\Tenant;
+namespace Stackra\Development\Actions\Tenant;
 
-use Academorix\Development\Contracts\Repositories\PathwayStageRepositoryInterface;
-use Academorix\Development\Data\PathwayStageData;
-use Academorix\Development\Data\Requests\CreatePathwayStageRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Development\Contracts\Repositories\PathwayStageRepositoryInterface;
+use Stackra\Development\Data\PathwayStageData;
+use Stackra\Development\Data\Requests\CreatePathwayStageRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/pathway-stages` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Development

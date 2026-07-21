@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/facility/attributes",
+  "id": "stackra://modules/facility/attributes",
   "$version": 1,
   "title": "facility — PHP attribute contracts",
   "description": "Three class-level attributes for listener discovery. No property-level attributes: the four owned rows (Facility, ResourceBooking, DayPass, Pass) use ordinary Eloquent + spatie/laravel-data class attributes shipped by foundation. `#[AsFacilityListener]` subscribes to facility-catalogue events (create / retire / blackout / pricing / availability). `#[AsBookingListener]` subscribes to booking-lifecycle events (create / cancel / no-show / complete / overlap-detected). `#[AsPassListener]` subscribes to both DayPass AND Pass events. Discovery loader picks up each class at boot + wires the declared events.",
-  "namespace": "Academorix\\Facility\\Attributes",
+  "namespace": "Stackra\\Facility\\Attributes",
   "attributes": [
     {
       "name": "AsFacilityListener",
-      "class": "Academorix\\Facility\\Attributes\\AsFacilityListener",
+      "class": "Stackra\\Facility\\Attributes\\AsFacilityListener",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a service as a subscriber to facility-catalogue lifecycle events (FacilityCreated / FacilityUpdated / FacilityStatusChanged / FacilityPricingUpdated / FacilityBlackoutAdded / FacilityBlackoutRemoved / FacilityAvailabilityChanged / FacilityRetired).",
@@ -16,7 +16,7 @@
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Array of event short names (`FacilityCreated`, `FacilityRetired`, `FacilityBlackoutAdded`, …). Empty = subscribe to every `Academorix\\Facility\\Events\\Facility*` event. Names resolve against events.json at boot; typos abort boot with a discovery error."
+          "description": "Array of event short names (`FacilityCreated`, `FacilityRetired`, `FacilityBlackoutAdded`, …). Empty = subscribe to every `Stackra\\Facility\\Events\\Facility*` event. Names resolve against events.json at boot; typos abort boot with a discovery error."
         },
         {
           "name": "queue",
@@ -35,7 +35,7 @@
     },
     {
       "name": "AsBookingListener",
-      "class": "Academorix\\Facility\\Attributes\\AsBookingListener",
+      "class": "Stackra\\Facility\\Attributes\\AsBookingListener",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a service as a subscriber to booking-lifecycle events (BookingCreated / BookingConfirmed / BookingCancelled / BookingCompleted / BookingMarkedNoShow / BookingRescheduled / BookingOverlapDetected / BookingCheckedIn). BookingOverlapDetected is CRITICAL — it means overlap-detection failed and a double-booking exists; consumers of that event MUST alert ops immediately.",
@@ -44,7 +44,7 @@
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Empty = subscribe to every `Academorix\\Facility\\Events\\Booking*` event."
+          "description": "Empty = subscribe to every `Stackra\\Facility\\Events\\Booking*` event."
         },
         {
           "name": "queue",
@@ -62,7 +62,7 @@
     },
     {
       "name": "AsPassListener",
-      "class": "Academorix\\Facility\\Attributes\\AsPassListener",
+      "class": "Stackra\\Facility\\Attributes\\AsPassListener",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a service as a subscriber to Pass + DayPass lifecycle events (PassIssued / PassCreditConsumed / PassExhausted / PassExpired / PassTransferred / PassRevoked / DayPassIssued / DayPassConsumed / DayPassExpired / DayPassRefunded). The two entity types share this attribute because most bridging consumers care about the union (Finance module attributes revenue for both alike, Notifications module renders both alike).",
@@ -71,7 +71,7 @@
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Empty = subscribe to every `Academorix\\Facility\\Events\\Pass*` AND `Academorix\\Facility\\Events\\DayPass*` event."
+          "description": "Empty = subscribe to every `Stackra\\Facility\\Events\\Pass*` AND `Stackra\\Facility\\Events\\DayPass*` event."
         },
         {
           "name": "queue",

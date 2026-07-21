@@ -13,7 +13,7 @@
  *
  * ## Interaction with the layer resolver
  *
- * The {@see \Academorix\Architecture\Support\LayerResolver} walks
+ * The {@see \Stackra\Architecture\Support\LayerResolver} walks
  * three signals in priority order:
  *
  *   1. **This attribute** or {@see Repository} / {@see Service} /
@@ -29,7 +29,7 @@
  * ## Usage
  *
  * ```php
- * use Academorix\Architecture\Attributes\Domain;
+ * use Stackra\Architecture\Attributes\Domain;
  *
  * #[Domain]
  * class TenantSettings
@@ -45,7 +45,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Attributes;
+namespace Stackra\Architecture\Attributes;
 
 use Attribute;
 

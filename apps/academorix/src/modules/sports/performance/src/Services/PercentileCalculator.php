@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Performance\Services;
+namespace Stackra\Performance\Services;
 
-use Academorix\Performance\Contracts\Services\PercentileCalculatorInterface;
+use Stackra\Performance\Contracts\Services\PercentileCalculatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Performance\Contracts\Repositories\BenchmarkRepositoryInterface;
+use Stackra\Performance\Contracts\Repositories\BenchmarkRepositoryInterface;
 
 /**
  * Concrete service — PercentileCalculator.

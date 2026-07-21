@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/staff/traits",
+  "id": "stackra://modules/staff/traits",
   "$version": 1,
   "title": "staff — trait composition",
   "description": "Four owned traits. `BelongsToStaff` is the FK trait for downstream models (TeamMember, Session, ShiftAssignment); `BelongsToCoach` for coach-scoped rows. `WrapsUser` is a Staff-specific mixin that adds the User relation + delegated PII accessors (surface layer for full_name / email / phone / avatar / locale — matches how Profile relates to User in the user module). `HasCoachProfile` is the inverse-side convenience on Staff for `->coach()` hasOne. Order matters when composed with `BelongsToTenant` / `BelongsToBranch` — tenant MUST come first so scope chains observe the tenant context; branch precedes the module-owned traits.",
   "owned": [
     {
-      "trait": "Academorix\\Staff\\Concerns\\BelongsToStaff",
+      "trait": "Stackra\\Staff\\Concerns\\BelongsToStaff",
       "description": "Mixed into any domain model that carries a `staff_id` FK. Adds the `staff()` belongsTo relation, a `resolveOnStaff(?Staff)` query scope that filters `WHERE staff_id = ?` (falling back to the caller's `Request::activeStaff()` when the arg is omitted), and a `booted()` hook that fills `staff_id = active_staff_id()` on `creating` when the field is null AND the current request carries a resolved active staff (rare — used by CLI + admin flows). Refuses to save a row whose `staff_id` points at a Staff in a different tenant than the row itself (defense-in-depth against cross-tenant FK smuggling).",
       "public": true,
       "usedBy": [
@@ -23,7 +23,7 @@
       ]
     },
     {
-      "trait": "Academorix\\Staff\\Concerns\\BelongsToCoach",
+      "trait": "Stackra\\Staff\\Concerns\\BelongsToCoach",
       "description": "Mixed into any domain model that carries a `coach_id` FK. Adds the `coach()` belongsTo relation + a `resolveOnCoach(?Coach)` query scope. Refuses cross-tenant coach references at save time (same defense-in-depth pattern as BelongsToStaff).",
       "public": true,
       "usedBy": [
@@ -34,7 +34,7 @@
       "conflicts_with": []
     },
     {
-      "trait": "Academorix\\Staff\\Concerns\\WrapsUser",
+      "trait": "Stackra\\Staff\\Concerns\\WrapsUser",
       "description": "Composed onto the Staff model itself. Adds `user()` belongsTo relation + a family of delegated accessors that pull from User + Profile (full_name / display_name / email / phone_e164 / avatar_url / locale / timezone) with fallbacks to Branch → Region defaults for locale + timezone. Callers rarely reach through to Staff->user->profile directly; the accessors keep the PII cluster behind one redactor boundary. Also exposes a `withDelegatedProfile()` eager-load scope that joins User + Profile in a single query — used by the /api/v1/staff read paths.",
       "public": true,
       "usedBy": ["staff::Staff (composed on the model)"],
@@ -43,7 +43,7 @@
       ]
     },
     {
-      "trait": "Academorix\\Staff\\Concerns\\HasCoachProfile",
+      "trait": "Stackra\\Staff\\Concerns\\HasCoachProfile",
       "description": "Composed onto the Staff model. Adds `->coach()` hasOne over Coach filtered by `staff_id = self.id` (single row per staff at a time; enforced by unique index). Also exposes `->isCoach(): bool` (true when the hasOne resolves to a live Coach), `->activeCoach(): ?Coach` (nullable when coach.status != 'active').",
       "public": true,
       "usedBy": ["staff::Staff"]
@@ -63,39 +63,39 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
     "tenants": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
         "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
       }
     ],
     "branch": [
       {
-        "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch",
+        "trait": "Stackra\\Branch\\Concerns\\BelongsToBranch",
         "reason": "Staff carries branch_id directly. Coach does NOT — it cascades through staff.branch_id."
       }
     ],
     "user": [
       {
-        "trait": "Academorix\\User\\Concerns\\BelongsToUser",
+        "trait": "Stackra\\User\\Concerns\\BelongsToUser",
         "reason": "Staff carries user_id + composes BelongsToUser for the .own scope suffix. `staff.view.own` narrows to `WHERE user_id = current_user_id`."
       }
     ],
     "audit": [
       {
-        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "trait": "Stackra\\Audit\\Concerns\\Auditable",
         "reason": "Every mutation to staff / coaches is compliance-relevant. Compensation columns write to a SEPARATE audit table (`staff_compensation_history`) with 7-year retention gated at row-level by the CompensationGate binding."
       }
     ],
     "activity": [
       {
-        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
         "reason": "Staff lifecycle transitions + coach-status + certification adds feed the tenant activity feed. Compensation changes DO NOT feed activity (private-tier)."
       }
     ]

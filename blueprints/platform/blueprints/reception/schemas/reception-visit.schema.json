@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/reception/schemas/reception-visit",
+  "id": "stackra://modules/reception/schemas/reception-visit",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ReceptionVisit",

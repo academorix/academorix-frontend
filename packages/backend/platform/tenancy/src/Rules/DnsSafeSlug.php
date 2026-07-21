@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Rules;
+namespace Stackra\Tenancy\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;

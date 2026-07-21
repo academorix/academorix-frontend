@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Attributes;
+namespace Stackra\Storage\Attributes;
 
 use Attribute;
 

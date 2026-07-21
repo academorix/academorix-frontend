@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Services;
+namespace Stackra\Geography\Services;
 
-use Academorix\Geography\Contracts\Services\GeolocateServiceInterface;
+use Stackra\Geography\Contracts\Services\GeolocateServiceInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Geography\Contracts\Repositories\CityRepositoryInterface;
+use Stackra\Geography\Contracts\Repositories\CityRepositoryInterface;
 
 /**
  * Concrete service — GeolocateService.

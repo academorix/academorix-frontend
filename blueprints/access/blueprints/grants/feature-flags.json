@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/grants/feature-flags",
+  "id": "stackra://modules/grants/feature-flags",
   "$version": 1,
   "title": "grants — rollout flags",
   "description": "Rollout / change-management flags for THIS module. Distinct from `features.json` (business-tier features gated by entitlement + plan). Every material change ships behind a flag per SOC 2 CC8.1.",

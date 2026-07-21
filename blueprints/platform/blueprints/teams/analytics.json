@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/teams/analytics",
+  "id": "stackra://modules/teams/analytics",
   "$version": 1,
   "title": "teams — product analytics",
   "sink": "segment",

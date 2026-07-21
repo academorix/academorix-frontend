@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Repositories;
+namespace Stackra\Newsletter\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Newsletter\Contracts\Data\NewsletterIssueInterface;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterIssueRepositoryInterface;
-use Academorix\Newsletter\Models\NewsletterIssue;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Newsletter\Contracts\Data\NewsletterIssueInterface;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterIssueRepositoryInterface;
+use Stackra\Newsletter\Models\NewsletterIssue;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Newsletter\Models\NewsletterIssue}.
+ * Attribute-first Eloquent repository for {@see Stackra\Newsletter\Models\NewsletterIssue}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(NewsletterIssueInterface::class)]` which resolves to
  * `NewsletterIssue` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Newsletter\Models\NewsletterIssue>
+ * @extends Repository<\Stackra\Newsletter\Models\NewsletterIssue>
  *
  * @category Newsletter
  *

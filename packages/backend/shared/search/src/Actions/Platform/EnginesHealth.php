@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Actions\Platform;
+namespace Stackra\Search\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Search\Enums\SearchPermission;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Search\Enums\SearchPermission;
 
 /**
  * `GET /api/v1/platform/search/engines/health` — live engine reachability.

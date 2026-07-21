@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/integrations/relations",
+  "id": "stackra://modules/integrations/relations",
   "$version": 1,
   "title": "integrations — model relationships",
   "description": "Single-entity module; only relation is Tenant -> TenantIntegration (1:N — one tenant can configure many integrations across different providers).",

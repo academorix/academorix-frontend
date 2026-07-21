@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\DigitalPasses\Actions\Tenant;
+namespace Stackra\DigitalPasses\Actions\Tenant;
 
-use Academorix\DigitalPasses\Contracts\Repositories\WalletPassRepositoryInterface;
-use Academorix\DigitalPasses\Data\WalletPassData;
-use Academorix\DigitalPasses\Data\Requests\CreateWalletPassRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\DigitalPasses\Contracts\Repositories\WalletPassRepositoryInterface;
+use Stackra\DigitalPasses\Data\WalletPassData;
+use Stackra\DigitalPasses\Data\Requests\CreateWalletPassRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/wallet-passes` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category DigitalPasses

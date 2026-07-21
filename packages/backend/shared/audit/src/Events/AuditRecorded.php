@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Events;
+namespace Stackra\Audit\Events;
 
-use Academorix\Audit\Models\Audit;
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Audit\Models\Audit;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 
 /**
  * Dispatched when a new audit row is persisted.
  *
- * Emitted from {@see \Academorix\Audit\Observers\AuditObserver::created()}
+ * Emitted from {@see \Stackra\Audit\Observers\AuditObserver::created()}
  * so downstream consumers (observability metrics, compliance
  * pipelines) can react without subscribing to owen-it's own event
  * shape.

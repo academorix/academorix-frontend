@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Contracts\Services;
+namespace Stackra\Integrations\Contracts\Services;
 
-use Academorix\Integrations\Services\AppWebhookDispatcher;
+use Stackra\Integrations\Services\AppWebhookDispatcher;
 use Illuminate\Container\Attributes\Bind;
 
 /**

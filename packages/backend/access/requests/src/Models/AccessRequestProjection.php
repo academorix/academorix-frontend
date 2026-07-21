@@ -4,15 +4,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Requests\Models;
+namespace Stackra\Requests\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Requests\Contracts\Data\AccessRequestProjectionInterface;
-use Academorix\Requests\Database\Factories\AccessRequestProjectionFactory;
+use Stackra\Requests\Contracts\Data\AccessRequestProjectionInterface;
+use Stackra\Requests\Database\Factories\AccessRequestProjectionFactory;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 

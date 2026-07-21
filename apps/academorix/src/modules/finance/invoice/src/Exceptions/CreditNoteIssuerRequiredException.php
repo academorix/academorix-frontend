@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invoice\Exceptions;
+namespace Stackra\Invoice\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `CREDIT_NOTE_ISSUER_REQUIRED` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CreditNoteIssuerRequiredException extends AcademorixException
+final class CreditNoteIssuerRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

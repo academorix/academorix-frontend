@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Retention\Enums;
+namespace Stackra\Retention\Enums;
 
-use Academorix\Enum\Enum;
-use Academorix\Retention\Runner\RetentionRunner;
+use Stackra\Enum\Enum;
+use Stackra\Retention\Runner\RetentionRunner;
 
 /**
  * The concrete action a retention policy takes on rows past their

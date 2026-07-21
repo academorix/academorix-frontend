@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/offline-sync/rules",
+  "id": "stackra://modules/offline-sync/rules",
   "$version": 1,
   "title": "offline-sync — validation rules",
   "description": "Named validation rules this module ships (registered via Validator::extend).",

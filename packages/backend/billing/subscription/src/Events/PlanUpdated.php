@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Events;
+namespace Stackra\Subscription\Events;
 
-use Academorix\Events\Attributes\AsEvent;
-use Academorix\Subscription\Models\Plan;
+use Stackra\Events\Attributes\AsEvent;
+use Stackra\Subscription\Models\Plan;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 

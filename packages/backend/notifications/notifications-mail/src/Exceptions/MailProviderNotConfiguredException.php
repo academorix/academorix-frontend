@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Exceptions;
+namespace Stackra\Notifications\Mail\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a send resolves a mailer that isn't defined in
@@ -23,7 +23,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MailProviderNotConfiguredException extends AcademorixException
+final class MailProviderNotConfiguredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

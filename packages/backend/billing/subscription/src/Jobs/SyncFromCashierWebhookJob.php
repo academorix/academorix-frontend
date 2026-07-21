@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Jobs;
+namespace Stackra\Subscription\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;

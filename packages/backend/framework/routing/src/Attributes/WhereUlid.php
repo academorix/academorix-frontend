@@ -11,7 +11,7 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use Spatie\RouteAttributes\Attributes\WhereUlid as SpatieWhereUlid;
@@ -29,8 +29,8 @@ use Spatie\RouteAttributes\Attributes\WhereUlid as SpatieWhereUlid;
  *
  * ## Usage:
  * ```php
- * use Academorix\Routing\Attributes\WhereUlid;
- * use Academorix\Routing\Attributes\Get;
+ * use Stackra\Routing\Attributes\WhereUlid;
+ * use Stackra\Routing\Attributes\Get;
  *
  * class OrderController
  * {

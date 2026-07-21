@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsProgressSdk\Resources;
+namespace Stackra\SportsProgressSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsProgressSdk\Data\CoachNoteData;
-use Academorix\SportsProgressSdk\Requests\CoachNotes\CreateCoachNoteRequest;
-use Academorix\SportsProgressSdk\Requests\CoachNotes\ListCoachNotesRequest;
-use Academorix\SportsProgressSdk\Requests\CoachNotes\UpdateCoachNoteRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsProgressSdk\Data\CoachNoteData;
+use Stackra\SportsProgressSdk\Requests\CoachNotes\CreateCoachNoteRequest;
+use Stackra\SportsProgressSdk\Requests\CoachNotes\ListCoachNotesRequest;
+use Stackra\SportsProgressSdk\Requests\CoachNotes\UpdateCoachNoteRequest;
 use Saloon\Http\Response;
 
 /**
@@ -56,7 +56,7 @@ final readonly class CoachNotesResource
      *
      * @return CoachNoteData
      */
-    public function create(\Academorix\SportsProgressSdk\Payloads\CoachNotes\CreateCoachNotePayload $payload, ?string $idempotencyKey = null): CoachNoteData
+    public function create(\Stackra\SportsProgressSdk\Payloads\CoachNotes\CreateCoachNotePayload $payload, ?string $idempotencyKey = null): CoachNoteData
     {
         return $this->connector->send(new CreateCoachNoteRequest($payload, $idempotencyKey))->dto();
     }
@@ -71,7 +71,7 @@ final readonly class CoachNotesResource
      *
      * @return CoachNoteData
      */
-    public function update(string $note, \Academorix\SportsProgressSdk\Payloads\CoachNotes\UpdateCoachNotePayload $payload, ?string $idempotencyKey = null): CoachNoteData
+    public function update(string $note, \Stackra\SportsProgressSdk\Payloads\CoachNotes\UpdateCoachNotePayload $payload, ?string $idempotencyKey = null): CoachNoteData
     {
         return $this->connector->send(new UpdateCoachNoteRequest($note, $payload, $idempotencyKey))->dto();
     }

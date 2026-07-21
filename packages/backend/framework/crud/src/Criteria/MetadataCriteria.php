@@ -12,15 +12,15 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Crud\Criteria;
+namespace Stackra\Crud\Criteria;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Academorix\Crud\Attributes\AsCriteria;
-use Academorix\Database\Attributes\Metadatable;
-use Academorix\Crud\Contracts\CriteriaInterface;
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Attributes\AsCriteria;
+use Stackra\Database\Attributes\Metadatable;
+use Stackra\Crud\Contracts\CriteriaInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
  * Metadata Criteria.

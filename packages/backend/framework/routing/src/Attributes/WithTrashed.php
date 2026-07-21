@@ -11,7 +11,7 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use Spatie\RouteAttributes\Attributes\WithTrashed as SpatieWithTrashed;
@@ -29,9 +29,9 @@ use Spatie\RouteAttributes\Attributes\WithTrashed as SpatieWithTrashed;
  *
  * ## Usage:
  * ```php
- * use Academorix\Routing\Attributes\WithTrashed;
- * use Academorix\Routing\Attributes\Get;
- * use Academorix\Routing\Attributes\Post;
+ * use Stackra\Routing\Attributes\WithTrashed;
+ * use Stackra\Routing\Attributes\Get;
+ * use Stackra\Routing\Attributes\Post;
  *
  * class UserController
  * {

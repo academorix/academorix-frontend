@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/transaction/metrics",
+  "id": "stackra://modules/transaction/metrics",
   "$version": 1,
   "title": "transaction — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "academorix.transaction",
+  "namespace": "stackra.transaction",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": [
@@ -26,35 +26,35 @@
   },
   "metrics": [
     {
-      "name": "academorix.transaction.created_total",
+      "name": "stackra.transaction.created_total",
       "kind": "counter",
       "unit": "transactions",
       "labels": ["kind"],
       "description": "Number of transaction rows created (status='draft', pre-post). Rate signal for money-movement volume."
     },
     {
-      "name": "academorix.transaction.posted_total",
+      "name": "stackra.transaction.posted_total",
       "kind": "counter",
       "unit": "transactions",
       "labels": ["kind"],
       "description": "Number of transactions transitioned to status='posted' (ledger balanced + committed). The primary success metric."
     },
     {
-      "name": "academorix.transaction.reversed_total",
+      "name": "stackra.transaction.reversed_total",
       "kind": "counter",
       "unit": "reversals",
       "labels": ["reversal_reason"],
       "description": "Every reversal transaction created (from all four reversal_reason values). refund/chargeback are expected volumes; error_correction/accounting_adjustment should be near-zero + spikes are ops signals."
     },
     {
-      "name": "academorix.transaction.amendment_requested_total",
+      "name": "stackra.transaction.amendment_requested_total",
       "kind": "counter",
       "unit": "amendments",
       "labels": [],
       "description": "Every manual reversal via POST /transactions/{id}/reverse. Regulator-critical — ANY non-zero rate is a signal to investigate + review the ops workflow."
     },
     {
-      "name": "academorix.transaction.create_duration_ms",
+      "name": "stackra.transaction.create_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1, 5, 20, 100, 500, 2000],
@@ -62,7 +62,7 @@
       "description": "TransactionObserver.creating latency (advisory-lock acquire + validation + insert). Should stay < 100ms P99. Cross-currency transactions add ~200ms for the ExchangeRateResolver call."
     },
     {
-      "name": "academorix.transaction.post_duration_ms",
+      "name": "stackra.transaction.post_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1, 5, 20, 100, 500, 2000],
@@ -70,14 +70,14 @@
       "description": "TransactionObserver::finalize() latency (SUM(debits) == SUM(credits) check + status transition). Should stay < 50ms P99."
     },
     {
-      "name": "academorix.ledger.entries_recorded_total",
+      "name": "stackra.ledger.entries_recorded_total",
       "kind": "counter",
       "unit": "entries",
       "labels": ["account", "side"],
       "description": "side = 'debit' or 'credit'. Number of ledger entries recorded per account per side. Every transaction contributes at least one debit + one credit."
     },
     {
-      "name": "academorix.ledger.entry_amount_cents",
+      "name": "stackra.ledger.entry_amount_cents",
       "kind": "histogram",
       "unit": "cents",
       "buckets": [100, 1000, 10000, 100000, 1000000, 10000000, 100000000],
@@ -85,21 +85,21 @@
       "description": "Distribution of ledger entry amounts. Helps ops identify unusual movements (e.g. a $1M refund is worth reviewing manually)."
     },
     {
-      "name": "academorix.ledger.imbalances_detected_total",
+      "name": "stackra.ledger.imbalances_detected_total",
       "kind": "counter",
       "unit": "imbalances",
       "labels": ["scope", "detected_by"],
       "description": "CRITICAL. Every increment triggers PagerDuty P0. scope='per_transaction' (transaction-level imbalance at post time) / 'per_account_daily' (nightly reconciler) / 'global_tenant' (nightly reconciler). detected_by='observer' / 'reconciler_nightly' / 'reconciler_manual'. Should stay at 0."
     },
     {
-      "name": "academorix.ledger.reconciliation_runs_total",
+      "name": "stackra.ledger.reconciliation_runs_total",
       "kind": "counter",
       "unit": "runs",
       "labels": ["outcome"],
       "description": "outcome='balanced' / 'imbalanced'. Number of ReconcileLedgerBalancesJob completions. Regulator-facing SLA — one 'balanced' run per tenant per day."
     },
     {
-      "name": "academorix.ledger.reconciliation_duration_ms",
+      "name": "stackra.ledger.reconciliation_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1000, 10000, 60000, 300000, 900000],
@@ -107,35 +107,35 @@
       "description": "Per-tenant reconciler run duration. Larger tenants naturally take longer; alert on P99 > 15 min (indicates a fanout / lock-contention issue)."
     },
     {
-      "name": "academorix.ledger.account_balance_cents",
+      "name": "stackra.ledger.account_balance_cents",
       "kind": "gauge",
       "unit": "cents",
       "labels": ["account", "regulator_category"],
       "description": "Current running balance per account per regulator category. Gauge — updated on every ledger entry write."
     },
     {
-      "name": "academorix.ledger.threshold_crossings_total",
+      "name": "stackra.ledger.threshold_crossings_total",
       "kind": "counter",
       "unit": "crossings",
       "labels": ["account", "watermark_kind"],
       "description": "watermark_kind='high_watermark' / 'low_watermark'. Number of AccountBalanceThresholdCrossed fires. Signals ops to review + potentially raise/lower the threshold in tenant settings."
     },
     {
-      "name": "academorix.transaction.halt_flag_active",
+      "name": "stackra.transaction.halt_flag_active",
       "kind": "gauge",
       "unit": "tenants",
       "labels": [],
       "description": "Current count of tenants with transaction_halt_new=true. Should stay near 0 in a healthy system. Every non-zero tenant is a P0 investigation."
     },
     {
-      "name": "academorix.transaction.exchange_rate_lookups_total",
+      "name": "stackra.transaction.exchange_rate_lookups_total",
       "kind": "counter",
       "unit": "lookups",
       "labels": ["from_currency", "to_currency", "provider", "hit_or_miss"],
       "description": "hit_or_miss='cache_hit' / 'cache_miss' / 'provider_success' / 'provider_failure'. Signal for cache effectiveness + provider health."
     },
     {
-      "name": "academorix.transaction.exchange_rate_provider_duration_ms",
+      "name": "stackra.transaction.exchange_rate_provider_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 100, 500, 2000, 10000],
@@ -143,35 +143,35 @@
       "description": "Per-provider exchange-rate lookup latency. openexchangerates typically < 500ms P99; ecb_daily is a local file lookup + should be < 20ms."
     },
     {
-      "name": "academorix.transaction.currency_converted_total",
+      "name": "stackra.transaction.currency_converted_total",
       "kind": "counter",
       "unit": "conversions",
       "labels": ["from_currency", "to_currency", "provider"],
       "description": "Number of TransactionCurrencyConverted fires. Signal for cross-currency transaction volume."
     },
     {
-      "name": "academorix.transaction.retention_purged_total",
+      "name": "stackra.transaction.retention_purged_total",
       "kind": "counter",
       "unit": "transactions",
       "labels": [],
       "description": "Number of transactions purged by PurgeExpiredTransactionDataJob after archive-to-compliance. Cumulative — sums lifetime purges."
     },
     {
-      "name": "academorix.transaction.archive_export_bytes",
+      "name": "stackra.transaction.archive_export_bytes",
       "kind": "counter",
       "unit": "bytes",
       "labels": [],
       "description": "Bytes exported to compliance-storage by the retention pipeline. Signal for storage-cost forecasting."
     },
     {
-      "name": "academorix.transaction.report_generated_total",
+      "name": "stackra.transaction.report_generated_total",
       "kind": "counter",
       "unit": "reports",
       "labels": ["outcome", "format"],
       "description": "outcome='success' / 'failure' / 'skipped_no_entitlement'. format='csv' / 'jsonl' / 'json'. Number of GenerateGeneralLedgerReportJob completions."
     },
     {
-      "name": "academorix.transaction.entitlement.gate_refusals_total",
+      "name": "stackra.transaction.entitlement.gate_refusals_total",
       "kind": "counter",
       "unit": "refusals",
       "labels": ["entitlement_key"],

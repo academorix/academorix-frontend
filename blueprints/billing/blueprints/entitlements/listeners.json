@@ -1,45 +1,45 @@
 {
-  "id": "academorix://modules/entitlements/listeners",
+  "id": "stackra://modules/entitlements/listeners",
   "$version": 1,
   "title": "entitlements \u2014 subscribed events",
   "listeners": [
     {
       "event": "foundation::ApplicationBooted",
-      "listener": "Academorix\\Entitlements\\Listeners\\HydrateEntitlementRegistry",
+      "listener": "Stackra\\Entitlements\\Listeners\\HydrateEntitlementRegistry",
       "queue": null,
       "purpose": "Compile #[Entitlement] declarations from every module's entitlements.json + attribute discovery into EntitlementRegistry (Octane-safe, per-request scoped)."
     },
     {
       "event": "tenancy::TenantProvisioned",
-      "listener": "Academorix\\Entitlements\\Listeners\\SeedInitialEntitlements",
+      "listener": "Stackra\\Entitlements\\Listeners\\SeedInitialEntitlements",
       "queue": "notifications",
       "purpose": "Create Entitlement rows for every declared key using the tenant's initial plan defaults."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Entitlements\\Listeners\\PurgeEntitlementsForErasedTenant",
+      "listener": "Stackra\\Entitlements\\Listeners\\PurgeEntitlementsForErasedTenant",
       "queue": "notifications",
       "purpose": "Cascade purge via FK; this listener writes the compliance audit trail entry."
     },
     {
       "event": "subscription::SubscriptionUpgraded",
-      "listener": "Academorix\\Entitlements\\Listeners\\SyncEntitlementsFromPlanListener",
+      "listener": "Stackra\\Entitlements\\Listeners\\SyncEntitlementsFromPlanListener",
       "queue": "notifications",
       "purpose": "Dispatch SyncEntitlementsFromPlanJob(tenant, from_plan, to_plan). Preserves value_used + is_platform_overridden=true rows."
     },
     {
       "event": "subscription::SubscriptionDowngraded",
-      "listener": "Academorix\\Entitlements\\Listeners\\SyncEntitlementsFromPlanListener",
+      "listener": "Stackra\\Entitlements\\Listeners\\SyncEntitlementsFromPlanListener",
       "queue": "notifications"
     },
     {
       "event": "subscription::SubscriptionSwitched",
-      "listener": "Academorix\\Entitlements\\Listeners\\SyncEntitlementsFromPlanListener",
+      "listener": "Stackra\\Entitlements\\Listeners\\SyncEntitlementsFromPlanListener",
       "queue": "notifications"
     },
     {
       "event": "entitlements::EntitlementConsumed",
-      "listener": "Academorix\\Entitlements\\Listeners\\CheckWarnThreshold",
+      "listener": "Stackra\\Entitlements\\Listeners\\CheckWarnThreshold",
       "queue": null,
       "purpose": "Fast check: did this consume() cross the warn threshold? If yes, fire EntitlementApproachingCap. Sync listener to avoid delay."
     }

@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Actions\Tenant;
+namespace Stackra\Entitlements\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Entitlements\Contracts\Repositories\EntitlementRepositoryInterface;
-use Academorix\Entitlements\Contracts\Repositories\EntitlementUsageRepositoryInterface;
-use Academorix\Entitlements\Data\EntitlementUsageData;
-use Academorix\Entitlements\Enums\EntitlementsPermission;
-use Academorix\Entitlements\Exceptions\EntitlementNotFoundException;
-use Academorix\Entitlements\Models\EntitlementUsage;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Entitlements\Contracts\Repositories\EntitlementRepositoryInterface;
+use Stackra\Entitlements\Contracts\Repositories\EntitlementUsageRepositoryInterface;
+use Stackra\Entitlements\Data\EntitlementUsageData;
+use Stackra\Entitlements\Enums\EntitlementsPermission;
+use Stackra\Entitlements\Exceptions\EntitlementNotFoundException;
+use Stackra\Entitlements\Models\EntitlementUsage;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Spatie\LaravelData\DataCollection;
 
 /**

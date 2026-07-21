@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Data;
+namespace Stackra\Transfer\Data;
 
-use Academorix\Transfer\Contracts\Data\XferJobInterface;
-use Academorix\Transfer\Models\XferJob;
+use Stackra\Transfer\Contracts\Data\XferJobInterface;
+use Stackra\Transfer\Models\XferJob;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

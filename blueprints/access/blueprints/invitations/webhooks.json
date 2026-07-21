@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invitations/webhooks",
+  "id": "stackra://modules/invitations/webhooks",
   "$version": 1,
   "title": "invitations — inbound + outbound webhooks",
   "description": "Two-way webhook contracts. INBOUND — mail-transport delivery signals arrive here and mutate invitation state. OUTBOUND — customer-consumable webhooks fire on invitation lifecycle events for CRM / HRIS integrations. This module owns the inbound receiver end-to-end; outbound delivery is handled by the future `webhooks` module which reads the event catalogue defined here.",
@@ -114,8 +114,8 @@
     "description": "Customer-consumable webhooks that fire on invitation lifecycle events. Fires through the future `webhooks` module. Every event carries a versioned envelope + HMAC-SHA256 signature (customer secret) and follows exponential-backoff retry policy up to 8 attempts.",
     "signing": {
       "algorithm": "hmac-sha256",
-      "header_name": "X-Academorix-Signature",
-      "timestamp_header": "X-Academorix-Timestamp",
+      "header_name": "X-Stackra-Signature",
+      "timestamp_header": "X-Stackra-Timestamp",
       "timestamp_tolerance_seconds": 300
     },
     "envelope": {

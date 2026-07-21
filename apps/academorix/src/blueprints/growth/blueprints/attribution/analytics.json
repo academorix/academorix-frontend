@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/attribution/analytics",
+  "id": "stackra://modules/attribution/analytics",
   "$version": 1,
   "title": "attribution — product analytics",
   "lane": "analytics",

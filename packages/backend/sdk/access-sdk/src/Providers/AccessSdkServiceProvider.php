@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AccessSdk\Providers;
+namespace Stackra\AccessSdk\Providers;
 
-use Academorix\AccessSdk\Client\AccessSdk;
-use Academorix\ApiSdk\Attributes\AsSdkResource;
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Contracts\SdkResource;
-use Academorix\ApiSdk\Enums\AuthStrategy;
-use Academorix\ApiSdk\Enums\LogLevel;
-use Academorix\ApiSdk\Registry\SdkResourceRegistry;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
+use Stackra\AccessSdk\Client\AccessSdk;
+use Stackra\ApiSdk\Attributes\AsSdkResource;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Contracts\SdkResource;
+use Stackra\ApiSdk\Enums\AuthStrategy;
+use Stackra\ApiSdk\Enums\LogLevel;
+use Stackra\ApiSdk\Registry\SdkResourceRegistry;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Psr\Log\LoggerInterface;
 
 /**
- * Root provider for `academorix/access-sdk`.
+ * Root provider for `stackra/access-sdk`.
  *
  * Builds the Access service's own Saloon connector from `sdk.access.*`,
  * runs a discovery pass scoped to `#[AsSdkResource(service: 'access')]`, and

@@ -6,7 +6,7 @@
  * @description
  * Configuration for the exceptions package. Merged into the host
  * app's config as `exceptions.*` by
- * {@see \Academorix\Exceptions\Providers\ExceptionsServiceProvider}.
+ * {@see \Stackra\Exceptions\Providers\ExceptionsServiceProvider}.
  *
  * Every runtime source reads through `env('EXCEPTIONS_*')` so
  * Doppler-injected secrets flow through `config:cache` cleanly.
@@ -14,20 +14,20 @@
  *
  * ## Consumers at a glance
  *
- *   - `docs_url`         — {@see \Academorix\Exceptions\Formatters\JsonErrorFormatter}
+ *   - `docs_url`         — {@see \Stackra\Exceptions\Formatters\JsonErrorFormatter}
  *                          builds `error.type` from this base.
- *   - `ai_solutions.*`   — {@see \Academorix\Exceptions\Ignition\AcademorixAiSolutionsProvider}
+ *   - `ai_solutions.*`   — {@see \Stackra\Exceptions\Ignition\StackraAiSolutionsProvider}
  *                          gates AI-powered Ignition suggestions.
  *   - `locale`           — Reserved for future per-package locale
  *                          override; today the translator falls back
  *                          to Laravel's `app.locale`.
- *   - `render.*`         — Controls what {@see \Academorix\Exceptions\Formatters\JsonErrorFormatter}
+ *   - `render.*`         — Controls what {@see \Stackra\Exceptions\Formatters\JsonErrorFormatter}
  *                          emits inside the `debug` and `meta` blocks.
- *   - `redaction.*`      — Injected into {@see \Academorix\Exceptions\Support\Redactor}
+ *   - `redaction.*`      — Injected into {@see \Stackra\Exceptions\Support\Redactor}
  *                          via the service provider closure.
- *   - `traces.*`         — Injected into {@see \Academorix\Exceptions\Support\TraceCleaner}.
+ *   - `traces.*`         — Injected into {@see \Stackra\Exceptions\Support\TraceCleaner}.
  *   - `log.channels`     — Read at report-time by
- *                          {@see \Academorix\Exceptions\Reporters\LogReporter}.
+ *                          {@see \Stackra\Exceptions\Reporters\LogReporter}.
  */
 
 declare(strict_types=1);
@@ -43,15 +43,15 @@ return [
     | response. Set this to your docs site so clients can click
     | through to the human-readable explanation of every error code:
     |
-    |     https://docs.academorix.com/errors/http.validation
+    |     https://docs.stackra.com/errors/http.validation
     |
     | When empty (default), the renderer emits a stable but
-    | non-clickable `urn:academorix:error:<code>` so the field
+    | non-clickable `urn:stackra:error:<code>` so the field
     | shape stays consistent.
     |
     | Override in Doppler:
     |
-    |     EXCEPTIONS_DOCS_URL=https://docs.academorix.com/errors
+    |     EXCEPTIONS_DOCS_URL=https://docs.stackra.com/errors
     */
 
     'docs_url' => env('EXCEPTIONS_DOCS_URL', ''),
@@ -104,19 +104,19 @@ return [
     | Rendering
     |----------------------------------------------------------------------
     |
-    | Controls what {@see \Academorix\Exceptions\Formatters\JsonErrorFormatter}
+    | Controls what {@see \Stackra\Exceptions\Formatters\JsonErrorFormatter}
     | emits back to clients.
     |
     |   - `render_context_in_debug` — echoes the exception `context()`
     |     map inside `meta.context` in debuggable environments (local
     |     / testing / dev). Always suppressed in production-like
     |     envs regardless of this value; the
-    |     {@see \Academorix\Exceptions\Support\MaskingPolicy} has
+    |     {@see \Stackra\Exceptions\Support\MaskingPolicy} has
     |     the final say.
     |
     |   - `trace_frames` — Upper bound on the number of stack frames
     |     shipped inside `debug.trace`. Duplicated as the default
-    |     for {@see \Academorix\Exceptions\Support\TraceCleaner}
+    |     for {@see \Stackra\Exceptions\Support\TraceCleaner}
     |     under `traces.max_frames` so downstream consumers can pin
     |     the trace budget separately from the response body.
     */
@@ -131,7 +131,7 @@ return [
     | Sensitive data redaction
     |----------------------------------------------------------------------
     |
-    | Configuration for {@see \Academorix\Exceptions\Support\Redactor}.
+    | Configuration for {@see \Stackra\Exceptions\Support\Redactor}.
     | The redactor ships with a comprehensive set of sensitive keys
     | and regex patterns (see `Redactor::DEFAULT_SENSITIVE_KEYS` and
     | `Redactor::DEFAULT_SENSITIVE_PATTERNS`); values declared here
@@ -188,7 +188,7 @@ return [
     | Stack-trace cleaning
     |----------------------------------------------------------------------
     |
-    | Configuration for {@see \Academorix\Exceptions\Support\TraceCleaner}.
+    | Configuration for {@see \Stackra\Exceptions\Support\TraceCleaner}.
     | The cleaner turns raw PHP traces into the safe subset shipped
     | in error responses and log lines.
     |
@@ -223,12 +223,12 @@ return [
     | Log routing
     |----------------------------------------------------------------------
     |
-    | The custom {@see \Academorix\Exceptions\Reporters\LogReporter}
+    | The custom {@see \Stackra\Exceptions\Reporters\LogReporter}
     | routes exceptions to different channels by category — so
     | security-relevant events land in an audit-friendly channel and
     | integration failures land where SRE looks.
     |
-    | Keys mirror {@see \Academorix\Exceptions\Enums\ErrorCategory}
+    | Keys mirror {@see \Stackra\Exceptions\Enums\ErrorCategory}
     | values. `null` (or an unknown channel name) falls back to the
     | log manager's default channel. Every channel referenced here
     | MUST exist in the host app's `config/logging.php` — otherwise

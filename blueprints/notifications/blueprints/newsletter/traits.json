@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/newsletter/traits",
+  "id": "stackra://modules/newsletter/traits",
   "$version": 1,
   "title": "newsletter \u2014 trait composition",
   "owned": [],
@@ -10,26 +10,26 @@
       { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasSystemFlag" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasVersions",
+        "trait": "Stackra\\Foundation\\Concerns\\HasVersions",
         "reason": "Content changes on Newsletter + NewsletterIssue tracked. Rollback issue drafts."
       },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
-    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "tenants": [{ "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" }],
     "activity": [
       {
-        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
         "reason": "Every issue publish + campaign send surfaces in the tenant activity feed."
       }
     ],
     "audit": [
       {
-        "trait": "Academorix\\Audit\\Concerns\\HasAudit",
+        "trait": "Stackra\\Audit\\Concerns\\HasAudit",
         "reason": "Subscription state changes + campaign sends carry CAN-SPAM + CASL evidence."
       }
     ]

@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/entitlements/permissions",
+  "id": "stackra://modules/entitlements/permissions",
   "$version": 1,
   "title": "entitlements \u2014 permissions",
-  "seeder": "Academorix\\Entitlements\\Database\\Seeders\\EntitlementsPermissionSeeder",
+  "seeder": "Stackra\\Entitlements\\Database\\Seeders\\EntitlementsPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

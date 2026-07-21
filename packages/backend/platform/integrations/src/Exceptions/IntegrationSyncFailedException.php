@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Exceptions;
+namespace Stackra\Integrations\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
- * Raised when a {@see \Academorix\Integrations\Jobs\SyncIntegrationJob}
+ * Raised when a {@see \Stackra\Integrations\Jobs\SyncIntegrationJob}
  * run fails at the driver level. Payload carries the provider error
  * string so the failure event surfaces the reason.
  *

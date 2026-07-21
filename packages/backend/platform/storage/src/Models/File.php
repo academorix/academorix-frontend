@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Models;
+namespace Stackra\Storage\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Retention\Attributes\AsRetentionPolicy;
-use Academorix\Retention\Enums\RetentionAction;
-use Academorix\Storage\Concerns\IsFile;
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Contracts\Data\FileVariantInterface;
-use Academorix\Storage\Database\Factories\FileFactory;
-use Academorix\Storage\Enums\FileVisibility;
-use Academorix\Storage\Enums\VirusScanState;
-use Academorix\Storage\Observers\FileObserver;
-use Academorix\Storage\Policies\FilePolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Retention\Attributes\AsRetentionPolicy;
+use Stackra\Retention\Enums\RetentionAction;
+use Stackra\Storage\Concerns\IsFile;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Contracts\Data\FileVariantInterface;
+use Stackra\Storage\Database\Factories\FileFactory;
+use Stackra\Storage\Enums\FileVisibility;
+use Stackra\Storage\Enums\VirusScanState;
+use Stackra\Storage\Observers\FileObserver;
+use Stackra\Storage\Policies\FilePolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

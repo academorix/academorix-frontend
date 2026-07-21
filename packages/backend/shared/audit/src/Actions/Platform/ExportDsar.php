@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Actions\Platform;
+namespace Stackra\Audit\Actions\Platform;
 
-use Academorix\Audit\Data\Requests\ExportDsarRequestData;
-use Academorix\Audit\Enums\AuditPermission;
-use Academorix\Audit\Jobs\ExportAuditForDsarJob;
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Audit\Data\Requests\ExportDsarRequestData;
+use Stackra\Audit\Enums\AuditPermission;
+use Stackra\Audit\Jobs\ExportAuditForDsarJob;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\JsonResponse;
 
 /**

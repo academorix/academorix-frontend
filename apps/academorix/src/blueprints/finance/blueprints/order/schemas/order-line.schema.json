@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/order/schemas/order-line",
+  "id": "stackra://modules/order/schemas/order-line",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "OrderLine",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "orl_",
     "incrementing": false,
-    "model": "Academorix\\Finance\\Order\\Models\\OrderLine",
-    "interface": "Academorix\\Finance\\Order\\Contracts\\Data\\OrderLineInterface",
-    "implements": ["Academorix\\Finance\\Order\\Contracts\\Data\\OrderLineInterface"],
+    "model": "Stackra\\Finance\\Order\\Models\\OrderLine",
+    "interface": "Stackra\\Finance\\Order\\Contracts\\Data\\OrderLineInterface",
+    "implements": ["Stackra\\Finance\\Order\\Contracts\\Data\\OrderLineInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

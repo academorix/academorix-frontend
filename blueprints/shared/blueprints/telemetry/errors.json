@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/telemetry/errors",
+  "id": "stackra://modules/telemetry/errors",
   "$version": 1,
   "title": "telemetry \u2014 error codes",
   "namespace": "telemetry",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/mfa/relations",
+  "id": "stackra://modules/mfa/relations",
   "$version": 1,
   "title": "mfa — model relationships",
   "description": "WebauthnCredential is the ONLY row owned directly by this module — every other MFA state lives inline on the Identity row (identity/identity ownership) or in the shared auth_mfa_challenges ledger (identity/auth ownership). Consequently the FK topology here is intentionally shallow: WebauthnCredential belongs-to Identity, and Identity has-many WebauthnCredentials. The rich inbound / outbound relations chart lives on identity/identity — this file only documents mfa-owned rows.",

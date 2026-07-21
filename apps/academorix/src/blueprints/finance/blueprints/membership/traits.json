@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/membership/traits",
+  "id": "stackra://modules/membership/traits",
   "$version": 1,
   "title": "membership — trait composition",
   "description": "Four owned traits — BelongsToMembership for downstream models with membership_id FK, BelongsToMembershipPlan for pricing catalog references, HasMemberships on Athlete for the reverse-relation accessor, HasPasses on Membership for the pass accessor.",
   "owned": [
     {
-      "trait": "Academorix\\Finance\\Membership\\Concerns\\BelongsToMembership",
+      "trait": "Stackra\\Finance\\Membership\\Concerns\\BelongsToMembership",
       "description": "Mixed into downstream models that carry a `membership_id` FK. Adds `membership()` belongsTo + query scope + cross-tenant guard.",
       "public": true,
       "usedBy": [
@@ -18,19 +18,19 @@
       ]
     },
     {
-      "trait": "Academorix\\Finance\\Membership\\Concerns\\BelongsToMembershipPlan",
+      "trait": "Stackra\\Finance\\Membership\\Concerns\\BelongsToMembershipPlan",
       "description": "Mixed into models with `membership_plan_id`. Adds `plan()` belongsTo.",
       "public": true,
       "usedBy": ["membership::Membership (owned)"]
     },
     {
-      "trait": "Academorix\\Finance\\Membership\\Concerns\\HasMemberships",
+      "trait": "Stackra\\Finance\\Membership\\Concerns\\HasMemberships",
       "description": "Composed onto Athlete + User models. Adds `memberships()` (hasMany), `activeMemberships()` (status IN pending/active/paused), `membershipHistory()` (all including terminal), `currentPlans()` (distinct plans from active memberships).",
       "public": true,
       "usedBy": ["athlete::Athlete", "user::User (for reverse lookup via primary_guardian)"]
     },
     {
-      "trait": "Academorix\\Finance\\Membership\\Concerns\\HasPasses",
+      "trait": "Stackra\\Finance\\Membership\\Concerns\\HasPasses",
       "description": "Composed onto the Membership model. Adds `passes()` (hasMany), `availablePasses()` (unconsumed + within valid window), `consumedPasses()`, `expiredPasses()`, `passesForPeriod(from, until)`.",
       "public": true,
       "usedBy": ["membership::Membership"]
@@ -43,19 +43,19 @@
       { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasSlug" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasSlug" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
     ],
-    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
-    "region": [{ "trait": "Academorix\\Region\\Concerns\\BelongsToRegion" }],
-    "branch": [{ "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch" }],
-    "athlete": [{ "trait": "Academorix\\Sports\\Athlete\\Concerns\\BelongsToAthlete" }],
-    "audit": [{ "trait": "Academorix\\Audit\\Concerns\\Auditable" }],
-    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
+    "tenants": [{ "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "region": [{ "trait": "Stackra\\Region\\Concerns\\BelongsToRegion" }],
+    "branch": [{ "trait": "Stackra\\Branch\\Concerns\\BelongsToBranch" }],
+    "athlete": [{ "trait": "Stackra\\Sports\\Athlete\\Concerns\\BelongsToAthlete" }],
+    "audit": [{ "trait": "Stackra\\Audit\\Concerns\\Auditable" }],
+    "activity": [{ "trait": "Stackra\\Activity\\Concerns\\HasActivityLog" }]
   },
   "composition": {
     "membership": {

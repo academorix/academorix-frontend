@@ -29,7 +29,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Violations;
+namespace Stackra\Architecture\Violations;
 
 /**
  * Immutable violation record.

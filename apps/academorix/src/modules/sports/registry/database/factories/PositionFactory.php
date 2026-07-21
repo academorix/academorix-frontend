@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Database\Factories;
+namespace Stackra\Registry\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Registry\Contracts\Data\PositionInterface;
-use Academorix\Registry\Models\Position;
+use Stackra\Registry\Contracts\Data\PositionInterface;
+use Stackra\Registry\Models\Position;
 
 /**
- * Factory for {@see \Academorix\Registry\Models\Position}.
+ * Factory for {@see \Stackra\Registry\Models\Position}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Registry\Models\Position>
+ * @extends Factory<\Stackra\Registry\Models\Position>
  *
  * @category Registry
  *

@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/region/helpers",
+  "id": "stackra://modules/region/helpers",
   "$version": 1,
   "title": "region — helper functions",
   "description": "Three published helpers for common region-flavoured lookups from any layer (controller, action, listener, blade template, artisan command).",
-  "namespace": "Academorix\\Region\\Support",
+  "namespace": "Stackra\\Region\\Support",
   "helpers": [
     {
       "signature": "active_region(): ?Region",

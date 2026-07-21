@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/teams/observers",
+  "id": "stackra://modules/teams/observers",
   "$version": 1,
   "title": "teams — Eloquent observers",
   "description": "Four observers enforce the module's write-time invariants: team catalogue integrity + immutability, roster polymorphism + uniqueness + eligibility + capacity, trial workflow atomicity, event-team participation shape. The TeamMemberObserver is the most consequential — the polymorphic uniqueness check runs under a partial unique index + a defensive tenant-match to catch cross-tenant FK smuggling.",
   "observers": [
     {
       "model": "Team",
-      "observer": "Academorix\\Teams\\Observers\\TeamObserver",
+      "observer": "Stackra\\Teams\\Observers\\TeamObserver",
       "handles": [
         "creating → populate ULID prefix `tea_`",
         "creating → refuse when tenant does NOT hold `teams` entitlement (returns `TEAM_FEATURE_NOT_ENTITLED`)",
@@ -41,7 +41,7 @@
     },
     {
       "model": "TeamMember",
-      "observer": "Academorix\\Teams\\Observers\\TeamMemberObserver",
+      "observer": "Stackra\\Teams\\Observers\\TeamMemberObserver",
       "handles": [
         "creating → populate ULID prefix `trm_`",
         "creating → refuse when team.status != 'active' (returns `TEAM_MEMBER_TEAM_NOT_ACTIVE`)",
@@ -72,7 +72,7 @@
     },
     {
       "model": "TeamTrial",
-      "observer": "Academorix\\Teams\\Observers\\TrialObserver",
+      "observer": "Stackra\\Teams\\Observers\\TrialObserver",
       "handles": [
         "creating → populate ULID prefix `ttr_`",
         "creating → refuse when tenant does NOT hold `team_trials` entitlement (returns `TRIAL_FEATURE_NOT_ENTITLED`)",
@@ -99,7 +99,7 @@
     },
     {
       "model": "EventTeam",
-      "observer": "Academorix\\Teams\\Observers\\EventTeamObserver",
+      "observer": "Stackra\\Teams\\Observers\\EventTeamObserver",
       "handles": [
         "creating → populate ULID prefix `evt_`",
         "creating → refuse when tenant does NOT hold `team_event_participation` entitlement (returns `EVENT_TEAM_FEATURE_NOT_ENTITLED`)",

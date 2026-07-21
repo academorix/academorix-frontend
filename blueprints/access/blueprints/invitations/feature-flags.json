@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invitations/feature-flags",
+  "id": "stackra://modules/invitations/feature-flags",
   "$version": 1,
   "title": "invitations — rollout flags",
   "description": "Rollout / change-management flags for THIS module. Distinct from `features.json` (empty — invitations substrate is always on). Every material change ships behind a flag per SOC 2 CC8.1.",

@@ -1,56 +1,56 @@
 {
-  "id": "academorix://modules/transaction/commands",
+  "id": "stackra://modules/transaction/commands",
   "$version": 1,
   "title": "transaction — Artisan commands",
   "commands": [
     {
       "signature": "transaction:list {--tenant=} {--kind=} {--from=} {--to=} {--currency=} {--reference-type=} {--reference-id=} {--limit=100}",
-      "class": "Academorix\\Finance\\Transaction\\Console\\Commands\\ListCommand",
+      "class": "Stackra\\Finance\\Transaction\\Console\\Commands\\ListCommand",
       "purpose": "Table view of transactions. Filterable by tenant, kind, date range, currency, reference (Invoice/Payment/Refund/etc.). Default limit 100; use --limit=0 for stream mode. Reserved for support tooling."
     },
     {
       "signature": "transaction:describe {transaction}",
-      "class": "Academorix\\Finance\\Transaction\\Console\\Commands\\DescribeCommand",
+      "class": "Stackra\\Finance\\Transaction\\Console\\Commands\\DescribeCommand",
       "purpose": "Verbose read of one transaction: base fields + ledger entries + reversal chain (if reversed) + reference entity chain. Support tool for investigating a specific ledger movement."
     },
     {
       "signature": "transaction:reverse {transaction} --note={note} {--effective-date=} {--dry-run}",
-      "class": "Academorix\\Finance\\Transaction\\Console\\Commands\\ReverseCommand",
+      "class": "Stackra\\Finance\\Transaction\\Console\\Commands\\ReverseCommand",
       "purpose": "Admin-only manual reversal. Creates a NEW offsetting transaction with reversal_reason='accounting_adjustment'. --note is REQUIRED + must be ≥ 10 chars (regulator-visible justification). --dry-run computes the reversal + validates the ledger balance without persisting. Every real fire writes a critical audit row + fires TransactionAmendmentApplied."
     },
     {
       "signature": "ledger:list-entries {--tenant=} {--transaction=} {--account=} {--from=} {--to=} {--limit=100}",
-      "class": "Academorix\\Finance\\Transaction\\Console\\Commands\\ListLedgerEntriesCommand",
+      "class": "Stackra\\Finance\\Transaction\\Console\\Commands\\ListLedgerEntriesCommand",
       "purpose": "Delivery ledger view. Filterable by tenant, transaction, account, date range. Support tool for tracing double-entry chains."
     },
     {
       "signature": "ledger:account-balance {--tenant=} {--account=*} {--currency=} {--as-of=}",
-      "class": "Academorix\\Finance\\Transaction\\Console\\Commands\\AccountBalanceCommand",
+      "class": "Stackra\\Finance\\Transaction\\Console\\Commands\\AccountBalanceCommand",
       "purpose": "Real-time per-account running balance. --account can be repeated (--account=cash --account=accounts_receivable). --as-of=YYYY-MM-DD computes balance at end-of-day (defaults to now()). Reserved for support tooling."
     },
     {
       "signature": "ledger:reconcile {--tenant=} {--from=} {--to=} {--scope=per_transaction} {--dry-run}",
-      "class": "Academorix\\Finance\\Transaction\\Console\\Commands\\ReconcileCommand",
+      "class": "Stackra\\Finance\\Transaction\\Console\\Commands\\ReconcileCommand",
       "purpose": "One-shot invocation of ReconcileLedgerBalancesJob. --scope=per_transaction|per_account_daily|global_tenant (defaults to per_transaction). --dry-run reports findings without persisting. --tenant= restricts to a single tenant; omit for cross-tenant sweep (super_admin only)."
     },
     {
       "signature": "ledger:report {--tenant=} {--from=} {--to=} {--format=json} {--output=}",
-      "class": "Academorix\\Finance\\Transaction\\Console\\Commands\\ReportCommand",
+      "class": "Stackra\\Finance\\Transaction\\Console\\Commands\\ReportCommand",
       "purpose": "Generate the General Ledger report. --from + --to define the date range (defaults to previous calendar month). --format=json|csv|jsonl. --output= sinks to a file path (defaults to stdout). Requires transaction_advanced_reporting entitlement on the target tenant."
     },
     {
       "signature": "ledger:export {--tenant=} {--from=} {--to=} {--format=jsonl}",
-      "class": "Academorix\\Finance\\Transaction\\Console\\Commands\\ExportCommand",
+      "class": "Stackra\\Finance\\Transaction\\Console\\Commands\\ExportCommand",
       "purpose": "Bulk export for accountants + auditors. --format=jsonl|csv. Streams to stdout. Includes every transaction + every ledger entry in the range. Idempotent — reruns produce identical output for a given date range. Reserved for scheduled audit exports + support tooling."
     },
     {
       "signature": "ledger:opening-balance {--tenant=} {--balances=}",
-      "class": "Academorix\\Finance\\Transaction\\Console\\Commands\\OpeningBalanceCommand",
+      "class": "Stackra\\Finance\\Transaction\\Console\\Commands\\OpeningBalanceCommand",
       "purpose": "One-shot install command. Creates the tenant's opening_balance transaction with ledger entries per --balances= (a JSON file mapping account → cents; defaults to all-zero if omitted). Refused if the tenant already has an opening_balance transaction — must be called exactly once per tenant. Used during data migrations from legacy systems + for test fixtures."
     },
     {
       "signature": "ledger:audit-imbalances {--tenant=} {--from=} {--to=} {--unresolved-only}",
-      "class": "Academorix\\Finance\\Transaction\\Console\\Commands\\AuditImbalancesCommand",
+      "class": "Stackra\\Finance\\Transaction\\Console\\Commands\\AuditImbalancesCommand",
       "purpose": "Read-only report of every LedgerImbalanceDetected fire in the range + resolution status. --unresolved-only filters to open items. Feeds the on-call runbook + regulator investigations."
     }
   ]

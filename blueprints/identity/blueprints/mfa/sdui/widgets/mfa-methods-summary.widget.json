@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/mfa/sdui/widgets/mfa-methods-summary",
+  "id": "stackra://modules/mfa/sdui/widgets/mfa-methods-summary",
   "$version": 1,
   "kind": "widget",
   "name": "mfa-methods-summary",

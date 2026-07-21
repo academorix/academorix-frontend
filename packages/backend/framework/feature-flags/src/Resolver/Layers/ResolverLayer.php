@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Resolver\Layers;
+namespace Stackra\FeatureFlags\Resolver\Layers;
 
-use Academorix\FeatureFlags\Resolver\FeatureResolution;
-use Academorix\FeatureFlags\Resolver\ResolutionContext;
+use Stackra\FeatureFlags\Resolver\FeatureResolution;
+use Stackra\FeatureFlags\Resolver\ResolutionContext;
 
 /**
  * Contract every resolver-chain layer implements.

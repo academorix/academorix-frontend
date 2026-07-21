@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/tax/jobs",
+  "id": "stackra://modules/tax/jobs",
   "$version": 1,
   "title": "tax — background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Finance\\Tax\\Jobs\\SyncTaxRatesFromProviderJob",
+      "class": "Stackra\\Finance\\Tax\\Jobs\\SyncTaxRatesFromProviderJob",
       "queue": "tax",
       "purpose": "Weekly per-provider. Pulls the latest rate updates from the provider's rate catalog + upserts into tax_rates. Handles fiscal-year rate changes (e.g. UK VAT 20% → 22% at the next fiscal year boundary).",
       "steps": [
@@ -22,7 +22,7 @@
       "backoff": [60, 300, 1800]
     },
     {
-      "class": "Academorix\\Finance\\Tax\\Jobs\\CalculateTaxForInvoiceLineJob",
+      "class": "Stackra\\Finance\\Tax\\Jobs\\CalculateTaxForInvoiceLineJob",
       "queue": "tax",
       "purpose": "The workhorse. Fired by the invoice module on invoice_line create. Resolves jurisdiction + rate + exemptions + persists a tax_calculations snapshot.",
       "steps": [
@@ -47,7 +47,7 @@
       "note": "tries=1 because the retry semantics are OWNED by this job body (via the exponential backoff loop). Do NOT enable Laravel-level retry — it would bypass the circuit-breaker + calculation-freeze semantics."
     },
     {
-      "class": "Academorix\\Finance\\Tax\\Jobs\\VerifyTaxExemptionJob",
+      "class": "Stackra\\Finance\\Tax\\Jobs\\VerifyTaxExemptionJob",
       "queue": "tax",
       "purpose": "Async cross-check against the issuing jurisdiction's public registry (when one exists). Dispatched from TaxExemptionObserver.creating.",
       "steps": [
@@ -66,13 +66,13 @@
       "backoff": [30, 120, 600]
     },
     {
-      "class": "Academorix\\Finance\\Tax\\Jobs\\ExpireExemptionsJob",
+      "class": "Stackra\\Finance\\Tax\\Jobs\\ExpireExemptionsJob",
       "queue": "tax",
       "purpose": "Nightly sweep. Finds exemptions with verification_status='verified' AND valid_until <= today. Transitions to verification_status='expired'.",
       "steps": [
         "SELECT id FROM tax_exemptions WHERE verification_status = 'verified' AND valid_until IS NOT NULL AND valid_until <= CURRENT_DATE LIMIT 1000",
         "For each: transition verification_status to 'expired' + fire TaxExemptionExpired",
-        "Emit metric academorix.tax.exemptions.expired_total per exemption_type"
+        "Emit metric stackra.tax.exemptions.expired_total per exemption_type"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -81,7 +81,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Finance\\Tax\\Jobs\\NotifyExemptionExpiringJob",
+      "class": "Stackra\\Finance\\Tax\\Jobs\\NotifyExemptionExpiringJob",
       "queue": "tax",
       "purpose": "Daily. Finds exemptions expiring in 60/30/7 days that have not been warned. Fires TaxExemptionExpiringNotification per exemption.",
       "steps": [
@@ -96,14 +96,14 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Finance\\Tax\\Jobs\\PurgeExpiredCalculationsJob",
+      "class": "Stackra\\Finance\\Tax\\Jobs\\PurgeExpiredCalculationsJob",
       "queue": "tax",
       "purpose": "Weekly sweep. Applies the calculation retention window: tax_calculations > 7 years → migrate to archive schema (matches invoice retention). NO hard-delete inside the module — regulator audit access is preserved via the archive.",
       "steps": [
         "SELECT id, tenant_id FROM tax_calculations WHERE created_at < now() - interval '7 years' LIMIT 5000",
         "For Enterprise tenants with tax_extended_retention entitlement: retention is 10 years instead of 7",
         "For each row: INSERT into tax_calculations_archive + DELETE from tax_calculations (transactional)",
-        "Emit metric academorix.tax.calculations.archived_total"
+        "Emit metric stackra.tax.calculations.archived_total"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -112,7 +112,7 @@
       "tries": 1
     },
     {
-      "class": "Academorix\\Finance\\Tax\\Jobs\\ReconcileProviderCalculationsJob",
+      "class": "Stackra\\Finance\\Tax\\Jobs\\ReconcileProviderCalculationsJob",
       "queue": "tax",
       "purpose": "Weekly. Spot-checks 1% of the past week's calculations against the current-day provider re-computation. Divergence indicates rate drift or provider-side algorithm change.",
       "steps": [
@@ -120,7 +120,7 @@
         "For each: reload the customer + jurisdiction as they were at calculated_at, re-invoke the provider driver, capture the current-day tax_amount_cents",
         "Compute delta = |original_tax - current_tax|",
         "When delta > threshold (100 cents OR 1% of source): fire TaxCalculationDriftDetected (regulator-critical — may indicate the tenant is under-filing based on outdated provider algorithm)",
-        "Emit metric academorix.tax.calculations.drift_detected_total labelled by provider + severity"
+        "Emit metric stackra.tax.calculations.drift_detected_total labelled by provider + severity"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,

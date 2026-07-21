@@ -29,20 +29,20 @@
  *   exceptions::domain.tenancy_missing        ({@see missingTenant()})
  *   exceptions::domain.tenancy_cross_tenant   ({@see crossTenantAccess()})
  *
- * @see \Academorix\Exceptions\AcademorixException  Base class.
- * @see \Academorix\Exceptions\Auth\ForbiddenException  For same-tenant permission denials.
+ * @see \Stackra\Exceptions\StackraException  Base class.
+ * @see \Stackra\Exceptions\Auth\ForbiddenException  For same-tenant permission denials.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Domain;
+namespace Stackra\Exceptions\Domain;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class TenantException extends AcademorixException
+class TenantException extends StackraException
 {
     /**
      * Machine-readable code — clients that recover from

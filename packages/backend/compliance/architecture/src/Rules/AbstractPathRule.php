@@ -16,17 +16,17 @@
  * `severity` normalisation identically to source rules so operators
  * get one uniform config vocabulary regardless of rule flavour.
  *
- * @see \Academorix\Architecture\Contracts\PathRule Contract.
+ * @see \Stackra\Architecture\Contracts\PathRule Contract.
  * @see AbstractRule                                Source-scan sibling.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Contracts\PathRule;
-use Academorix\Architecture\Violations\Severity;
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Contracts\PathRule;
+use Stackra\Architecture\Violations\Severity;
+use Stackra\Architecture\Violations\Violation;
 
 abstract class AbstractPathRule implements PathRule
 {

@@ -13,11 +13,11 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Settings\Enums;
+namespace Stackra\Settings\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Enum;
 
 /**
  * Settings hierarchy scope levels.

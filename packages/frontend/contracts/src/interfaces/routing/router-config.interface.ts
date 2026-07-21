@@ -16,7 +16,7 @@ import type { IRouteRecord } from "./route-record.interface";
  * // apps/dashboard/react-router.config.ts
  * export default defineRouterConfig({
  *   basename: '/',
- *   rootDomain: 'academorix.app',
+ *   rootDomain: 'stackra.app',
  *   devSubdomains: ['www', 'docs', 'admin'],
  *   routes: [
  *     defineRoute({...}),
@@ -36,7 +36,7 @@ export interface IRouterConfig {
    * uses `match.subdomain`. The framework subtracts `rootDomain` from
    * the request `Host` header to compute the subdomain.
    *
-   * @example `'academorix.app'`
+   * @example `'stackra.app'`
    */
   readonly rootDomain?: string;
 

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Tests;
+namespace Stackra\Match\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/match.
+ * Base test case for stackra/match.
  *
  * @category Match
  *

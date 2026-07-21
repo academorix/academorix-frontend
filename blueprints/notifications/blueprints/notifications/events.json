@@ -1,15 +1,15 @@
 {
-  "id": "academorix://modules/notifications/events",
+  "id": "stackra://modules/notifications/events",
   "$version": 1,
   "title": "notifications core \u2014 published events",
   "description": "Every event emitted by notifications core. Every event carries the full context a subscriber needs \u2014 event-carried state, so channel modules + downstream consumers never need to callback into core. Each event has a stable JSON schema. Breaking-change to a schema requires a new event class with a version suffix (e.g. NotificationDispatchedV2).",
-  "namespace": "Academorix\\Notifications\\Events",
+  "namespace": "Stackra\\Notifications\\Events",
   "dispatchMode": "afterCommit",
   "dispatchModeRationale": "Every event fires only AFTER the initiating DB transaction commits. Reason: a subscriber (channel module, downstream consumer) that reads the Notification row must see it. Without after-commit, a race condition surfaces where the subscriber queries a not-yet-visible row.",
   "events": [
     {
       "name": "NotificationDispatched",
-      "class": "Academorix\\Notifications\\Events\\NotificationDispatched",
+      "class": "Stackra\\Notifications\\Events\\NotificationDispatched",
       "trigger": "Caller invokes `$user->notify(...)` OR `Notifications::dispatch(...)`. Fires after the Notification row commits + before channel-module handoff.",
       "queue": "notifications",
       "priority": "high",
@@ -61,7 +61,7 @@
     },
     {
       "name": "NotificationQueued",
-      "class": "Academorix\\Notifications\\Events\\NotificationQueued",
+      "class": "Stackra\\Notifications\\Events\\NotificationQueued",
       "trigger": "SendNotificationJob accepted onto its queue. Emitted for observability, not for consumers to act on.",
       "queue": "notifications",
       "priority": "low",
@@ -76,7 +76,7 @@
     },
     {
       "name": "NotificationSent",
-      "class": "Academorix\\Notifications\\Events\\NotificationSent",
+      "class": "Stackra\\Notifications\\Events\\NotificationSent",
       "trigger": "Channel module handed off to its provider AND received a synchronous accept (provider message id captured). Not the same as Delivered \u2014 provider may still bounce later.",
       "queue": "notifications",
       "priority": "normal",
@@ -97,7 +97,7 @@
     },
     {
       "name": "NotificationDelivered",
-      "class": "Academorix\\Notifications\\Events\\NotificationDelivered",
+      "class": "Stackra\\Notifications\\Events\\NotificationDelivered",
       "trigger": "Provider webhook confirms endpoint delivery (mail: recipient MX accepted / rendered / opened depending on provider convention; sms: carrier delivery receipt; push: FCM/APNs success). Emitted from the channel module's IngestProviderWebhookJob.",
       "queue": "notifications",
       "priority": "normal",
@@ -116,7 +116,7 @@
     },
     {
       "name": "NotificationFailed",
-      "class": "Academorix\\Notifications\\Events\\NotificationFailed",
+      "class": "Stackra\\Notifications\\Events\\NotificationFailed",
       "trigger": "Channel module exhausted retries OR received a hard-failure signal (hard bounce, unsubscribed, invalid device token). No further attempts.",
       "queue": "notifications",
       "priority": "high",
@@ -139,7 +139,7 @@
     },
     {
       "name": "NotificationOpened",
-      "class": "Academorix\\Notifications\\Events\\NotificationOpened",
+      "class": "Stackra\\Notifications\\Events\\NotificationOpened",
       "trigger": "Tracking pixel loaded (mail) OR user viewed in inbox (in_app) OR system open event (push).",
       "queue": "notifications",
       "priority": "low",
@@ -155,7 +155,7 @@
     },
     {
       "name": "NotificationClicked",
-      "class": "Academorix\\Notifications\\Events\\NotificationClicked",
+      "class": "Stackra\\Notifications\\Events\\NotificationClicked",
       "trigger": "User clicked a tracked link. Recorded per-link with the target URL.",
       "queue": "notifications",
       "priority": "low",
@@ -172,7 +172,7 @@
     },
     {
       "name": "NotificationSeen",
-      "class": "Academorix\\Notifications\\Events\\NotificationSeen",
+      "class": "Stackra\\Notifications\\Events\\NotificationSeen",
       "trigger": "User explicitly marked a notification seen via inbox UI OR opened it in-app.",
       "queue": "notifications",
       "priority": "low",
@@ -186,7 +186,7 @@
     },
     {
       "name": "NotificationArchived",
-      "class": "Academorix\\Notifications\\Events\\NotificationArchived",
+      "class": "Stackra\\Notifications\\Events\\NotificationArchived",
       "trigger": "User archived a notification from inbox.",
       "queue": "notifications",
       "priority": "low",
@@ -199,7 +199,7 @@
     },
     {
       "name": "DigestQueued",
-      "class": "Academorix\\Notifications\\Events\\DigestQueued",
+      "class": "Stackra\\Notifications\\Events\\DigestQueued",
       "trigger": "DigestScheduler added a notification to a pending digest instead of dispatching immediately.",
       "queue": "notifications-digests",
       "priority": "low",
@@ -215,7 +215,7 @@
     },
     {
       "name": "DigestDelivered",
-      "class": "Academorix\\Notifications\\Events\\DigestDelivered",
+      "class": "Stackra\\Notifications\\Events\\DigestDelivered",
       "trigger": "ProcessDigestJob rendered + dispatched a digest. Notifications inside the digest are marked digest_delivered_at; downstream consumers can mark items sent-via-digest.",
       "queue": "notifications-digests",
       "priority": "normal",
@@ -232,7 +232,7 @@
     },
     {
       "name": "TemplatePublished",
-      "class": "Academorix\\Notifications\\Events\\TemplatePublished",
+      "class": "Stackra\\Notifications\\Events\\TemplatePublished",
       "trigger": "Tenant admin (or platform seeder) transitioned a template from draft \u2192 published. Emitted for cache invalidation + audit.",
       "queue": "notifications",
       "priority": "normal",
@@ -253,7 +253,7 @@
     },
     {
       "name": "PreferenceUpdated",
-      "class": "Academorix\\Notifications\\Events\\PreferenceUpdated",
+      "class": "Stackra\\Notifications\\Events\\PreferenceUpdated",
       "trigger": "User changed preferences (opt-in / opt-out / quiet hours / digest mode). Fires per-row (bulk PATCH fans out into many events).",
       "queue": "notifications",
       "priority": "normal",
@@ -275,7 +275,7 @@
     },
     {
       "name": "CategoryRegistered",
-      "class": "Academorix\\Notifications\\Events\\CategoryRegistered",
+      "class": "Stackra\\Notifications\\Events\\CategoryRegistered",
       "trigger": "A module's ServiceProvider registered a new category during boot. Emitted once per unique slug per boot. Consumers invalidate their caches.",
       "queue": "notifications",
       "priority": "low",

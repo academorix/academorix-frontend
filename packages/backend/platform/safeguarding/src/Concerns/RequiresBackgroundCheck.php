@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Safeguarding\Concerns;
+namespace Stackra\Safeguarding\Concerns;
 
 /**
  * Trait — RequiresBackgroundCheck.

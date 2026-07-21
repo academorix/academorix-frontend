@@ -58,7 +58,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Middleware;
+namespace Stackra\ApiSdk\Middleware;
 
 use Saloon\Http\Connector;
 use Saloon\Http\Response;

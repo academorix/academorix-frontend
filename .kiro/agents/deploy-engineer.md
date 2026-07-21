@@ -1,6 +1,6 @@
 ---
 description: >-
-  Deploy Engineer for Academorix — owns infrastructure-as-code, canary / promote
+  Deploy Engineer for Stackra — owns infrastructure-as-code, canary / promote
   / rollback plans, and deployment automation across environments in Phase 6.
   Consumes release notes + tags from release-manager. Reports to
   chief-orchestrator. Writes IaC + runbooks; does not modify feature code.

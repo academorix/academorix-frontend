@@ -4,8 +4,8 @@
  * @file src/Contracts/Data/ScopeDefinitionInterface.php
  *
  * @description
- * Column + table metadata contract for {@see \Academorix\Scope\Models\ScopeDefinition}.
- * Ports the `academorix-api/tenancy` "constants-only interface" pattern
+ * Column + table metadata contract for {@see \Stackra\Scope\Models\ScopeDefinition}.
+ * Ports the `stackra-api/tenancy` "constants-only interface" pattern
  * so every hard-coded column name lives in exactly one place. Column
  * renames become a single-file edit; every consumer references the
  * `ATTR_*` constants below.
@@ -13,7 +13,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Contracts\Data;
+namespace Stackra\Scope\Contracts\Data;
 
 /**
  * Table shape for the `scope_definitions` table — describes what

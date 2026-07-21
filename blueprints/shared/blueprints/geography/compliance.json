@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geography/compliance",
+  "id": "stackra://modules/geography/compliance",
   "$version": 1,
   "title": "geography \u2014 compliance evidence",
   "description": "IP-to-location is personal data (GDPR Art. 4(1)). The vendor's ip-api.com fallback is a subprocessor. MaxMind GeoLite2 is a locally-executing binary DB (no data leaves the app) so not a subprocessor.",

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Attributes;
+namespace Stackra\Activity\Attributes;
 
 use Attribute;
 
@@ -10,9 +10,9 @@ use Attribute;
  * Marks a Model as opted into the activity feed.
  *
  * Discovered at boot by the framework's generic hydration pump
- * ({@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper})
+ * ({@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper})
  * via the `#[HydratesFrom(LoggableActivity::class)]` declaration on
- * {@see \Academorix\Activity\Contracts\Services\ActivityRegistryInterface::register()}.
+ * {@see \Stackra\Activity\Contracts\Services\ActivityRegistryInterface::register()}.
  * The `activity:describe` command reads the resulting registry to
  * print the compile-time inventory of every model publishing to the
  * feed.

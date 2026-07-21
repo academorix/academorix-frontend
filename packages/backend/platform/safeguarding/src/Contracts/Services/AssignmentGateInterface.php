@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Safeguarding\Contracts\Services;
+namespace Stackra\Safeguarding\Contracts\Services;
 
-use Academorix\Safeguarding\Services\AssignmentGate;
+use Stackra\Safeguarding\Services\AssignmentGate;
 use Illuminate\Container\Attributes\Bind;
 
 /**

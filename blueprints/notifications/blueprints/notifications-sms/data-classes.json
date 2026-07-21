@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-sms/data-classes",
+  "id": "stackra://modules/notifications-sms/data-classes",
   "$version": 1,
   "title": "notifications-sms \u2014 field classification",
   "reference": "foundation::data-classes.json.tiers",

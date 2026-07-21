@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/platform-user/compliance",
+  "id": "stackra://modules/platform-user/compliance",
   "$version": 1,
   "title": "platform-user \u2014 compliance evidence",
-  "description": "SOC 2 HEAVY. This module is the substrate for every internal-workforce control that a Type II attestation covers \u2014 CC6.1 logical access, CC6.7 encryption + credential mgmt, CC7.2 change monitoring, CC7.3 incident response, CC8.1 change management. Every state transition on a PlatformUser writes an audit row; every PII access writes a meta-audit row; every offboarding is measured against a 24h access-removal SLA. Distinct from the tenant plane's compliance surface (which is GDPR-heavy) \u2014 platform staff are Academorix's own employees, so tenant-facing GDPR articles like Art. 17 (right to erasure) do NOT govern PlatformUser rows.",
+  "description": "SOC 2 HEAVY. This module is the substrate for every internal-workforce control that a Type II attestation covers \u2014 CC6.1 logical access, CC6.7 encryption + credential mgmt, CC7.2 change monitoring, CC7.3 incident response, CC8.1 change management. Every state transition on a PlatformUser writes an audit row; every PII access writes a meta-audit row; every offboarding is measured against a 24h access-removal SLA. Distinct from the tenant plane's compliance surface (which is GDPR-heavy) \u2014 platform staff are Stackra's own employees, so tenant-facing GDPR articles like Art. 17 (right to erasure) do NOT govern PlatformUser rows.",
   "regimes": {
     "soc2_type2": {
       "applicable": true,
@@ -82,7 +82,7 @@
     },
     "gdpr": {
       "applicable": true,
-      "scope_note": "PlatformUser + PlatformProfile rows carry PII (name, phone, email via Identity), so GDPR data-processing principles apply \u2014 but Academorix is the DATA CONTROLLER for its own employee records, and processing basis is the employment contract (Art. 6(1)(b)). Data-subject rights apply, though Art. 17 (erasure) is bounded by the audit-retention obligations under Art. 30.",
+      "scope_note": "PlatformUser + PlatformProfile rows carry PII (name, phone, email via Identity), so GDPR data-processing principles apply \u2014 but Stackra is the DATA CONTROLLER for its own employee records, and processing basis is the employment contract (Art. 6(1)(b)). Data-subject rights apply, though Art. 17 (erasure) is bounded by the audit-retention obligations under Art. 30.",
       "controls": [
         {
           "article": "Art. 5(1)(f)",
@@ -102,13 +102,13 @@
         {
           "article": "Art. 30",
           "principle": "records of processing",
-          "evidence": "audit-heavy trail (see CC7.2). PlatformUser mutations are the internal-workforce records-of-processing evidence for the Academorix DPO."
+          "evidence": "audit-heavy trail (see CC7.2). PlatformUser mutations are the internal-workforce records-of-processing evidence for the Stackra DPO."
         }
       ]
     },
     "hr_compliance": {
       "applicable": true,
-      "scope_note": "Regional labour-law compliance (EEOC in the US, GDPR-adjacent in the EU) governs employment-record retention + access. This module surfaces the hooks; the retention policy is jurisdiction-dependent + set per Academorix workplace, not per PlatformUser.",
+      "scope_note": "Regional labour-law compliance (EEOC in the US, GDPR-adjacent in the EU) governs employment-record retention + access. This module surfaces the hooks; the retention policy is jurisdiction-dependent + set per Stackra workplace, not per PlatformUser.",
       "controls": [
         {
           "principle": "employment record retention",

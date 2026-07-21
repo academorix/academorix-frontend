@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/referrals/helpers",
+  "id": "stackra://modules/referrals/helpers",
   "$version": 1,
   "title": "referrals — helper functions",
   "description": "Ergonomic helpers for accessing the active program from the request context, resolving codes to referral records, and building attribution + reward snapshots. All helpers are thin wrappers around bound services — never business logic.",
-  "namespace": "Academorix\\Growth\\Referrals\\Support",
+  "namespace": "Stackra\\Growth\\Referrals\\Support",
   "helpers": [
     {
       "signature": "active_referral_program(): ?ReferralProgram",
@@ -33,7 +33,7 @@
     },
     {
       "signature": "build_referral_share_url(User $user, ReferralProgram $program = null): string",
-      "purpose": "Constructs the shareable URL for the user's referral code. Uses the tenant's configured `referral_landing_url` + appends ?ref={code}. Falls back to https://{tenant.slug}.academorix.app/?ref={code} when unset.",
+      "purpose": "Constructs the shareable URL for the user's referral code. Uses the tenant's configured `referral_landing_url` + appends ?ref={code}. Falls back to https://{tenant.slug}.stackra.app/?ref={code} when unset.",
       "delegates_to": "ReferralCodeRepository::findForUserProgram() + Tenant::config('referral_landing_url')"
     },
     {

@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/notifications-push/observers",
+  "id": "stackra://modules/notifications-push/observers",
   "$version": 1,
   "title": "notifications-push \u2014 Eloquent observers",
   "observers": [
     {
       "model": "PushSubscription",
-      "observer": "Academorix\\Notifications\\Push\\Observers\\PushSubscriptionObserver",
+      "observer": "Stackra\\Notifications\\Push\\Observers\\PushSubscriptionObserver",
       "handles": [
         "creating \u2192 compute device_token_fingerprint via sha256(device_token) BEFORE encryption",
         "creating \u2192 validate token via TokenValidator (provider dry-run); refuse persist if invalid",

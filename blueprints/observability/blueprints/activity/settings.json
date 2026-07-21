@@ -1,15 +1,15 @@
 {
-  "id": "academorix://modules/activity/settings",
+  "id": "stackra://modules/activity/settings",
   "$version": 1,
   "title": "activity — settings",
   "description": "Tenant-editable settings. Two groups: `activity` (tenant-wide feed preferences + broadcast toggles; owner + admin) and `activity_digest_prefs` (per-user opt-in for digest emails; user-scoped).",
   "storedIn": "settings",
   "sduiScreen": "sdui/screens/settings-activity.screen.json",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "activity",
-      "class": "Academorix\\Observability\\Activity\\Settings\\ActivitySettings",
+      "class": "Stackra\\Observability\\Activity\\Settings\\ActivitySettings",
       "label": "Activity feed",
       "description": "Tenant-wide preferences for the activity feed feature. Owner + admin only.",
       "icon": "clock",
@@ -86,7 +86,7 @@
     },
     {
       "key": "activity_digest_prefs",
-      "class": "Academorix\\Observability\\Activity\\Settings\\ActivityDigestPreferences",
+      "class": "Stackra\\Observability\\Activity\\Settings\\ActivityDigestPreferences",
       "label": "Activity digest emails",
       "description": "Per-user preferences for activity digest emails. Every user can configure their own.",
       "icon": "envelope",

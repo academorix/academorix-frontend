@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/event/observers",
+  "id": "stackra://modules/event/observers",
   "$version": 1,
   "title": "event — Eloquent observers",
   "description": "Two observers — EventObserver (Event model) and EventFacilityObserver (event_facilities pivot). Together they enforce the module's write-time invariants: entitlement gating, scoping-tuple integrity, date-range validation, state-machine transitions, immutability rules, and the post-registration-open guardrails (dates + venue + pricing + eligibility narrowing).",
   "observers": [
     {
       "model": "Event",
-      "observer": "Academorix\\Sports\\Event\\Observers\\EventObserver",
+      "observer": "Stackra\\Sports\\Event\\Observers\\EventObserver",
       "handles": [
         "creating -> populate ULID prefix `eve_`.",
         "creating -> refuse when tenant does NOT hold `sports_events` entitlement (returns `EVENT_FEATURE_NOT_ENTITLED`, 402).",
@@ -64,7 +64,7 @@
     },
     {
       "model": "EventFacility",
-      "observer": "Academorix\\Sports\\Event\\Observers\\EventFacilityObserver",
+      "observer": "Stackra\\Sports\\Event\\Observers\\EventFacilityObserver",
       "handles": [
         "creating -> populate ULID prefix `efc_`.",
         "creating -> refuse when facility.tenant_id != event.tenant_id (returns `EVENT_FACILITY_TENANT_MISMATCH`, 422 — cross-tenant FK smuggling).",

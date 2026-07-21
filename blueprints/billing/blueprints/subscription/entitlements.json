@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/subscription/entitlements",
+  "id": "stackra://modules/subscription/entitlements",
   "$version": 1,
   "title": "subscription \u2014 declared entitlements",
   "description": "The subscription module is an entitlement source (Plans DECLARE default_entitlements). It also declares a few of its own for lifecycle rate limits.",

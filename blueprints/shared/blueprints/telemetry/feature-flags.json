@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/telemetry/feature-flags",
+  "id": "stackra://modules/telemetry/feature-flags",
   "$version": 1,
   "title": "telemetry \u2014 kill switches",
   "engine": "laravel/pennant",

@@ -32,7 +32,7 @@
           "kind": "Alert",
           "props": {
             "variant": "info",
-            "children": "After you add the domain, we'll generate DNS records to point at Academorix. Verification runs automatically once the records are live."
+            "children": "After you add the domain, we'll generate DNS records to point at Stackra. Verification runs automatically once the records are live."
           }
         },
         {

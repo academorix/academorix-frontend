@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/organization/config",
+  "id": "stackra://modules/organization/config",
   "$version": 1,
   "title": "organization — developer configuration",
   "configFile": "config/organization.php",

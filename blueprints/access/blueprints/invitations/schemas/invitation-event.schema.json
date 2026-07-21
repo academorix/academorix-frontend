@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invitations/schemas/invitation-event",
+  "id": "stackra://modules/invitations/schemas/invitation-event",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "InvitationEvent",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "ive_",
     "incrementing": false,
-    "model": "Academorix\\Invitations\\Models\\InvitationEvent",
-    "interface": "Academorix\\Invitations\\Contracts\\Data\\InvitationEventInterface",
-    "implements": ["Academorix\\Invitations\\Contracts\\Data\\InvitationEventInterface"],
+    "model": "Stackra\\Invitations\\Models\\InvitationEvent",
+    "interface": "Stackra\\Invitations\\Contracts\\Data\\InvitationEventInterface",
+    "implements": ["Stackra\\Invitations\\Contracts\\Data\\InvitationEventInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

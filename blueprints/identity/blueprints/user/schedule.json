@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/user/schedule",
+  "id": "stackra://modules/user/schedule",
   "$version": 1,
   "title": "user \u2014 scheduled tasks",
   "entries": [
@@ -36,7 +36,7 @@
       "command": "user:metrics:snapshot",
       "cron": "0 * * * *",
       "timezone": "UTC",
-      "purpose": "Hourly. Compute `academorix.user.active.count` per status + `academorix.user.tenant_member.count` gauges + `academorix.user.purge_pending.count`. Publishes to the OpenTelemetry endpoint."
+      "purpose": "Hourly. Compute `stackra.user.active.count` per status + `stackra.user.tenant_member.count` gauges + `stackra.user.purge_pending.count`. Publishes to the OpenTelemetry endpoint."
     }
   ]
 }

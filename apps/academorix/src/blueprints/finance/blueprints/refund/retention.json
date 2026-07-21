@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/refund/retention",
+  "id": "stackra://modules/refund/retention",
   "$version": 1,
   "title": "refund — retention windows",
   "description": "Refund data is financial-audit critical. Every refund is a compliance-relevant financial event — a reversal of previously-recognised revenue. Default retention 7 years (SOX + SOC 2 CC6.3 + national tax law baselines: US, EU, UK, CA). Enterprise tier extends to 10y via `refund_extended_retention`. TenantErased cascades FK CASCADE hard-delete of every owned row EXCEPT invoice-linked refunds — those migrate to a compliance archive for legal-obligation retention. Consumer-protection-law SLAs (14-30 day refund windows) do NOT affect retention — those govern how quickly refunds MUST complete, not how long records live.",

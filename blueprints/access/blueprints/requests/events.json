@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/access/requests/events",
+  "id": "stackra://modules/access/requests/events",
   "$version": 1,
   "title": "requests \u2014 domain events",
   "description": "Seven lifecycle events published by this module. Each is a SHIM on top of a matching event from workflow/approvals or access/grants \u2014 the shim exists so consumers of THIS module's semantics don't need to know the upstream engines' event schemas. Every event carries `ShouldDispatchAfterCommit` so listeners never react to a rolled-back state change.",
-  "contract": "Academorix\\Foundation\\Contracts\\ShouldDispatchAfterCommit",
-  "eventBase": "Academorix\\AccessRequest\\Events\\AccessRequestEvent",
+  "contract": "Stackra\\Foundation\\Contracts\\ShouldDispatchAfterCommit",
+  "eventBase": "Stackra\\AccessRequest\\Events\\AccessRequestEvent",
   "events": [
     {
       "name": "AccessRequestSubmitted",
-      "class": "Academorix\\AccessRequest\\Events\\AccessRequestSubmitted",
+      "class": "Stackra\\AccessRequest\\Events\\AccessRequestSubmitted",
       "when": "Immediately after `workflow/approvals` creates the approval_instance in response to POST /access-requests. Wraps `workflow/approvals::ApprovalRequested` filtered to `action_key='access.grants.create'`.",
       "afterCommit": true,
       "payload": {
@@ -25,7 +25,7 @@
     },
     {
       "name": "AccessRequestApproved",
-      "class": "Academorix\\AccessRequest\\Events\\AccessRequestApproved",
+      "class": "Stackra\\AccessRequest\\Events\\AccessRequestApproved",
       "when": "Fires when the underlying approval_instance transitions to `approved` \u2014 all requirements satisfied. Wraps `workflow/approvals::ApprovalGranted` filtered to `action_key='access.grants.create'`. Does NOT itself materialise the grant \u2014 that happens on `ApprovalExecuted` in AccessRequestGrantMaterializer. This event fires FIRST (before the grant exists) so the requester can be told 'approved!' while the materialiser is still running \u2014 the notification body optimistically says 'you should now be able to access X'.",
       "afterCommit": true,
       "payload": {
@@ -42,7 +42,7 @@
     },
     {
       "name": "AccessRequestRejected",
-      "class": "Academorix\\AccessRequest\\Events\\AccessRequestRejected",
+      "class": "Stackra\\AccessRequest\\Events\\AccessRequestRejected",
       "when": "Fires when the underlying approval_instance transitions to `rejected` \u2014 any requirement failed. Wraps `workflow/approvals::ApprovalRejected` filtered to `action_key='access.grants.create'`. Terminal.",
       "afterCommit": true,
       "payload": {
@@ -60,7 +60,7 @@
     },
     {
       "name": "AccessRequestExpired",
-      "class": "Academorix\\AccessRequest\\Events\\AccessRequestExpired",
+      "class": "Stackra\\AccessRequest\\Events\\AccessRequestExpired",
       "when": "Fires when the underlying approval_instance transitions to `expired` because no decision arrived before `expires_at`. Wraps `workflow/approvals::ApprovalExpired` filtered to `action_key='access.grants.create'`. Behaviour depends on the matched template's `on_timeout`: `expire` (default) fires this event; `approve` fires AccessRequestApproved instead; `escalate` fires AccessRequestEscalated (deferred to Wave 2).",
       "afterCommit": true,
       "payload": {
@@ -77,7 +77,7 @@
     },
     {
       "name": "AccessRequestCancelled",
-      "class": "Academorix\\AccessRequest\\Events\\AccessRequestCancelled",
+      "class": "Stackra\\AccessRequest\\Events\\AccessRequestCancelled",
       "when": "Fires when the requester withdraws via POST /access-requests/{id}/withdraw. Wraps `workflow/approvals::ApprovalCancelled`. Terminal.",
       "afterCommit": true,
       "payload": {
@@ -93,7 +93,7 @@
     },
     {
       "name": "AccessRequestApproverNotified",
-      "class": "Academorix\\AccessRequest\\Events\\AccessRequestApproverNotified",
+      "class": "Stackra\\AccessRequest\\Events\\AccessRequestApproverNotified",
       "when": "Fires once per approver after `NotifyApproversJob` delivers `AccessRequestSubmittedNotification`. Separate event so analytics can measure notification delivery latency + drop rate.",
       "afterCommit": true,
       "payload": {
@@ -106,7 +106,7 @@
     },
     {
       "name": "AccessRequestGrantIssued",
-      "class": "Academorix\\AccessRequest\\Events\\AccessRequestGrantIssued",
+      "class": "Stackra\\AccessRequest\\Events\\AccessRequestGrantIssued",
       "when": "Fires from AccessRequestGrantMaterializer AFTER `access/grants::GrantIssuer::issue()` returns successfully. Distinct from AccessRequestApproved (which fires the moment the instance is approved). This event guarantees the grant row exists \u2014 downstream consumers who need the grant id (e.g. audit correlation) subscribe here, not to Approved.",
       "afterCommit": true,
       "payload": {

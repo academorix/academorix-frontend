@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Database\Factories;
+namespace Stackra\Registry\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Registry\Contracts\Data\DisciplineInterface;
-use Academorix\Registry\Models\Discipline;
+use Stackra\Registry\Contracts\Data\DisciplineInterface;
+use Stackra\Registry\Models\Discipline;
 
 /**
- * Factory for {@see \Academorix\Registry\Models\Discipline}.
+ * Factory for {@see \Stackra\Registry\Models\Discipline}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Registry\Models\Discipline>
+ * @extends Factory<\Stackra\Registry\Models\Discipline>
  *
  * @category Registry
  *

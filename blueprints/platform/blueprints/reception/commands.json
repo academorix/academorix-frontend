@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/reception/commands",
+  "id": "stackra://modules/reception/commands",
   "$version": 1,
   "title": "reception — Artisan commands",
   "description": "Console commands this module ships.",

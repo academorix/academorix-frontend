@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Contracts\Services;
+namespace Stackra\Notifications\Mail\Contracts\Services;
 
-use Academorix\Notifications\Mail\Services\MailProviderWebhookIngestor;
+use Stackra\Notifications\Mail\Services\MailProviderWebhookIngestor;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -17,11 +17,11 @@ use Illuminate\Container\Attributes\Bind;
  * takes the raw provider payload and dispatches the canonical
  * events:
  *
- *   * {@see \Academorix\Notifications\Mail\Events\MailDelivered}
- *   * {@see \Academorix\Notifications\Mail\Events\MailOpened}
- *   * {@see \Academorix\Notifications\Mail\Events\MailClicked}
- *   * {@see \Academorix\Notifications\Mail\Events\MailBounced}
- *   * {@see \Academorix\Notifications\Mail\Events\MailComplaint}
+ *   * {@see \Stackra\Notifications\Mail\Events\MailDelivered}
+ *   * {@see \Stackra\Notifications\Mail\Events\MailOpened}
+ *   * {@see \Stackra\Notifications\Mail\Events\MailClicked}
+ *   * {@see \Stackra\Notifications\Mail\Events\MailBounced}
+ *   * {@see \Stackra\Notifications\Mail\Events\MailComplaint}
  *
  * A payload the ingestor cannot map (unknown event type, missing
  * `provider_message_id`) is logged + acknowledged as a no-op — the

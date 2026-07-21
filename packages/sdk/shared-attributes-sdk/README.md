@@ -1,7 +1,7 @@
-# academorix-shared/attributes-sdk
+# stackra-shared/attributes-sdk
 
 Wire-visible SDK surface for the `attributes` module of the Shared service.
-Auto-discovered by `academorix/shared-sdk` (the service umbrella) via
+Auto-discovered by `stackra/shared-sdk` (the service umbrella) via
 `#[AsSdkResource(name: 'attributes', service: 'shared')]`.
 
 ## Aggregates
@@ -29,7 +29,7 @@ src/
 Consumed only over HTTP via the umbrella client:
 
 ```php
-app(\Academorix\SharedSdk\Client\SharedSdk::class)
+app(\Stackra\SharedSdk\Client\SharedSdk::class)
     ->attributes()
     ->attributeDefinitions()
     ->list();

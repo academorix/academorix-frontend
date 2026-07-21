@@ -47,11 +47,11 @@ declare(strict_types=1);
  * @see \Illuminate\Database\Schema\ColumnDefinition
  */
 
-namespace Academorix\Database\Schema;
+namespace Stackra\Database\Schema;
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\ColumnDefinition;
-use Academorix\Database\Attributes\AsDatabaseBlueprint;
+use Stackra\Database\Attributes\AsDatabaseBlueprint;
 
 /**
  * Registers the translatable() macro on Blueprint.

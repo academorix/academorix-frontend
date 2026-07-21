@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsSms\Exceptions;
+namespace Stackra\NotificationsSms\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `NOTIFICATIONS_SMS_RATE_LIMITED` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsSmsRateLimitedException extends AcademorixException
+final class NotificationsSmsRateLimitedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

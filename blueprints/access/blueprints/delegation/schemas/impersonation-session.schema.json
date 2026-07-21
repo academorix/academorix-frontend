@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/delegation/schemas/impersonation-session",
+  "id": "stackra://modules/delegation/schemas/impersonation-session",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ImpersonationSession",
-  "description": "One row per act-as session started by a PlatformUser (Academorix staff) against a tenant User for support / debug purposes. Cross-plane FK — `impersonator_platform_user_id` references `platform_users.id` (central-plane row); every other FK is tenant-plane. The `session_token_hash` is the SHA-256 of the Sanctum PAT minted by identity/auth's `IssueImpersonationPatAction` — the raw token exists only in the impersonator's browser + is returned once at start-time; the hash exists only for lookup + revocation (never surfaced to consumers). Snapshot columns (`impersonator_display_name` + `impersonator_department`) capture the impersonator's identity at session start and are IMMUTABLE thereafter, so compliance queries survive the impersonator's PlatformUser hard-delete (post 90-day retention hold — see platform-user/retention). NEVER soft-deleted (append-only compliance evidence); `session_token_hash` is NULLED after 30 days by `PurgeImpersonationSessionsJob` (the token is expired anyway, but hash scrubbing avoids leaving a residue that could be brute-forced if the hashing algorithm is compromised).",
+  "description": "One row per act-as session started by a PlatformUser (Stackra staff) against a tenant User for support / debug purposes. Cross-plane FK — `impersonator_platform_user_id` references `platform_users.id` (central-plane row); every other FK is tenant-plane. The `session_token_hash` is the SHA-256 of the Sanctum PAT minted by identity/auth's `IssueImpersonationPatAction` — the raw token exists only in the impersonator's browser + is returned once at start-time; the hash exists only for lookup + revocation (never surfaced to consumers). Snapshot columns (`impersonator_display_name` + `impersonator_department`) capture the impersonator's identity at session start and are IMMUTABLE thereafter, so compliance queries survive the impersonator's PlatformUser hard-delete (post 90-day retention hold — see platform-user/retention). NEVER soft-deleted (append-only compliance evidence); `session_token_hash` is NULLED after 30 days by `PurgeImpersonationSessionsJob` (the token is expired anyway, but hash scrubbing avoids leaving a residue that could be brute-forced if the hashing algorithm is compromised).",
   "type": "object",
   "x-module": "delegation",
   "x-eloquent": {
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "imp_",
     "incrementing": false,
-    "model": "Academorix\\Delegation\\Models\\ImpersonationSession",
-    "interface": "Academorix\\Delegation\\Contracts\\Data\\ImpersonationSessionInterface",
-    "implements": ["Academorix\\Delegation\\Contracts\\Data\\ImpersonationSessionInterface"],
+    "model": "Stackra\\Delegation\\Models\\ImpersonationSession",
+    "interface": "Stackra\\Delegation\\Contracts\\Data\\ImpersonationSessionInterface",
+    "implements": ["Stackra\\Delegation\\Contracts\\Data\\ImpersonationSessionInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -71,7 +71,7 @@
         "length": 64,
         "nullable": true,
         "foreign": { "table": "platform_users", "column": "id", "onDelete": "set null" },
-        "description": "PlatformUser (Academorix staff) initiating the session. NULLABLE with SET NULL on delete so the row survives the PlatformUser's hard-delete at the end of the 90-day retention hold (see platform-user/retention.json). Snapshot columns `impersonator_display_name` + `impersonator_department` preserve identity for compliance queries after this FK NULLs."
+        "description": "PlatformUser (Stackra staff) initiating the session. NULLABLE with SET NULL on delete so the row survives the PlatformUser's hard-delete at the end of the 90-day retention hold (see platform-user/retention.json). Snapshot columns `impersonator_display_name` + `impersonator_department` preserve identity for compliance queries after this FK NULLs."
       },
       "impersonated_user_id": {
         "type": "string",
@@ -85,7 +85,7 @@
         "length": 64,
         "nullable": false,
         "foreign": { "table": "applications", "column": "id", "onDelete": "restrict" },
-        "description": "Which Academorix Application the session operates within (Sports, Marketplace, ...). Restrict on delete so an application cannot be retired while impersonation records reference it. A PlatformUser starting a session must specify target_application_id explicitly — the JWT `app` claim on the minted PAT binds to this value."
+        "description": "Which Stackra Application the session operates within (Sports, Marketplace, ...). Restrict on delete so an application cannot be retired while impersonation records reference it. A PlatformUser starting a session must specify target_application_id explicitly — the JWT `app` claim on the minted PAT binds to this value."
       },
       "target_tenant_id": {
         "type": "string",

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Contracts\Data;
+namespace Stackra\Auth\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Auth\Models\AuthCrossAppGrant;
+use Stackra\Auth\Models\AuthCrossAppGrant;
 
 /**
  * Table shape for the `auth_cross_app_grants` table.

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\DigitalPasses\Contracts\Repositories;
+namespace Stackra\DigitalPasses\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\DigitalPasses\Models\WalletPass}.
+ * Repository contract for {@see Stackra\DigitalPasses\Models\WalletPass}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `WalletPassRepository`.
  *
- * @extends RepositoryInterface<\Academorix\DigitalPasses\Models\WalletPass>
+ * @extends RepositoryInterface<\Stackra\DigitalPasses\Models\WalletPass>
  *
  * @category DigitalPasses
  *

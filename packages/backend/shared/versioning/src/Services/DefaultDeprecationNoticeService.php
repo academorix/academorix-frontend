@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Services;
+namespace Stackra\Versioning\Services;
 
-use Academorix\Versioning\Contracts\Data\ApiVersionInterface;
-use Academorix\Versioning\Contracts\Data\DeprecationNoticeInterface;
-use Academorix\Versioning\Contracts\Repositories\ApiVersionRepositoryInterface;
-use Academorix\Versioning\Contracts\Repositories\DeprecationNoticeRepositoryInterface;
-use Academorix\Versioning\Contracts\Services\DeprecationNoticeServiceInterface;
-use Academorix\Versioning\Events\DeprecationNoticePublished;
-use Academorix\Versioning\Models\DeprecationNotice;
+use Stackra\Versioning\Contracts\Data\ApiVersionInterface;
+use Stackra\Versioning\Contracts\Data\DeprecationNoticeInterface;
+use Stackra\Versioning\Contracts\Repositories\ApiVersionRepositoryInterface;
+use Stackra\Versioning\Contracts\Repositories\DeprecationNoticeRepositoryInterface;
+use Stackra\Versioning\Contracts\Services\DeprecationNoticeServiceInterface;
+use Stackra\Versioning\Events\DeprecationNoticePublished;
+use Stackra\Versioning\Models\DeprecationNotice;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Support\Collection;
 

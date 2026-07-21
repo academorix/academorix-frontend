@@ -18,7 +18,7 @@ declare(strict_types=1);
  *
  * ## Usage:
  * ```php
- * use Academorix\Database\Concerns\Model\HasSortOrder;
+ * use Stackra\Database\Concerns\Model\HasSortOrder;
  *
  * class MenuItem extends Model
  * {
@@ -47,7 +47,7 @@ declare(strict_types=1);
  * @see \Illuminate\Support\Facades\DB::transaction()
  */
 
-namespace Academorix\Database\Concerns\Model;
+namespace Stackra\Database\Concerns\Model;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -70,9 +70,9 @@ trait HasSortOrder
     {
         // Read attribute configuration (if present)
         $config = null;
-        $forClass = \Academorix\Database\Support\AttributeReader::forClass(static::class);
+        $forClass = \Stackra\Database\Support\AttributeReader::forClass(static::class);
         foreach ($forClass->classAttributes as $attr) {
-            if ($attr instanceof \Academorix\Database\Attributes\SortableModel) {
+            if ($attr instanceof \Stackra\Database\Attributes\SortableModel) {
                 $config = $attr;
                 break;
             }
@@ -309,10 +309,10 @@ trait HasSortOrder
      * Applies WHERE clauses for each group column so that ordering
      * operations only affect records in the same group.
      *
-     * @param  \Academorix\Database\Attributes\SortableModel|null  $config  Optional attribute configuration.
+     * @param  \Stackra\Database\Attributes\SortableModel|null  $config  Optional attribute configuration.
      * @return Builder<static>
      */
-    protected function buildGroupQuery(?\Academorix\Database\Attributes\SortableModel $config = null): Builder
+    protected function buildGroupQuery(?\Stackra\Database\Attributes\SortableModel $config = null): Builder
     {
         $query = static::query();
 

@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/tenancy/hooks",
+  "id": "stackra://modules/tenancy/hooks",
   "$version": 1,
   "title": "tenants — tenancy hooks",
   "description": "Per-tenant lifecycle callbacks (#[AsTenancyHook]) that this module registers. Fires on every tenant init and every tenant end for every request. Each hook is symmetric: whatever `onTenantInitialized` mutates, `onTenantEnded` restores — mandatory for Octane safety. See .kiro/steering/tenants-hooks.md.",
-  "contract": "Academorix\\ServiceProvider\\Contracts\\TenancyHookInterface",
-  "dispatcher": "Academorix\\ServiceProvider\\Dispatchers\\TenancyHookDispatcher",
-  "registry": "Academorix\\ServiceProvider\\Registry\\TenancyHookRegistry",
+  "contract": "Stackra\\ServiceProvider\\Contracts\\TenancyHookInterface",
+  "dispatcher": "Stackra\\ServiceProvider\\Dispatchers\\TenancyHookDispatcher",
+  "registry": "Stackra\\ServiceProvider\\Registry\\TenancyHookRegistry",
   "hooks": [
     {
-      "class": "Academorix\\Tenancy\\TenancyHooks\\LogContextTenantHook",
+      "class": "Stackra\\Tenancy\\TenancyHooks\\LogContextTenantHook",
       "priority": 10,
       "range": "framework-level (0..99)",
       "onInit": "Push `tenant_id`, `tenant_slug`, `application_id` into the current PSR-3 log context. Every log line emitted in the request now carries the tenant + application identifiers.",
@@ -17,7 +17,7 @@
       "octaneSafe": true
     },
     {
-      "class": "Academorix\\Tenancy\\TenancyHooks\\CachePrefixTenantHook",
+      "class": "Stackra\\Tenancy\\TenancyHooks\\CachePrefixTenantHook",
       "priority": 20,
       "range": "framework-level (0..99)",
       "onInit": "Set the cache repository prefix to `tenant:{tenant_id}:` so every cache read/write is namespaced. Prevents accidental cross-tenant cache reads.",

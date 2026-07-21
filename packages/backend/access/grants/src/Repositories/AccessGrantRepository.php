@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Grants\Repositories;
+namespace Stackra\Grants\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Grants\Contracts\Data\AccessGrantInterface;
-use Academorix\Grants\Contracts\Repositories\AccessGrantRepositoryInterface;
-use Academorix\Grants\Models\AccessGrant;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Grants\Contracts\Data\AccessGrantInterface;
+use Stackra\Grants\Contracts\Repositories\AccessGrantRepositoryInterface;
+use Stackra\Grants\Models\AccessGrant;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Grants\Models\AccessGrant}.
+ * Attribute-first Eloquent repository for {@see Stackra\Grants\Models\AccessGrant}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AccessGrantInterface::class)]` which resolves to
  * `AccessGrant` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Grants\Models\AccessGrant>
+ * @extends Repository<\Stackra\Grants\Models\AccessGrant>
  *
  * @category Grants
  *

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Database\Factories;
+namespace Stackra\Notifications\Push\Database\Factories;
 
-use Academorix\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
-use Academorix\Notifications\Push\Enums\PushPlatform;
-use Academorix\Notifications\Push\Enums\PushProvider;
-use Academorix\Notifications\Push\Models\PushSubscription;
+use Stackra\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
+use Stackra\Notifications\Push\Enums\PushPlatform;
+use Stackra\Notifications\Push\Enums\PushProvider;
+use Stackra\Notifications\Push\Models\PushSubscription;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

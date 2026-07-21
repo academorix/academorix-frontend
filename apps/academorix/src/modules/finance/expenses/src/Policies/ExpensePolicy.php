@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Expenses\Policies;
+namespace Stackra\Expenses\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Expenses\Models\Expense;
+use Stackra\User\Models\User;
+use Stackra\Expenses\Models\Expense;
 
 /**
- * Authorization policy for {@see \Academorix\Expenses\Models\Expense}.
+ * Authorization policy for {@see \Stackra\Expenses\Models\Expense}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

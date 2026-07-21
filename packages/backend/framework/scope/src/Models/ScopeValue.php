@@ -7,16 +7,16 @@
  * Eloquent model for the `scope_values` table — a namespaced
  * key-value store keyed by node id. Reads never happen directly on
  * this model in application code; go through
- * {@see \Academorix\Scope\Contracts\ScopeResolutionInterface::resolve()}
+ * {@see \Stackra\Scope\Contracts\ScopeResolutionInterface::resolve()}
  * so the cascading path is applied.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Models;
+namespace Stackra\Scope\Models;
 
-use Academorix\Scope\Contracts\Data\ScopeValueInterface;
-use Academorix\Scope\Database\Factories\ScopeValueFactory;
+use Stackra\Scope\Contracts\Data\ScopeValueInterface;
+use Stackra\Scope\Database\Factories\ScopeValueFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;

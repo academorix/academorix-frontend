@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geography/schemas/country",
+  "id": "stackra://modules/geography/schemas/country",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Country",
@@ -19,9 +19,9 @@
     "keyType": "int",
     "incrementing": true,
     "timestamps": false,
-    "model": "Academorix\\Geography\\Models\\Country",
-    "interface": "Academorix\\Geography\\Contracts\\Data\\CountryInterface",
-    "implements": ["Academorix\\Geography\\Contracts\\Data\\CountryInterface"],
+    "model": "Stackra\\Geography\\Models\\Country",
+    "interface": "Stackra\\Geography\\Contracts\\Data\\CountryInterface",
+    "implements": ["Stackra\\Geography\\Contracts\\Data\\CountryInterface"],
     "traits": ["HasFactory", "HasWorldLocalizedName", "Filterable"],
     "casts": { "status": "integer" },
     "appends": ["localized_name"],
@@ -106,7 +106,7 @@
     "envelope": "spatie-data",
     "wrap": "data",
     "mapper": "SnakeCaseMapper",
-    "resource_class": "Academorix\\Geography\\Data\\Resources\\CountryResourceData",
+    "resource_class": "Stackra\\Geography\\Data\\Resources\\CountryResourceData",
     "computed": ["localized_name"]
   },
   "x-route-binding": {

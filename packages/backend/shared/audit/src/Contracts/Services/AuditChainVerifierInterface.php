@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Contracts\Services;
+namespace Stackra\Audit\Contracts\Services;
 
-use Academorix\Audit\Models\Audit;
-use Academorix\Audit\Services\DefaultAuditChainVerifier;
+use Stackra\Audit\Models\Audit;
+use Stackra\Audit\Services\DefaultAuditChainVerifier;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Scoped;
 
@@ -15,7 +15,7 @@ use Illuminate\Container\Attributes\Scoped;
  * The default {@see DefaultAuditChainVerifier} walks the `audits`
  * table in creation order, recomputes each row's expected
  * `chain_hash`, and compares to the stored value. On mismatch it
- * emits {@see \Academorix\Audit\Events\AuditChainBroken}.
+ * emits {@see \Stackra\Audit\Events\AuditChainBroken}.
  *
  * Bound `#[Scoped]` — the verifier holds per-run counters
  * (`verified`, `broken`, `first_break_at`) that must reset between
@@ -34,7 +34,7 @@ interface AuditChainVerifierInterface
      * Walk the audit chain for one tenant (or every tenant when
      * `$tenantId === null`) and produce a verification summary.
      *
-     * Emits {@see \Academorix\Audit\Events\AuditChainBroken} on the
+     * Emits {@see \Stackra\Audit\Events\AuditChainBroken} on the
      * FIRST broken link and continues walking so the summary counts
      * every downstream mismatch.
      *

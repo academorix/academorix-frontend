@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Exceptions;
+namespace Stackra\Tax\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to create a tax_rate whose (jurisdiction, rate_type, applies_to, effective_range) overlaps an existing row.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TaxRateOverlappingRangeException extends AcademorixException
+final class TaxRateOverlappingRangeException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Medical\Contracts\Services;
+namespace Stackra\Medical\Contracts\Services;
 
-use Academorix\Medical\Services\EligibilityGate;
+use Stackra\Medical\Services\EligibilityGate;
 use Illuminate\Container\Attributes\Bind;
 
 /**

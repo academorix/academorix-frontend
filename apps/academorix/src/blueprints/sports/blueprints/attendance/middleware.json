@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/attendance/middleware",
+  "id": "stackra://modules/attendance/middleware",
   "$version": 1,
   "title": "attendance — HTTP middleware",
   "middleware": [
     {
       "alias": "attendance.rate_limit",
-      "class": "Academorix\\Sports\\Attendance\\Http\\Middleware\\AttendanceRateLimit",
+      "class": "Stackra\\Sports\\Attendance\\Http\\Middleware\\AttendanceRateLimit",
       "priority": 42,
       "description": "Prevents kiosk spam. Rate-limits check-in POSTs to 5 attempts per athlete per session per minute per source (IP + device fingerprint). Returns 429 ATTENDANCE_RATE_LIMITED with Retry-After header. Uses Redis atomic INCR + TTL for cross-instance coordination. Applied only on POST /api/v1/attendance/check-in and the kiosk-check-in-app route.",
       "auto_applied": false,
@@ -13,7 +13,7 @@
     },
     {
       "alias": "attendance.geofence_verify",
-      "class": "Academorix\\Sports\\Attendance\\Http\\Middleware\\AttendanceGeofenceVerify",
+      "class": "Stackra\\Sports\\Attendance\\Http\\Middleware\\AttendanceGeofenceVerify",
       "priority": 44,
       "description": "For check-in routes with checked_in_via='geofence': validates gps_lat + gps_lng against the session's venue geofence radius. Integrates with the products/geofencing module. Returns 422 ATTENDANCE_GEOFENCE_MISMATCH when outside radius, or ATTENDANCE_GPS_REQUIRED when missing. Skips when checked_in_via != 'geofence' OR when tenant lacks attendance_geofence entitlement (delegates entitlement check to observer).",
       "auto_applied": false,

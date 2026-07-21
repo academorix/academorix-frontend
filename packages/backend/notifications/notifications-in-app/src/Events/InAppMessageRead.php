@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\InApp\Events;
+namespace Stackra\Notifications\InApp\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 
 /**
  * Dispatched when a
- * {@see \Academorix\Notifications\InApp\Models\InAppMessageRead}
+ * {@see \Stackra\Notifications\InApp\Models\InAppMessageRead}
  * transitions its `read_at` column from `null` to non-null. Fires
  * exactly once per delivery (idempotent — subsequent mark-read
  * attempts do NOT re-fire).

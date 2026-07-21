@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Services;
+namespace Stackra\Attribution\Services;
 
-use Academorix\Attribution\Contracts\Services\AttributionProvisionerInterface;
+use Stackra\Attribution\Contracts\Services\AttributionProvisionerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Attribution\Contracts\Repositories\AttributionTouchpointRepositoryInterface;
+use Stackra\Attribution\Contracts\Repositories\AttributionTouchpointRepositoryInterface;
 
 /**
  * Concrete service — AttributionProvisioner.

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Database\Factories;
+namespace Stackra\Search\Database\Factories;
 
-use Academorix\Search\Contracts\Data\SearchIndexInterface;
-use Academorix\Search\Enums\SearchEngine;
-use Academorix\Search\Enums\SearchIndexStatus;
-use Academorix\Search\Models\SearchIndex;
+use Stackra\Search\Contracts\Data\SearchIndexInterface;
+use Stackra\Search\Enums\SearchEngine;
+use Stackra\Search\Enums\SearchIndexStatus;
+use Stackra\Search\Models\SearchIndex;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

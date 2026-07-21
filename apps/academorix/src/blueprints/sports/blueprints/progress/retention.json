@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/progress/retention",
+  "id": "stackra://modules/progress/retention",
   "$version": 1,
   "title": "progress — data retention windows",
   "description": "Progress records are development-material for athletes — long retention. GradingResult retained indefinitely for belt provenance across career moves. Extended retention Enterprise-only.",

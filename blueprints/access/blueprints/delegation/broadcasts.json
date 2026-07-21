@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/delegation/broadcasts",
+  "id": "stackra://modules/delegation/broadcasts",
   "$version": 1,
   "title": "delegation — broadcast channels",
   "description": "Two channels — one tenant-plane for delegation lifecycle updates in real time, one platform-plane for impersonation session updates surfaced to the operator's browser (session ends, extensions, forced-terminations should update the operator's UI without a full poll).",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/region/data-classes",
+  "id": "stackra://modules/region/data-classes",
   "$version": 1,
   "title": "region — field classification",
   "description": "Region carries commercial + regulatory reference data. No PII. `tax_config.registration_number` is the highest-sensitivity field (a tenant's tax registration ID for the jurisdiction) — classified `confidential` because leakage would expose the tenant's tax posture to competitors. Every status transition + tax_config change is audit-logged (financial-record retention). Domain rows below Region (Branch, Membership, Invoice) inherit their own classification per their owning module.",

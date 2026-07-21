@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SharedAttributesSdk\Requests\AttributeGroups;
+namespace Stackra\SharedAttributesSdk\Requests\AttributeGroups;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SharedAttributesSdk\Data\AttributeGroupData;
-use Academorix\SharedAttributesSdk\Payloads\AttributeGroups\CreateAttributeGroupPayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SharedAttributesSdk\Data\AttributeGroupData;
+use Stackra\SharedAttributesSdk\Payloads\AttributeGroups\CreateAttributeGroupPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

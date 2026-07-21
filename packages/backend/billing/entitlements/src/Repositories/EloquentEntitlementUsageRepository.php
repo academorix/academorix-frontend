@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Repositories;
+namespace Stackra\Entitlements\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Entitlements\Contracts\Data\EntitlementUsageInterface;
-use Academorix\Entitlements\Contracts\Repositories\EntitlementUsageRepositoryInterface;
-use Academorix\Entitlements\Models\EntitlementUsage;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Entitlements\Contracts\Data\EntitlementUsageInterface;
+use Stackra\Entitlements\Contracts\Repositories\EntitlementUsageRepositoryInterface;
+use Stackra\Entitlements\Models\EntitlementUsage;
 use Illuminate\Support\Collection;
 
 /**

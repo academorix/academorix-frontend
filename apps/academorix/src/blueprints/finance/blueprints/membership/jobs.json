@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/membership/jobs",
+  "id": "stackra://modules/membership/jobs",
   "$version": 1,
   "title": "membership — background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Finance\\Membership\\Jobs\\CreateMembershipInvoiceJob",
+      "class": "Stackra\\Finance\\Membership\\Jobs\\CreateMembershipInvoiceJob",
       "queue": "finance",
       "purpose": "Dispatched from CreateInvoiceOnMembershipCreated hook when the initial invoice-create path needs to run async (e.g. Wave 4.5+ invoice module ships with retry semantics). Wave 4 inception: this job is a no-op fallback — the hook does the work in-band. Left as scaffolding for later.",
       "steps": [
@@ -19,7 +19,7 @@
       "backoff": [10, 60, 300, 900]
     },
     {
-      "class": "Academorix\\Finance\\Membership\\Jobs\\ChargeMembershipPaymentIntentJob",
+      "class": "Stackra\\Finance\\Membership\\Jobs\\ChargeMembershipPaymentIntentJob",
       "queue": "finance-critical",
       "purpose": "Attempts to charge the payment method for a MembershipRenewal. Called on renewal.creating (initial attempt) + by RetryFailedRenewalJob (retries). Delegates to the payment module's PaymentIntent.confirm — never touches PAN/CVV directly.",
       "steps": [
@@ -37,7 +37,7 @@
       "backoff": [30, 120, 300]
     },
     {
-      "class": "Academorix\\Finance\\Membership\\Jobs\\ProcessMembershipRenewalJob",
+      "class": "Stackra\\Finance\\Membership\\Jobs\\ProcessMembershipRenewalJob",
       "queue": "finance-critical",
       "purpose": "Hourly: sweep active memberships whose next_renewal_at <= now() + create a fresh MembershipRenewal + dispatch ChargeMembershipPaymentIntentJob.",
       "steps": [
@@ -53,7 +53,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Finance\\Membership\\Jobs\\RetryFailedRenewalJob",
+      "class": "Stackra\\Finance\\Membership\\Jobs\\RetryFailedRenewalJob",
       "queue": "finance-critical",
       "purpose": "Hourly: sweep MembershipRenewal rows with status='failed_transient' AND next_attempt_at <= now() + create the next attempt row + dispatch ChargeMembershipPaymentIntentJob.",
       "steps": [
@@ -68,7 +68,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Finance\\Membership\\Jobs\\LapseMembershipJob",
+      "class": "Stackra\\Finance\\Membership\\Jobs\\LapseMembershipJob",
       "queue": "finance-critical",
       "purpose": "Terminal lapse. Transitions membership.status from active/paused to lapsed after 3+ consecutive failed renewals. Expires remaining passes. Fires MembershipLapsed. Growth analytics keys off this for involuntary-churn dashboards.",
       "steps": [
@@ -84,7 +84,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Finance\\Membership\\Jobs\\ExpireMembershipJob",
+      "class": "Stackra\\Finance\\Membership\\Jobs\\ExpireMembershipJob",
       "queue": "finance",
       "purpose": "Nightly: sweep memberships with expires_at <= now() AND status IN ('active','paused') (soft-cancelled memberships past their period end) + transition to expired.",
       "steps": [
@@ -97,7 +97,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Finance\\Membership\\Jobs\\IssuePassesForPeriodJob",
+      "class": "Stackra\\Finance\\Membership\\Jobs\\IssuePassesForPeriodJob",
       "queue": "finance",
       "purpose": "Dispatched on MembershipActivated + on MembershipRenewed. Generates plan.passes_per_period Pass rows for the current period. When plan.passes_carry_over is true + unused passes exist from the previous period, re-issues them as pass_type='carryover' with new valid_until.",
       "steps": [
@@ -112,7 +112,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Finance\\Membership\\Jobs\\ExpireStalePassesJob",
+      "class": "Stackra\\Finance\\Membership\\Jobs\\ExpireStalePassesJob",
       "queue": "finance",
       "purpose": "Nightly: sweep unconsumed passes past valid_until + fire PassExpired per pass. Skips carryover passes that plan opts to re-issue on next renewal (those expire naturally at the next renewal boundary).",
       "steps": [
@@ -125,7 +125,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Finance\\Membership\\Jobs\\NotifyRenewalUpcomingJob",
+      "class": "Stackra\\Finance\\Membership\\Jobs\\NotifyRenewalUpcomingJob",
       "queue": "notifications",
       "purpose": "Daily: sweep active memberships with next_renewal_at in exactly 7 days + dispatch MembershipRenewalUpcomingNotification.",
       "steps": [
@@ -139,7 +139,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Finance\\Membership\\Jobs\\NotifyPaymentFailureJob",
+      "class": "Stackra\\Finance\\Membership\\Jobs\\NotifyPaymentFailureJob",
       "queue": "notifications-critical",
       "purpose": "Dispatched by TriggerRetryLadderOnRenewalFailed. Sends dunning emails at 24h, 72h, 7d after each failed attempt. Transactional (contract-critical) — cannot-opt-out.",
       "steps": [
@@ -153,7 +153,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Finance\\Membership\\Jobs\\ProcessMembershipCancellationJob",
+      "class": "Stackra\\Finance\\Membership\\Jobs\\ProcessMembershipCancellationJob",
       "queue": "finance",
       "purpose": "Fires from MembershipCanceller when cancellation_kind='hard_immediate'. Coordinates the refund calculation + refund module dispatch. Wave 4.5+ Redux — invokes refund::RefundOrchestrator; Wave 4 inception: emits stub events for downstream module wiring.",
       "steps": [
@@ -169,7 +169,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Finance\\Membership\\Jobs\\GenerateMembershipStatementsJob",
+      "class": "Stackra\\Finance\\Membership\\Jobs\\GenerateMembershipStatementsJob",
       "queue": "finance",
       "purpose": "Monthly: produce a per-tenant statement PDF of all memberships (active + terminal) for the month. Feeds tenant admin dashboards + tax-audit archives. Storage module owns the PDF; this job orchestrates content generation.",
       "steps": [

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Repositories;
+namespace Stackra\Referrals\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Referrals\Contracts\Data\ReferralRewardInterface;
-use Academorix\Referrals\Contracts\Repositories\ReferralRewardRepositoryInterface;
-use Academorix\Referrals\Models\ReferralReward;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Referrals\Contracts\Data\ReferralRewardInterface;
+use Stackra\Referrals\Contracts\Repositories\ReferralRewardRepositoryInterface;
+use Stackra\Referrals\Models\ReferralReward;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Referrals\Models\ReferralReward}.
+ * Attribute-first Eloquent repository for {@see Stackra\Referrals\Models\ReferralReward}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ReferralRewardInterface::class)]` which resolves to
  * `ReferralReward` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Referrals\Models\ReferralReward>
+ * @extends Repository<\Stackra\Referrals\Models\ReferralReward>
  *
  * @category Referrals
  *

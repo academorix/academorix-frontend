@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Contracts\Services;
+namespace Stackra\Notifications\Mail\Contracts\Services;
 
-use Academorix\Notifications\Mail\Services\MailProviderWebhookVerifier;
+use Stackra\Notifications\Mail\Services\MailProviderWebhookVerifier;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Http\Request;
 
@@ -23,7 +23,7 @@ use Illuminate\Http\Request;
  * `config('notifications-mail.webhook_secrets.{provider}')` and
  * apply the provider-specific verification algorithm. A failed
  * verification MUST return `false` — the caller
- * ({@see \Academorix\Notifications\Mail\Middleware\VerifyMailWebhookMiddleware})
+ * ({@see \Stackra\Notifications\Mail\Middleware\VerifyMailWebhookMiddleware})
  * then raises the correct HTTP 401 with error code
  * `NOTIFICATIONS_MAIL_WEBHOOK_SIGNATURE_INVALID`.
  *

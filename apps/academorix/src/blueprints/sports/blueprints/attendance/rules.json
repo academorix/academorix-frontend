@@ -1,96 +1,96 @@
 {
-  "id": "academorix://modules/attendance/rules",
+  "id": "stackra://modules/attendance/rules",
   "$version": 1,
   "title": "attendance — validation rules",
-  "namespace": "Academorix\\Sports\\Attendance\\Rules",
+  "namespace": "Stackra\\Sports\\Attendance\\Rules",
   "rules": [
     {
       "name": "valid_status",
-      "class": "Academorix\\Sports\\Attendance\\Rules\\ValidStatus",
+      "class": "Stackra\\Sports\\Attendance\\Rules\\ValidStatus",
       "signature": "valid_status",
       "description": "Enforces the AttendanceRecord.status enum: not_yet_checked_in / present / late / left_early / present_with_note. Enforces the state-machine — not_yet_checked_in → present / late; present → left_early / present_with_note; late → left_early / present_with_note. Terminal states have no forward transitions.",
       "default_message": "The attendance status is not a valid enum value or the transition is not allowed."
     },
     {
       "name": "valid_check_in_via",
-      "class": "Academorix\\Sports\\Attendance\\Rules\\ValidCheckInVia",
+      "class": "Stackra\\Sports\\Attendance\\Rules\\ValidCheckInVia",
       "signature": "valid_check_in_via",
       "description": "Enforces checked_in_via enum: self_kiosk / coach_verified / admin_recorded / geofence / qr_scan. Cross-check against tenant entitlements — geofence requires attendance_geofence; self_kiosk requires attendance_self_kiosk; qr_scan requires attendance_qr_scan.",
       "default_message": "The check-in method is not valid or your tenant does not carry the required entitlement."
     },
     {
       "name": "valid_late_penalty_type",
-      "class": "Academorix\\Sports\\Attendance\\Rules\\ValidLatePenaltyType",
+      "class": "Stackra\\Sports\\Attendance\\Rules\\ValidLatePenaltyType",
       "signature": "valid_late_penalty_type",
       "description": "Enforces AttendancePolicy.late_arrival_penalty_type enum: none / consume_pass_anyway / fractional_pass_consume / notify_only.",
       "default_message": "The late-arrival penalty type is not a valid enum value."
     },
     {
       "name": "valid_absence_status",
-      "class": "Academorix\\Sports\\Attendance\\Rules\\ValidAbsenceStatus",
+      "class": "Stackra\\Sports\\Attendance\\Rules\\ValidAbsenceStatus",
       "signature": "valid_absence_status",
       "description": "Enforces AbsenceRecord.status enum: unexcused / excused / no_show_advance_notice_given / vacation / medical / bereavement. Enforces reversible transition unexcused ↔ excused; other transitions require admin override.",
       "default_message": "The absence status is not a valid enum value."
     },
     {
       "name": "valid_grace_period_minutes",
-      "class": "Academorix\\Sports\\Attendance\\Rules\\ValidGracePeriodMinutes",
+      "class": "Stackra\\Sports\\Attendance\\Rules\\ValidGracePeriodMinutes",
       "signature": "valid_grace_period_minutes",
       "description": "Refuses grace_period_minutes < 0 OR > 120. Sensible bounds — 0 means 'no grace, immediate late' and 120 minutes is the ceiling before the concept stops meaning 'late for a session'.",
       "default_message": "grace_period_minutes must be between 0 and 120."
     },
     {
       "name": "valid_max_absences",
-      "class": "Academorix\\Sports\\Attendance\\Rules\\ValidMaxAbsences",
+      "class": "Stackra\\Sports\\Attendance\\Rules\\ValidMaxAbsences",
       "signature": "valid_max_absences",
       "description": "Refuses max_unexcused_absences_per_period < 1 OR > 100. Below 1 makes no sense (would freeze on first absence); above 100 makes the freeze meaningless.",
       "default_message": "max_unexcused_absences_per_period must be between 1 and 100."
     },
     {
       "name": "valid_freeze_period_days",
-      "class": "Academorix\\Sports\\Attendance\\Rules\\ValidFreezePeriodDays",
+      "class": "Stackra\\Sports\\Attendance\\Rules\\ValidFreezePeriodDays",
       "signature": "valid_freeze_period_days",
       "description": "Refuses absence_freeze_period_days < 7 OR > 365. Below 7 is too tight to be meaningful; above 365 defeats the purpose of a rolling window.",
       "default_message": "absence_freeze_period_days must be between 7 and 365."
     },
     {
       "name": "valid_gps_coordinates",
-      "class": "Academorix\\Sports\\Attendance\\Rules\\ValidGpsCoordinates",
+      "class": "Stackra\\Sports\\Attendance\\Rules\\ValidGpsCoordinates",
       "signature": "valid_gps_coordinates",
       "description": "When gps_lat / gps_lng set, validates gps_lat between -90 and 90 + gps_lng between -180 and 180. Enforces both-or-neither (refuses one set without the other).",
       "default_message": "GPS coordinates must be valid decimal degrees, and both lat + lng must be provided together."
     },
     {
       "name": "unique_attendance_per_session_per_athlete",
-      "class": "Academorix\\Sports\\Attendance\\Rules\\UniqueAttendancePerSessionPerAthlete",
+      "class": "Stackra\\Sports\\Attendance\\Rules\\UniqueAttendancePerSessionPerAthlete",
       "signature": "unique_attendance_per_session_per_athlete",
       "description": "Enforces the partial unique index. One AttendanceRecord per (tenant_id, session_id, athlete_id) WHERE deleted_at IS NULL.",
       "default_message": "This athlete already has an attendance record for this session."
     },
     {
       "name": "unique_absence_per_session_per_athlete",
-      "class": "Academorix\\Sports\\Attendance\\Rules\\UniqueAbsencePerSessionPerAthlete",
+      "class": "Stackra\\Sports\\Attendance\\Rules\\UniqueAbsencePerSessionPerAthlete",
       "signature": "unique_absence_per_session_per_athlete",
       "description": "Enforces the partial unique index. One AbsenceRecord per (tenant_id, session_id, athlete_id) WHERE deleted_at IS NULL. Also validates mutual exclusion with AttendanceRecord — the two cannot co-exist for the same (session, athlete).",
       "default_message": "This athlete already has an absence record for this session, or an attendance record already exists."
     },
     {
       "name": "valid_signature_url",
-      "class": "Academorix\\Sports\\Attendance\\Rules\\ValidSignatureUrl",
+      "class": "Stackra\\Sports\\Attendance\\Rules\\ValidSignatureUrl",
       "signature": "valid_signature_url",
       "description": "When signature_url_signed set, validates it's HTTPS + hosted on the tenant's approved S3 bucket. Refuses http:// or off-bucket URLs.",
       "default_message": "signature_url_signed must be an HTTPS URL on your tenant's approved S3 storage bucket."
     },
     {
       "name": "no_check_in_after_session_end_plus_grace",
-      "class": "Academorix\\Sports\\Attendance\\Rules\\NoCheckInAfterSessionEndPlusGrace",
+      "class": "Stackra\\Sports\\Attendance\\Rules\\NoCheckInAfterSessionEndPlusGrace",
       "signature": "no_check_in_after_session_end_plus_grace",
       "description": "Refuses new AttendanceRecord.creating when checked_in_at > session.ends_at + 48h (post-session correction window closed). Admin override permission bypasses this rule with a documented reason.",
       "default_message": "Check-in is not allowed more than 48 hours after the session ended. Contact an admin for post-window corrections."
     },
     {
       "name": "pass_available_when_required",
-      "class": "Academorix\\Sports\\Attendance\\Rules\\PassAvailableWhenRequired",
+      "class": "Stackra\\Sports\\Attendance\\Rules\\PassAvailableWhenRequired",
       "signature": "pass_available_when_required",
       "description": "When session.requires_pass=true, validates that the athlete's active Membership has an unconsumed Pass in the current period. Refuses check-in with ATTENDANCE_NO_ACTIVE_PASS when none available.",
       "default_message": "This session requires an active pass; the athlete does not have an unconsumed pass in the current period."

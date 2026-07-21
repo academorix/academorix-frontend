@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Contracts\Services;
+namespace Stackra\Geofencing\Contracts\Services;
 
-use Academorix\Geofencing\Services\GeofenceOverrideService;
+use Stackra\Geofencing\Services\GeofenceOverrideService;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -27,7 +27,7 @@ interface GeofenceOverrideServiceInterface
      * task id so the caller's UI can link to it.
      *
      * @throws \InvalidArgumentException  On reason length < min.
-     * @throws \Academorix\Geofencing\Exceptions\OverrideAlreadyAppliedException
+     * @throws \Stackra\Geofencing\Exceptions\OverrideAlreadyAppliedException
      */
     public function requestOverride(
         string $originalCheckId,

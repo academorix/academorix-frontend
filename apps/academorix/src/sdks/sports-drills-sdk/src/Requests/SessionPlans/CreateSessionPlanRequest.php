@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsDrillsSdk\Requests\SessionPlans;
+namespace Stackra\SportsDrillsSdk\Requests\SessionPlans;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsDrillsSdk\Data\SessionPlanData;
-use Academorix\SportsDrillsSdk\Payloads\SessionPlans\CreateSessionPlanPayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsDrillsSdk\Data\SessionPlanData;
+use Stackra\SportsDrillsSdk\Payloads\SessionPlans\CreateSessionPlanPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

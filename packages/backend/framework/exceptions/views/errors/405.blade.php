@@ -12,7 +12,7 @@
 * - HTTP method not supported by endpoint
 *
 * @extends foundation::layouts.app
-* @package Academorix\Foundation
+* @package Stackra\Foundation
 */
 --}}
 @extends('foundation::layouts.app')

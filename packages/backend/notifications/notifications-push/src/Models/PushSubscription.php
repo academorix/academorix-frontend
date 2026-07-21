@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Models;
+namespace Stackra\Notifications\Push\Models;
 
-use Academorix\Application\Concerns\BelongsToApplication;
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
-use Academorix\Notifications\Push\Database\Factories\PushSubscriptionFactory;
-use Academorix\Notifications\Push\Enums\PushPlatform;
-use Academorix\Notifications\Push\Enums\PushProvider;
-use Academorix\Notifications\Push\Observers\PushSubscriptionObserver;
-use Academorix\Notifications\Push\Policies\PushSubscriptionPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Application\Concerns\BelongsToApplication;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
+use Stackra\Notifications\Push\Database\Factories\PushSubscriptionFactory;
+use Stackra\Notifications\Push\Enums\PushPlatform;
+use Stackra\Notifications\Push\Enums\PushProvider;
+use Stackra\Notifications\Push\Observers\PushSubscriptionObserver;
+use Stackra\Notifications\Push\Policies\PushSubscriptionPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;

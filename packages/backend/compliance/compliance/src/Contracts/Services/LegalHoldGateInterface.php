@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Contracts\Services;
+namespace Stackra\Compliance\Contracts\Services;
 
-use Academorix\Compliance\Attributes\LegalHoldable;
-use Academorix\Compliance\Services\DefaultLegalHoldGate;
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Compliance\Attributes\LegalHoldable;
+use Stackra\Compliance\Services\DefaultLegalHoldGate;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
 use Illuminate\Container\Attributes\Bind;
 
 /**

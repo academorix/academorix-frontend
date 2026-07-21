@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Jobs;
+namespace Stackra\Localization\Jobs;
 
-use Academorix\Localization\Contracts\Data\PlatformLanguageInterface;
-use Academorix\Localization\Contracts\Data\TranslationInterface;
-use Academorix\Localization\Contracts\Repositories\PlatformLanguageRepositoryInterface;
-use Academorix\Localization\Contracts\Repositories\TranslationJobRepositoryInterface;
-use Academorix\Localization\Contracts\Repositories\TranslationRepositoryInterface;
-use Academorix\Localization\Contracts\Services\SourceRedactorInterface;
-use Academorix\Localization\Contracts\Services\TranslatorDriverManagerInterface;
-use Academorix\Localization\Enums\TranslationSource;
-use Academorix\Localization\Events\MachineTranslationCompleted;
-use Academorix\Localization\Events\MachineTranslationFailed;
-use Academorix\Localization\Events\MachineTranslationRequested;
+use Stackra\Localization\Contracts\Data\PlatformLanguageInterface;
+use Stackra\Localization\Contracts\Data\TranslationInterface;
+use Stackra\Localization\Contracts\Repositories\PlatformLanguageRepositoryInterface;
+use Stackra\Localization\Contracts\Repositories\TranslationJobRepositoryInterface;
+use Stackra\Localization\Contracts\Repositories\TranslationRepositoryInterface;
+use Stackra\Localization\Contracts\Services\SourceRedactorInterface;
+use Stackra\Localization\Contracts\Services\TranslatorDriverManagerInterface;
+use Stackra\Localization\Enums\TranslationSource;
+use Stackra\Localization\Events\MachineTranslationCompleted;
+use Stackra\Localization\Events\MachineTranslationFailed;
+use Stackra\Localization\Events\MachineTranslationRequested;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Queue\ShouldQueue;

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Athlete\Tests;
+namespace Stackra\Athlete\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/athlete.
+ * Base test case for stackra/athlete.
  *
  * @category Athlete
  *

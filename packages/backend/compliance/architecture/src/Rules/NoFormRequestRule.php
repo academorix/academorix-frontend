@@ -5,7 +5,7 @@
  *
  * @description
  * Source rule: forbids the use of Laravel's `FormRequest` anywhere
- * in the codebase. Academorix uses `spatie/laravel-data` input DTOs
+ * in the codebase. Stackra uses `spatie/laravel-data` input DTOs
  * for validation + transport typing — one class per shape, one
  * shape per boundary. See `data-first.md` steering.
  *
@@ -36,11 +36,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Support\SourceFile;
-use Academorix\Architecture\Violations\Severity;
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Support\SourceFile;
+use Stackra\Architecture\Violations\Severity;
+use Stackra\Architecture\Violations\Violation;
 
 /**
  * Ban Laravel's FormRequest.

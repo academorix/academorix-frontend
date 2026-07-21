@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/workflow/approvals/helpers",
+  "id": "stackra://modules/workflow/approvals/helpers",
   "$version": 1,
   "title": "approvals — helper functions",
   "description": "Two lightweight helpers to keep call sites terse — `approve_scope()` for the middleware bypass flag + `approval_for()` for the polymorphic subject lookup. Both are tenant-scope-aware.",
-  "namespace": "Academorix\\Approval\\Support",
+  "namespace": "Stackra\\Approval\\Support",
   "helpers": [
     {
       "signature": "approve_scope(string $instanceId, callable $callback): mixed",

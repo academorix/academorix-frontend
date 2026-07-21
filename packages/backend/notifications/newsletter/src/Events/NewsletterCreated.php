@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Events;
+namespace Stackra\Newsletter\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 
 /**
- * Dispatched when a new {@see \Academorix\Newsletter\Models\Newsletter}
+ * Dispatched when a new {@see \Stackra\Newsletter\Models\Newsletter}
  * row is persisted.
  *
  * ## Consumers

@@ -4,7 +4,7 @@
  * @file src/Contracts/Data/ScopeValueInterface.php
  *
  * @description
- * Column metadata for {@see \Academorix\Scope\Models\ScopeValue} —
+ * Column metadata for {@see \Stackra\Scope\Models\ScopeValue} —
  * the namespaced key-value store attached to scope nodes. Every
  * consumer package (settings, permissions, feature flags, pricing)
  * writes into this table under its registered namespace, and
@@ -14,9 +14,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Contracts\Data;
+namespace Stackra\Scope\Contracts\Data;
 
-use Academorix\Scope\Contracts\ScopeRegistryInterface;
+use Stackra\Scope\Contracts\ScopeRegistryInterface;
 
 /**
  * Table shape for the `scope_values` table.

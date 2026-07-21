@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/geography/schemas/timezone",
+  "id": "stackra://modules/geography/schemas/timezone",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Timezone",
@@ -19,9 +19,9 @@
     "keyType": "int",
     "incrementing": true,
     "timestamps": false,
-    "model": "Academorix\\Geography\\Models\\Timezone",
-    "interface": "Academorix\\Geography\\Contracts\\Data\\TimezoneInterface",
-    "implements": ["Academorix\\Geography\\Contracts\\Data\\TimezoneInterface"],
+    "model": "Stackra\\Geography\\Models\\Timezone",
+    "interface": "Stackra\\Geography\\Contracts\\Data\\TimezoneInterface",
+    "implements": ["Stackra\\Geography\\Contracts\\Data\\TimezoneInterface"],
     "traits": ["HasFactory", "Filterable"],
     "observers": ["TimezoneObserver"]
   },
@@ -50,7 +50,7 @@
     "envelope": "spatie-data",
     "wrap": "data",
     "mapper": "SnakeCaseMapper",
-    "resource_class": "Academorix\\Geography\\Data\\Resources\\TimezoneResourceData",
+    "resource_class": "Stackra\\Geography\\Data\\Resources\\TimezoneResourceData",
     "computed": ["current_utc_offset_minutes", "current_utc_offset_iso"]
   },
   "x-route-binding": {

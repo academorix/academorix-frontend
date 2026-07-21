@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/coaching/subprocessors",
+  "id": "stackra://modules/coaching/subprocessors",
   "$version": 1,
   "title": "coaching — subprocessors",
-  "description": "The Coaching module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. Downstream: notifications module dispatches coaching notifications; storage module (Wave 4+) stores signed certification documents + coach photos. Wave 4+ optional integration with issuing-body verification APIs is subprocessor-relevant when introduced.",
+  "description": "The Coaching module itself engages ZERO third-party subprocessors — every state transition happens within the Stackra platform. Downstream: notifications module dispatches coaching notifications; storage module (Wave 4+) stores signed certification documents + coach photos. Wave 4+ optional integration with issuing-body verification APIs is subprocessor-relevant when introduced.",
   "subprocessors": [],
   "downstream_subprocessors_referenced": [
     {

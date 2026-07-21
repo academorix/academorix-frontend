@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/auth/retention",
+  "id": "stackra://modules/auth/retention",
   "$version": 1,
   "title": "auth \u2014 retention windows",
   "description": "Auth's token tables all have short, compliance-driven retention. Refresh tokens retain 90 days post-consumption for audit; password resets + verifications are purged aggressively (no audit value beyond the immediate flow); MFA challenges are ephemeral. JWT signing keys retire but stay verify-capable for 180 days after retirement. JWT deny-list rows self-expire at the underlying JWT's natural exp.",

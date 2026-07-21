@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Exceptions;
+namespace Stackra\Geography\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the submitted IP is not a valid IPv4 / IPv6 address.
@@ -13,7 +13,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GeographyGeolocateInvalidIpException extends AcademorixException
+final class GeographyGeolocateInvalidIpException extends StackraException
 {
     public const CODE = 'GEOGRAPHY_GEOLOCATE_INVALID_IP';
 

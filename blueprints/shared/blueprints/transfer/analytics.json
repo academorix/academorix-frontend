@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transfer/analytics",
+  "id": "stackra://modules/transfer/analytics",
   "$version": 1,
   "title": "transfer \u2014 product analytics events",
   "description": "Product-analytics events emitted from the tenant surface. Volume-level telemetry lives in metrics.json; this file is for behaviour signals (features used, funnels, drop-off).",

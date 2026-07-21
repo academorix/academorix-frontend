@@ -1,4 +1,4 @@
-# academorix/tasks
+# stackra/tasks
 
 Server-side Laravel package for the `tasks` module. Auto-generated from the
 blueprint at `modules/workflow/blueprints/tasks/`.
@@ -45,6 +45,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-workflow/tasks-sdk` under `sdk/workflow-tasks-sdk/`. Consumers cross
+`stackra-workflow/tasks-sdk` under `sdk/workflow-tasks-sdk/`. Consumers cross
 the service boundary through the SDK; this package is the SERVER-side owner of
 the domain.

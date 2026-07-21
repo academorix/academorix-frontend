@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Announcements\Repositories;
+namespace Stackra\Announcements\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Announcements\Contracts\Data\AnnouncementInterface;
-use Academorix\Announcements\Contracts\Repositories\AnnouncementRepositoryInterface;
-use Academorix\Announcements\Models\Announcement;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Announcements\Contracts\Data\AnnouncementInterface;
+use Stackra\Announcements\Contracts\Repositories\AnnouncementRepositoryInterface;
+use Stackra\Announcements\Models\Announcement;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Announcements\Models\Announcement}.
+ * Attribute-first Eloquent repository for {@see Stackra\Announcements\Models\Announcement}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AnnouncementInterface::class)]` which resolves to
  * `Announcement` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Announcements\Models\Announcement>
+ * @extends Repository<\Stackra\Announcements\Models\Announcement>
  *
  * @category Announcements
  *

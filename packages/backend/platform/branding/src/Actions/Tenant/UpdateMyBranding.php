@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Actions\Tenant;
+namespace Stackra\Branding\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Branding\Contracts\Data\BrandingInterface;
-use Academorix\Branding\Contracts\Repositories\BrandingRepositoryInterface;
-use Academorix\Branding\Data\BrandingData;
-use Academorix\Branding\Data\Requests\UpdateBrandingRequestData;
-use Academorix\Branding\Enums\BrandingPermission;
-use Academorix\Branding\Exceptions\BrandingNotFoundException;
-use Academorix\Branding\Models\Branding;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Patch;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Branding\Contracts\Data\BrandingInterface;
+use Stackra\Branding\Contracts\Repositories\BrandingRepositoryInterface;
+use Stackra\Branding\Data\BrandingData;
+use Stackra\Branding\Data\Requests\UpdateBrandingRequestData;
+use Stackra\Branding\Enums\BrandingPermission;
+use Stackra\Branding\Exceptions\BrandingNotFoundException;
+use Stackra\Branding\Models\Branding;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Patch;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 
 /**
  * `PATCH /api/v1/tenant/branding` — tenant admin updates their

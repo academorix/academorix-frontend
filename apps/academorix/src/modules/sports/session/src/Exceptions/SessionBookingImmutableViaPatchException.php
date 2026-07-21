@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Session\Exceptions;
+namespace Stackra\Session\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * resource_booking_id cannot be changed via PATCH — use the reschedule endpoint.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SessionBookingImmutableViaPatchException extends AcademorixException
+final class SessionBookingImmutableViaPatchException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

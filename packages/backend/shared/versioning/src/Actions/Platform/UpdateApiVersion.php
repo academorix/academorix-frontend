@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Actions\Platform;
+namespace Stackra\Versioning\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Patch;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Versioning\Contracts\Data\ApiVersionInterface;
-use Academorix\Versioning\Contracts\Repositories\ApiVersionRepositoryInterface;
-use Academorix\Versioning\Data\ApiVersionData;
-use Academorix\Versioning\Data\Requests\UpdateApiVersionRequestData;
-use Academorix\Versioning\Enums\VersioningPermission;
-use Academorix\Versioning\Exceptions\ApiVersionNotFoundException;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Patch;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Versioning\Contracts\Data\ApiVersionInterface;
+use Stackra\Versioning\Contracts\Repositories\ApiVersionRepositoryInterface;
+use Stackra\Versioning\Data\ApiVersionData;
+use Stackra\Versioning\Data\Requests\UpdateApiVersionRequestData;
+use Stackra\Versioning\Enums\VersioningPermission;
+use Stackra\Versioning\Exceptions\ApiVersionNotFoundException;
 
 /**
  * `PATCH /api/v1/platform/versioning/api-versions/{slug}` — edit

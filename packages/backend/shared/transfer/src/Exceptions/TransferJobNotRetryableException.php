@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Exceptions;
+namespace Stackra\Transfer\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when trying to retry a job that is not in a retryable state.
@@ -13,7 +13,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TransferJobNotRetryableException extends AcademorixException
+final class TransferJobNotRetryableException extends StackraException
 {
     public const CODE = 'TRANSFER_JOB_NOT_RETRYABLE';
 

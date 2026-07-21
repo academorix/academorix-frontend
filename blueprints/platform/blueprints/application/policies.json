@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/application/policies",
+  "id": "stackra://modules/application/policies",
   "$version": 1,
   "title": "application — authorization policies",
   "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",

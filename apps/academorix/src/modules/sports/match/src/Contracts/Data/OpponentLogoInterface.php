@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Contracts\Data;
+namespace Stackra\Match\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Match\Models\OpponentLogo;
+use Stackra\Match\Models\OpponentLogo;
 
 /**
  * Table shape for the `opponent_logos` table.

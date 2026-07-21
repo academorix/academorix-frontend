@@ -39,13 +39,13 @@
  * Use `$keys` when you know the exact keys to forget and don't
  * want to blow neighbours.
  *
- * @see \Academorix\Caching\Attributes\Cacheable Read counterpart.
- * @see \Academorix\Caching\Attributes\CachePut  Write-through counterpart.
+ * @see \Stackra\Caching\Attributes\Cacheable Read counterpart.
+ * @see \Stackra\Caching\Attributes\CachePut  Write-through counterpart.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Caching\Attributes;
+namespace Stackra\Caching\Attributes;
 
 use Attribute;
 

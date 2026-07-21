@@ -1,4 +1,4 @@
-# academorix/realtime
+# stackra/realtime
 
 Server-side Laravel package for the `realtime` module. Auto-generated from the
 blueprint at `modules/platform/blueprints/realtime/`.
@@ -48,6 +48,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-platform/realtime-sdk` under `sdk/platform-realtime-sdk/`. Consumers
+`stackra-platform/realtime-sdk` under `sdk/platform-realtime-sdk/`. Consumers
 cross the service boundary through the SDK; this package is the SERVER-side
 owner of the domain.

@@ -4,10 +4,10 @@
  * @file database/factories/ScopeDefinitionFactory.php
  *
  * @description
- * Factory for {@see \Academorix\Scope\Models\ScopeDefinition}. Emits
+ * Factory for {@see \Stackra\Scope\Models\ScopeDefinition}. Emits
  * plausible per-owner hierarchy levels. Real production hierarchies
  * are bootstrapped by whichever module owns the tenant lifecycle
- * (typically `academorix-api/tenancy`), so this factory is
+ * (typically `stackra-api/tenancy`), so this factory is
  * test-oriented: parent_slug defaults to `null` (produces root
  * levels) and callers use `->state(['parent_slug' => 'owner'])` to
  * chain deeper levels.
@@ -15,10 +15,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Database\Factories;
+namespace Stackra\Scope\Database\Factories;
 
-use Academorix\Scope\Contracts\Data\ScopeDefinitionInterface;
-use Academorix\Scope\Models\ScopeDefinition;
+use Stackra\Scope\Contracts\Data\ScopeDefinitionInterface;
+use Stackra\Scope\Models\ScopeDefinition;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

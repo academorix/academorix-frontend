@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Session\Data;
+namespace Stackra\Session\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Server-side output DTO for {@see \Academorix\Session\Models\Session}.
+ * Server-side output DTO for {@see \Stackra\Session\Models\Session}.
  *
  * Consumed by controllers + services on the SERVER side. This is
  * distinct from the wire SDK's DTO (which sits under
- * `Academorix\SportsSessionSdk\Data`) — the wire DTO travels across the HTTP
+ * `Stackra\SportsSessionSdk\Data`) — the wire DTO travels across the HTTP
  * boundary; this one stays in-process.
  *
  * @category Session

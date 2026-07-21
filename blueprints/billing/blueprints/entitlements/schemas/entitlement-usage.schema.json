@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/entitlements/schemas/entitlement-usage",
+  "id": "stackra://modules/entitlements/schemas/entitlement-usage",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "EntitlementUsage",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "use_",
     "incrementing": false,
-    "model": "Academorix\\Entitlements\\Models\\EntitlementUsage",
-    "interface": "Academorix\\Entitlements\\Contracts\\Data\\EntitlementUsageInterface",
-    "implements": ["Academorix\\Entitlements\\Contracts\\Data\\EntitlementUsageInterface"],
+    "model": "Stackra\\Entitlements\\Models\\EntitlementUsage",
+    "interface": "Stackra\\Entitlements\\Contracts\\Data\\EntitlementUsageInterface",
+    "implements": ["Stackra\\Entitlements\\Contracts\\Data\\EntitlementUsageInterface"],
     "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "Filterable"],
     "casts": {
       "amount": "integer",

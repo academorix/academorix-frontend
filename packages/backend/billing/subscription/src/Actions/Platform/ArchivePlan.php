@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Actions\Platform;
+namespace Stackra\Subscription\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Delete;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Subscription\Contracts\Data\PlanInterface;
-use Academorix\Subscription\Contracts\Repositories\PlanRepositoryInterface;
-use Academorix\Subscription\Enums\SubscriptionPermission;
-use Academorix\Subscription\Exceptions\PlanInUseException;
-use Academorix\Subscription\Exceptions\PlanNotFoundException;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Delete;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Subscription\Contracts\Data\PlanInterface;
+use Stackra\Subscription\Contracts\Repositories\PlanRepositoryInterface;
+use Stackra\Subscription\Enums\SubscriptionPermission;
+use Stackra\Subscription\Exceptions\PlanInUseException;
+use Stackra\Subscription\Exceptions\PlanNotFoundException;
 use Illuminate\Http\JsonResponse;
 
 /**

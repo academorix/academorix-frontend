@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/facility/schemas/facility",
+  "id": "stackra://modules/facility/schemas/facility",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Facility",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "fac_",
     "incrementing": false,
-    "model": "Academorix\\Facility\\Models\\Facility",
-    "interface": "Academorix\\Facility\\Contracts\\Data\\FacilityInterface",
-    "implements": ["Academorix\\Facility\\Contracts\\Data\\FacilityInterface"],
+    "model": "Stackra\\Facility\\Models\\Facility",
+    "interface": "Stackra\\Facility\\Contracts\\Data\\FacilityInterface",
+    "implements": ["Stackra\\Facility\\Contracts\\Data\\FacilityInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

@@ -179,7 +179,7 @@ Every route lands under exactly one guard:
 
 There is no crossover. A tenant User has no way to reach
 `impersonation_sessions`; a PlatformUser has no way to reach `role_delegations`
-(Academorix staff don't have OOF within a tenant they don't belong to).
+(Stackra staff don't have OOF within a tenant they don't belong to).
 
 ## Public surface
 
@@ -225,7 +225,7 @@ hard-delete of the platform_users row.
 
 - `role_delegation` — role delegation available (all tiers)
 - `emergency_delegation` — bypass min_advance_notice_hours (medium + enterprise)
-- `impersonation` — a per-PlatformUser capability (Academorix-internal only —
+- `impersonation` — a per-PlatformUser capability (Stackra-internal only —
   NOT a tenant entitlement; belongs to platform-user seed data)
 - `read_only_impersonation` — is_read_only sessions available (enterprise)
 - `impersonation_extended_ttl` — > 60 minute sessions available (enterprise,
@@ -301,7 +301,7 @@ hard-delete of the platform_users row.
   longer-lived transition, e.g. Alice leaves the finance team and hands over to
   Bob), `emergency` (immediate + bypass min_advance_notice_hours).
 - **Impersonation session** — the `ImpersonationSession` record.
-- **Impersonator** — the PlatformUser starting the session (Academorix staff).
+- **Impersonator** — the PlatformUser starting the session (Stackra staff).
 - **Impersonated** — the tenant User the impersonator acts as.
 - **Session token** — the short-lived Sanctum PAT bound to the session. Its hash
   is `session_token_hash`; the raw PAT is only ever known to the impersonator's

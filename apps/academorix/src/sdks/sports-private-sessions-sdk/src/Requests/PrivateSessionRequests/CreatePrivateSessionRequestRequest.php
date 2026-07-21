@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsPrivateSessionsSdk\Requests\PrivateSessionRequests;
+namespace Stackra\SportsPrivateSessionsSdk\Requests\PrivateSessionRequests;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsPrivateSessionsSdk\Data\PrivateSessionRequestData;
-use Academorix\SportsPrivateSessionsSdk\Payloads\PrivateSessionRequests\CreatePrivateSessionRequestPayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsPrivateSessionsSdk\Data\PrivateSessionRequestData;
+use Stackra\SportsPrivateSessionsSdk\Payloads\PrivateSessionRequests\CreatePrivateSessionRequestPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

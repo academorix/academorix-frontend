@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Data;
+namespace Stackra\Notifications\Data;
 
-use Academorix\Notifications\Contracts\Data\NotificationTemplateInterface;
-use Academorix\Notifications\Enums\NotificationChannel;
-use Academorix\Notifications\Enums\TemplateState;
-use Academorix\Notifications\Models\NotificationTemplate;
+use Stackra\Notifications\Contracts\Data\NotificationTemplateInterface;
+use Stackra\Notifications\Enums\NotificationChannel;
+use Stackra\Notifications\Enums\TemplateState;
+use Stackra\Notifications\Models\NotificationTemplate;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

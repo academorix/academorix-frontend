@@ -29,7 +29,7 @@ declare(strict_types=1);
  *
  * @example Creating tables in a migration:
  * ```php
- * use Academorix\Database\Schema\TaggableBlueprint;
+ * use Stackra\Database\Schema\TaggableBlueprint;
  *
  * public function up(): void
  * {
@@ -62,16 +62,16 @@ declare(strict_types=1);
  *
  * @since    2.0.0
  *
- * @see \Academorix\Database\Concerns\Model\HasTags
- * @see \Academorix\Crud\Models\Tag
+ * @see \Stackra\Database\Concerns\Model\HasTags
+ * @see \Stackra\Crud\Models\Tag
  * @see \Illuminate\Database\Schema\Blueprint
  */
 
-namespace Academorix\Database\Schema;
+namespace Stackra\Database\Schema;
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Academorix\Database\Attributes\AsDatabaseBlueprint;
+use Stackra\Database\Attributes\AsDatabaseBlueprint;
 
 /**
  * Provides static helpers for creating/dropping tag and taggable pivot tables.

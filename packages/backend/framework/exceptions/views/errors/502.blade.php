@@ -12,7 +12,7 @@
 * - Network connectivity issues between servers
 *
 * @extends foundation::layouts.app
-* @package Academorix\Foundation
+* @package Stackra\Foundation
 */
 --}}
 @extends('foundation::layouts.app')

@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "compliance",
   "alias": "compliance",
-  "namespace": "Academorix\\Compliance",
+  "namespace": "Stackra\\Compliance",
   "description": "Cross-cutting compliance substrate. Owns eight entities: ConsentCategory (config-backed catalogue: essential / functional / marketing / analytics / ai-training / minor-parental), ConsentRecord (immutable subject × category × decision snapshots — the audit-material consent evidence), Dsar (data-subject-request state machine: received → triaging → collecting → assembling → delivered | rejected), DsarArtefact (per-module contribution to a DSAR bundle — points at a storage::File), LegalHold (freezes retention on a subject or record set while litigation / audit is active), RetentionRun (audit trail of every retention sweep: what was purged, what was held, per-tenant), Subprocessor (versioned VPC registry — every third party that receives subject data), SafeguardingIncident (minor-safeguarding report inbox distinct from audit — domain-driven, not diff-driven). Ships the `HasConsent`, `IsRetentionAware`, `HasLegalHold`, `IsDsarContributor` traits + the `#[DsarExportable]` / `#[DsarErasable]` / `#[ConsentRequired]` / `#[RetentionPolicy]` / `#[LegalHoldable]` attributes so downstream modules opt into the DSAR / retention / consent-gate machinery without importing the SDK. Not a per-module obligation — the DSAR runner, retention runner, legal-hold policy, and consent-gate facade all live here; every other module is a contributor via events + attributes.",
   "keywords": [
     "compliance",
@@ -24,7 +24,7 @@
     "breach-notification"
   ],
   "priority": 30,
-  "providers": ["Academorix\\Compliance\\Providers\\ComplianceServiceProvider"],
+  "providers": ["Stackra\\Compliance\\Providers\\ComplianceServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",
@@ -254,7 +254,7 @@
       "extended": 90,
       "note": "GDPR Art. 12(3) baseline is 30d; extension up to 60d for complex requests must be communicated within the first month. Enterprise contracts may negotiate SLAs; overrides live in tenancy::TenantSetting.compliance.dsar_sla_days."
     },
-    "contributor_discovery": "DsarContributorRegistry scans #[DsarExportable] + #[DsarErasable] classes at boot. Each contributor implements `Academorix\\Compliance\\Contracts\\DsarContributor` with `collect(SubjectId $s): Iterable` + `erase(SubjectId $s): void`."
+    "contributor_discovery": "DsarContributorRegistry scans #[DsarExportable] + #[DsarErasable] classes at boot. Each contributor implements `Stackra\\Compliance\\Contracts\\DsarContributor` with `collect(SubjectId $s): Iterable` + `erase(SubjectId $s): void`."
   },
   "retention_orchestration": {
     "description": "RetentionRunner is the ONLY canonical purge orchestrator. Every module declares its per-entity retention windows in `modules/<name>/retention.json`. The runner reads them all + respects LegalHold + applies tenant-tier overrides.",

@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/newsletter/settings",
+  "id": "stackra://modules/newsletter/settings",
   "$version": 1,
   "title": "newsletter \u2014 settings",
   "description": "Newsletter platform defaults. Canonical group/section/field taxonomy. One #[AsSetting] class \u2014 `NewsletterSettings` \u2014 group key `newsletter`.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "newsletter",
-      "class": "Academorix\\Newsletter\\Settings\\NewsletterSettings",
+      "class": "Stackra\\Newsletter\\Settings\\NewsletterSettings",
       "label": "Newsletter",
       "description": "Platform defaults applied to new newsletters + reputation guardrails.",
       "icon": "newspaper",

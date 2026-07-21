@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Repositories;
+namespace Stackra\Marketing\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Marketing\Contracts\Data\MarketingDeliveryInterface;
-use Academorix\Marketing\Contracts\Repositories\MarketingDeliveryRepositoryInterface;
-use Academorix\Marketing\Models\MarketingDelivery;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Marketing\Contracts\Data\MarketingDeliveryInterface;
+use Stackra\Marketing\Contracts\Repositories\MarketingDeliveryRepositoryInterface;
+use Stackra\Marketing\Models\MarketingDelivery;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Marketing\Models\MarketingDelivery}.
+ * Attribute-first Eloquent repository for {@see Stackra\Marketing\Models\MarketingDelivery}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(MarketingDeliveryInterface::class)]` which resolves to
  * `MarketingDelivery` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Marketing\Models\MarketingDelivery>
+ * @extends Repository<\Stackra\Marketing\Models\MarketingDelivery>
  *
  * @category Marketing
  *

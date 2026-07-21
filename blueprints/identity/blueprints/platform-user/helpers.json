@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/platform-user/helpers",
+  "id": "stackra://modules/platform-user/helpers",
   "$version": 1,
   "title": "platform-user \u2014 helper functions",
   "description": "Two helper facades exposed for internal tooling that reaches PlatformUser + on-call state without going through the full HTTP layer (Artisan commands, listeners, notifications composing enrichment text). Every helper delegates to a service binding under the `platform-user` container namespace; helpers are the ergonomic surface.",
-  "namespace": "Academorix\\PlatformUser\\Support",
+  "namespace": "Stackra\\PlatformUser\\Support",
   "helpers": [
     {
       "signature": "platform_user(?string $identityIdOrPlatformUserId = null): ?PlatformUser",
@@ -15,7 +15,7 @@
         "platform_user('idn_01H...') \u2192 resolves the PlatformUser via UNIQUE(identity_id)",
         "platform_user('idn_01H...') when the identity has no linked PlatformUser \u2192 returns null (an identity may be a tenant User only)"
       ],
-      "delegates_to": "Academorix\\PlatformUser\\Repositories\\PlatformUserRepository"
+      "delegates_to": "Stackra\\PlatformUser\\Repositories\\PlatformUserRepository"
     },
     {
       "signature": "on_call_now(?string $department = null): ?OnCallShift",
@@ -26,7 +26,7 @@
         "on_call_now('security') \u2192 scoped to the security department's rotation",
         "on_call_now() during a resolver timeout \u2192 returns null (never throws; falls back to Slack broadcast at the caller layer)"
       ],
-      "delegates_to": "Academorix\\PlatformUser\\Services\\OnCallResolver"
+      "delegates_to": "Stackra\\PlatformUser\\Services\\OnCallResolver"
     }
   ],
   "notes": [

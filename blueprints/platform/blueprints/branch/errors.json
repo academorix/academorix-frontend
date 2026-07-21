@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/branch/errors",
+  "id": "stackra://modules/branch/errors",
   "$version": 1,
   "title": "branch — error codes",
   "namespace": "branch",

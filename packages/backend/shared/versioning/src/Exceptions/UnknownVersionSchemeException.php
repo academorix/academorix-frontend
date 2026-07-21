@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Exceptions;
+namespace Stackra\Versioning\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
- * Raised when {@see \Academorix\Versioning\Contracts\Services\VersionSchemeRegistryInterface::resolve()}
+ * Raised when {@see \Stackra\Versioning\Contracts\Services\VersionSchemeRegistryInterface::resolve()}
  * is called with a scheme name that isn't registered.
  *
  * Only reachable via a data-integrity bug (an `api_versions.scheme`
@@ -18,7 +18,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class UnknownVersionSchemeException extends AcademorixException
+final class UnknownVersionSchemeException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

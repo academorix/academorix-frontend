@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Drivers;
+namespace Stackra\Localization\Drivers;
 
-use Academorix\Localization\Attributes\AsTranslatorDriver;
-use Academorix\Localization\Contracts\Services\TranslatorDriverInterface;
-use Academorix\Localization\Data\DriverHealthData;
-use Academorix\Localization\Data\TranslationResultData;
+use Stackra\Localization\Attributes\AsTranslatorDriver;
+use Stackra\Localization\Contracts\Services\TranslatorDriverInterface;
+use Stackra\Localization\Data\DriverHealthData;
+use Stackra\Localization\Data\TranslationResultData;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\Scoped;
 

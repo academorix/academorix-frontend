@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attribution\Exceptions;
+namespace Stackra\Attribution\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * subject_type value not in enum { user, athlete, lead, anonymous_session }.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AttributionInvalidSubjectTypeException extends AcademorixException
+final class AttributionInvalidSubjectTypeException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

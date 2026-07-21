@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Gateway\Services;
+namespace Stackra\Gateway\Services;
 
-use Academorix\Gateway\Contracts\Data\PaymentGatewayConfigInterface;
-use Academorix\Gateway\Contracts\Repositories\PaymentGatewayConfigRepositoryInterface;
-use Academorix\Gateway\Contracts\Services\PaymentGatewayInterface;
-use Academorix\Gateway\Contracts\Services\PaymentGatewayManagerInterface;
-use Academorix\Gateway\Exceptions\GatewayUnsupportedProviderException;
+use Stackra\Gateway\Contracts\Data\PaymentGatewayConfigInterface;
+use Stackra\Gateway\Contracts\Repositories\PaymentGatewayConfigRepositoryInterface;
+use Stackra\Gateway\Contracts\Services\PaymentGatewayInterface;
+use Stackra\Gateway\Contracts\Services\PaymentGatewayManagerInterface;
+use Stackra\Gateway\Exceptions\GatewayUnsupportedProviderException;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Contracts\Container\Container;
 
 /**
  * Reference implementation of
- * {@see \Academorix\Gateway\Contracts\Services\PaymentGatewayManagerInterface}.
+ * {@see \Stackra\Gateway\Contracts\Services\PaymentGatewayManagerInterface}.
  *
  * Resolves a `PaymentGatewayInterface` driver for a given provider slug or
  * tenant. Drivers register themselves at boot via the service provider,

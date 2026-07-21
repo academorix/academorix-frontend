@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsAnnouncementsSdk\Enums;
+namespace Stackra\NotificationsAnnouncementsSdk\Enums;
 
 /**
  * Wire-visible backed enum for `announcement.priority`.

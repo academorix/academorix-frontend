@@ -1,20 +1,20 @@
 {
-  "id": "academorix://modules/event/attributes",
+  "id": "stackra://modules/event/attributes",
   "$version": 1,
   "title": "event — PHP attribute contracts",
   "description": "One attribute — `#[AsEventListener]` — marks a service class as a subscriber to event-lifecycle events. AttributeDiscovery scans + wires it to the event map declared in events.json.",
-  "namespace": "Academorix\\Sports\\Event\\Attributes",
+  "namespace": "Stackra\\Sports\\Event\\Attributes",
   "attributes": [
     {
       "name": "AsEventListener",
-      "class": "Academorix\\Sports\\Event\\Attributes\\AsEventListener",
+      "class": "Stackra\\Sports\\Event\\Attributes\\AsEventListener",
       "targets": ["class"],
       "params": [
         {
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Array of event short names (`EventCreated`, `EventCancellationBroadcast`, `EventPricingChanged`, etc.). Empty = subscribe to every event in Academorix\\Sports\\Event\\Events\\*. Names validated against events.json at boot."
+          "description": "Array of event short names (`EventCreated`, `EventCancellationBroadcast`, `EventPricingChanged`, etc.). Empty = subscribe to every event in Stackra\\Sports\\Event\\Events\\*. Names validated against events.json at boot."
         },
         {
           "name": "queue",

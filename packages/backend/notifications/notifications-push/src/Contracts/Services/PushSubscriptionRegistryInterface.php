@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Contracts\Services;
+namespace Stackra\Notifications\Push\Contracts\Services;
 
-use Academorix\Notifications\Push\Attributes\AsPushProvider;
-use Academorix\Notifications\Push\Services\PushSubscriptionRegistry;
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Notifications\Push\Attributes\AsPushProvider;
+use Stackra\Notifications\Push\Services\PushSubscriptionRegistry;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
 use Illuminate\Container\Attributes\Bind;
 
 /**
  * Attribute-discovered registry of {@see AsPushProvider} driver classes.
  *
  * Hydrated at boot by the framework's generic
- * {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ * {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  * pump via the {@see HydratesFrom} attribute on {@see register()}. The
- * {@see \Academorix\Notifications\Push\Contracts\Services\PushTransportManagerInterface}
+ * {@see \Stackra\Notifications\Push\Contracts\Services\PushTransportManagerInterface}
  * consults this registry to know which drivers exist before resolving one.
  *
  * @category NotificationsPush

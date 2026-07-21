@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registrations\Actions\Tenant;
+namespace Stackra\Registrations\Actions\Tenant;
 
-use Academorix\Registrations\Contracts\Repositories\RegistrationRepositoryInterface;
-use Academorix\Registrations\Data\RegistrationData;
-use Academorix\Registrations\Data\Requests\CreateRegistrationRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Registrations\Contracts\Repositories\RegistrationRepositoryInterface;
+use Stackra\Registrations\Data\RegistrationData;
+use Stackra\Registrations\Data\Requests\CreateRegistrationRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/registrations` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Registrations

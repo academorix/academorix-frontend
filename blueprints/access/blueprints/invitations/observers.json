@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/invitations/observers",
+  "id": "stackra://modules/invitations/observers",
   "$version": 1,
   "title": "invitations — Eloquent observers",
   "description": "Model observers registered by `InvitationsServiceProvider::boot()`. Each observer's hooks[] enumerates the Eloquent events it acts on plus the side effect. Idempotent by construction — every side effect checks state before firing.",
   "observers": [
     {
-      "class": "Academorix\\Invitations\\Observers\\InvitationObserver",
-      "target": "Academorix\\Invitations\\Models\\Invitation",
+      "class": "Stackra\\Invitations\\Observers\\InvitationObserver",
+      "target": "Stackra\\Invitations\\Models\\Invitation",
       "hooks": [
         {
           "event": "creating",

@@ -1,8 +1,8 @@
 {
-  "name": "@academorix/config-eslint",
+  "name": "@stackra/config-eslint",
   "version": "0.1.0",
   "private": true,
-  "description": "Shared ESLint flat config presets for the academorix-frontend monorepo. Exports base + react + vite-app presets.",
+  "description": "Shared ESLint flat config presets for the stackra-frontend monorepo. Exports base + react + vite-app presets.",
   "license": "MIT",
   "type": "module",
   "exports": {

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Exceptions;
+namespace Stackra\Invitations\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Idempotency guard — the token was already accepted / declined.

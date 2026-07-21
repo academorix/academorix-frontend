@@ -12,10 +12,10 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Support\Facades;
+namespace Stackra\Support\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use Academorix\Serializer\Contracts\JsonInterface;
+use Stackra\Serializer\Contracts\JsonInterface;
 
 /**
  * Json Facade.

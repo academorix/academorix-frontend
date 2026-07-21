@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Announcements\Database\Factories;
+namespace Stackra\Announcements\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Announcements\Contracts\Data\AnnouncementInterface;
-use Academorix\Announcements\Models\Announcement;
+use Stackra\Announcements\Contracts\Data\AnnouncementInterface;
+use Stackra\Announcements\Models\Announcement;
 
 /**
- * Factory for {@see \Academorix\Announcements\Models\Announcement}.
+ * Factory for {@see \Stackra\Announcements\Models\Announcement}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Announcements\Models\Announcement>
+ * @extends Factory<\Stackra\Announcements\Models\Announcement>
  *
  * @category Announcements
  *

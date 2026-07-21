@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Observers;
+namespace Stackra\Geography\Observers;
 
-use Academorix\Geography\Contracts\Data\LanguageInterface;
-use Academorix\Geography\Events\Domain\LanguageCreated;
-use Academorix\Geography\Events\Domain\LanguageDeleted;
-use Academorix\Geography\Events\Domain\LanguageUpdated;
-use Academorix\Geography\Models\Language;
+use Stackra\Geography\Contracts\Data\LanguageInterface;
+use Stackra\Geography\Events\Domain\LanguageCreated;
+use Stackra\Geography\Events\Domain\LanguageDeleted;
+use Stackra\Geography\Events\Domain\LanguageUpdated;
+use Stackra\Geography\Models\Language;
 
 /**
  * Lifecycle side effects for {@see Language}.

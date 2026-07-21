@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/activity/retention",
+  "id": "stackra://modules/activity/retention",
   "$version": 1,
   "title": "activity — data retention windows",
   "description": "Retention per model. Activity rows: 90d default (all tiers); extendable to 365d with `activity_retention_extended` (Enterprise); up to 730d for regulator holds. Retention policies: retained while active. Cold-storage archive at 90d for Enterprise tenants; hard-delete at retention_days for every tenant. TenantErased: cascade delete all activity rows (unlike audit which anonymises).",

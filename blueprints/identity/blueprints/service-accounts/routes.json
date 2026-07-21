@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/service-accounts/routes",
+  "id": "stackra://modules/service-accounts/routes",
   "$version": 1,
   "title": "service-accounts \u2014 HTTP routes",
   "description": "Nine routes total. Eight on the platform_admin plane at `/api/v1/platform/service-accounts/*` (super_admin/security/ops-scoped for writes; wider read). One unauthenticated route at `/api/v1/service-accounts/token` for credential exchange (rate-limited per-SA + per-IP-/24). No tenant-plane surface \u2014 tenants never see SA rows even for their own machine credentials.",
@@ -23,56 +23,56 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\ServiceAccount\\Http\\Controllers\\Platform\\ServiceAccountController@index",
+          "controller": "Stackra\\ServiceAccount\\Http\\Controllers\\Platform\\ServiceAccountController@index",
           "permission": "platform.service_accounts.viewAny",
           "description": "List. Filters: filter[application_id], filter[tenant_id], filter[is_enabled], filter[has_expired], filter[dormant_days], filter[signer_kid]. Search: q (matches name + description). Default sort: created_at desc. Excludes soft-deleted rows unless include_deleted=true. Redacted list \u2014 no secret_hash, no last_used_ip."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\ServiceAccount\\Http\\Controllers\\Platform\\ServiceAccountController@store",
+          "controller": "Stackra\\ServiceAccount\\Http\\Controllers\\Platform\\ServiceAccountController@store",
           "permission": "platform.service_accounts.create",
           "description": "Provision a new SA. Body: CreateServiceAccountInput. Response: ServiceAccountCreatedResponse (includes the plaintext secret ONCE). Fires ServiceAccountCreated on success. Refuses with 422 on invalid application_id / tenant_id / signer_kid / name."
         },
         {
           "method": "GET",
           "path": "/{serviceAccount}",
-          "controller": "Academorix\\ServiceAccount\\Http\\Controllers\\Platform\\ServiceAccountController@show",
+          "controller": "Stackra\\ServiceAccount\\Http\\Controllers\\Platform\\ServiceAccountController@show",
           "permission": "platform.service_accounts.view",
           "description": "Detail. Includes application_slug, tenant_slug, signer_kid, expires_at, secret_rotated_at, last_used_at, last_used_ip (visible to platform-admin), status, computed accessors (days_until_expiry, is_dormant, is_expiring_soon)."
         },
         {
           "method": "PATCH",
           "path": "/{serviceAccount}",
-          "controller": "Academorix\\ServiceAccount\\Http\\Controllers\\Platform\\ServiceAccountController@update",
+          "controller": "Stackra\\ServiceAccount\\Http\\Controllers\\Platform\\ServiceAccountController@update",
           "permission": "platform.service_accounts.update",
           "description": "Update mutable fields (name, description, is_enabled, expires_at, metadata). Refuses with 422 SERVICE_ACCOUNT_IMMUTABLE_FIELD on any attempt to change application_id / tenant_id / signer_kid. Refuses expires_at values in the past."
         },
         {
           "method": "DELETE",
           "path": "/{serviceAccount}",
-          "controller": "Academorix\\ServiceAccount\\Http\\Controllers\\Platform\\ServiceAccountController@destroy",
+          "controller": "Stackra\\ServiceAccount\\Http\\Controllers\\Platform\\ServiceAccountController@destroy",
           "permission": "platform.service_accounts.delete",
           "description": "Soft-delete + disable. Fires ServiceAccountDeleted(erasure_phase='soft_delete'). Starts the retention hold clock (default 90d)."
         },
         {
           "method": "POST",
           "path": "/{serviceAccount}/rotate-secret",
-          "controller": "Academorix\\ServiceAccount\\Http\\Controllers\\Platform\\RotateServiceAccountSecretController@__invoke",
+          "controller": "Stackra\\ServiceAccount\\Http\\Controllers\\Platform\\RotateServiceAccountSecretController@__invoke",
           "permission": "platform.service_accounts.rotate",
           "description": "Rotate the SA secret. Body: { ttl_days?: int, reason: string }. Response: ServiceAccountCreatedResponse (same shape as create \u2014 includes plaintext secret ONCE). Fires ServiceAccountSecretRotated."
         },
         {
           "method": "POST",
           "path": "/{serviceAccount}/issue-jwt",
-          "controller": "Academorix\\ServiceAccount\\Http\\Controllers\\Platform\\IssueTestServiceAccountJwtController@__invoke",
+          "controller": "Stackra\\ServiceAccount\\Http\\Controllers\\Platform\\IssueTestServiceAccountJwtController@__invoke",
           "permission": "platform.service_accounts.issue_test_jwt",
           "description": "Issue a test JWT with configurable scope + TTL. Body: IssueTestJwtInput. Response: TokenExchangeResponse (same shape as the public exchange endpoint). Fires ServiceAccountJwtIssued with trigger='test'. Refuses when SA is disabled or expired."
         },
         {
           "method": "GET",
           "path": "/{serviceAccount}/audit-usage",
-          "controller": "Academorix\\ServiceAccount\\Http\\Controllers\\Platform\\ServiceAccountAuditUsageController@__invoke",
+          "controller": "Stackra\\ServiceAccount\\Http\\Controllers\\Platform\\ServiceAccountAuditUsageController@__invoke",
           "permission": "platform.service_accounts.view.audit_trail",
           "description": "Usage report over the window. Query params: window (24h | 7d | 30d | 90d; default 30d), format (json | csv). Response: ServiceAccountUsageReportData. Every invocation writes its own audit row so 'who ran a report on which SA' is auditable."
         }
@@ -94,14 +94,14 @@
         {
           "method": "POST",
           "path": "/token",
-          "controller": "Academorix\\ServiceAccount\\Http\\Controllers\\TokenExchangeController@__invoke",
+          "controller": "Stackra\\ServiceAccount\\Http\\Controllers\\TokenExchangeController@__invoke",
           "permission": null,
           "description": "Exchange bcrypt secret for HS256 JWT. Body: TokenExchangeInput. Response: TokenExchangeResponse. Rate-limit rejections return 429 SERVICE_ACCOUNT_RATE_LIMITED with Retry-After. Credential-verification rejections return 401 INVALID_SERVICE_ACCOUNT_CREDENTIALS (generic; no enumeration signal). Successful exchange fires ServiceAccountJwtIssued with trigger='exchange'."
         }
       ]
     }
   ],
-  "boundary_note": "The token-exchange endpoint is INTENTIONALLY on the public host set (available on tenant subdomains + platform-admin + central) so a machine deployed inside any Academorix-facing zone can reach it. It does NOT require the caller to route through the internal-service mesh (that would break bootstrap sequencing \u2014 the first inter-service call has to happen SOMEHOW). The security posture is enforced by: (a) aggressive rate limiting, (b) generic error responses (enumeration safety), (c) fingerprint-based anomaly detection with critical-queue notifications on rate spikes + novel tuples.",
+  "boundary_note": "The token-exchange endpoint is INTENTIONALLY on the public host set (available on tenant subdomains + platform-admin + central) so a machine deployed inside any Stackra-facing zone can reach it. It does NOT require the caller to route through the internal-service mesh (that would break bootstrap sequencing \u2014 the first inter-service call has to happen SOMEHOW). The security posture is enforced by: (a) aggressive rate limiting, (b) generic error responses (enumeration safety), (c) fingerprint-based anomaly detection with critical-queue notifications on rate spikes + novel tuples.",
   "consumed_by_downstream_modules": {
     "identity/auth": [
       "consumes ServiceAccountJwtIssuerInterface + delegates JWT signing to auth::JwtSigner",

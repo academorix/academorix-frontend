@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformIntegrationsSdk\Resources;
+namespace Stackra\PlatformIntegrationsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\PlatformIntegrationsSdk\Data\AppWebhookSubscriptionData;
-use Academorix\PlatformIntegrationsSdk\Requests\AppWebhookSubscriptions\ListAppWebhookSubscriptionsAdminRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\PlatformIntegrationsSdk\Data\AppWebhookSubscriptionData;
+use Stackra\PlatformIntegrationsSdk\Requests\AppWebhookSubscriptions\ListAppWebhookSubscriptionsAdminRequest;
 use Saloon\Http\Response;
 
 /**

@@ -5,7 +5,7 @@
  *
  * @description
  * Contract implemented by classes referenced from
- * {@see \Academorix\Scheduling\Attributes\ScheduleWhen}. The
+ * {@see \Stackra\Scheduling\Attributes\ScheduleWhen}. The
  * scheduler evaluates the gate on every tick — the task runs
  * only when `__invoke()` returns `true`.
  *
@@ -25,7 +25,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scheduling\Contracts;
+namespace Stackra\Scheduling\Contracts;
 
 interface ScheduleGate
 {

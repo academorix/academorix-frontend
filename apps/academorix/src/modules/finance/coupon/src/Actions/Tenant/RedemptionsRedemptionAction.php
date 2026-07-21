@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Actions\Tenant;
+namespace Stackra\Coupon\Actions\Tenant;
 
-use Academorix\Coupon\Contracts\Data\CouponRedemptionInterface;
-use Academorix\Coupon\Contracts\Repositories\CouponRedemptionRepositoryInterface;
-use Academorix\Coupon\Data\CouponRedemptionData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Coupon\Contracts\Data\CouponRedemptionInterface;
+use Stackra\Coupon\Contracts\Repositories\CouponRedemptionRepositoryInterface;
+use Stackra\Coupon\Data\CouponRedemptionData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\LaravelData\PaginatedDataCollection;
@@ -47,7 +47,7 @@ final class RedemptionsRedemptionAction
      */
     public function __invoke(Request $request, string $couponId): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Academorix\Coupon\Models\CouponRedemption> $page */
+        /** @var LengthAwarePaginator<int, \Stackra\Coupon\Models\CouponRedemption> $page */
         $page = $this->repository->getModel()->newQuery()
             ->where(CouponRedemptionInterface::ATTR_COUPON_ID, $couponId)
             ->orderByDesc(CouponRedemptionInterface::ATTR_REDEEMED_AT)

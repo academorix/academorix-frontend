@@ -58,7 +58,7 @@
     "sender_name": "The sender's full legal name (e.g. 'Alice Johnson').",
     "sender_display_name": "The sender's display / preferred name (e.g. 'Alice' or 'Alice J.').",
     "sender_avatar_url": "URL to the sender's avatar image (nullable).",
-    "referral_url": "The full URL: https://{tenant.slug}.academorix.app/?ref={code}.",
+    "referral_url": "The full URL: https://{tenant.slug}.stackra.app/?ref={code}.",
     "referral_url_short": "Shortened URL for SMS (bit.ly-style; max 20 chars).",
     "reward_summary": "Human-readable reward summary (e.g. '10% off your first payment' or '$25 in credits').",
     "tenant_name": "The tenant's display name.",

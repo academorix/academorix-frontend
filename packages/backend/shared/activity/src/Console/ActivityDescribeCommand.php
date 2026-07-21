@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Console;
+namespace Stackra\Activity\Console;
 
-use Academorix\Activity\Contracts\Services\ActivityRegistryInterface;
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Activity\Contracts\Services\ActivityRegistryInterface;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan activity:describe` — print the compile-time inventory of
  * every model class registered with the {@see ActivityRegistryInterface}.
  *
  * The registry is hydrated at boot by the framework's generic
- * hydration pump ({@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper})
+ * hydration pump ({@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper})
  * via the `#[HydratesFrom(LoggableActivity::class)]` declaration on
  * {@see ActivityRegistryInterface::register()}. Every class carrying
  * `#[LoggableActivity]` lands in the registry — this command is the

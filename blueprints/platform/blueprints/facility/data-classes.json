@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/facility/data-classes",
+  "id": "stackra://modules/facility/data-classes",
   "$version": 1,
   "title": "facility — field classification",
   "description": "Facilities are commercial reference data (public within the tenant). ResourceBookings carry user identifiers (internal) + financial data (confidential). DayPasses have anonymous PII sub-fields (confidential, redacted at 90 days). Passes carry pricing + assignment info (confidential). No health / medical / minor-specific data on any row — those attach through the User side.",

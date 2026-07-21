@@ -175,7 +175,7 @@ page — the app-boot discovery+cache class.** Never overload the word.
 ## The `AbstractBootstrapper` contract (escape-hatch shape)
 
 Every escape-hatch bootstrapper extends
-`Academorix\ServiceProvider\Bootstrappers\AbstractBootstrapper`:
+`Stackra\ServiceProvider\Bootstrappers\AbstractBootstrapper`:
 
 ```php
 #[AsBootstrapper(priority: 120)]

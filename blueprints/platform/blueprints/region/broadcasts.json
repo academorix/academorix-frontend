@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/region/broadcasts",
+  "id": "stackra://modules/region/broadcasts",
   "$version": 1,
   "title": "region — realtime broadcasts",
   "description": "The region module does NOT broadcast on realtime channels directly. Region mutations fire domain events (see `events.json`) which downstream modules (notifications, activity, branch) may republish over their own broadcast channels — but this module ships zero channels of its own. Broadcast surfaces belong to the domain that owns the read side (branch UI for the region-picker, activity feed for the audit trail), not the write side.",

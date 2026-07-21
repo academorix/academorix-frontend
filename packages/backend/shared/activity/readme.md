@@ -34,8 +34,8 @@ a change to a permission / role / consent record produces both an activity row
 ## 3. Opting a model in
 
 ```php
-use Academorix\Activity\Concerns\HasActivityLog;
-use Academorix\Activity\Attributes\LoggableActivity;
+use Stackra\Activity\Concerns\HasActivityLog;
+use Stackra\Activity\Attributes\LoggableActivity;
 use Spatie\Activitylog\LogOptions;
 
 #[LoggableActivity(logName: 'invitations', retention: 'tier_based')]

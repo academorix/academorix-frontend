@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Models;
+namespace Stackra\Activity\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Activity\Contracts\Data\ActivityInterface;
-use Academorix\Activity\Database\Factories\ActivityFactory;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Activity\Contracts\Data\ActivityInterface;
+use Stackra\Activity\Database\Factories\ActivityFactory;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Scout\Searchable;
 

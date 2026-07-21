@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformCredentialsSdk\Requests\Gates;
+namespace Stackra\PlatformCredentialsSdk\Requests\Gates;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\PlatformCredentialsSdk\Data\GateData;
-use Academorix\PlatformCredentialsSdk\Payloads\Gates\CreateGatePayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\PlatformCredentialsSdk\Data\GateData;
+use Stackra\PlatformCredentialsSdk\Payloads\Gates\CreateGatePayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

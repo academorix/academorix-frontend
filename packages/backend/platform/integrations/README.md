@@ -1,4 +1,4 @@
-# academorix/integrations
+# stackra/integrations
 
 Third-party integration credentials per Tenant. Owns the `TenantIntegration`
 aggregate — Stripe, Slack, HubSpot, Zapier, custom OAuth2, SCIM, HRIS, LMS.
@@ -12,7 +12,7 @@ aggregate — Stripe, Slack, HubSpot, Zapier, custom OAuth2, SCIM, HRIS, LMS.
 ## Install
 
 ```bash
-composer require academorix/integrations
+composer require stackra/integrations
 ```
 
 ## Blueprint

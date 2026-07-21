@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "rbac",
   "alias": "rbac",
-  "namespace": "Academorix\\Rbac",
+  "namespace": "Stackra\\Rbac",
   "description": "The runtime role + permission storage layer for the sanctum + platform_admin guards. Extends spatie/laravel-permission's tables with `application_id` + `tenant_id` columns per design.md §2 D-A2. Ships CRUD APIs for tenant admins to manage their tenant's roles + custom permissions (gated by the `custom_roles` entitlement + `custom_role_slot` quota). System roles are seeded per-business-type from `role_definitions` — a metadata layer that pins which business_types default-provision which roles, plus i18n labels + min-tier gating. Enforces `GuardMismatch` (422) on any write that would bind a sanctum permission to a platform_admin role (or vice versa) + `ApplicationMismatch` (422) on cross-Application writes. Ships the base `PermissionResolver` that composes RBAC ∪ grants − denies + delegation per design.md §2 D-A3 — every downstream permission check flows through this resolver. Owns the seed permissions catalogue that domain modules extend (users.*, tenants.*, invoices.*, athletes.*, ...) — with the `.own` / `.tenant` / `.branch` / `.team` / `.child` / `.any` scope-suffix convention resolved by `auth::ScopeSuffixResolver`. Framework primitives (`#[RequirePermission]`, `#[RequireRole]`, base guard classes) live in `backend-packages/authorization/` — THIS module owns the business data. RBAC binds polymorphically to `User` (tenant plane, sanctum guard), `PlatformUser` (platform plane, platform_admin guard), and `ServiceAccount` (machine plane, sanctum guard via a dedicated ability slice).",
   "keywords": [
     "rbac",
@@ -27,7 +27,7 @@
     "iso27001-a9.2"
   ],
   "priority": 30,
-  "providers": ["Academorix\\Rbac\\Providers\\RbacServiceProvider"],
+  "providers": ["Stackra\\Rbac\\Providers\\RbacServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

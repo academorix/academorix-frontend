@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Models;
+namespace Stackra\Search\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Database\Concerns\HasSystemFlag;
-use Academorix\Search\Contracts\Data\SearchSynonymInterface;
-use Academorix\Search\Database\Factories\SearchSynonymFactory;
-use Academorix\Search\Enums\SynonymKind;
-use Academorix\Search\Observers\SearchSynonymObserver;
-use Academorix\Search\Policies\SearchSynonymPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Database\Concerns\HasSystemFlag;
+use Stackra\Search\Contracts\Data\SearchSynonymInterface;
+use Stackra\Search\Database\Factories\SearchSynonymFactory;
+use Stackra\Search\Enums\SynonymKind;
+use Stackra\Search\Observers\SearchSynonymObserver;
+use Stackra\Search\Policies\SearchSynonymPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

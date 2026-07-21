@@ -10,7 +10,7 @@
  * method on an event class with a single declarative statement.
  *
  * Applied by
- * {@see \Academorix\Events\Support\BroadcastConfigurator} whenever
+ * {@see \Stackra\Events\Support\BroadcastConfigurator} whenever
  * the framework asks the event for its broadcast name. Absent, the
  * framework uses the event's fully-qualified class name — the
  * default behaviour.
@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Events\Attributes;
+namespace Stackra\Events\Attributes;
 
 use Attribute;
 

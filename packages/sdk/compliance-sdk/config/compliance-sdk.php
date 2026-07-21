@@ -4,7 +4,7 @@
  * @file config/compliance-sdk.php
  *
  * @description
- * Runtime configuration for `academorix/compliance-sdk`. Mirrors the shape of
+ * Runtime configuration for `stackra/compliance-sdk`. Mirrors the shape of
  * the kernel's `sdk.api.*` bag but under the `sdk.compliance.*` namespace, so
  * `config('sdk')` stays enumerable across every per-service SDK. Every value
  * is env-driven (`SDK_COMPLIANCE_*`).
@@ -12,8 +12,8 @@
 
 declare(strict_types=1);
 
-use Academorix\ApiSdk\Enums\AuthStrategy;
-use Academorix\ApiSdk\Enums\LogLevel;
+use Stackra\ApiSdk\Enums\AuthStrategy;
+use Stackra\ApiSdk\Enums\LogLevel;
 
 return [
 
@@ -22,7 +22,7 @@ return [
     | Base URL — the Compliance service HTTP surface.
     |----------------------------------------------------------------
     */
-    'base_url' => env('SDK_COMPLIANCE_BASE_URL', 'https://compliance.academorix.test'),
+    'base_url' => env('SDK_COMPLIANCE_BASE_URL', 'https://compliance.stackra.test'),
 
     /*
     |----------------------------------------------------------------
@@ -98,7 +98,7 @@ return [
     'headers' => [
         'Accept'       => 'application/json',
         'Content-Type' => 'application/json',
-        'User-Agent'   => env('SDK_COMPLIANCE_USER_AGENT', 'academorix-compliance-sdk/1.0'),
+        'User-Agent'   => env('SDK_COMPLIANCE_USER_AGENT', 'stackra-compliance-sdk/1.0'),
     ],
 
     /*

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/payout/schemas/payout-reconciliation",
+  "id": "stackra://modules/payout/schemas/payout-reconciliation",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "PayoutReconciliation",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "pyr_",
     "incrementing": false,
-    "model": "Academorix\\Finance\\Payout\\Models\\PayoutReconciliation",
-    "interface": "Academorix\\Finance\\Payout\\Contracts\\Data\\PayoutReconciliationInterface",
-    "implements": ["Academorix\\Finance\\Payout\\Contracts\\Data\\PayoutReconciliationInterface"],
+    "model": "Stackra\\Finance\\Payout\\Models\\PayoutReconciliation",
+    "interface": "Stackra\\Finance\\Payout\\Contracts\\Data\\PayoutReconciliationInterface",
+    "implements": ["Stackra\\Finance\\Payout\\Contracts\\Data\\PayoutReconciliationInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

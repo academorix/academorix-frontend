@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tasks\Attributes;
+namespace Stackra\Tasks\Attributes;
 
 use Attribute;
 

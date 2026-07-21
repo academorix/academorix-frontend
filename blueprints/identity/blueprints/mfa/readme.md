@@ -108,7 +108,7 @@ durable storage until the user proves possession:
    `mfa:enroll:preview:{session_id}` (5-minute TTL), returns
    `TotpEnrollmentPreview` DTO containing:
    - `totp_secret` (base32, echoed for the browser's QR component)
-   - `totp_uri` (`otpauth://totp/Academorix:<fingerprint>?secret=<secret>&…`)
+   - `totp_uri` (`otpauth://totp/Stackra:<fingerprint>?secret=<secret>&…`)
    - Issued + expiry timestamps
 2. **Round 2 — confirm.** `POST /api/v1/me/mfa/totp/enroll` submits back the
    secret + a valid TOTP code proving the user scanned it. Server verifies the

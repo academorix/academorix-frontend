@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Resolver\Layers;
+namespace Stackra\FeatureFlags\Resolver\Layers;
 
-use Academorix\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureOverrideRepositoryInterface;
-use Academorix\FeatureFlags\Enums\OverrideDecision;
-use Academorix\FeatureFlags\Resolver\FeatureResolution;
-use Academorix\FeatureFlags\Resolver\ResolutionContext;
+use Stackra\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureOverrideRepositoryInterface;
+use Stackra\FeatureFlags\Enums\OverrideDecision;
+use Stackra\FeatureFlags\Resolver\FeatureResolution;
+use Stackra\FeatureFlags\Resolver\ResolutionContext;
 
 /**
  * Second layer — returns the deepest matching `feature_overrides` row's decision.

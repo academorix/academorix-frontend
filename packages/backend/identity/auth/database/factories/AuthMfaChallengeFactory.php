@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Database\Factories;
+namespace Stackra\Auth\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Auth\Contracts\Data\AuthMfaChallengeInterface;
-use Academorix\Auth\Models\AuthMfaChallenge;
+use Stackra\Auth\Contracts\Data\AuthMfaChallengeInterface;
+use Stackra\Auth\Models\AuthMfaChallenge;
 
 /**
- * Factory for {@see \Academorix\Auth\Models\AuthMfaChallenge}.
+ * Factory for {@see \Stackra\Auth\Models\AuthMfaChallenge}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Auth\Models\AuthMfaChallenge>
+ * @extends Factory<\Stackra\Auth\Models\AuthMfaChallenge>
  *
  * @category Auth
  *

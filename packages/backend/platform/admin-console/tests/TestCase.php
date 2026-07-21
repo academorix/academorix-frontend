@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AdminConsole\Tests;
+namespace Stackra\AdminConsole\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/admin-console.
+ * Base test case for stackra/admin-console.
  *
  * @category AdminConsole
  *

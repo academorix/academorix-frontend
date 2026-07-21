@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/attribution/schemas/attribution-touchpoint",
+  "id": "stackra://modules/attribution/schemas/attribution-touchpoint",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "AttributionTouchpoint",
@@ -13,10 +13,10 @@
     "keyType": "string",
     "keyPrefix": "atp_",
     "incrementing": false,
-    "model": "Academorix\\Growth\\Attribution\\Models\\AttributionTouchpoint",
-    "interface": "Academorix\\Growth\\Attribution\\Contracts\\Data\\AttributionTouchpointInterface",
+    "model": "Stackra\\Growth\\Attribution\\Models\\AttributionTouchpoint",
+    "interface": "Stackra\\Growth\\Attribution\\Contracts\\Data\\AttributionTouchpointInterface",
     "implements": [
-      "Academorix\\Growth\\Attribution\\Contracts\\Data\\AttributionTouchpointInterface"
+      "Stackra\\Growth\\Attribution\\Contracts\\Data\\AttributionTouchpointInterface"
     ],
     "traits": [
       "HasFactory",

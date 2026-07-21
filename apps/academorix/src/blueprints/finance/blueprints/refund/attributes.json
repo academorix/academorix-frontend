@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/refund/attributes",
+  "id": "stackra://modules/refund/attributes",
   "$version": 1,
   "title": "refund — PHP attribute contracts",
   "description": "Two class-level attributes for listener discovery. `AsRefundListener` subscribes to refund lifecycle events (requested / approval_required / approved / rejected / processing / succeeded / failed / cancelled / provider_error / provider_reconciled). `AsRefundLineListener` subscribes to refund_line events (created). Discovery loader picks up each class at boot + wires the declared events. No property-level attributes: the two owned rows use ordinary Eloquent + spatie/laravel-data class attributes shipped by foundation.",
-  "namespace": "Academorix\\Finance\\Refund\\Attributes",
+  "namespace": "Stackra\\Finance\\Refund\\Attributes",
   "attributes": [
     {
       "name": "AsRefundListener",
-      "class": "Academorix\\Finance\\Refund\\Attributes\\AsRefundListener",
+      "class": "Stackra\\Finance\\Refund\\Attributes\\AsRefundListener",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a service as a subscriber to refund lifecycle events (RefundRequested / RefundApprovalRequired / RefundApproved / RefundRejected / RefundProcessing / RefundSucceeded / RefundFailed / RefundCancelled / RefundNotifiedProvider / RefundProviderError / RefundProviderReconciled / RefundClawbackReferral / RefundClawbackCoupon).",
@@ -34,7 +34,7 @@
     },
     {
       "name": "AsRefundLineListener",
-      "class": "Academorix\\Finance\\Refund\\Attributes\\AsRefundLineListener",
+      "class": "Stackra\\Finance\\Refund\\Attributes\\AsRefundLineListener",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a service as a subscriber to refund_line lifecycle events (RefundLineCreated). Refund lines are immutable at creation — no update / delete events fire.",

@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/chargeback/metrics",
+  "id": "stackra://modules/chargeback/metrics",
   "$version": 1,
   "title": "chargeback — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "academorix.chargeback",
+  "namespace": "stackra.chargeback",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": [
@@ -29,34 +29,34 @@
   },
   "metrics": [
     {
-      "name": "academorix.chargeback.count",
+      "name": "stackra.chargeback.count",
       "kind": "gauge",
       "unit": "chargebacks",
       "labels": ["status", "network", "reason_category"],
       "description": "Count of chargebacks per (status, network, reason_category). Sampled hourly."
     },
     {
-      "name": "academorix.chargeback.pending_evidence",
+      "name": "stackra.chargeback.pending_evidence",
       "kind": "gauge",
       "unit": "chargebacks",
       "labels": ["network"],
       "description": "Count of chargebacks stuck in pending_evidence. Sampled every 15 minutes. Feeds the evidence-deadline-approaching alert threshold."
     },
     {
-      "name": "academorix.chargeback.filed_total",
+      "name": "stackra.chargeback.filed_total",
       "kind": "counter",
       "unit": "chargebacks",
       "labels": ["network", "reason_category"]
     },
     {
-      "name": "academorix.chargeback.evidence_submissions_total",
+      "name": "stackra.chargeback.evidence_submissions_total",
       "kind": "counter",
       "unit": "submissions",
       "labels": ["submission_attempt_number"],
       "description": "Every evidence submission. submission_attempt_number typically 1; 2+ indicates CE3.0 second pass OR bank requested additional evidence."
     },
     {
-      "name": "academorix.chargeback.evidence_completeness_percent",
+      "name": "stackra.chargeback.evidence_completeness_percent",
       "kind": "histogram",
       "unit": "percent",
       "buckets": [25, 50, 75, 90, 100],
@@ -64,28 +64,28 @@
       "description": "Distribution of evidence bundle completeness at submission time. P50 target > 75; P90 target > 90."
     },
     {
-      "name": "academorix.chargeback.evidence_overdue_total",
+      "name": "stackra.chargeback.evidence_overdue_total",
       "kind": "counter",
       "unit": "chargebacks",
       "labels": ["days_remaining"],
       "description": "days_remaining IN (7, 3, 1). P2 signal at 7d, P1 at 3d, P0 at 1d."
     },
     {
-      "name": "academorix.chargeback.evidence_auto_collected_total",
+      "name": "stackra.chargeback.evidence_auto_collected_total",
       "kind": "counter",
       "unit": "chargebacks",
       "labels": [],
       "description": "CollectChargebackEvidenceJob successful auto-collection runs."
     },
     {
-      "name": "academorix.chargeback.provider_dispatch_total",
+      "name": "stackra.chargeback.provider_dispatch_total",
       "kind": "counter",
       "unit": "dispatches",
       "labels": ["provider", "outcome"],
       "description": "SubmitChargebackEvidenceJob outcomes. outcome IN ('sync_success', 'async_processing', 'failed', 'provider_error')."
     },
     {
-      "name": "academorix.chargeback.provider_dispatch_duration_ms",
+      "name": "stackra.chargeback.provider_dispatch_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 250, 1000, 5000, 30000],
@@ -93,40 +93,40 @@
       "description": "SubmitChargebackEvidenceJob HTTP call duration. P99 target < 5000ms."
     },
     {
-      "name": "academorix.chargeback.polls_total",
+      "name": "stackra.chargeback.polls_total",
       "kind": "counter",
       "unit": "polls",
       "labels": ["provider", "terminal_state"],
       "description": "CheckChargebackStatusJob invocations. terminal_state = still_processing / won / lost / provider_error / reference_not_found."
     },
     {
-      "name": "academorix.chargeback.won_total",
+      "name": "stackra.chargeback.won_total",
       "kind": "counter",
       "unit": "chargebacks",
       "labels": ["network", "reason_category"]
     },
     {
-      "name": "academorix.chargeback.lost_total",
+      "name": "stackra.chargeback.lost_total",
       "kind": "counter",
       "unit": "chargebacks",
       "labels": ["network", "reason_category", "reason_code"]
     },
     {
-      "name": "academorix.chargeback.expired_total",
+      "name": "stackra.chargeback.expired_total",
       "kind": "counter",
       "unit": "chargebacks",
       "labels": ["network"],
       "description": "Auto-loss via missed evidence deadline."
     },
     {
-      "name": "academorix.chargeback.rdr_accepted_total",
+      "name": "stackra.chargeback.rdr_accepted_total",
       "kind": "counter",
       "unit": "chargebacks",
       "labels": [],
       "description": "RDR-accepted chargebacks. Powers RDR-cost-effectiveness analysis (no fee, no rate impact)."
     },
     {
-      "name": "academorix.chargeback.days_to_decision",
+      "name": "stackra.chargeback.days_to_decision",
       "kind": "histogram",
       "unit": "days",
       "buckets": [7, 30, 60, 90, 120],
@@ -134,98 +134,98 @@
       "description": "outcome IN ('won', 'lost'). Days from filed_at to decision_at."
     },
     {
-      "name": "academorix.chargeback.losses_total_cents",
+      "name": "stackra.chargeback.losses_total_cents",
       "kind": "counter",
       "unit": "cents",
       "labels": ["currency"],
       "description": "Sum of amount_cents on lost chargebacks. Financial loss metric."
     },
     {
-      "name": "academorix.chargeback.network_fees_total_cents",
+      "name": "stackra.chargeback.network_fees_total_cents",
       "kind": "counter",
       "unit": "cents",
       "labels": ["network", "currency"],
       "description": "Sum of fee_cents across lost chargebacks. Network fee cost metric."
     },
     {
-      "name": "academorix.chargeback.provider_errors_total",
+      "name": "stackra.chargeback.provider_errors_total",
       "kind": "counter",
       "unit": "errors",
       "labels": ["provider", "error_category"],
       "description": "P1 signal when this counter surges. error_category IN ('network_timeout', 'rate_limit', 'transient_5xx', 'authentication', 'unknown')."
     },
     {
-      "name": "academorix.chargeback.finalizations_total",
+      "name": "stackra.chargeback.finalizations_total",
       "kind": "counter",
       "unit": "finalizations",
       "labels": ["success"],
       "description": "success=true when FinalizeChargebackJob completed all 5 steps; false when the chain partial-failed + chargeback stays in terminal with metadata.finalization_error set."
     },
     {
-      "name": "academorix.chargeback.finalization_failures_total",
+      "name": "stackra.chargeback.finalization_failures_total",
       "kind": "counter",
       "unit": "failures",
       "labels": ["failure_step"],
       "description": "P1 signal. failure_step IN ('transaction_loss_recorder', 'transaction_fee_recorder', 'invoice_state_updater', 'clawback_coordinator', 'marketing_fire')."
     },
     {
-      "name": "academorix.chargeback.atomicity.failures_total",
+      "name": "stackra.chargeback.atomicity.failures_total",
       "kind": "counter",
       "unit": "failures",
       "labels": ["failure_point"],
       "description": "CRITICAL. Chargeback transaction atomicity failures. Should stay at 0."
     },
     {
-      "name": "academorix.chargeback.orphaned_terminal_total",
+      "name": "stackra.chargeback.orphaned_terminal_total",
       "kind": "counter",
       "unit": "orphans",
       "labels": [],
       "description": "Chargebacks in terminal status ('lost', 'expired') with transaction_id IS NULL OR fee_transaction_id IS NULL. Actionable via chargeback:reconcile admin CLI."
     },
     {
-      "name": "academorix.chargeback.clawback_referral_total",
+      "name": "stackra.chargeback.clawback_referral_total",
       "kind": "counter",
       "unit": "clawbacks",
       "labels": [],
       "description": "ChargebackClawbackReferral cascades fired."
     },
     {
-      "name": "academorix.chargeback.clawback_coupon_total",
+      "name": "stackra.chargeback.clawback_coupon_total",
       "kind": "counter",
       "unit": "clawbacks",
       "labels": [],
       "description": "ChargebackClawbackCoupon cascades fired."
     },
     {
-      "name": "academorix.chargeback.reconciliations_total",
+      "name": "stackra.chargeback.reconciliations_total",
       "kind": "counter",
       "unit": "reconciliations",
       "labels": ["drift_detected"],
       "description": "CheckChargebackStatusJob per-chargeback reconciliations. drift_detected=true means the local status differed from provider."
     },
     {
-      "name": "academorix.chargeback.rate_percent",
+      "name": "stackra.chargeback.rate_percent",
       "kind": "gauge",
       "unit": "percent",
       "labels": ["network"],
       "description": "Current rolling 60-day chargeback rate per network. Updated nightly by MonitorChargebackRateJob."
     },
     {
-      "name": "academorix.chargeback.rate_threshold_exceeded_total",
+      "name": "stackra.chargeback.rate_threshold_exceeded_total",
       "kind": "counter",
       "unit": "alerts",
       "labels": ["network"],
       "description": "P1 signal. Rate crossed VDMP/MDMP threshold. Every fire = actionable ops intervention."
     },
     {
-      "name": "academorix.chargeback.webhooks_received_total",
+      "name": "stackra.chargeback.webhooks_received_total",
       "kind": "counter",
       "unit": "webhooks",
       "labels": ["provider", "webhook_type"],
       "description": "webhook_type IN ('created', 'evidence_received', 'under_review', 'won', 'lost')."
     },
     {
-      "name": "academorix.chargeback.reconciler_run_duration_ms",
+      "name": "stackra.chargeback.reconciler_run_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1000, 10000, 60000, 300000, 600000],
@@ -233,35 +233,35 @@
       "description": "CheckChargebackStatusJob total run duration. P99 target < 600000ms (10 min)."
     },
     {
-      "name": "academorix.chargeback.approvals_notified_total",
+      "name": "stackra.chargeback.approvals_notified_total",
       "kind": "counter",
       "unit": "notifications",
       "labels": [],
       "description": "NotifyChargebackEvidenceOverdueJob per-chargeback defender-notification dispatches."
     },
     {
-      "name": "academorix.chargeback.notifications_dispatched_total",
+      "name": "stackra.chargeback.notifications_dispatched_total",
       "kind": "counter",
       "unit": "notifications",
       "labels": ["category", "channel"],
       "description": "channel IN ('mail', 'in_app', 'sms', 'push'). category IN ('filed', 'evidence_overdue', 'won', 'lost', 'rate_threshold_exceeded', 'evidence_reminder', 'accepted_refund')."
     },
     {
-      "name": "academorix.chargeback.entitlement.gate_refusals_total",
+      "name": "stackra.chargeback.entitlement.gate_refusals_total",
       "kind": "counter",
       "unit": "refusals",
       "labels": ["entitlement_key"],
       "description": "Route hits refused by the entitlement middleware. Product signal for upgrade-CTA impressions."
     },
     {
-      "name": "academorix.chargeback.retention.purged_total",
+      "name": "stackra.chargeback.retention.purged_total",
       "kind": "counter",
       "unit": "rows",
       "labels": ["entity", "destination"],
       "description": "PurgeExpiredChargebackDataJob emits. entity: 'chargebacks' / 'chargeback_evidence'. destination: 'hard_delete' / 'compliance_archive'."
     },
     {
-      "name": "academorix.chargeback.marketing_events_dispatched_total",
+      "name": "stackra.chargeback.marketing_events_dispatched_total",
       "kind": "counter",
       "unit": "events",
       "labels": ["provider"],

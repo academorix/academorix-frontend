@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Contracts\Services;
+namespace Stackra\Webhook\Contracts\Services;
 
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
-use Academorix\Webhook\Attributes\AsWebhookDestination;
-use Academorix\Webhook\Services\WebhookDestinationRegistry;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Webhook\Attributes\AsWebhookDestination;
+use Stackra\Webhook\Services\WebhookDestinationRegistry;
 use Illuminate\Container\Attributes\Bind;
 
 /**
  * Attribute-discovered registry of destination drivers.
  *
  * Hydrated at boot by the framework's generic
- * {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ * {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  * pump via the {@see HydratesFrom} attribute on {@see register()}.
  * Consumers pick a destination key when creating a subscription; the
  * sender resolves the key to the concrete driver on dispatch.

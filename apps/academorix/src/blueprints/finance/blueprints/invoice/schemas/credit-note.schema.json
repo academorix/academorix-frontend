@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/invoice/schemas/credit-note",
+  "id": "stackra://modules/invoice/schemas/credit-note",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "CreditNote",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "crn_",
     "incrementing": false,
-    "model": "Academorix\\Finance\\Invoice\\Models\\CreditNote",
-    "interface": "Academorix\\Finance\\Invoice\\Contracts\\Data\\CreditNoteInterface",
-    "implements": ["Academorix\\Finance\\Invoice\\Contracts\\Data\\CreditNoteInterface"],
+    "model": "Stackra\\Finance\\Invoice\\Models\\CreditNote",
+    "interface": "Stackra\\Finance\\Invoice\\Contracts\\Data\\CreditNoteInterface",
+    "implements": ["Stackra\\Finance\\Invoice\\Contracts\\Data\\CreditNoteInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

@@ -49,12 +49,12 @@
  * ## Example
  *
  * ```php
- * use Academorix\Routing\Attributes\{AsAction, Post};
- * use Academorix\Authorization\Attributes\RequirePermission;
- * use Academorix\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
- * use Academorix\Tenancy\Enums\TenancyPermission;
- * use Academorix\ApiTenancySdk\Data\TenantData;
- * use Academorix\ApiTenancySdk\Requests\CreateTenantRequestData;
+ * use Stackra\Routing\Attributes\{AsAction, Post};
+ * use Stackra\Authorization\Attributes\RequirePermission;
+ * use Stackra\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
+ * use Stackra\Tenancy\Enums\TenancyPermission;
+ * use Stackra\ApiTenancySdk\Data\TenantData;
+ * use Stackra\ApiTenancySdk\Requests\CreateTenantRequestData;
  *
  * #[AsAction(name: 'tenants.create')]
  * #[Post('/api/v1/tenants')]
@@ -74,13 +74,13 @@
  * }
  * ```
  *
- * @see \Academorix\Routing\Attributes\AsController Legacy multi-method target (kept for backwards compat during migration; new code MUST use AsAction).
- * @see \Academorix\Routing\RouteRegistrar Discovery consumer.
+ * @see \Stackra\Routing\Attributes\AsController Legacy multi-method target (kept for backwards compat during migration; new code MUST use AsAction).
+ * @see \Stackra\Routing\RouteRegistrar Discovery consumer.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 

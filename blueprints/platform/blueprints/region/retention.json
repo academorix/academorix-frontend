@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/region/retention",
+  "id": "stackra://modules/region/retention",
   "$version": 1,
   "title": "region — retention windows",
   "description": "Region rows follow a soft-delete → archived → hard-delete lifecycle. The hold window is 730 days (2 years) matching financial-record retention. Audit rows produced by this module outlive their source Region for 7 years (financial retention floor).",
@@ -21,7 +21,7 @@
         "action": "hard delete",
         "job": "PurgeArchivedRegionsJob",
         "cascades": [],
-        "note": "IF any inbound row (Branch, Membership, Invoice, Transaction) still references the Region past the retention window, the job SKIPS the row + logs a telemetry counter (`academorix.region.purge_pending.count`). The row survives another day. Explicit `region:archive --force` bypasses the FK check but does NOT delete referring rows."
+        "note": "IF any inbound row (Branch, Membership, Invoice, Transaction) still references the Region past the retention window, the job SKIPS the row + logs a telemetry counter (`stackra.region.purge_pending.count`). The row survives another day. Explicit `region:archive --force` bypasses the FK check but does NOT delete referring rows."
       }
     },
     {

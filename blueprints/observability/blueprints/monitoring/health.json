@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/monitoring/health",
+  "id": "stackra://modules/monitoring/health",
   "$version": 1,
   "title": "monitoring — health probes",
   "description": "This module OWNS health checks — the module's own boot-time health probes are a small set of self-consistency checks (schema migrations applied, provider drivers registered, provider schemas loaded, evaluator running, retention pipeline recent). The tenant-facing HealthCheck rows are USER health checks (not module boot probes).",
   "probes": [
     {
       "name": "monitoring-schema-migrations-applied",
-      "class": "Academorix\\Observability\\Monitoring\\Health\\Probes\\SchemaMigrationsAppliedProbe",
+      "class": "Stackra\\Observability\\Monitoring\\Health\\Probes\\SchemaMigrationsAppliedProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms every migration this module ships has run: health_checks, health_check_runs, monitoring_alert_policies, monitoring_alerts, monitoring_incidents, monitoring_provider_configs, plus their indexes (composite unique partial indexes on tenant_id + slug/name; retention-sweep indexes on created_at / next_retry_at).",
@@ -14,7 +14,7 @@
     },
     {
       "name": "monitoring-provider-drivers-registered",
-      "class": "Academorix\\Observability\\Monitoring\\Health\\Probes\\ProviderDriversRegisteredProbe",
+      "class": "Stackra\\Observability\\Monitoring\\Health\\Probes\\ProviderDriversRegisteredProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms every advertised provider (via #[AsMonitoringProvider]) is registered with MonitoringProviderManager + its createXxxDriver factory resolves without errors. Fails hard when a driver class is missing.",
@@ -22,7 +22,7 @@
     },
     {
       "name": "monitoring-provider-schemas-loaded",
-      "class": "Academorix\\Observability\\Monitoring\\Health\\Probes\\ProviderSchemasLoadedProbe",
+      "class": "Stackra\\Observability\\Monitoring\\Health\\Probes\\ProviderSchemasLoadedProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms every data/providers/<provider>-config.schema.json is present + parseable. Missing schemas would make provider config create silently accept invalid credentials.",
@@ -30,7 +30,7 @@
     },
     {
       "name": "monitoring-check-type-catalogs-loaded",
-      "class": "Academorix\\Observability\\Monitoring\\Health\\Probes\\CheckTypeCatalogsLoadedProbe",
+      "class": "Stackra\\Observability\\Monitoring\\Health\\Probes\\CheckTypeCatalogsLoadedProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms data/check-type-catalog.json + data/signal-type-catalog.json + data/severity-catalog.json parse + reference every enum value in the HealthCheckType / MonitoringSignalType / MonitoringSeverity enums.",
@@ -38,7 +38,7 @@
     },
     {
       "name": "monitoring-executor-strategies-registered",
-      "class": "Academorix\\Observability\\Monitoring\\Health\\Probes\\ExecutorStrategiesRegisteredProbe",
+      "class": "Stackra\\Observability\\Monitoring\\Health\\Probes\\ExecutorStrategiesRegisteredProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms every HealthCheckType has a registered HealthCheckExecutor strategy (via #[AsHealthCheckStrategy]). Missing a strategy would make RunHealthCheckJob throw at first invocation.",
@@ -46,7 +46,7 @@
     },
     {
       "name": "monitoring-evaluator-recent",
-      "class": "Academorix\\Observability\\Monitoring\\Health\\Probes\\EvaluatorRecentProbe",
+      "class": "Stackra\\Observability\\Monitoring\\Health\\Probes\\EvaluatorRecentProbe",
       "category": "readiness",
       "critical": false,
       "description": "Confirms EvaluateAlertPoliciesJob completed within the last 5 minutes. Stale evaluator indicates the scheduler drifted or the queue backed up. Non-critical because a stale evaluator delays alert firing but doesn't cause data loss.",
@@ -54,7 +54,7 @@
     },
     {
       "name": "monitoring-firing-alerts-backlog",
-      "class": "Academorix\\Observability\\Monitoring\\Health\\Probes\\FiringAlertsBacklogProbe",
+      "class": "Stackra\\Observability\\Monitoring\\Health\\Probes\\FiringAlertsBacklogProbe",
       "category": "readiness",
       "critical": false,
       "description": "Warns when > 100 alerts are in status='firing' for > 30 minutes across all tenants. Indicates alert overload OR notification-provider outage OR incident-grouper failure.",
@@ -62,7 +62,7 @@
     },
     {
       "name": "monitoring-open-incidents",
-      "class": "Academorix\\Observability\\Monitoring\\Health\\Probes\\OpenIncidentsProbe",
+      "class": "Stackra\\Observability\\Monitoring\\Health\\Probes\\OpenIncidentsProbe",
       "category": "readiness",
       "critical": false,
       "description": "Counts open incidents by severity. Feeds the platform ops dashboard. Not critical per-se — an open P1 is expected during outages.",
@@ -70,7 +70,7 @@
     },
     {
       "name": "monitoring-open-circuit-breakers",
-      "class": "Academorix\\Observability\\Monitoring\\Health\\Probes\\OpenCircuitBreakersProbe",
+      "class": "Stackra\\Observability\\Monitoring\\Health\\Probes\\OpenCircuitBreakersProbe",
       "category": "readiness",
       "critical": false,
       "description": "Counts monitoring_provider_configs with circuit_breaker_state='open'. Non-zero means at least one tenant × provider has notification dispatch degraded. Every open breaker over 24h is a P1 signal — the monitoring is telling ops the monitoring is broken.",
@@ -78,7 +78,7 @@
     },
     {
       "name": "monitoring-notification-failure-rate",
-      "class": "Academorix\\Observability\\Monitoring\\Health\\Probes\\NotificationFailureRateProbe",
+      "class": "Stackra\\Observability\\Monitoring\\Health\\Probes\\NotificationFailureRateProbe",
       "category": "readiness",
       "critical": false,
       "description": "Trailing 15-minute per-provider notification failure rate. > 10% warns; > 25% alerts.",
@@ -86,7 +86,7 @@
     },
     {
       "name": "monitoring-retention-recent",
-      "class": "Academorix\\Observability\\Monitoring\\Health\\Probes\\RetentionRecentProbe",
+      "class": "Stackra\\Observability\\Monitoring\\Health\\Probes\\RetentionRecentProbe",
       "category": "readiness",
       "critical": false,
       "description": "Confirms PurgeExpiredHealthCheckRunsJob + PurgeResolvedIncidentsJob completed within the last 24h + 7d respectively. Stale retention = disk growth (fixable ops task).",
@@ -94,7 +94,7 @@
     },
     {
       "name": "monitoring-encryption-key-rotated",
-      "class": "Academorix\\Observability\\Monitoring\\Health\\Probes\\EncryptionKeyRotatedProbe",
+      "class": "Stackra\\Observability\\Monitoring\\Health\\Probes\\EncryptionKeyRotatedProbe",
       "category": "readiness",
       "critical": false,
       "description": "Warns when the encryption key used for monitoring_provider_configs.config has not been rotated in > 90 days. Delegated to the compliance/encryption service's rotation cadence.",

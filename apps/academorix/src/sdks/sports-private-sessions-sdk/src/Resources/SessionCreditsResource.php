@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsPrivateSessionsSdk\Resources;
+namespace Stackra\SportsPrivateSessionsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsPrivateSessionsSdk\Data\SessionCreditData;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsPrivateSessionsSdk\Data\SessionCreditData;
 use Saloon\Http\Response;
 
 /**

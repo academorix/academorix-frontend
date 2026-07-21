@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/monitoring/subprocessors",
+  "id": "stackra://modules/monitoring/subprocessors",
   "$version": 1,
   "title": "monitoring — subprocessors",
   "description": "The Monitoring module engages SIX third-party subprocessors — one per provider driver. Every subprocessor receives system-health signals + alert metadata via HTTPS. NO customer PII flows through monitoring providers — the signals contain tenant_id + severity + timestamp + affected service + error messages. GDPR Art. 28 DPA references + Art. 30 records of processing activities. Every tenant that activates a provider effectively adds that subprocessor to their processing register; the tenant admin acknowledges the DPA reference before configuring.",
@@ -99,7 +99,7 @@
       "slug": "prometheus",
       "vendor_name": "Tenant-hosted (Prometheus + AlertManager)",
       "vendor_url": "N/A (tenant-owned infrastructure)",
-      "purpose": "Tenant-hosted Prometheus + AlertManager. Academorix pushes metrics to the tenant's Pushgateway + optionally acts as an AlertManager webhook receiver (accepts POST from tenant Prometheus + re-emits as internal alerts).",
+      "purpose": "Tenant-hosted Prometheus + AlertManager. Stackra pushes metrics to the tenant's Pushgateway + optionally acts as an AlertManager webhook receiver (accepts POST from tenant Prometheus + re-emits as internal alerts).",
       "data_categories": [
         "prometheus text-format metrics (tenant_hash + severity + service labels)",
         "alert-manager webhook payloads"

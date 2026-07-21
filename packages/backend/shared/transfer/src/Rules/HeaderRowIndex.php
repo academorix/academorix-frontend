@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Rules;
+namespace Stackra\Transfer\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;

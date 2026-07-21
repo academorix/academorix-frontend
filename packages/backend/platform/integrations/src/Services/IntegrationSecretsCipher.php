@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Services;
+namespace Stackra\Integrations\Services;
 
-use Academorix\Integrations\Contracts\Services\IntegrationSecretsCipherInterface;
+use Stackra\Integrations\Contracts\Services\IntegrationSecretsCipherInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Integrations\Contracts\Repositories\AppInstallationRepositoryInterface;
+use Stackra\Integrations\Contracts\Repositories\AppInstallationRepositoryInterface;
 
 /**
  * Concrete service — IntegrationSecretsCipher.

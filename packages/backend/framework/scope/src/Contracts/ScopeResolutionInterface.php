@@ -6,18 +6,18 @@
  * @description
  * Contract for the cascading value resolver — the piece that walks
  * a node's materialised path and returns the first stored value per
- * key. Consumers ({@see \Academorix\Settings\Services\SettingsService},
+ * key. Consumers ({@see \Stackra\Settings\Services\SettingsService},
  * for example) call this instead of hitting `scope_values` directly.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Contracts;
+namespace Stackra\Scope\Contracts;
 
-use Academorix\Scope\Data\ResolvedScopeValue;
-use Academorix\Scope\Exceptions\ScopeContextRequiredException;
-use Academorix\Scope\Models\ScopeNode;
-use Academorix\Scope\Services\ScopeResolver;
+use Stackra\Scope\Data\ResolvedScopeValue;
+use Stackra\Scope\Exceptions\ScopeContextRequiredException;
+use Stackra\Scope\Models\ScopeNode;
+use Stackra\Scope\Services\ScopeResolver;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Scoped;
 

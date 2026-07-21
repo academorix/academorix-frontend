@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Models;
+namespace Stackra\Branding\Models;
 
-use Academorix\Branding\Contracts\Data\BrandingInterface;
-use Academorix\Branding\Database\Factories\BrandingFactory;
-use Academorix\Branding\Enums\BrandingTheme;
-use Academorix\Branding\Observers\BrandingObserver;
-use Academorix\Branding\Policies\BrandingPolicy;
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Branding\Contracts\Data\BrandingInterface;
+use Stackra\Branding\Database\Factories\BrandingFactory;
+use Stackra\Branding\Enums\BrandingTheme;
+use Stackra\Branding\Observers\BrandingObserver;
+use Stackra\Branding\Policies\BrandingPolicy;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

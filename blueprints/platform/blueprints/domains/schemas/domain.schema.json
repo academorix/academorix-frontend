@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/domains/schemas/domain",
+  "id": "stackra://modules/domains/schemas/domain",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Domain",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "dom_",
     "incrementing": false,
-    "model": "Academorix\\Domains\\Models\\Domain",
-    "interface": "Academorix\\Domains\\Contracts\\Data\\DomainInterface",
-    "implements": ["Academorix\\Domains\\Contracts\\Data\\DomainInterface"],
+    "model": "Stackra\\Domains\\Models\\Domain",
+    "interface": "Stackra\\Domains\\Contracts\\Data\\DomainInterface",
+    "implements": ["Stackra\\Domains\\Contracts\\Data\\DomainInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/traits",
+  "id": "stackra://modules/notifications/traits",
   "$version": 1,
   "title": "notifications core \u2014 trait composition per model",
   "description": "Notifications core owns zero new traits \u2014 it consumes foundation's cross-cutting traits + tenants's boundary traits. This file documents (a) the framework + foundation + tenants traits every core model composes, and (b) the canonical compose-order per model so CI's trait-order linter can verify. Push subscriptions live in `notifications-push` (not this module); mail suppression in `notifications-mail`; SMS opt-outs in `notifications-sms`.",
@@ -25,57 +25,57 @@
     ],
     "foundation": [
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag",
+        "trait": "Stackra\\Foundation\\Concerns\\HasSystemFlag",
         "reason": "NotificationTemplate + NotificationCategory carry is_system=true for platform defaults; Policy@update refuses on system rows unless the actor is super_admin."
       },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps",
+        "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps",
         "reason": "created_by / updated_by / deleted_by auto-populated from auth actor."
       },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasAuditable",
+        "trait": "Stackra\\Foundation\\Concerns\\HasAuditable",
         "reason": "Preference / template / delivery changes audit-logged; audit rows classify as audit_log tier."
       },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\HasMetadata",
+        "trait": "Stackra\\Foundation\\Concerns\\HasMetadata",
         "reason": "Universal metadata JSONB \u2014 channel modules emit metadata fields the core schema doesn't need to model."
       },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\Sortable",
+        "trait": "Stackra\\Foundation\\Concerns\\Sortable",
         "reason": "NotificationTemplate ordered by (key, locale, channel, version DESC)."
       },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\Filterable",
+        "trait": "Stackra\\Foundation\\Concerns\\Filterable",
         "reason": "Every model exposes filterable() for spatie/laravel-query-builder integration."
       },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\Sluggable",
+        "trait": "Stackra\\Foundation\\Concerns\\Sluggable",
         "reason": "NotificationCategory carries a slug (module-namespaced: `invitations.invitation_sent`)."
       },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\Searchable",
+        "trait": "Stackra\\Foundation\\Concerns\\Searchable",
         "reason": "Notification indexed for admin diagnostics; template indexed for admin template browsing."
       },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\Importable",
+        "trait": "Stackra\\Foundation\\Concerns\\Importable",
         "reason": "NotificationTemplate + NotificationPreference importable via CSV/JSON for tenant onboarding + backup restore."
       },
       {
-        "trait": "Academorix\\Foundation\\Concerns\\Exportable",
+        "trait": "Stackra\\Foundation\\Concerns\\Exportable",
         "reason": "Notification exportable for DSAR (Art. 15); NotificationPreference exportable for user-driven backup."
       }
     ],
     "tenants": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
         "reason": "Every model except NotificationCategory carries tenant_id; auto-scope on read queries."
       },
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToApplication",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToApplication",
         "reason": "Notification carries application_id (a coach's inbox is per-app)."
       },
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenantOptional",
+        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenantOptional",
         "reason": "NotificationTemplate + NotificationCategory: tenant_id NULLABLE. NULL = platform default; row with tenant_id set = tenant override."
       }
     ]

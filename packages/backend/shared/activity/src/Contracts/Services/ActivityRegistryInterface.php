@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Contracts\Services;
+namespace Stackra\Activity\Contracts\Services;
 
-use Academorix\Activity\Attributes\LoggableActivity;
-use Academorix\Activity\Services\ActivityRegistry;
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Activity\Attributes\LoggableActivity;
+use Stackra\Activity\Services\ActivityRegistry;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -14,7 +14,7 @@ use Illuminate\Container\Attributes\Bind;
  * attribute — the compile-time inventory of the activity feed.
  *
  * Hydrated at boot by the framework's generic
- * {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ * {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  * pump via the {@see HydratesFrom} attribute on {@see register()}.
  * Consumers depend on this interface (never the concrete class) so
  * tests can bind a fake.

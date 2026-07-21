@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Repositories;
+namespace Stackra\Domains\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Domains\Contracts\Data\DomainRecordInterface;
-use Academorix\Domains\Contracts\Repositories\DomainRecordRepositoryInterface;
-use Academorix\Domains\Enums\DnsRecordStatus;
-use Academorix\Domains\Models\DomainRecord;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Domains\Contracts\Data\DomainRecordInterface;
+use Stackra\Domains\Contracts\Repositories\DomainRecordRepositoryInterface;
+use Stackra\Domains\Enums\DnsRecordStatus;
+use Stackra\Domains\Models\DomainRecord;
 use Illuminate\Support\Collection;
 
 /**

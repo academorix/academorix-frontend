@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceProvider\Support;
+namespace Stackra\ServiceProvider\Support;
 
-use Academorix\Foundation\Contracts\Clock;
-use Academorix\ServiceProvider\Bootstrappers\AbstractBootstrapper;
-use Academorix\ServiceProvider\Contracts\BootstrapperInterface;
-use Academorix\ServiceProvider\Registry\BootstrapperRegistry;
+use Stackra\Foundation\Contracts\Clock;
+use Stackra\ServiceProvider\Bootstrappers\AbstractBootstrapper;
+use Stackra\ServiceProvider\Contracts\BootstrapperInterface;
+use Stackra\ServiceProvider\Registry\BootstrapperRegistry;
 use Illuminate\Container\Attributes\Cache;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Container\Attributes\Singleton;

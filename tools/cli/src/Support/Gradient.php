@@ -2,15 +2,15 @@
 
 /**
  * @file Gradient.php
- * @module Academorix\Cli\Support
+ * @module Stackra\Cli\Support
  * @description ANSI escape helpers for 256-colour and truecolour output.
- *   Used by {@see \Academorix\Cli\Concerns\RendersBrandArt} to paint the
+ *   Used by {@see \Stackra\Cli\Concerns\RendersBrandArt} to paint the
  *   banner line-by-line.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Support;
+namespace Stackra\Cli\Support;
 
 /**
  * Static helpers — do not instantiate.

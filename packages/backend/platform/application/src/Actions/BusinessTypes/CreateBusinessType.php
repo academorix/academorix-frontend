@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Actions\BusinessTypes;
+namespace Stackra\Application\Actions\BusinessTypes;
 
-use Academorix\Application\Contracts\Data\BusinessTypeInterface;
-use Academorix\Application\Contracts\Repositories\BusinessTypeRepositoryInterface;
-use Academorix\Application\Data\BusinessTypeData;
-use Academorix\Application\Data\Requests\CreateBusinessTypeRequestData;
-use Academorix\Application\Enums\ApplicationPermission;
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Application\Contracts\Data\BusinessTypeInterface;
+use Stackra\Application\Contracts\Repositories\BusinessTypeRepositoryInterface;
+use Stackra\Application\Data\BusinessTypeData;
+use Stackra\Application\Data\Requests\CreateBusinessTypeRequestData;
+use Stackra\Application\Enums\ApplicationPermission;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `POST /api/v1/platform/business-types` — create a tenant-CUSTOM row.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformIntegrationsSdk\Payloads\Apps;
+namespace Stackra\PlatformIntegrationsSdk\Payloads\Apps;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\StringType;
@@ -31,7 +31,7 @@ final class CreateAppPayload extends Data
      * @param  string                       $developerName
      * @param  string                       $developerEmail
      * @param  string                       $status                     draft / in_review / approved / suspended / retired.
-     * @param  bool                         $isFirstParty               True for apps built by Academorix or a vetted partner.
+     * @param  bool                         $isFirstParty               True for apps built by Stackra or a vetted partner.
      * @param  array                        $allowedScopes              Array of permission strings the app may request.
      * @param  bool                         $requiresChildDataScopes    Computed: true if allowed_scopes intersects with athletes / medical / attendance / safeguarding scopes.
      * @param  array                        $webhookEvents              Array of event names the app subscribes to.

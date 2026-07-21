@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Registry\Exceptions;
+namespace Stackra\Registry\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `POSITION_KEY_UNRESOLVED` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PositionKeyUnresolvedException extends AcademorixException
+final class PositionKeyUnresolvedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

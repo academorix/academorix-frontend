@@ -12,14 +12,14 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Support\Traits;
+namespace Stackra\Support\Traits;
 
 use BadMethodCallException;
 use JsonException;
-use Academorix\Support\Arr;
-use Academorix\Support\DataObject as DataObjectClass;
-use Academorix\Support\Reflection;
-use Academorix\Support\Str;
+use Stackra\Support\Arr;
+use Stackra\Support\DataObject as DataObjectClass;
+use Stackra\Support\Reflection;
+use Stackra\Support\Str;
 use ReflectionException;
 use ReflectionProperty;
 

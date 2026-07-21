@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsRegistrationsSdk\Resources;
+namespace Stackra\SportsRegistrationsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsRegistrationsSdk\Data\OfferData;
-use Academorix\SportsRegistrationsSdk\Requests\Offers\ListOffersRequest;
-use Academorix\SportsRegistrationsSdk\Requests\Offers\ShowOfferRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsRegistrationsSdk\Data\OfferData;
+use Stackra\SportsRegistrationsSdk\Requests\Offers\ListOffersRequest;
+use Stackra\SportsRegistrationsSdk\Requests\Offers\ShowOfferRequest;
 use Saloon\Http\Response;
 
 /**

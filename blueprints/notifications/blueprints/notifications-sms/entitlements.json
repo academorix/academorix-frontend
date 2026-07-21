@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-sms/entitlements",
+  "id": "stackra://modules/notifications-sms/entitlements",
   "$version": 1,
   "title": "notifications-sms \u2014 entitlements",
   "reference": {

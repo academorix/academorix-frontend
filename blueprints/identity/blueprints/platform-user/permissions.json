@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/platform-user/permissions",
+  "id": "stackra://modules/platform-user/permissions",
   "$version": 1,
   "title": "platform-user \u2014 permissions",
-  "description": "Permission seeder for the platform_admin guard. Every permission here is namespaced under `platform.platform_users.*` or `platform.platform_profiles.*` \u2014 the `sanctum` guard NEVER holds any of these. Seeded roles: `super_admin` (root Academorix authority), `ops` (day-to-day operations), `product` (product management), `security` (security engineering), `hr` (people operations), `compliance` (compliance officers + DPO). Fresh hires land with ZERO role assignments \u2014 super_admin grants roles + entitlements post-hire, per the least-privilege posture.",
-  "seeder": "Academorix\\PlatformUser\\Database\\Seeders\\PlatformUserPermissionSeeder",
+  "description": "Permission seeder for the platform_admin guard. Every permission here is namespaced under `platform.platform_users.*` or `platform.platform_profiles.*` \u2014 the `sanctum` guard NEVER holds any of these. Seeded roles: `super_admin` (root Stackra authority), `ops` (day-to-day operations), `product` (product management), `security` (security engineering), `hr` (people operations), `compliance` (compliance officers + DPO). Fresh hires land with ZERO role assignments \u2014 super_admin grants roles + entitlements post-hire, per the least-privilege posture.",
+  "seeder": "Stackra\\PlatformUser\\Database\\Seeders\\PlatformUserPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

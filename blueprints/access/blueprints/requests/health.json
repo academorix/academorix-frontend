@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/access/requests/health",
+  "id": "stackra://modules/access/requests/health",
   "$version": 1,
   "title": "requests \u2014 health probes",
   "description": "Health probes registered with Foundation's health aggregator. Because this module has no local tables, health mostly asserts the BRIDGE is intact \u2014 workflow/approvals + access/grants are reachable, listeners are wired, the registry is populated.",
   "endpoint": "GET /api/health",
-  "aggregator": "Academorix\\Foundation\\Health\\HealthAggregator",
+  "aggregator": "Stackra\\Foundation\\Health\\HealthAggregator",
   "probes": [
     {
       "name": "access-requests-registry-populated",
-      "class": "Academorix\\AccessRequest\\Health\\RegistryPopulatedProbe",
+      "class": "Stackra\\AccessRequest\\Health\\RegistryPopulatedProbe",
       "category": "startup",
       "critical": false,
       "description": "Verifies AccessRequestableRegistry has at least one entry \u2014 confirms boot-time discovery ran and consumer modules successfully declared their requestable models. Non-critical because a fresh install (before any consumer modules land) will legitimately have zero entries.",
@@ -16,7 +16,7 @@
     },
     {
       "name": "access-requests-approvable-action-registered",
-      "class": "Academorix\\AccessRequest\\Health\\ApprovableActionRegisteredProbe",
+      "class": "Stackra\\AccessRequest\\Health\\ApprovableActionRegisteredProbe",
       "category": "startup",
       "critical": true,
       "description": "Verifies `workflow/approvals::approvable_actions` contains a row with key='access.grants.create'. Without it the submit action would bypass the approval middleware and no approval_instance would be created. Fires on every deploy \u2014 the approvable-action registration is a boot-time side effect of THIS module's ServiceProvider.",
@@ -24,7 +24,7 @@
     },
     {
       "name": "access-requests-shim-listeners-registered",
-      "class": "Academorix\\AccessRequest\\Health\\ShimListenersRegisteredProbe",
+      "class": "Stackra\\AccessRequest\\Health\\ShimListenersRegisteredProbe",
       "category": "startup",
       "critical": true,
       "description": "Verifies every shim listener (ShimApprovalRequestedListener, ShimApprovalGrantedListener, ShimApprovalExecutedListener, ShimApprovalRejectedListener, ShimApprovalExpiredListener, ShimApprovalCancelledListener) is registered on the workflow/approvals event bus. Without them the bridge is broken \u2014 requests would flow but no AccessRequest events would fire, no notifications, no grants.",
@@ -32,7 +32,7 @@
     },
     {
       "name": "access-requests-grants-module-reachable",
-      "class": "Academorix\\AccessRequest\\Health\\GrantsModuleReachableProbe",
+      "class": "Stackra\\AccessRequest\\Health\\GrantsModuleReachableProbe",
       "category": "readiness",
       "critical": true,
       "description": "Verifies `access/grants::GrantIssuer` binding resolves + the target table exists. Without it approvals would deadlock at materialisation.",
@@ -40,7 +40,7 @@
     },
     {
       "name": "access-requests-orphaned-approvals-under-threshold",
-      "class": "Academorix\\AccessRequest\\Health\\OrphanedApprovalsUnderThresholdProbe",
+      "class": "Stackra\\AccessRequest\\Health\\OrphanedApprovalsUnderThresholdProbe",
       "category": "readiness",
       "critical": false,
       "description": "Counts approval_instances where action_key='access.grants.create' AND status='approved' AND context_json.materialised_grant_id IS NULL. Any non-zero count in the last hour means AccessRequestGrantMaterializer has been failing \u2014 alerts on-call to run `access-requests:remediate-orphaned-approvals`. Threshold: 3.",
@@ -48,7 +48,7 @@
     },
     {
       "name": "access-requests-schedule-registered",
-      "class": "Academorix\\AccessRequest\\Health\\ScheduleRegisteredProbe",
+      "class": "Stackra\\AccessRequest\\Health\\ScheduleRegisteredProbe",
       "category": "startup",
       "critical": true,
       "description": "Boot-time. Verifies the three scheduled entries (cleanup-orphaned, send-reminders, audit-report) registered on the scheduler.",

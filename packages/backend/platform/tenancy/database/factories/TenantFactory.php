@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Database\Factories;
+namespace Stackra\Tenancy\Database\Factories;
 
-use Academorix\Application\Enums\BusinessTypeEnum;
-use Academorix\Tenancy\Contracts\Data\TenantInterface;
-use Academorix\Tenancy\Enums\TenantStatus;
-use Academorix\Tenancy\Models\Tenant;
+use Stackra\Application\Enums\BusinessTypeEnum;
+use Stackra\Tenancy\Contracts\Data\TenantInterface;
+use Stackra\Tenancy\Enums\TenantStatus;
+use Stackra\Tenancy\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

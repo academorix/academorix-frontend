@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Schemes;
+namespace Stackra\Versioning\Schemes;
 
-use Academorix\Versioning\Contracts\Services\VersionSchemeInterface;
+use Stackra\Versioning\Contracts\Services\VersionSchemeInterface;
 
 /**
  * Standard SemVer implementation of {@see VersionSchemeInterface}.

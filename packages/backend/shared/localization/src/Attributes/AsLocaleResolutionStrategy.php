@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Attributes;
+namespace Stackra\Localization\Attributes;
 
 use Attribute;
 
@@ -10,11 +10,11 @@ use Attribute;
  * Register a class as a locale-resolution strategy.
  *
  * Discovered at boot by the framework's generic hydration pump
- * ({@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper})
+ * ({@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper})
  * via the `#[HydratesFrom]` declaration on
- * {@see \Academorix\Localization\Contracts\Services\LocaleResolutionStrategyRegistryInterface::register()}.
+ * {@see \Stackra\Localization\Contracts\Services\LocaleResolutionStrategyRegistryInterface::register()}.
  * The
- * {@see \Academorix\Localization\Services\LocaleResolver} iterates
+ * {@see \Stackra\Localization\Services\LocaleResolver} iterates
  * the config-declared chain and asks each named strategy in turn.
  *
  * ## Example

@@ -1,14 +1,14 @@
 ---
-title: Academorix Agent Roster & Pipeline Plan
+title: Stackra Agent Roster & Pipeline Plan
 status: v1.0 adopted
 version: 1.0
 last_updated: 2026-07-20
 ---
 
-# Academorix Agent Roster & Pipeline Plan
+# Stackra Agent Roster & Pipeline Plan
 
-Day-0 to Day-90 delivery plan for the Academorix product built on Stackra. The
-plan names every agent that touches a Academorix workstream, the phase it owns,
+Day-0 to Day-90 delivery plan for the Stackra product built on Stackra. The
+plan names every agent that touches a Stackra workstream, the phase it owns,
 the artefacts it emits, and the handoffs into and out of its lane. It is a
 delivery contract between Kiro's coordination primitives (sub-agents + hooks +
 file-based state) and the human operator supervising the run.
@@ -96,7 +96,7 @@ something not on this list, it is a bug in the plan, not a new capability.
 
 ### I.5 Cross-repo canonical directory
 
-The Academorix workspace is one of several repos in the Stackra org. Agents that
+The Stackra workspace is one of several repos in the Stackra org. Agents that
 operate on multiple repos need a canonical home. The three-tier canonical-
 directory model — parent-workspace agents, per-repo agents, git-ignored
 reference copies — is decided in
@@ -112,9 +112,9 @@ converges on Phase 5. The rest of the pipeline is strictly sequential.
 ```
 Phase 0. INTAKE           spec-intake-analyst
    |                       (PDF/MD/DOCX -> structured brief.json)
-Phase 1. DISCOVERY        academorix-product + ux-research-lead + market-research-analyst
+Phase 1. DISCOVERY        stackra-product + ux-research-lead + market-research-analyst
    |                       (personas, JTBD, competitive matrix, opportunity brief)
-Phase 2. DEFINITION       academorix-product
+Phase 2. DEFINITION       stackra-product
    |                       (PRD, INVEST stories, v1/v2/later scope)
 Phase 3. DESIGN           solution-architect + api-contract-designer + data-modeler
                           + threat-modeler + product-designer + content-designer
@@ -196,7 +196,7 @@ specialists, and holds the phase-close signal.
 
 | Lead          | Slug            | Owns                            | Manages                                                                                                      |
 | ------------- | --------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Product Lead  | `product-lead`  | Phase 0 + Phase 1 + Phase 2     | spec-intake-analyst, academorix-product, ux-research-lead, market-research-analyst                           |
+| Product Lead  | `product-lead`  | Phase 0 + Phase 1 + Phase 2     | spec-intake-analyst, stackra-product, ux-research-lead, market-research-analyst                           |
 | Design Lead   | `design-lead`   | Phase 3 (design + content + IA) | product-designer, content-designer, api-contract-designer, ui-design-a11y-reviewer, accessibility-audit-lead |
 | Delivery Lead | `delivery-lead` | Phase 4 across four lanes       | every builder + every steward + every test-writer                                                            |
 | Quality Lead  | `quality-lead`  | Phase 5                         | every reviewer + e2e-test-engineer + performance-engineer + accessibility-audit-lead                         |
@@ -215,7 +215,7 @@ builder questions.
 
 ### III.4 AI-service sibling
 
-The AI service is a separate repo (`academorix-ai-service`) and a separate
+The AI service is a separate repo (`stackra-ai-service`) and a separate
 deployment. It reports laterally to Delivery Lead but owns its own build →
 review cadence.
 
@@ -269,13 +269,13 @@ Grouped by the phase they primarily operate in. Every agent has a charter at
 
 | #   | Slug                      | Role                         |
 | --- | ------------------------- | ---------------------------- |
-| 2   | `academorix-product`      | Product Manager · Enterprise |
+| 2   | `stackra-product`      | Product Manager · Enterprise |
 | 3   | `ux-research-lead`        | UX Research Lead             |
 | 4   | `market-research-analyst` | Market Research Analyst      |
 
 ### Phase 2 — Definition (1)
 
-Reuses `academorix-product` — no new agent. Phase 2 is the PRD-authoring pass
+Reuses `stackra-product` — no new agent. Phase 2 is the PRD-authoring pass
 and stays with the Product Manager for continuity with Discovery.
 
 ### Phase 3 — Design (6)
@@ -549,7 +549,7 @@ Pick one small feature. Run it through Phase 0 → Phase 6 end-to-end. Every
 handoff is exercised at least once. Every reviewer files at least one report.
 Every closure stanza is written.
 
-Recommended pilot: one Academorix Sports resource (Athlete or Team) with CRUD +
+Recommended pilot: one Stackra Sports resource (Athlete or Team) with CRUD +
 basic list UI + one AI-service endpoint. Small enough to close in 30 days; big
 enough to touch every lane.
 
@@ -573,7 +573,7 @@ an ADR per VI.4.
 
 ### Appendix A — A-to-Z agent index
 
-`academorix-product`, `accessibility-audit-lead`, `analytics-engineer`,
+`stackra-product`, `accessibility-audit-lead`, `analytics-engineer`,
 `api-contract-designer`, `backend-architecture-reviewer`,
 `backend-platform-reviewer`, `chief-orchestrator`, `code-documentation-writer`,
 `code-standards-steward`, `codebase-housekeeper`,

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Contracts\Services;
+namespace Stackra\Webhook\Contracts\Services;
 
-use Academorix\Webhook\Services\HmacSha256Signer;
+use Stackra\Webhook\Services\HmacSha256Signer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

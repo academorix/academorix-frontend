@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Domains\Enums;
+namespace Stackra\Domains\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `kind` on `domain-record`.

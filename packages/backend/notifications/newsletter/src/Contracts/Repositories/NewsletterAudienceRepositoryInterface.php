@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Contracts\Repositories;
+namespace Stackra\Newsletter\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Newsletter\Models\NewsletterAudience;
-use Academorix\Newsletter\Repositories\EloquentNewsletterAudienceRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Newsletter\Models\NewsletterAudience;
+use Stackra\Newsletter\Repositories\EloquentNewsletterAudienceRepository;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Sms\Services;
+namespace Stackra\Notifications\Sms\Services;
 
-use Academorix\Notifications\Sms\Attributes\AsSmsProvider;
-use Academorix\Notifications\Sms\Contracts\Services\SmsOptOutRegistryInterface;
+use Stackra\Notifications\Sms\Attributes\AsSmsProvider;
+use Stackra\Notifications\Sms\Contracts\Services\SmsOptOutRegistryInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

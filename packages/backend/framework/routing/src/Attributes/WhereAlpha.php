@@ -11,7 +11,7 @@
  *
  * @since    1.0.0
  */
-namespace Academorix\Routing\Attributes;
+namespace Stackra\Routing\Attributes;
 
 use Attribute;
 use Spatie\RouteAttributes\Attributes\WhereAlpha as SpatieWhereAlpha;
@@ -29,8 +29,8 @@ use Spatie\RouteAttributes\Attributes\WhereAlpha as SpatieWhereAlpha;
  *
  * ## Usage:
  * ```php
- * use Academorix\Routing\Attributes\WhereAlpha;
- * use Academorix\Routing\Attributes\Get;
+ * use Stackra\Routing\Attributes\WhereAlpha;
+ * use Stackra\Routing\Attributes\Get;
  *
  * class CategoryController
  * {

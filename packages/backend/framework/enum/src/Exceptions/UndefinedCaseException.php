@@ -12,17 +12,17 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Enum\Exceptions;
+namespace Stackra\Enum\Exceptions;
 
 use Error;
-use Academorix\Support\Str;
+use Stackra\Support\Str;
 
 /**
  * Undefined Case Exception.
  *
  * Thrown when trying to access an enum case that doesn't exist.
  *
- * @author  Academorix Development Team
+ * @author  Stackra Development Team
  *
  * @since   1.0.0
  */

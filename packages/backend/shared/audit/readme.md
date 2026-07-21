@@ -33,8 +33,8 @@ serve different audiences and don't conflict.
 ## 3. Opting a model in
 
 ```php
-use Academorix\Audit\Concerns\HasAudit;
-use Academorix\Audit\Attributes\Auditable;
+use Stackra\Audit\Concerns\HasAudit;
+use Stackra\Audit\Attributes\Auditable;
 
 #[Auditable(events: ['created', 'updated', 'deleted', 'restored'])]
 class Permission extends Model

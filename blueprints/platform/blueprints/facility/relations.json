@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/facility/relations",
+  "id": "stackra://modules/facility/relations",
   "$version": 1,
   "title": "facility — model relationships",
   "description": "Four owned entities. Facility is a leaf below Branch (which is under Region + Organization). ResourceBooking, DayPass, and Pass all attach to Facility (bookings) or Branch (day_passes) or Membership+Facility+Branch (passes). Every outbound FK stays same-tenant per tenancy-columns.md §5. NO organization_id / region_id / application_id on any owned row (facilities cascade all three through branch_id).",

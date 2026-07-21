@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Delegation\Repositories;
+namespace Stackra\Delegation\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Delegation\Contracts\Data\ImpersonationSessionInterface;
-use Academorix\Delegation\Contracts\Repositories\ImpersonationSessionRepositoryInterface;
-use Academorix\Delegation\Models\ImpersonationSession;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Delegation\Contracts\Data\ImpersonationSessionInterface;
+use Stackra\Delegation\Contracts\Repositories\ImpersonationSessionRepositoryInterface;
+use Stackra\Delegation\Models\ImpersonationSession;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Delegation\Models\ImpersonationSession}.
+ * Attribute-first Eloquent repository for {@see Stackra\Delegation\Models\ImpersonationSession}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ImpersonationSessionInterface::class)]` which resolves to
  * `ImpersonationSession` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Delegation\Models\ImpersonationSession>
+ * @extends Repository<\Stackra\Delegation\Models\ImpersonationSession>
  *
  * @category Delegation
  *

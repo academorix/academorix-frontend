@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformPublicSiteSdk\Payloads\PublicPages;
+namespace Stackra\PlatformPublicSiteSdk\Payloads\PublicPages;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\Regex;

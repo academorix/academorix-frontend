@@ -1,4 +1,4 @@
-# academorix/delegation
+# stackra/delegation
 
 Server-side Laravel package for the `delegation` module. Auto-generated from the
 blueprint at `modules/access/blueprints/delegation/`.
@@ -6,7 +6,7 @@ blueprint at `modules/access/blueprints/delegation/`.
 ## Entities
 
 - **ImpersonationSession** (`imp_...`) — One row per act-as session started by a
-  PlatformUser (Academorix staff) against a tenant User for support / debug
+  PlatformUser (Stackra staff) against a tenant User for support / debug
   purpos...
 - **RoleDelegation** (`dlg_...`) — Time-bounded delegation of a delegator User's
   role (or all roles) to a delegate User within the same tenant.
@@ -47,6 +47,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-access/delegation-sdk` under `sdk/access-delegation-sdk/`. Consumers
+`stackra-access/delegation-sdk` under `sdk/access-delegation-sdk/`. Consumers
 cross the service boundary through the SDK; this package is the SERVER-side
 owner of the domain.

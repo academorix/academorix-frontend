@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/tenancy/notifications",
+  "id": "stackra://modules/tenancy/notifications",
   "$version": 1,
   "title": "tenants — Laravel notifications",
   "description": "Laravel notifications this module owns. Each carries the channels it delivers to, the template refs (Markdown Mailable or Blade view), the notifiable model(s) it targets, and the localisation namespace. Consent tier is per-notification: transactional (essential) notifications ignore marketing opt-out; marketing notifications respect it.",
-  "namespace": "Academorix\\Tenancy\\Notifications",
+  "namespace": "Stackra\\Tenancy\\Notifications",
   "notifications": [
     {
-      "class": "Academorix\\Tenancy\\Notifications\\WelcomeNotification",
+      "class": "Stackra\\Tenancy\\Notifications\\WelcomeNotification",
       "channels": ["mail", "database"],
       "consentTier": "transactional",
       "targets": ["User"],
@@ -18,7 +18,7 @@
       "description": "Sent to the newly-created owner User after TenantProvisioned. Includes verification link + first-steps checklist keyed by BusinessType.default_config.onboarding_steps."
     },
     {
-      "class": "Academorix\\Tenancy\\Notifications\\TenantSuspendedNotification",
+      "class": "Stackra\\Tenancy\\Notifications\\TenantSuspendedNotification",
       "channels": ["mail", "database"],
       "consentTier": "transactional",
       "targets": ["User"],
@@ -27,7 +27,7 @@
       "description": "Sent to every User with the `owner` or `admin` role in a suspended Tenant. Includes reason + support contact + grace window if applicable."
     },
     {
-      "class": "Academorix\\Tenancy\\Notifications\\TenantResumedNotification",
+      "class": "Stackra\\Tenancy\\Notifications\\TenantResumedNotification",
       "channels": ["mail", "database"],
       "consentTier": "transactional",
       "targets": ["User"],
@@ -36,7 +36,7 @@
       "description": "Sent to owners + admins when a Tenant returns to active status."
     },
     {
-      "class": "Academorix\\Tenancy\\Notifications\\TenantArchivedNotification",
+      "class": "Stackra\\Tenancy\\Notifications\\TenantArchivedNotification",
       "channels": ["mail", "database"],
       "consentTier": "transactional",
       "targets": ["User"],
@@ -45,7 +45,7 @@
       "description": "Sent to owners on archive. Includes data export link (valid 30d — matches retention window) and undo-instructions."
     },
     {
-      "class": "Academorix\\Tenancy\\Notifications\\DomainVerifiedNotification",
+      "class": "Stackra\\Tenancy\\Notifications\\DomainVerifiedNotification",
       "channels": ["mail", "database", "broadcast"],
       "consentTier": "transactional",
       "targets": ["User"],
@@ -54,7 +54,7 @@
       "description": "Sent to Users with `tenants.manage_domains` permission when a Domain's verification succeeds."
     },
     {
-      "class": "Academorix\\Tenancy\\Notifications\\DomainVerificationFailedNotification",
+      "class": "Stackra\\Tenancy\\Notifications\\DomainVerificationFailedNotification",
       "channels": ["mail", "database"],
       "consentTier": "transactional",
       "targets": ["User"],
@@ -63,7 +63,7 @@
       "description": "Sent after `verification_attempts >= 100`. Includes the last error + a manual retry link."
     },
     {
-      "class": "Academorix\\Tenancy\\Notifications\\BrandingUpdatedNotification",
+      "class": "Stackra\\Tenancy\\Notifications\\BrandingUpdatedNotification",
       "channels": ["database"],
       "consentTier": "functional",
       "targets": ["User"],
@@ -72,7 +72,7 @@
       "description": "In-app-only. Sent to owners + admins when the primary Branding profile changes."
     },
     {
-      "class": "Academorix\\Tenancy\\Notifications\\IntegrationSyncFailedNotification",
+      "class": "Stackra\\Tenancy\\Notifications\\IntegrationSyncFailedNotification",
       "channels": ["mail", "database", "slack"],
       "consentTier": "transactional",
       "targets": ["User"],

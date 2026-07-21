@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/branch/broadcasts",
+  "id": "stackra://modules/branch/broadcasts",
   "$version": 1,
   "title": "branch — realtime broadcasts",
   "description": "The branch module publishes one broadcast channel — `tenant.{id}.branches` — for the SPA's live branch list. Domain events (BranchCreated, BranchStatusChanged, BranchOpeningHoursUpdated, BranchCoordinatesUpdated) fan out to this channel so admins see updates without polling. High-frequency events (like every capacity change in a busy tenant) are debounced 5 seconds to avoid channel spam.",
@@ -11,46 +11,46 @@
       "events_broadcast": [
         {
           "event_name": "branch.created",
-          "source_event": "Academorix\\Branch\\Events\\BranchCreated",
+          "source_event": "Stackra\\Branch\\Events\\BranchCreated",
           "payload_shape": "{ branch_id, organization_id, region_id, name, slug, is_default }"
         },
         {
           "event_name": "branch.updated",
-          "source_event": "Academorix\\Branch\\Events\\BranchUpdated",
+          "source_event": "Stackra\\Branch\\Events\\BranchUpdated",
           "payload_shape": "{ branch_id, changed_fields }",
           "debounce_ms": 2000,
           "debounce_note": "Debounced so bulk edits don't flood the channel — the final state broadcasts once per branch per 2-second window."
         },
         {
           "event_name": "branch.status_changed",
-          "source_event": "Academorix\\Branch\\Events\\BranchStatusChanged",
+          "source_event": "Stackra\\Branch\\Events\\BranchStatusChanged",
           "payload_shape": "{ branch_id, from_status, to_status }"
         },
         {
           "event_name": "branch.default_changed",
-          "source_event": "Academorix\\Branch\\Events\\BranchDefaultChanged",
+          "source_event": "Stackra\\Branch\\Events\\BranchDefaultChanged",
           "payload_shape": "{ organization_id, new_default_branch_id, previous_default_branch_id }"
         },
         {
           "event_name": "branch.opening_hours_updated",
-          "source_event": "Academorix\\Branch\\Events\\BranchOpeningHoursUpdated",
+          "source_event": "Stackra\\Branch\\Events\\BranchOpeningHoursUpdated",
           "payload_shape": "{ branch_id, days_touched }",
           "debounce_ms": 5000
         },
         {
           "event_name": "branch.coordinates_updated",
-          "source_event": "Academorix\\Branch\\Events\\BranchCoordinatesUpdated",
+          "source_event": "Stackra\\Branch\\Events\\BranchCoordinatesUpdated",
           "payload_shape": "{ branch_id, source, has_new_position: true }",
           "note": "Coordinates lat/lng are NOT included in the broadcast payload — competitive-intel risk (unless the channel-listener explicitly re-fetches via GET /branches/{branch})."
         },
         {
           "event_name": "branch.closed",
-          "source_event": "Academorix\\Branch\\Events\\BranchClosed",
+          "source_event": "Stackra\\Branch\\Events\\BranchClosed",
           "payload_shape": "{ branch_id, reason_kind, closed_date, successor_branch_id }"
         },
         {
           "event_name": "branch.reopened",
-          "source_event": "Academorix\\Branch\\Events\\BranchReopened",
+          "source_event": "Stackra\\Branch\\Events\\BranchReopened",
           "payload_shape": "{ branch_id, days_closed }"
         }
       ]

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/performance/broadcasts",
+  "id": "stackra://modules/performance/broadcasts",
   "$version": 1,
   "title": "performance — broadcast channels",
   "description": "Channels this module publishes to for real-time UI updates.",

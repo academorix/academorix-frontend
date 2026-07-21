@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Contracts\Services;
+namespace Stackra\Notifications\Push\Contracts\Services;
 
-use Academorix\Notifications\Push\Data\PushEnvelope;
-use Academorix\Notifications\Push\Data\PushSendResult;
+use Stackra\Notifications\Push\Data\PushEnvelope;
+use Stackra\Notifications\Push\Data\PushSendResult;
 
 /**
  * Contract every push transport driver implements.

@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "attribution",
   "alias": "attribution",
-  "namespace": "Academorix\\Growth\\Attribution",
+  "namespace": "Stackra\\Growth\\Attribution",
   "description": "Captures marketing attribution metadata at every request boundary and persists it per-subject for lifetime source-tracing. Answers 'where did this signup / conversion come from?'. Two owned tables: (1) `attributions` — per-subject rolling profile with first-touch + last-touch snapshots, current-session state, aggregated touch counts, lifecycle state (anonymous / identified / converted / churned); (2) `attribution_touchpoints` — append-only ledger of every attribution-bearing request (UTM change, ad click, referrer switch). Every marketing/analytics event downstream snapshots the CURRENT attribution profile into its own `attribution` jsonb column at create-time (frozen — attribution changes after don't reshape historical events). Ships: `AttributionMiddleware` (captures utm_* + gclid + fbclid + ttclid + msclkid + sccid + referrer + landing_page from cookies + query params at request boundary), `AttributionContext` (request-scoped binding for domain code to read current attribution), `AttributionResolver` (looks up per-subject profile), `AttributionSnapshotBuilder` (builds the immutable jsonb blob for downstream event.attribution columns). Supports 5 click-ID sources: Google Ads (gclid), Meta (fbclid), TikTok (ttclid), Microsoft/Bing (msclkid), Snapchat (sccid). Attribution model: first-touch preserved forever; last-touch updates every attribution-bearing request; session-scoped touchpoints logged. Consent-gated — under `marketing` category consent tier; without consent, attribution captures only session_id + hashed_ip in an ephemeral in-memory context and refuses persistence past the session. Feeder for marketing + analytics + referrals + finance + notifications (Wave 5+).",
   "keywords": [
     "attribution",
@@ -39,7 +39,7 @@
     "wave-5"
   ],
   "priority": 63,
-  "providers": ["Academorix\\Growth\\Attribution\\Providers\\AttributionServiceProvider"],
+  "providers": ["Stackra\\Growth\\Attribution\\Providers\\AttributionServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "application", "user", "entitlements", "compliance"],
   "extendedBy": [],

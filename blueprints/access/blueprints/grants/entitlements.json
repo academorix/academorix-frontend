@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/grants/entitlements",
+  "id": "stackra://modules/grants/entitlements",
   "$version": 1,
   "title": "grants — entitlements",
   "description": "Six entitlement keys. Values seeded per Tenant by the entitlements module (from Subscription plan + BusinessType.default_config.entitlements). Enforcement lives in the observer / issuer + the policies — a 402 response indicates the tenant needs to upgrade; distinct from 403 (permission-based refusal).",

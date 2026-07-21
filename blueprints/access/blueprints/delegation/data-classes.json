@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/delegation/data-classes",
+  "id": "stackra://modules/delegation/data-classes",
   "$version": 1,
   "title": "delegation — field classification",
   "description": "role_delegations metadata is largely internal-tier (delegator + delegate identity is already visible to both parties by the domain rules). impersonation_sessions is heavier — the operator identity + reason + support ticket reference are internal-tier (visible only to compliance-authorized readers), and the session_token_hash is confidential (equivalent to a password hash for the short-lived impersonation credential).",
@@ -55,7 +55,7 @@
   "notes": [
     "RoleDelegation.reason + revoke_reason are marked confidential because they may reference internal HR context ('Alice is on medical leave until 2026-08-15'). Public-tier readers of the /me/delegations surface see the reason (delegator + delegate know it), but cross-user reads via the admin surface are permission-gated.",
     "ImpersonationSession.reason + support_ticket_reference are confidential because they may reference customer-support context that is itself sensitive (a customer's billing dispute, a suspected security issue on the target's account). Access is scoped to the impersonator + security + super_admin + dpo via ImpersonationSessionPolicy.",
-    "The impersonator_display_name snapshot is confidential because it identifies a specific Academorix staff member's real name — internal-tier by our classification but revealing enough that we treat it as confidential for consistency with employment records.",
+    "The impersonator_display_name snapshot is confidential because it identifies a specific Stackra staff member's real name — internal-tier by our classification but revealing enough that we treat it as confidential for consistency with employment records.",
     "session_token_hash is RESTRICTED — even the impersonator does not see the hash after session start (they only ever knew the raw token, which is not persisted). It exists solely for the middleware's lookup + is scrubbed at 30 days.",
     "GDPR Art. 17 erasure: on target User erasure, the ImpersonationSession row cascades but the parallel HasAudit stream is retained under Art. 17(3)(e) legal claims defence."
   ]

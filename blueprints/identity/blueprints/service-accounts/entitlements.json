@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/service-accounts/entitlements",
+  "id": "stackra://modules/service-accounts/entitlements",
   "$version": 1,
   "title": "service-accounts \u2014 declared entitlements",
   "description": "Five entitlement keys covering the SA capability surface a tenant purchases. Every tenant gets tenant-scoped SAs on any plan (a webhook signer is baseline). Platform-plane SAs are medium+ (cross-tenant integrations imply a paid engagement). IP allowlisting + extended TTL are enterprise controls. Entitlements gate CREATION of an SA carrying the corresponding property; already-issued SAs are grandfathered until rotation.",

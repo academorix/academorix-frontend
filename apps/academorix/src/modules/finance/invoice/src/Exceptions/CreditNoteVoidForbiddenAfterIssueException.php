@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invoice\Exceptions;
+namespace Stackra\Invoice\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Issued/applied credit notes are IMMUTABLE financial records.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CreditNoteVoidForbiddenAfterIssueException extends AcademorixException
+final class CreditNoteVoidForbiddenAfterIssueException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

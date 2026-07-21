@@ -7,7 +7,7 @@ The CENTRAL-plane person registry — cross-academy shared profile substrate. Wa
 
 | Concern         | Owned artefact                                                                                                 |
 | --------------- | -------------------------------------------------------------------------------------------------------------- |
-| Global identity | `PersonIdentity` (`pin_`) — one per real human, cross-tenant, minimal PII, carries the Academorix ID.          |
+| Global identity | `PersonIdentity` (`pin_`) — one per real human, cross-tenant, minimal PII, carries the Stackra ID.          |
 | Guardian link   | `PersonGuardianLink` (`pgl_`) — central-plane parent↔minor link that survives across tenants.                  |
 | Consent request | `TenantLinkRequest` (`tlr_`) — request from a tenant to bind a local Athlete/Staff to a global PersonIdentity. |
 
@@ -25,7 +25,7 @@ central — never the reverse. Central knows a person exists; tenants know what
 that person does IN their academy. Scoring / cards / attendance / progress /
 medical records stay 100% tenant-local.
 
-## 3. The Academorix ID
+## 3. The Stackra ID
 
 Format: `AX-<segment1>-<segment2>` where each segment is 4 base32 chars
 (Crockford). Example: `AX-7F3K-9210`. Guaranteed globally unique across the
@@ -37,7 +37,7 @@ Athlete record.
 
 ## 4. Enumeration-resistant lookup
 
-`POST /api/v1/people/lookup` takes `{ academorix_id, date_of_birth }`. The
+`POST /api/v1/people/lookup` takes `{ stackra_id, date_of_birth }`. The
 response contains ONLY `{ found: true, request_url? }` — no PII, no name, no
 nationality is revealed before consent. If a match is found, the caller may file
 a `TenantLinkRequest` which fires a consent notification to the linked

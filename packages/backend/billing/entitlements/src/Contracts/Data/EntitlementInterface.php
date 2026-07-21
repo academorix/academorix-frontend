@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Contracts\Data;
+namespace Stackra\Entitlements\Contracts\Data;
 
-use Academorix\Entitlements\Models\Entitlement;
+use Stackra\Entitlements\Models\Entitlement;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Infrastructure;
+namespace Stackra\Exceptions\Infrastructure;
 
 class MaintenanceModeException extends ServiceUnavailableException
 {

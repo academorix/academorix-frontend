@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Events;
+namespace Stackra\Coupon\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -17,7 +17,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - audit::WriteToAuditLog
  * - activity::WriteToActivityLog
  * - notifications::DispatchCouponUsageCapReachedNotification (owner + marketing role)
- * - observability::MetricsCollector (academorix.coupons.usage_cap_reached_total)
+ * - observability::MetricsCollector (stackra.coupons.usage_cap_reached_total)
  *
  * @category Coupon
  *

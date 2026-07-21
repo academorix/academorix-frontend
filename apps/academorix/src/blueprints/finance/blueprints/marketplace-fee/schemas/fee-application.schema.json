@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/marketplace-fee/schemas/fee-application",
+  "id": "stackra://modules/marketplace-fee/schemas/fee-application",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "FeeApplication",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "fap_",
     "incrementing": false,
-    "model": "Academorix\\Finance\\MarketplaceFee\\Models\\FeeApplication",
-    "interface": "Academorix\\Finance\\MarketplaceFee\\Contracts\\Data\\FeeApplicationInterface",
-    "implements": ["Academorix\\Finance\\MarketplaceFee\\Contracts\\Data\\FeeApplicationInterface"],
+    "model": "Stackra\\Finance\\MarketplaceFee\\Models\\FeeApplication",
+    "interface": "Stackra\\Finance\\MarketplaceFee\\Contracts\\Data\\FeeApplicationInterface",
+    "implements": ["Stackra\\Finance\\MarketplaceFee\\Contracts\\Data\\FeeApplicationInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -109,7 +109,7 @@
         "length": 64,
         "nullable": true,
         "foreign": { "table": "fee_payouts", "column": "id", "onDelete": "set null" },
-        "description": "Set when included in a roll-up payout to Academorix."
+        "description": "Set when included in a roll-up payout to Stackra."
       },
       "schedule_snapshot": { "type": "jsonb", "nullable": true },
       "metadata": { "type": "jsonb", "nullable": true },

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Exceptions;
+namespace Stackra\Geography\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the tenant's monthly `geography.geolocate.month`
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GeographyGeolocateQuotaExceededException extends AcademorixException
+final class GeographyGeolocateQuotaExceededException extends StackraException
 {
     public const CODE = 'GEOGRAPHY_GEOLOCATE_QUOTA_EXCEEDED';
 

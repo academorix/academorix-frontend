@@ -16,7 +16,7 @@ declare(strict_types=1);
  *
  * `NightwatchContextMiddleware` and `NightwatchSamplerMiddleware`
  * auto-register via `#[AsMiddleware]` — discovered by
- * {@see \Academorix\Routing\Providers\RoutingServiceProvider}.
+ * {@see \Stackra\Routing\Providers\RoutingServiceProvider}.
  *
  * ## Registered Services (via compiler)
  * - NightwatchFilterRegistry   → singleton (immutable after boot)
@@ -27,17 +27,17 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  *
- * @see \Academorix\Nightwatch\Compiler\NightwatchCompiler
- * @see \Academorix\Nightwatch\Registry\NightwatchContextRegistry
- * @see \Academorix\Nightwatch\Registry\NightwatchFilterRegistry
- * @see \Academorix\Nightwatch\Registry\NightwatchRedactorRegistry
+ * @see \Stackra\Nightwatch\Compiler\NightwatchCompiler
+ * @see \Stackra\Nightwatch\Registry\NightwatchContextRegistry
+ * @see \Stackra\Nightwatch\Registry\NightwatchFilterRegistry
+ * @see \Stackra\Nightwatch\Registry\NightwatchRedactorRegistry
  */
 
-namespace Academorix\Nightwatch\Providers;
+namespace Stackra\Nightwatch\Providers;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
 
 /**
  * Nightwatch module service provider.

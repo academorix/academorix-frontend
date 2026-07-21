@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Models;
+namespace Stackra\Search\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Search\Contracts\Data\SearchSavedQueryInterface;
-use Academorix\Search\Database\Factories\SearchSavedQueryFactory;
-use Academorix\Search\Policies\SearchSavedQueryPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Search\Contracts\Data\SearchSavedQueryInterface;
+use Stackra\Search\Database\Factories\SearchSavedQueryFactory;
+use Stackra\Search\Policies\SearchSavedQueryPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;

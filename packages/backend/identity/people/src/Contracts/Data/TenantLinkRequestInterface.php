@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\People\Contracts\Data;
+namespace Stackra\People\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\People\Models\TenantLinkRequest;
+use Stackra\People\Models\TenantLinkRequest;
 
 /**
  * Table shape for the `tenant_link_requests` table.

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Console;
+namespace Stackra\Application\Console;
 
-use Academorix\Application\Contracts\Data\ApplicationInterface;
-use Academorix\Application\Contracts\Repositories\ApplicationRepositoryInterface;
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Application\Contracts\Data\ApplicationInterface;
+use Stackra\Application\Contracts\Repositories\ApplicationRepositoryInterface;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan application:list` — dump every Application row as a

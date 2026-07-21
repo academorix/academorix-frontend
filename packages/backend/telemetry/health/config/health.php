@@ -5,7 +5,7 @@
  *
  * @description
  * Baseline `health.*` config merged by
- * {@see \Academorix\Health\Providers\HealthServiceProvider::register()}.
+ * {@see \Stackra\Health\Providers\HealthServiceProvider::register()}.
  *
  * Consumers publish this file to their app's `config/` directory
  * with:
@@ -18,7 +18,7 @@
  * ## Rule of thumb
  *
  * The MAP below is keyed by the string value of a
- * {@see \Academorix\Health\Enums\HealthNotificationChannel} case.
+ * {@see \Stackra\Health\Enums\HealthNotificationChannel} case.
  * That coupling is intentional — every check in every package
  * routes by enum case, so the config key MUST match the case value
  * or resolution silently misses.
@@ -29,7 +29,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Health\Enums\HealthNotificationChannel;
+use Stackra\Health\Enums\HealthNotificationChannel;
 
 return [
 

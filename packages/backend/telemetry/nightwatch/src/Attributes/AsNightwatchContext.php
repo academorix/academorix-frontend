@@ -14,11 +14,11 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  *
- * @see \Academorix\Nightwatch\Contracts\NightwatchContext
- * @see \Academorix\Nightwatch\Compiler\NightwatchCompiler
+ * @see \Stackra\Nightwatch\Contracts\NightwatchContext
+ * @see \Stackra\Nightwatch\Compiler\NightwatchCompiler
  */
 
-namespace Academorix\Nightwatch\Attributes;
+namespace Stackra\Nightwatch\Attributes;
 
 use Attribute;
 
@@ -58,7 +58,7 @@ use Attribute;
  *
  * The service provider wraps each provider's output with `Context::add($key, $data)`.
  *
- * @see \Academorix\Nightwatch\Contracts\NightwatchContext
+ * @see \Stackra\Nightwatch\Contracts\NightwatchContext
  */
 #[Attribute(Attribute::TARGET_CLASS)]
 final readonly class AsNightwatchContext

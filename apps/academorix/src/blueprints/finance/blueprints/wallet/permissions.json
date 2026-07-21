@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/wallet/permissions",
+  "id": "stackra://modules/wallet/permissions",
   "$version": 1,
   "title": "wallet — permissions",
-  "seeder": "Academorix\\Finance\\Wallet\\Database\\Seeders\\WalletPermissionSeeder",
+  "seeder": "Stackra\\Finance\\Wallet\\Database\\Seeders\\WalletPermissionSeeder",
   "isSystem": true,
   "description": "Guardian sees own wallets (all three kinds). Finance role manages tenant-level wallet operations. Manual adjustments (staff-issued credits) require finance role.",
   "permissions": [

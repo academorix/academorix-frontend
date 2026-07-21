@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Services;
+namespace Stackra\Rbac\Services;
 
-use Academorix\Rbac\Contracts\Services\PermissionCacheManagerInterface;
+use Stackra\Rbac\Contracts\Services\PermissionCacheManagerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Rbac\Contracts\Repositories\ModelHasPermissionsRepositoryInterface;
+use Stackra\Rbac\Contracts\Repositories\ModelHasPermissionsRepositoryInterface;
 
 /**
  * Concrete service — PermissionCacheManager.

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Actions\Platform\Drivers;
+namespace Stackra\Localization\Actions\Platform\Drivers;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Localization\Contracts\Services\TranslatorDriverRegistryInterface;
-use Academorix\Localization\Data\Resources\TranslatorDriverStatusData;
-use Academorix\Localization\Enums\LocalizationPermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Localization\Contracts\Services\TranslatorDriverRegistryInterface;
+use Stackra\Localization\Data\Resources\TranslatorDriverStatusData;
+use Stackra\Localization\Enums\LocalizationPermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 use Spatie\LaravelData\DataCollection;
 
 /**

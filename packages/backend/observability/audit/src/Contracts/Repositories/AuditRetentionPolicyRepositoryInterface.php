@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Contracts\Repositories;
+namespace Stackra\Audit\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Audit\Models\AuditRetentionPolicy}.
+ * Repository contract for {@see Stackra\Audit\Models\AuditRetentionPolicy}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `AuditRetentionPolicyRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Audit\Models\AuditRetentionPolicy>
+ * @extends RepositoryInterface<\Stackra\Audit\Models\AuditRetentionPolicy>
  *
  * @category Audit
  *

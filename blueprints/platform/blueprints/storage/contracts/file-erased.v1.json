@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/storage/contracts/file-erased.v1",
+  "id": "stackra://modules/storage/contracts/file-erased.v1",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "title": "file-erased event \u2014 v1 wire contract",
   "description": "FROZEN wire shape for the `storage::FileErased` event. Emitted afterCommit when a File is hard-deleted (row + blob refcount decrement). Distinct from SoftDeletes (which fires no event) and archival (which fires FileArchived). Consumers use this to: remove search-index entries, cascade blob refcount, record erasure evidence for DSAR compliance, revoke lingering signed URLs.",
-  "x-emitter": "Academorix\\Storage\\Events\\FileErased",
+  "x-emitter": "Stackra\\Storage\\Events\\FileErased",
   "x-owning-module": "storage",
   "x-event-name": "storage.file.erased",
   "x-version": "v1",

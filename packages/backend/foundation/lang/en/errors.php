@@ -6,7 +6,7 @@ declare(strict_types=1);
  * @file packages/foundation/lang/en/errors.php
  *
  * @description
- * Copy for the Blade error pages shipped by `academorix/exceptions`
+ * Copy for the Blade error pages shipped by `stackra/exceptions`
  * (which extend `foundation::layouts.app`). Kept in foundation
  * rather than exceptions because:
  *

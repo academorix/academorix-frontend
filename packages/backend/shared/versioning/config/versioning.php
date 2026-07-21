@@ -4,7 +4,7 @@
  * @file modules/shared/versioning/config/versioning.php
  *
  * @description
- * Runtime knobs for the `academorix/versioning` module. Mirrors the
+ * Runtime knobs for the `stackra/versioning` module. Mirrors the
  * blueprint at `modules/shared/versioning/config.json`.
  */
 
@@ -39,7 +39,7 @@ return [
         'header' => [
             'accept_pattern' => env(
                 'VERSIONING_ACCEPT_PATTERN',
-                'application/vnd.academorix.{version}+json',
+                'application/vnd.stackra.{version}+json',
             ),
         ],
 
@@ -51,7 +51,7 @@ return [
 
         'webhook' => [
             'subscription_column' => env('VERSIONING_WEBHOOK_COLUMN', 'api_version'),
-            'request_attribute'   => 'academorix.versioning.webhook_subscription_version',
+            'request_attribute'   => 'stackra.versioning.webhook_subscription_version',
         ],
 
         'graphql' => [

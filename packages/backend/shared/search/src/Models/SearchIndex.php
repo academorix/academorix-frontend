@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Models;
+namespace Stackra\Search\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Search\Contracts\Data\SearchIndexInterface;
-use Academorix\Search\Database\Factories\SearchIndexFactory;
-use Academorix\Search\Enums\SearchEngine;
-use Academorix\Search\Enums\SearchIndexStatus;
-use Academorix\Search\Observers\SearchIndexObserver;
-use Academorix\Search\Policies\SearchIndexPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Search\Contracts\Data\SearchIndexInterface;
+use Stackra\Search\Database\Factories\SearchIndexFactory;
+use Stackra\Search\Enums\SearchEngine;
+use Stackra\Search\Enums\SearchIndexStatus;
+use Stackra\Search\Observers\SearchIndexObserver;
+use Stackra\Search\Policies\SearchIndexPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

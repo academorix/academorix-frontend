@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Chargeback\Events;
+namespace Stackra\Chargeback\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -17,7 +17,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - audit::WriteToAuditLog (retention: 7 years)
  * - activity::WriteToActivityLog
  * - notifications::DispatchChargebackEvidenceSubmittedNotification (admin — confirmation)
- * - observability::MetricsCollector (academorix.chargeback.evidence_submissions_total labelled by submission_attempt_number)
+ * - observability::MetricsCollector (stackra.chargeback.evidence_submissions_total labelled by submission_attempt_number)
  *
  * @category Chargeback
  *

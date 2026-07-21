@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Services;
+namespace Stackra\Activity\Services;
 
-use Academorix\Activity\Contracts\Data\ActivityInterface;
-use Academorix\Activity\Contracts\Services\ActivityLoggerInterface;
-use Academorix\Activity\Models\Activity;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Activity\Contracts\Data\ActivityInterface;
+use Stackra\Activity\Contracts\Services\ActivityLoggerInterface;
+use Stackra\Activity\Models\Activity;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;

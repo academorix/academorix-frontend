@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/teams/retention",
+  "id": "stackra://modules/teams/retention",
   "$version": 1,
   "title": "teams — retention windows",
   "description": "Active teams are permanent while any tenant references them. Team members are permanent as historic roster (compliance material — participation lineage). Trials are retained 3 years post-decision (anti-discrimination defence records for rejected trials; audit trail for converted trials). Event teams retained 7 years when payment_status is set (financial), 3 years otherwise (participation record). Anonymous trialist PII redacted 90 days post-decision.",

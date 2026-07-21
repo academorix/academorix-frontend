@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Services;
+namespace Stackra\Versioning\Services;
 
-use Academorix\Versioning\Contracts\Data\ApiVersionInterface;
-use Academorix\Versioning\Contracts\Repositories\ApiVersionRepositoryInterface;
-use Academorix\Versioning\Contracts\Services\SunsetHeaderEmitterInterface;
-use Academorix\Versioning\Enums\ApiVersionStatus;
+use Stackra\Versioning\Contracts\Data\ApiVersionInterface;
+use Stackra\Versioning\Contracts\Repositories\ApiVersionRepositoryInterface;
+use Stackra\Versioning\Contracts\Services\SunsetHeaderEmitterInterface;
+use Stackra\Versioning\Enums\ApiVersionStatus;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Http\Response;
 

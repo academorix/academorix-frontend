@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attributes\Tests;
+namespace Stackra\Attributes\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/attributes.
+ * Base test case for stackra/attributes.
  *
  * @category Attributes
  *

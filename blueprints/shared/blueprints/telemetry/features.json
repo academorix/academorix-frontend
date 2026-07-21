@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/telemetry/features",
+  "id": "stackra://modules/telemetry/features",
   "$version": 1,
   "title": "telemetry \u2014 feature keys",
   "description": "Not tenant-facing \u2014 telemetry is a platform capability, always on. Features here gate which subsystems + exporters are active.",

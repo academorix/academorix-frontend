@@ -1,4 +1,4 @@
-# academorix/messaging
+# stackra/messaging
 
 Server-side Laravel package for the `messaging` module. Auto-generated from the
 blueprint at `modules/notifications/blueprints/messaging/`.
@@ -45,6 +45,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-notifications/messaging-sdk` under
+`stackra-notifications/messaging-sdk` under
 `sdk/notifications-messaging-sdk/`. Consumers cross the service boundary through
 the SDK; this package is the SERVER-side owner of the domain.

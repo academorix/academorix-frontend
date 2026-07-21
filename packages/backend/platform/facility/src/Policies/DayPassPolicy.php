@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Policies;
+namespace Stackra\Facility\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Facility\Models\DayPass;
+use Stackra\User\Models\User;
+use Stackra\Facility\Models\DayPass;
 
 /**
- * Authorization policy for {@see \Academorix\Facility\Models\DayPass}.
+ * Authorization policy for {@see \Stackra\Facility\Models\DayPass}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

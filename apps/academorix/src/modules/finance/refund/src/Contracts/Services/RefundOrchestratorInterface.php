@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Refund\Contracts\Services;
+namespace Stackra\Refund\Contracts\Services;
 
-use Academorix\Refund\Services\RefundOrchestrator;
+use Stackra\Refund\Services\RefundOrchestrator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

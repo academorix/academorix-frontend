@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Models;
+namespace Stackra\Compliance\Models;
 
-use Academorix\Compliance\Contracts\Data\LegalHoldInterface;
-use Academorix\Compliance\Database\Factories\LegalHoldFactory;
-use Academorix\Compliance\Enums\LegalHoldScope;
-use Academorix\Compliance\Observers\LegalHoldObserver;
-use Academorix\Compliance\Policies\LegalHoldPolicy;
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Compliance\Contracts\Data\LegalHoldInterface;
+use Stackra\Compliance\Database\Factories\LegalHoldFactory;
+use Stackra\Compliance\Enums\LegalHoldScope;
+use Stackra\Compliance\Observers\LegalHoldObserver;
+use Stackra\Compliance\Policies\LegalHoldPolicy;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;

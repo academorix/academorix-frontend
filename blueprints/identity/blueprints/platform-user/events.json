@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/platform-user/events",
+  "id": "stackra://modules/platform-user/events",
   "$version": 1,
   "title": "platform-user \u2014 published events",
-  "namespace": "Academorix\\PlatformUser\\Events",
+  "namespace": "Stackra\\PlatformUser\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every platform-user lifecycle event fires after DB commit so downstream listeners never see uncommitted state. Payloads are readonly value objects (readonly class + readonly properties) \u2014 immutable by construction so listeners cannot mutate the shape another listener depends on. Payloads carry `platform_user_id` only; downstream services that need PII (email, phone, department) re-fetch through PlatformUserRepository so redaction rules apply consistently. The `notifications-critical` queue is used for offboarding-related events which MUST NOT queue behind a backlog (the 24h SLA depends on prompt processing).",
   "events": [
     {
       "name": "PlatformUserHired",
-      "class": "Academorix\\PlatformUser\\Events\\PlatformUserHired",
+      "class": "Stackra\\PlatformUser\\Events\\PlatformUserHired",
       "trigger": "New PlatformUser row inserted after passing the HirePlatformUserInput safety gates (MFA enrolled on Identity, unique identity_id). Fires exactly once per PlatformUser, ever.",
       "queue": "notifications",
       "consumers": [
@@ -31,7 +31,7 @@
     },
     {
       "name": "PlatformUserActivated",
-      "class": "Academorix\\PlatformUser\\Events\\PlatformUserActivated",
+      "class": "Stackra\\PlatformUser\\Events\\PlatformUserActivated",
       "trigger": "PlatformUser.status transitioned from `pending` to `active` (usually via the onboarding checklist completing) OR from `suspended` back to `active` via `restore`.",
       "queue": "notifications",
       "consumers": [
@@ -48,7 +48,7 @@
     },
     {
       "name": "PlatformUserSuspended",
-      "class": "Academorix\\PlatformUser\\Events\\PlatformUserSuspended",
+      "class": "Stackra\\PlatformUser\\Events\\PlatformUserSuspended",
       "trigger": "PlatformUser.status transitioned from `active` to `suspended`. Temporary state \u2014 for investigations, leaves of absence, or reversible policy violations. Distinct from `offboarded` (terminal).",
       "queue": "notifications-critical",
       "consumers": [
@@ -68,7 +68,7 @@
     },
     {
       "name": "PlatformUserRestored",
-      "class": "Academorix\\PlatformUser\\Events\\PlatformUserRestored",
+      "class": "Stackra\\PlatformUser\\Events\\PlatformUserRestored",
       "trigger": "PlatformUser.status transitioned from `suspended` back to `active`. Idempotent \u2014 restoring an already-active row is a no-op that emits no event.",
       "queue": "notifications",
       "consumers": [
@@ -86,7 +86,7 @@
     },
     {
       "name": "PlatformUserOffboarded",
-      "class": "Academorix\\PlatformUser\\Events\\PlatformUserOffboarded",
+      "class": "Stackra\\PlatformUser\\Events\\PlatformUserOffboarded",
       "trigger": "PlatformUser.status transitioned to `offboarded` (terminal). offboarded_at populated. Dispatches RevokePlatformUserAccessJob synchronously in the same request-cycle so the 24h SLA is measured from event emission.",
       "queue": "notifications-critical",
       "consumers": [
@@ -110,7 +110,7 @@
     },
     {
       "name": "PlatformProfileUpdated",
-      "class": "Academorix\\PlatformUser\\Events\\PlatformProfileUpdated",
+      "class": "Stackra\\PlatformUser\\Events\\PlatformProfileUpdated",
       "trigger": "One or more columns on the PlatformProfile row mutated. Fires once per save regardless of the number of changed columns. Includes the changed field names so listeners can filter (e.g. `avatar_updated` listener only reacts when `avatar_url` is in the changed set).",
       "queue": "notifications",
       "consumers": [
@@ -128,7 +128,7 @@
     },
     {
       "name": "PlatformUserManagerReassigned",
-      "class": "Academorix\\PlatformUser\\Events\\PlatformUserManagerReassigned",
+      "class": "Stackra\\PlatformUser\\Events\\PlatformUserManagerReassigned",
       "trigger": "PlatformUser.manager_id mutated from a non-null value to a different non-null value, or to null (orphaning to top-of-tree), or from null to a non-null value (adopting into a chain).",
       "queue": "notifications",
       "consumers": [
@@ -147,7 +147,7 @@
     },
     {
       "name": "PlatformUserDepartmentChanged",
-      "class": "Academorix\\PlatformUser\\Events\\PlatformUserDepartmentChanged",
+      "class": "Stackra\\PlatformUser\\Events\\PlatformUserDepartmentChanged",
       "trigger": "PlatformUser.department mutated. Emitted separately from the generic profile update so downstream services with per-department routing (Slack channel selection, on-call rotation membership) can react cleanly.",
       "queue": "notifications",
       "consumers": [

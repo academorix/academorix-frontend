@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Attributes;
+namespace Stackra\Monitoring\Attributes;
 
 use Attribute;
 

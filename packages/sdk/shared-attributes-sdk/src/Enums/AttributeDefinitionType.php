@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SharedAttributesSdk\Enums;
+namespace Stackra\SharedAttributesSdk\Enums;
 
 /**
  * Wire-visible backed enum for `attribute-definition.type`.

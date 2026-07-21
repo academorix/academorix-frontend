@@ -13,12 +13,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Contracts;
+namespace Stackra\Scope\Contracts;
 
-use Academorix\Scope\Data\ScopeContextData;
-use Academorix\Scope\Exceptions\ScopeContextRequiredException;
-use Academorix\Scope\Middleware\ResolveScope;
-use Academorix\Scope\Services\ScopeContext;
+use Stackra\Scope\Data\ScopeContextData;
+use Stackra\Scope\Exceptions\ScopeContextRequiredException;
+use Stackra\Scope\Middleware\ResolveScope;
+use Stackra\Scope\Services\ScopeContext;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Scoped;
 

@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/region/metrics",
+  "id": "stackra://modules/region/metrics",
   "$version": 1,
   "title": "region — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "academorix.region",
+  "namespace": "stackra.region",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["country_code", "currency", "status", "source", "outcome"],
@@ -11,14 +11,14 @@
   },
   "metrics": [
     {
-      "name": "academorix.region.created.total",
+      "name": "stackra.region.created.total",
       "kind": "counter",
       "unit": "regions",
       "labels": ["country_code", "currency", "source"],
       "description": "source: tenant_provisioning / admin_created / legacy_backfill_command."
     },
     {
-      "name": "academorix.region.create.duration_ms",
+      "name": "stackra.region.create.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 200, 1000, 5000],
@@ -26,62 +26,62 @@
       "description": "End-to-end provisioning latency (validate country_code + resolve defaults + write row + fire events)."
     },
     {
-      "name": "academorix.region.default_changed.total",
+      "name": "stackra.region.default_changed.total",
       "kind": "counter",
       "unit": "changes",
       "labels": [],
       "description": "How often the default region flips per tenant. High rate is a signal — the default drives invoice calculations for legacy rows, changing it often is a red flag."
     },
     {
-      "name": "academorix.region.paused.total",
+      "name": "stackra.region.paused.total",
       "kind": "counter",
       "unit": "pauses",
       "labels": []
     },
     {
-      "name": "academorix.region.archived.total",
+      "name": "stackra.region.archived.total",
       "kind": "counter",
       "unit": "archives",
       "labels": ["outcome"],
       "description": "outcome: soft (deleted_at set) / hard (PurgeArchivedRegionsJob completed) / rejected_in_use / rejected_default."
     },
     {
-      "name": "academorix.region.active.count",
+      "name": "stackra.region.active.count",
       "kind": "gauge",
       "unit": "regions",
       "labels": ["status", "country_code"],
       "description": "Point-in-time count of Regions per status per country. Populated hourly by a metrics-collector task."
     },
     {
-      "name": "academorix.region.per_tenant.count",
+      "name": "stackra.region.per_tenant.count",
       "kind": "gauge",
       "unit": "regions",
       "labels": [],
       "description": "Global histogram of regions-per-tenant. Feeds the tier-adoption dashboard."
     },
     {
-      "name": "academorix.region.default_invariant_drift.count",
+      "name": "stackra.region.default_invariant_drift.count",
       "kind": "gauge",
       "unit": "tenants",
       "labels": ["drift_kind"],
       "description": "drift_kind: zero_default / multiple_default. Populated by ReconcileDefaultRegionInvariantJob. Ideally always 0."
     },
     {
-      "name": "academorix.region.tax_config_update.total",
+      "name": "stackra.region.tax_config_update.total",
       "kind": "counter",
       "unit": "updates",
       "labels": ["field"],
       "description": "field: default_rate_percent / rates / name / inclusive / registration_number / fiscal_year_start_month. Each dotted-path change increments the corresponding label."
     },
     {
-      "name": "academorix.region.slot_exhaustion.total",
+      "name": "stackra.region.slot_exhaustion.total",
       "kind": "counter",
       "unit": "refusals",
       "labels": [],
       "description": "How often region_slot entitlement quota refuses a Region create. Feeds the upsell funnel."
     },
     {
-      "name": "academorix.region.middleware_resolve.duration_ms",
+      "name": "stackra.region.middleware_resolve.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1, 5, 20, 100],
@@ -89,14 +89,14 @@
       "description": "`region.resolve_active` middleware latency. source: header / default_cache / default_db. P99 target < 10ms — the middleware runs on every tenant-plane request."
     },
     {
-      "name": "academorix.region.middleware_reject.total",
+      "name": "stackra.region.middleware_reject.total",
       "kind": "counter",
       "unit": "rejects",
       "labels": ["reason"],
       "description": "reason: cross_tenant / paused / archived / tenant_missing_default. Cross-tenant rejects are security-relevant + alerting-worthy."
     },
     {
-      "name": "academorix.region.seed_default.duration_ms",
+      "name": "stackra.region.seed_default.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [100, 500, 2000, 10000],
@@ -104,14 +104,14 @@
       "description": "SeedDefaultRegionForTenantJob end-to-end latency. source: tenant_provisioning / reconciler / legacy_backfill_command."
     },
     {
-      "name": "academorix.region.seed_default.retries",
+      "name": "stackra.region.seed_default.retries",
       "kind": "counter",
       "unit": "retries",
       "labels": ["attempt"],
       "description": "attempt: 1..5. Feeds the queue-health dashboard."
     },
     {
-      "name": "academorix.region.purge_pending.count",
+      "name": "stackra.region.purge_pending.count",
       "kind": "gauge",
       "unit": "regions",
       "labels": [],

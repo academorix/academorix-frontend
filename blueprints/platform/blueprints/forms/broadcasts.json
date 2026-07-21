@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/forms/broadcasts",
+  "id": "stackra://modules/forms/broadcasts",
   "$version": 1,
   "title": "forms — broadcast channels",
   "description": "Channels this module publishes to for real-time UI updates.",

@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Models;
+namespace Stackra\Invitations\Models;
 
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Invitations\Casts\InvitationInviterCast;
-use Academorix\Invitations\Casts\InvitationTargetCast;
-use Academorix\Invitations\Contracts\Data\InvitationInterface;
-use Academorix\Invitations\Contracts\Services\InvitationTargetRegistryInterface;
-use Academorix\Invitations\Database\Factories\InvitationFactory;
-use Academorix\Invitations\Enums\InvitationChannel;
-use Academorix\Invitations\Enums\InvitationStatus;
-use Academorix\Invitations\Observers\InvitationObserver;
-use Academorix\Invitations\Policies\InvitationPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Invitations\Casts\InvitationInviterCast;
+use Stackra\Invitations\Casts\InvitationTargetCast;
+use Stackra\Invitations\Contracts\Data\InvitationInterface;
+use Stackra\Invitations\Contracts\Services\InvitationTargetRegistryInterface;
+use Stackra\Invitations\Database\Factories\InvitationFactory;
+use Stackra\Invitations\Enums\InvitationChannel;
+use Stackra\Invitations\Enums\InvitationStatus;
+use Stackra\Invitations\Observers\InvitationObserver;
+use Stackra\Invitations\Policies\InvitationPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -107,7 +107,7 @@ final class Invitation extends Model implements AuditableContract, InvitationInt
     /**
      * Transient — the raw (unhashed) token, populated once by the
      * observer on `creating` and consumed once by
-     * {@see \Academorix\Invitations\Jobs\SendInvitationJob}. NEVER
+     * {@see \Stackra\Invitations\Jobs\SendInvitationJob}. NEVER
      * persisted, NEVER serialised, NEVER returned in a JSON envelope.
      */
     public ?string $rawToken = null;
@@ -180,7 +180,7 @@ final class Invitation extends Model implements AuditableContract, InvitationInt
     {
         return $this->hasMany(
             InvitationEvent::class,
-            \Academorix\Invitations\Contracts\Data\InvitationEventInterface::ATTR_INVITATION_ID,
+            \Stackra\Invitations\Contracts\Data\InvitationEventInterface::ATTR_INVITATION_ID,
         );
     }
 
@@ -195,7 +195,7 @@ final class Invitation extends Model implements AuditableContract, InvitationInt
     public function acceptedBy(): BelongsTo
     {
         /** @var class-string<Model> $userClass */
-        $userClass = 'Academorix\\User\\Models\\User';
+        $userClass = 'Stackra\\User\\Models\\User';
 
         return $this->belongsTo(
             $userClass,
@@ -211,7 +211,7 @@ final class Invitation extends Model implements AuditableContract, InvitationInt
     public function revokedBy(): BelongsTo
     {
         /** @var class-string<Model> $userClass */
-        $userClass = 'Academorix\\User\\Models\\User';
+        $userClass = 'Stackra\\User\\Models\\User';
 
         return $this->belongsTo(
             $userClass,

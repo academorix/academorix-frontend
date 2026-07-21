@@ -12,11 +12,11 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Enum\Concerns;
+namespace Stackra\Enum\Concerns;
 
 use BackedEnum;
-use Academorix\Enum\Exceptions\UndefinedCaseException;
-use Academorix\Support\Reflection;
+use Stackra\Enum\Exceptions\UndefinedCaseException;
+use Stackra\Support\Reflection;
 
 /**
  * Invokable Cases Trait.
@@ -43,7 +43,7 @@ use Academorix\Support\Reflection;
  * $status();         // Returns 'active'
  * ```
  *
- * @author  Academorix Development Team
+ * @author  Stackra Development Team
  *
  * @since   1.0.0
  */

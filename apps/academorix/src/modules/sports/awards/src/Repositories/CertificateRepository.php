@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Awards\Repositories;
+namespace Stackra\Awards\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Awards\Contracts\Data\CertificateInterface;
-use Academorix\Awards\Contracts\Repositories\CertificateRepositoryInterface;
-use Academorix\Awards\Models\Certificate;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Awards\Contracts\Data\CertificateInterface;
+use Stackra\Awards\Contracts\Repositories\CertificateRepositoryInterface;
+use Stackra\Awards\Models\Certificate;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Awards\Models\Certificate}.
+ * Attribute-first Eloquent repository for {@see Stackra\Awards\Models\Certificate}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(CertificateInterface::class)]` which resolves to
  * `Certificate` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Awards\Models\Certificate>
+ * @extends Repository<\Stackra\Awards\Models\Certificate>
  *
  * @category Awards
  *

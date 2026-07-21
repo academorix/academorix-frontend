@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Console;
+namespace Stackra\Audit\Console;
 
-use Academorix\Audit\Contracts\Services\AuditRegistryInterface;
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Audit\Contracts\Services\AuditRegistryInterface;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan audit:describe` — render the {@see AuditRegistryInterface}

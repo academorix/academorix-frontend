@@ -14,7 +14,7 @@ TODO(release-manager): list every feature that ships in this release, one
 bullet each, with a link to the PR or spec.
 
 - **`<feature-slug>`** — one-line description.
-  ([PR #NNN](https://github.com/academorix/academorix-frontend/pull/NNN))
+  ([PR #NNN](https://github.com/stackra/stackra-frontend/pull/NNN))
 - **`<feature-slug>`** — one-line description.
   ([Spec](.kiro/specs/<slug>/design.md))
 

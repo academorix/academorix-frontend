@@ -6,13 +6,13 @@ The workspace hosts TWO products under one Git repo:
   React + TypeScript), native (React Native + Uniwind), config presets, CLI, and
   JSON blueprints for the RBAC/auth/audit substrates. Every package under
   `packages/*`, `tools/cli/`, and `blueprints/*` is Stackra.
-- **Academorix** — the first product built ON Stackra. Sports academy / gym /
+- **Stackra** — the first product built ON Stackra. Sports academy / gym /
   school / clinic domain. Every package under
-  `apps/academorix/src/{modules,sdks,blueprints}/**` is Academorix.
+  `apps/stackra/src/{modules,sdks,blueprints}/**` is Stackra.
 
 This split is a policy decision: Stackra is what we ship internally as the
-framework Kiro + future products build on; Academorix is what we ship to the
-customer. Renaming a package from Academorix to Stackra (or the reverse) is a
+framework Kiro + future products build on; Stackra is what we ship to the
+customer. Renaming a package from Stackra to Stackra (or the reverse) is a
 boundary-crossing operation that requires an ADR.
 
 ## Rule 1 — Vendor scope is the boundary
@@ -21,13 +21,13 @@ boundary-crossing operation that requires an ADR.
 | ----------------------- | ------------------- | ---------- | ------------------------------------------------------------------------------------ |
 | `stackra/*`             | Composer (PHP)      | Stackra    | `packages/backend/*`, `packages/sdk/*`, `tools/cli/`, `blueprints/*` (metadata only) |
 | `@stackra/*`            | npm (TS)            | Stackra    | `packages/frontend/*`, `packages/config/*`                                           |
-| `academorix/*`          | Composer (PHP)      | Academorix | `apps/academorix/src/**` (aggregate/app-scope only)                                  |
-| `@academorix/*`         | npm (TS)            | Academorix | `apps/academorix/**/package.json`                                                    |
-| `academorix-<domain>/*` | Composer sub-vendor | Academorix | `apps/academorix/src/{modules,sdks}/<domain>/*`                                      |
+| `stackra/*`          | Composer (PHP)      | Stackra | `apps/stackra/src/**` (aggregate/app-scope only)                                  |
+| `@stackra/*`         | npm (TS)            | Stackra | `apps/stackra/**/package.json`                                                    |
+| `stackra-<domain>/*` | Composer sub-vendor | Stackra | `apps/stackra/src/{modules,sdks}/<domain>/*`                                      |
 
 Every composer package MUST have `name:` in exactly one of the above buckets.
 Every npm package MUST have `name:` in exactly one of the `@stackra/*` or
-`@academorix/*` buckets. Anything else fails the audit.
+`@stackra/*` buckets. Anything else fails the audit.
 
 ## Rule 2 — No framework prefix in the package name
 
@@ -56,9 +56,9 @@ Composer and npm both allow exactly ONE slash in a package name. Sub-domain
 grouping uses dashed vendor names:
 
 - ✓ `stackra/caching`
-- ✓ `academorix-sports/athlete-sdk`
+- ✓ `stackra-sports/athlete-sdk`
 - ✗ `stackra/framework/caching` — invalid (two slashes)
-- ✗ `academorix/sports/athlete-sdk` — invalid (two slashes)
+- ✗ `stackra/sports/athlete-sdk` — invalid (two slashes)
 
 **When to use dashed sub-vendors:**
 
@@ -67,9 +67,9 @@ grouping uses dashed vendor names:
 | Stackra framework packages                              | **flat** — `stackra/<name>`      | The framework is one coherent product. Flat mirrors `illuminate/*`.                                     |
 | Stackra observability triad (activity/audit/monitoring) | `stackra-observability/<name>`   | Grandfathered — three cross-cutting packages that ship together.                                        |
 | Stackra shared substrate                                | `stackra-shared/<name>`          | Grandfathered — packages every service consumes.                                                        |
-| Academorix domain modules                               | `academorix-<domain>/<name>`     | Domain grouping is the primary organizational axis for the product (sports, finance, growth, platform). |
-| Academorix domain SDKs                                  | `academorix-<domain>/<name>-sdk` | Sibling to the domain module, suffixed `-sdk`.                                                          |
-| Academorix top-level                                    | `academorix/<name>`              | For app-scope aggregators — the composer.json at the app root, if any.                                  |
+| Stackra domain modules                               | `stackra-<domain>/<name>`     | Domain grouping is the primary organizational axis for the product (sports, finance, growth, platform). |
+| Stackra domain SDKs                                  | `stackra-<domain>/<name>-sdk` | Sibling to the domain module, suffixed `-sdk`.                                                          |
+| Stackra top-level                                    | `stackra/<name>`              | For app-scope aggregators — the composer.json at the app root, if any.                                  |
 
 **Threshold for a new sub-vendor**: 3+ related packages that ship together AND
 share a bounded-context vocabulary. Below that threshold, stay flat —
@@ -79,7 +79,7 @@ justify a new sub-vendor.
 ## Rule 4 — Package name is kebab-case
 
 - ✓ `stackra/caching`, `stackra/service-provider`,
-  `academorix-sports/athlete-sdk`
+  `stackra-sports/athlete-sdk`
 - ✗ `stackra/Caching`, `stackra/serviceProvider`, `stackra/service_provider`
 
 Matches Laravel's own convention (`illuminate/support`, `illuminate/database`,
@@ -93,9 +93,9 @@ Given a composer name, the PHP namespace is deterministic:
 - `stackra/service-provider` → `Stackra\ServiceProvider\`
 - `stackra-observability/activity` → `Stackra\Observability\Activity\`
 - `stackra-shared/foundation` → `Stackra\Shared\Foundation\`
-- `academorix-sports/athlete-sdk` → `Academorix\Sports\AthleteSdk\`
-- `academorix-finance/chargeback` → `Academorix\Finance\Chargeback\`
-- `academorix/access` (if it existed) → `Academorix\Access\`
+- `stackra-sports/athlete-sdk` → `Stackra\Sports\AthleteSdk\`
+- `stackra-finance/chargeback` → `Stackra\Finance\Chargeback\`
+- `stackra/access` (if it existed) → `Stackra\Access\`
 
 Rule: split the vendor on `-` and split the package name on `-`. Each segment
 becomes a `StudlyCase` namespace part. Dashed vendors become nested namespaces.
@@ -138,7 +138,7 @@ post-rename.
 
 ## Rule 8 — The vendor rename is a boundary crossing
 
-A package moves from `stackra/*` to `academorix/*` (or the reverse) ONLY through
+A package moves from `stackra/*` to `stackra/*` (or the reverse) ONLY through
 an ADR. Signals a domain re-classification (framework concern turned product
 concern, or the other direction). Every such rename touches:
 
@@ -156,8 +156,8 @@ mechanical parts.
 
 Copy-paste checklist for authoring a new package:
 
-- [ ] Decide the vendor: `stackra/*`, `@stackra/*`, `academorix/*`,
-      `@academorix/*`, or a `-<domain>/*` sub-vendor.
+- [ ] Decide the vendor: `stackra/*`, `@stackra/*`, `stackra/*`,
+      `@stackra/*`, or a `-<domain>/*` sub-vendor.
 - [ ] Name in kebab-case.
 - [ ] No framework prefix (see Rule 2 for the third-party-adapter exception).
 - [ ] PHP namespace derives from the vendor per Rule 5.
@@ -183,7 +183,7 @@ Copy-paste checklist for authoring a new package:
 | ------------------------------------------------------------- | ------------------------------------------ |
 | `stackra/laravel-caching`                                     | `stackra/caching`                          |
 | `@stackra/ts-container`                                       | `@stackra/container`                       |
-| `academorix/sports-athlete`                                   | `academorix-sports/athlete`                |
+| `stackra/sports-athlete`                                   | `stackra-sports/athlete`                |
 | `stackra/frameworkCaching`                                    | `stackra/framework-caching` (kebab)        |
 | `stackra/framework/caching` (2 slashes)                       | `stackra/framework-caching`                |
 | `stackra/Caching` (PascalCase)                                | `stackra/caching`                          |
@@ -195,21 +195,21 @@ Copy-paste checklist for authoring a new package:
 At the time of this steering (2026-07-21), the following packages predate the
 steering and are locked as-is until the vendor migration lands:
 
-- `academorix-observability/{activity, audit, monitoring}` — the observability
+- `stackra-observability/{activity, audit, monitoring}` — the observability
   triad. Will migrate to `stackra-observability/*` under Rule 1.
-- `academorix-shared/foundation` — the shared substrate. Will migrate to
+- `stackra-shared/foundation` — the shared substrate. Will migrate to
   `stackra-shared/foundation`.
-- `academorix/{debugbar, horizon, nightwatch, omniterm, sentry, serializer}` —
-  Laravel adapters. Being renamed to `academorix/{name}` (this steering commit)
+- `stackra/{debugbar, horizon, nightwatch, omniterm, sentry, serializer}` —
+  Laravel adapters. Being renamed to `stackra/{name}` (this steering commit)
   and then migrated to `stackra/{name}` (subsequent vendor commit).
 
-All other `academorix/*` framework packages migrate to `stackra/*` in the
+All other `stackra/*` framework packages migrate to `stackra/*` in the
 vendor-migration commit.
 
 ## Related
 
 - ADR-0027 (planned) — the vendor split ADR that formalises the Stackra +
-  Academorix boundary.
+  Stackra boundary.
 - `.kiro/steering/hierarchy.md` — the platform tree that the vendor split aligns
   with.
 - `.kiro/steering/module-lifecycle.md` — how packages boot, per vendor.

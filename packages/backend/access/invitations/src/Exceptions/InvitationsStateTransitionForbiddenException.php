@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Exceptions;
+namespace Stackra\Invitations\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Attempt to move an invitation to a state that is not allowed from its current state (e.

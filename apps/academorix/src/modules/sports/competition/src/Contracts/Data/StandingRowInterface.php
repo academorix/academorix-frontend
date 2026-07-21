@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Competition\Contracts\Data;
+namespace Stackra\Competition\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Competition\Models\StandingRow;
+use Stackra\Competition\Models\StandingRow;
 
 /**
  * Table shape for the `standing_rows` table.

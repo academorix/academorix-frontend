@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Dunning\Contracts\Repositories;
+namespace Stackra\Dunning\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Dunning\Models\DunningEvent}.
+ * Repository contract for {@see Stackra\Dunning\Models\DunningEvent}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `DunningEventRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Dunning\Models\DunningEvent>
+ * @extends RepositoryInterface<\Stackra\Dunning\Models\DunningEvent>
  *
  * @category Dunning
  *

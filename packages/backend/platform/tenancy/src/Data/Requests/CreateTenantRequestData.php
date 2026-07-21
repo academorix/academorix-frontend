@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Data\Requests;
+namespace Stackra\Tenancy\Data\Requests;
 
-use Academorix\Application\Enums\BusinessTypeEnum;
-use Academorix\Tenancy\Rules\DnsSafeSlug;
-use Academorix\Tenancy\Rules\ReservedSlug;
+use Stackra\Application\Enums\BusinessTypeEnum;
+use Stackra\Tenancy\Rules\DnsSafeSlug;
+use Stackra\Tenancy\Rules\ReservedSlug;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Enum;
 use Spatie\LaravelData\Attributes\Validation\Max;

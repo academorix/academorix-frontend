@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/offline-sync/middleware",
+  "id": "stackra://modules/offline-sync/middleware",
   "$version": 1,
   "title": "offline-sync — HTTP middleware",
   "description": "Middleware aliases this module contributes.",

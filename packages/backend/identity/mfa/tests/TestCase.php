@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Tests;
+namespace Stackra\Mfa\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/mfa.
+ * Base test case for stackra/mfa.
  *
  * @category Mfa
  *

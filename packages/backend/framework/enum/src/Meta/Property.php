@@ -12,10 +12,10 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Enum\Meta;
+namespace Stackra\Enum\Meta;
 
-use Academorix\Support\Reflection;
-use Academorix\Support\Str;
+use Stackra\Support\Reflection;
+use Stackra\Support\Str;
 use ReflectionClass;
 
 /**
@@ -25,9 +25,9 @@ use ReflectionClass;
  *
  * ## Creating Custom Meta Properties:
  * ```php
- * use Academorix\Enum\Meta\Property;
+ * use Stackra\Enum\Meta\Property;
  * use Attribute;
-use Academorix\Support\Str;
+use Stackra\Support\Str;
  *
  * #[Attribute(Attribute::TARGET_CLASS_CONSTANT)]
  * class Color extends Property
@@ -44,7 +44,7 @@ use Academorix\Support\Str;
  * }
  * ```
  *
- * @author  Academorix Development Team
+ * @author  Stackra Development Team
  *
  * @since   1.0.0
  */

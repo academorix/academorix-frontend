@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Events;
+namespace Stackra\Notifications\Push\Events;
 
-use Academorix\Notifications\Push\Models\PushSubscription;
+use Stackra\Notifications\Push\Models\PushSubscription;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 /**
  * A new {@see PushSubscription} was persisted.
  *

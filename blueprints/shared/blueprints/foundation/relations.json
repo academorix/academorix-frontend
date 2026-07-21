@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/foundation/relations",
+  "id": "stackra://modules/foundation/relations",
   "$version": 1,
   "title": "foundation — cross-module relations",
   "description": "Foundation ships zero domain entities. There are no Eloquent relations rooted here. This file exists for uniform module shape so CI's cross-module validator + graph builder doesn't special-case foundation. Any downstream module's `relations.json` referencing `foundation` as a target module is a bug — foundation has no models to relate to.",

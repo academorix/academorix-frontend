@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/tenancy/permissions",
+  "id": "stackra://modules/tenancy/permissions",
   "$version": 1,
   "title": "tenants — permissions",
-  "description": "Permission strings this module publishes. Split by guard: platform_admin (Academorix staff surface) vs sanctum (tenant users self-serving their own tenant). Seeded by `TenancyPermissionSeeder` with `is_system=true` on `firstOrCreate` (idempotent).",
-  "seeder": "Academorix\\Tenancy\\Database\\Seeders\\TenancyPermissionSeeder",
+  "description": "Permission strings this module publishes. Split by guard: platform_admin (Stackra staff surface) vs sanctum (tenant users self-serving their own tenant). Seeded by `TenancyPermissionSeeder` with `is_system=true` on `firstOrCreate` (idempotent).",
+  "seeder": "Stackra\\Tenancy\\Database\\Seeders\\TenancyPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

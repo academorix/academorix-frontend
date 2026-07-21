@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Casts;
+namespace Stackra\Transfer\Casts;
 
-use Academorix\Transfer\Enums\ImportMode;
+use Stackra\Transfer\Enums\ImportMode;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 

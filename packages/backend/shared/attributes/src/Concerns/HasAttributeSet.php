@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attributes\Concerns;
+namespace Stackra\Attributes\Concerns;
 
 /**
  * Trait — HasAttributeSet.

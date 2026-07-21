@@ -8,7 +8,7 @@ declare(strict_types=1);
  * @description
  * Declaratively configures which conventional-path resources a
  * service provider should auto-load at boot. Consumed by the
- * {@see \Academorix\ServiceProvider\Concerns\LoadsResources} trait
+ * {@see \Stackra\ServiceProvider\Concerns\LoadsResources} trait
  * during the boot phase.
  *
  * ## Attribute-first — what this attribute deliberately does NOT cover
@@ -52,7 +52,7 @@ declare(strict_types=1);
  * concrete statement about what the provider ships.
  *
  * The alternative (defaults-on for a common six) was inherited
- * from the academorix origins where every package followed a strict
+ * from the stackra origins where every package followed a strict
  * shape (`src/Migrations/`, `src/i18n/`, `config/config.php`,
  * `src/routes/`). Our packages deliberately keep the classic
  * Laravel layout (`database/migrations/`, `lang/`,
@@ -71,9 +71,9 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\ServiceProvider\Attributes;
+namespace Stackra\ServiceProvider\Attributes;
 
-use Academorix\ServiceProvider\Compiler\DeferredProviderCompiler;
+use Stackra\ServiceProvider\Compiler\DeferredProviderCompiler;
 use Attribute;
 
 /**

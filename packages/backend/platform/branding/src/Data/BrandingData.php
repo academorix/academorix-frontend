@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Data;
+namespace Stackra\Branding\Data;
 
-use Academorix\Branding\Contracts\Data\BrandingInterface;
-use Academorix\Branding\Enums\BrandingTheme;
-use Academorix\Branding\Models\Branding;
+use Stackra\Branding\Contracts\Data\BrandingInterface;
+use Stackra\Branding\Enums\BrandingTheme;
+use Stackra\Branding\Models\Branding;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

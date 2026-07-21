@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/workflow/approvals/observers",
+  "id": "stackra://modules/workflow/approvals/observers",
   "$version": 1,
   "title": "approvals — Eloquent observers",
   "description": "Five observers enforce the engine's write-time invariants: action-key format + registry integrity, template versioning + one-active constraint, instance status-machine, requirement quorum evaluation, and decision integrity (the security-critical one). Every observer refuses writes that violate its invariant AND fires the appropriate event or ApprovalSecurityViolation.",
   "observers": [
     {
       "model": "ApprovableAction",
-      "observer": "Academorix\\Approval\\Observers\\ApprovableActionObserver",
+      "observer": "Stackra\\Approval\\Observers\\ApprovableActionObserver",
       "handles": [
         "creating → populate ULID prefix `aac_`",
         "creating → validate action_key matches `^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_]*)+$` (refused otherwise with `INVALID_ACTION_KEY_FORMAT`)",
@@ -21,7 +21,7 @@
     },
     {
       "model": "ApprovalTemplate",
-      "observer": "Academorix\\Approval\\Observers\\ApprovalTemplateObserver",
+      "observer": "Stackra\\Approval\\Observers\\ApprovalTemplateObserver",
       "handles": [
         "creating → populate ULID prefix `apt_`",
         "creating → set version=1 always",
@@ -39,7 +39,7 @@
     },
     {
       "model": "ApprovalInstance",
-      "observer": "Academorix\\Approval\\Observers\\ApprovalInstanceObserver",
+      "observer": "Stackra\\Approval\\Observers\\ApprovalInstanceObserver",
       "handles": [
         "creating → populate ULID prefix `api_`",
         "creating → snapshot template_version from approval_templates.version (immutable pin — subsequent template edits don't change this instance's semantics)",
@@ -60,7 +60,7 @@
     },
     {
       "model": "ApprovalRequirement",
-      "observer": "Academorix\\Approval\\Observers\\ApprovalRequirementObserver",
+      "observer": "Stackra\\Approval\\Observers\\ApprovalRequirementObserver",
       "handles": [
         "creating → populate ULID prefix `apr_`",
         "creating → snapshot selector_expression + quorum_type + quorum_n + sort_order from the parent approval_template_approvers row (frozen for audit — subsequent template edits don't change these snapshots)",
@@ -75,7 +75,7 @@
     },
     {
       "model": "ApprovalDecision",
-      "observer": "Academorix\\Approval\\Observers\\ApprovalDecisionObserver",
+      "observer": "Stackra\\Approval\\Observers\\ApprovalDecisionObserver",
       "handles": [
         "creating → populate ULID prefix `apd_`",
         "creating → REFUSE if approver_id NOT IN parent requirement.resolved_approvers → fire ApprovalSecurityViolation(violation_type='forged_decision') → refuse the write with 403 approval.caller_not_approver (P0 audit — closes the direct-DB forgery seam)",

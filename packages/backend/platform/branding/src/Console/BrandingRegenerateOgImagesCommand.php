@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Console;
+namespace Stackra\Branding\Console;
 
-use Academorix\Branding\Contracts\Repositories\BrandingRepositoryInterface;
-use Academorix\Branding\Jobs\RegenerateOgImageJob;
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
+use Stackra\Branding\Contracts\Repositories\BrandingRepositoryInterface;
+use Stackra\Branding\Jobs\RegenerateOgImageJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `php artisan branding:regenerate-og-images` — dispatch

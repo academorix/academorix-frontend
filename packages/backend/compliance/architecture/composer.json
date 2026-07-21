@@ -1,14 +1,14 @@
 {
-  "name": "academorix/architecture",
+  "name": "stackra/architecture",
   "type": "library",
-  "description": "Architectural enforcement for Academorix apps. Prevents direct model access outside Repository, Factory, Seeder, or explicitly-allowed contexts, and (optionally) forbids Controllers from bypassing Services to call Repositories. Ships marker attributes, contracts, a layer resolver, a source-file scanner, a rule engine, and an artisan command.",
+  "description": "Architectural enforcement for Stackra apps. Prevents direct model access outside Repository, Factory, Seeder, or explicitly-allowed contexts, and (optionally) forbids Controllers from bypassing Services to call Repositories. Ships marker attributes, contracts, a layer resolver, a source-file scanner, a rule engine, and an artisan command.",
   "license": "proprietary",
   "require": {
     "php": "^8.3",
-    "academorix/console": "@dev",
-    "academorix/foundation": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/service-provider": "@dev",
+    "stackra/console": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/service-provider": "@dev",
     "illuminate/contracts": "^13.0",
     "illuminate/console": "^13.0",
     "illuminate/support": "^13.0",
@@ -22,12 +22,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Architecture\\": "src/"
+      "Stackra\\Architecture\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Architecture\\Tests\\": "tests/"
+      "Stackra\\Architecture\\Tests\\": "tests/"
     }
   },
   "repositories": [
@@ -63,7 +63,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Architecture\\Providers\\ArchitectureServiceProvider"
+        "Stackra\\Architecture\\Providers\\ArchitectureServiceProvider"
       ],
       "aliases": {}
     },

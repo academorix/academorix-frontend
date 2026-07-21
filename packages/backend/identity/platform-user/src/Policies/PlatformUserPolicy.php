@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformUser\Policies;
+namespace Stackra\PlatformUser\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\PlatformUser\Models\PlatformUser;
+use Stackra\User\Models\User;
+use Stackra\PlatformUser\Models\PlatformUser;
 
 /**
- * Authorization policy for {@see \Academorix\PlatformUser\Models\PlatformUser}.
+ * Authorization policy for {@see \Stackra\PlatformUser\Models\PlatformUser}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *
@@ -21,7 +21,7 @@ use Academorix\PlatformUser\Models\PlatformUser;
 final class PlatformUserPolicy
 {
     /**
-     * Any Academorix staffer with the ops or product baseline role can list.
+     * Any Stackra staffer with the ops or product baseline role can list.
      *
      * @return bool
      */

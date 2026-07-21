@@ -10,7 +10,7 @@ fileMatchPattern: "**/*.php"
 > target: Laravel Octane; every service is Octane-safe by construction. The
 > "when in doubt, `#[Scoped]`" rule below is the invariant that ADR pins.
 
-Every Academorix backend app targets Laravel Octane in production (Roadrunner or
+Every Stackra backend app targets Laravel Octane in production (Roadrunner or
 Swoole worker pool). Octane keeps the framework + the container **alive between
 requests** in the same PHP process. Any service, closure, or static that
 captured request-1 state and got promoted to a singleton will silently serve
@@ -103,7 +103,7 @@ and construction is expensive enough to matter.
 Good candidates:
 
 - Deterministic mappers (like our `ExceptionMapper` — pure function from
-  throwable to Academorix exception).
+  throwable to Stackra exception).
 - Value-lookup tables built once at boot.
 - Cache-adapter wrappers (the adapter is stateless; the backing store is not).
 - Stateless computation helpers.
@@ -313,7 +313,7 @@ the model class — registered once at model boot, stays static across requests.
 ## The single-file cheat sheet
 
 ```php
-use Academorix\Foundation\Contracts\Clock;
+use Stackra\Foundation\Contracts\Clock;
 use Illuminate\Container\Attributes\{Auth, Cache, Config, CurrentUser, DB, Log};
 
 // ✅ Idiomatic Octane-safe service:
@@ -368,7 +368,7 @@ protected function bootBespoke(): void
     $this->app['events']->listen(
         \Laravel\Octane\Events\RequestTerminated::class,
         static function (): void {
-            \Academorix\MyPackage\Support\SomeGlobal::reset();
+            \Stackra\MyPackage\Support\SomeGlobal::reset();
         },
     );
 
@@ -377,7 +377,7 @@ protected function bootBespoke(): void
     $this->app['events']->listen(
         \Illuminate\Foundation\Http\Events\RequestHandled::class,
         static function (): void {
-            \Academorix\MyPackage\Support\SomeGlobal::reset();
+            \Stackra\MyPackage\Support\SomeGlobal::reset();
         },
     );
 }

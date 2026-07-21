@@ -52,14 +52,14 @@ Wave 2 module inception (`modules/transfer/`) takes ownership of the CSV / Excel
 substrate at inception; they retire here.
 
 - **removed traits** — `Importable`, `Exportable` (both moved to
-  `Academorix\Transfer\Concerns\HasImportable` /
-  `Academorix\Transfer\Concerns\HasExportable`). Foundation trait count drops
+  `Stackra\Transfer\Concerns\HasImportable` /
+  `Stackra\Transfer\Concerns\HasExportable`). Foundation trait count drops
   from 11 (as originally counted in the inception entry) to 9.
 - **removed blueprint macros** — `->importable()`, `->exportable()` (retired;
   transfer discovers via PHP attributes, not migration markers). Blueprint count
   drops from 10 to 8.
-- **removed jobs** — `Academorix\Foundation\Jobs\ProcessImportBatchJob`,
-  `Academorix\Foundation\Jobs\GenerateExportJob`. Transfer uses
+- **removed jobs** — `Stackra\Foundation\Jobs\ProcessImportBatchJob`,
+  `Stackra\Foundation\Jobs\GenerateExportJob`. Transfer uses
   `maatwebsite/excel`'s own `->queue()` chain + our shard coordinator on top, so
   it does not consume a foundation-level base job.
 - **removed bindings** — `ImportContractRegistry`, `ExportContractRegistry`
@@ -74,10 +74,10 @@ substrate at inception; they retire here.
   rename \u2014 both foundation and transfer are pre-release.
 - Consumer modules opting a model into imports / exports **must** add `transfer`
   to their `dependencies` and switch:
-  - `use Academorix\Foundation\Concerns\Importable;` \u2192
-    `use Academorix\Transfer\Concerns\HasImportable;`
-  - `use Academorix\Foundation\Concerns\Exportable;` \u2192
-    `use Academorix\Transfer\Concerns\HasExportable;`
+  - `use Stackra\Foundation\Concerns\Importable;` \u2192
+    `use Stackra\Transfer\Concerns\HasImportable;`
+  - `use Stackra\Foundation\Concerns\Exportable;` \u2192
+    `use Stackra\Transfer\Concerns\HasExportable;`
 - Migration files remove `->importable()` and `->exportable()` marker calls.
   Transfer discovers importable / exportable models by scanning `#[Importable]`
   / `#[Exportable]` PHP attributes on the model class, not via schema-side

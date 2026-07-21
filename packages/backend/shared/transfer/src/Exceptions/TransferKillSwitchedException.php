@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Exceptions;
+namespace Stackra\Transfer\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when one of the `transfer.*` kill switches is off.
@@ -13,7 +13,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TransferKillSwitchedException extends AcademorixException
+final class TransferKillSwitchedException extends StackraException
 {
     public const CODE = 'TRANSFER_KILL_SWITCHED';
 

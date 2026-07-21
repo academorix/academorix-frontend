@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Audit\Contracts\Data;
+namespace Stackra\Audit\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Audit\Models\AuditRetentionPolicy;
+use Stackra\Audit\Models\AuditRetentionPolicy;
 
 /**
  * Table shape for the `audit_retention_policies` table.

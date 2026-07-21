@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Messaging\Services;
+namespace Stackra\Messaging\Services;
 
-use Academorix\Messaging\Contracts\Services\MessagingBroadcasterInterface;
+use Stackra\Messaging\Contracts\Services\MessagingBroadcasterInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Messaging\Contracts\Repositories\ConversationParticipantRepositoryInterface;
+use Stackra\Messaging\Contracts\Repositories\ConversationParticipantRepositoryInterface;
 
 /**
  * Concrete service — MessagingBroadcaster.

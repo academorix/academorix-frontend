@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/facility/metrics",
+  "id": "stackra://modules/facility/metrics",
   "$version": 1,
   "title": "facility — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "academorix.facility",
+  "namespace": "stackra.facility",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": [
@@ -25,40 +25,40 @@
   },
   "metrics": [
     {
-      "name": "academorix.facility.catalogue.count",
+      "name": "stackra.facility.catalogue.count",
       "kind": "gauge",
       "unit": "facilities",
       "labels": ["facility_type", "status"],
       "description": "Count of facilities per (type, status). Sampled hourly. Powers capacity-planning dashboards."
     },
     {
-      "name": "academorix.facility.bookings.created_total",
+      "name": "stackra.facility.bookings.created_total",
       "kind": "counter",
       "unit": "bookings",
       "labels": ["facility_type", "duration_bucket", "used_pass"],
       "description": "duration_bucket: <60m / 60-120m / 120-240m / >240m. used_pass: true / false."
     },
     {
-      "name": "academorix.facility.bookings.cancelled_total",
+      "name": "stackra.facility.bookings.cancelled_total",
       "kind": "counter",
       "unit": "bookings",
       "labels": ["facility_type", "cascade_trigger", "within_notice_window"],
       "description": "cascade_trigger enum from BookingCancelled event; within_notice_window bool."
     },
     {
-      "name": "academorix.facility.bookings.completed_total",
+      "name": "stackra.facility.bookings.completed_total",
       "kind": "counter",
       "unit": "bookings",
       "labels": ["facility_type", "checked_in"]
     },
     {
-      "name": "academorix.facility.bookings.no_show_total",
+      "name": "stackra.facility.bookings.no_show_total",
       "kind": "counter",
       "unit": "bookings",
       "labels": ["facility_type", "trigger"]
     },
     {
-      "name": "academorix.facility.bookings.create_duration_ms",
+      "name": "stackra.facility.bookings.create_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 50, 200, 1000, 5000],
@@ -66,7 +66,7 @@
       "description": "Booking-create HTTP latency including the SERIALIZABLE overlap check. P99 target < 200ms; P99.9 < 1000ms."
     },
     {
-      "name": "academorix.facility.bookings.overlap_check_duration_ms",
+      "name": "stackra.facility.bookings.overlap_check_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1, 5, 20, 100, 500],
@@ -74,14 +74,14 @@
       "description": "Just the SERIALIZABLE overlap query duration. Should stay < 20ms P99 given the partial index; drift indicates index bloat."
     },
     {
-      "name": "academorix.facility.overlaps.detected",
+      "name": "stackra.facility.overlaps.detected",
       "kind": "counter",
       "unit": "overlaps",
       "labels": ["detected_by"],
       "description": "CRITICAL. Every increment indicates data-integrity risk. Should stay at 0. detected_by: observer / reconciler_job / audit_scan."
     },
     {
-      "name": "academorix.facility.available_slots.query_duration_ms",
+      "name": "stackra.facility.available_slots.query_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [5, 20, 100, 500, 2000],
@@ -89,19 +89,19 @@
       "description": "Latency of GET /facilities/{id}/available-slots. Hot endpoint — feeds the booking widget."
     },
     {
-      "name": "academorix.facility.day_passes.issued_total",
+      "name": "stackra.facility.day_passes.issued_total",
       "kind": "counter",
       "unit": "day_passes",
       "labels": ["payment_method", "is_anonymous", "age_band"]
     },
     {
-      "name": "academorix.facility.day_passes.consumed_total",
+      "name": "stackra.facility.day_passes.consumed_total",
       "kind": "counter",
       "unit": "day_passes",
       "labels": []
     },
     {
-      "name": "academorix.facility.day_passes.consumption_lag_seconds",
+      "name": "stackra.facility.day_passes.consumption_lag_seconds",
       "kind": "histogram",
       "unit": "seconds",
       "buckets": [60, 300, 3600, 21600, 43200, 86400],
@@ -109,101 +109,101 @@
       "description": "Time from purchased_at to consumed_at. Long tail indicates walk-ins buying in advance."
     },
     {
-      "name": "academorix.facility.day_passes.expired_total",
+      "name": "stackra.facility.day_passes.expired_total",
       "kind": "counter",
       "unit": "day_passes",
       "labels": []
     },
     {
-      "name": "academorix.facility.day_passes.refunded_total",
+      "name": "stackra.facility.day_passes.refunded_total",
       "kind": "counter",
       "unit": "day_passes",
       "labels": []
     },
     {
-      "name": "academorix.facility.passes.issued_total",
+      "name": "stackra.facility.passes.issued_total",
       "kind": "counter",
       "unit": "passes",
       "labels": ["facility_specific", "is_transferable"]
     },
     {
-      "name": "academorix.facility.passes.credit_consumed_total",
+      "name": "stackra.facility.passes.credit_consumed_total",
       "kind": "counter",
       "unit": "credits",
       "labels": []
     },
     {
-      "name": "academorix.facility.passes.exhausted_total",
+      "name": "stackra.facility.passes.exhausted_total",
       "kind": "counter",
       "unit": "passes",
       "labels": []
     },
     {
-      "name": "academorix.facility.passes.expired_total",
+      "name": "stackra.facility.passes.expired_total",
       "kind": "counter",
       "unit": "passes",
       "labels": []
     },
     {
-      "name": "academorix.facility.passes.revoked_total",
+      "name": "stackra.facility.passes.revoked_total",
       "kind": "counter",
       "unit": "passes",
       "labels": []
     },
     {
-      "name": "academorix.facility.passes.double_spend_attempts_total",
+      "name": "stackra.facility.passes.double_spend_attempts_total",
       "kind": "counter",
       "unit": "attempts",
       "labels": [],
       "description": "CRITICAL. Every fire is a P1 signal. Should stay at 0."
     },
     {
-      "name": "academorix.facility.blackouts.added_total",
+      "name": "stackra.facility.blackouts.added_total",
       "kind": "counter",
       "unit": "blackouts",
       "labels": []
     },
     {
-      "name": "academorix.facility.blackouts.cascaded_cancellations_total",
+      "name": "stackra.facility.blackouts.cascaded_cancellations_total",
       "kind": "counter",
       "unit": "bookings",
       "labels": []
     },
     {
-      "name": "academorix.facility.pricing.updates_total",
+      "name": "stackra.facility.pricing.updates_total",
       "kind": "counter",
       "unit": "updates",
       "labels": []
     },
     {
-      "name": "academorix.facility.reminders.dispatched_total",
+      "name": "stackra.facility.reminders.dispatched_total",
       "kind": "counter",
       "unit": "reminders",
       "labels": ["hours_before"]
     },
     {
-      "name": "academorix.facility.reminders.skipped_total",
+      "name": "stackra.facility.reminders.skipped_total",
       "kind": "counter",
       "unit": "reminders",
       "labels": ["reason"],
       "description": "reason: user_opted_out / booking_cancelled / short_notice / kill_switch"
     },
     {
-      "name": "academorix.facility.reconcile.orphan_bookings_found",
+      "name": "stackra.facility.reconcile.orphan_bookings_found",
       "kind": "counter",
       "unit": "bookings",
       "labels": [],
       "description": "ReconcileBookingsAgainstRetiredFacilitiesJob finding count. Should stay at 0."
     },
     {
-      "name": "academorix.facility.reconcile.overlap_pairs_found",
+      "name": "stackra.facility.reconcile.overlap_pairs_found",
       "kind": "counter",
       "unit": "pairs",
       "labels": [],
       "description": "ReconcileBookingOverlapsJob finding count. Should stay at 0."
     },
     {
-      "name": "academorix.facility.entitlement.gate_refusals_total",
+      "name": "stackra.facility.entitlement.gate_refusals_total",
       "kind": "counter",
       "unit": "refusals",
       "labels": ["entitlement_key"],

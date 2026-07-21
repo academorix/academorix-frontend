@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Membership\Repositories;
+namespace Stackra\Membership\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Membership\Contracts\Data\PassInterface;
-use Academorix\Membership\Contracts\Repositories\PassRepositoryInterface;
-use Academorix\Membership\Models\Pass;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Membership\Contracts\Data\PassInterface;
+use Stackra\Membership\Contracts\Repositories\PassRepositoryInterface;
+use Stackra\Membership\Models\Pass;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Membership\Models\Pass}.
+ * Attribute-first Eloquent repository for {@see Stackra\Membership\Models\Pass}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(PassInterface::class)]` which resolves to
  * `Pass` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Membership\Models\Pass>
+ * @extends Repository<\Stackra\Membership\Models\Pass>
  *
  * @category Membership
  *

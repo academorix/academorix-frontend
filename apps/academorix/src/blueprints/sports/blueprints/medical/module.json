@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "medical",
   "alias": "medical",
-  "namespace": "Academorix\\Sports\\Medical",
+  "namespace": "Stackra\\Sports\\Medical",
   "description": "Health records + return-to-play gating per blueprint §14.3. Sensitive-data module — restricted RBAC (medical role + admin only) + encrypted at rest. Ships SIX owned entities: `MedicalRecord` (root health record per athlete; container for downstream), `Injury` (per-athlete injury event — body_part / mechanism / severity / onset_at / status reported→under_treatment→recovering→cleared), `Treatment` (treatment record linked to an Injury — provider / date / notes / follow_up_at; encrypted), `MedicalClearance` (certificate — issued_by_user + issued_at + expires_at + scope IN all_activities/limited/pending_review; ELIGIBILITY GATE consumed by match squad selection + attendance check-in), `Allergy` (allergen / severity / notes; surfaced to coaches via safe read only), `Medication` (name / dosage / frequency / prescribing_provider / expires_at; medical role restricted). Eligibility gate blocks squad selection when clearance expired OR injury active. Emits `RETURN_TO_PLAY_CLEARED` event on cleared status. All records subject to strict RBAC + encrypted columns + GDPR export-before-delete.",
   "keywords": [
     "medical",
@@ -17,7 +17,7 @@
     "wave-3"
   ],
   "priority": 80,
-  "providers": ["Academorix\\Sports\\Medical\\Providers\\MedicalServiceProvider"],
+  "providers": ["Stackra\\Sports\\Medical\\Providers\\MedicalServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

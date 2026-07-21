@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/staff/errors",
+  "id": "stackra://modules/staff/errors",
   "$version": 1,
   "title": "staff — error codes",
   "namespace": "staff",

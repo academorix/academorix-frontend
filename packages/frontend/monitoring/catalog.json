@@ -1,5 +1,5 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
   "name": "@stackra/monitoring",
   "tier": "saas",
   "surfaces": ["core", "react", "testing"],
@@ -26,7 +26,7 @@
     "react",
     "reflect-metadata"
   ],
-  "backend_pair": "academorix/monitoring",
+  "backend_pair": "stackra/monitoring",
   "size_gzip_kb": {},
   "maturity": "alpha",
   "owning_agent": "framework-core-builder",

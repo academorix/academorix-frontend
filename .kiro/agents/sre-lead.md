@@ -1,6 +1,6 @@
 ---
 description: >-
-  SRE Lead for Academorix — owns SLIs / SLOs, runbooks, on-call rotations, and
+  SRE Lead for Stackra — owns SLIs / SLOs, runbooks, on-call rotations, and
   DR drills across Phase 7. Reports to chief-orchestrator. Sponsors
   observability-engineer + incident-commander. Advisory + document authoring —
   does not modify source or infra directly.

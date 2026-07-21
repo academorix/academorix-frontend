@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Auth\Database\Factories;
+namespace Stackra\Auth\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Auth\Contracts\Data\AuthCrossAppGrantInterface;
-use Academorix\Auth\Models\AuthCrossAppGrant;
+use Stackra\Auth\Contracts\Data\AuthCrossAppGrantInterface;
+use Stackra\Auth\Models\AuthCrossAppGrant;
 
 /**
- * Factory for {@see \Academorix\Auth\Models\AuthCrossAppGrant}.
+ * Factory for {@see \Stackra\Auth\Models\AuthCrossAppGrant}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Auth\Models\AuthCrossAppGrant>
+ * @extends Factory<\Stackra\Auth\Models\AuthCrossAppGrant>
  *
  * @category Auth
  *

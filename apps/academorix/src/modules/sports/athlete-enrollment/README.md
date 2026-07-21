@@ -1,4 +1,4 @@
-# academorix/athlete-enrollment
+# stackra/athlete-enrollment
 
 Server-side Laravel package for the `athlete-enrollment` module. Auto-generated
 from the blueprint at `modules/sports/blueprints/athlete-enrollment/`.
@@ -44,6 +44,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-sports/athlete-enrollment-sdk` under
+`stackra-sports/athlete-enrollment-sdk` under
 `sdk/sports-athlete-enrollment-sdk/`. Consumers cross the service boundary
 through the SDK; this package is the SERVER-side owner of the domain.

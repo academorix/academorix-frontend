@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Contracts\Services;
+namespace Stackra\Geography\Contracts\Services;
 
-use Academorix\Geography\Data\GeolocationData;
-use Academorix\Geography\Services\MaxMindGeolocateService;
+use Stackra\Geography\Data\GeolocationData;
+use Stackra\Geography\Services\MaxMindGeolocateService;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -44,8 +44,8 @@ interface GeolocateServiceInterface
      * @return GeolocationData|null  The resolved location, or `null`
      *                               when both sources fail.
      *
-     * @throws \Academorix\Geography\Exceptions\GeographyGeolocateInvalidIpException
-     * @throws \Academorix\Geography\Exceptions\GeographyGeolocatePrivateIpException
+     * @throws \Stackra\Geography\Exceptions\GeographyGeolocateInvalidIpException
+     * @throws \Stackra\Geography\Exceptions\GeographyGeolocatePrivateIpException
      */
     public function resolve(string $ip, ?string $locale = null): ?GeolocationData;
 
@@ -53,7 +53,7 @@ interface GeolocateServiceInterface
      * Refresh the local GeoLite2-City database via
      * `Nnjeim\World\Console\Commands\GeoipCommand`.
      *
-     * @throws \Academorix\Geography\Exceptions\GeographyMaxMindMissingException
+     * @throws \Stackra\Geography\Exceptions\GeographyMaxMindMissingException
      */
     public function refreshMaxMindDatabase(): void;
 }

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/organization/macros",
+  "id": "stackra://modules/organization/macros",
   "$version": 1,
   "title": "organization — published macros",
   "description": "One Blueprint macro. `Blueprint::organizationable()` adds the `organization_id` column + FK + index used by every table below Organization that needs to identify which brand owns the row (Branches, Teams, and future planned aggregates). Registered by OrganizationServiceProvider::boot() during framework boot so every downstream migration can call it regardless of priority ordering.",
@@ -40,12 +40,12 @@
       },
       "description": "Adds the FK column + index + FK constraint used by tables that belong to an Organization. Pairs with the `BelongsToOrganization` trait on the model (composed AFTER `BelongsToTenant`).",
       "companion": {
-        "trait": "Academorix\\Organization\\Concerns\\BelongsToOrganization",
+        "trait": "Stackra\\Organization\\Concerns\\BelongsToOrganization",
         "reference": "See `traits.json` for the trait's global-scope + auto-fill behaviour."
       },
       "usage_example": "// In branches migration\nSchema::create('branches', function (Blueprint $t) {\n    $t->prefixedUlid('id', 'brc_');\n    $t->tenantable();\n    $t->organizationable();  // ← adds organization_id + FK + index\n    $t->foreignId('region_id')->constrained();\n    // ...\n});",
       "boot_order_note": "Registered by OrganizationServiceProvider::boot(). Because Laravel loads every ServiceProvider's boot() before running any migration, the macro is available to every migration regardless of the organization module's priority (41)."
     }
   ],
-  "registered_by": "Academorix\\Organization\\Providers\\OrganizationServiceProvider::boot()"
+  "registered_by": "Stackra\\Organization\\Providers\\OrganizationServiceProvider::boot()"
 }

@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/tenancy/policies",
+  "id": "stackra://modules/tenancy/policies",
   "$version": 1,
   "title": "tenants — authorization policies",
   "description": "Policy classes and the abilities they gate. Most policies target the `platform_admin` guard (the tenant catalogue is a platform-plane concern). Tenant-scoped self-service abilities (a tenant admin editing their own tenant) target the `sanctum` guard and are marked `guard: sanctum`. Policies registered by `TenancyServiceProvider::registerPolicies()`.",
   "policies": [
     {
-      "class": "Academorix\\Tenancy\\Policies\\ApplicationPolicy",
-      "target": "Academorix\\Tenancy\\Models\\Application",
+      "class": "Stackra\\Tenancy\\Policies\\ApplicationPolicy",
+      "target": "Stackra\\Tenancy\\Models\\Application",
       "guard": "platform_admin",
       "abilities": [
         { "name": "viewAny", "requires": ["view_applications OR manage_applications"] },
@@ -17,8 +17,8 @@
       ]
     },
     {
-      "class": "Academorix\\Tenancy\\Policies\\TenantPolicy",
-      "target": "Academorix\\Tenancy\\Models\\Tenant",
+      "class": "Stackra\\Tenancy\\Policies\\TenantPolicy",
+      "target": "Stackra\\Tenancy\\Models\\Tenant",
       "guard": "platform_admin",
       "abilities": [
         { "name": "viewAny", "requires": ["view_tenants OR manage_tenants"] },
@@ -41,8 +41,8 @@
       ]
     },
     {
-      "class": "Academorix\\Tenancy\\Policies\\TenantSelfPolicy",
-      "target": "Academorix\\Tenancy\\Models\\Tenant",
+      "class": "Stackra\\Tenancy\\Policies\\TenantSelfPolicy",
+      "target": "Stackra\\Tenancy\\Models\\Tenant",
       "guard": "sanctum",
       "abilities": [
         {
@@ -53,8 +53,8 @@
       ]
     },
     {
-      "class": "Academorix\\Tenancy\\Policies\\BusinessTypePolicy",
-      "target": "Academorix\\Tenancy\\Models\\BusinessType",
+      "class": "Stackra\\Tenancy\\Policies\\BusinessTypePolicy",
+      "target": "Stackra\\Tenancy\\Models\\BusinessType",
       "guard": "platform_admin",
       "abilities": [
         { "name": "create", "requires": ["manage_business_types"] },
@@ -67,8 +67,8 @@
       ]
     },
     {
-      "class": "Academorix\\Tenancy\\Policies\\DomainPolicy",
-      "target": "Academorix\\Tenancy\\Models\\Domain",
+      "class": "Stackra\\Tenancy\\Policies\\DomainPolicy",
+      "target": "Stackra\\Tenancy\\Models\\Domain",
       "guard": ["platform_admin", "sanctum"],
       "abilities": [
         {
@@ -90,8 +90,8 @@
       ]
     },
     {
-      "class": "Academorix\\Tenancy\\Policies\\DomainRecordPolicy",
-      "target": "Academorix\\Tenancy\\Models\\DomainRecord",
+      "class": "Stackra\\Tenancy\\Policies\\DomainRecordPolicy",
+      "target": "Stackra\\Tenancy\\Models\\DomainRecord",
       "guard": ["platform_admin", "sanctum"],
       "abilities": [
         { "name": "viewAny", "requires": ["tenants.manage_domains OR manage_tenants"] },
@@ -100,8 +100,8 @@
       "note": "Read-only. DomainRecord rows are populated by DomainObserver; there is no direct create/update path."
     },
     {
-      "class": "Academorix\\Tenancy\\Policies\\BrandingPolicy",
-      "target": "Academorix\\Tenancy\\Models\\Branding",
+      "class": "Stackra\\Tenancy\\Policies\\BrandingPolicy",
+      "target": "Stackra\\Tenancy\\Models\\Branding",
       "guard": ["platform_admin", "sanctum"],
       "abilities": [
         { "name": "viewAny", "requires": ["manage_tenants OR tenants.manage_branding"] },
@@ -121,8 +121,8 @@
       ]
     },
     {
-      "class": "Academorix\\Tenancy\\Policies\\IdentityPolicy",
-      "target": "Academorix\\Tenancy\\Models\\Identity",
+      "class": "Stackra\\Tenancy\\Policies\\IdentityPolicy",
+      "target": "Stackra\\Tenancy\\Models\\Identity",
       "guard": "platform_admin",
       "abilities": [
         { "name": "viewAny", "requires": ["manage_identities OR manage_tenants"] },
@@ -136,8 +136,8 @@
       "note": "No create/update — Identity rows are created by the auth flow, not by admin CRUD."
     },
     {
-      "class": "Academorix\\Tenancy\\Policies\\TenantContactPolicy",
-      "target": "Academorix\\Tenancy\\Models\\TenantContact",
+      "class": "Stackra\\Tenancy\\Policies\\TenantContactPolicy",
+      "target": "Stackra\\Tenancy\\Models\\TenantContact",
       "guard": ["platform_admin", "sanctum"],
       "abilities": [
         { "name": "viewAny", "requires": ["manage_tenants OR tenants.manage_contacts"] },
@@ -152,8 +152,8 @@
       ]
     },
     {
-      "class": "Academorix\\Tenancy\\Policies\\TenantIntegrationPolicy",
-      "target": "Academorix\\Tenancy\\Models\\TenantIntegration",
+      "class": "Stackra\\Tenancy\\Policies\\TenantIntegrationPolicy",
+      "target": "Stackra\\Tenancy\\Models\\TenantIntegration",
       "guard": ["platform_admin", "sanctum"],
       "abilities": [
         { "name": "viewAny", "requires": ["manage_tenants OR tenants.manage_integrations"] },

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Exceptions;
+namespace Stackra\Coupon\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Redemption fields are immutable except for the reversal path (reversed_at, clawback_reason, reversed_by_user_id).
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CouponRedemptionImmutableException extends AcademorixException
+final class CouponRedemptionImmutableException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

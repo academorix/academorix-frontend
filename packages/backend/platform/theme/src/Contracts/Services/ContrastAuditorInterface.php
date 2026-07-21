@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Contracts\Services;
+namespace Stackra\Theme\Contracts\Services;
 
-use Academorix\Theme\Services\ContrastAuditor;
+use Stackra\Theme\Services\ContrastAuditor;
 use Illuminate\Container\Attributes\Bind;
 
 /**

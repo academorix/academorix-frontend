@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/user/analytics",
+  "id": "stackra://modules/user/analytics",
   "$version": 1,
   "title": "user \u2014 product analytics",
   "sink": "segment",

@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/region/observers",
+  "id": "stackra://modules/region/observers",
   "$version": 1,
   "title": "region — Eloquent observers",
   "observers": [
     {
       "model": "Region",
-      "observer": "Academorix\\Region\\Observers\\RegionObserver",
+      "observer": "Stackra\\Region\\Observers\\RegionObserver",
       "handles": [
         "creating → populate ULID prefix `reg_`.",
         "creating → apply country_code defaults from `data/country-defaults.json` when currency / timezone / locale / weekend_days / tax_config fields are left unset by the caller (RegionProvisioner honours partial input — caller may supply { country_code: 'AE' } and receive AED + Asia/Dubai + ar-AE + [friday, saturday] + VAT 5% auto-filled).",

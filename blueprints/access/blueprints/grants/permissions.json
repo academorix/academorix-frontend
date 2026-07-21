@@ -1,9 +1,9 @@
 {
-  "id": "academorix://modules/grants/permissions",
+  "id": "stackra://modules/grants/permissions",
   "$version": 1,
   "title": "grants — permissions",
-  "description": "Permission strings this module publishes. Split by guard: `sanctum` for tenant admins + tenant users managing grants; `platform_admin` for Academorix ops with cross-tenant read + audit-report authority. Seeded by GrantPermissionSeeder with is_system=true.",
-  "seeder": "Academorix\\Grant\\Database\\Seeders\\GrantPermissionSeeder",
+  "description": "Permission strings this module publishes. Split by guard: `sanctum` for tenant admins + tenant users managing grants; `platform_admin` for Stackra ops with cross-tenant read + audit-report authority. Seeded by GrantPermissionSeeder with is_system=true.",
+  "seeder": "Stackra\\Grant\\Database\\Seeders\\GrantPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

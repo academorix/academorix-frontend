@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "activity",
   "alias": "activity",
-  "namespace": "Academorix\\Observability\\Activity",
+  "namespace": "Stackra\\Observability\\Activity",
   "description": "The activity lane. Wraps vendor `spatie/laravel-activitylog` for tenant-user-facing 'What happened recently?' feeds. Human-readable log lines that answer 'what did I / my team / this branch do this week?'. Distinct from `audit` (Wave 6 sibling — audit is regulator-facing compliance grade). Same domain events NEVER both — a mutation fires audit OR activity, never both. Medium loss tolerance (sample OK on backpressure), 90d default retention (extends to 1y with `activity_extended_retention` Enterprise). Adapts vendor `activity_log` table by adding `tenant_id` NOT NULL + `application_id` NULLABLE + composite indexes + backfill from `properties.tenant_id` jsonb. Ships two aggregates: `Activity` (the adapted vendor table wrapped with BelongsToTenant + polymorphic subject/causer) and `ActivityRetentionPolicy` (per-tenant retention override). Each module adds `LogsActivity` trait to models WHERE user-facing activity capture is wanted (NOT everywhere — audit captures everything; activity captures deliberate user-visible events like 'Alice booked court 3 for tomorrow'). Consumer contract: opt-in via `LogsActivity` trait + `activity_log` config on the model.",
   "keywords": [
     "activity",
@@ -20,7 +20,7 @@
     "ccpa-1798.100"
   ],
   "priority": 21,
-  "providers": ["Academorix\\Observability\\Activity\\Providers\\ActivityServiceProvider"],
+  "providers": ["Stackra\\Observability\\Activity\\Providers\\ActivityServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "application", "user"],
   "extendedBy": [],
@@ -99,7 +99,7 @@
       ]
     },
     "platform-admin": {
-      "description": "Platform-admin cross-tenant activity read for Academorix support. Read-only — writes still go through the tenant `LogsActivity` trait.",
+      "description": "Platform-admin cross-tenant activity read for Stackra support. Read-only — writes still go through the tenant `LogsActivity` trait.",
       "routes": ["GET /api/v1/platform/activities", "GET /api/v1/platform/activities/{activity}"]
     }
   }

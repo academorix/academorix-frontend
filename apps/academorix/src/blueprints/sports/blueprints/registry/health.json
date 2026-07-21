@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/sports-registry/health",
+  "id": "stackra://modules/sports-registry/health",
   "$version": 1,
   "title": "sports-registry — health probes",
   "probes": [
     {
       "name": "sports-registry-tables-migrated",
-      "class": "Academorix\\Sports\\Registry\\Health\\Probes\\TablesMigratedProbe",
+      "class": "Stackra\\Sports\\Registry\\Health\\Probes\\TablesMigratedProbe",
       "category": "startup",
       "critical": true,
       "description": "The `sports` + `disciplines` + `positions` tables exist + carry the latest schema version. Failure indicates a missed migration — every Wave 3 module depends on this schema.",
@@ -13,7 +13,7 @@
     },
     {
       "name": "sports-registry-platform-catalog-loaded",
-      "class": "Academorix\\Sports\\Registry\\Health\\Probes\\PlatformCatalogLoadedProbe",
+      "class": "Stackra\\Sports\\Registry\\Health\\Probes\\PlatformCatalogLoadedProbe",
       "category": "startup",
       "critical": true,
       "description": "The platform-seeded catalog is present (SELECT COUNT WHERE tenant_id IS NULL >= 30). Failure means SeedPlatformSportsCatalogJob hasn't run OR the boot listener failed silently. Every Wave 3 write depends on the catalog being present — this probe is critical.",
@@ -21,7 +21,7 @@
     },
     {
       "name": "sports-registry-catalog-json-parseable",
-      "class": "Academorix\\Sports\\Registry\\Health\\Probes\\CatalogJsonParseableProbe",
+      "class": "Stackra\\Sports\\Registry\\Health\\Probes\\CatalogJsonParseableProbe",
       "category": "startup",
       "critical": true,
       "description": "`data/platform-sports-catalog.json` parses cleanly + validates against the ships schema. Failure indicates a corrupted deploy artifact — a reseed would fail.",
@@ -29,7 +29,7 @@
     },
     {
       "name": "sports-registry-tenant-fk-integrity",
-      "class": "Academorix\\Sports\\Registry\\Health\\Probes\\TenantFkIntegrityProbe",
+      "class": "Stackra\\Sports\\Registry\\Health\\Probes\\TenantFkIntegrityProbe",
       "category": "readiness",
       "critical": false,
       "description": "Every non-null `sports.tenant_id` / `disciplines.tenant_id` / `positions.tenant_id` resolves to a live tenant. FK is CASCADE so orphans should be impossible via the DB; this probe catches direct SQL manipulation.",
@@ -37,7 +37,7 @@
     },
     {
       "name": "sports-registry-slug-uniqueness",
-      "class": "Academorix\\Sports\\Registry\\Health\\Probes\\SlugUniquenessProbe",
+      "class": "Stackra\\Sports\\Registry\\Health\\Probes\\SlugUniquenessProbe",
       "category": "readiness",
       "critical": false,
       "description": "No two active rows in the same scoping tuple share a slug. Sport: (tenant_id NULL for platform, slug) OR (tenant_id X, slug) unique. Same for disciplines under (sport_id, slug) + positions under (discipline_id, slug). Backed by partial unique indexes; the probe verifies the indexes are in place + healthy.",
@@ -45,7 +45,7 @@
     },
     {
       "name": "sports-registry-parent-fk-integrity",
-      "class": "Academorix\\Sports\\Registry\\Health\\Probes\\ParentFkIntegrityProbe",
+      "class": "Stackra\\Sports\\Registry\\Health\\Probes\\ParentFkIntegrityProbe",
       "category": "readiness",
       "critical": false,
       "description": "Every `disciplines.sport_id` resolves to a live sport; every `positions.discipline_id` resolves to a live discipline. FKs are RESTRICT so the DB blocks the deletion; this probe catches direct SQL manipulation.",
@@ -53,7 +53,7 @@
     },
     {
       "name": "sports-registry-cross-tenant-references",
-      "class": "Academorix\\Sports\\Registry\\Health\\Probes\\CrossTenantReferenceProbe",
+      "class": "Stackra\\Sports\\Registry\\Health\\Probes\\CrossTenantReferenceProbe",
       "category": "readiness",
       "critical": true,
       "description": "SECURITY probe. Verifies that no `disciplines.tenant_id` differs from its parent `sports.tenant_id` in a cross-tenant way (parent must be same-tenant OR platform-seeded). Same for positions vs disciplines. A failure indicates a security anomaly — cross-tenant FK smuggling.",
@@ -61,7 +61,7 @@
     },
     {
       "name": "sports-registry-resolver-reachable",
-      "class": "Academorix\\Sports\\Registry\\Health\\Probes\\ResolverReachableProbe",
+      "class": "Stackra\\Sports\\Registry\\Health\\Probes\\ResolverReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "SportKeyResolver responds to a known-good query (`resolve('football', null, null, null)` against the platform catalog). Failure indicates the resolver's cache layer + DB path are both down.",
@@ -69,7 +69,7 @@
     },
     {
       "name": "sports-registry-reconciler-recent",
-      "class": "Academorix\\Sports\\Registry\\Health\\Probes\\ReconcilerRecentProbe",
+      "class": "Stackra\\Sports\\Registry\\Health\\Probes\\ReconcilerRecentProbe",
       "category": "readiness",
       "critical": false,
       "description": "ReconcileSportReferencesJob has completed in the last 26 hours (nightly + 2h grace). Reads from `sports:reconciler_last_run` cache key. Failure indicates the scheduled task is stuck.",
@@ -77,7 +77,7 @@
     },
     {
       "name": "sports-registry-drift-count-bounded",
-      "class": "Academorix\\Sports\\Registry\\Health\\Probes\\DriftCountBoundedProbe",
+      "class": "Stackra\\Sports\\Registry\\Health\\Probes\\DriftCountBoundedProbe",
       "category": "readiness",
       "critical": false,
       "description": "The count of `SportPrefixResolutionFailed` events in the last 24 hours is below `config('sports_registry.health.drift_alarm_threshold')` (default 10). A high count signals downstream schema drift OR a catalog reseed that deactivated a slug still in use — either way, ops attention needed.",
@@ -85,7 +85,7 @@
     },
     {
       "name": "sports-registry-purge-queue-drained",
-      "class": "Academorix\\Sports\\Registry\\Health\\Probes\\PurgeQueueDrainedProbe",
+      "class": "Stackra\\Sports\\Registry\\Health\\Probes\\PurgeQueueDrainedProbe",
       "category": "readiness",
       "critical": false,
       "description": "No PurgeArchivedRegistryRowsJob has been pending for > 8 days (weekly + 1d grace). Catches queue stalls that could push deactivated customs indefinitely past their 730-day retention window.",

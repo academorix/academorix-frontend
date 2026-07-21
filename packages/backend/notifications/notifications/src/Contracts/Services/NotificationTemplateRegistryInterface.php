@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Contracts\Services;
+namespace Stackra\Notifications\Contracts\Services;
 
-use Academorix\Notifications\Services\NotificationTemplateRegistry;
+use Stackra\Notifications\Services\NotificationTemplateRegistry;
 use Illuminate\Container\Attributes\Bind;
 
 /**

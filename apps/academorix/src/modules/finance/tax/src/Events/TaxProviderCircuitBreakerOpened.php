@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Events;
+namespace Stackra\Tax\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog
  * - notifications::DispatchTaxProviderCircuitBreakerOpenedNotification (cannot-opt-out — pages finance ops)
- * - monitoring::MetricsCollector (increments academorix.tax.circuit_breakers.opened_total)
+ * - monitoring::MetricsCollector (increments stackra.tax.circuit_breakers.opened_total)
  *
  * @category Tax
  *

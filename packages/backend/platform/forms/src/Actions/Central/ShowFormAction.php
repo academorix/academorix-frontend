@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Forms\Actions\Central;
+namespace Stackra\Forms\Actions\Central;
 
-use Academorix\Forms\Contracts\Repositories\FormRepositoryInterface;
-use Academorix\Forms\Data\FormData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Forms\Contracts\Repositories\FormRepositoryInterface;
+use Stackra\Forms\Data\FormData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 
 /**
  * `GET /forms/{signature}` — show action (central audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Forms

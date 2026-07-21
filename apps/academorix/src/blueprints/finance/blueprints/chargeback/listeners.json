@@ -1,144 +1,144 @@
 {
-  "id": "academorix://modules/chargeback/listeners",
+  "id": "stackra://modules/chargeback/listeners",
   "$version": 1,
   "title": "chargeback — subscribed events",
   "listeners": [
     {
       "event": "chargeback::ChargebackLost",
-      "listener": "Academorix\\Finance\\Chargeback\\Listeners\\RecordOffsettingTransactionOnChargebackLost",
+      "listener": "Stackra\\Finance\\Chargeback\\Listeners\\RecordOffsettingTransactionOnChargebackLost",
       "queue": "chargebacks-critical",
       "priority": 10,
       "purpose": "Finalization chain step 1 (runs first). Uses transaction::TransactionRecorder::recordChargebackLoss($event->chargeback_id) to record the double-entry ledger movement for the disputed amount: debit chargebacks_expense, credit cash. Persists transaction_id back onto the chargeback row."
     },
     {
       "event": "chargeback::ChargebackLost",
-      "listener": "Academorix\\Finance\\Chargeback\\Listeners\\RecordNetworkFeeOnChargebackLost",
+      "listener": "Stackra\\Finance\\Chargeback\\Listeners\\RecordNetworkFeeOnChargebackLost",
       "queue": "chargebacks-critical",
       "priority": 20,
       "purpose": "Finalization chain step 2. Uses NetworkFeeCalculator::compute + transaction::TransactionRecorder::recordChargebackFee to record the SECONDARY offsetting Transaction for the network fee: debit chargeback_fees, credit cash. Persists fee_transaction_id back onto the chargeback row. Fires ChargebackNetworkFeeRecorded."
     },
     {
       "event": "chargeback::ChargebackLost",
-      "listener": "Academorix\\Finance\\Chargeback\\Listeners\\MarkInvoiceDisputedOnChargebackLost",
+      "listener": "Stackra\\Finance\\Chargeback\\Listeners\\MarkInvoiceDisputedOnChargebackLost",
       "queue": "chargebacks-critical",
       "priority": 30,
       "purpose": "Finalization chain step 3. Uses invoice::InvoiceStateUpdater::markDisputed to update parent invoice.status='disputed' + persist amount_disputed_cents. Also invokes invoice::CreditNoteIssuer::createFromChargeback for tax-reversal credit note (except reason_category='card_recovery')."
     },
     {
       "event": "chargeback::ChargebackLost",
-      "listener": "Academorix\\Finance\\Chargeback\\Listeners\\CascadeClawbackOnChargebackLost",
+      "listener": "Stackra\\Finance\\Chargeback\\Listeners\\CascadeClawbackOnChargebackLost",
       "queue": "chargebacks-critical",
       "priority": 40,
       "purpose": "Finalization chain step 4. Uses ClawbackCoordinator::fanOut to dispatch ChargebackClawbackReferral (when materialized referral reward exists) + ChargebackClawbackCoupon (when redeemed coupon exists) events downstream."
     },
     {
       "event": "chargeback::ChargebackLost",
-      "listener": "Academorix\\Finance\\Chargeback\\Listeners\\FireMarketingChargebackFiledOnChargebackLost",
+      "listener": "Stackra\\Finance\\Chargeback\\Listeners\\FireMarketingChargebackFiledOnChargebackLost",
       "queue": "chargebacks-critical",
       "priority": 50,
       "purpose": "Finalization chain step 5. Dispatches marketing::ChargebackFiled negative-value conversion + fraud signal event (Wave 5 bridge). Ad networks subtract from ROAS + retrain fraud models. Consent-gate: advertising tier."
     },
     {
       "event": "chargeback::ChargebackLost",
-      "listener": "Academorix\\Finance\\Chargeback\\Listeners\\NotifyAdminOnChargebackLost",
+      "listener": "Stackra\\Finance\\Chargeback\\Listeners\\NotifyAdminOnChargebackLost",
       "queue": "notifications",
       "priority": 60,
       "purpose": "Dispatches ChargebackLostNotification to admin (P1). Includes decision_reason + amount + fee_cents + total_cost + link to the chargeback detail. NOT sent to customers (some card networks explicitly prohibit surfacing chargeback outcomes to the customer). Runs AFTER the finalization chain — admin sees the notification only when the chargeback is fully processed downstream."
     },
     {
       "event": "chargeback::ChargebackExpired",
-      "listener": "Academorix\\Finance\\Chargeback\\Listeners\\FinalizeExpiredChargeback",
+      "listener": "Stackra\\Finance\\Chargeback\\Listeners\\FinalizeExpiredChargeback",
       "queue": "chargebacks-critical",
       "priority": 10,
       "purpose": "Expired chargebacks trigger the same finalization chain as lost — auto-loss. Dispatches FinalizeChargebackJob which invokes the ChargebackLost finalization chain (this listener's peers under the ChargebackLost event). Notification distinguishes 'auto-lost due to missed evidence deadline'."
     },
     {
       "event": "chargeback::ChargebackWon",
-      "listener": "Academorix\\Finance\\Chargeback\\Listeners\\ReducePaymentDisputedOnChargebackWon",
+      "listener": "Stackra\\Finance\\Chargeback\\Listeners\\ReducePaymentDisputedOnChargebackWon",
       "queue": "chargebacks-critical",
       "priority": 10,
       "purpose": "Reduces parent payment.amount_disputed_cents back to reflect the win. NOTE: won chargebacks still incur the initial network fee — banks don't refund the fee they collected. This listener reduces only the disputed_cents tracking, not the fee tracking."
     },
     {
       "event": "chargeback::ChargebackWon",
-      "listener": "Academorix\\Finance\\Chargeback\\Listeners\\NotifyAdminOnChargebackWon",
+      "listener": "Stackra\\Finance\\Chargeback\\Listeners\\NotifyAdminOnChargebackWon",
       "queue": "notifications",
       "priority": 40,
       "purpose": "Dispatches ChargebackWonNotification to admin only. NOT sent to customers (card network rules)."
     },
     {
       "event": "chargeback::ChargebackAcceptedRefund",
-      "listener": "Academorix\\Finance\\Chargeback\\Listeners\\NotifyCustomerAndAdminOnRdrAccept",
+      "listener": "Stackra\\Finance\\Chargeback\\Listeners\\NotifyCustomerAndAdminOnRdrAccept",
       "queue": "notifications",
       "priority": 40,
       "purpose": "RDR path — dispatches ChargebackAcceptedRefundNotification to customer + admin. Customer sees a refund confirmation framed as 'your dispute has been resolved — a refund has been issued'. Admin sees the RDR outcome (no fee, no rate impact)."
     },
     {
       "event": "chargeback::ChargebackFiled",
-      "listener": "Academorix\\Finance\\Chargeback\\Listeners\\NotifyAdminOnChargebackFiled",
+      "listener": "Stackra\\Finance\\Chargeback\\Listeners\\NotifyAdminOnChargebackFiled",
       "queue": "notifications",
       "priority": 10,
       "purpose": "Dispatches ChargebackFiledNotification (P0 — immediate SMS + push + email). Money has been forcibly reversed — admin must act to defend within the evidence deadline."
     },
     {
       "event": "chargeback::ChargebackFiled",
-      "listener": "Academorix\\Finance\\Chargeback\\Listeners\\DispatchEvidenceCollectionOnChargebackFiled",
+      "listener": "Stackra\\Finance\\Chargeback\\Listeners\\DispatchEvidenceCollectionOnChargebackFiled",
       "queue": "chargebacks",
       "priority": 20,
       "purpose": "Dispatches CollectChargebackEvidenceJob to auto-collect evidence from invoice + membership + notifications + support modules. Pre-populates the evidence bundle for admin review."
     },
     {
       "event": "chargeback::ChargebackEvidenceOverdue",
-      "listener": "Academorix\\Finance\\Chargeback\\Listeners\\NotifyAdminOnEvidenceOverdue",
+      "listener": "Stackra\\Finance\\Chargeback\\Listeners\\NotifyAdminOnEvidenceOverdue",
       "queue": "notifications",
       "priority": 30,
       "purpose": "Escalating cadence notifications. Sent at 7d before deadline (P2), 3d before (P1), 1d before (P0). Includes days_remaining + current_evidence_completeness_percent + link to submit-evidence UI."
     },
     {
       "event": "chargeback::ChargebackRateThresholdExceeded",
-      "listener": "Academorix\\Finance\\Chargeback\\Listeners\\NotifyAdminAndPlatformOnRateThreshold",
+      "listener": "Stackra\\Finance\\Chargeback\\Listeners\\NotifyAdminAndPlatformOnRateThreshold",
       "queue": "notifications",
       "priority": 20,
-      "purpose": "P1. Dispatches ChargebackRateThresholdExceededNotification to admin (tenant-facing) + Academorix platform ops (cross-tenant). Merchant-account termination risk if sustained. Includes prevention recommendations."
+      "purpose": "P1. Dispatches ChargebackRateThresholdExceededNotification to admin (tenant-facing) + Stackra platform ops (cross-tenant). Merchant-account termination risk if sustained. Includes prevention recommendations."
     },
     {
       "event": "payment::PaymentDisputeLost",
-      "listener": "Academorix\\Finance\\Chargeback\\Listeners\\CreateChargebackFromDisputeLost",
+      "listener": "Stackra\\Finance\\Chargeback\\Listeners\\CreateChargebackFromDisputeLost",
       "queue": "chargebacks-critical",
       "priority": 10,
       "purpose": "Wave 4 bridge. When a PaymentDispute is lost (customer's bank filed a full chargeback after pre-chargeback resolution): dispatches CreateChargebackFromDisputeJob to create a Chargeback row from the lost dispute — snapshots reason_code + reason_category + amount + currency + provider + provider_reference_id from the parent PaymentDispute."
     },
     {
       "event": "payment::PaymentWebhookReceived",
-      "listener": "Academorix\\Finance\\Chargeback\\Listeners\\HandleChargebackWebhook",
+      "listener": "Stackra\\Finance\\Chargeback\\Listeners\\HandleChargebackWebhook",
       "queue": "chargebacks-critical",
       "priority": 20,
       "purpose": "Wave 4 bridge. Payment module's webhook handler dispatches this event on chargeback-typed webhooks (e.g. Stripe 'charge.dispute.created', Paddle 'transaction.chargeback', Adyen 'NOTIFICATION_OF_CHARGEBACK'). This listener parses the provider event + calls ChargebackOrchestrator::createFromWebhook (for new chargebacks) OR ChargebackReconciler::reconcileFromWebhook (for status updates on existing chargebacks — the provider communicates 'evidence received', 'under review', 'won', 'lost' via webhook)."
     },
     {
       "event": "refund::RefundSucceeded",
-      "listener": "Academorix\\Finance\\Chargeback\\Listeners\\CloseRdrChargebackOnRefundSucceeded",
+      "listener": "Stackra\\Finance\\Chargeback\\Listeners\\CloseRdrChargebackOnRefundSucceeded",
       "queue": "chargebacks-critical",
       "priority": 40,
       "purpose": "RDR path bridge. When a Refund with metadata.originating_chargeback_id succeeds: transition the linked chargeback to accepted_refund (terminal) + fire ChargebackAcceptedRefund. Only fires when the refund's metadata.originating_chargeback_id is set (populated by RdrHandler when creating the refund)."
     },
     {
       "event": "user::UserErased",
-      "listener": "Academorix\\Finance\\Chargeback\\Listeners\\RedactUserFromChargebacksOnUserErased",
+      "listener": "Stackra\\Finance\\Chargeback\\Listeners\\RedactUserFromChargebacksOnUserErased",
       "queue": "chargebacks",
       "priority": 50,
       "purpose": "GDPR minimisation. When a user is erased as submitted_by_user_id on any ChargebackEvidence: schedule 90-day-post-erasure redaction of user_id references. Retention window unchanged."
     },
     {
       "event": "tenancy::TenantErasing",
-      "listener": "Academorix\\Finance\\Chargeback\\Listeners\\ArchiveChargebackFinancialRecordsOnTenantErasure",
+      "listener": "Stackra\\Finance\\Chargeback\\Listeners\\ArchiveChargebackFinancialRecordsOnTenantErasure",
       "queue": "chargebacks",
       "priority": 40,
       "purpose": "Migrates invoice-linked chargebacks to compliance_archive.chargebacks + compliance_archive.chargeback_evidence BEFORE the TenantErased cascade. Financial-obligation retention override."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Academorix\\Finance\\Chargeback\\Listeners\\PurgeChargebackDataForErasedTenant",
+      "listener": "Stackra\\Finance\\Chargeback\\Listeners\\PurgeChargebackDataForErasedTenant",
       "queue": "chargebacks",
       "priority": 60,
       "purpose": "Cascade delete via FK for non-archived chargebacks; writes compliance audit trail entry + emits count metrics."

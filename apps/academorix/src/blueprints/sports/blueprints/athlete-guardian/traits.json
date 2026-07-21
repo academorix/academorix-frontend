@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/athlete-guardian/traits",
+  "id": "stackra://modules/athlete-guardian/traits",
   "$version": 1,
   "title": "athlete-guardian — trait composition",
   "description": "Two owned traits — `BelongsToAthleteGuardian` for downstream models that carry a `guardian_id` FK (Wave 4+ CustodyScheduleEntry + MedicalClearanceAuthorisation), `HasGuardianRelationships` on the User model exposing per-user guardianship accessors.",
   "owned": [
     {
-      "trait": "Academorix\\Sports\\AthleteGuardian\\Concerns\\BelongsToAthleteGuardian",
+      "trait": "Stackra\\Sports\\AthleteGuardian\\Concerns\\BelongsToAthleteGuardian",
       "description": "Mixed into any downstream model that carries a `guardian_id` FK. Adds the `guardian()` belongsTo relation + a `resolveInGuardian(?AthleteGuardian)` query scope + a `booted()` hook that refuses to save when guardian.tenant_id != row.tenant_id (cross-tenant defense-in-depth).",
       "public": true,
       "usedBy": [
@@ -15,7 +15,7 @@
       "conflicts_with": []
     },
     {
-      "trait": "Academorix\\Sports\\AthleteGuardian\\Concerns\\HasGuardianRelationships",
+      "trait": "Stackra\\Sports\\AthleteGuardian\\Concerns\\HasGuardianRelationships",
       "description": "Composed onto the User model. Adds sibling accessors: `guardianships()` (hasMany AthleteGuardian where user_id = this.id), `activeGuardianships()` (filtered by is_active), `primaryGuardianships()` (where is_primary=true), `authorisedForMedical()` (where has_legal_custody + can_authorise_medical_care). Read-only accessors; every write goes through AthleteGuardianProvisioner.",
       "public": true,
       "usedBy": [
@@ -31,31 +31,31 @@
       { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" }
+      { "trait": "Stackra\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" }
     ],
-    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "tenants": [{ "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" }],
     "athlete": [
       {
-        "trait": "Academorix\\Sports\\Athlete\\Concerns\\BelongsToAthlete",
+        "trait": "Stackra\\Sports\\Athlete\\Concerns\\BelongsToAthlete",
         "reason": "AthleteGuardian carries athlete_id — cascades tenant + branch through the athlete."
       }
     ],
     "user": [
       {
-        "trait": "Academorix\\User\\Concerns\\BelongsToUser",
+        "trait": "Stackra\\User\\Concerns\\BelongsToUser",
         "reason": "AthleteGuardian carries user_id — enables .own scoping for guardians managing their own guardianships."
       }
     ],
     "audit": [
       {
-        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "trait": "Stackra\\Audit\\Concerns\\Auditable",
         "reason": "Every state mutation (verification, primary flip, role flags) is compliance-relevant."
       }
     ],
-    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
+    "activity": [{ "trait": "Stackra\\Activity\\Concerns\\HasActivityLog" }]
   },
   "composition": {
     "athleteGuardian": {

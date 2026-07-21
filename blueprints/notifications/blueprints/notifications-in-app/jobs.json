@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/notifications-in-app/jobs",
+  "id": "stackra://modules/notifications-in-app/jobs",
   "$version": 1,
   "title": "notifications-in-app \u2014 background jobs",
   "description": "One job. Thin because in-app delivery is a synchronous DB write + a fire-and-forget broadcast.",
   "jobs": [
     {
-      "class": "Academorix\\Notifications\\InApp\\Jobs\\BroadcastInAppNotificationJob",
+      "class": "Stackra\\Notifications\\InApp\\Jobs\\BroadcastInAppNotificationJob",
       "queue": "notifications",
       "purpose": "Consumes NotificationDispatched (channel=in_app). Creates the NotificationDelivery row via core's DispatchGateway with state=delivered. Emits `notifications.created` broadcast on user.{id}.notifications. Broadcast failure is logged but does NOT retry \u2014 the DB write is the ground truth, socket updates are best-effort.",
       "steps": [

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/attributes/schemas/attribute-definition",
+  "id": "stackra://modules/attributes/schemas/attribute-definition",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "AttributeDefinition",
@@ -13,8 +13,8 @@
     "keyType": "string",
     "keyPrefix": "ads_",
     "incrementing": false,
-    "model": "Academorix\\Attributes\\Models\\AttributeDefinition",
-    "interface": "Academorix\\Attributes\\Contracts\\Data\\AttributeDefinitionInterface",
+    "model": "Stackra\\Attributes\\Models\\AttributeDefinition",
+    "interface": "Stackra\\Attributes\\Contracts\\Data\\AttributeDefinitionInterface",
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Membership\Exceptions;
+namespace Stackra\Membership\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Use /upgrade or /downgrade endpoints to change plan.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MembershipPlanIdImmutableException extends AcademorixException
+final class MembershipPlanIdImmutableException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

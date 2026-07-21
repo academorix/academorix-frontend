@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Settings\Registry;
+namespace Stackra\Settings\Registry;
 
-use Academorix\Settings\Contracts\SettingsRegistryInterface;
-use Academorix\Settings\Data\SettingDefinitionData;
+use Stackra\Settings\Contracts\SettingsRegistryInterface;
+use Stackra\Settings\Data\SettingDefinitionData;
 use Illuminate\Container\Attributes\Scoped;
 
 /**
@@ -14,7 +14,7 @@ use Illuminate\Container\Attributes\Scoped;
  * Stores {@see SettingDefinitionData} DTOs keyed by group name.
  * Hydrated at boot by the settings bootstrapper reading every
  * class carrying `#[AsSetting]` via the shared
- * `Academorix\Foundation\Contracts\DiscoversAttributes` seam.
+ * `Stackra\Foundation\Contracts\DiscoversAttributes` seam.
  *
  * `#[Scoped]` — one instance per request lifecycle under Octane;
  * state resets between requests. The stored definitions are

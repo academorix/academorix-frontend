@@ -1,17 +1,17 @@
 {
-  "id": "academorix://modules/auth/jobs",
+  "id": "stackra://modules/auth/jobs",
   "$version": 1,
   "title": "auth \u2014 background jobs",
   "description": "Eight jobs. Six purge expired/consumed tokens on staggered cadences (per retention.json). One rotates JWT signing keys on a monthly cadence per key. One asynchronously revokes every active session for a User (dispatched by the PasswordChanged listener \u2014 the bulk revocation can be slow for cross-Application identities with many User rows).",
   "jobs": [
     {
-      "class": "Academorix\\Auth\\Jobs\\PurgeExpiredRefreshTokensJob",
+      "class": "Stackra\\Auth\\Jobs\\PurgeExpiredRefreshTokensJob",
       "queue": "notifications",
       "purpose": "Hard-delete auth_refresh_tokens rows whose consumed_at OR revoked_at OR expires_at is older than 90 days. 90-day tail is for post-incident audit; anything older has no compliance value.",
       "steps": [
         "SELECT id FROM auth_refresh_tokens WHERE (consumed_at IS NOT NULL AND consumed_at < now() - INTERVAL '90 days') OR (revoked_at IS NOT NULL AND revoked_at < now() - INTERVAL '90 days') OR (expires_at < now() - INTERVAL '90 days') LIMIT 5000.",
         "DELETE the batch inside a transaction.",
-        "Emit `academorix.auth.refresh_tokens.purged` metric.",
+        "Emit `stackra.auth.refresh_tokens.purged` metric.",
         "Recurse if batch was 5000."
       ],
       "shouldQueue": true,
@@ -23,7 +23,7 @@
       "timeout": 300
     },
     {
-      "class": "Academorix\\Auth\\Jobs\\PurgeExpiredResetTokensJob",
+      "class": "Stackra\\Auth\\Jobs\\PurgeExpiredResetTokensJob",
       "queue": "notifications",
       "purpose": "Hard-delete auth_password_resets rows past their 24h purge window (24h AFTER consumed_at OR expires_at; the extra 24h is for immediate post-consumption audit trace).",
       "steps": [
@@ -39,7 +39,7 @@
       "timeout": 120
     },
     {
-      "class": "Academorix\\Auth\\Jobs\\PurgeExpiredVerificationTokensJob",
+      "class": "Stackra\\Auth\\Jobs\\PurgeExpiredVerificationTokensJob",
       "queue": "notifications",
       "purpose": "Hard-delete auth_email_verifications rows past their 30-day purge window.",
       "steps": [
@@ -55,7 +55,7 @@
       "timeout": 120
     },
     {
-      "class": "Academorix\\Auth\\Jobs\\PurgeExpiredMfaChallengesJob",
+      "class": "Stackra\\Auth\\Jobs\\PurgeExpiredMfaChallengesJob",
       "queue": "notifications",
       "purpose": "Hard-delete auth_mfa_challenges rows past their 1h purge window. Short cadence (every 5 min) because challenges have a 5-min TTL \u2014 many rows to reap fast.",
       "steps": [
@@ -71,7 +71,7 @@
       "timeout": 60
     },
     {
-      "class": "Academorix\\Auth\\Jobs\\PurgeExpiredCrossAppGrantsJob",
+      "class": "Stackra\\Auth\\Jobs\\PurgeExpiredCrossAppGrantsJob",
       "queue": "notifications",
       "purpose": "Hard-delete auth_cross_app_grants rows past their 24h purge window. Fires CrossAppGrantExpired for grants that were never consumed.",
       "steps": [
@@ -87,7 +87,7 @@
       "timeout": 120
     },
     {
-      "class": "Academorix\\Auth\\Jobs\\PurgeExpiredJwtDenyListJob",
+      "class": "Stackra\\Auth\\Jobs\\PurgeExpiredJwtDenyListJob",
       "queue": "notifications",
       "purpose": "Hard-delete auth_jwt_deny_list rows once the underlying JWT's natural expires_at has passed. After natural expiry, downstream verifiers reject the JWT on their own \u2014 no need to keep the deny-list row.",
       "steps": [
@@ -102,7 +102,7 @@
       "timeout": 300
     },
     {
-      "class": "Academorix\\Auth\\Jobs\\RotateJwtSigningKeyJob",
+      "class": "Stackra\\Auth\\Jobs\\RotateJwtSigningKeyJob",
       "queue": "notifications-critical",
       "purpose": "Monthly rotation cadence per Application (or global key). Inserts a new active key, marks the previous key retired_at=now() (still verify-capable for auth.jwt.rotation_grace_period_days). Fires JwtSigningKeyRotated.",
       "steps": [
@@ -119,7 +119,7 @@
       "timeout": 600
     },
     {
-      "class": "Academorix\\Auth\\Jobs\\RevokeAllActiveSessionsJob",
+      "class": "Stackra\\Auth\\Jobs\\RevokeAllActiveSessionsJob",
       "queue": "notifications-critical",
       "purpose": "Bulk revoke every active PAT for every User referencing an Identity. Dispatched by the PasswordChanged / MfaDisabled / IdentityLocked listeners. Runs async because a User with User rows on many Applications can have dozens of PATs \u2014 doing this inside the request would slow the password change.",
       "steps": [

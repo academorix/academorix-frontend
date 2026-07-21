@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Actions\Contacts;
+namespace Stackra\Tenancy\Actions\Contacts;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Patch;
-use Academorix\Routing\Attributes\WhereUlid;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Tenancy\Data\Requests\UpdateTenantContactRequestData;
-use Academorix\Tenancy\Data\TenantContactData;
-use Academorix\Tenancy\Enums\TenancyPermission;
-use Academorix\Tenancy\Models\TenantContact;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Patch;
+use Stackra\Routing\Attributes\WhereUlid;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Tenancy\Data\Requests\UpdateTenantContactRequestData;
+use Stackra\Tenancy\Data\TenantContactData;
+use Stackra\Tenancy\Enums\TenancyPermission;
+use Stackra\Tenancy\Models\TenantContact;
 
 /**
  * `PATCH /api/current-tenant/contacts/{contact}` — update a contact.

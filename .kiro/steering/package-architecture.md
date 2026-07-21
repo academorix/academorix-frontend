@@ -26,7 +26,7 @@ to our Composer-path-repository monorepo.
 ## Monorepo layout (recap)
 
 ```
-academorix-backend/
+stackra-backend/
 ├── apps/                  # deployable services — bootstrap the framework
 │   ├── template/          # headless REST API template
 │   ├── api/               # main tenant API (Phase 2)
@@ -92,7 +92,7 @@ folder — read that alongside for the per-folder rules and anti-patterns.
 
 ```
 packages/<name>/
-├── composer.json                 # academorix/<name>; PSR-4 Academorix\<Name>\ -> src/
+├── composer.json                 # stackra/<name>; PSR-4 Stackra\<Name>\ -> src/
 ├── package.json                  # Turborepo shim; lint/analyse/test scripts
 ├── phpstan.neon                  # includes ../../config/phpstan-base.neon
 ├── phpunit.xml
@@ -127,9 +127,9 @@ per-folder contract lives in `.kiro/steering/folder-conventions.md`.
 | `Contracts/Repositories/` | Repository contract             | ✅                | `<Model>RepositoryInterface extends RepositoryInterface<Model>`.                               |
 | `Data/`                   | Spatie DTO                      | ✅                | Input + output DTOs.                                                                           |
 | `Dispatchers/`            | Runtime dispatcher              | ✅                | Iterate a `Registry/`, fire the referenced primitive.                                          |
-| `Enums/`                  | Backed enum                     | ✅                | Composes `Academorix\Enum\Enum`.                                                               |
+| `Enums/`                  | Backed enum                     | ✅                | Composes `Stackra\Enum\Enum`.                                                               |
 | `Events/` / `Listeners/`  | Domain event + listener         | ✅                | `#[AsEvent]` / `#[OnEvent]` attributed.                                                        |
-| `Exceptions/`             | Package exception               | ✅                | Extends `AcademorixException`.                                                                 |
+| `Exceptions/`             | Package exception               | ✅                | Extends `StackraException`.                                                                 |
 | `Jobs/`                   | Queued job                      | ✅                | Tenant-aware.                                                                                  |
 | `Middleware/`             | HTTP middleware                 | ✅                | Flat namespace — no `Http/` nesting. `#[AsMiddleware]`-attributed.                             |
 | `Models/`                 | Eloquent model                  | ✅                | Attribute-first — `#[Table]`, `#[Fillable]`, `#[UseFactory]`, `#[UsePolicy]`, `#[ObservedBy]`. |
@@ -150,19 +150,19 @@ per-folder contract lives in `.kiro/steering/folder-conventions.md`.
   layers. Empty directories aren't shipped.
 - **No `routes/` folder.** Controllers own their own routes via
   `#[AsController]` + `#[Get]` / `#[Post]` / ... attributes from
-  `Academorix\Routing\Attributes`. See `php-attributes.md` for the full
+  `Stackra\Routing\Attributes`. See `php-attributes.md` for the full
   catalogue. The Routing package's `RouteRegistrar` discovers controllers via
-  the unified `Academorix\Foundation\Contracts\DiscoversAttributes` contract at
+  the unified `Stackra\Foundation\Contracts\DiscoversAttributes` contract at
   boot; no route file is required or accepted.
-- **Flat namespaces.** `Academorix\<Name>\Middleware`,
-  `Academorix\<Name>\Registry`, etc. No `Http\` nesting. Factories and seeders
-  keep `Academorix\<Name>\Database\Factories` / `Seeders` because the framework
+- **Flat namespaces.** `Stackra\<Name>\Middleware`,
+  `Stackra\<Name>\Registry`, etc. No `Http\` nesting. Factories and seeders
+  keep `Stackra\<Name>\Database\Factories` / `Seeders` because the framework
   expects that path.
 - **No `config/config.php` name inside a package** — it clashes with Laravel's
   own configs. Config files are named for the package: `config/exceptions.php`,
   `config/billing.php`.
 - **`src/` is the source root** for every package, matching every app. Autoload
-  maps `Academorix\<Name>\` → `src/`.
+  maps `Stackra\<Name>\` → `src/`.
 - **`Support/` is grab-bag; `Registry/` is a first-class primitive.** Never
   conflate. See `.kiro/steering/folder-conventions.md` for the anti-pattern
   catalogue.
@@ -170,8 +170,8 @@ per-folder contract lives in `.kiro/steering/folder-conventions.md`.
 ## 3. Providers
 
 Prefer a **single** `<Name>ServiceProvider` extending {@see
-Academorix\ServiceProvider\Providers\ServiceProvider}. The base class from
-`academorix/service-provider` composes an attribute-first lifecycle:
+Stackra\ServiceProvider\Providers\ServiceProvider}. The base class from
+`stackra/service-provider` composes an attribute-first lifecycle:
 
 - Module identity is declared via
   `#[AsModule(name, priority?, dependencies?, deferred?)]` — or auto-derived
@@ -198,8 +198,8 @@ framework-level wiring must precede attribute resolution (rare); call
 
 **Third-party bases** — when a package must extend a vendor base (Horizon,
 Debugbar, Sentry, ...) it cannot also extend {@see
-Academorix\ServiceProvider\Providers\ServiceProvider}. Use the {@see
-Academorix\ServiceProvider\Concerns\AsModuleProvider} trait instead and bridge
+Stackra\ServiceProvider\Providers\ServiceProvider}. Use the {@see
+Stackra\ServiceProvider\Concerns\AsModuleProvider} trait instead and bridge
 the two lifecycles by hand:
 
 ```php
@@ -214,7 +214,7 @@ final class HorizonServiceProvider extends BaseHorizonServiceProvider
 
 Route registration is NOT a provider concern — the Routing package discovers
 `#[AsController]` classes globally and handles it. See `php-attributes.md` §
-"Academorix Routing attributes".
+"Stackra Routing attributes".
 
 Only introduce a second provider (`EventServiceProvider`,
 `RouteServiceProvider`) when the single provider grows past ~250 lines OR when
@@ -222,14 +222,14 @@ there's a genuine separate lifecycle concern.
 
 ### Legacy: `AbstractModuleServiceProvider`
 
-Providers created before `academorix/service-provider` shipped extend {@see
-Academorix\Foundation\Providers\AbstractModuleServiceProvider} — the
+Providers created before `stackra/service-provider` shipped extend {@see
+Stackra\Foundation\Providers\AbstractModuleServiceProvider} — the
 pre-attribute base that mapped `$bindings`, `$singletons`, `$middlewareAliases`,
 `$policies`, `$configs`, `$migrations`, `$commands` array properties into wiring
 calls with `registerBespoke()` / `bootBespoke()` escape hatches.
 
 Every existing extender is migrating to
-`Academorix\ServiceProvider\Providers\ServiceProvider` package by package. New
+`Stackra\ServiceProvider\Providers\ServiceProvider` package by package. New
 providers MUST target the new base class. When touching a legacy provider for
 other reasons, migrate it in the same commit — the shape is:
 
@@ -247,9 +247,9 @@ other reasons, migrate it in the same commit — the shape is:
 Example package provider (new base):
 
 ```php
-use Academorix\ServiceProvider\Attributes\{Module, LoadsResources, OnBoot, OnRegister};
-use Academorix\ServiceProvider\Contracts\{HasBindings, HasPolicies};
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\{Module, LoadsResources, OnBoot, OnRegister};
+use Stackra\ServiceProvider\Contracts\{HasBindings, HasPolicies};
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 #[AsModule(name: 'Billing', priority: 30)]
 #[LoadsResources(migrations: true, config: true, commands: true, publishables: true)]
@@ -264,7 +264,7 @@ final class BillingServiceProvider extends ServiceProvider implements HasBinding
      */
     public function bindings(): void
     {
-        $this->app->singleton(\Academorix\Billing\Contracts\Invoicer::class, \Academorix\Billing\Services\StripeInvoicer::class);
+        $this->app->singleton(\Stackra\Billing\Contracts\Invoicer::class, \Stackra\Billing\Services\StripeInvoicer::class);
     }
 
     /**
@@ -272,7 +272,7 @@ final class BillingServiceProvider extends ServiceProvider implements HasBinding
      */
     public function policies(): void
     {
-        Gate::policy(\Academorix\Billing\Models\Invoice::class, \Academorix\Billing\Policies\InvoicePolicy::class);
+        Gate::policy(\Stackra\Billing\Models\Invoice::class, \Stackra\Billing\Policies\InvoicePolicy::class);
     }
 
     /**
@@ -305,7 +305,7 @@ final class BillingServiceProvider extends ServiceProvider implements HasBinding
 ## 4. Cross-package dependencies
 
 - A package MAY depend on another package via `require` in its `composer.json`.
-  `academorix/foundation` is the only universal dep — everything else opt-in.
+  `stackra/foundation` is the only universal dep — everything else opt-in.
 - A package MUST NOT depend on an app. Dependencies point downward in the
   dependency graph: apps → packages, packages → other packages.
 - Circular package dependencies are forbidden. If A needs B and B needs A,
@@ -329,9 +329,9 @@ final class InvoiceController extends BaseController
 }
 ```
 
-The Academorix Routing package's `RouteRegistrar` discovers `#[AsController]`
+The Stackra Routing package's `RouteRegistrar` discovers `#[AsController]`
 classes at app boot via the unified
-`Academorix\Foundation\Contracts\DiscoversAttributes` contract (backed by
+`Stackra\Foundation\Contracts\DiscoversAttributes` contract (backed by
 `olvlvl/composer-attribute-collector`) and registers their routes with Laravel's
 router. One scan per boot — no runtime cost.
 
@@ -360,11 +360,11 @@ Consequences for apps:
 
 Before finalising any package change:
 
-1. `pnpm turbo run install --filter=@academorix/<name>` — vendor hydrated.
-2. `pnpm turbo run lint --filter=@academorix/<name>` — Pint clean.
-3. `pnpm turbo run analyse --filter=@academorix/<name>` — Larastan / PHPStan
+1. `pnpm turbo run install --filter=@stackra/<name>` — vendor hydrated.
+2. `pnpm turbo run lint --filter=@stackra/<name>` — Pint clean.
+3. `pnpm turbo run analyse --filter=@stackra/<name>` — Larastan / PHPStan
    level max, no baseline drift.
-4. `pnpm turbo run test --filter=@academorix/<name>` — Pest green.
+4. `pnpm turbo run test --filter=@stackra/<name>` — Pest green.
 5. Commit with a conventional-commits message; stage specific files only (never
    `git add -A`); never commit `.kiro/settings/mcp.json`.
 
@@ -372,9 +372,9 @@ Before finalising any package change:
 
 - [ ] `./scripts/new-package.sh <name>` — creates the skeleton.
 - [ ] Fill in `composer.json` — description, `require` (add
-      `academorix/foundation`), PSR-4 already scaffolded.
+      `stackra/foundation`), PSR-4 already scaffolded.
 - [ ] Update `extra.laravel.providers` to point at
-      `Academorix\<Name>\Providers\<Name>ServiceProvider`.
+      `Stackra\<Name>\Providers\<Name>ServiceProvider`.
 - [ ] Create layers **only** as needed: `Data/`, `Services/` (+ `Actions/`),
       `Repositories/` + `Contracts/`, `Models/`, `Enums/`, events / listeners /
       jobs / policies / observers / middleware as required.
@@ -383,7 +383,7 @@ Before finalising any package change:
       tests for services / actions / data.
 - [ ] Docblocks + inline comments throughout (see `conventions.md`).
 - [ ] Register with a consuming app:
-      `cd apps/api && composer require academorix/<name>:'*'`.
+      `cd apps/api && composer require stackra/<name>:'*'`.
 - [ ] `pint` + `phpstan` + `test` green; conventional commit.
 
 ## 9. When to add an app vs. a package

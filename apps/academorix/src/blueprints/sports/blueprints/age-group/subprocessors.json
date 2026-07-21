@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/age-group/subprocessors",
+  "id": "stackra://modules/age-group/subprocessors",
   "$version": 1,
   "title": "age-group — subprocessors",
   "description": "The age-group module engages ZERO third-party processors. Every field is stored in the tenant's own database. Age-group reference data feeds downstream Team + AthleteEnrollment modules; those modules engage their own subprocessors (Segment for analytics, S3 for cohort roster exports) — those are documented under their respective modules, not here.",

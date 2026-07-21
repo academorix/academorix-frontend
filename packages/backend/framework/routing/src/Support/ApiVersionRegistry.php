@@ -6,10 +6,10 @@
  * @description
  * Per-request scoped registry that holds the resolved API version
  * for the current HTTP cycle. Populated by
- * {@see \Academorix\Routing\Middleware\DetectApiVersion} on the
+ * {@see \Stackra\Routing\Middleware\DetectApiVersion} on the
  * inbound side and consumed by:
  *
- *   - {@see \Academorix\Routing\Concerns\InteractsWithApiVersion}
+ *   - {@see \Stackra\Routing\Concerns\InteractsWithApiVersion}
  *     (controller helpers).
  *   - The response emitter (out of scope here) which reads the
  *     resolved version + Sunsets metadata to attach
@@ -18,7 +18,7 @@
  *
  * ## Binding
  *
- * Bound in {@see \Academorix\Routing\Providers\ApiVersioningServiceProvider}
+ * Bound in {@see \Stackra\Routing\Providers\ApiVersioningServiceProvider}
  * via Laravel's `scoped()` so each request / job gets its own
  * instance. `scoped()` (not `singleton()`) is deliberate — this
  * registry holds request-lifetime state and would leak between
@@ -32,15 +32,15 @@
  * variant that reports the version to a span), promote the class
  * to an interface at that point rather than pre-emptively.
  *
- * @see \Academorix\Routing\Middleware\DetectApiVersion Populator.
- * @see \Academorix\Routing\Concerns\InteractsWithApiVersion Reader.
+ * @see \Stackra\Routing\Middleware\DetectApiVersion Populator.
+ * @see \Stackra\Routing\Concerns\InteractsWithApiVersion Reader.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Routing\Support;
+namespace Stackra\Routing\Support;
 
-use Academorix\Routing\Attributes\Sunsets;
+use Stackra\Routing\Attributes\Sunsets;
 use Illuminate\Container\Attributes\Scoped;
 
 /**
@@ -105,7 +105,7 @@ final class ApiVersionRegistry
 
     /**
      * Record that the resolved route target opted out of
-     * versioning via {@see \Academorix\Routing\Attributes\ApiVersionNeutral}.
+     * versioning via {@see \Stackra\Routing\Attributes\ApiVersionNeutral}.
      * Callers of {@see version()} will get `null` back — the
      * emitter interprets that as "attach no version headers".
      */

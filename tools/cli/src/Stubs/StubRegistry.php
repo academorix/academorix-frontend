@@ -2,7 +2,7 @@
 
 /**
  * @file StubRegistry.php
- * @module Academorix\Cli\Stubs
+ * @module Stackra\Cli\Stubs
  * @description Maps 69 logical stub names to their file paths under
  *   `src/Stubs/stubs/`. Population of `defaultStubs()` lives in
  *   `.kiro/specs/utils-work/stubs-tasks.md` — this class is authored by
@@ -11,9 +11,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Stubs;
+namespace Stackra\Cli\Stubs;
 
-use Academorix\Cli\Exceptions\StubException;
+use Stackra\Cli\Exceptions\StubException;
 
 /**
  * Central registry mapping `category.name` logical keys to relative

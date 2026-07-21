@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Models;
+namespace Stackra\Rbac\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Rbac\Contracts\Data\PermissionInterface;
-use Academorix\Rbac\Database\Factories\PermissionFactory;
-use Academorix\Database\Concerns\HasSystemFlag;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Rbac\Policies\PermissionPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenantOptional;
+use Stackra\Rbac\Contracts\Data\PermissionInterface;
+use Stackra\Rbac\Database\Factories\PermissionFactory;
+use Stackra\Database\Concerns\HasSystemFlag;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Rbac\Policies\PermissionPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenantOptional;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,7 +31,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 /**
  * Eloquent model for a Permission.
  *
- * Spatie's `permissions` table augmented with Academorix scope columns (application_id, tenant_id, is_system, description, module_slug, sort_order).
+ * Spatie's `permissions` table augmented with Stackra scope columns (application_id, tenant_id, is_system, description, module_slug, sort_order).
  *
  * @category Rbac
  *

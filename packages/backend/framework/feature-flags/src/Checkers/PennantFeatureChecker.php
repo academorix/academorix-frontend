@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Checkers;
+namespace Stackra\FeatureFlags\Checkers;
 
-use Academorix\FeatureFlags\Contracts\FeatureCheckerInterface;
-use Academorix\FeatureFlags\Registry\FeatureFlagRegistry;
-use Academorix\FeatureFlags\Resolver\FeatureResolution;
-use Academorix\FeatureFlags\Resolver\FeatureResolver;
-use Academorix\FeatureFlags\Resolver\ResolutionContext;
-use Academorix\FeatureFlags\Support\ScopePath;
-use Academorix\Scope\Contracts\ScopeContextInterface;
-use Academorix\Tenancy\Models\Tenant;
-use Academorix\User\Models\User;
+use Stackra\FeatureFlags\Contracts\FeatureCheckerInterface;
+use Stackra\FeatureFlags\Registry\FeatureFlagRegistry;
+use Stackra\FeatureFlags\Resolver\FeatureResolution;
+use Stackra\FeatureFlags\Resolver\FeatureResolver;
+use Stackra\FeatureFlags\Resolver\ResolutionContext;
+use Stackra\FeatureFlags\Support\ScopePath;
+use Stackra\Scope\Contracts\ScopeContextInterface;
+use Stackra\Tenancy\Models\Tenant;
+use Stackra\User\Models\User;
 use BackedEnum;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;

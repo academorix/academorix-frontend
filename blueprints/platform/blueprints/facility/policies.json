@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/facility/policies",
+  "id": "stackra://modules/facility/policies",
   "$version": 1,
   "title": "facility — authorization policies",
   "description": "Four policies, one per owned model. Each policy composes the ResolveScope middleware's decision: a caller with scope 'branch:X' can only see/act on facilities inside branch X. Every ability defers to spatie/laravel-permission for the permission check, then layers scope narrowing.",
   "policies": [
     {
       "model": "Facility",
-      "class": "Academorix\\Facility\\Policies\\FacilityPolicy",
+      "class": "Stackra\\Facility\\Policies\\FacilityPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -41,7 +41,7 @@
     },
     {
       "model": "ResourceBooking",
-      "class": "Academorix\\Facility\\Policies\\ResourceBookingPolicy",
+      "class": "Stackra\\Facility\\Policies\\ResourceBookingPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -85,7 +85,7 @@
     },
     {
       "model": "DayPass",
-      "class": "Academorix\\Facility\\Policies\\DayPassPolicy",
+      "class": "Stackra\\Facility\\Policies\\DayPassPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -112,7 +112,7 @@
     },
     {
       "model": "Pass",
-      "class": "Academorix\\Facility\\Policies\\PassPolicy",
+      "class": "Stackra\\Facility\\Policies\\PassPolicy",
       "abilities": [
         {
           "action": "viewAny",

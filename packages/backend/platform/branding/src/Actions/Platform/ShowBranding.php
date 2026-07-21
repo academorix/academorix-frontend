@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Branding\Actions\Platform;
+namespace Stackra\Branding\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Branding\Data\BrandingData;
-use Academorix\Branding\Enums\BrandingPermission;
-use Academorix\Branding\Models\Branding;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\WhereUlid;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Branding\Data\BrandingData;
+use Stackra\Branding\Enums\BrandingPermission;
+use Stackra\Branding\Models\Branding;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\WhereUlid;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `GET /api/v1/platform/brandings/{branding}` — read one branding profile.

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Data\Requests;
+namespace Stackra\Subscription\Data\Requests;
 
-use Academorix\Subscription\Enums\BillingCycle;
-use Academorix\Subscription\Enums\BillingMode;
-use Academorix\Subscription\Enums\PlanTier;
+use Stackra\Subscription\Enums\BillingCycle;
+use Stackra\Subscription\Enums\BillingMode;
+use Stackra\Subscription\Enums\PlanTier;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\ArrayType;
 use Spatie\LaravelData\Attributes\Validation\BooleanType;

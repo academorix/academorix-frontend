@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Contracts\Services;
+namespace Stackra\Monitoring\Contracts\Services;
 
-use Academorix\Monitoring\Services\MonitoringPagingCoordinator;
+use Stackra\Monitoring\Services\MonitoringPagingCoordinator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

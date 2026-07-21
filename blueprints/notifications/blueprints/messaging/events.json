@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/messaging/events",
+  "id": "stackra://modules/messaging/events",
   "$version": 1,
   "title": "messaging — published events",
-  "namespace": "Academorix\\Notifications\\Messaging\\Events",
+  "namespace": "Stackra\\Notifications\\Messaging\\Events",
   "dispatchMode": "afterCommit",
   "description": "DM + group chat. MessageSent is HIGH-VOLUME (broadcasts to conversation members over realtime). Presence typing indicators are ephemeral (never persisted, never audited).",
   "events": [

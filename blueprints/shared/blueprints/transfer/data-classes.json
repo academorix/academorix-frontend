@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/transfer/data-classes",
+  "id": "stackra://modules/transfer/data-classes",
   "$version": 1,
   "title": "transfer \u2014 field classification",
   "description": "Every column across xfer_jobs, xfer_shards, xfer_artifacts, and xfer_mapping_profiles classified per foundation's tier taxonomy. Note that the artifact FILE CONTENTS on disk carry the source entity's classification \u2014 an athletes-import errors.csv is regulated_minor because Athlete rows are regulated_minor \u2014 not the classification of the XferArtifact ledger row itself.",

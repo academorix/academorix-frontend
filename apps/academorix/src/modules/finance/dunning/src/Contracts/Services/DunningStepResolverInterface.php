@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Dunning\Contracts\Services;
+namespace Stackra\Dunning\Contracts\Services;
 
-use Academorix\Dunning\Services\DunningStepResolver;
+use Stackra\Dunning\Services\DunningStepResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

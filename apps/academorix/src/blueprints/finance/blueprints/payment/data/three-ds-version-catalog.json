@@ -6,7 +6,7 @@
     {
       "version": "1.0.2",
       "display_name": "3D Secure 1 (legacy)",
-      "description": "Original 3DS protocol. Redirect-based challenge flow. Deprecated by Visa + Mastercard 2022+; issuers may reject or downgrade to 2.x. NOT ISSUED FROM ACADEMORIX — kept in enum for historical Payment.three_ds_version values.",
+      "description": "Original 3DS protocol. Redirect-based challenge flow. Deprecated by Visa + Mastercard 2022+; issuers may reject or downgrade to 2.x. NOT ISSUED FROM STACKRA — kept in enum for historical Payment.three_ds_version values.",
       "supported_by_providers": [],
       "typical_challenge_ux": "iframe redirect to issuer's ACS page",
       "psd2_compliant": false

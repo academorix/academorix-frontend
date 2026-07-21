@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Grants\Contracts\Services;
+namespace Stackra\Grants\Contracts\Services;
 
-use Academorix\Grants\Services\GrantRevoker;
+use Stackra\Grants\Services\GrantRevoker;
 use Illuminate\Container\Attributes\Bind;
 
 /**

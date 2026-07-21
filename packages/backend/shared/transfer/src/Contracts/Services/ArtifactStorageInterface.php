@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Contracts\Services;
+namespace Stackra\Transfer\Contracts\Services;
 
-use Academorix\Transfer\Enums\XferArtifactKind;
-use Academorix\Transfer\Models\XferArtifact;
-use Academorix\Transfer\Services\NullArtifactStorage;
+use Stackra\Transfer\Enums\XferArtifactKind;
+use Stackra\Transfer\Models\XferArtifact;
+use Stackra\Transfer\Services\NullArtifactStorage;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -1,11 +1,11 @@
 <?php
 
 /**
- * @file packages/exceptions/src/Ignition/AcademorixSolutionsProvider.php
+ * @file packages/exceptions/src/Ignition/StackraSolutionsProvider.php
  *
  * @description
  * Deterministic solution provider for
- * {@see \Academorix\Exceptions\AcademorixException} subclasses.
+ * {@see \Stackra\Exceptions\StackraException} subclasses.
  * Spatie Ignition (bundled with `spatie/laravel-ignition` in local
  * dev) calls `canSolve()` on every registered provider for every
  * unhandled throwable; every provider that says yes contributes
@@ -16,12 +16,12 @@
  * This class handles the exceptions we already understand — a
  * `ConfigurationException` always wants the same "check Doppler"
  * hint. The AI-powered counterpart
- * ({@see AcademorixAiSolutionsProvider}) handles the long tail of
+ * ({@see StackraAiSolutionsProvider}) handles the long tail of
  * un-mapped 5xx errors where a generic pattern isn't useful.
  *
  * Both providers are registered when Spatie Ignition is loaded in
  * the runtime — see
- * {@see \Academorix\Exceptions\Providers\ExceptionsServiceProvider::registerIgnitionSolutions()}.
+ * {@see \Stackra\Exceptions\Providers\ExceptionsServiceProvider::registerIgnitionSolutions()}.
  *
  * ## Adding new deterministic solutions
  *
@@ -33,23 +33,23 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Ignition;
+namespace Stackra\Exceptions\Ignition;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Auth\FeatureDisabledException;
-use Academorix\Exceptions\Domain\TenantException;
-use Academorix\Exceptions\Infrastructure\ConfigurationException;
-use Academorix\Exceptions\Infrastructure\IntegrationException;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Auth\FeatureDisabledException;
+use Stackra\Exceptions\Domain\TenantException;
+use Stackra\Exceptions\Infrastructure\ConfigurationException;
+use Stackra\Exceptions\Infrastructure\IntegrationException;
 use Spatie\Ignition\Contracts\HasSolutionsForThrowable;
 use Spatie\Ignition\Contracts\Solution;
 use Spatie\Ignition\Solutions\SuggestionSolution;
 use Throwable;
 
-final class AcademorixSolutionsProvider implements HasSolutionsForThrowable
+final class StackraSolutionsProvider implements HasSolutionsForThrowable
 {
     public function canSolve(Throwable $throwable): bool
     {
-        return $throwable instanceof AcademorixException;
+        return $throwable instanceof StackraException;
     }
 
     /** @return list<Solution> */
@@ -57,7 +57,7 @@ final class AcademorixSolutionsProvider implements HasSolutionsForThrowable
     {
         // `canSolve()` already guarantees this — but we assert it
         // here so phpstan/level-8 sees the narrower type below.
-        if (! $throwable instanceof AcademorixException) {
+        if (! $throwable instanceof StackraException) {
             return [];
         }
 
@@ -119,10 +119,10 @@ final class AcademorixSolutionsProvider implements HasSolutionsForThrowable
         );
     }
 
-    private function genericSolution(AcademorixException $e): Solution
+    private function genericSolution(StackraException $e): Solution
     {
         return new SuggestionSolution(
-            title: "Academorix error: {$e->errorCode()}",
+            title: "Stackra error: {$e->errorCode()}",
             description: sprintf(
                 'Severity: %s. Category: %s. Correlation id: %s. See docs/adr/0002-exception-handling.md for the full catalogue.',
                 $e->severity()->value,

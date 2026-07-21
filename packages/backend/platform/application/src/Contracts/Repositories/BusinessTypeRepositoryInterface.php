@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Contracts\Repositories;
+namespace Stackra\Application\Contracts\Repositories;
 
-use Academorix\Application\Models\BusinessType;
-use Academorix\Application\Repositories\EloquentBusinessTypeRepository;
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Application\Models\BusinessType;
+use Stackra\Application\Repositories\EloquentBusinessTypeRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

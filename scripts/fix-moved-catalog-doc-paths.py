@@ -2,7 +2,7 @@
 """
 Fix `docs:` paths in every catalog.json that got moved out of
 `packages/backend/` / `packages/sdk/` / `blueprints/` into
-`apps/academorix/src/{modules,sdks,blueprints}/`.
+`apps/stackra/src/{modules,sdks,blueprints}/`.
 
 Each catalog.json's `docs:` field references the README.md that lives
 alongside it. Post-move, the file physically moved with its parent
@@ -18,7 +18,7 @@ import json
 import pathlib
 import sys
 
-WORKSPACE = pathlib.Path("/Users/akouta/Projects/academorix-frontend")
+WORKSPACE = pathlib.Path("/Users/akouta/Projects/stackra-frontend")
 
 
 def new_prefix_for(catalog_path: pathlib.Path) -> str:
@@ -26,8 +26,8 @@ def new_prefix_for(catalog_path: pathlib.Path) -> str:
     in a `docs:` reference, based on where the catalog.json now sits.
     """
     rel = catalog_path.relative_to(WORKSPACE)
-    # `apps/academorix/src/modules/finance/chargeback/catalog.json`
-    #  -> `apps/academorix/src/modules/finance/chargeback`
+    # `apps/stackra/src/modules/finance/chargeback/catalog.json`
+    #  -> `apps/stackra/src/modules/finance/chargeback`
     return str(rel.parent)
 
 
@@ -75,7 +75,7 @@ def main() -> int:
     touched = 0
     skipped = 0
     errored = 0
-    for cat in sorted((WORKSPACE / "apps/academorix/src").rglob("catalog.json")):
+    for cat in sorted((WORKSPACE / "apps/stackra/src").rglob("catalog.json")):
         changed, msg = process(cat)
         if changed:
             touched += 1

@@ -1,6 +1,6 @@
 {
   "title": "GeofenceEvaluated",
-  "description": "Public wire shape of the Academorix\\Geofencing\\Events\\GeofenceEvaluated domain event. Fired synchronously by GeofenceService::evaluate() after the geofence_checks row is persisted. Consumed by audit / metric listeners inside the Geofencing module and by feature listeners in staff-clock-in-out, athlete-self-check-in, visitor-auto-log, attendance. Carries TWO polymorphic pointers: subject (WHY the check ran) + fenceable (WHAT it ran against). Breaking changes require a v2 bump + parallel dispatch during migration.",
+  "description": "Public wire shape of the Stackra\\Geofencing\\Events\\GeofenceEvaluated domain event. Fired synchronously by GeofenceService::evaluate() after the geofence_checks row is persisted. Consumed by audit / metric listeners inside the Geofencing module and by feature listeners in staff-clock-in-out, athlete-self-check-in, visitor-auto-log, attendance. Carries TWO polymorphic pointers: subject (WHY the check ran) + fenceable (WHAT it ran against). Breaking changes require a v2 bump + parallel dispatch during migration.",
   "version": "1.0.0",
   "type": "object",
   "required": ["check", "input"],

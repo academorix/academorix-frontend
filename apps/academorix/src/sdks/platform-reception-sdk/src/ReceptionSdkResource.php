@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformReceptionSdk;
+namespace Stackra\PlatformReceptionSdk;
 
-use Academorix\ApiSdk\Attributes\AsSdkResource;
-use Academorix\ApiSdk\Resources\BaseSdkResource;
+use Stackra\ApiSdk\Attributes\AsSdkResource;
+use Stackra\ApiSdk\Resources\BaseSdkResource;
 
 /**
  * Top-level SDK Resource for the `reception` module.

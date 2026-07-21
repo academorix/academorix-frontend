@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Attributes;
+namespace Stackra\Storage\Attributes;
 
 use Attribute;
 
 /**
  * Marks a model class or property as attachable to a
- * {@see \Academorix\Storage\Models\File} of the named kind.
+ * {@see \Stackra\Storage\Models\File} of the named kind.
  *
  * Applied on the property, `#[Attachable(kind: 'avatar')]` on a
  * `User::$avatarFile` accessor declares "this model has an avatar"
@@ -16,7 +16,7 @@ use Attribute;
  * resolved `File`.
  *
  * Applied on the class, the module scanner registers the kind with
- * {@see \Academorix\Storage\Contracts\Services\FileKindRegistryInterface}
+ * {@see \Stackra\Storage\Contracts\Services\FileKindRegistryInterface}
  * so the API layer validates the upload MIME + size without
  * per-controller code.
  *

@@ -27,7 +27,7 @@
 - `ThemeApplier` — reads the active theme + emits the CSS custom properties
   block that the frontend loads. Consumers: the SPA's bootstrap payload (via
   `/api/v1/tenant/theme/active`).
-- `ThemeSeeder` — seeds Academorix-shipped default themes (Light, Dark, Auto).
+- `ThemeSeeder` — seeds Stackra-shipped default themes (Light, Dark, Auto).
   `#[AsSeeder]` priority 40.
 
 ### Domain events

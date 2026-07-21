@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file apps/academorix/src/sdks/platform-application-sdk/src/Requests/BusinessTypes/ListBusinessTypesRequest.php
+ * @file apps/stackra/src/sdks/platform-application-sdk/src/Requests/BusinessTypes/ListBusinessTypesRequest.php
  *
  * @description
  * `GET /api/v1/business-types` — the **platform-admin** BusinessType
@@ -13,13 +13,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformApplicationSdk\Requests\BusinessTypes;
+namespace Stackra\PlatformApplicationSdk\Requests\BusinessTypes;
 
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\ApiSdk\Data\PaginationLinks;
-use Academorix\ApiSdk\Data\PaginationMeta;
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\PlatformApplicationSdk\Data\BusinessTypeData;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\ApiSdk\Data\PaginationLinks;
+use Stackra\ApiSdk\Data\PaginationMeta;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\PlatformApplicationSdk\Data\BusinessTypeData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

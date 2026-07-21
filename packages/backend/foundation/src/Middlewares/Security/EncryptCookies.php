@@ -12,10 +12,10 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Foundation\Middlewares\Security;
+namespace Stackra\Foundation\Middlewares\Security;
 
 use Illuminate\Cookie\Middleware\EncryptCookies as BaseEncryptCookies;
-use Academorix\Routing\Attributes\AsMiddleware;
+use Stackra\Routing\Attributes\AsMiddleware;
 
 /**
  * Encrypt Cookies Middleware.

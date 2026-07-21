@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Progress\Enums;
+namespace Stackra\Progress\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `result` on `grading-result`.

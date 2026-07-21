@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/digital-passes/metrics",
+  "id": "stackra://modules/digital-passes/metrics",
   "$version": 1,
   "title": "digital-passes — OpenTelemetry metrics",
   "description": "OTel / Prometheus metrics this module emits.",

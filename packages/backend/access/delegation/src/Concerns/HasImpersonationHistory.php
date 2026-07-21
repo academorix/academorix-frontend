@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Delegation\Concerns;
+namespace Stackra\Delegation\Concerns;
 
 /**
  * Trait — HasImpersonationHistory.

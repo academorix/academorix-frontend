@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Tests;
+namespace Stackra\Referrals\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/referrals.
+ * Base test case for stackra/referrals.
  *
  * @category Referrals
  *

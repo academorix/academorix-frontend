@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Credentials\Contracts\Repositories;
+namespace Stackra\Credentials\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Credentials\Models\Gate}.
+ * Repository contract for {@see Stackra\Credentials\Models\Gate}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `GateRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Credentials\Models\Gate>
+ * @extends RepositoryInterface<\Stackra\Credentials\Models\Gate>
  *
  * @category Credentials
  *

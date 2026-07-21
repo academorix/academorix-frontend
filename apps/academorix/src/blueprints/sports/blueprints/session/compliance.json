@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/session/compliance",
+  "id": "stackra://modules/session/compliance",
   "$version": 1,
   "title": "session — compliance evidence",
   "description": "Session is the highest-risk module in the sports tier from a compliance standpoint — it captures minors' physical attendance + coach identity + safeguarding narratives. Regulatory framework: US state childcare regs, UK Ofsted, EU GDPR + child-protection directives, and jurisdiction-specific safeguarding retention (e.g. UK IICSA — indefinite for suspected abuse).",

@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Crud\Attributes;
+namespace Stackra\Crud\Attributes;
 
 use Attribute;
 
@@ -31,7 +31,7 @@ use Attribute;
  *
  * ## Usage:
  * ```php
- * use Academorix\Crud\Attributes\AsScope;
+ * use Stackra\Crud\Attributes\AsScope;
  * use Illuminate\Database\Eloquent\Builder;
  * use Illuminate\Database\Eloquent\Model;
  * use Illuminate\Database\Eloquent\Scope;
@@ -67,7 +67,7 @@ use Attribute;
  *
  * ## Apply to Repository:
  * ```php
- * use Academorix\Crud\Attributes\UseScope;
+ * use Stackra\Crud\Attributes\UseScope;
  *
  * #[UseScope(TenantScope::class)]
  * #[UseScope(ExcludeArchivedScope::class)]

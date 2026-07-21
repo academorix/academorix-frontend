@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Exceptions;
+namespace Stackra\Tax\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * effective_from must be < effective_to when both set.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TaxRateInvalidEffectiveRangeException extends AcademorixException
+final class TaxRateInvalidEffectiveRangeException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

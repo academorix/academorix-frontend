@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/rbac/subprocessors",
+  "id": "stackra://modules/rbac/subprocessors",
   "$version": 1,
   "title": "rbac \u2014 subprocessors",
   "description": "RBAC does not engage third-party subprocessors. Every read + write is against the platform's own Postgres + Redis. This file documents the empty surface so compliance reviewers can quickly verify.",

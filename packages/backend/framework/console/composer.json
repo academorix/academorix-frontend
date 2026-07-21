@@ -1,9 +1,9 @@
 {
-  "name": "academorix/console",
-  "description": "Console framework — extended AsCommand attribute (with extension-registry support) plus a BaseCommand class that wires OmniTerm output, AOP before/after hooks, duration tracking, and per-command extension discovery. Every Academorix Artisan command extends this BaseCommand.",
+  "name": "stackra/console",
+  "description": "Console framework — extended AsCommand attribute (with extension-registry support) plus a BaseCommand class that wires OmniTerm output, AOP before/after hooks, duration tracking, and per-command extension discovery. Every Stackra Artisan command extends this BaseCommand.",
   "type": "library",
   "keywords": [
-    "academorix",
+    "stackra",
     "laravel",
     "console",
     "artisan",
@@ -13,9 +13,9 @@
   "license": "MIT",
   "authors": [
     {
-      "name": "Academorix Team",
-      "email": "dev@academorix.com",
-      "homepage": "https://academorix.com"
+      "name": "Stackra Team",
+      "email": "dev@stackra.com",
+      "homepage": "https://stackra.com"
     }
   ],
   "require": {
@@ -34,12 +34,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Console\\": "src/"
+      "Stackra\\Console\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Console\\Tests\\": "tests/"
+      "Stackra\\Console\\Tests\\": "tests/"
     }
   },
   "extra": {

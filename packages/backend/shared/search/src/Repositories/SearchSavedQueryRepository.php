@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Search\Repositories;
+namespace Stackra\Search\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Search\Contracts\Data\SearchSavedQueryInterface;
-use Academorix\Search\Contracts\Repositories\SearchSavedQueryRepositoryInterface;
-use Academorix\Search\Models\SearchSavedQuery;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Search\Contracts\Data\SearchSavedQueryInterface;
+use Stackra\Search\Contracts\Repositories\SearchSavedQueryRepositoryInterface;
+use Stackra\Search\Models\SearchSavedQuery;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Search\Models\SearchSavedQuery}.
+ * Attribute-first Eloquent repository for {@see Stackra\Search\Models\SearchSavedQuery}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(SearchSavedQueryInterface::class)]` which resolves to
  * `SearchSavedQuery` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Search\Models\SearchSavedQuery>
+ * @extends Repository<\Stackra\Search\Models\SearchSavedQuery>
  *
  * @category Search
  *

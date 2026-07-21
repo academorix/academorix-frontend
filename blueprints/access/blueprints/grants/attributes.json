@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/grants/attributes",
+  "id": "stackra://modules/grants/attributes",
   "$version": 1,
   "title": "grants — PHP attribute contracts",
   "description": "Two attributes. #[Grantable] on a class marks the model as a valid grant target and seeds it into GrantableRegistry at boot. #[AsGrantListener] marks a service that reacts to grant lifecycle events (used by consumer modules that need to respond to grant issue / revoke on their aggregates).",
-  "namespace": "Academorix\\Grant\\Attributes",
+  "namespace": "Stackra\\Grant\\Attributes",
   "attributes": [
     {
       "name": "Grantable",
-      "class": "Academorix\\Grant\\Attributes\\Grantable",
+      "class": "Stackra\\Grant\\Attributes\\Grantable",
       "targets": ["class"],
       "description": "Class-level marker on models that can be granted. Boot-time discovery scans #[Grantable]-annotated classes and seeds them into GrantableRegistry with their resource_type key. Composes with the HasResourceGrants + IsGrantable traits.",
       "params": [
@@ -52,7 +52,7 @@
     },
     {
       "name": "AsGrantListener",
-      "class": "Academorix\\Grant\\Attributes\\AsGrantListener",
+      "class": "Stackra\\Grant\\Attributes\\AsGrantListener",
       "targets": ["class"],
       "description": "Marks a service class as a grant-lifecycle listener. Boot-time discovery registers the class with Laravel's event dispatcher for the specified grant events. Alternative to manual EventServiceProvider wiring — keeps grant-adjacent listener registration self-contained.",
       "params": [

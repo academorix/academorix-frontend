@@ -12,12 +12,12 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Serializer;
+namespace Stackra\Serializer;
 
-use Academorix\Foundation\Exceptions\InvalidArgumentException;
-use Academorix\Serializer\Contracts\SerializerInterface;
-use Academorix\Support\Reflection;
-use Academorix\Support\Str;
+use Stackra\Foundation\Exceptions\InvalidArgumentException;
+use Stackra\Serializer\Contracts\SerializerInterface;
+use Stackra\Support\Reflection;
+use Stackra\Support\Str;
 use Throwable;
 
 /**

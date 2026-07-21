@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Exceptions;
+namespace Stackra\Transfer\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when an uploaded file exceeds the configured max size.
@@ -13,7 +13,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TransferFileTooLargeException extends AcademorixException
+final class TransferFileTooLargeException extends StackraException
 {
     public const CODE = 'TRANSFER_FILE_TOO_LARGE';
 

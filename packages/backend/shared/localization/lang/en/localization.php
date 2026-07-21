@@ -4,7 +4,7 @@
  * @file modules/shared/localization/lang/en/localization.php
  *
  * @description
- * English translations for the `academorix/localization` module.
+ * English translations for the `stackra/localization` module.
  */
 
 declare(strict_types=1);

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Contracts\Services;
+namespace Stackra\Localization\Contracts\Services;
 
-use Academorix\Localization\Data\LocaleResolutionResultData;
-use Academorix\Localization\Services\LocaleResolver;
+use Stackra\Localization\Data\LocaleResolutionResultData;
+use Stackra\Localization\Services\LocaleResolver;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Http\Request;
 

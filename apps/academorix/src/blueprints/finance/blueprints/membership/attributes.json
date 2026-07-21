@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/membership/attributes",
+  "id": "stackra://modules/membership/attributes",
   "$version": 1,
   "title": "membership — PHP attribute contracts",
-  "namespace": "Academorix\\Finance\\Membership\\Attributes",
+  "namespace": "Stackra\\Finance\\Membership\\Attributes",
   "attributes": [
     {
       "name": "AsMembershipListener",
-      "class": "Academorix\\Finance\\Membership\\Attributes\\AsMembershipListener",
+      "class": "Stackra\\Finance\\Membership\\Attributes\\AsMembershipListener",
       "targets": ["class"],
       "description": "Marks a service as a subscriber to membership lifecycle events. Contract-critical events (MembershipChargedBack, MembershipRefunded) require explicit opt-in (they route on finance-critical queue and are financially load-bearing).",
       "params": [
@@ -14,7 +14,7 @@
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Empty = subscribe to every Academorix\\Finance\\Membership\\Events\\Membership* + Pass* event EXCEPT MembershipChargedBack + MembershipRefunded (explicit opt-in required)."
+          "description": "Empty = subscribe to every Stackra\\Finance\\Membership\\Events\\Membership* + Pass* event EXCEPT MembershipChargedBack + MembershipRefunded (explicit opt-in required)."
         },
         { "name": "queue", "type": "string | null", "default": null },
         { "name": "priority", "type": "integer", "default": 100 }
@@ -23,7 +23,7 @@
     },
     {
       "name": "AsPassConsumer",
-      "class": "Academorix\\Finance\\Membership\\Attributes\\AsPassConsumer",
+      "class": "Stackra\\Finance\\Membership\\Attributes\\AsPassConsumer",
       "targets": ["class"],
       "description": "Marks a session/event/booking module as a Pass consumer. When a marked class is invoked with a pass id, PassObserver's consuming-branch performs the idempotent consumption + links consumed_by_session_id to the caller's session context.",
       "params": [

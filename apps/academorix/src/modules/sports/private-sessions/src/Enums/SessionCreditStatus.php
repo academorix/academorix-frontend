@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PrivateSessions\Enums;
+namespace Stackra\PrivateSessions\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Closed-set enum for `status` on `session-credit`.

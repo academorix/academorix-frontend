@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Contracts\Services;
+namespace Stackra\Localization\Contracts\Services;
 
 use Illuminate\Http\Request;
 
@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
  * One link in the locale-resolution chain.
  *
  * Every implementer is discovered via
- * {@see \Academorix\Localization\Attributes\AsLocaleResolutionStrategy}
+ * {@see \Stackra\Localization\Attributes\AsLocaleResolutionStrategy}
  * and hydrated into
  * {@see LocaleResolutionStrategyRegistryInterface} at boot. The
  * {@see LocaleResolverInterface} iterates the config chain and asks
@@ -35,7 +35,7 @@ interface LocaleResolutionStrategyInterface
     /**
      * The strategy's identifier — matches an entry in the config
      * chain. Present so the resolver can report the winning
-     * strategy in {@see \Academorix\Localization\Data\LocaleResolutionResultData}.
+     * strategy in {@see \Stackra\Localization\Data\LocaleResolutionResultData}.
      */
     public function name(): string;
 }

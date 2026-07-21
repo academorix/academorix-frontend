@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/athlete-enrollment/retention",
+  "id": "stackra://modules/athlete-enrollment/retention",
   "$version": 1,
   "title": "athlete-enrollment — retention windows",
   "description": "Active + confirmed + waitlisted enrollments never expire. Completed / withdrawn / expelled / expired enrollments retain 7 years post terminal transition (season-history + membership-record retention for federation compliance).",

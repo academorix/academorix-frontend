@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/telemetry/analytics",
+  "id": "stackra://modules/telemetry/analytics",
   "$version": 1,
   "title": "telemetry \u2014 product analytics",
   "description": "None. Telemetry is developer infrastructure; there is no product-analytics surface tied to it.",

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Session\Tests;
+namespace Stackra\Session\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/session.
+ * Base test case for stackra/session.
  *
  * @category Session
  *

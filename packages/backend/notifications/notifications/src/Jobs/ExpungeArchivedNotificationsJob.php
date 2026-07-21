@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Jobs;
+namespace Stackra\Notifications\Jobs;
 
-use Academorix\Notifications\Contracts\Repositories\NotificationRepositoryInterface;
+use Stackra\Notifications\Contracts\Repositories\NotificationRepositoryInterface;
 use Carbon\CarbonImmutable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;

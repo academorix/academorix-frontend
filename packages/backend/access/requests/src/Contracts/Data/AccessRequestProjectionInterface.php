@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Requests\Contracts\Data;
+namespace Stackra\Requests\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Requests\Models\AccessRequestProjection;
+use Stackra\Requests\Models\AccessRequestProjection;
 
 /**
  * Table shape for the `access_request_projections` table.

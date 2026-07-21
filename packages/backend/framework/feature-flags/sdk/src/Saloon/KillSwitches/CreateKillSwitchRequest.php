@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlagsSdk\Saloon\KillSwitches;
+namespace Stackra\FeatureFlagsSdk\Saloon\KillSwitches;
 
-use Academorix\FeatureFlagsSdk\Data\FeatureKillSwitchData;
+use Stackra\FeatureFlagsSdk\Data\FeatureKillSwitchData;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;

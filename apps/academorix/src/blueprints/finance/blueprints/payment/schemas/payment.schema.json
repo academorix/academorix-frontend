@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/payment/schemas/payment",
+  "id": "stackra://modules/payment/schemas/payment",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Payment",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "pay_",
     "incrementing": false,
-    "model": "Academorix\\Finance\\Payment\\Models\\Payment",
-    "interface": "Academorix\\Finance\\Payment\\Contracts\\Data\\PaymentInterface",
-    "implements": ["Academorix\\Finance\\Payment\\Contracts\\Data\\PaymentInterface"],
+    "model": "Stackra\\Finance\\Payment\\Models\\Payment",
+    "interface": "Stackra\\Finance\\Payment\\Contracts\\Data\\PaymentInterface",
+    "implements": ["Stackra\\Finance\\Payment\\Contracts\\Data\\PaymentInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

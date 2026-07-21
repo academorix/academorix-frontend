@@ -1,10 +1,10 @@
 {
-  "name": "academorix-observability/audit",
+  "name": "stackra-observability/audit",
   "type": "library",
-  "description": "Academorix Audit module — server-side Laravel package emitted from the module blueprint at `modules/observability/blueprints/audit/`. Tier-scoped composer name (`academorix-observability/audit`) to disambiguate from the hand-tuned `academorix/audit` under `backend-packages/shared/audit/` which owns the vendor `owen-it/laravel-auditing` wrapper + retention. This module owns the storage schema adaptation (tenant_id + application_id columns) + query surface + retention scheduling on top of it. Complements the wire SDK at `academorix-observability/audit-sdk`.",
+  "description": "Stackra Audit module — server-side Laravel package emitted from the module blueprint at `modules/observability/blueprints/audit/`. Tier-scoped composer name (`stackra-observability/audit`) to disambiguate from the hand-tuned `stackra/audit` under `backend-packages/shared/audit/` which owns the vendor `owen-it/laravel-auditing` wrapper + retention. This module owns the storage schema adaptation (tenant_id + application_id columns) + query surface + retention scheduling on top of it. Complements the wire SDK at `stackra-observability/audit-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "observability",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-observability/audit-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-observability/audit-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Audit\\": "src/"
+      "Stackra\\Audit\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Audit\\Tests\\": "tests/"
+      "Stackra\\Audit\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Audit\\Providers\\AuditServiceProvider"
+        "Stackra\\Audit\\Providers\\AuditServiceProvider"
       ],
       "aliases": {}
     }

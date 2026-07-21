@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SharedAttributesSdk\Requests\AttributeGroups;
+namespace Stackra\SharedAttributesSdk\Requests\AttributeGroups;
 
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\ApiSdk\Data\PaginationLinks;
-use Academorix\ApiSdk\Data\PaginationMeta;
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SharedAttributesSdk\Data\AttributeGroupData;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\ApiSdk\Data\PaginationLinks;
+use Stackra\ApiSdk\Data\PaginationMeta;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SharedAttributesSdk\Data\AttributeGroupData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

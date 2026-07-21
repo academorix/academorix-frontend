@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Staff\Services;
+namespace Stackra\Staff\Services;
 
-use Academorix\Staff\Contracts\Services\CoachProfileFactoryInterface;
+use Stackra\Staff\Contracts\Services\CoachProfileFactoryInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Staff\Contracts\Repositories\CoachRepositoryInterface;
+use Stackra\Staff\Contracts\Repositories\CoachRepositoryInterface;
 
 /**
  * Concrete service — CoachProfileFactory.

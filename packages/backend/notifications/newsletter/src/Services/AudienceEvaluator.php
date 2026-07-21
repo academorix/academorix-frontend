@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Services;
+namespace Stackra\Newsletter\Services;
 
-use Academorix\Newsletter\Contracts\Services\AudienceEvaluatorInterface;
+use Stackra\Newsletter\Contracts\Services\AudienceEvaluatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Newsletter\Contracts\Repositories\NewsletterAudienceRepositoryInterface;
+use Stackra\Newsletter\Contracts\Repositories\NewsletterAudienceRepositoryInterface;
 
 /**
  * Concrete service — AudienceEvaluator.

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Exceptions;
+namespace Stackra\Payment\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to set amount_refunded_cents > amount_cents.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PaymentRefundExceedsCaptureException extends AcademorixException
+final class PaymentRefundExceedsCaptureException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

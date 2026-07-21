@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/identity/features",
+  "id": "stackra://modules/identity/features",
   "$version": 1,
   "title": "identity \u2014 feature keys",
   "reference": {

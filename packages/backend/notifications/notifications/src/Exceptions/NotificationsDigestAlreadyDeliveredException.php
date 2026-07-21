@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Exceptions;
+namespace Stackra\Notifications\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * ProcessDigestJob raced with an idempotent duplicate — the second run detected a delivered digest for the same window.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsDigestAlreadyDeliveredException extends AcademorixException
+final class NotificationsDigestAlreadyDeliveredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

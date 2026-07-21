@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Events;
+namespace Stackra\Application\Events;
 
-use Academorix\Application\Models\Application;
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Application\Models\Application;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 
 /**
  * Dispatched when an Application is soft-deleted.
  *
- * Fires from {@see \Academorix\Application\Observers\ApplicationObserver::deleted()}.
+ * Fires from {@see \Stackra\Application\Observers\ApplicationObserver::deleted()}.
  * `ShouldDispatchAfterCommit` — the dispatcher defers firing until the
  * enclosing transaction commits. Consumers should DISABLE — never delete
  * — downstream state (Tenants, Roles, Permissions) since the Application

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Exceptions;
+namespace Stackra\Match\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Caller lacks the coach / head_coach / admin / owner role required to reach the surface.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MatchInsufficientRoleException extends AcademorixException
+final class MatchInsufficientRoleException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

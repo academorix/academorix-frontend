@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Membership\Models;
+namespace Stackra\Membership\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Membership\Contracts\Data\MembershipPlanInterface;
-use Academorix\Membership\Database\Factories\MembershipPlanFactory;
-use Academorix\Branch\Concerns\BelongsToBranch;
-use Academorix\Foundation\Concerns\Filterable;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Membership\Policies\MembershipPlanPolicy;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Membership\Contracts\Data\MembershipPlanInterface;
+use Stackra\Membership\Database\Factories\MembershipPlanFactory;
+use Stackra\Branch\Concerns\BelongsToBranch;
+use Stackra\Foundation\Concerns\Filterable;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Foundation\Concerns\HasPrefixedUlid;
+use Stackra\Membership\Policies\MembershipPlanPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Data;
+namespace Stackra\Geofencing\Data;
 
-use Academorix\Geofencing\Enums\GeofenceMode;
-use Academorix\Geofencing\Enums\GeofenceResult;
+use Stackra\Geofencing\Enums\GeofenceMode;
+use Stackra\Geofencing\Enums\GeofenceResult;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Exceptions;
+namespace Stackra\Referrals\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `REFERRAL_FRAUD_FLAG_ALREADY_REVIEWED` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ReferralFraudFlagAlreadyReviewedException extends AcademorixException
+final class ReferralFraudFlagAlreadyReviewedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

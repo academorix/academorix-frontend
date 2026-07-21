@@ -1,10 +1,10 @@
 {
-  "name": "academorix-observability/activity",
+  "name": "stackra-observability/activity",
   "type": "library",
-  "description": "Academorix Activity module — server-side Laravel package emitted from the module blueprint at `modules/observability/blueprints/activity/`. Tier-scoped composer name (`academorix-observability/activity`) to disambiguate from the hand-tuned `academorix/activity` under `backend-packages/shared/activity/` which owns the vendor `spatie/laravel-activitylog` wrapper + retention. This module owns the storage schema adaptation (tenant_id + application_id columns) + query surface + retention scheduling on top of it. Complements the wire SDK at `academorix-observability/activity-sdk`.",
+  "description": "Stackra Activity module — server-side Laravel package emitted from the module blueprint at `modules/observability/blueprints/activity/`. Tier-scoped composer name (`stackra-observability/activity`) to disambiguate from the hand-tuned `stackra/activity` under `backend-packages/shared/activity/` which owns the vendor `spatie/laravel-activitylog` wrapper + retention. This module owns the storage schema adaptation (tenant_id + application_id columns) + query surface + retention scheduling on top of it. Complements the wire SDK at `stackra-observability/activity-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "module",
     "laravel",
     "observability",
@@ -17,12 +17,12 @@
     "illuminate/container": "^13.0",
     "illuminate/contracts": "^13.0",
     "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/support": "@dev",
-    "academorix-observability/activity-sdk": "@dev"
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev",
+    "stackra-observability/activity-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,18 +33,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Activity\\": "src/"
+      "Stackra\\Activity\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Activity\\Tests\\": "tests/"
+      "Stackra\\Activity\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Activity\\Providers\\ActivityServiceProvider"
+        "Stackra\\Activity\\Providers\\ActivityServiceProvider"
       ],
       "aliases": {}
     }

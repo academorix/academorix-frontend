@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/entitlements/errors",
+  "id": "stackra://modules/entitlements/errors",
   "$version": 1,
   "title": "entitlements \u2014 error codes",
   "namespace": "entitlements",

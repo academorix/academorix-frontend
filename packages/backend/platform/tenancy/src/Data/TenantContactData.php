@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Data;
+namespace Stackra\Tenancy\Data;
 
-use Academorix\Tenancy\Contracts\Data\TenantContactInterface;
-use Academorix\Tenancy\Enums\TenantContactKind;
-use Academorix\Tenancy\Models\TenantContact;
+use Stackra\Tenancy\Contracts\Data\TenantContactInterface;
+use Stackra\Tenancy\Enums\TenantContactKind;
+use Stackra\Tenancy\Models\TenantContact;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

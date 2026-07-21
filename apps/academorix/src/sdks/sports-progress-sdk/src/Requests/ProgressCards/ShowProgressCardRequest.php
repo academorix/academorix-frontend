@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsProgressSdk\Requests\ProgressCards;
+namespace Stackra\SportsProgressSdk\Requests\ProgressCards;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsProgressSdk\Data\ProgressCardData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsProgressSdk\Data\ProgressCardData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

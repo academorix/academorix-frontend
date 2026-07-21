@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/monitoring/features",
+  "id": "stackra://modules/monitoring/features",
   "$version": 1,
   "title": "monitoring — feature keys",
   "reference": {

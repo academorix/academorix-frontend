@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Ai\Database\Factories;
+namespace Stackra\Ai\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Ai\Contracts\Data\AiDraftInterface;
-use Academorix\Ai\Models\AiDraft;
+use Stackra\Ai\Contracts\Data\AiDraftInterface;
+use Stackra\Ai\Models\AiDraft;
 
 /**
- * Factory for {@see \Academorix\Ai\Models\AiDraft}.
+ * Factory for {@see \Stackra\Ai\Models\AiDraft}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Ai\Models\AiDraft>
+ * @extends Factory<\Stackra\Ai\Models\AiDraft>
  *
  * @category Ai
  *

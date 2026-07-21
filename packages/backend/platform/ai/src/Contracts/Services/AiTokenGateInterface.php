@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Ai\Contracts\Services;
+namespace Stackra\Ai\Contracts\Services;
 
-use Academorix\Ai\Services\AiTokenGate;
+use Stackra\Ai\Services\AiTokenGate;
 use Illuminate\Container\Attributes\Bind;
 
 /**

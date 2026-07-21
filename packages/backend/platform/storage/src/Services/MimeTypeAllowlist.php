@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Services;
+namespace Stackra\Storage\Services;
 
-use Academorix\Storage\Contracts\Services\MimeTypeAllowlistInterface;
+use Stackra\Storage\Contracts\Services\MimeTypeAllowlistInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Storage\Contracts\Repositories\ChunkedUploadRepositoryInterface;
+use Stackra\Storage\Contracts\Repositories\ChunkedUploadRepositoryInterface;
 
 /**
  * Concrete service — MimeTypeAllowlist.

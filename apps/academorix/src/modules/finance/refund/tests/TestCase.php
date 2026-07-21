@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Refund\Tests;
+namespace Stackra\Refund\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/refund.
+ * Base test case for stackra/refund.
  *
  * @category Refund
  *

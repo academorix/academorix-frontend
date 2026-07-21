@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformApplicationSdk\Data;
+namespace Stackra\PlatformApplicationSdk\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Wire-visible response DTO for {@see \Academorix\Application\Models\Application}.
+ * Wire-visible response DTO for {@see \Stackra\Application\Models\Application}.
  *
  * Mirrors `schemas/application.schema.json` column-for-column, minus
  * the fields declared under `x-wire.hidden` (`metadata`,
@@ -32,12 +32,12 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
  * ## Example
  *
  * ```php
- * use Academorix\PlatformSdk\Client\PlatformSdk;
+ * use Stackra\PlatformSdk\Client\PlatformSdk;
  *
  * $app = app(PlatformSdk::class)->application()->applications()->show('sports');
  * $app->slug;             // 'sports'
  * $app->defaultCurrency;  // 'USD'
- * $app->centralUrl;       // 'https://sports.academorix.app'
+ * $app->centralUrl;       // 'https://sports.stackra.app'
  * ```
  *
  * @category PlatformApplicationSdk
@@ -50,9 +50,9 @@ final class ApplicationData extends Data
     /**
      * @param  string       $id                    Prefixed ULID (`app_<26 chars>`).
      * @param  string       $slug                  URL-safe application identifier — matches `^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$`.
-     * @param  string       $name                  Display name shown in admin surfaces (e.g. "Academorix", "Academorix EU").
-     * @param  string       $centralHost           Marketing + workspace-picker host (e.g. "academorix.app").
-     * @param  string       $platformAdminHost     Academorix-staff host (e.g. "admin.academorix.app").
+     * @param  string       $name                  Display name shown in admin surfaces (e.g. "Stackra", "Stackra EU").
+     * @param  string       $centralHost           Marketing + workspace-picker host (e.g. "stackra.app").
+     * @param  string       $platformAdminHost     Stackra-staff host (e.g. "admin.stackra.app").
      * @param  string       $defaultLocale         Default IETF locale tag (e.g. "en", "fr-FR").
      * @param  string       $defaultTimezone       Default IANA timezone name (e.g. "UTC").
      * @param  string       $defaultCurrency       Default ISO-4217 currency code (three uppercase letters).
@@ -96,7 +96,7 @@ final class ApplicationData extends Data
      * Useful for callers that received the payload from somewhere
      * other than a Saloon response (fixtures, webhooks, message
      * broker payloads). Prefer the Saloon path
-     * ({@see \Academorix\PlatformApplicationSdk\Requests\Applications\ShowApplicationRequest::createDtoFromResponse()})
+     * ({@see \Stackra\PlatformApplicationSdk\Requests\Applications\ShowApplicationRequest::createDtoFromResponse()})
      * when the record came from an HTTP response.
      *
      * @param  array<string, mixed>  $row  The raw snake_case record.

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Exceptions;
+namespace Stackra\Payment\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * provider_reference_id does not match the per-provider format regex.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PaymentInvalidProviderReferenceException extends AcademorixException
+final class PaymentInvalidProviderReferenceException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

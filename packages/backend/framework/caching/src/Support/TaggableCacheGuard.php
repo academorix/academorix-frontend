@@ -43,7 +43,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Caching\Support;
+namespace Stackra\Caching\Support;
 
 use Closure;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;

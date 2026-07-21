@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PrivateSessions\Tests;
+namespace Stackra\PrivateSessions\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/private-sessions.
+ * Base test case for stackra/private-sessions.
  *
  * @category PrivateSessions
  *

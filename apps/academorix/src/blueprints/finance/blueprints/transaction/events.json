@@ -1,20 +1,20 @@
 {
-  "id": "academorix://modules/transaction/events",
+  "id": "stackra://modules/transaction/events",
   "$version": 1,
   "title": "transaction — published events",
-  "namespace": "Academorix\\Finance\\Transaction\\Events",
+  "namespace": "Stackra\\Finance\\Transaction\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. LedgerImbalanceDetected is the CRITICAL P0 event of the module — it should NEVER fire in a healthy system; if it does, the ledger is broken + new transactions halt until an ops-authored fix lands. TransactionReversed + TransactionAmendmentRequested are the two write-critical audit signals (regulator-facing). AccountBalanceThresholdCrossed is an ops signal (accounts_receivable > $X, cash < $Y).",
   "events": [
     {
       "name": "TransactionCreated",
-      "class": "Academorix\\Finance\\Transaction\\Events\\TransactionCreated",
+      "class": "Stackra\\Finance\\Transaction\\Events\\TransactionCreated",
       "trigger": "TransactionObserver.creating committed a new transactions row (status='draft', before ledger entries attach). Fires exactly once per transaction. Precedes TransactionPosted by the balancing step in the same DB transaction.",
       "queue": "finance",
       "consumers": [
         "audit::WriteToAuditLog (retention: 7 years — SOX 404)",
         "activity::WriteToActivityLog",
-        "monitoring::MetricsCollector (increments academorix.transaction.created_total)"
+        "monitoring::MetricsCollector (increments stackra.transaction.created_total)"
       ],
       "payload": {
         "transaction_id": "ULID (trx_*)",
@@ -34,13 +34,13 @@
     },
     {
       "name": "TransactionPosted",
-      "class": "Academorix\\Finance\\Transaction\\Events\\TransactionPosted",
+      "class": "Stackra\\Finance\\Transaction\\Events\\TransactionPosted",
       "trigger": "Ledger entries balanced (SUM(debits) == SUM(credits) > 0) + transaction.status transitioned draft → posted + posted_at timestamp set. Terminal state — every posted transaction is IMMUTABLE.",
       "queue": "finance",
       "consumers": [
         "audit::WriteToAuditLog (retention: 7 years — SOX 404; every posted transaction is regulator-visible)",
         "activity::WriteToActivityLog",
-        "monitoring::MetricsCollector (increments academorix.transaction.posted_total)",
+        "monitoring::MetricsCollector (increments stackra.transaction.posted_total)",
         "cache::InvalidateAccountBalanceCache (invalidates per-account balance keys for every account touched)",
         "growth::analytics::TrackRevenueMovement (when kind IN ('invoice_payment', 'refund_issued'))"
       ],
@@ -58,14 +58,14 @@
     },
     {
       "name": "TransactionReversed",
-      "class": "Academorix\\Finance\\Transaction\\Events\\TransactionReversed",
+      "class": "Stackra\\Finance\\Transaction\\Events\\TransactionReversed",
       "trigger": "TransactionReverser committed a NEW transaction pointing at an existing one via source_transaction_id + reversal_reason. The reversal transaction is a first-class posted transaction with offsetting ledger entries (debit ↔ credit swapped). The ORIGINAL transaction remains posted + IMMUTABLE. This event fires on the REVERSAL transaction (not on the original — originals never change).",
       "queue": "finance-critical",
       "consumers": [
         "audit::WriteToAuditLog (retention: 7 years — regulator-critical audit trail for every ledger correction)",
         "activity::WriteToActivityLog",
         "notifications::DispatchTransactionAmendmentAppliedNotification (finance role + admin — every reversal is regulator-visible)",
-        "monitoring::MetricsCollector (increments academorix.transaction.reversed_total)"
+        "monitoring::MetricsCollector (increments stackra.transaction.reversed_total)"
       ],
       "payload": {
         "reversal_transaction_id": "ULID (trx_*) — the new offsetting transaction",
@@ -80,14 +80,14 @@
     },
     {
       "name": "TransactionAmendmentRequested",
-      "class": "Academorix\\Finance\\Transaction\\Events\\TransactionAmendmentRequested",
+      "class": "Stackra\\Finance\\Transaction\\Events\\TransactionAmendmentRequested",
       "trigger": "Admin invoked POST /transactions/{id}/reverse with reversal_reason='accounting_adjustment' — a manual override for correcting a ledger entry that was posted incorrectly. Distinct from the automated invoice-refund flow (which uses reversal_reason='refund'). Every fire is regulator-critical + must include a written note.",
       "queue": "finance-critical",
       "consumers": [
         "audit::WriteToAuditLog (retention: 7 years — REQUIRED for manual overrides per SOX 404)",
         "activity::WriteToActivityLog",
         "notifications::DispatchTransactionAmendmentAppliedNotification (cannot-opt-out — pages finance + admin)",
-        "monitoring::MetricsCollector (increments academorix.transaction.amendment_requested_total; any non-zero rate is a signal to investigate)"
+        "monitoring::MetricsCollector (increments stackra.transaction.amendment_requested_total; any non-zero rate is a signal to investigate)"
       ],
       "payload": {
         "reversal_transaction_id": "ULID",
@@ -100,12 +100,12 @@
     },
     {
       "name": "LedgerEntryRecorded",
-      "class": "Academorix\\Finance\\Transaction\\Events\\LedgerEntryRecorded",
+      "class": "Stackra\\Finance\\Transaction\\Events\\LedgerEntryRecorded",
       "trigger": "TransactionLedgerEntryObserver.creating committed a ledger entry row. Fires once per entry — a typical invoice-paid transaction fires TWICE (one debit entry + one credit entry).",
       "queue": "finance",
       "consumers": [
         "audit::WriteToAuditLog (retention: 7 years)",
-        "monitoring::MetricsCollector (increments academorix.ledger.entries_recorded_total; labels: account, side)",
+        "monitoring::MetricsCollector (increments stackra.ledger.entries_recorded_total; labels: account, side)",
         "cache::InvalidateAccountBalanceCache (invalidates the specific account's balance cache)"
       ],
       "payload": {
@@ -122,13 +122,13 @@
     },
     {
       "name": "LedgerImbalanceDetected",
-      "class": "Academorix\\Finance\\Transaction\\Events\\LedgerImbalanceDetected",
+      "class": "Stackra\\Finance\\Transaction\\Events\\LedgerImbalanceDetected",
       "trigger": "CRITICAL P0. SUM(debit_cents) != SUM(credit_cents) for a transaction OR the nightly LedgerReconciler found a global tenant-account imbalance. Should NEVER fire in a healthy system — if it does, the ledger is broken + new transactions HALT until an ops-authored fix lands. Every fire pages the on-call + escalates to finance leadership + writes a critical audit row.",
       "queue": "finance-critical",
       "consumers": [
         "audit::WriteToAuditLog (retention: 7 years — REGULATOR-CRITICAL)",
         "notifications::DispatchLedgerImbalanceDetectedNotification (cannot-opt-out — pages on-call + finance leadership + platform ops)",
-        "monitoring::MetricsCollector (increments academorix.ledger.imbalances_detected_total; every increment triggers PagerDuty P0)",
+        "monitoring::MetricsCollector (increments stackra.ledger.imbalances_detected_total; every increment triggers PagerDuty P0)",
         "transaction::HaltNewTransactionsOnImbalance (sets tenant-level flag transaction.halt_new = true until resolved)"
       ],
       "payload": {
@@ -146,7 +146,7 @@
     },
     {
       "name": "AccountBalanceThresholdCrossed",
-      "class": "Academorix\\Finance\\Transaction\\Events\\AccountBalanceThresholdCrossed",
+      "class": "Stackra\\Finance\\Transaction\\Events\\AccountBalanceThresholdCrossed",
       "trigger": "The AccountBalanceCalculator computed a per-account running balance that crossed a config-defined threshold. Example: accounts_receivable > $50k (collection risk); cash < $1k (liquidity risk); refunds_owed > $10k (needs disbursement). Not a P0 — signals ops to review.",
       "queue": "finance",
       "consumers": [
@@ -167,7 +167,7 @@
     },
     {
       "name": "TenantOpeningBalanceRecorded",
-      "class": "Academorix\\Finance\\Transaction\\Events\\TenantOpeningBalanceRecorded",
+      "class": "Stackra\\Finance\\Transaction\\Events\\TenantOpeningBalanceRecorded",
       "trigger": "RecordOpeningBalanceOnTenantProvisioned hook fired on tenancy::TenantProvisioned. Creates one transaction with kind='opening_balance' + ledger entries at zero for every enabled account (or non-zero when migrating from a legacy system with existing balances). Fires exactly once per tenant.",
       "queue": "finance",
       "consumers": [
@@ -184,7 +184,7 @@
     },
     {
       "name": "TransactionCurrencyConverted",
-      "class": "Academorix\\Finance\\Transaction\\Events\\TransactionCurrencyConverted",
+      "class": "Stackra\\Finance\\Transaction\\Events\\TransactionCurrencyConverted",
       "trigger": "Fires ONLY on cross-currency transactions (transaction.currency ≠ tenant.base_currency). The ExchangeRateResolver captured a rate; base_amount_cents was computed atomically before the ledger balancing step. Downstream reports use base_amount_cents for aggregation across currencies.",
       "queue": "finance",
       "consumers": [
@@ -205,12 +205,12 @@
     },
     {
       "name": "LedgerReconciliationCompleted",
-      "class": "Academorix\\Finance\\Transaction\\Events\\LedgerReconciliationCompleted",
+      "class": "Stackra\\Finance\\Transaction\\Events\\LedgerReconciliationCompleted",
       "trigger": "ReconcileLedgerBalancesJob completed its nightly sweep. Reports total transactions scanned + per-account balance snapshots + any imbalances detected (fires LedgerImbalanceDetected per imbalance BEFORE this event). Every fire is expected; every scan-completed-with-imbalances-found is a P0.",
       "queue": "finance",
       "consumers": [
         "audit::WriteToAuditLog (retention: 7 years — regulators love to see the nightly reconciler completing on schedule)",
-        "monitoring::MetricsCollector (increments academorix.ledger.reconciliation_runs_total; labels: outcome='balanced' or 'imbalanced')"
+        "monitoring::MetricsCollector (increments stackra.ledger.reconciliation_runs_total; labels: outcome='balanced' or 'imbalanced')"
       ],
       "payload": {
         "tenant_id": "ULID",

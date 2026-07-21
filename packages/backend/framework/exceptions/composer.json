@@ -1,12 +1,12 @@
 {
-  "name": "academorix/exceptions",
+  "name": "stackra/exceptions",
   "type": "library",
-  "description": "Structured exception hierarchy, JSON error renderer, Spatie Ignition + AI solutions, and Sentry context enrichment for every Academorix app and package.",
+  "description": "Structured exception hierarchy, JSON error renderer, Spatie Ignition + AI solutions, and Sentry context enrichment for every Stackra app and package.",
   "license": "proprietary",
   "require": {
     "php": "^8.3",
-    "academorix/foundation": "@dev",
-    "academorix/service-provider": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/service-provider": "@dev",
     "illuminate/auth": "^13.0",
     "illuminate/contracts": "^13.0",
     "illuminate/http": "^13.0",
@@ -32,18 +32,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Exceptions\\": "src/"
+      "Stackra\\Exceptions\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Exceptions\\Tests\\": "tests/"
+      "Stackra\\Exceptions\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Exceptions\\Providers\\ExceptionsServiceProvider"
+        "Stackra\\Exceptions\\Providers\\ExceptionsServiceProvider"
       ],
       "aliases": {}
     }

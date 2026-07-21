@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformSdk\Client;
+namespace Stackra\PlatformSdk\Client;
 
-use Academorix\ApiSdk\Contracts\SdkResource;
-use Academorix\ApiSdk\Registry\SdkResourceRegistry;
+use Stackra\ApiSdk\Contracts\SdkResource;
+use Stackra\ApiSdk\Registry\SdkResourceRegistry;
 
 /**
  * Consumer-facing facade for the Platform service SDK.
  *
  * Every `$platform->{resource}()` call dispatches through `__call()` into the
  * service-scoped {@see SdkResourceRegistry} populated at boot by
- * {@see \Academorix\PlatformSdk\Providers\PlatformSdkServiceProvider}. Distinct
+ * {@see \Stackra\PlatformSdk\Providers\PlatformSdkServiceProvider}. Distinct
  * from the kernel `ApiClient` so each service exposes its own typed facade
  * bound to its own connector (its own base URL).
  *
@@ -32,7 +32,7 @@ final readonly class PlatformSdk
     /**
      * Fetch a discovered resource by its `#[AsSdkResource]` name.
      *
-     * @throws \Academorix\ApiSdk\Exceptions\ResourceNotFoundException When none registered under `$name`.
+     * @throws \Stackra\ApiSdk\Exceptions\ResourceNotFoundException When none registered under `$name`.
      */
     public function resource(string $name): SdkResource
     {

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Refund\Events;
+namespace Stackra\Refund\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -17,7 +17,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - audit::WriteToAuditLog (retention: 7 years — financial record)
  * - activity::WriteToActivityLog
  * - notifications::DispatchRefundFailedNotification (customer + admin)
- * - observability::MetricsCollector (academorix.refund.failed_total labelled by failure_reason_category)
+ * - observability::MetricsCollector (stackra.refund.failed_total labelled by failure_reason_category)
  *
  * @category Refund
  *

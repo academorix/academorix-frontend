@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Actions\Tenant;
+namespace Stackra\Transfer\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Transfer\Data\Requests\CreateExportRequestData;
-use Academorix\Transfer\Enums\TransferPermission;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Transfer\Data\Requests\CreateExportRequestData;
+use Stackra\Transfer\Enums\TransferPermission;
 
 /**
  * `POST /api/v1/transfer/exports/stream` — synchronous inline

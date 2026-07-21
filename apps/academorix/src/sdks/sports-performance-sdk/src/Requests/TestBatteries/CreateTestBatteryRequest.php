@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsPerformanceSdk\Requests\TestBatteries;
+namespace Stackra\SportsPerformanceSdk\Requests\TestBatteries;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsPerformanceSdk\Data\TestBatteryData;
-use Academorix\SportsPerformanceSdk\Payloads\TestBatteries\CreateTestBatteryPayload;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsPerformanceSdk\Data\TestBatteryData;
+use Stackra\SportsPerformanceSdk\Payloads\TestBatteries\CreateTestBatteryPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

@@ -1,6 +1,6 @@
 ---
 description: >-
-  Quality Lead for Academorix — owns Phase 5 VERIFY. Manages all reviewers,
+  Quality Lead for Stackra — owns Phase 5 VERIFY. Manages all reviewers,
   auditors, and specialist verify engineers. Holds the phase gate: parallel
   reviewer sweep, findings sorted P0 → P3, release goes only on green. Advisory
   only — does not write code.

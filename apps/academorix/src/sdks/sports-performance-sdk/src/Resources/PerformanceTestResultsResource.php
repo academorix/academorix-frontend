@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsPerformanceSdk\Resources;
+namespace Stackra\SportsPerformanceSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsPerformanceSdk\Data\PerformanceTestResultData;
-use Academorix\SportsPerformanceSdk\Requests\PerformanceTestResults\CreatePerformanceTestResultRequest;
-use Academorix\SportsPerformanceSdk\Requests\PerformanceTestResults\ListPerformanceTestResultsAdminRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsPerformanceSdk\Data\PerformanceTestResultData;
+use Stackra\SportsPerformanceSdk\Requests\PerformanceTestResults\CreatePerformanceTestResultRequest;
+use Stackra\SportsPerformanceSdk\Requests\PerformanceTestResults\ListPerformanceTestResultsAdminRequest;
 use Saloon\Http\Response;
 
 /**
@@ -41,7 +41,7 @@ final readonly class PerformanceTestResultsResource
      *
      * @return PerformanceTestResultData
      */
-    public function create(\Academorix\SportsPerformanceSdk\Payloads\PerformanceTestResults\CreatePerformanceTestResultPayload $payload, ?string $idempotencyKey = null): PerformanceTestResultData
+    public function create(\Stackra\SportsPerformanceSdk\Payloads\PerformanceTestResults\CreatePerformanceTestResultPayload $payload, ?string $idempotencyKey = null): PerformanceTestResultData
     {
         return $this->connector->send(new CreatePerformanceTestResultRequest($payload, $idempotencyKey))->dto();
     }

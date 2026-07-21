@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Contracts\Repositories;
+namespace Stackra\Newsletter\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
-use Academorix\Newsletter\Models\NewsletterSubscription;
-use Academorix\Newsletter\Repositories\EloquentNewsletterSubscriptionRepository;
+use Stackra\Crud\Contracts\RepositoryInterface;
+use Stackra\Newsletter\Models\NewsletterSubscription;
+use Stackra\Newsletter\Repositories\EloquentNewsletterSubscriptionRepository;
 use DateTimeInterface;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
@@ -64,7 +64,7 @@ interface NewsletterSubscriptionRepositoryInterface extends RepositoryInterface
     /**
      * Every subscription in `pending_confirmation` whose
      * `confirmation_expires_at` is at or before `$cutoff`. Consumed
-     * by {@see \Academorix\Newsletter\Jobs\PruneUnengagedSubscribersJob}.
+     * by {@see \Stackra\Newsletter\Jobs\PruneUnengagedSubscribersJob}.
      *
      * @return Collection<int, NewsletterSubscription>
      */

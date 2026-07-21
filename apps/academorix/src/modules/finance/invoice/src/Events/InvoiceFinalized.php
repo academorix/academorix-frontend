@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invoice\Events;
+namespace Stackra\Invoice\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog
  * - activity::WriteToActivityLog
- * - monitoring::MetricsCollector (increments academorix.invoice.finalized_total)
+ * - monitoring::MetricsCollector (increments stackra.invoice.finalized_total)
  * - invoice::EnqueueGenerateInvoicePDFJob (generates PDF + uploads to S3)
  * - invoice::EnqueueSendInvoiceEmailJob (delivers to customer.email)
  *

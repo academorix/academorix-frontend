@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Concerns;
+namespace Stackra\Subscription\Concerns;
 
 /**
  * Trait — IsBillable.

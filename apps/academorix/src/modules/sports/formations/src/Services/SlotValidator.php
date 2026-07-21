@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Formations\Services;
+namespace Stackra\Formations\Services;
 
-use Academorix\Formations\Contracts\Services\SlotValidatorInterface;
+use Stackra\Formations\Contracts\Services\SlotValidatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Formations\Contracts\Repositories\FormationSlotRepositoryInterface;
+use Stackra\Formations\Contracts\Repositories\FormationSlotRepositoryInterface;
 
 /**
  * Concrete service — SlotValidator.

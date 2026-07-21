@@ -1,10 +1,10 @@
 {
-  "name": "academorix/platform-sdk",
+  "name": "stackra/platform-sdk",
   "type": "library",
   "description": "Typed Saloon SDK for the Platform service — applications, tenants, organizations, regions, branches, settings, feature flags, branding, domains, storage.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "sdk",
     "saloon",
     "api-client",
@@ -12,10 +12,10 @@
   ],
   "require": {
     "php": "^8.3",
-    "academorix/api-sdk": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
-    "academorix/service-provider": "@dev",
+    "stackra/api-sdk": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/service-provider": "@dev",
     "illuminate/contracts": "^13.0",
     "illuminate/support": "^13.0",
     "saloonphp/saloon": "^3.10",
@@ -30,18 +30,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\PlatformSdk\\": "src/"
+      "Stackra\\PlatformSdk\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\PlatformSdk\\Tests\\": "tests/"
+      "Stackra\\PlatformSdk\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\PlatformSdk\\Providers\\PlatformSdkServiceProvider"
+        "Stackra\\PlatformSdk\\Providers\\PlatformSdkServiceProvider"
       ],
       "aliases": {}
     }

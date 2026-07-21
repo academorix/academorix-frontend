@@ -4,8 +4,8 @@
  * @file packages/scheduling/tests/Unit/ScheduleRegistrarTest.php
  *
  * @description
- * Exercises {@see \Academorix\Scheduling\Support\ScheduleRegistrar}
- * — the layer that turns a {@see \Academorix\Scheduling\Support\ScheduledTask}
+ * Exercises {@see \Stackra\Scheduling\Support\ScheduleRegistrar}
+ * — the layer that turns a {@see \Stackra\Scheduling\Support\ScheduledTask}
  * list into concrete calls on Laravel's `Schedule` builder.
  *
  * ## Testing strategy
@@ -34,11 +34,11 @@
 
 declare(strict_types=1);
 
-use Academorix\Scheduling\Contracts\ScheduleGate;
-use Academorix\Scheduling\Enums\Frequency;
-use Academorix\Scheduling\Support\ScheduleDiscovery;
-use Academorix\Scheduling\Support\ScheduledTask;
-use Academorix\Scheduling\Support\ScheduleRegistrar;
+use Stackra\Scheduling\Contracts\ScheduleGate;
+use Stackra\Scheduling\Enums\Frequency;
+use Stackra\Scheduling\Support\ScheduleDiscovery;
+use Stackra\Scheduling\Support\ScheduledTask;
+use Stackra\Scheduling\Support\ScheduleRegistrar;
 use Illuminate\Container\Container;
 
 /**

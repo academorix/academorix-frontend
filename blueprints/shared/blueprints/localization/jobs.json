@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/localization/jobs",
+  "id": "stackra://modules/localization/jobs",
   "$version": 1,
   "title": "localization \u2014 background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Localization\\Jobs\\TranslateJob",
+      "class": "Stackra\\Localization\\Jobs\\TranslateJob",
       "queue": "notifications",
       "purpose": "Translate one key via the configured driver. Called by the MaybeDispatchAutoTranslate listener + by bulk jobs iterating keys.",
       "steps": [
@@ -22,7 +22,7 @@
       "backoff": [10, 60, 300]
     },
     {
-      "class": "Academorix\\Localization\\Jobs\\BulkTranslateNamespaceJob",
+      "class": "Stackra\\Localization\\Jobs\\BulkTranslateNamespaceJob",
       "queue": "notifications",
       "purpose": "Translate all keys in a namespace (or across namespaces) for one or more target locales.",
       "steps": [
@@ -38,7 +38,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Localization\\Jobs\\WarmTranslationCacheJob",
+      "class": "Stackra\\Localization\\Jobs\\WarmTranslationCacheJob",
       "queue": "notifications",
       "purpose": "Pre-populate top-N most-frequently-accessed keys in Redis / APCu for the fastest cold-request performance.",
       "steps": [
@@ -52,7 +52,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Localization\\Jobs\\PruneStaleTranslationsJob",
+      "class": "Stackra\\Localization\\Jobs\\PruneStaleTranslationsJob",
       "queue": "notifications",
       "purpose": "Delete Translation rows past retention (source='ai' + translated_at older than tenant_locale.auto_translate_ttl_hours).",
       "shouldQueue": true,
@@ -61,7 +61,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Localization\\Jobs\\ReconcileTranslationCacheJob",
+      "class": "Stackra\\Localization\\Jobs\\ReconcileTranslationCacheJob",
       "queue": "notifications",
       "purpose": "Verify DB Translation row counts match Redis cache counters. Warns on drift.",
       "shouldQueue": true,

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Marketing\Contracts\Data;
+namespace Stackra\Marketing\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Academorix\Marketing\Models\MarketingDeadLetter;
+use Stackra\Marketing\Models\MarketingDeadLetter;
 
 /**
  * Table shape for the `marketing_dead_letters` table.

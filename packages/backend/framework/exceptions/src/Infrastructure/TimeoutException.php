@@ -25,9 +25,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Infrastructure;
+namespace Stackra\Exceptions\Infrastructure;
 
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
 class TimeoutException extends IntegrationException

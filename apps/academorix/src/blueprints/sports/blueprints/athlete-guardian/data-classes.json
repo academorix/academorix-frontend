@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/athlete-guardian/data-classes",
+  "id": "stackra://modules/athlete-guardian/data-classes",
   "$version": 1,
   "title": "athlete-guardian — field classification",
   "description": "AthleteGuardian carries mostly public-tier (structural) + internal-tier (verification state) fields. Notes + dispute_reason + revoke_reason are confidential-tier (HR-visible only). Guardian names + emails cascade the redactor treatment from their User (regulated_minor tier when the underlying athlete is a minor).",

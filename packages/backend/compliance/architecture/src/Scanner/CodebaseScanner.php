@@ -33,13 +33,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Scanner;
+namespace Stackra\Architecture\Scanner;
 
-use Academorix\Architecture\Contracts\ArchitectureRule;
-use Academorix\Architecture\Contracts\PathRule;
-use Academorix\Architecture\Support\SourceFileParser;
-use Academorix\Architecture\Violations\Severity;
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Contracts\ArchitectureRule;
+use Stackra\Architecture\Contracts\PathRule;
+use Stackra\Architecture\Support\SourceFileParser;
+use Stackra\Architecture\Violations\Severity;
+use Stackra\Architecture\Violations\Violation;
 use Symfony\Component\Finder\Finder;
 use Throwable;
 

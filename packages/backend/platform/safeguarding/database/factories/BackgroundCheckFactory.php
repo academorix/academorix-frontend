@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Safeguarding\Database\Factories;
+namespace Stackra\Safeguarding\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Safeguarding\Contracts\Data\BackgroundCheckInterface;
-use Academorix\Safeguarding\Models\BackgroundCheck;
+use Stackra\Safeguarding\Contracts\Data\BackgroundCheckInterface;
+use Stackra\Safeguarding\Models\BackgroundCheck;
 
 /**
- * Factory for {@see \Academorix\Safeguarding\Models\BackgroundCheck}.
+ * Factory for {@see \Stackra\Safeguarding\Models\BackgroundCheck}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Safeguarding\Models\BackgroundCheck>
+ * @extends Factory<\Stackra\Safeguarding\Models\BackgroundCheck>
  *
  * @category Safeguarding
  *

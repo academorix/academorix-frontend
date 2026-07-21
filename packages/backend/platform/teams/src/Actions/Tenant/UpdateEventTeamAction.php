@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Teams\Actions\Tenant;
+namespace Stackra\Teams\Actions\Tenant;
 
-use Academorix\Teams\Contracts\Repositories\EventTeamRepositoryInterface;
-use Academorix\Teams\Data\EventTeamData;
-use Academorix\Teams\Data\Requests\UpdateEventTeamRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Patch;
+use Stackra\Teams\Contracts\Repositories\EventTeamRepositoryInterface;
+use Stackra\Teams\Data\EventTeamData;
+use Stackra\Teams\Data\Requests\UpdateEventTeamRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Patch;
 
 /**
  * `PATCH /api/v1/teams/{team}/event-teams/{eventTeam}` — update action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Patch(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Teams

@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "academorix/nightwatch",
+  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "stackra/nightwatch",
   "tier": "framework",
   "surfaces": ["core"],
   "kind": "framework-plumbing",
@@ -14,8 +14,8 @@
     "Nightwatch facade wrapping the context registry"
   ],
   "when_to_use": "Enriching production observability with tenant / user / feature-flag context, filters, or dynamic sampling.",
-  "when_not_to_use": "For error tracking specifically, use academorix/sentry; for dev-time inspection, use academorix/debugbar.",
-  "peer_deps": ["academorix/support", "laravel/nightwatch"],
+  "when_not_to_use": "For error tracking specifically, use stackra/sentry; for dev-time inspection, use stackra/debugbar.",
+  "peer_deps": ["stackra/support", "laravel/nightwatch"],
   "backend_pair": null,
   "size_gzip_kb": {},
   "maturity": "alpha",

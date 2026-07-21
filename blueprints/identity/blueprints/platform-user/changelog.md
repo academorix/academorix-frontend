@@ -34,7 +34,7 @@
   `platform.platform_profiles.view.self` + `.update.self` seeded on every
   baseline role, so a new hire can read + write their own profile but nothing
   else.
-- Four Academorix-internal capability entitlements: `platform.impersonate`,
+- Four Stackra-internal capability entitlements: `platform.impersonate`,
   `platform.audit_read`, `platform.tenant_admin`, `platform.security_review`.
   Granted per-PlatformUser (not per-role) so revocation is granular.
 - Three notifications: `PlatformUserHiredNotification`,
@@ -62,7 +62,7 @@
 - Health probes: catalogue-seeded, MFA-coverage, manager-integrity,
   org-chart-cycles, on-call-resolver-reachable, offboarding-SLA-track,
   retention-hold-integrity, identity-uniqueness.
-- Sixteen OpenTelemetry metrics under the `academorix.platform_user.*`
+- Sixteen OpenTelemetry metrics under the `stackra.platform_user.*`
   namespace.
 - Nine analytics events, routed to the internal (workforce) Segment source,
   never the tenant-facing product source.

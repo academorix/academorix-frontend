@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/safeguarding/policies",
+  "id": "stackra://modules/safeguarding/policies",
   "$version": 1,
   "title": "safeguarding — authorization policies",
   "description": "TWO policies. Incidents are HIGHLY sensitive — investigator + safeguarding officer + owner only. Any other viewer requires explicit case-access grant (per-incident ACL). StaffCheck view scoped to check subject + branch_manager + admin.",
   "policies": [
     {
       "model": "Incident",
-      "class": "Academorix\\Platform\\Safeguarding\\Policies\\IncidentPolicy",
+      "class": "Stackra\\Platform\\Safeguarding\\Policies\\IncidentPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -47,7 +47,7 @@
     },
     {
       "model": "StaffCheck",
-      "class": "Academorix\\Platform\\Safeguarding\\Policies\\StaffCheckPolicy",
+      "class": "Stackra\\Platform\\Safeguarding\\Policies\\StaffCheckPolicy",
       "abilities": [
         {
           "action": "viewAny",

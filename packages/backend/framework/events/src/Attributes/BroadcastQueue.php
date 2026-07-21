@@ -10,7 +10,7 @@
  * method with a single declarative statement.
  *
  * Applied by
- * {@see \Academorix\Events\Support\BroadcastConfigurator} whenever
+ * {@see \Stackra\Events\Support\BroadcastConfigurator} whenever
  * the framework asks the event for its broadcast queue name. Takes
  * precedence over the `queue` argument passed to
  * {@see Broadcastable}, so events that want to override the queue
@@ -24,7 +24,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Events\Attributes;
+namespace Stackra\Events\Attributes;
 
 use Attribute;
 

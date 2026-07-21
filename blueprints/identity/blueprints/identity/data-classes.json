@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/identity/data-classes",
+  "id": "stackra://modules/identity/data-classes",
   "$version": 1,
   "title": "identity \u2014 field classification",
   "description": "Identity is the most privacy-sensitive aggregate in the system. Every credential column is `regulated_secret` (never returned on wire, never logged, never emitted to metrics). PII (email, dob) is `restricted` and gated behind the platform-admin `identity.view.pii` permission. Redactor rules always apply to every field of the Identity row unless the caller has that permission. See compliance.json for COPPA + GDPR floors.",
@@ -67,7 +67,7 @@
   },
   "input_dtos": [
     {
-      "class": "Academorix\\Identity\\Data\\RegisterIdentityInput",
+      "class": "Stackra\\Identity\\Data\\RegisterIdentityInput",
       "shape": {
         "email": "string (validated: RFC 5321, citext-normalised)",
         "password": "string (validated: strong_password rule)",
@@ -77,28 +77,28 @@
       "compliance_gate": "Before creation, CompliantAgePolicy resolves the effective floor (US COPPA \u2192 13; EU country \u2192 per_country.minor_age 13\u201316) and refuses if dob resolves the applicant to a minor below that floor."
     },
     {
-      "class": "Academorix\\Identity\\Data\\ChangePasswordInput",
+      "class": "Stackra\\Identity\\Data\\ChangePasswordInput",
       "shape": {
         "current_password": "string (verified against password_hash)",
         "new_password": "string (validated: strong_password + not_in_password_history)"
       }
     },
     {
-      "class": "Academorix\\Identity\\Data\\ResetPasswordInput",
+      "class": "Stackra\\Identity\\Data\\ResetPasswordInput",
       "shape": {
         "reset_token": "string (validated against auth::PasswordResetToken)",
         "new_password": "string (validated: strong_password + not_in_password_history)"
       }
     },
     {
-      "class": "Academorix\\Identity\\Data\\EnrollMfaInput",
+      "class": "Stackra\\Identity\\Data\\EnrollMfaInput",
       "shape": {
         "totp_secret": "string (base32; server-generated on preview endpoint, echoed back to confirm)",
         "totp_confirmation_code": "string (6-digit code the user typed from their authenticator)"
       }
     },
     {
-      "class": "Academorix\\Identity\\Data\\ConsumeRecoveryCodeInput",
+      "class": "Stackra\\Identity\\Data\\ConsumeRecoveryCodeInput",
       "shape": {
         "recovery_code": "string (validated: valid_recovery_code)"
       }
@@ -106,11 +106,11 @@
   ],
   "output_dtos": [
     {
-      "class": "Academorix\\Identity\\Data\\IdentityAdminData",
+      "class": "Stackra\\Identity\\Data\\IdentityAdminData",
       "purpose": "Platform-admin listing + detail surface. See wire_projection.platform_admin_wire_shape above."
     },
     {
-      "class": "Academorix\\Identity\\Data\\MfaEnrolmentPreview",
+      "class": "Stackra\\Identity\\Data\\MfaEnrolmentPreview",
       "shape": {
         "totp_secret": "string (base32 \u2014 shown once, then discarded; user re-submits to confirm)",
         "totp_uri": "otpauth:// URI for QR-code rendering",

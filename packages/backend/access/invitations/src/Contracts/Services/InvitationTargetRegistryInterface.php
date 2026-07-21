@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invitations\Contracts\Services;
+namespace Stackra\Invitations\Contracts\Services;
 
-use Academorix\Invitations\Attributes\Invitable;
-use Academorix\Invitations\Services\DefaultInvitationTargetRegistry;
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Invitations\Attributes\Invitable;
+use Stackra\Invitations\Services\DefaultInvitationTargetRegistry;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Database\Eloquent\Model;
@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * (`Tenant`, `Team`, `Athlete`, ...) — consumer modules mark their
  * Eloquent model with `#[Invitable(key: '<morph-key>', ...)]` and the
  * framework's generic
- * {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ * {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  * pump calls {@see self::register()} on every hit at app boot. The
  * attribute carries:
  *
@@ -33,9 +33,9 @@ use Illuminate\Database\Eloquent\Model;
  * The registry powers three lookups:
  *
  *   - MorphTo resolution at hydrate time (`target()` relation on
- *     {@see \Academorix\Invitations\Models\Invitation}),
+ *     {@see \Stackra\Invitations\Models\Invitation}),
  *   - target-type validation for the
- *     {@see \Academorix\Invitations\Rules\InvitationTargetRegistered}
+ *     {@see \Stackra\Invitations\Rules\InvitationTargetRegistered}
  *     rule,
  *   - accept-handler dispatch on the acceptance flow.
  *

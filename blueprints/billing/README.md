@@ -6,8 +6,8 @@ them to. The two are inseparable and co-located here:
 > "The tenant is on the Pro plan (Subscription) which lets them run 100 AI
 > queries per month (Entitlements)."
 
-Deploys to `academorix-backend/apps/billing-service/` (see
-[`apps/billing-service/README.md`](../../../academorix/academorix-backend/apps/billing-service/README.md)).
+Deploys to `stackra-backend/apps/billing-service/` (see
+[`apps/billing-service/README.md`](../../../stackra/stackra-backend/apps/billing-service/README.md)).
 
 ## Modules — on disk
 
@@ -35,7 +35,7 @@ change.
 
 Inbound Cashier webhooks (Stripe → us, Paddle → us) land here as **receiver
 controllers**, not in the platform `webhook/` module. The platform `webhook`
-substrate is for OUTBOUND webhooks (Academorix → tenant URLs). Inbound is
+substrate is for OUTBOUND webhooks (Stackra → tenant URLs). Inbound is
 provider-specific + billing-owned.
 
 Flow: Cashier webhook → receiver translates the raw provider event into our own
@@ -46,7 +46,7 @@ subscription writes to its tables → `EntitlementProvisioner` refreshes
 ## Cross-cutting invariants
 
 - **`TenantSubscription` ≠ `Finance\Membership`** — the former is the _academy
-  paying Academorix_ (SaaS billing); the latter (future, in a product monolith)
+  paying Stackra_ (SaaS billing); the latter (future, in a product monolith)
   is a _parent paying an academy_. Never conflate; the domain vocabulary in
   `hierarchy.md` §1b enforces the two nouns.
 - **`tenant_subscriptions` + `entitlement_licenses` carry `application_id`

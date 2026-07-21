@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsSeasonSdk\Resources;
+namespace Stackra\SportsSeasonSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsSeasonSdk\Data\SeasonData;
-use Academorix\SportsSeasonSdk\Requests\Seasons\CreateSeasonRequest;
-use Academorix\SportsSeasonSdk\Requests\Seasons\DeleteSeasonRequest;
-use Academorix\SportsSeasonSdk\Requests\Seasons\ListSeasonsAdminRequest;
-use Academorix\SportsSeasonSdk\Requests\Seasons\ListSeasonsRequest;
-use Academorix\SportsSeasonSdk\Requests\Seasons\ShowSeasonAdminRequest;
-use Academorix\SportsSeasonSdk\Requests\Seasons\ShowSeasonRequest;
-use Academorix\SportsSeasonSdk\Requests\Seasons\UpdateSeasonRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsSeasonSdk\Data\SeasonData;
+use Stackra\SportsSeasonSdk\Requests\Seasons\CreateSeasonRequest;
+use Stackra\SportsSeasonSdk\Requests\Seasons\DeleteSeasonRequest;
+use Stackra\SportsSeasonSdk\Requests\Seasons\ListSeasonsAdminRequest;
+use Stackra\SportsSeasonSdk\Requests\Seasons\ListSeasonsRequest;
+use Stackra\SportsSeasonSdk\Requests\Seasons\ShowSeasonAdminRequest;
+use Stackra\SportsSeasonSdk\Requests\Seasons\ShowSeasonRequest;
+use Stackra\SportsSeasonSdk\Requests\Seasons\UpdateSeasonRequest;
 use Saloon\Http\Response;
 
 /**
@@ -60,7 +60,7 @@ final readonly class SeasonsResource
      *
      * @return SeasonData
      */
-    public function create(\Academorix\SportsSeasonSdk\Payloads\Seasons\CreateSeasonPayload $payload, ?string $idempotencyKey = null): SeasonData
+    public function create(\Stackra\SportsSeasonSdk\Payloads\Seasons\CreateSeasonPayload $payload, ?string $idempotencyKey = null): SeasonData
     {
         return $this->connector->send(new CreateSeasonRequest($payload, $idempotencyKey))->dto();
     }
@@ -88,7 +88,7 @@ final readonly class SeasonsResource
      *
      * @return SeasonData
      */
-    public function update(string $season, \Academorix\SportsSeasonSdk\Payloads\Seasons\UpdateSeasonPayload $payload, ?string $idempotencyKey = null): SeasonData
+    public function update(string $season, \Stackra\SportsSeasonSdk\Payloads\Seasons\UpdateSeasonPayload $payload, ?string $idempotencyKey = null): SeasonData
     {
         return $this->connector->send(new UpdateSeasonRequest($season, $payload, $idempotencyKey))->dto();
     }

@@ -13,9 +13,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Enums;
+namespace Stackra\Scope\Enums;
 
-use Academorix\Enum\Enum;
+use Stackra\Enum\Enum;
 
 /**
  * Priority table.

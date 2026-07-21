@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/webhook/analytics",
+  "id": "stackra://modules/webhook/analytics",
   "$version": 1,
   "title": "webhook \u2014 product analytics events",
   "description": "Analytics for the product team tracking webhook adoption + reliability. Functional consent \u2014 webhook infrastructure is service functionality, not marketing insight.",

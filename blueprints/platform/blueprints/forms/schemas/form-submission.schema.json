@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/forms/schemas/form-submission",
+  "id": "stackra://modules/forms/schemas/form-submission",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "FormSubmission",

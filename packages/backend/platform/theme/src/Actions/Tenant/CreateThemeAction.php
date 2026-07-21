@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Actions\Tenant;
+namespace Stackra\Theme\Actions\Tenant;
 
-use Academorix\Theme\Contracts\Repositories\ThemeRepositoryInterface;
-use Academorix\Theme\Data\ThemeData;
-use Academorix\Theme\Data\Requests\CreateThemeRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Theme\Contracts\Repositories\ThemeRepositoryInterface;
+use Stackra\Theme\Data\ThemeData;
+use Stackra\Theme\Data\Requests\CreateThemeRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/themes` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Theme

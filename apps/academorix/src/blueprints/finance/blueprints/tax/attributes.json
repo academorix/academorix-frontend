@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/tax/attributes",
+  "id": "stackra://modules/tax/attributes",
   "$version": 1,
   "title": "tax — PHP attribute contracts",
   "description": "Two class-level attributes. `#[AsTaxProvider]` marks a class as a provider driver — the TaxProviderManager discovers these at boot and registers them via createXxxDriver factories. `#[AsExemptionVerifier]` marks a class as a per-jurisdiction exemption verifier (public-registry cross-check for certificate validity).",
-  "namespace": "Academorix\\Finance\\Tax\\Attributes",
+  "namespace": "Stackra\\Finance\\Tax\\Attributes",
   "attributes": [
     {
       "name": "AsTaxProvider",
-      "class": "Academorix\\Finance\\Tax\\Attributes\\AsTaxProvider",
+      "class": "Stackra\\Finance\\Tax\\Attributes\\AsTaxProvider",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a class as a tax provider driver. The TaxProviderManager discovers these at boot and registers a createXxxDriver factory keyed on the slug. Every driver MUST implement the ITaxProvider contract (name(), supports(TaxJurisdiction), calculate(source_amount_cents, source_currency, jurisdiction, exemptions, applies_to), syncRates()) + ship a JSON Schema under data/providers/<slug>-config.schema.json for config validation.",
@@ -45,7 +45,7 @@
     },
     {
       "name": "AsExemptionVerifier",
-      "class": "Academorix\\Finance\\Tax\\Attributes\\AsExemptionVerifier",
+      "class": "Stackra\\Finance\\Tax\\Attributes\\AsExemptionVerifier",
       "targets": ["class"],
       "isRepeatable": true,
       "description": "Marks a class as an exemption verifier for a specific (issuing_jurisdiction, exemption_type) pair. Every verifier cross-checks the certificate_number against the issuing jurisdiction's public registry (when one exists). VerifyTaxExemptionJob invokes these at exemption create.",

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/referrals/config",
+  "id": "stackra://modules/referrals/config",
   "$version": 1,
   "title": "referrals — developer configuration",
   "configFile": "config/referrals.php",

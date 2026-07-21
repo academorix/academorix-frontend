@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Data\Requests;
+namespace Stackra\Versioning\Data\Requests;
 
-use Academorix\Versioning\Enums\DeprecationSurface;
+use Stackra\Versioning\Enums\DeprecationSurface;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Enum;
 use Spatie\LaravelData\Attributes\Validation\Max;

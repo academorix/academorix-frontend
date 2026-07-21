@@ -4,7 +4,7 @@
  * @file packages/exceptions/tests/Unit/GuardTest.php
  *
  * @description
- * Unit coverage for {@see \Academorix\Exceptions\Guard}. Each guard is
+ * Unit coverage for {@see \Stackra\Exceptions\Guard}. Each guard is
  * exercised twice — once on the happy path (must not throw) and once
  * on the failing path (must throw `InvariantViolationException` with
  * the argument name preserved in context).
@@ -12,8 +12,8 @@
 
 declare(strict_types=1);
 
-use Academorix\Exceptions\Domain\InvariantViolationException;
-use Academorix\Exceptions\Guard;
+use Stackra\Exceptions\Domain\InvariantViolationException;
+use Stackra\Exceptions\Guard;
 
 it('notNull passes on a non-null value', function (): void {
     // Guard clauses return `void`; the assertion is "no throw".

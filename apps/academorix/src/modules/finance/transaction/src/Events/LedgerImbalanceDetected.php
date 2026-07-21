@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transaction\Events;
+namespace Stackra\Transaction\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * - audit::WriteToAuditLog (retention: 7 years — REGULATOR-CRITICAL)
  * - notifications::DispatchLedgerImbalanceDetectedNotification (cannot-opt-out — pages on-call + finance leadership + platform ops)
- * - monitoring::MetricsCollector (increments academorix.ledger.imbalances_detected_total; every increment triggers PagerDuty P0)
+ * - monitoring::MetricsCollector (increments stackra.ledger.imbalances_detected_total; every increment triggers PagerDuty P0)
  * - transaction::HaltNewTransactionsOnImbalance (sets tenant-level flag transaction.halt_new = true until resolved)
  *
  * @category Transaction

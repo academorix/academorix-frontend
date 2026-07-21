@@ -12,11 +12,11 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Enum\Concerns;
+namespace Stackra\Enum\Concerns;
 
 use BackedEnum;
-use Academorix\Support\Arr;
-use Academorix\Support\Reflection;
+use Stackra\Support\Arr;
+use Stackra\Support\Reflection;
 
 /**
  * Valuable Trait.
@@ -38,7 +38,7 @@ use Academorix\Support\Reflection;
  * Status::values();  // Returns ['active', 'inactive', 'pending']
  * ```
  *
- * @author  Academorix Development Team
+ * @author  Stackra Development Team
  *
  * @since   1.0.0
  */

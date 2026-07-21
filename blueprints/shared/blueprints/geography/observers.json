@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/geography/observers",
+  "id": "stackra://modules/geography/observers",
   "$version": 1,
   "title": "geography \u2014 Eloquent observers",
   "description": "Per-entity observers. All fire the matching domain event on created / updated / deleted. NO ULID minting (vendor uses integer PKs). NO userstamp because vendor rows are seeder-owned; platform-admin overrides carry updated_by via HasUserstamps trait applied at the migration layer (add-column extension). Deletion is refused on system rows unless a platform-admin flag is set.",
   "observers": [
     {
       "model": "Country",
-      "observer": "Academorix\\Geography\\Observers\\CountryObserver",
+      "observer": "Stackra\\Geography\\Observers\\CountryObserver",
       "handles": [
         "saving \u2192 uppercase iso2 + iso3 for consistency",
         "created \u2192 fire CountryCreated",
@@ -17,7 +17,7 @@
     },
     {
       "model": "State",
-      "observer": "Academorix\\Geography\\Observers\\StateObserver",
+      "observer": "Stackra\\Geography\\Observers\\StateObserver",
       "handles": [
         "saving \u2192 uppercase country_code",
         "created \u2192 fire StateCreated",
@@ -28,7 +28,7 @@
     },
     {
       "model": "City",
-      "observer": "Academorix\\Geography\\Observers\\CityObserver",
+      "observer": "Stackra\\Geography\\Observers\\CityObserver",
       "handles": [
         "saving \u2192 uppercase country_code",
         "created \u2192 fire CityCreated",
@@ -38,7 +38,7 @@
     },
     {
       "model": "Currency",
-      "observer": "Academorix\\Geography\\Observers\\CurrencyObserver",
+      "observer": "Stackra\\Geography\\Observers\\CurrencyObserver",
       "handles": [
         "saving \u2192 uppercase code (ISO-4217)",
         "saving \u2192 refuse precision outside [0, 8]",
@@ -49,7 +49,7 @@
     },
     {
       "model": "Language",
-      "observer": "Academorix\\Geography\\Observers\\LanguageObserver",
+      "observer": "Stackra\\Geography\\Observers\\LanguageObserver",
       "handles": [
         "saving \u2192 lowercase code (ISO-639-1)",
         "saving \u2192 auto-derive is_rtl from dir when dir set",
@@ -60,7 +60,7 @@
     },
     {
       "model": "Timezone",
-      "observer": "Academorix\\Geography\\Observers\\TimezoneObserver",
+      "observer": "Stackra\\Geography\\Observers\\TimezoneObserver",
       "handles": [
         "saving \u2192 validate IANA name format via valid_iana_timezone rule",
         "saving \u2192 uppercase country_code",

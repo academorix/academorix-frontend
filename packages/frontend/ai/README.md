@@ -1,7 +1,7 @@
 # @stackra/ai
 
 Client-side AI toolkit for the Stackra framework — the client counterpart to the
-`academorix/ai` PHP backend. It streams chat over a swappable transport
+`stackra/ai` PHP backend. It streams chat over a swappable transport
 (`@stackra/http` SSE today, WebSocket later), lets mounted components contribute
 client tools and UI context frames that self-register on mount, surfaces
 personas and a draft-then-confirm write flow, and renders the whole surface on

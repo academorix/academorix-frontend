@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Facility\Database\Factories;
+namespace Stackra\Facility\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Facility\Contracts\Data\PassInterface;
-use Academorix\Facility\Models\Pass;
+use Stackra\Facility\Contracts\Data\PassInterface;
+use Stackra\Facility\Models\Pass;
 
 /**
- * Factory for {@see \Academorix\Facility\Models\Pass}.
+ * Factory for {@see \Stackra\Facility\Models\Pass}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Facility\Models\Pass>
+ * @extends Factory<\Stackra\Facility\Models\Pass>
  *
  * @category Facility
  *

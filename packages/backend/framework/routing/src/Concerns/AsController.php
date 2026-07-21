@@ -19,13 +19,13 @@
  * ## Naming note
  *
  * The trait shares its short name with the `#[AsController]`
- * attribute at `Academorix\Routing\Attributes\AsController`.
+ * attribute at `Stackra\Routing\Attributes\AsController`.
  * Namespaces resolve the collision at the class level; a
  * consumer that needs BOTH the attribute and the trait in the
  * same file aliases one of the imports:
  *
- *   use Academorix\Routing\Attributes\AsController as AsControllerAttribute;
- *   use Academorix\Routing\Concerns\AsController;
+ *   use Stackra\Routing\Attributes\AsController as AsControllerAttribute;
+ *   use Stackra\Routing\Concerns\AsController;
  *
  * The `#[AsController]` attribute itself is deprecated by
  * ADR 0016 — its use in domain modules is banned; framework
@@ -68,13 +68,13 @@
  * ## Usage
  *
  * ```php
- * use Academorix\Routing\Attributes\{AsAction, Post};
- * use Academorix\Routing\Concerns\AsController;
- * use Academorix\Authorization\Attributes\RequirePermission;
- * use Academorix\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
- * use Academorix\Tenancy\Enums\TenancyPermission;
- * use Academorix\ApiTenancySdk\Data\TenantData;
- * use Academorix\ApiTenancySdk\Requests\CreateTenantRequestData;
+ * use Stackra\Routing\Attributes\{AsAction, Post};
+ * use Stackra\Routing\Concerns\AsController;
+ * use Stackra\Authorization\Attributes\RequirePermission;
+ * use Stackra\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
+ * use Stackra\Tenancy\Enums\TenancyPermission;
+ * use Stackra\ApiTenancySdk\Data\TenantData;
+ * use Stackra\ApiTenancySdk\Requests\CreateTenantRequestData;
  *
  * #[AsAction(name: 'tenants.create')]
  * #[Post('/api/v1/tenants')]
@@ -114,7 +114,7 @@
  *
  * ## Interaction with the legacy `Controller` base class
  *
- * `Academorix\Routing\Controller` (deprecated by ADR 0016 for
+ * `Stackra\Routing\Controller` (deprecated by ADR 0016 for
  * domain modules but kept for backwards compat) `use`s this same
  * trait — so the surface is identical between the two paths.
  * Code that already extends `Controller` gets no functional
@@ -129,14 +129,14 @@
  * container (or pooled when marked `#[Singleton]`); either mode
  * is safe.
  *
- * @see \Academorix\Routing\Controller Legacy base class (uses this same trait).
- * @see \Academorix\Routing\Attributes\AsAction Marker attribute for action discovery.
- * @see \Academorix\Routing\Attributes\AsController Deprecated attribute (ADR 0016) — same short name, different namespace.
+ * @see \Stackra\Routing\Controller Legacy base class (uses this same trait).
+ * @see \Stackra\Routing\Attributes\AsAction Marker attribute for action discovery.
+ * @see \Stackra\Routing\Attributes\AsController Deprecated attribute (ADR 0016) — same short name, different namespace.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Routing\Concerns;
+namespace Stackra\Routing\Concerns;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;

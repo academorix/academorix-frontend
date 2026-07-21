@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/localization/health",
+  "id": "stackra://modules/localization/health",
   "$version": 1,
   "title": "localization \u2014 health probes",
   "probes": [
     {
       "name": "localization-catalogue-seeded",
-      "class": "Academorix\\Localization\\Health\\Probes\\CatalogueSeededProbe",
+      "class": "Stackra\\Localization\\Health\\Probes\\CatalogueSeededProbe",
       "category": "startup",
       "critical": true,
       "description": "PlatformLanguage catalogue has at least English + one other locale seeded, each with a resolvable geography_language_id.",
@@ -13,7 +13,7 @@
     },
     {
       "name": "localization-geography-fk-integrity",
-      "class": "Academorix\\Localization\\Health\\Probes\\GeographyFkIntegrityProbe",
+      "class": "Stackra\\Localization\\Health\\Probes\\GeographyFkIntegrityProbe",
       "category": "readiness",
       "critical": false,
       "description": "Every PlatformLanguage.geography_language_id resolves to a live geography::Language row; every non-null geography_country_id resolves to a live geography::Country. Failure indicates orphaned rows after a vendor `world:install --force` truncation.",
@@ -22,7 +22,7 @@
     },
     {
       "name": "localization-cache-reachable",
-      "class": "Academorix\\Localization\\Health\\Probes\\CacheReachableProbe",
+      "class": "Stackra\\Localization\\Health\\Probes\\CacheReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "Redis LRU cache namespace reachable. Falls back to DB on failure.",
@@ -30,7 +30,7 @@
     },
     {
       "name": "localization-openai-reachable",
-      "class": "Academorix\\Localization\\Health\\Probes\\OpenAIReachableProbe",
+      "class": "Stackra\\Localization\\Health\\Probes\\OpenAIReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "OpenAI API reachable (models endpoint). Non-critical because other drivers exist.",
@@ -39,7 +39,7 @@
     },
     {
       "name": "localization-google-reachable",
-      "class": "Academorix\\Localization\\Health\\Probes\\GoogleReachableProbe",
+      "class": "Stackra\\Localization\\Health\\Probes\\GoogleReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "Google Cloud Translation reachable.",
@@ -48,7 +48,7 @@
     },
     {
       "name": "localization-deepl-reachable",
-      "class": "Academorix\\Localization\\Health\\Probes\\DeepLReachableProbe",
+      "class": "Stackra\\Localization\\Health\\Probes\\DeepLReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "DeepL API reachable + quota available.",
@@ -57,7 +57,7 @@
     },
     {
       "name": "localization-translation-job-stuck",
-      "class": "Academorix\\Localization\\Health\\Probes\\StuckJobProbe",
+      "class": "Stackra\\Localization\\Health\\Probes\\StuckJobProbe",
       "category": "readiness",
       "critical": false,
       "description": "No TranslationJob in state=running for > 1 hour without progress.",

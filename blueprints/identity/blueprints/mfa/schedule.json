@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/mfa/schedule",
+  "id": "stackra://modules/mfa/schedule",
   "$version": 1,
   "title": "mfa — scheduled tasks",
   "entries": [

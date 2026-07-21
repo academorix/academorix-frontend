@@ -5,7 +5,7 @@
  *
  * @description
  * Marker interface for single-purpose actions. Equivalent to
- * {@see \Academorix\Architecture\Attributes\Action}.
+ * {@see \Stackra\Architecture\Attributes\Action}.
  *
  * ## Convention (not enforced here)
  *
@@ -16,12 +16,12 @@
  * (or a follow-up architectural rule) that inspects classes
  * implementing this interface.
  *
- * @see \Academorix\Architecture\Attributes\Action
+ * @see \Stackra\Architecture\Attributes\Action
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Contracts;
+namespace Stackra\Architecture\Contracts;
 
 /**
  * Empty marker interface — no methods to implement.

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Services;
+namespace Stackra\Webhook\Services;
 
-use Academorix\Webhook\Contracts\Data\WebhookSubscriptionInterface;
-use Academorix\Webhook\Contracts\Services\BackoffStrategyResolverInterface;
-use Academorix\Webhook\Models\WebhookSubscription;
-use Academorix\Webhook\Strategies\RetryAfterAwareBackoffStrategy;
-use Academorix\Webhook\Strategies\StaticArrayBackoffStrategy;
+use Stackra\Webhook\Contracts\Data\WebhookSubscriptionInterface;
+use Stackra\Webhook\Contracts\Services\BackoffStrategyResolverInterface;
+use Stackra\Webhook\Models\WebhookSubscription;
+use Stackra\Webhook\Strategies\RetryAfterAwareBackoffStrategy;
+use Stackra\Webhook\Strategies\StaticArrayBackoffStrategy;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

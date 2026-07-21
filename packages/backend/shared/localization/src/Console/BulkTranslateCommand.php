@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Console;
+namespace Stackra\Localization\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Localization\Contracts\Data\TranslationJobInterface;
-use Academorix\Localization\Contracts\Repositories\TranslationJobRepositoryInterface;
-use Academorix\Localization\Enums\TranslationJobKind;
-use Academorix\Localization\Enums\TranslationJobStatus;
-use Academorix\Localization\Enums\TranslatorDriverName;
-use Academorix\Localization\Jobs\BulkTranslateNamespaceJob;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Localization\Contracts\Data\TranslationJobInterface;
+use Stackra\Localization\Contracts\Repositories\TranslationJobRepositoryInterface;
+use Stackra\Localization\Enums\TranslationJobKind;
+use Stackra\Localization\Enums\TranslationJobStatus;
+use Stackra\Localization\Enums\TranslatorDriverName;
+use Stackra\Localization\Jobs\BulkTranslateNamespaceJob;
 
 /**
  * `php artisan localization:bulk-translate` — dispatch a bulk

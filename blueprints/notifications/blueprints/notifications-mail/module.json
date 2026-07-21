@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "notifications-mail",
   "alias": "notifications-mail",
-  "namespace": "Academorix\\Notifications\\Mail",
+  "namespace": "Stackra\\Notifications\\Mail",
   "description": "Mail channel. Thin wrapper around Laravel Mail (MailManager) that adds the notification-specific concerns Laravel doesn't ship: template/category/preference orchestration, React Email pre-rendered HTML resolution + Blade interpolation at send, CAN-SPAM footer + RFC 8058 List-Unsubscribe header injection, provider webhook ingestion (Mailgun / SendGrid / AWS SES / Postmark / Resend), NotificationDelivery state tracking via provider message id correlation, hard-bounce address suppression, per-provider observability + cost tracking. Owns ONE entity: `MailSuppression` (hard-bounced / complained / manually-blocked email addresses).",
   "keywords": [
     "notifications",
@@ -19,7 +19,7 @@
     "suppression"
   ],
   "priority": 26,
-  "providers": ["Academorix\\Notifications\\Mail\\Providers\\NotificationsMailServiceProvider"],
+  "providers": ["Stackra\\Notifications\\Mail\\Providers\\NotificationsMailServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "notifications"],
   "extendedBy": [],
@@ -60,7 +60,7 @@
   },
   "channelRegistration": {
     "slug": "mail",
-    "class": "Academorix\\Notifications\\Mail\\Channels\\MailChannel",
+    "class": "Stackra\\Notifications\\Mail\\Channels\\MailChannel",
     "kind": "external",
     "provider_kind": "provider-mediated",
     "supported_providers": [

@@ -35,21 +35,21 @@
  *   exceptions::auth.forbidden_missing_role       ({@see missingRole()})
  *   exceptions::auth.forbidden_policy_denied      ({@see policyDenied()})
  *
- * @see \Academorix\Exceptions\AcademorixException  Base class.
- * @see \Academorix\Exceptions\Concerns\TranslatesMessages
- * @see \Academorix\Exceptions\Auth\AuthenticationException  For 401 — "who are you?" — instead of 403 "what may you do?".
+ * @see \Stackra\Exceptions\StackraException  Base class.
+ * @see \Stackra\Exceptions\Concerns\TranslatesMessages
+ * @see \Stackra\Exceptions\Auth\AuthenticationException  For 401 — "who are you?" — instead of 403 "what may you do?".
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Auth;
+namespace Stackra\Exceptions\Auth;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class ForbiddenException extends AcademorixException
+class ForbiddenException extends StackraException
 {
     /**
      * Machine-readable code — the literal clients branch on. Treat

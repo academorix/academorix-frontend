@@ -1,6 +1,6 @@
-# academorix/architecture
+# stackra/architecture
 
-Architectural enforcement for Academorix apps. Prevents direct Model access
+Architectural enforcement for Stackra apps. Prevents direct Model access
 outside the Repository / Factory / Seeder / test contexts, plus 33 other rules
 across data-first hygiene, Octane safety, filesystem convention, and
 model/job/command shape. Ships a custom scanner CLI **and** a companion PHPStan
@@ -19,7 +19,7 @@ Layers are resolved from (in priority order):
 2. **Class attribute** — `#[Domain]`, `#[Repository]`, `#[Service]`,
    `#[Action]`.
 3. **Marker interface** —
-   `Academorix\Architecture\Contracts\{Repository, Service, Action}`.
+   `Stackra\Architecture\Contracts\{Repository, Service, Action}`.
 4. **Base-class inheritance** — `extends Model` → Model, `extends Controller` →
    Controller.
 5. **Namespace convention** — configured in `config/architecture.php`.
@@ -29,7 +29,7 @@ Layers are resolved from (in priority order):
 Attribute form (preferred on `final` classes):
 
 ```php
-use Academorix\Architecture\Attributes\Repository;
+use Stackra\Architecture\Attributes\Repository;
 
 #[Repository]
 final class UserRepository { /* ... */ }
@@ -38,7 +38,7 @@ final class UserRepository { /* ... */ }
 Interface form (when you also want `instanceof` / container tagging):
 
 ```php
-use Academorix\Architecture\Contracts\Repository;
+use Stackra\Architecture\Contracts\Repository;
 
 final class UserRepository implements Repository { /* ... */ }
 ```
@@ -46,7 +46,7 @@ final class UserRepository implements Repository { /* ... */ }
 ## Escape hatch
 
 ```php
-use Academorix\Architecture\Attributes\AllowsDirectModelAccess;
+use Stackra\Architecture\Attributes\AllowsDirectModelAccess;
 
 #[AllowsDirectModelAccess(reason: 'Legacy — remove after billing v2 lands.')]
 final class BackfillInvoiceStatus extends Command { /* ... */ }
@@ -64,9 +64,9 @@ composer architecture:strict       # every warning treated as error
 Or directly:
 
 ```bash
-php artisan academorix:architecture:check              # human-readable output
-php artisan academorix:architecture:check --json       # newline-delimited JSON for CI
-php artisan academorix:architecture:check --path=src   # scope to a subtree
+php artisan stackra:architecture:check              # human-readable output
+php artisan stackra:architecture:check --json       # newline-delimited JSON for CI
+php artisan stackra:architecture:check --path=src   # scope to a subtree
 ```
 
 Exit codes: **0** clean, **1** error-severity violation, **2** operator error.
@@ -87,7 +87,7 @@ Exit codes: **0** clean, **1** error-severity violation, **2** operator error.
 | `architecture.no_form_request`                | error    | Bans `use Illuminate\Foundation\Http\FormRequest;` and `extends FormRequest`. Use spatie/laravel-data DTOs.                 |
 | `architecture.no_json_resource`               | error    | Bans `JsonResource` / `ResourceCollection` import and extension. Use spatie/laravel-data output DTOs.                       |
 | `architecture.no_facades_in_services`         | error    | Bans facade imports in Service / Action layers. Inject via container attributes (`#[Auth]`, `#[Log]`, `#[Cache]`, `#[DB]`). |
-| `architecture.controller_extends_base`        | error    | Controllers must extend `Academorix\Routing\BaseController`, not `Illuminate\Routing\Controller`.                           |
+| `architecture.controller_extends_base`        | error    | Controllers must extend `Stackra\Routing\BaseController`, not `Illuminate\Routing\Controller`.                           |
 | `architecture.controller_needs_as_controller` | error    | Every Controller must carry `#[AsController]` — route discovery relies on it.                                               |
 | `architecture.repository_needs_bind`          | error    | Every concrete Repository must carry `#[Bind(...RepositoryInterface::class)]`.                                              |
 | `architecture.middleware_needs_as_middleware` | error    | Every Middleware must carry `#[AsMiddleware]`.                                                                              |
@@ -130,7 +130,7 @@ Exit codes: **0** clean, **1** error-severity violation, **2** operator error.
 | `architecture.job_has_queue_attribute`          | warning  | `ShouldQueue` classes must declare `#[Queue]` + `#[Timeout]` + `#[Tries]`.                            |
 | `architecture.job_implements_failed`            | warning  | `ShouldQueue` classes must declare `failed(\Throwable)`.                                              |
 | `architecture.command_uses_attribute_signature` | warning  | Console commands must use `#[Signature]`, not the `$signature` property.                              |
-| `architecture.no_http_namespace_nesting`        | warning  | Namespaces must be flat — `Academorix\<Package>\Controllers`, not `\Http\Controllers`.                |
+| `architecture.no_http_namespace_nesting`        | warning  | Namespaces must be flat — `Stackra\<Package>\Controllers`, not `\Http\Controllers`.                |
 
 ### PHPStan extension — scope-aware rules (5 rules)
 
@@ -159,7 +159,7 @@ Then edit `config/architecture.php`. Every rule reads its own subtree
 
 New source rule:
 
-1. Create a class extending `Academorix\Architecture\Rules\AbstractRule`.
+1. Create a class extending `Stackra\Architecture\Rules\AbstractRule`.
 2. Implement `id()`, `description()`, `defaultSeverity()`,
    `check(SourceFile $file): array`.
 3. Add to `ArchitectureServiceProvider::$sourceRules`.

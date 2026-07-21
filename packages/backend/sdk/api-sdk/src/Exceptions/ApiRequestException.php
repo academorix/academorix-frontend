@@ -21,7 +21,7 @@
  *  └── NetworkException                    ← DNS / TCP / TLS / read-timeout — no HTTP response
  * ```
  *
- * All extend `Academorix\Exceptions\AcademorixException` so the
+ * All extend `Stackra\Exceptions\StackraException` so the
  * central JSON renderer treats them uniformly and Sentry gets
  * the correct fingerprint.
  *
@@ -48,9 +48,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Exceptions;
+namespace Stackra\ApiSdk\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 use Saloon\Http\Request;
 use Saloon\Http\Response;
 use Throwable;
@@ -60,7 +60,7 @@ use Throwable;
  * HTTP status; consumers catch the specific subclass they care
  * about and let others bubble.
  */
-class ApiRequestException extends AcademorixException
+class ApiRequestException extends StackraException
 {
     /**
      * @param  string          $message   Human-readable failure summary.

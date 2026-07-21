@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geofencing\Tests;
+namespace Stackra\Geofencing\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/geofencing.
+ * Base test case for stackra/geofencing.
  *
  * @category Geofencing
  *

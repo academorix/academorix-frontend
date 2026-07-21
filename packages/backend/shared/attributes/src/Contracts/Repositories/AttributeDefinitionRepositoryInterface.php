@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Attributes\Contracts\Repositories;
+namespace Stackra\Attributes\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Attributes\Models\AttributeDefinition}.
+ * Repository contract for {@see Stackra\Attributes\Models\AttributeDefinition}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `AttributeDefinitionRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Attributes\Models\AttributeDefinition>
+ * @extends RepositoryInterface<\Stackra\Attributes\Models\AttributeDefinition>
  *
  * @category Attributes
  *

@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/delegation/routes",
+  "id": "stackra://modules/delegation/routes",
   "$version": 1,
   "title": "delegation — HTTP routes",
-  "description": "Two-audience split, no crossover. Tenant-plane routes at `/api/v1/me/delegations/*` are for the delegator + delegate to manage their own OOF relationships. Platform-plane routes at `/api/v1/platform/impersonation/*` are for Academorix staff to start + manage impersonation sessions. Every impersonation route inherits MFA-mandatory from the platform_admin guard's policy (PCI-DSS 8.5 requirement — see platform-user/middleware.json).",
+  "description": "Two-audience split, no crossover. Tenant-plane routes at `/api/v1/me/delegations/*` are for the delegator + delegate to manage their own OOF relationships. Platform-plane routes at `/api/v1/platform/impersonation/*` are for Stackra staff to start + manage impersonation sessions. Every impersonation route inherits MFA-mandatory from the platform_admin guard's policy (PCI-DSS 8.5 requirement — see platform-user/middleware.json).",
   "groups": [
     {
       "name": "tenant-my-delegations",
@@ -23,28 +23,28 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Delegation\\Http\\Controllers\\Tenant\\MyDelegationController@index",
+          "controller": "Stackra\\Delegation\\Http\\Controllers\\Tenant\\MyDelegationController@index",
           "permission": "delegations.viewAny",
           "description": "List caller's outbound delegations (where caller is delegator). Filterable by delegation_type + is_active + role_id. Sorted by starts_at desc by default."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Delegation\\Http\\Controllers\\Tenant\\MyDelegationController@store",
+          "controller": "Stackra\\Delegation\\Http\\Controllers\\Tenant\\MyDelegationController@store",
           "permission": "delegations.create",
           "description": "Create a delegation. Body: { delegate_id, role_id?, starts_at, ends_at, reason, delegation_type }. Validated by CreateDelegationInput data-class + rules `valid_delegation_window`, `delegator_holds_role`, `same_tenant_delegation`. Fires DelegationCreated."
         },
         {
           "method": "GET",
           "path": "/{delegation}",
-          "controller": "Academorix\\Delegation\\Http\\Controllers\\Tenant\\MyDelegationController@show",
+          "controller": "Stackra\\Delegation\\Http\\Controllers\\Tenant\\MyDelegationController@show",
           "permission": "delegations.view",
           "description": "Show a single delegation. Visible to delegator, delegate, and admins (RoleDelegationPolicy@view)."
         },
         {
           "method": "DELETE",
           "path": "/{delegation}",
-          "controller": "Academorix\\Delegation\\Http\\Controllers\\Tenant\\MyDelegationController@revoke",
+          "controller": "Stackra\\Delegation\\Http\\Controllers\\Tenant\\MyDelegationController@revoke",
           "permission": "delegations.revoke",
           "description": "Revoke early. Body: { revoke_reason }. Caller must be the delegator or hold `delegations.manage_any` (admin). Fires DelegationRevokedEarly."
         }
@@ -69,7 +69,7 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Delegation\\Http\\Controllers\\Tenant\\ReceivedDelegationController@index",
+          "controller": "Stackra\\Delegation\\Http\\Controllers\\Tenant\\ReceivedDelegationController@index",
           "permission": "delegations.viewAny",
           "description": "List active delegations where I am the delegate. Powers the 'I can currently act as...' widget in the caller's shell + is the primary read the DelegationResolver relies on for approver-selector resolution."
         }
@@ -94,42 +94,42 @@
         {
           "method": "POST",
           "path": "/start",
-          "controller": "Academorix\\Delegation\\Http\\Controllers\\Platform\\ImpersonationController@start",
+          "controller": "Stackra\\Delegation\\Http\\Controllers\\Platform\\ImpersonationController@start",
           "permission": "platform.impersonate",
           "description": "Start a new impersonation session. Composes identity/auth's `ImpersonateStartAction` — issues the impersonation-scoped Sanctum PAT AND writes the impersonation_sessions row atomically within a DB transaction. Body: { impersonated_user_id, target_application_id, target_tenant_id, reason (min 40 chars), support_ticket_reference?, is_read_only?, requested_duration_minutes? }. Response: { session: {...}, token: '<the raw PAT — returned ONCE + never persisted>' }. Fires ImpersonationSessionStarted + notifies impersonated User via ImpersonationSessionStartedNotification (cannot-opt-out)."
         },
         {
           "method": "POST",
           "path": "/{session}/end",
-          "controller": "Academorix\\Delegation\\Http\\Controllers\\Platform\\ImpersonationController@end",
+          "controller": "Stackra\\Delegation\\Http\\Controllers\\Platform\\ImpersonationController@end",
           "permission": "platform.impersonate",
           "description": "Self-service end. Caller must be the session's impersonator OR hold `platform.impersonation.terminate` (security / super_admin). Sets ended_at + end_trigger=self_service (or admin_revocation if the caller is not the impersonator). Fires ImpersonationSessionEnded."
         },
         {
           "method": "GET",
           "path": "/sessions",
-          "controller": "Academorix\\Delegation\\Http\\Controllers\\Platform\\ImpersonationController@index",
+          "controller": "Stackra\\Delegation\\Http\\Controllers\\Platform\\ImpersonationController@index",
           "permission": "platform.impersonation.viewAll",
           "description": "List active sessions across all tenants. Read scope: security + super_admin. Regular support agents see only their own sessions (filtered by impersonator_platform_user_id in the controller). Filter[target_tenant_id], filter[impersonator_platform_user_id], filter[is_active]."
         },
         {
           "method": "GET",
           "path": "/sessions/{session}",
-          "controller": "Academorix\\Delegation\\Http\\Controllers\\Platform\\ImpersonationController@show",
+          "controller": "Stackra\\Delegation\\Http\\Controllers\\Platform\\ImpersonationController@show",
           "permission": "platform.impersonation.view",
           "description": "Session detail. Caller must be the impersonator OR hold security / super_admin permissions. Full audit trail visible."
         },
         {
           "method": "GET",
           "path": "/audit",
-          "controller": "Academorix\\Delegation\\Http\\Controllers\\Platform\\ImpersonationAuditController@index",
+          "controller": "Stackra\\Delegation\\Http\\Controllers\\Platform\\ImpersonationAuditController@index",
           "permission": "platform.impersonation.audit",
           "description": "Cross-tenant compliance audit report. Read scope: super_admin + dpo + security. Filterable by target_tenant_id, impersonator_platform_user_id, started_at range, end_trigger. Powers the SOC 2 evidence review — this is THE read endpoint auditors traverse."
         },
         {
           "method": "POST",
           "path": "/{session}/force-terminate",
-          "controller": "Academorix\\Delegation\\Http\\Controllers\\Platform\\ImpersonationController@forceTerminate",
+          "controller": "Stackra\\Delegation\\Http\\Controllers\\Platform\\ImpersonationController@forceTerminate",
           "permission": "platform.impersonation.terminate",
           "description": "Emergency termination. Body: { reason (min 40 chars) }. Sets ended_at + end_trigger=security_lockdown. Fires ImpersonationSessionForcedTerminate on notifications-critical queue. Notifies security team (Slack #security) via ImpersonationForcedTerminationNotification (cannot-opt-out). Restricted to super_admin + security roles."
         }

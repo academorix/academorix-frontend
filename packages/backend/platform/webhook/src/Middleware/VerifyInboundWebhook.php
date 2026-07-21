@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Middleware;
+namespace Stackra\Webhook\Middleware;
 
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Webhook\Exceptions\SignatureVerificationFailedException;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Webhook\Exceptions\SignatureVerificationFailedException;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;

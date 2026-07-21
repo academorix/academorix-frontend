@@ -20,22 +20,22 @@
  *     base provider's `LoadsResources(commands: true)`.
  *   - Seeder: `#[AsSeeder(priority: 20)]` on `BusinessTypeSeeder`
  *     (dual-source enum-primary catalogue seeder per ADR 0018).
- *   - Events: `#[AsEvent]` (discovered by `academorix/events`).
+ *   - Events: `#[AsEvent]` (discovered by `stackra/events`).
  *   - Observers: `#[ObservedBy]` on the models.
  *   - Policies: `#[UsePolicy]` on the models.
  *   - Middleware: `#[AsMiddleware]` on `ResolveApplication`.
  *   - Blueprint macro: `#[AsDatabaseBlueprint]` on `ApplicableMacro`
- *     (auto-registered on `Blueprint` at boot by `academorix/database`).
+ *     (auto-registered on `Blueprint` at boot by `stackra/database`).
  *   - Retention: `#[AsRetentionPolicy]` on the Application model.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Providers;
+namespace Stackra\Application\Providers;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * Application module service provider.
@@ -61,7 +61,7 @@ use Academorix\ServiceProvider\Providers\ServiceProvider;
     // and registers matching commands during console boot.
     commands: true,
     // Seeders auto-loaded from `database/seeders/` — discovered by
-    // `academorix/service-provider`'s `#[AsSeeder]` scanner.
+    // `stackra/service-provider`'s `#[AsSeeder]` scanner.
     seeders: true,
     // Publishable resources (config overrides, seed scaffolding).
     publishables: true,

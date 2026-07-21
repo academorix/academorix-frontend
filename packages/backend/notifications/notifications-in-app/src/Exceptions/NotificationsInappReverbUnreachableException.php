@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsInApp\Exceptions;
+namespace Stackra\NotificationsInApp\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Reverb HTTP admin API returned 5xx or timed out.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class NotificationsInappReverbUnreachableException extends AcademorixException
+final class NotificationsInappReverbUnreachableException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

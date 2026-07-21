@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Wallet\Services;
+namespace Stackra\Wallet\Services;
 
-use Academorix\Wallet\Contracts\Services\PointsEarnRuleEngineInterface;
+use Stackra\Wallet\Contracts\Services\PointsEarnRuleEngineInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Wallet\Contracts\Repositories\WalletHoldRepositoryInterface;
+use Stackra\Wallet\Contracts\Repositories\WalletHoldRepositoryInterface;
 
 /**
  * Concrete service — PointsEarnRuleEngine.

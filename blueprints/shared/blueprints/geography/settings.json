@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/geography/settings",
+  "id": "stackra://modules/geography/settings",
   "$version": 1,
   "title": "geography \u2014 settings",
   "description": "Tenant-facing geography preferences. Two groups: tenant defaults + per-user preferences. These are PREFERENCES only \u2014 reference-catalog rows themselves are global.",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "geography",
-      "class": "Academorix\\Geography\\Settings\\GeographySettings",
+      "class": "Stackra\\Geography\\Settings\\GeographySettings",
       "label": "Region defaults",
       "description": "Tenant-wide defaults for country, currency, timezone, and language.",
       "icon": "globe-alt",
@@ -60,7 +60,7 @@
     },
     {
       "key": "geography_user",
-      "class": "Academorix\\Geography\\Settings\\GeographyUserSettings",
+      "class": "Stackra\\Geography\\Settings\\GeographyUserSettings",
       "label": "My region",
       "description": "Per-user region preferences.",
       "icon": "user-circle",

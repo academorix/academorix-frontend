@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Database\Attributes;
+namespace Stackra\Database\Attributes;
 
 use Attribute;
 
@@ -20,7 +20,7 @@ use Attribute;
  * SortableModel Attribute for Model Classes.
  *
  * Configures positional ordering behaviour for the
- * {@see \Academorix\Database\Concerns\Model\HasSortOrder} trait. When
+ * {@see \Stackra\Database\Concerns\Model\HasSortOrder} trait. When
  * applied, the attribute values override the trait's method-based
  * defaults, allowing per-model sort configuration via a single attribute.
  *
@@ -46,7 +46,7 @@ use Attribute;
  *
  * @since    2.0.0
  *
- * @see \Academorix\Database\Concerns\Model\HasSortOrder
+ * @see \Stackra\Database\Concerns\Model\HasSortOrder
  */
 #[Attribute(Attribute::TARGET_CLASS)]
 final readonly class SortableModel

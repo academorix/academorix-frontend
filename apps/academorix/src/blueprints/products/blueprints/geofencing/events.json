@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/geofencing/events",
+  "id": "stackra://modules/geofencing/events",
   "$version": 1,
   "title": "geofencing \u2014 published events",
-  "namespace": "Academorix\\Geofencing\\Events",
+  "namespace": "Stackra\\Geofencing\\Events",
   "dispatchMode": "afterCommit",
   "public_wire_contract": "contracts/geofence-evaluated.v1.json",
   "events": [
     {
       "name": "GeofenceEvaluated",
-      "class": "Academorix\\Geofencing\\Events\\GeofenceEvaluated",
+      "class": "Stackra\\Geofencing\\Events\\GeofenceEvaluated",
       "queue": null,
       "dispatch_mode": "sync (fires immediately after INSERT, before evaluate() returns)",
       "wire_contract_version": "1.0.0",
@@ -32,7 +32,7 @@
     },
     {
       "name": "GeofenceOverrideRequested",
-      "class": "Academorix\\Geofencing\\Events\\GeofenceOverrideRequested",
+      "class": "Stackra\\Geofencing\\Events\\GeofenceOverrideRequested",
       "trigger": "GeofenceOverrideService::requestOverride() created an approval_tasks row.",
       "queue": "notifications",
       "consumers": ["notifications::DispatchGeofenceOverrideRequestedNotification"],
@@ -45,7 +45,7 @@
     },
     {
       "name": "GeofenceOverrideApplied",
-      "class": "Academorix\\Geofencing\\Events\\GeofenceOverrideApplied",
+      "class": "Stackra\\Geofencing\\Events\\GeofenceOverrideApplied",
       "trigger": "ApplyGeofenceOverrideOnApproval listener minted a new INSIDE row with supersedes_check_id set. New row keeps the ORIGINAL row's fenceable_type + fenceable_id.",
       "queue": "notifications",
       "consumers": [
@@ -63,7 +63,7 @@
     },
     {
       "name": "GeofenceOverrideRejected",
-      "class": "Academorix\\Geofencing\\Events\\GeofenceOverrideRejected",
+      "class": "Stackra\\Geofencing\\Events\\GeofenceOverrideRejected",
       "trigger": "Approval task closed with reject decision.",
       "queue": "notifications",
       "consumers": ["notifications::DispatchGeofenceOverrideRejectedNotification"],
@@ -76,7 +76,7 @@
     },
     {
       "name": "GeofenceCheckCreated",
-      "class": "Academorix\\Geofencing\\Events\\Domain\\GeofenceCheckCreated",
+      "class": "Stackra\\Geofencing\\Events\\Domain\\GeofenceCheckCreated",
       "trigger": "Eloquent created event on GeofenceCheck. Coarser signal than GeofenceEvaluated \u2014 fires for override rows too. Used for cache invalidation.",
       "queue": "notifications",
       "payload": {
@@ -89,21 +89,21 @@
     },
     {
       "name": "GeofenceCheckUpdated",
-      "class": "Academorix\\Geofencing\\Events\\Domain\\GeofenceCheckUpdated",
+      "class": "Stackra\\Geofencing\\Events\\Domain\\GeofenceCheckUpdated",
       "trigger": "Never dispatched under normal operation (immutability guard). Reserved for platform admin retention-purge edits.",
       "queue": "notifications",
       "payload": { "check_id": "gfc_*", "changed_fields": "string[]" }
     },
     {
       "name": "GeofenceCheckDeleted",
-      "class": "Academorix\\Geofencing\\Events\\Domain\\GeofenceCheckDeleted",
+      "class": "Stackra\\Geofencing\\Events\\Domain\\GeofenceCheckDeleted",
       "trigger": "Soft-delete via SoftDeletes trait \u2014 GDPR retention path.",
       "queue": "notifications",
       "payload": { "check_id": "gfc_*", "tenant_id": "ten_*" }
     },
     {
       "name": "FenceableGeometryUpdated",
-      "class": "Academorix\\Geofencing\\Events\\FenceableGeometryUpdated",
+      "class": "Stackra\\Geofencing\\Events\\FenceableGeometryUpdated",
       "trigger": "The HasGeofence trait's boot hook detected an update to any of the 5 fence columns on a Geofenceable model. Fires from the consumer's model save().",
       "queue": "notifications",
       "consumers": ["geofencing::InvalidateFenceableCache", "audit::AuditListener"],

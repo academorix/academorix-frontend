@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Referrals\Actions\Tenant;
+namespace Stackra\Referrals\Actions\Tenant;
 
-use Academorix\Referrals\Contracts\Repositories\ReferralProgramRepositoryInterface;
-use Academorix\Referrals\Data\ReferralProgramData;
-use Academorix\Referrals\Data\Requests\CreateReferralProgramRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Referrals\Contracts\Repositories\ReferralProgramRepositoryInterface;
+use Stackra\Referrals\Data\ReferralProgramData;
+use Stackra\Referrals\Data\Requests\CreateReferralProgramRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/referral-programs` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Referrals

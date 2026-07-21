@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Contracts\Services;
+namespace Stackra\Storage\Contracts\Services;
 
-use Academorix\ServiceProvider\Attributes\HydratesFrom;
-use Academorix\Storage\Attributes\FileKind;
-use Academorix\Storage\Services\DefaultFileKindRegistry;
+use Stackra\ServiceProvider\Attributes\HydratesFrom;
+use Stackra\Storage\Attributes\FileKind;
+use Stackra\Storage\Services\DefaultFileKindRegistry;
 use Illuminate\Container\Attributes\Bind;
 
 /**
  * Attribute-discovery registry for `#[FileKind]` classes.
  *
  * Hydrated at boot by the framework's generic
- * {@see \Academorix\ServiceProvider\Bootstrappers\HydrationBootstrapper}
+ * {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  * pump via the {@see HydratesFrom} attribute on {@see register()}.
  * One row per class carrying the `#[FileKind]` attribute — the
  * upload / validation path reads the recipe here so no

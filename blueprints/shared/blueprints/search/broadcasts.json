@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/search/broadcasts",
+  "id": "stackra://modules/search/broadcasts",
   "$version": 1,
   "title": "search \u2014 broadcast channels",
   "description": "Two private channels. Per-user for sync-job lifecycle (own jobs). Per-tenant for admin dashboards watching cross-user reindex activity + engine health.",

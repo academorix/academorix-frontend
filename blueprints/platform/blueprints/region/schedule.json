@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/region/schedule",
+  "id": "stackra://modules/region/schedule",
   "$version": 1,
   "title": "region — scheduled tasks",
   "entries": [
@@ -8,7 +8,7 @@
       "command": "region:reconcile-defaults",
       "cron": "15 3 * * *",
       "timezone": "UTC",
-      "purpose": "Daily 03:15 UTC. Verifies every tenant has exactly one is_default=true Region. Reports drift + optionally auto-heals per `region.reconciliation.auto_heal` config. Feeds the `academorix.region.default_invariant_drift.count` gauge."
+      "purpose": "Daily 03:15 UTC. Verifies every tenant has exactly one is_default=true Region. Reports drift + optionally auto-heals per `region.reconciliation.auto_heal` config. Feeds the `stackra.region.default_invariant_drift.count` gauge."
     },
     {
       "name": "region-purge-archived",
@@ -29,7 +29,7 @@
       "command": "region:metrics:snapshot",
       "cron": "0 * * * *",
       "timezone": "UTC",
-      "purpose": "Hourly. Compute `academorix.region.active.count` per (status, country_code) + `academorix.region.per_tenant.count` histogram + `academorix.region.purge_pending.count`. Publishes to the OpenTelemetry endpoint."
+      "purpose": "Hourly. Compute `stackra.region.active.count` per (status, country_code) + `stackra.region.per_tenant.count` histogram + `stackra.region.purge_pending.count`. Publishes to the OpenTelemetry endpoint."
     },
     {
       "name": "region-cache-warm-country-defaults",

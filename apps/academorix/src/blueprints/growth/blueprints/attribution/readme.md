@@ -205,7 +205,7 @@ attribution changes do not reshape historical events.
     "campaign": "spring-signup-2026",
     "content": "ad-variant-b",
     "term": "sports academy",
-    "landing_page": "https://tenant.academorix.app/signup",
+    "landing_page": "https://tenant.stackra.app/signup",
     "referrer": "https://google.com/search?q=…",
     "click_id": { "gclid": "Cj0KCQjw…", "provider_hint": "google" },
     "at": "2026-01-15T09:32:14Z"

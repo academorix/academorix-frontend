@@ -6,7 +6,7 @@
  * @description
  * Static accessor for the current-request correlation id (a.k.a.
  * request id / trace id). The id is minted or read by
- * {@see \Academorix\Foundation\Middleware\AssignCorrelationId} and
+ * {@see \Stackra\Foundation\Middleware\AssignCorrelationId} and
  * exposed here so code deep in the call stack — exceptions, log
  * processors, queued jobs — can read it without hauling a `Request`
  * dependency around.
@@ -22,7 +22,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Support;
+namespace Stackra\Foundation\Support;
 
 use Illuminate\Support\Str;
 

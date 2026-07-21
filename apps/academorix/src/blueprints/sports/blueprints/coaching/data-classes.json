@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/coaching/data-classes",
+  "id": "stackra://modules/coaching/data-classes",
   "$version": 1,
   "title": "coaching — field classification",
   "description": "Coaching entities carry a mix of tiers. Public: structural + slugs. Internal: verification state + activity flags. Confidential: bio + notes + verification-document reference. Regulated financial: hourly_rate_cents (7-year retention; NEVER surfaces on platform-admin reads). Regulated minor: coach-of-minors-adjacent — coach identifiers referenced by athlete rows for minor athletes are subject to the athlete module's redactor chain.",

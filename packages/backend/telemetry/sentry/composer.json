@@ -1,21 +1,21 @@
 {
-  "name": "academorix/sentry",
-  "description": "Sentry error tracking and monitoring with automatic context discovery for Academorix applications",
+  "name": "stackra/sentry",
+  "description": "Sentry error tracking and monitoring with automatic context discovery for Stackra applications",
   "type": "library",
   "license": "MIT",
   "authors": [
     {
-      "name": "Academorix Team",
-      "email": "dev@academorix.com"
+      "name": "Stackra Team",
+      "email": "dev@stackra.com"
     }
   ],
-  "homepage": "https://github.com/academorix-inc/laravel-telemetry/sentry",
+  "homepage": "https://github.com/stackra-inc/laravel-telemetry/sentry",
   "support": {
-    "issues": "https://github.com/academorix-inc/laravel-telemetry/sentry/-/issues",
-    "source": "https://github.com/academorix-inc/laravel-telemetry/sentry"
+    "issues": "https://github.com/stackra-inc/laravel-telemetry/sentry/-/issues",
+    "source": "https://github.com/stackra-inc/laravel-telemetry/sentry"
   },
   "keywords": [
-    "academorix",
+    "stackra",
     "telemetry",
     "sentry",
     "error-tracking",
@@ -36,7 +36,7 @@
   "require": {
     "php": "^8.4|^8.5",
     "sentry/sentry-laravel": "^4.0",
-    "academorix/support": "@dev"
+    "stackra/support": "@dev"
   },
   "require-dev": {
     "mockery/mockery": "^1.6",
@@ -45,18 +45,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Sentry\\": "src/"
+      "Stackra\\Sentry\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Sentry\\Tests\\": "tests/"
+      "Stackra\\Sentry\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Sentry\\Providers\\SentryServiceProvider"
+        "Stackra\\Sentry\\Providers\\SentryServiceProvider"
       ]
     }
   },

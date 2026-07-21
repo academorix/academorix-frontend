@@ -16,11 +16,11 @@
  *
  * ## Allowed namespaces
  *
- *  - `Academorix\FeatureFlags\Checkers` — the `PennantFeatureChecker`
+ *  - `Stackra\FeatureFlags\Checkers` — the `PennantFeatureChecker`
  *    implementation.
- *  - `Academorix\FeatureFlags\Registry` — `FeatureFlagDiscovery`
+ *  - `Stackra\FeatureFlags\Registry` — `FeatureFlagDiscovery`
  *    wires Pennant's class-based resolver.
- *  - `Academorix\FeatureFlags\Providers` — reserved for future
+ *  - `Stackra\FeatureFlags\Providers` — reserved for future
  *    provider-level Pennant wiring.
  *
  * Every other namespace that references `Laravel\Pennant\*` symbols
@@ -29,7 +29,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\PhpStan;
+namespace Stackra\Architecture\PhpStan;
 
 use PhpParser\Node;
 use PhpParser\Node\Name;
@@ -52,9 +52,9 @@ final class NoDirectPennantAccessRule implements Rule
      * @var list<string>
      */
     private const array ALLOWED_NAMESPACES = [
-        'Academorix\\FeatureFlags\\Checkers',
-        'Academorix\\FeatureFlags\\Registry',
-        'Academorix\\FeatureFlags\\Providers',
+        'Stackra\\FeatureFlags\\Checkers',
+        'Stackra\\FeatureFlags\\Registry',
+        'Stackra\\FeatureFlags\\Providers',
     ];
 
     /**
@@ -111,7 +111,7 @@ final class NoDirectPennantAccessRule implements Rule
         }
 
         $message = \sprintf(
-            'Direct Pennant reference `%s` in namespace `%s` is forbidden — route through `Academorix\\FeatureFlags\\Facades\\Feature` or inject `FeatureCheckerInterface` (Requirement 4.9).',
+            'Direct Pennant reference `%s` in namespace `%s` is forbidden — route through `Stackra\\FeatureFlags\\Facades\\Feature` or inject `FeatureCheckerInterface` (Requirement 4.9).',
             $fqn,
             $currentNamespace,
         );

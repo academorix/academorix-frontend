@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Strategies;
+namespace Stackra\Localization\Strategies;
 
-use Academorix\Localization\Attributes\AsLocaleResolutionStrategy;
-use Academorix\Localization\Contracts\Services\LocaleResolutionStrategyInterface;
+use Stackra\Localization\Attributes\AsLocaleResolutionStrategy;
+use Stackra\Localization\Contracts\Services\LocaleResolutionStrategyInterface;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;

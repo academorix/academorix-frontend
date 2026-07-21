@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Announcements\Services;
+namespace Stackra\Announcements\Services;
 
-use Academorix\Announcements\Contracts\Services\AnnouncementFanoutJobInterface;
+use Stackra\Announcements\Contracts\Services\AnnouncementFanoutJobInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Announcements\Contracts\Repositories\AnnouncementViewRepositoryInterface;
+use Stackra\Announcements\Contracts\Repositories\AnnouncementViewRepositoryInterface;
 
 /**
  * Concrete service — AnnouncementFanoutJob.

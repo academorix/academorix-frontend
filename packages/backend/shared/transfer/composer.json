@@ -1,10 +1,10 @@
 {
-  "name": "academorix/transfer",
+  "name": "stackra/transfer",
   "type": "library",
   "description": "Enterprise-grade unified import/export engine wrapping `maatwebsite/excel`. Owns four aggregates (`XferJob`, `XferShard`, `XferArtifact`, `XferMappingProfile`), attribute-driven registration (`#[Importable]` / `#[Exportable]` / `#[SampleData]` / `#[ImportField]` / `#[ExportField]` / `#[TransferField]` / `#[ImportableWorkbook]` / `#[ExportableWorkbook]`), queue-by-default execution riding Laravel Excel's chain + `WithChunkReading`, four import modes (append / upsert / replace / delete), sharded imports for very large files, downloadable errors artifact for partial success, signed download URLs, tenant scoping via `BelongsToTenant`, per-user notifications on finish (mail / broadcast / database / push) resolved at dispatch, mapping profiles for header remap at upload time, and a preview + dry-run pipeline. Distinct from `activity` (product feed) and `audit` (compliance evidence) — transfer runs the data-movement operations both of those modules observe.",
   "license": "proprietary",
   "keywords": [
-    "academorix",
+    "stackra",
     "laravel",
     "transfer",
     "import",
@@ -24,25 +24,25 @@
   ],
   "require": {
     "php": "^8.3",
-    "academorix/activity": "@dev",
-    "academorix/application": "@dev",
-    "academorix/audit": "@dev",
-    "academorix/authorization": "@dev",
-    "academorix/console": "@dev",
-    "academorix/crud": "@dev",
-    "academorix/database": "@dev",
-    "academorix/enum": "@dev",
-    "academorix/events": "@dev",
-    "academorix/exceptions": "@dev",
-    "academorix/foundation": "@dev",
-    "academorix/notifications": "@dev",
-    "academorix/retention": "@dev",
-    "academorix/routing": "@dev",
-    "academorix/serializer": "@dev",
-    "academorix/service-provider": "@dev",
-    "academorix/settings": "@dev",
-    "academorix/support": "@dev",
-    "academorix/tenancy": "@dev",
+    "stackra/activity": "@dev",
+    "stackra/application": "@dev",
+    "stackra/audit": "@dev",
+    "stackra/authorization": "@dev",
+    "stackra/console": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/database": "@dev",
+    "stackra/enum": "@dev",
+    "stackra/events": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/notifications": "@dev",
+    "stackra/retention": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/serializer": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/settings": "@dev",
+    "stackra/support": "@dev",
+    "stackra/tenancy": "@dev",
     "illuminate/bus": "^13.0",
     "illuminate/contracts": "^13.0",
     "illuminate/database": "^13.0",
@@ -68,20 +68,20 @@
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\Transfer\\": "src/",
-      "Academorix\\Transfer\\Database\\Factories\\": "database/factories/",
-      "Academorix\\Transfer\\Database\\Seeders\\": "database/seeders/"
+      "Stackra\\Transfer\\": "src/",
+      "Stackra\\Transfer\\Database\\Factories\\": "database/factories/",
+      "Stackra\\Transfer\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\Transfer\\Tests\\": "tests/"
+      "Stackra\\Transfer\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Transfer\\Providers\\TransferServiceProvider"
+        "Stackra\\Transfer\\Providers\\TransferServiceProvider"
       ],
       "aliases": {}
     }

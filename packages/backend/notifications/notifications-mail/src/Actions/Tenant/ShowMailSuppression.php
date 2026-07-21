@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Actions\Tenant;
+namespace Stackra\Notifications\Mail\Actions\Tenant;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Notifications\Mail\Data\MailSuppressionData;
-use Academorix\Notifications\Mail\Enums\NotificationsMailPermission;
-use Academorix\Notifications\Mail\Models\MailSuppression;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\WhereUlid;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Notifications\Mail\Data\MailSuppressionData;
+use Stackra\Notifications\Mail\Enums\NotificationsMailPermission;
+use Stackra\Notifications\Mail\Models\MailSuppression;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\WhereUlid;
+use Stackra\Routing\Concerns\AsController;
 
 /**
  * `GET /api/v1/tenant/mail-suppressions/{suppression}` — show a

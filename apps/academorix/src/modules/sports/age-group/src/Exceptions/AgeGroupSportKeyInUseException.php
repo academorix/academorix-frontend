@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Exceptions;
+namespace Stackra\AgeGroup\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to mutate sport_key on an AgeGroup with active downstream references.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AgeGroupSportKeyInUseException extends AcademorixException
+final class AgeGroupSportKeyInUseException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

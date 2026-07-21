@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications/schemas/notification-delivery",
+  "id": "stackra://modules/notifications/schemas/notification-delivery",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "NotificationDelivery",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "delv_",
     "incrementing": false,
-    "model": "Academorix\\Notifications\\Models\\NotificationDelivery",
-    "interface": "Academorix\\Notifications\\Contracts\\Data\\NotificationDeliveryInterface",
-    "implements": ["Academorix\\Notifications\\Contracts\\Data\\NotificationDeliveryInterface"],
+    "model": "Stackra\\Notifications\\Models\\NotificationDelivery",
+    "interface": "Stackra\\Notifications\\Contracts\\Data\\NotificationDeliveryInterface",
+    "implements": ["Stackra\\Notifications\\Contracts\\Data\\NotificationDeliveryInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

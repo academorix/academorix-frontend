@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Teams\Database\Factories;
+namespace Stackra\Teams\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Academorix\Teams\Contracts\Data\EventTeamInterface;
-use Academorix\Teams\Models\EventTeam;
+use Stackra\Teams\Contracts\Data\EventTeamInterface;
+use Stackra\Teams\Models\EventTeam;
 
 /**
- * Factory for {@see \Academorix\Teams\Models\EventTeam}.
+ * Factory for {@see \Stackra\Teams\Models\EventTeam}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Academorix\Teams\Models\EventTeam>
+ * @extends Factory<\Stackra\Teams\Models\EventTeam>
  *
  * @category Teams
  *

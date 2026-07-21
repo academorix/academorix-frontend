@@ -1,8 +1,8 @@
 {
-  "id": "academorix://modules/storage/jobs",
+  "id": "stackra://modules/storage/jobs",
   "$version": 1,
   "title": "storage \u2014 background jobs",
-  "namespace": "Academorix\\Storage\\Jobs",
+  "namespace": "Stackra\\Storage\\Jobs",
   "queues": {
     "storage": {
       "priority": "normal",
@@ -28,7 +28,7 @@
   },
   "jobs": [
     {
-      "class": "Academorix\\Storage\\Jobs\\ProcessUploadedFileJob",
+      "class": "Stackra\\Storage\\Jobs\\ProcessUploadedFileJob",
       "queue": "storage-critical",
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -37,7 +37,7 @@
       "purpose": "Orchestrator dispatched immediately after FileUploaded. Fans out to ScanFileForVirusesJob + GenerateFileVariantsJob (batched). Also updates FileKindRegistry usage stats + records the upload against `storage.uploads.month` entitlement."
     },
     {
-      "class": "Academorix\\Storage\\Jobs\\GenerateFileVariantsJob",
+      "class": "Stackra\\Storage\\Jobs\\GenerateFileVariantsJob",
       "queue": "storage",
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -46,7 +46,7 @@
       "purpose": "Runs the file kind's variant recipes (thumbnail, medium, hero, etc). Each recipe produces one FileVariant row. Retries on transient image-processor errors. Skips variants that already exist (idempotent). Fires FileVariantGenerated per successful variant + FileVariantsCompleted when all done."
     },
     {
-      "class": "Academorix\\Storage\\Jobs\\ScanFileForVirusesJob",
+      "class": "Stackra\\Storage\\Jobs\\ScanFileForVirusesJob",
       "queue": "storage-critical",
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -55,7 +55,7 @@
       "purpose": "Runs the configured AV driver (clamav / s3-antivirus / null) against the file byte stream. On clean: sets virus_scan_state=clean, fires FileScanned. On infected: moves the file to quarantine disk, sets virus_scan_state=infected, fires FileVirusFound. On scan_failed after retry exhaustion: sets virus_scan_state=scan_failed + fires FileScanned with outcome=scan_failed (admin dashboard surfaces for manual review)."
     },
     {
-      "class": "Academorix\\Storage\\Jobs\\PurgeExpiredFilesJob",
+      "class": "Stackra\\Storage\\Jobs\\PurgeExpiredFilesJob",
       "queue": "storage-maintenance",
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -64,7 +64,7 @@
       "purpose": "Nightly sweep of soft-deleted + archived files past their retention window. For each: hard-delete the row + decrement blob refcount (physical byte removal happens when refcount hits 0 on the last-referring delete). Batched at 500 rows per run to keep DB pressure low. Emits FileErased with erasure_reason=retention_purge."
     },
     {
-      "class": "Academorix\\Storage\\Jobs\\PurgeAbortedChunkedUploadsJob",
+      "class": "Stackra\\Storage\\Jobs\\PurgeAbortedChunkedUploadsJob",
       "queue": "storage-maintenance",
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -73,7 +73,7 @@
       "purpose": "Nightly sweep of aborted / expired ChunkedUploads past a 7-day retention. Hard-deletes the row + cleans up any leftover multipart parts on the driver side (S3 abortMultipartUpload). Releases any lingering quota reservation."
     },
     {
-      "class": "Academorix\\Storage\\Jobs\\DedupOrphanBlobsJob",
+      "class": "Stackra\\Storage\\Jobs\\DedupOrphanBlobsJob",
       "queue": "storage-maintenance",
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -82,7 +82,7 @@
       "purpose": "Weekly sweep. Reconciles the ContentAddressableStore refcount ledger against the actual File row count per sha256. Corrects drift (e.g. refcount says 3 but only 2 File rows exist, so the blob is a candidate for deletion after the last-referrer hard-delete). Emits STORAGE_DEDUP_DRIFT_FOUND metric per finding."
     },
     {
-      "class": "Academorix\\Storage\\Jobs\\RevokeExpiredSignedUrlsJob",
+      "class": "Stackra\\Storage\\Jobs\\RevokeExpiredSignedUrlsJob",
       "queue": "storage-maintenance",
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -91,7 +91,7 @@
       "purpose": "Hourly sweep. Marks every SignedUrlAudit row where expires_at < NOW() AND revoked_at IS NULL as revoked (revoked_reason=expired_by_sweep). Emits SignedUrlRevoked per row. Batched at 5000 rows per run."
     },
     {
-      "class": "Academorix\\Storage\\Jobs\\SyncStorageEntitlementUsageJob",
+      "class": "Stackra\\Storage\\Jobs\\SyncStorageEntitlementUsageJob",
       "queue": "storage-maintenance",
       "shouldQueue": true,
       "shouldBeUnique": true,

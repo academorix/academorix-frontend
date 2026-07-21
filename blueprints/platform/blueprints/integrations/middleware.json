@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/integrations/middleware",
+  "id": "stackra://modules/integrations/middleware",
   "$version": 1,
   "title": "integrations — HTTP middleware",
   "description": "Middleware aliases this module contributes.",

@@ -37,7 +37,7 @@ return [
         // Fully-qualified issuer URL emitted in every signed JWT's
         // `iss` claim. Downstream verifiers refuse tokens whose
         // `iss` doesn't match.
-        'issuer' => env('AUTH_JWT_ISSUER', 'https://identity.academorix.com'),
+        'issuer' => env('AUTH_JWT_ISSUER', 'https://identity.stackra.com'),
 
         // Default TTL for user-session JWTs. Service accounts pass
         // an explicit TTL at issuance and default to 300s per the

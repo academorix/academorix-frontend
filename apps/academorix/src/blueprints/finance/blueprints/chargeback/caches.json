@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/chargeback/caches",
+  "id": "stackra://modules/chargeback/caches",
   "$version": 1,
   "title": "chargeback — cache keys + tags",
   "driver": "redis",

@@ -6,7 +6,7 @@ declare(strict_types=1);
  * @file packages/framework/database/src/Providers/DatabaseServiceProvider.php
  *
  * @description
- * Root service provider for `academorix/database`. Auto-discovered
+ * Root service provider for `stackra/database`. Auto-discovered
  * by Laravel via `composer.json`'s `extra.laravel.providers`, so
  * consumer apps get the entire wiring by simply requiring the
  * package — no manual registration in `bootstrap/providers.php`.
@@ -20,7 +20,7 @@ declare(strict_types=1);
  * database-layer: Blueprint macro discovery.
  *
  *   1. Discover every class carrying
- *      {@see \Academorix\Database\Attributes\AsDatabaseBlueprint}
+ *      {@see \Stackra\Database\Attributes\AsDatabaseBlueprint}
  *      and call its static `register()` method — this is how the
  *      Schema Blueprint macros (`$table->archivable()`,
  *      `$table->sluggable()`, `$table->translatable()`, …) attach
@@ -42,23 +42,23 @@ declare(strict_types=1);
  * concern is delegated to Laravel's `#[Bind]`, `#[Singleton]`,
  * `#[Scoped]` attributes on the concrete classes.
  *
- * @see \Academorix\Database\Attributes\AsDatabaseBlueprint Marker attribute.
- * @see \Academorix\Database\Schema Every ported macro.
- * @see \Academorix\ServiceProvider\Providers\ServiceProvider New base class.
+ * @see \Stackra\Database\Attributes\AsDatabaseBlueprint Marker attribute.
+ * @see \Stackra\Database\Schema Every ported macro.
+ * @see \Stackra\ServiceProvider\Providers\ServiceProvider New base class.
  */
 
-namespace Academorix\Database\Providers;
+namespace Stackra\Database\Providers;
 
-use Academorix\Database\Attributes\AsDatabaseBlueprint;
-use Academorix\Foundation\Contracts\DiscoversAttributes;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\OnBoot;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\Database\Attributes\AsDatabaseBlueprint;
+use Stackra\Foundation\Contracts\DiscoversAttributes;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\OnBoot;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 use Throwable;
 
 /**
- * Root service provider for the `academorix/database` package.
+ * Root service provider for the `stackra/database` package.
  *
  * Zero-body class beyond the two boot-time discovery hooks —
  * every concrete dependency is auto-wired via attributes on the

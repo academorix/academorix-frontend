@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FinanceExpensesSdk\Resources;
+namespace Stackra\FinanceExpensesSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\FinanceExpensesSdk\Data\ExpenseCategoryData;
-use Academorix\FinanceExpensesSdk\Requests\ExpenseCategories\CreateExpenseCategoryRequest;
-use Academorix\FinanceExpensesSdk\Requests\ExpenseCategories\ListExpenseCategoriesRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\FinanceExpensesSdk\Data\ExpenseCategoryData;
+use Stackra\FinanceExpensesSdk\Requests\ExpenseCategories\CreateExpenseCategoryRequest;
+use Stackra\FinanceExpensesSdk\Requests\ExpenseCategories\ListExpenseCategoriesRequest;
 use Saloon\Http\Response;
 
 /**
@@ -55,7 +55,7 @@ final readonly class ExpenseCategoriesResource
      *
      * @return ExpenseCategoryData
      */
-    public function create(\Academorix\FinanceExpensesSdk\Payloads\ExpenseCategories\CreateExpenseCategoryPayload $payload, ?string $idempotencyKey = null): ExpenseCategoryData
+    public function create(\Stackra\FinanceExpensesSdk\Payloads\ExpenseCategories\CreateExpenseCategoryPayload $payload, ?string $idempotencyKey = null): ExpenseCategoryData
     {
         return $this->connector->send(new CreateExpenseCategoryRequest($payload, $idempotencyKey))->dto();
     }

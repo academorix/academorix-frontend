@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/theme/broadcasts",
+  "id": "stackra://modules/theme/broadcasts",
   "$version": 1,
   "title": "theme — broadcast channels",
   "description": "Real-time UI updates so admin panels observe activation + regen completion without polling.",

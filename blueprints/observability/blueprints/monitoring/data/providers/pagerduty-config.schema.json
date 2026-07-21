@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/monitoring/data/providers/pagerduty-config",
+  "id": "stackra://modules/monitoring/data/providers/pagerduty-config",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "PagerDuty provider config",
@@ -23,13 +23,13 @@
     },
     "client": {
       "type": "string",
-      "default": "Academorix Monitoring",
+      "default": "Stackra Monitoring",
       "description": "'client' field in PagerDuty payload. Identifies the source system."
     },
     "client_url": {
       "type": ["string", "null"],
       "format": "uri",
-      "description": "Optional URL back to the incident in the tenant's Academorix dashboard. PagerDuty renders this as a link in the incident view."
+      "description": "Optional URL back to the incident in the tenant's Stackra dashboard. PagerDuty renders this as a link in the incident view."
     },
     "auto_resolve_on_signal_clear": {
       "type": "boolean",

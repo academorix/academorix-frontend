@@ -13,7 +13,7 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\Horizon\Filters;
+namespace Stackra\Horizon\Filters;
 
 /**
  * Horizon Filter Interface.

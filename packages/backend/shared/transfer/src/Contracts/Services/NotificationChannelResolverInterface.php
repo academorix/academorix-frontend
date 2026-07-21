@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Contracts\Services;
+namespace Stackra\Transfer\Contracts\Services;
 
-use Academorix\Transfer\Services\DefaultNotificationChannelResolver;
+use Stackra\Transfer\Services\DefaultNotificationChannelResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -13,7 +13,7 @@ use Illuminate\Container\Attributes\Bind;
  * Precedence: request-supplied override > user setting > tenant
  * setting > `config('transfer.notifications.default_channels')`.
  * The resolved list is frozen onto `xfer_jobs.notify_channels` by
- * {@see \Academorix\Transfer\Observers\XferJobObserver} at creation
+ * {@see \Stackra\Transfer\Observers\XferJobObserver} at creation
  * time so the dispatch path never re-resolves.
  *
  * @category Transfer

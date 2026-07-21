@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Actions;
+namespace Stackra\Geography\Actions;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Geography\Contracts\Services\GeolocateServiceInterface;
-use Academorix\Geography\Data\GeolocationData;
-use Academorix\Geography\Data\Requests\GeolocateRequestData;
-use Academorix\Geography\Enums\GeographyPermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Geography\Contracts\Services\GeolocateServiceInterface;
+use Stackra\Geography\Data\GeolocationData;
+use Stackra\Geography\Data\Requests\GeolocateRequestData;
+use Stackra\Geography\Enums\GeographyPermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
 use Illuminate\Http\Request;
 
 /**

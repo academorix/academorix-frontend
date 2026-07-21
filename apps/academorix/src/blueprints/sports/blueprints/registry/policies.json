@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/sports-registry/policies",
+  "id": "stackra://modules/sports-registry/policies",
   "$version": 1,
   "title": "sports-registry — authorization policies",
   "description": "Three policies — SportPolicy / DisciplinePolicy / PositionPolicy — one per entity. Reads are universal across every tenant role (the catalog is UI reference data). Writes are admin/owner-only + gated by the sports_registry_custom entitlement. Platform-seeded rows are strictly read-only on the tenant plane; every write attempt against them is refused by the policy layer (not just the observer).",
   "policies": [
     {
       "model": "Sport",
-      "class": "Academorix\\Sports\\Registry\\Policies\\SportPolicy",
+      "class": "Stackra\\Sports\\Registry\\Policies\\SportPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -77,7 +77,7 @@
     },
     {
       "model": "Discipline",
-      "class": "Academorix\\Sports\\Registry\\Policies\\DisciplinePolicy",
+      "class": "Stackra\\Sports\\Registry\\Policies\\DisciplinePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -124,7 +124,7 @@
     },
     {
       "model": "Position",
-      "class": "Academorix\\Sports\\Registry\\Policies\\PositionPolicy",
+      "class": "Stackra\\Sports\\Registry\\Policies\\PositionPolicy",
       "abilities": [
         {
           "action": "viewAny",

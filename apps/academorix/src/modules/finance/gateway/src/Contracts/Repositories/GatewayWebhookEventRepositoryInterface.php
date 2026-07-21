@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Gateway\Contracts\Repositories;
+namespace Stackra\Gateway\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Gateway\Models\GatewayWebhookEvent}.
+ * Repository contract for {@see Stackra\Gateway\Models\GatewayWebhookEvent}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `GatewayWebhookEventRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Gateway\Models\GatewayWebhookEvent>
+ * @extends RepositoryInterface<\Stackra\Gateway\Models\GatewayWebhookEvent>
  *
  * @category Gateway
  *

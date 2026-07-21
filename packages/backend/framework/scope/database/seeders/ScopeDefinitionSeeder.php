@@ -4,7 +4,7 @@
  * @file database/seeders/ScopeDefinitionSeeder.php
  *
  * @description
- * Demo-only seeder for {@see \Academorix\Scope\Models\ScopeDefinition}.
+ * Demo-only seeder for {@see \Stackra\Scope\Models\ScopeDefinition}.
  * Production hierarchies come from the tenancy module's own
  * bootstrap when a tenant is created — never from this seeder,
  * hence the `$isDemoOnly = true` guard.
@@ -17,10 +17,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Database\Seeders;
+namespace Stackra\Scope\Database\Seeders;
 
-use Academorix\ServiceProvider\Attributes\AsSeeder;
-use Academorix\Scope\Models\ScopeDefinition;
+use Stackra\ServiceProvider\Attributes\AsSeeder;
+use Stackra\Scope\Models\ScopeDefinition;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -36,7 +36,7 @@ final class ScopeDefinitionSeeder extends Seeder
 {
     /**
      * Guard flag consumed by
-     * {@see \Academorix\Database\Seeders\RunModuleSeeders} — this
+     * {@see \Stackra\Database\Seeders\RunModuleSeeders} — this
      * seeder is skipped during production `db:seed` runs.
      */
     public static bool $isDemoOnly = true;

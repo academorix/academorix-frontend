@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/theme/compliance",
+  "id": "stackra://modules/theme/compliance",
   "$version": 1,
   "title": "theme — compliance evidence",
   "description": "WCAG 2.2 Level AA + ADA + EN 301 549 covered by the ContrastAuditor + accessibility_flags primitives. GDPR Art. 25 (data protection by design) covered by not shipping third-party analytics for per-user theme preference. SOC 2 CC8.1 (change management) covered by the ThemeActivated dual-write audit trail.",
@@ -98,7 +98,7 @@
         {
           "annex": "A.5.15",
           "principle": "access control",
-          "evidence": "theme.manage + theme.activate permissions gate write paths. platform.theme.manage-presets gates platform preset writes to Academorix staff only."
+          "evidence": "theme.manage + theme.activate permissions gate write paths. platform.theme.manage-presets gates platform preset writes to Stackra staff only."
         }
       ]
     }

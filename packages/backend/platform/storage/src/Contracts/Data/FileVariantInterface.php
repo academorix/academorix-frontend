@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Contracts\Data;
+namespace Stackra\Storage\Contracts\Data;
 
-use Academorix\Storage\Models\FileVariant;
+use Stackra\Storage\Models\FileVariant;
 use Illuminate\Container\Attributes\Bind;
 
 /**

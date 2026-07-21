@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Mail\Events;
+namespace Stackra\Notifications\Mail\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 
@@ -14,7 +14,7 @@ use Illuminate\Foundation\Events\Dispatchable;
  * `bounceKind` is either `'hard'` (permanent — recipient does not
  * exist) or `'soft'` (transient — mailbox full, over quota, DNS
  * timeout). Hard bounces trigger address suppression via
- * {@see \Academorix\Notifications\Mail\Listeners\SuppressAddressListener};
+ * {@see \Stackra\Notifications\Mail\Listeners\SuppressAddressListener};
  * soft bounces trigger a retry of the delivery.
  *
  * ## Consumers

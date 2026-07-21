@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Actions\Central;
+namespace Stackra\Webhook\Actions\Central;
 
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Webhook\Events\InboundWebhookReceived;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Webhook\Events\InboundWebhookReceived;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -19,7 +19,7 @@ use Illuminate\Http\Request;
  * The signature IS the credential — the `webhooks.verify` middleware
  * validates the shape of `X-Webhook-*` headers; the provider-specific
  * secret check lives in the event listener registered per namespace.
- * A signature failure raises {@see \Academorix\Webhook\Exceptions\SignatureVerificationFailedException}
+ * A signature failure raises {@see \Stackra\Webhook\Exceptions\SignatureVerificationFailedException}
  * (HTTP 401) before this action runs.
  *
  * @category Webhook

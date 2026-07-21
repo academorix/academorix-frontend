@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Contracts\Services;
+namespace Stackra\Subscription\Contracts\Services;
 
-use Academorix\Subscription\Models\Subscription;
-use Academorix\Subscription\Services\DefaultGracePeriodResolver;
+use Stackra\Subscription\Models\Subscription;
+use Stackra\Subscription\Services\DefaultGracePeriodResolver;
 use DateTimeInterface;
 use Illuminate\Container\Attributes\Bind;
 

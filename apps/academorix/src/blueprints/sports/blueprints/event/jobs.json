@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/event/jobs",
+  "id": "stackra://modules/event/jobs",
   "$version": 1,
   "title": "event — background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Sports\\Event\\Jobs\\RollEventStatusJob",
+      "class": "Stackra\\Sports\\Event\\Jobs\\RollEventStatusJob",
       "queue": "sports",
       "purpose": "Hourly cron. Walks every active Event + transitions its status based on now() vs its registration_opens_at / registration_closes_at / starts_at / ends_at timestamps. Automated counterpart to the manual action routes; idempotent.",
       "steps": [
@@ -26,7 +26,7 @@
       "note": "Similar pattern to season's RollSeasonPhaseJob but Event-specific transitions. Every fire traces back to a specific hour boundary."
     },
     {
-      "class": "Academorix\\Sports\\Event\\Jobs\\ExpireExpiredEventRegistrationsJob",
+      "class": "Stackra\\Sports\\Event\\Jobs\\ExpireExpiredEventRegistrationsJob",
       "queue": "sports",
       "purpose": "Every 15 minutes. Fine-grained pass that catches events whose registration_closes_at fell within the last 15 minutes so the closure is prompt (matches season's close-expired job cadence). Transitions registration_open -> registration_closed.",
       "steps": [
@@ -42,7 +42,7 @@
       "backoff": [30, 120, 300]
     },
     {
-      "class": "Academorix\\Sports\\Event\\Jobs\\NotifyEventReminderJob",
+      "class": "Stackra\\Sports\\Event\\Jobs\\NotifyEventReminderJob",
       "queue": "notifications",
       "purpose": "Runs 24h + 1h before an event's starts_at. Dispatches EventReminderNotification to every registered participant + coach + guardian for minors. The Wave 3 enrollment surface computes the recipients list; pre-Wave-3 falls back to every tenant member with visibility >= tenant_only.",
       "steps": [
@@ -57,7 +57,7 @@
       "backoff": [30, 120, 300]
     },
     {
-      "class": "Academorix\\Sports\\Event\\Jobs\\ReconcileEventFacilityBookingsJob",
+      "class": "Stackra\\Sports\\Event\\Jobs\\ReconcileEventFacilityBookingsJob",
       "queue": "low",
       "purpose": "Nightly at 04:00 UTC. Verifies that every active event_facilities row has a corresponding facility::ResourceBooking (bkg_*) spanning the event's [starts_at, ends_at] window for the appropriate purpose. Auto-creates missing bookings + flags orphan bookings (bookings pointing at a detached event_facilities row).",
       "steps": [
@@ -74,7 +74,7 @@
       "note": "The event module OWNS the composition contract — sessions (Wave 3b) compose ResourceBookings directly, but events compose them THROUGH the event_facilities pivot for the venue-blocking side. Wave 3+ enrollment/finance may layer further pricing on top of these bookings."
     },
     {
-      "class": "Academorix\\Sports\\Event\\Jobs\\PurgeArchivedEventsJob",
+      "class": "Stackra\\Sports\\Event\\Jobs\\PurgeArchivedEventsJob",
       "queue": "low",
       "purpose": "Daily at 04:30 UTC. Hard-deletes soft-deleted (archived) Event rows past `event.retention.archived_events_retention_days` (default 2555 = 7 years for financial retention) IF no inbound FK row still references them.",
       "steps": [
@@ -89,7 +89,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Sports\\Event\\Jobs\\NotifyEventUpcomingJob",
+      "class": "Stackra\\Sports\\Event\\Jobs\\NotifyEventUpcomingJob",
       "queue": "notifications",
       "purpose": "Weekly on Monday 09:00 UTC. Fans out a 'this week's events' digest to every tenant member with the appropriate visibility. Aggregated per tenant to avoid noise. Skipped for tenants with no events in the coming 7 days.",
       "steps": [
@@ -104,7 +104,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Sports\\Event\\Jobs\\ExpireEventCoolingOffJob",
+      "class": "Stackra\\Sports\\Event\\Jobs\\ExpireEventCoolingOffJob",
       "queue": "low",
       "purpose": "Runs every 4 hours. Enforces the cancellation cooling-off period: an event cancelled within `event.cooling_off.window_hours` (default 24h) of registration_opens_at cannot be re-opened during the cooling-off window — this prevents rapid-fire cancel/reopen cycles that would spam registered participants. After the window, the event may be restored + re-announced.",
       "steps": [

@@ -21,7 +21,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ApiSdk\Exceptions;
+namespace Stackra\ApiSdk\Exceptions;
 
 /**
  * HTTP 401 — the API rejected the caller's credentials.

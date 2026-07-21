@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Competition\Policies;
+namespace Stackra\Competition\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Competition\Models\CompetitionFixture;
+use Stackra\User\Models\User;
+use Stackra\Competition\Models\CompetitionFixture;
 
 /**
- * Authorization policy for {@see \Academorix\Competition\Models\CompetitionFixture}.
+ * Authorization policy for {@see \Stackra\Competition\Models\CompetitionFixture}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

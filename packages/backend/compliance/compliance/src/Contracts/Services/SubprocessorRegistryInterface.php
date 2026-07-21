@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Compliance\Contracts\Services;
+namespace Stackra\Compliance\Contracts\Services;
 
-use Academorix\Compliance\Models\Subprocessor;
-use Academorix\Compliance\Services\DefaultSubprocessorRegistry;
+use Stackra\Compliance\Models\Subprocessor;
+use Stackra\Compliance\Services\DefaultSubprocessorRegistry;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Support\Collection;
 

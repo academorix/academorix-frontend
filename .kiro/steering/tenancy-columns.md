@@ -11,7 +11,7 @@ inclusion: always
 > of that ADR; §§6-9 are its operational tail (enforcement points, auditor
 > agent, migration templates, living gap register).
 
-Row-level attribution contract for every Academorix package. Complements
+Row-level attribution contract for every Stackra package. Complements
 `hierarchy.md` — the parent doc defines the platform tree; this doc defines
 which columns each row carries to participate in that tree. When the two
 disagree, `hierarchy.md` wins.
@@ -28,8 +28,8 @@ for each other. A row can need one, two, or three of them; most rows need one.
 | Axis            | Column                                 | Answers                                                        | Substrate                                                                                                      |
 | --------------- | -------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | **Tenant**      | `tenant_id` (uuid)                     | "Which tenant owns this row?"                                  | Direct FK. `BelongsToTenant` trait applies the global scope + fills the column on save.                        |
-| **Application** | `application_id` (uuid)                | "Which of the N Academorix products does this row belong to?"  | Direct FK on the 8 top-level rows only. Cascades through `tenant_id` for everything else — never a shortcut.   |
-| **Scope**       | `scope_node_id` (uuid) + `#[ScopedTo]` | "What cascading-resolution path does this row participate in?" | `academorix/scope` substrate. Materialised path. **Configuration consumers only** — never on domain data rows. |
+| **Application** | `application_id` (uuid)                | "Which of the N Stackra products does this row belong to?"  | Direct FK on the 8 top-level rows only. Cascades through `tenant_id` for everything else — never a shortcut.   |
+| **Scope**       | `scope_node_id` (uuid) + `#[ScopedTo]` | "What cascading-resolution path does this row participate in?" | `stackra/scope` substrate. Materialised path. **Configuration consumers only** — never on domain data rows. |
 
 Rule of thumb: if you can't state the question your column answers in one
 sentence from that table, you're using the wrong axis.
@@ -68,7 +68,7 @@ Enforced by:
 
 Every domain row that lives below Tenant carries `tenant_id`. Every module below
 owns rows tenant-scoped this way. Use the
-`Academorix\Tenancy\Concerns\BelongsToTenant` trait — it applies the global
+`Stackra\Tenancy\Concerns\BelongsToTenant` trait — it applies the global
 scope + auto-fills on save + registers the FK.
 
 ### Package matrix (current + target)
@@ -269,7 +269,7 @@ public function down(): void
 Then on the model:
 
 ```php
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 
 final class <Model> extends VendorModel
 {

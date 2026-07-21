@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Wallet\Tests;
+namespace Stackra\Wallet\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/wallet.
+ * Base test case for stackra/wallet.
  *
  * @category Wallet
  *

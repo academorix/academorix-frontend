@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Theme\Models;
+namespace Stackra\Theme\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Academorix\Theme\Contracts\Data\ThemeInterface;
-use Academorix\Theme\Database\Factories\ThemeFactory;
-use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
-use Academorix\Theme\Enums\ThemeMode;
-use Academorix\Theme\Policies\ThemePolicy;
+use Stackra\Theme\Contracts\Data\ThemeInterface;
+use Stackra\Theme\Database\Factories\ThemeFactory;
+use Stackra\Foundation\Concerns\HasMetadata;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Theme\Enums\ThemeMode;
+use Stackra\Theme\Policies\ThemePolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

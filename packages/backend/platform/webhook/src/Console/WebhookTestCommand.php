@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Console;
+namespace Stackra\Webhook\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Webhook\Contracts\Data\WebhookSubscriptionInterface;
-use Academorix\Webhook\Contracts\Repositories\WebhookSubscriptionRepositoryInterface;
-use Academorix\Webhook\Contracts\Services\WebhookSenderInterface;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Webhook\Contracts\Data\WebhookSubscriptionInterface;
+use Stackra\Webhook\Contracts\Repositories\WebhookSubscriptionRepositoryInterface;
+use Stackra\Webhook\Contracts\Services\WebhookSenderInterface;
 
 /**
  * `php artisan webhook:test {subscription}` — fire a test event

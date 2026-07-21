@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Telemetry\Contracts\Services;
+namespace Stackra\Telemetry\Contracts\Services;
 
-use Academorix\Telemetry\Services\LogContextRegistry;
+use Stackra\Telemetry\Services\LogContextRegistry;
 use Illuminate\Container\Attributes\Bind;
 
 /**

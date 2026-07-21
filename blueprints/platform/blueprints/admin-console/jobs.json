@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/admin-console/jobs",
+  "id": "stackra://modules/admin-console/jobs",
   "$version": 1,
   "title": "admin-console — queued jobs",
   "description": "Queued jobs this module dispatches.",

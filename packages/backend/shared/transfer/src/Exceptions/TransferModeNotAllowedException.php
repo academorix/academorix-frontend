@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Exceptions;
+namespace Stackra\Transfer\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the requested import mode is blocked by feature
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TransferModeNotAllowedException extends AcademorixException
+final class TransferModeNotAllowedException extends StackraException
 {
     public const CODE = 'TRANSFER_MODE_NOT_ALLOWED';
 

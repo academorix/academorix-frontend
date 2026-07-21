@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Session\Exceptions;
+namespace Stackra\Session\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `SESSION_SHORT_NOTICE_COACH_REASSIGN_REQUIRES_PERMISSION` fires.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SessionShortNoticeCoachReassignRequiresPermissionException extends AcademorixException
+final class SessionShortNoticeCoachReassignRequiresPermissionException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

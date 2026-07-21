@@ -1,4 +1,4 @@
-# academorix/reception
+# stackra/reception
 
 Server-side Laravel package for the `reception` module. Auto-generated from the
 blueprint at `modules/platform/blueprints/reception/`.
@@ -43,6 +43,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`academorix-platform/reception-sdk` under `sdk/platform-reception-sdk/`.
+`stackra-platform/reception-sdk` under `sdk/platform-reception-sdk/`.
 Consumers cross the service boundary through the SDK; this package is the
 SERVER-side owner of the domain.

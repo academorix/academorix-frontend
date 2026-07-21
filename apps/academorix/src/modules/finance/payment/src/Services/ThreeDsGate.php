@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Payment\Services;
+namespace Stackra\Payment\Services;
 
-use Academorix\Payment\Contracts\Services\ThreeDsGateInterface;
+use Stackra\Payment\Contracts\Services\ThreeDsGateInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Payment\Contracts\Repositories\PaymentDisputeRepositoryInterface;
+use Stackra\Payment\Contracts\Repositories\PaymentDisputeRepositoryInterface;
 
 /**
  * Concrete service — ThreeDsGate.

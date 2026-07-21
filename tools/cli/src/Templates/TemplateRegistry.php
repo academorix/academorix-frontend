@@ -2,7 +2,7 @@
 
 /**
  * @file TemplateRegistry.php
- * @module Academorix\Cli\Templates
+ * @module Stackra\Cli\Templates
  * @description Maps `backend-app` / `web-app` / `mobile-app` to their
  *   source directories under `<workspaceRoot>/templates/`. v0.1 CLI
  *   ships without templates; that's expected — the registry raises a
@@ -12,10 +12,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Templates;
+namespace Stackra\Cli\Templates;
 
-use Academorix\Cli\Exceptions\TemplateException;
-use Academorix\Cli\Support\PathResolver;
+use Stackra\Cli\Exceptions\TemplateException;
+use Stackra\Cli\Support\PathResolver;
 
 /**
  * Fixed list of template kinds the CLI supports.

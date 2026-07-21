@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/platform-user/health",
+  "id": "stackra://modules/platform-user/health",
   "$version": 1,
   "title": "platform-user \u2014 health probes",
   "probes": [
     {
       "name": "platform-user-catalogue-seeded",
-      "class": "Academorix\\PlatformUser\\Health\\Probes\\CatalogueSeededProbe",
+      "class": "Stackra\\PlatformUser\\Health\\Probes\\CatalogueSeededProbe",
       "category": "startup",
       "critical": true,
       "description": "The platform_users table has at least one row in status='active' with department='ops' AND at least one row in status='active' with `super_admin` role assignment. Ensures the ops-support + super_admin baseline is provisioned before the app opens for platform-admin traffic. Fail = the platform_admin surface is unusable (no one can log in as a real staffer).",
@@ -13,7 +13,7 @@
     },
     {
       "name": "platform-user-mfa-coverage",
-      "class": "Academorix\\PlatformUser\\Health\\Probes\\MfaCoverageProbe",
+      "class": "Stackra\\PlatformUser\\Health\\Probes\\MfaCoverageProbe",
       "category": "readiness",
       "critical": false,
       "description": "Every ACTIVE PlatformUser has an Identity with mfa_secret_encrypted NOT NULL. Non-critical because the middleware refuses non-MFA tokens at request time \u2014 but a red probe flags an operational drift (an Identity's MFA was disabled without the corresponding PlatformUser being suspended).",
@@ -21,7 +21,7 @@
     },
     {
       "name": "platform-user-manager-integrity",
-      "class": "Academorix\\PlatformUser\\Health\\Probes\\ManagerIntegrityProbe",
+      "class": "Stackra\\PlatformUser\\Health\\Probes\\ManagerIntegrityProbe",
       "category": "readiness",
       "critical": false,
       "description": "Zero PlatformUser rows have manager_id pointing at a soft-deleted or offboarded PlatformUser. If nonzero, the org-chart accessor will resolve to phantom rows during redaction. Fail = a super_admin should run `platform-user:reassign-manager` on the affected rows.",
@@ -29,7 +29,7 @@
     },
     {
       "name": "platform-user-org-chart-cycles",
-      "class": "Academorix\\PlatformUser\\Health\\Probes\\OrgChartCyclesProbe",
+      "class": "Stackra\\PlatformUser\\Health\\Probes\\OrgChartCyclesProbe",
       "category": "readiness",
       "critical": false,
       "description": "Zero cycles in the org chart (following manager_id from any row eventually terminates at NULL or the same row). The reassignment observer refuses cycles at write time \u2014 this probe defends against pre-existing bad data (imported org charts, migration bugs).",
@@ -37,7 +37,7 @@
     },
     {
       "name": "platform-user-on-call-resolver-reachable",
-      "class": "Academorix\\PlatformUser\\Health\\Probes\\OnCallResolverReachableProbe",
+      "class": "Stackra\\PlatformUser\\Health\\Probes\\OnCallResolverReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "OnCallResolver responds within `platform-user.on_call.pagerduty.timeout_seconds`. When the backend is `internal`, checks the on_call_rotation_entries table is queryable. When the backend is `pagerduty`, GETs /oncalls with the schedule id filter. Non-critical because escalation has a fallback path (Slack broadcast to the department channel), but a red probe warns that PagerDuty pages may not reach the right person.",
@@ -46,7 +46,7 @@
     },
     {
       "name": "platform-user-offboarding-sla-track",
-      "class": "Academorix\\PlatformUser\\Health\\Probes\\OffboardingSlaTrackProbe",
+      "class": "Stackra\\PlatformUser\\Health\\Probes\\OffboardingSlaTrackProbe",
       "category": "readiness",
       "critical": true,
       "description": "Zero PlatformUser rows have status='offboarded' AND offboarded_at older than `platform-user.offboarding.sla_hours` (default 24h) AND no successful RevokePlatformUserAccessJob metric emitted. CRITICAL because SOC 2 CC6.7 depends on prompt access revocation \u2014 a red probe means the SLA is currently breached and PagerDuty pages fire.",
@@ -54,7 +54,7 @@
     },
     {
       "name": "platform-user-retention-hold-integrity",
-      "class": "Academorix\\PlatformUser\\Health\\Probes\\RetentionHoldIntegrityProbe",
+      "class": "Stackra\\PlatformUser\\Health\\Probes\\RetentionHoldIntegrityProbe",
       "category": "readiness",
       "critical": false,
       "description": "Zero PlatformUser rows have deleted_at older than `platform-user.retention.hold_days + 7 days` (a 7-day grace beyond the configured hold). If nonzero, PurgeOffboardedPlatformUsersJob is stalled and rows are lingering past the retention window. A red probe warns compliance + ops.",
@@ -62,7 +62,7 @@
     },
     {
       "name": "platform-user-identity-uniqueness",
-      "class": "Academorix\\PlatformUser\\Health\\Probes\\IdentityUniquenessProbe",
+      "class": "Stackra\\PlatformUser\\Health\\Probes\\IdentityUniquenessProbe",
       "category": "startup",
       "critical": true,
       "description": "Zero Identity rows reference MORE than one platform_users row. Defends against a bug where the UNIQUE(identity_id) constraint was dropped in a bad migration. Fail = catastrophic invariant break (two PlatformUsers sharing credentials).",

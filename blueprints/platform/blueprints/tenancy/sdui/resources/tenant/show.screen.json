@@ -62,7 +62,7 @@
                     {
                       "kind": "Text",
                       "props": { "className": "text-sm text-muted font-mono" },
-                      "bindings": { "children": { "$expr": "tenant.slug + '.academorix.app'" } }
+                      "bindings": { "children": { "$expr": "tenant.slug + '.stackra.app'" } }
                     },
                     {
                       "kind": "View",

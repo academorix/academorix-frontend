@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file apps/academorix/src/sdks/platform-application-sdk/src/Requests/BusinessTypes/DeleteBusinessTypeRequest.php
+ * @file apps/stackra/src/sdks/platform-application-sdk/src/Requests/BusinessTypes/DeleteBusinessTypeRequest.php
  *
  * @description
  * `DELETE /api/v1/business-types/{key}` — the **platform-admin**
@@ -14,9 +14,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\PlatformApplicationSdk\Requests\BusinessTypes;
+namespace Stackra\PlatformApplicationSdk\Requests\BusinessTypes;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

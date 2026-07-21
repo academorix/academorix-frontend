@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Coupon\Tests;
+namespace Stackra\Coupon\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/coupon.
+ * Base test case for stackra/coupon.
  *
  * @category Coupon
  *

@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/analytics/events",
+  "id": "stackra://modules/analytics/events",
   "$version": 1,
   "title": "analytics — published events",
   "description": "22 published events covering capture lifecycle, delivery lifecycle, batching, circuit-breaker transitions, identity resolution, and semantic events (funnel step, experiment variant). All events dispatched afterCommit so a rollback doesn't leak side effects to listeners.",
-  "namespace": "Academorix\\Growth\\Analytics\\Events",
+  "namespace": "Stackra\\Growth\\Analytics\\Events",
   "dispatchMode": "afterCommit",
   "events": [
     {
       "name": "AnalyticsEventCaptured",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsEventCaptured",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsEventCaptured",
       "trigger": "AnalyticsEventObserver.created \u2014 event row inserted into analytics_events.",
       "queue": "analytics",
       "consumers": [
@@ -29,7 +29,7 @@
     },
     {
       "name": "AnalyticsEventDispatched",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsEventDispatched",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsEventDispatched",
       "trigger": "DispatchAnalyticsEventJob completed \u2014 all eligible providers have had DispatchToProviderJob queued.",
       "queue": "analytics",
       "consumers": [],
@@ -42,7 +42,7 @@
     },
     {
       "name": "AnalyticsEventDelivered",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsEventDelivered",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsEventDelivered",
       "trigger": "delivered_provider_count reached eligible_provider_count \u2014 all providers delivered successfully.",
       "queue": "analytics",
       "consumers": [
@@ -59,11 +59,11 @@
     },
     {
       "name": "AnalyticsEventPartiallyDelivered",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsEventPartiallyDelivered",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsEventPartiallyDelivered",
       "trigger": "All provider retries exhausted AND delivered_provider_count < eligible_provider_count.",
       "queue": "analytics",
       "consumers": [
-        "monitoring::EmitDegradedDeliveryMetricListener \u2014 emits academorix.analytics.deliveries.partial gauge"
+        "monitoring::EmitDegradedDeliveryMetricListener \u2014 emits stackra.analytics.deliveries.partial gauge"
       ],
       "payload": {
         "analytics_event_id": "ULID",
@@ -75,7 +75,7 @@
     },
     {
       "name": "AnalyticsEventSuppressedByConsent",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsEventSuppressedByConsent",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsEventSuppressedByConsent",
       "trigger": "AnalyticsEventObserver.creating \u2014 subject has no `analytics` consent.",
       "queue": "analytics",
       "consumers": [
@@ -91,7 +91,7 @@
     },
     {
       "name": "AnalyticsEventSuppressedBySampling",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsEventSuppressedBySampling",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsEventSuppressedBySampling",
       "trigger": "SamplingGate rolled a suppress across all eligible providers.",
       "queue": "analytics",
       "consumers": [],
@@ -104,7 +104,7 @@
     },
     {
       "name": "AnalyticsDeliveryAttempted",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsDeliveryAttempted",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsDeliveryAttempted",
       "trigger": "DispatchToProviderJob started \u2014 HTTP call about to fire.",
       "queue": "analytics",
       "consumers": [],
@@ -117,7 +117,7 @@
     },
     {
       "name": "AnalyticsDeliverySucceeded",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsDeliverySucceeded",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsDeliverySucceeded",
       "trigger": "HTTP call returned 2xx (or provider-specific success shape).",
       "queue": "analytics",
       "consumers": [
@@ -134,12 +134,12 @@
     },
     {
       "name": "AnalyticsDeliveryFailed",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsDeliveryFailed",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsDeliveryFailed",
       "trigger": "HTTP call returned a non-retryable error OR max attempts exhausted.",
       "queue": "analytics",
       "consumers": [
         "analytics::CircuitBreakerFailureListener \u2014 records failure into circuit_breaker_state, may transition to open",
-        "monitoring::EmitFailureMetricListener \u2014 emits academorix.analytics.deliveries.by_state_total counter"
+        "monitoring::EmitFailureMetricListener \u2014 emits stackra.analytics.deliveries.by_state_total counter"
       ],
       "payload": {
         "delivery_id": "ULID",
@@ -152,7 +152,7 @@
     },
     {
       "name": "AnalyticsDeliveryRateLimited",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsDeliveryRateLimited",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsDeliveryRateLimited",
       "trigger": "HTTP call returned 429 with a Retry-After header.",
       "queue": "analytics",
       "consumers": [
@@ -166,7 +166,7 @@
     },
     {
       "name": "AnalyticsProviderCircuitBreakerOpened",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsProviderCircuitBreakerOpened",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsProviderCircuitBreakerOpened",
       "trigger": "CircuitBreakerFailureListener transitioned state from closed \u2192 open.",
       "queue": "analytics",
       "consumers": [
@@ -183,7 +183,7 @@
     },
     {
       "name": "AnalyticsProviderCircuitBreakerClosed",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsProviderCircuitBreakerClosed",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsProviderCircuitBreakerClosed",
       "trigger": "Half-open probe succeeded close_after_successes times \u2014 state \u2192 closed.",
       "queue": "analytics",
       "consumers": [
@@ -198,7 +198,7 @@
     },
     {
       "name": "AnalyticsProviderConfigured",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsProviderConfigured",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsProviderConfigured",
       "trigger": "AnalyticsProviderConfigObserver.created + updated (credential/enabled_event_types/sampling changes).",
       "queue": "analytics",
       "consumers": [
@@ -213,7 +213,7 @@
     },
     {
       "name": "AnalyticsProviderDeactivated",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsProviderDeactivated",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsProviderDeactivated",
       "trigger": "AnalyticsProviderConfigObserver \u2014 is_active flipped false OR soft-deleted.",
       "queue": "analytics",
       "consumers": [
@@ -229,7 +229,7 @@
     },
     {
       "name": "AnalyticsBatchFlushed",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsBatchFlushed",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsBatchFlushed",
       "trigger": "FlushBatchedProviderJob completed all deliveries in a batch.",
       "queue": "analytics",
       "consumers": ["monitoring::EmitBatchSizeMetricListener"],
@@ -244,7 +244,7 @@
     },
     {
       "name": "AnalyticsBatchFailed",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsBatchFailed",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsBatchFailed",
       "trigger": "FlushBatchedProviderJob attempted but the provider returned a non-partial failure (e.g. auth error).",
       "queue": "analytics",
       "consumers": [
@@ -259,7 +259,7 @@
     },
     {
       "name": "AnalyticsIdentityCreated",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsIdentityCreated",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsIdentityCreated",
       "trigger": "AnalyticsIdentityObserver.created \u2014 first analytics event carrying a previously-unknown anonymous_id.",
       "queue": "analytics",
       "consumers": [],
@@ -272,7 +272,7 @@
     },
     {
       "name": "AnalyticsIdentityIdentified",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsIdentityIdentified",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsIdentityIdentified",
       "trigger": "identified_user_id transitions null \u2192 non-null.",
       "queue": "analytics",
       "consumers": [
@@ -288,7 +288,7 @@
     },
     {
       "name": "AnalyticsIdentityAliased",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsIdentityAliased",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsIdentityAliased",
       "trigger": "Two AnalyticsIdentity rows merged via alias() into one canonical identity. Fires on the SURVIVING row.",
       "queue": "analytics",
       "consumers": [
@@ -303,7 +303,7 @@
     },
     {
       "name": "AnalyticsIdentitySplit",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsIdentitySplit",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsIdentitySplit",
       "trigger": "Deidentification \u2014 identified_user_id set back to null (typically GDPR erasure).",
       "queue": "analytics",
       "consumers": ["compliance::AuditDeidentificationListener (Wave 5)"],
@@ -316,7 +316,7 @@
     },
     {
       "name": "AnalyticsFunnelStepReached",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsFunnelStepReached",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsFunnelStepReached",
       "trigger": "AnalyticsEvent with category='funnel_step' passed capture. Semantic mirror of AnalyticsEventCaptured for consumers that only care about funnel milestones.",
       "queue": "analytics",
       "consumers": [
@@ -333,7 +333,7 @@
     },
     {
       "name": "AnalyticsExperimentAssigned",
-      "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsExperimentAssigned",
+      "class": "Stackra\\Growth\\Analytics\\Events\\AnalyticsExperimentAssigned",
       "trigger": "AnalyticsEvent with category='experiment' AND event_name='experiment_variant_assigned' captured. Records the subject's variant assignment for a running experiment.",
       "queue": "analytics",
       "consumers": [

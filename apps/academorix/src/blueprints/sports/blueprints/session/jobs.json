@@ -1,10 +1,10 @@
 {
-  "id": "academorix://modules/session/jobs",
+  "id": "stackra://modules/session/jobs",
   "$version": 1,
   "title": "session — background jobs",
   "jobs": [
     {
-      "class": "Academorix\\Sports\\Session\\Jobs\\StartScheduledSessionsJob",
+      "class": "Stackra\\Sports\\Session\\Jobs\\StartScheduledSessionsJob",
       "queue": "sports",
       "purpose": "Every 5 minutes. Transitions Session.status from confirmed -> in_progress when resource_booking.starts_at <= now(). Fine-grained cadence because attendance UX depends on the session being in in_progress when coaches start check-ins.",
       "steps": [
@@ -19,7 +19,7 @@
       "backoff": [30, 120, 300]
     },
     {
-      "class": "Academorix\\Sports\\Session\\Jobs\\CompleteFinishedSessionsJob",
+      "class": "Stackra\\Sports\\Session\\Jobs\\CompleteFinishedSessionsJob",
       "queue": "sports",
       "purpose": "Every 5 minutes. Transitions in_progress -> completed when resource_booking.ends_at + 15-minute grace <= now(). Grace lets late-running sessions wrap without early auto-complete.",
       "steps": [
@@ -33,7 +33,7 @@
       "backoff": [30, 120, 300]
     },
     {
-      "class": "Academorix\\Sports\\Session\\Jobs\\CancelUnderMinimumSessionsJob",
+      "class": "Stackra\\Sports\\Session\\Jobs\\CancelUnderMinimumSessionsJob",
       "queue": "sports",
       "purpose": "Every 5 minutes. Auto-cancels sessions where checked_in_athletes_count < attendance_min after the session has started (5 minutes past starts_at). Fires SessionAttendanceBelowMinimum + SessionCancelled with trigger='automated_under_minimum'.",
       "steps": [
@@ -47,7 +47,7 @@
       "backoff": [30, 120, 300]
     },
     {
-      "class": "Academorix\\Sports\\Session\\Jobs\\ReconcileAttendanceCountsJob",
+      "class": "Stackra\\Sports\\Session\\Jobs\\ReconcileAttendanceCountsJob",
       "queue": "low",
       "purpose": "Nightly at 02:00 UTC. Recomputes checked_in_athletes_count + absent_athletes_count denormalised counters from session_attendance pivot rows. Catches drift from concurrent writes.",
       "steps": [
@@ -61,7 +61,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Sports\\Session\\Jobs\\AggregateSessionRatingsJob",
+      "class": "Stackra\\Sports\\Session\\Jobs\\AggregateSessionRatingsJob",
       "queue": "low",
       "purpose": "Nightly at 02:30 UTC. Aggregates individual ratings (stored in session_ratings table via Wave 3+ ratings module OR in metadata pre-Wave-3) into Session.session_rating + session_rating_count. Additionally feeds AggregateCoachRatingsJob (Wave 2b coaching module) with per-coach aggregates.",
       "steps": [
@@ -75,7 +75,7 @@
       "tries": 2
     },
     {
-      "class": "Academorix\\Sports\\Session\\Jobs\\NotifySessionReminderJob",
+      "class": "Stackra\\Sports\\Session\\Jobs\\NotifySessionReminderJob",
       "queue": "notifications",
       "purpose": "Dispatched at T-24h + T-1h relative to session start. Sends SessionReminderNotification to registered athletes + coach + guardians for minors.",
       "steps": [
@@ -89,7 +89,7 @@
       "tries": 3
     },
     {
-      "class": "Academorix\\Sports\\Session\\Jobs\\PurgeCompletedSessionsJob",
+      "class": "Stackra\\Sports\\Session\\Jobs\\PurgeCompletedSessionsJob",
       "queue": "low",
       "purpose": "Daily at 05:00 UTC. Hard-deletes soft-deleted (archived) session rows past `session.retention.completed_sessions_retention_days` (default 2555 = 7 years — financial + coaching + safeguarding records) IF no inbound reference remains.",
       "steps": [

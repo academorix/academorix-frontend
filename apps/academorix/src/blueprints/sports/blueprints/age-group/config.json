@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/age-group/config",
+  "id": "stackra://modules/age-group/config",
   "$version": 1,
   "title": "age-group — developer configuration",
   "configFile": "config/age_group.php",

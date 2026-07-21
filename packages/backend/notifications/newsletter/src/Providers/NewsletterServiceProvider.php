@@ -18,7 +18,7 @@
  *     `#[RequirePermission]`.
  *   - Console commands: `#[AsCommand]` extending `BaseCommand`.
  *   - Seeder: `#[AsSeeder(priority: 48)]` composes
- *     {@see \Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
+ *     {@see \Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
  *   - Events: `#[AsEvent]` on every event class.
  *   - Observers: `#[ObservedBy]` on the models.
  *   - Policies: `#[UsePolicy]` on the models.
@@ -31,16 +31,16 @@
  * driver — it does NOT ship `#[AsNotificationChannel]` and does NOT
  * self-register with the core notifications channel registry.
  * Outbound send flows through notifications-mail's `SendMailJob`
- * from {@see \Academorix\Newsletter\Jobs\SendNewsletterIssueBatchJob}.
+ * from {@see \Stackra\Newsletter\Jobs\SendNewsletterIssueBatchJob}.
  */
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Providers;
+namespace Stackra\Newsletter\Providers;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * Newsletter module service provider.

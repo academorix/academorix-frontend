@@ -1,14 +1,14 @@
 {
-  "id": "academorix://modules/notifications-mail/settings",
+  "id": "stackra://modules/notifications-mail/settings",
   "$version": 1,
   "title": "notifications-mail \u2014 settings",
   "description": "Mail-specific settings on top of notifications core's sender identity. Canonical group/section/field taxonomy. Two groups: `mail` (channel routing + brand) and `mail_smtp` (enterprise custom SMTP \u2014 split into its own class to gate on entitlement).",
   "storedIn": "settings",
-  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "reference": { "contract": "stackra://modules/settings/attributes" },
   "groups": [
     {
       "key": "mail",
-      "class": "Academorix\\Notifications\\Mail\\Settings\\MailSettings",
+      "class": "Stackra\\Notifications\\Mail\\Settings\\MailSettings",
       "label": "Email",
       "description": "Email channel routing + brand overlays.",
       "icon": "envelope",
@@ -104,7 +104,7 @@
     },
     {
       "key": "mail_smtp",
-      "class": "Academorix\\Notifications\\Mail\\Settings\\MailSmtpSettings",
+      "class": "Stackra\\Notifications\\Mail\\Settings\\MailSmtpSettings",
       "label": "Custom SMTP",
       "description": "Enterprise-only: bring-your-own SMTP endpoint. Overrides provider selection entirely.",
       "icon": "wrench-screwdriver",

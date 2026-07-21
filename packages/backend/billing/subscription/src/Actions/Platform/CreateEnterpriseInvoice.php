@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Subscription\Actions\Platform;
+namespace Stackra\Subscription\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Subscription\Contracts\Data\PlanInterface;
-use Academorix\Subscription\Contracts\Data\SubscriptionInterface;
-use Academorix\Subscription\Contracts\Repositories\PlanRepositoryInterface;
-use Academorix\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
-use Academorix\Subscription\Data\Requests\EnterpriseInvoiceRequestData;
-use Academorix\Subscription\Data\SubscriptionData;
-use Academorix\Subscription\Enums\BillingMode;
-use Academorix\Subscription\Enums\SubscriptionProvider;
-use Academorix\Subscription\Enums\SubscriptionState;
-use Academorix\Subscription\Exceptions\EnterpriseInvoiceInvalidException;
-use Academorix\Subscription\Exceptions\PlanNotFoundException;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Subscription\Contracts\Data\PlanInterface;
+use Stackra\Subscription\Contracts\Data\SubscriptionInterface;
+use Stackra\Subscription\Contracts\Repositories\PlanRepositoryInterface;
+use Stackra\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
+use Stackra\Subscription\Data\Requests\EnterpriseInvoiceRequestData;
+use Stackra\Subscription\Data\SubscriptionData;
+use Stackra\Subscription\Enums\BillingMode;
+use Stackra\Subscription\Enums\SubscriptionProvider;
+use Stackra\Subscription\Enums\SubscriptionState;
+use Stackra\Subscription\Exceptions\EnterpriseInvoiceInvalidException;
+use Stackra\Subscription\Exceptions\PlanNotFoundException;
 
 /**
  * `POST /api/v1/platform/subscriptions/{tenant}/enterprise-invoice`

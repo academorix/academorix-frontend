@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transfer\Notifications;
+namespace Stackra\Transfer\Notifications;
 
-use Academorix\Transfer\Models\XferJob;
+use Stackra\Transfer\Models\XferJob;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;

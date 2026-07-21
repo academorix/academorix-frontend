@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\MarketplaceFee\Concerns;
+namespace Stackra\MarketplaceFee\Concerns;
 
 /**
  * Trait — HasFeeSchedules.

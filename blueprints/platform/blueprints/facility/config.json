@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/facility/config",
+  "id": "stackra://modules/facility/config",
   "$version": 1,
   "title": "facility — developer configuration",
   "configFile": "config/facility.php",

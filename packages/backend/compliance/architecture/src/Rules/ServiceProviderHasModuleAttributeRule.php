@@ -6,7 +6,7 @@
  * @description
  * Source rule: every concrete `class Foo extends *ServiceProvider`
  * must carry `#[AsModule]` and `#[LoadsResources]` from
- * `academorix/service-provider`.
+ * `stackra/service-provider`.
  *
  * ## Why
  *
@@ -35,7 +35,7 @@
  *
  *   - Abstract provider base classes are exempt — they aren't
  *     the discovery target, their concrete subclasses are.
- *   - The `Academorix\ServiceProvider` and `Academorix\Foundation`
+ *   - The `Stackra\ServiceProvider` and `Stackra\Foundation`
  *     packages themselves are exempt (they define the machinery).
  *
  * ## Paired migrator
@@ -47,11 +47,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\Rules;
+namespace Stackra\Architecture\Rules;
 
-use Academorix\Architecture\Support\SourceFile;
-use Academorix\Architecture\Violations\Severity;
-use Academorix\Architecture\Violations\Violation;
+use Stackra\Architecture\Support\SourceFile;
+use Stackra\Architecture\Violations\Severity;
+use Stackra\Architecture\Violations\Violation;
 
 /**
  * Enforce `#[AsModule]` + `#[LoadsResources]` on every concrete
@@ -68,7 +68,7 @@ final class ServiceProviderHasModuleAttributeRule extends AbstractRule
 
     public function description(): string
     {
-        return 'Every concrete ServiceProvider must carry `#[AsModule]` and `#[LoadsResources]` from `academorix/service-provider`.';
+        return 'Every concrete ServiceProvider must carry `#[AsModule]` and `#[LoadsResources]` from `stackra/service-provider`.';
     }
 
     protected function defaultSeverity(): Severity
@@ -95,8 +95,8 @@ final class ServiceProviderHasModuleAttributeRule extends AbstractRule
         // Skip framework base packages that define the machinery.
         $fqcn = $file->classFqcn ?? '';
         if (
-            str_starts_with($fqcn, 'Academorix\\ServiceProvider\\')
-            || str_starts_with($fqcn, 'Academorix\\Foundation\\Providers\\')
+            str_starts_with($fqcn, 'Stackra\\ServiceProvider\\')
+            || str_starts_with($fqcn, 'Stackra\\Foundation\\Providers\\')
         ) {
             return [];
         }
@@ -129,7 +129,7 @@ final class ServiceProviderHasModuleAttributeRule extends AbstractRule
                     \implode(' + ', $missing),
                 ),
                 line: null,
-                hint: 'Run `php dev-tools/migrations/bin/academorix-migrate service-providers --apply` to fix every violation of this rule automatically.',
+                hint: 'Run `php dev-tools/migrations/bin/stackra-migrate service-providers --apply` to fix every violation of this rule automatically.',
             ),
         ];
     }

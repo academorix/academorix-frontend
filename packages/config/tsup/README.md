@@ -1,6 +1,6 @@
-# @academorix/config-tsup
+# @stackra/config-tsup
 
-Shared tsup config helper for the `academorix-frontend` monorepo. Every
+Shared tsup config helper for the `stackra-frontend` monorepo. Every
 workspace package's local `tsup.config.ts` calls
 `defineBaseConfig(entries, overrides?)` from this package.
 
@@ -8,7 +8,7 @@ workspace package's local `tsup.config.ts` calls
 
 ```ts
 // packages/frontend/<pkg>/tsup.config.ts
-import { defineBaseConfig } from "@academorix/config-tsup";
+import { defineBaseConfig } from "@stackra/config-tsup";
 
 export default defineBaseConfig({
   index: "src/index.ts",

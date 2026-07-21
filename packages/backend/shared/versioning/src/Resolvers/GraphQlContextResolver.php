@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Resolvers;
+namespace Stackra\Versioning\Resolvers;
 
-use Academorix\Versioning\Contracts\Services\VersionResolverInterface;
+use Stackra\Versioning\Contracts\Services\VersionResolverInterface;
 use Illuminate\Http\Request;
 
 /**

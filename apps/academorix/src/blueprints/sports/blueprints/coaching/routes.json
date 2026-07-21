@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/coaching/routes",
+  "id": "stackra://modules/coaching/routes",
   "$version": 1,
   "title": "coaching — HTTP routes",
   "description": "Tenant-facing routes for admin + HR + branch_manager to manage coaching profiles, assignments, certifications, and skill ratings. Coach self-service routes at /coaches/me/*. Platform-admin cross-tenant read for support tooling (PII + hourly-rate always redacted).",
@@ -25,48 +25,48 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachingProfileController@index",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachingProfileController@index",
           "permission": "coaching_profiles.viewAny",
           "description": "List coaching profiles. filter[primary_sport_id], filter[is_active], filter[verified], filter[branch_id], filter[is_accepting_new_athletes]."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachingProfileController@store",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachingProfileController@store",
           "permission": "coaching_profiles.create",
           "description": "Body: CreateCoachingProfileData { staff_id, branch_id, primary_sport_id?, coaching_since_year?, bio?, photo_url_signed?, availability?, hourly_rate_cents?, rate_currency?, specializations?, is_accepting_new_athletes?, max_athletes_per_session?, languages_spoken? }. Fires CoachingProfileCreated. Refused when tenant slot cap exceeded."
         },
         {
           "method": "GET",
           "path": "/{profile}",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachingProfileController@show",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachingProfileController@show",
           "permission": "coaching_profiles.view"
         },
         {
           "method": "PATCH",
           "path": "/{profile}",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachingProfileController@update",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachingProfileController@update",
           "permission": "coaching_profiles.update",
           "description": "Body: UpdateCoachingProfileData. Excludes staff_id, tenant_id [immutable], hourly_rate_cents/rate_currency [dedicated permission], verified_by_admin_at [dedicated endpoint], is_active [dedicated endpoints]."
         },
         {
           "method": "POST",
           "path": "/{profile}/verify",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachingProfileController@verify",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachingProfileController@verify",
           "permission": "coaching_profiles.verify",
           "description": "Admin verifies the profile. Sets verified_by_admin_at + verified_by_admin_user_id. Fires CoachingProfileVerified."
         },
         {
           "method": "POST",
           "path": "/{profile}/deactivate",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachingProfileController@deactivate",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachingProfileController@deactivate",
           "permission": "coaching_profiles.deactivate",
           "description": "Body: { reason?: string }. Flips is_active=false. Fires CoachingProfileDeactivated → cascade cancels open assignments."
         },
         {
           "method": "POST",
           "path": "/{profile}/reactivate",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachingProfileController@reactivate",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachingProfileController@reactivate",
           "permission": "coaching_profiles.reactivate",
           "description": "Flips is_active=true. Requires admin re-verification (fires CoachingProfileVerified + CoachingProfileReactivated)."
         }
@@ -93,34 +93,34 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachAssignmentController@index",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachAssignmentController@index",
           "permission": "coach_assignments.viewAny",
           "description": "filter[coaching_profile_id], filter[assignable_type], filter[assignable_id], filter[role], filter[active]."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachAssignmentController@store",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachAssignmentController@store",
           "permission": "coach_assignments.create",
           "description": "Body: CreateCoachAssignmentData { coaching_profile_id, assignable_type, assignable_id, role, start_date, end_date?, notes? }. Refused when profile not verified OR not active OR head_coach already assigned OR cross-branch without entitlement."
         },
         {
           "method": "GET",
           "path": "/{assignment}",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachAssignmentController@show",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachAssignmentController@show",
           "permission": "coach_assignments.view"
         },
         {
           "method": "POST",
           "path": "/{assignment}/end",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachAssignmentController@end",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachAssignmentController@end",
           "permission": "coach_assignments.end",
           "description": "Body: { end_date?: ISO 8601, reason?: string }. Default end_date=NOW(). Fires CoachAssignmentEnded."
         },
         {
           "method": "DELETE",
           "path": "/{assignment}",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachAssignmentController@destroy",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachAssignmentController@destroy",
           "permission": "coach_assignments.delete",
           "description": "Soft-cancel. Fires CoachAssignmentCancelled with trigger='manual'."
         }
@@ -147,34 +147,34 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachCertificationController@index",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachCertificationController@index",
           "permission": "coach_certifications.viewAny",
           "description": "filter[coaching_profile_id], filter[issuing_body], filter[verified], filter[expiring_within_days]."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachCertificationController@store",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachCertificationController@store",
           "permission": "coach_certifications.create",
           "description": "Body: CreateCoachCertificationData { coaching_profile_id, issuing_body, certification_name, level?, issued_at, expires_at?, verification_url?, document_url? }. document_url requires coaching_advanced_certifications entitlement."
         },
         {
           "method": "GET",
           "path": "/{cert}",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachCertificationController@show",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachCertificationController@show",
           "permission": "coach_certifications.view"
         },
         {
           "method": "POST",
           "path": "/{cert}/verify",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachCertificationController@verify",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachCertificationController@verify",
           "permission": "coach_certifications.verify",
           "description": "Body: { verification_notes?: string }. Requires coaching_advanced_certifications entitlement (Medium+). Sets verified_by_admin_user_id + verified_at. Fires CoachCertificationVerified."
         },
         {
           "method": "GET",
           "path": "/expiring",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachCertificationController@expiring",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachCertificationController@expiring",
           "permission": "coach_certifications.expiring",
           "description": "Compliance surface. Query: within_days=90 (default). Returns certs whose expires_at is within the window."
         }
@@ -201,27 +201,27 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachSkillRatingController@index",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachSkillRatingController@index",
           "permission": "coach_skill_ratings.viewAny",
           "description": "filter[coaching_profile_id], filter[ratable_type], filter[ratable_id], filter[rating_scale]."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachSkillRatingController@store",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachSkillRatingController@store",
           "permission": "coach_skill_ratings.create",
           "description": "Body: CreateCoachSkillRatingData { coaching_profile_id, ratable_type, ratable_id, rating_scale, rating_value, notes?, expires_at? }. Refused when tenant lacks coaching_skill_ratings entitlement OR self-rating detected."
         },
         {
           "method": "GET",
           "path": "/{rating}",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachSkillRatingController@show",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachSkillRatingController@show",
           "permission": "coach_skill_ratings.view"
         },
         {
           "method": "PATCH",
           "path": "/{rating}",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachSkillRatingController@update",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachSkillRatingController@update",
           "permission": "coach_skill_ratings.update",
           "description": "Body: UpdateCoachSkillRatingData { rating_value, notes?, expires_at? }. Excludes rating_scale + ratable_type + ratable_id [immutable]."
         }
@@ -248,7 +248,7 @@
         {
           "method": "GET",
           "path": "/{coach}/roster-report",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachReportController@rosterReport",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\CoachReportController@rosterReport",
           "permission": "coaches.report",
           "description": "Per-coach compact roster export."
         }
@@ -275,48 +275,48 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\Me\\ProfileController@show",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\Me\\ProfileController@show",
           "permission": "coaching_profiles.view.own",
           "description": "Return the caller's own CoachingProfile. 404 when Staff has no profile."
         },
         {
           "method": "PATCH",
           "path": "/",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\Me\\ProfileController@update",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\Me\\ProfileController@update",
           "permission": "coaching_profiles.update.own",
           "description": "Body: UpdateOwnProfileData. Fields limited: bio, availability, photo_url_signed, is_accepting_new_athletes, languages_spoken, specializations, max_athletes_per_session. Rate + verification remain admin-only."
         },
         {
           "method": "GET",
           "path": "/assignments",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\Me\\AssignmentsController@index",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\Me\\AssignmentsController@index",
           "permission": "coach_assignments.view.own",
           "description": "The caller's assignments across every Session / Team / Event in the tenant."
         },
         {
           "method": "GET",
           "path": "/certifications",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\Me\\CertificationsController@index",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\Me\\CertificationsController@index",
           "permission": "coach_certifications.view.own"
         },
         {
           "method": "POST",
           "path": "/certifications",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\Me\\CertificationsController@store",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\Me\\CertificationsController@store",
           "permission": "coach_certifications.create.own",
           "description": "Coach captures a certification on their own profile. Landing state is unverified — admin verify step remains admin-only."
         },
         {
           "method": "GET",
           "path": "/ratings",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\Me\\RatingsController@index",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\Me\\RatingsController@index",
           "permission": "coach_skill_ratings.view.own",
           "description": "Ratings the coach has received. notes field REDACTED."
         },
         {
           "method": "GET",
           "path": "/export",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Tenant\\Me\\ExportController@download",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Tenant\\Me\\ExportController@download",
           "permission": "coaching_profiles.export.own",
           "description": "CCPA data-export. Returns the coach's complete data envelope (profile + assignments + certifications + received ratings) as JSON."
         }
@@ -339,13 +339,13 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Platform\\CoachingProfilesController@index",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Platform\\CoachingProfilesController@index",
           "permission": "platform.coaching_profiles.viewAny"
         },
         {
           "method": "GET",
           "path": "/{profile}",
-          "controller": "Academorix\\Sports\\Coaching\\Http\\Controllers\\Platform\\CoachingProfilesController@show",
+          "controller": "Stackra\\Sports\\Coaching\\Http\\Controllers\\Platform\\CoachingProfilesController@show",
           "permission": "platform.coaching_profiles.view"
         }
       ]

@@ -1,16 +1,16 @@
-# academorix/container
+# stackra/container
 
 > **Attribute-driven container binding for the Pattern-B case Laravel's
 > canonical `#[Bind]` can't express.**
 
-Every Academorix service that needs to swap an abstract for a concrete in the DI
+Every Stackra service that needs to swap an abstract for a concrete in the DI
 container uses one of two attributes, picked by ownership of the abstract:
 
 - **You own the abstract (interface / abstract class)?** →
   [`Illuminate\Container\Attributes\Bind`](https://laravel.com/docs/container).
   Placed ON the abstract; the argument is the concrete. Pattern A.
 - **The abstract is vendor / third-party (or an interface you can't annotate)?**
-  → `Academorix\Container\Attributes\Overrides` (this package). Placed ON the
+  → `Stackra\Container\Attributes\Overrides` (this package). Placed ON the
   concrete; the argument is the abstract. Pattern B.
 
 This package ships **only** the Pattern B side. Pattern A ships in Laravel.
@@ -39,9 +39,9 @@ Three artifacts. Nothing else.
 
 | Artifact                                                  | Kind             | Purpose                                                                                    |
 | --------------------------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------ |
-| `Academorix\Container\Attributes\Overrides`               | class attribute  | Marks a concrete class as the container resolution for another abstract.                   |
-| `Academorix\Container\Concerns\HasDiscovery`              | trait            | Boot-time discovery pass that scans every `#[Overrides]` target and registers the binding. |
-| `Academorix\Container\Providers\ContainerServiceProvider` | service provider | Composes `HasDiscovery` and invokes it during `register()`. Priority `1`.                  |
+| `Stackra\Container\Attributes\Overrides`               | class attribute  | Marks a concrete class as the container resolution for another abstract.                   |
+| `Stackra\Container\Concerns\HasDiscovery`              | trait            | Boot-time discovery pass that scans every `#[Overrides]` target and registers the binding. |
+| `Stackra\Container\Providers\ContainerServiceProvider` | service provider | Composes `HasDiscovery` and invokes it during `register()`. Priority `1`.                  |
 
 That's it. No custom `Bind` (we use Laravel's), no `#[Tagged]` (removed —
 Laravel's `$app->tag()` + `#[Tag]` parameter attribute cover it canonically), no
@@ -66,13 +66,13 @@ with the contract.
 ### Real-world example — the routing package's use
 
 ```php
-use Academorix\Container\Attributes\Overrides;
+use Stackra\Container\Attributes\Overrides;
 use Spatie\RouteAttributes\RouteRegistrar as SpatieRouteRegistrar;
 
 #[Overrides(SpatieRouteRegistrar::class)]
 class RouteRegistrar extends SpatieRouteRegistrar
 {
-    // Academorix's Discovery-based scanner replaces Spatie's
+    // Stackra's Discovery-based scanner replaces Spatie's
     // directory-based one. Anyone injecting `SpatieRouteRegistrar`
     // (including Spatie's own service provider) now receives our
     // subclass — without touching Spatie's source.
@@ -91,17 +91,17 @@ provider.
 ### 1. Install (via the framework meta-package)
 
 ```bash
-composer require academorix/framework
+composer require stackra/framework
 ```
 
-`academorix/container` ships as a dependency of `academorix/framework`. The
+`stackra/container` ships as a dependency of `stackra/framework`. The
 `ContainerServiceProvider` is auto-registered via Laravel's package discovery —
 you don't need to add it to `bootstrap/providers.php`.
 
 ### 2. Add `#[Overrides]` to your concrete
 
 ```php
-use Academorix\Container\Attributes\Overrides;
+use Stackra\Container\Attributes\Overrides;
 use Vendor\Package\OriginalClass;
 
 #[Overrides(OriginalClass::class)]
@@ -192,8 +192,8 @@ Composed by service providers that own container-override wiring. Exposes:
 Call from `register()` after `parent::register()`:
 
 ```php
-use Academorix\Container\Concerns\HasDiscovery;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\Container\Concerns\HasDiscovery;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 class MyProvider extends ServiceProvider
 {
@@ -239,4 +239,4 @@ Auto-discovered via Laravel's package-discovery. Nothing to configure.
 
 ## License
 
-Part of the Academorix framework. See the repository root for licence terms.
+Part of the Stackra framework. See the repository root for licence terms.

@@ -1,46 +1,46 @@
 {
-  "id": "academorix://modules/attribution/schedule",
+  "id": "stackra://modules/attribution/schedule",
   "$version": 1,
   "title": "attribution — scheduled tasks",
   "entries": [
     {
       "name": "attribution-rollup-campaigns-hourly",
-      "command": "queue:dispatch --job=Academorix\\Growth\\Attribution\\Jobs\\CampaignRollupAggregatorJob",
+      "command": "queue:dispatch --job=Stackra\\Growth\\Attribution\\Jobs\\CampaignRollupAggregatorJob",
       "cron": "5 * * * *",
       "timezone": "UTC",
       "purpose": "Hourly at :05: pre-aggregate campaign performance into rollup cache per tenant with attribution_rollup entitlement. Skipped for tenants without the entitlement."
     },
     {
       "name": "attribution-mark-churned-daily",
-      "command": "queue:dispatch --job=Academorix\\Growth\\Attribution\\Jobs\\MarkAttributionChurnedJob",
+      "command": "queue:dispatch --job=Stackra\\Growth\\Attribution\\Jobs\\MarkAttributionChurnedJob",
       "cron": "0 2 * * *",
       "timezone": "UTC",
       "purpose": "Daily 02:00 UTC: transition subjects with no touchpoint in 90+ days from anonymous | identified → churned. Fires AttributionChurned + batches AttributionChurnDetectedNotification for the marketing role."
     },
     {
       "name": "attribution-reconcile-counts-nightly",
-      "command": "queue:dispatch --job=Academorix\\Growth\\Attribution\\Jobs\\ReconcileAttributionCountsJob",
+      "command": "queue:dispatch --job=Stackra\\Growth\\Attribution\\Jobs\\ReconcileAttributionCountsJob",
       "cron": "0 3 * * *",
       "timezone": "UTC",
       "purpose": "Nightly 03:00 UTC: audit sweep. Recompute touchpoint_count + conversion_touchpoint_count from actual attribution_touchpoints rows. Every finding is a data-integrity signal (should be 0)."
     },
     {
       "name": "attribution-purge-archived-daily",
-      "command": "queue:dispatch --job=Academorix\\Growth\\Attribution\\Jobs\\PurgeArchivedAttributionsJob",
+      "command": "queue:dispatch --job=Stackra\\Growth\\Attribution\\Jobs\\PurgeArchivedAttributionsJob",
       "cron": "0 4 * * *",
       "timezone": "UTC",
       "purpose": "Daily 04:00 UTC: hard-purge soft-deleted attributions past retention + touchpoints past retention (730d default, 2555d on Enterprise). Also completes the reset audit hold — touchpoints past their 90-day hold are hard-deleted, firing AttributionResetConfirmed."
     },
     {
       "name": "attribution-expiry-notifier-weekly",
-      "command": "queue:dispatch --job=Academorix\\Growth\\Attribution\\Jobs\\AttributionExpiryNotifierJob",
+      "command": "queue:dispatch --job=Stackra\\Growth\\Attribution\\Jobs\\AttributionExpiryNotifierJob",
       "cron": "0 8 * * 1",
       "timezone": "UTC",
       "purpose": "Weekly Monday 08:00 UTC: fires 7 days before a tenant's touchpoint retention window would purge a large batch. Notifies the tenant admin so they can request an export or upgrade to attribution_touchpoint_retention_extended."
     },
     {
       "name": "attribution-consent-suppression-daily-digest",
-      "command": "queue:dispatch --job=Academorix\\Growth\\Attribution\\Jobs\\SendConsentSuppressionDigestJob",
+      "command": "queue:dispatch --job=Stackra\\Growth\\Attribution\\Jobs\\SendConsentSuppressionDigestJob",
       "cron": "0 9 * * *",
       "timezone": "UTC",
       "purpose": "Daily 09:00 UTC: batched digest of AttributionSuppressedByConsent events for the previous 24h. Sent to compliance-role recipients per attribution.consent.suppression_notification_frequency config."

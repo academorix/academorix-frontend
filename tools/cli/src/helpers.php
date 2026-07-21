@@ -2,7 +2,7 @@
 
 /**
  * @file helpers.php
- * @module Academorix\Cli
+ * @module Stackra\Cli
  * @description Global helper functions. Autoloaded via
  *   composer.json's `autoload.files`. Provides a Laravel-style `view()`
  *   helper for OmniTerm view rendering.
@@ -19,7 +19,7 @@ use Illuminate\Contracts\View\View;
 if (! function_exists('view')) {
     /**
      * Render a view through the Illuminate View factory bound onto the
-     * CLI container by {@see \Academorix\Cli\Bootstrap\ViewBootstrapper}.
+     * CLI container by {@see \Stackra\Cli\Bootstrap\ViewBootstrapper}.
      *
      * Behaviour mirrors Laravel's global `view()` helper:
      * - `view()` returns the factory.
@@ -30,7 +30,7 @@ if (! function_exists('view')) {
      */
     function view(?string $view = null, array $data = []): ViewFactory|View
     {
-        $factory = \Academorix\Cli\Bootstrap\ViewBootstrapper::factory();
+        $factory = \Stackra\Cli\Bootstrap\ViewBootstrapper::factory();
         if ($view === null) {
             return $factory;
         }

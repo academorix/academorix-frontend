@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/athlete/policies",
+  "id": "stackra://modules/athlete/policies",
   "$version": 1,
   "title": "athlete — authorization policies",
   "description": "One policy, AthletePolicy. Composes the ResolveScope middleware's decision: a caller with scope 'branch:X' can only see/act on athletes in branch X. Every ability defers to spatie/laravel-permission for the base check, then layers scope narrowing + PII / medical gates. Two special permissions carry `athletes.` prefix even though they read like actions: `athletes.view.medical` and `athletes.view.emergency_contact` (both permission-gated field-access filters, not full policies). The redactor pipeline applies these on egress — a caller with `athletes.view` but WITHOUT `athletes.view.medical` sees the Athlete row with medical_* fields stripped from the wire projection.",
   "policies": [
     {
       "model": "Athlete",
-      "class": "Academorix\\Sports\\Athlete\\Policies\\AthletePolicy",
+      "class": "Stackra\\Sports\\Athlete\\Policies\\AthletePolicy",
       "abilities": [
         {
           "action": "viewAny",

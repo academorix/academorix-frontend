@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Integrations\Actions\Tenant;
+namespace Stackra\Integrations\Actions\Tenant;
 
-use Academorix\Integrations\Contracts\Repositories\AppInstallationRepositoryInterface;
-use Academorix\Integrations\Data\AppInstallationData;
-use Academorix\Integrations\Data\Requests\CreateAppInstallationRequestData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Post;
+use Stackra\Integrations\Contracts\Repositories\AppInstallationRepositoryInterface;
+use Stackra\Integrations\Data\AppInstallationData;
+use Stackra\Integrations\Data\Requests\CreateAppInstallationRequestData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Post;
 use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/app-installations` — create action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Post(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Integrations

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/search/schemas/search-analytics-event",
+  "id": "stackra://modules/search/schemas/search-analytics-event",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "SearchAnalyticsEvent",
@@ -13,12 +13,12 @@
     "keyType": "string",
     "keyPrefix": "sae_",
     "incrementing": false,
-    "model": "Academorix\\Search\\Models\\SearchAnalyticsEvent",
-    "interface": "Academorix\\Search\\Contracts\\Data\\SearchAnalyticsEventInterface",
-    "implements": ["Academorix\\Search\\Contracts\\Data\\SearchAnalyticsEventInterface"],
+    "model": "Stackra\\Search\\Models\\SearchAnalyticsEvent",
+    "interface": "Stackra\\Search\\Contracts\\Data\\SearchAnalyticsEventInterface",
+    "implements": ["Stackra\\Search\\Contracts\\Data\\SearchAnalyticsEventInterface"],
     "traits": ["HasUlids", "BelongsToTenant"],
     "casts": {
-      "kind": "Academorix\\Search\\Enums\\SearchAnalyticsKind",
+      "kind": "Stackra\\Search\\Enums\\SearchAnalyticsKind",
       "index_names": "array",
       "result_count": "integer",
       "clicked_position": "integer",

@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Teams\Services;
+namespace Stackra\Teams\Services;
 
-use Academorix\Teams\Contracts\Services\AgeEligibilityGateInterface;
+use Stackra\Teams\Contracts\Services\AgeEligibilityGateInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Teams\Contracts\Repositories\EventTeamRepositoryInterface;
+use Stackra\Teams\Contracts\Repositories\EventTeamRepositoryInterface;
 
 /**
  * Concrete service — AgeEligibilityGate.

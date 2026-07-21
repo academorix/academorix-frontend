@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/platform-user/config",
+  "id": "stackra://modules/platform-user/config",
   "$version": 1,
   "title": "platform-user \u2014 developer configuration",
   "configFile": "config/platform-user.php",

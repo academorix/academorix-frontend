@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Contracts\Services;
+namespace Stackra\Versioning\Contracts\Services;
 
-use Academorix\Versioning\Services\DefaultVersionResolverChain;
+use Stackra\Versioning\Services\DefaultVersionResolverChain;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Http\Request;
 

@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Actions\Platform;
+namespace Stackra\Storage\Actions\Platform;
 
-use Academorix\Authorization\Attributes\RequirePermission;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Attributes\Post;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Contracts\Services\SignedUrlIssuerInterface;
-use Academorix\Storage\Data\FileData;
-use Academorix\Storage\Enums\StoragePermission;
-use Academorix\Storage\Enums\VirusScanState;
-use Academorix\Storage\Events\FileVirusFound;
-use Academorix\Storage\Models\File;
+use Stackra\Authorization\Attributes\RequirePermission;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Attributes\Post;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Contracts\Services\SignedUrlIssuerInterface;
+use Stackra\Storage\Data\FileData;
+use Stackra\Storage\Enums\StoragePermission;
+use Stackra\Storage\Enums\VirusScanState;
+use Stackra\Storage\Events\FileVirusFound;
+use Stackra\Storage\Models\File;
 
 /**
  * `POST /api/v1/platform/files/{file}/quarantine` — manually

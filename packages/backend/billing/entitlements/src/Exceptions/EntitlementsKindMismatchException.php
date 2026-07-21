@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Exceptions;
+namespace Stackra\Entitlements\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Called has() on a pool key or consume() on a boolean key.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class EntitlementsKindMismatchException extends AcademorixException
+final class EntitlementsKindMismatchException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

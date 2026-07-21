@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Invoice\Attributes;
+namespace Stackra\Invoice\Attributes;
 
 use Attribute;
 

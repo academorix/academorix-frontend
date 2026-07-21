@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tasks\Tests;
+namespace Stackra\Tasks\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/tasks.
+ * Base test case for stackra/tasks.
  *
  * @category Tasks
  *

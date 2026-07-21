@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/athlete-enrollment/schemas/athlete-enrollment",
+  "id": "stackra://modules/athlete-enrollment/schemas/athlete-enrollment",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "AthleteEnrollment",
@@ -13,10 +13,10 @@
     "keyType": "string",
     "keyPrefix": "aen_",
     "incrementing": false,
-    "model": "Academorix\\Sports\\AthleteEnrollment\\Models\\AthleteEnrollment",
-    "interface": "Academorix\\Sports\\AthleteEnrollment\\Contracts\\Data\\AthleteEnrollmentInterface",
+    "model": "Stackra\\Sports\\AthleteEnrollment\\Models\\AthleteEnrollment",
+    "interface": "Stackra\\Sports\\AthleteEnrollment\\Contracts\\Data\\AthleteEnrollmentInterface",
     "implements": [
-      "Academorix\\Sports\\AthleteEnrollment\\Contracts\\Data\\AthleteEnrollmentInterface"
+      "Stackra\\Sports\\AthleteEnrollment\\Contracts\\Data\\AthleteEnrollmentInterface"
     ],
     "traits": [
       "HasFactory",

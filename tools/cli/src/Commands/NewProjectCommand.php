@@ -2,9 +2,9 @@
 
 /**
  * @file NewProjectCommand.php
- * @module Academorix\Cli\Commands
- * @description `academorix new <name> [--preset=<business-type>]`
- *   Bootstraps a new Academorix project. Interactive Laravel Prompts drive
+ * @module Stackra\Cli\Commands
+ * @description `stackra new <name> [--preset=<business-type>]`
+ *   Bootstraps a new Stackra project. Interactive Laravel Prompts drive
  *   business-type + capability selection. Resolved packages are shown as
  *   an OmniTerm table before the caller confirms. Template hydration is
  *   deferred to v0.2 (templates aren't authored yet); v0.1 reports the
@@ -13,9 +13,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Cli\Commands;
+namespace Stackra\Cli\Commands;
 
-use Academorix\Cli\Catalog\CatalogEntry;
+use Stackra\Cli\Catalog\CatalogEntry;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,7 +24,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
     name: 'new',
-    description: 'Bootstrap a new Academorix project from the workspace catalog.',
+    description: 'Bootstrap a new Stackra project from the workspace catalog.',
 )]
 final class NewProjectCommand extends AbstractCommand
 {
@@ -86,7 +86,7 @@ final class NewProjectCommand extends AbstractCommand
                 'Zero catalog entries carry any of the capabilities you picked.',
                 [
                     'Re-run the command and pick at least one capability.',
-                    'Run `academorix catalog:list` to see every known package.',
+                    'Run `stackra catalog:list` to see every known package.',
                 ],
             );
 
@@ -107,7 +107,7 @@ final class NewProjectCommand extends AbstractCommand
                 sprintf('Destination: %s', $destination),
                 sprintf('Business type: %s', $businessType),
                 sprintf('Capabilities: %s', implode(', ', $selectedCapabilities)),
-                'Next: `academorix package:add <name>` to install individual packages once v0.2 ships.',
+                'Next: `stackra package:add <name>` to install individual packages once v0.2 ships.',
             ],
         );
 

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Observers;
+namespace Stackra\Localization\Observers;
 
-use Academorix\Localization\Contracts\Data\PlatformLanguageInterface;
-use Academorix\Localization\Contracts\Data\TenantLocaleInterface;
-use Academorix\Localization\Exceptions\PlatformLanguageInUseException;
-use Academorix\Localization\Models\PlatformLanguage;
+use Stackra\Localization\Contracts\Data\PlatformLanguageInterface;
+use Stackra\Localization\Contracts\Data\TenantLocaleInterface;
+use Stackra\Localization\Exceptions\PlatformLanguageInUseException;
+use Stackra\Localization\Models\PlatformLanguage;
 use Illuminate\Support\Facades\DB;
 
 /**

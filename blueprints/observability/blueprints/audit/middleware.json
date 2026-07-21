@@ -1,12 +1,12 @@
 {
-  "id": "academorix://modules/audit/middleware",
+  "id": "stackra://modules/audit/middleware",
   "$version": 1,
   "title": "audit — HTTP middleware",
   "description": "One owned middleware — `audit.enforce_read_only` — used on every /audits* route as defense-in-depth against a rogue route registration attempting to expose non-GET methods. Refuses PATCH / POST / PUT / DELETE with 405 Method Not Allowed.",
   "middleware": [
     {
       "alias": "audit.enforce_read_only",
-      "class": "Academorix\\Observability\\Audit\\Http\\Middleware\\EnforceAuditReadOnly",
+      "class": "Stackra\\Observability\\Audit\\Http\\Middleware\\EnforceAuditReadOnly",
       "kind": "route-scoped",
       "purpose": "Belt-and-braces refusal of non-GET methods on any /audits* route. AuditPolicy already refuses create/update/delete at the authorization layer; this middleware refuses at the request-parsing layer BEFORE authorization runs. Prevents any future rogue route registration from accidentally exposing a write path.",
       "steps": [

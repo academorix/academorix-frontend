@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/notifications-push/data-classes",
+  "id": "stackra://modules/notifications-push/data-classes",
   "$version": 1,
   "title": "notifications-push \u2014 field classification",
   "description": "device_token is RESTRICTED (encrypted, never returned). Every other field is public or internal. Push notification content itself is CONFIDENTIAL (may include recipient name / activity details).",

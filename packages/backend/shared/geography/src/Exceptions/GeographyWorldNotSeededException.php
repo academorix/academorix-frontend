@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Exceptions;
+namespace Stackra\Geography\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the health probe detects the vendor seeder never ran.
@@ -14,7 +14,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GeographyWorldNotSeededException extends AcademorixException
+final class GeographyWorldNotSeededException extends StackraException
 {
     public const CODE = 'GEOGRAPHY_WORLD_NOT_SEEDED';
 

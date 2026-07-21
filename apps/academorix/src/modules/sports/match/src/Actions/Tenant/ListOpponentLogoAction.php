@@ -4,14 +4,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Match\Actions\Tenant;
+namespace Stackra\Match\Actions\Tenant;
 
-use Academorix\Match\Contracts\Repositories\OpponentLogoRepositoryInterface;
-use Academorix\Match\Data\OpponentLogoData;
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Routing\Attributes\Get;
+use Stackra\Match\Contracts\Repositories\OpponentLogoRepositoryInterface;
+use Stackra\Match\Data\OpponentLogoData;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Routing\Attributes\Get;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\LaravelData\PaginatedDataCollection;
@@ -20,7 +20,7 @@ use Spatie\LaravelData\PaginatedDataCollection;
  * `GET /api/v1/opponent-logos` — list action (tenant audience).
  *
  * Single-invoke controller wired via `#[AsAction]` + `#[Get(...)]`
- * + `#[Middleware(...)]` from `Academorix\Routing`. Discovered by the routing
+ * + `#[Middleware(...)]` from `Stackra\Routing`. Discovered by the routing
  * package's boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Match
@@ -50,7 +50,7 @@ final class ListOpponentLogoAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Academorix\Match\Models\OpponentLogo> $page */
+        /** @var LengthAwarePaginator<int, \Stackra\Match\Models\OpponentLogo> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/athlete/retention",
+  "id": "stackra://modules/athlete/retention",
   "$version": 1,
   "title": "athlete — retention windows",
   "description": "Active + paused athletes never expire. Graduated athletes retain indefinitely (alumni relations) unless the tenant opts into graduate_purge_after_years. Withdrawn + archived athletes enter a two-phase retention: 90-day grace hold on emergency_contact_* + medical_* fields (GDPR Art. 5(1)(c) minimisation), then 7-year retention on the demographic + status metadata (SOC 2 CC6.3 + safeguarding retention + national medical-record retention). Medical history rows retain 7 years even after the parent Athlete is hard-deleted — migrated to a compliance-archive table for the residual window. Same pattern as staff_compensation_history in the staff module.",

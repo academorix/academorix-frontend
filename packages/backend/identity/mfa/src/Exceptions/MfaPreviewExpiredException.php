@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Mfa\Exceptions;
+namespace Stackra\Mfa\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\AcademorixException;
 
 /**
  * Round-2 confirm refused because the round-1 preview envelope is no longer in Redis (either TTL elapsed OR PurgeUnconfirmedEnrollmentsJob evicted).

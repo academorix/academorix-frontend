@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\NotificationsAnnouncementsSdk\Resources;
+namespace Stackra\NotificationsAnnouncementsSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\NotificationsAnnouncementsSdk\Data\AnnouncementData;
-use Academorix\NotificationsAnnouncementsSdk\Requests\Announcements\CreateAnnouncementRequest;
-use Academorix\NotificationsAnnouncementsSdk\Requests\Announcements\ListAnnouncementsRequest;
-use Academorix\NotificationsAnnouncementsSdk\Requests\Announcements\ShowAnnouncementRequest;
-use Academorix\NotificationsAnnouncementsSdk\Requests\Announcements\UpdateAnnouncementRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\NotificationsAnnouncementsSdk\Data\AnnouncementData;
+use Stackra\NotificationsAnnouncementsSdk\Requests\Announcements\CreateAnnouncementRequest;
+use Stackra\NotificationsAnnouncementsSdk\Requests\Announcements\ListAnnouncementsRequest;
+use Stackra\NotificationsAnnouncementsSdk\Requests\Announcements\ShowAnnouncementRequest;
+use Stackra\NotificationsAnnouncementsSdk\Requests\Announcements\UpdateAnnouncementRequest;
 use Saloon\Http\Response;
 
 /**
@@ -57,7 +57,7 @@ final readonly class AnnouncementsResource
      *
      * @return AnnouncementData
      */
-    public function create(\Academorix\NotificationsAnnouncementsSdk\Payloads\Announcements\CreateAnnouncementPayload $payload, ?string $idempotencyKey = null): AnnouncementData
+    public function create(\Stackra\NotificationsAnnouncementsSdk\Payloads\Announcements\CreateAnnouncementPayload $payload, ?string $idempotencyKey = null): AnnouncementData
     {
         return $this->connector->send(new CreateAnnouncementRequest($payload, $idempotencyKey))->dto();
     }
@@ -85,7 +85,7 @@ final readonly class AnnouncementsResource
      *
      * @return AnnouncementData
      */
-    public function update(string $announcement, \Academorix\NotificationsAnnouncementsSdk\Payloads\Announcements\UpdateAnnouncementPayload $payload, ?string $idempotencyKey = null): AnnouncementData
+    public function update(string $announcement, \Stackra\NotificationsAnnouncementsSdk\Payloads\Announcements\UpdateAnnouncementPayload $payload, ?string $idempotencyKey = null): AnnouncementData
     {
         return $this->connector->send(new UpdateAnnouncementRequest($announcement, $payload, $idempotencyKey))->dto();
     }

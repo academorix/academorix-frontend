@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsCompetitionSdk\Resources;
+namespace Stackra\SportsCompetitionSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SportsCompetitionSdk\Data\CompetitionData;
-use Academorix\SportsCompetitionSdk\Requests\Competitions\CreateCompetitionRequest;
-use Academorix\SportsCompetitionSdk\Requests\Competitions\ListCompetitionsRequest;
-use Academorix\SportsCompetitionSdk\Requests\Competitions\ShowCompetitionRequest;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SportsCompetitionSdk\Data\CompetitionData;
+use Stackra\SportsCompetitionSdk\Requests\Competitions\CreateCompetitionRequest;
+use Stackra\SportsCompetitionSdk\Requests\Competitions\ListCompetitionsRequest;
+use Stackra\SportsCompetitionSdk\Requests\Competitions\ShowCompetitionRequest;
 use Saloon\Http\Response;
 
 /**
@@ -56,7 +56,7 @@ final readonly class CompetitionsResource
      *
      * @return CompetitionData
      */
-    public function create(\Academorix\SportsCompetitionSdk\Payloads\Competitions\CreateCompetitionPayload $payload, ?string $idempotencyKey = null): CompetitionData
+    public function create(\Stackra\SportsCompetitionSdk\Payloads\Competitions\CreateCompetitionPayload $payload, ?string $idempotencyKey = null): CompetitionData
     {
         return $this->connector->send(new CreateCompetitionRequest($payload, $idempotencyKey))->dto();
     }

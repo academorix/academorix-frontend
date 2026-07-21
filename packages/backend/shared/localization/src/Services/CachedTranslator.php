@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Localization\Services;
+namespace Stackra\Localization\Services;
 
-use Academorix\Localization\Contracts\Repositories\PlatformLanguageRepositoryInterface;
-use Academorix\Localization\Contracts\Repositories\TranslationRepositoryInterface;
-use Academorix\Localization\Contracts\Services\TranslationCacheInterface;
-use Academorix\Localization\Contracts\Data\PlatformLanguageInterface;
-use Academorix\Localization\Contracts\Data\TranslationInterface;
-use Academorix\Localization\Events\TranslationCacheHit;
-use Academorix\Localization\Events\TranslationCacheMiss;
-use Academorix\Localization\Models\Translation;
+use Stackra\Localization\Contracts\Repositories\PlatformLanguageRepositoryInterface;
+use Stackra\Localization\Contracts\Repositories\TranslationRepositoryInterface;
+use Stackra\Localization\Contracts\Services\TranslationCacheInterface;
+use Stackra\Localization\Contracts\Data\PlatformLanguageInterface;
+use Stackra\Localization\Contracts\Data\TranslationInterface;
+use Stackra\Localization\Events\TranslationCacheHit;
+use Stackra\Localization\Events\TranslationCacheMiss;
+use Stackra\Localization\Models\Translation;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Translation\Translator;
 

@@ -18,7 +18,7 @@ declare(strict_types=1);
  * @since    1.0.0
  */
 
-namespace Academorix\ServiceProvider;
+namespace Stackra\ServiceProvider;
 
 /**
  * Standardized constants for module directory structure and publishing.
@@ -128,7 +128,7 @@ interface ModuleConstants
     /**
      * @var string Path prefix for published assets (public/{PATH_PREFIX}/{slug}/{version}/).
      */
-    public const PATH_PREFIX = 'academorix';
+    public const PATH_PREFIX = 'stackra';
 
     // -------------------------------------------------------------------------
     // Cache Key Constants

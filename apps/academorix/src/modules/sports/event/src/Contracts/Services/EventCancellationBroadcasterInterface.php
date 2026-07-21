@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Event\Contracts\Services;
+namespace Stackra\Event\Contracts\Services;
 
-use Academorix\Event\Services\EventCancellationBroadcaster;
+use Stackra\Event\Services\EventCancellationBroadcaster;
 use Illuminate\Container\Attributes\Bind;
 
 /**

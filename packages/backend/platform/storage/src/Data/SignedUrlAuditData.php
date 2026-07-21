@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Data;
+namespace Stackra\Storage\Data;
 
-use Academorix\Storage\Contracts\Data\SignedUrlAuditInterface;
-use Academorix\Storage\Enums\SignedUrlPurpose;
-use Academorix\Storage\Models\SignedUrlAudit;
+use Stackra\Storage\Contracts\Data\SignedUrlAuditInterface;
+use Stackra\Storage\Enums\SignedUrlPurpose;
+use Stackra\Storage\Models\SignedUrlAudit;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

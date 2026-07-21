@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/mfa/rules",
+  "id": "stackra://modules/mfa/rules",
   "$version": 1,
   "title": "mfa — validation rules",
   "description": "Custom Laravel validation rules published by MfaServiceProvider::boot() so any FormRequest / Data class can validate MFA-related input. Every rule operates on scalar input (strings).",
-  "namespace": "Academorix\\Mfa\\Rules",
+  "namespace": "Stackra\\Mfa\\Rules",
   "rules": [
     {
       "name": "valid_totp_code",
-      "class": "Academorix\\Mfa\\Rules\\ValidTotpCode",
+      "class": "Stackra\\Mfa\\Rules\\ValidTotpCode",
       "signature": "valid_totp_code",
       "description": "Format validation for a TOTP code. Enforces exactly config('mfa.totp.digits') decimal digits (default 6). Does NOT verify the code against a stored secret — that's the TotpChallenger's job at verification time. Rule-only + format-only. Refuses non-digits, leading whitespace, or trailing whitespace so timing-consistent responses can happen without a first pass leaking format-vs-semantic failure via error text.",
       "params": [],
@@ -18,7 +18,7 @@
     },
     {
       "name": "valid_recovery_code_format",
-      "class": "Academorix\\Mfa\\Rules\\ValidRecoveryCodeFormat",
+      "class": "Stackra\\Mfa\\Rules\\ValidRecoveryCodeFormat",
       "signature": "valid_recovery_code_format",
       "description": "Format validation for a recovery code. Enforces exactly config('mfa.recovery_codes.length') characters from the Crockford base32 alphabet (default 10 chars, 0-9 + A-Z minus I/L/O/U). Strips the group separator (`-` at `format_group_size` intervals) before validation so users can copy-paste the formatted or unformatted version. Does NOT verify against the Identity's hashed codes — that's the RecoveryCodeChallenger's job (via identity/identity's valid_recovery_code rule which performs the constant-time bcrypt compare + atomic consumption).",
       "params": [],
@@ -33,7 +33,7 @@
     },
     {
       "name": "valid_webauthn_credential_id",
-      "class": "Academorix\\Mfa\\Rules\\ValidWebauthnCredentialId",
+      "class": "Stackra\\Mfa\\Rules\\ValidWebauthnCredentialId",
       "signature": "valid_webauthn_credential_id",
       "description": "Format validation for a base64url-encoded WebAuthn credential ID. Enforces the base64url alphabet (0-9, A-Z, a-z, -, _) + a length range consistent with W3C spec (16-1024 bytes decoded → roughly 22-1366 base64url characters). Refuses padding characters (`=`) which are optional in base64url. Does NOT verify the credential exists in webauthn_credentials — that's the WebauthnAssertionVerifier's job.",
       "params": [],
@@ -43,7 +43,7 @@
     },
     {
       "name": "valid_device_name",
-      "class": "Academorix\\Mfa\\Rules\\ValidDeviceName",
+      "class": "Stackra\\Mfa\\Rules\\ValidDeviceName",
       "signature": "valid_device_name",
       "description": "Format validation for a user-provided device_name on WebauthnCredential registration / rename. Enforces 1-60 characters, no leading/trailing whitespace, no control characters. Allows emoji + non-Latin scripts so users can name their device in native language (e.g. `iPhone الخاص بي`, `私のパソコン`).",
       "params": [],

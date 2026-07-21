@@ -21,7 +21,7 @@ import json
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path("/Users/akouta/Projects/academorix-frontend")
+REPO_ROOT = Path("/Users/akouta/Projects/stackra-frontend")
 MODULE_REF_ARRAYS = {"dependencies", "extendedBy", "planned_consumers"}
 SELF_STRING_FIELDS = {"name", "alias"}
 CONTRIBUTES_ARRAY_FIELDS = {"lang", "config"}

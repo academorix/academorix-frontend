@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\DigitalPasses\Contracts\Services;
+namespace Stackra\DigitalPasses\Contracts\Services;
 
-use Academorix\DigitalPasses\Services\AppleWalletProvider;
+use Stackra\DigitalPasses\Services\AppleWalletProvider;
 use Illuminate\Container\Attributes\Bind;
 
 /**

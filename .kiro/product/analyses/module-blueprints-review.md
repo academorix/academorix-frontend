@@ -293,7 +293,7 @@ or an auditor requires.
 Given the persona set (**minors + guardians + coaches + payment collection +
 safeguarding records + medical clearance + staff HR data**):
 
-| Regime                                                 | Trigger                                                                                                                                                                                          | Evidence Academorix must produce                                                                                                                                                                                                 |
+| Regime                                                 | Trigger                                                                                                                                                                                          | Evidence Stackra must produce                                                                                                                                                                                                 |
 | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **GDPR** (Regulation (EU) 2016/679) + UK-GDPR          | Any EU/EEA/UK data subject                                                                                                                                                                       | ROPA (Art. 30) per module; DPIA (Art. 35) for minors + biometrics; DPA template (Art. 28); breach notification runbook (72h, Art. 33); SCC / adequacy decision for extra-EU transfers (Ch. V); DPO contact per tenant.           |
 | **COPPA** (16 CFR Part 312)                            | Any child under 13 in a US tenant                                                                                                                                                                | Verifiable Parental Consent flow (§312.5); direct-notice-to-parents; no behavioural marketing to under-13; safe-harbour-programme membership recommended (§312.10).                                                              |
@@ -361,7 +361,7 @@ safeguarding records + medical clearance + staff HR data**):
 
 4. **`subprocessors.json` at repo root** (auto-generated) — aggregated from
    per-module `subprocessors.json`. Publicly available at
-   `https://academorix.app/subprocessors` per GDPR Art. 28.
+   `https://stackra.app/subprocessors` per GDPR Art. 28.
 
 5. **`consent-flows/*.flow.json`** — declarative consent capture flows (parental
    consent, guardian consent, marketing opt-in, cookie tiers). Feeds the SDUI
@@ -488,11 +488,11 @@ Reversibility: two-way. Retrofitting `$version=1` everywhere is a one-liner.
 ### 6.3 Ref resolution scheme
 
 **Recommendation: extend JSON Schema's existing `$id` + `$ref` with a base URI
-convention** (`academorix://modules/<name>/`), don't invent a new scheme.
+convention** (`stackra://modules/<name>/`), don't invent a new scheme.
 
 Ship a small Node resolver that:
 
-- Turns `academorix://modules/tenancy/schemas/tenant` into
+- Turns `stackra://modules/tenancy/schemas/tenant` into
   `modules/tenancy/schemas/tenant.schema.json`.
 - Validates that the file exists.
 - Validates that the referenced `$id` matches.
@@ -579,7 +579,7 @@ I use two lenses:
   / University / School District RFP: Foundation → Tenancy → **Access → Audit**
   → Settings → FeatureFlag → User → Auth → Activity → Notifications.
 
-### 7.2 Recommended sequence for Academorix
+### 7.2 Recommended sequence for Stackra
 
 Given the ARR shape of Federation + University + School District deals (10-100×
 SMB), **prioritise time-to-first-enterprise-deal**:

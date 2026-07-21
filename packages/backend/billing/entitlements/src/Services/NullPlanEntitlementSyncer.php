@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Services;
+namespace Stackra\Entitlements\Services;
 
-use Academorix\Entitlements\Contracts\Services\PlanEntitlementSyncerInterface;
+use Stackra\Entitlements\Contracts\Services\PlanEntitlementSyncerInterface;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

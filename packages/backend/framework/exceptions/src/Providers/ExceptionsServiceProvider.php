@@ -4,7 +4,7 @@
  * @file packages/exceptions/src/Providers/ExceptionsServiceProvider.php
  *
  * @description
- * Package entry point for `academorix/exceptions`. Wires the new
+ * Package entry point for `stackra/exceptions`. Wires the new
  * pluggable exception architecture into the host application's
  * container, router, config, translation loader, and view loader.
  *
@@ -21,8 +21,8 @@
  *      `config('exceptions.*')` take effect without any code change.
  *
  *   3. **Registering the formatter + reporter chains** via
- *      container tagging (`academorix.exception.formatters` /
- *      `academorix.exception.reporters`). The custom {@see Handler}
+ *      container tagging (`stackra.exception.formatters` /
+ *      `stackra.exception.reporters`). The custom {@see Handler}
  *      pulls the tagged sets, sorts them by
  *      {@see ErrorFormatterInterface::priority()} /
  *      {@see ExceptionReporterInterface::priority()} in descending
@@ -70,26 +70,26 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Providers;
+namespace Stackra\Exceptions\Providers;
 
-use Academorix\Exceptions\Contracts\ErrorFormatterInterface;
-use Academorix\Exceptions\Contracts\ExceptionReporterInterface;
-use Academorix\Exceptions\Formatters\HtmlErrorFormatter;
-use Academorix\Exceptions\Formatters\JsonErrorFormatter;
-use Academorix\Exceptions\Handler;
-use Academorix\Exceptions\Ignition\AcademorixAiSolutionsProvider;
-use Academorix\Exceptions\Ignition\AcademorixSolutionsProvider;
-use Academorix\Exceptions\Reporters\LogReporter;
-use Academorix\Exceptions\Reporters\SentryReporter;
-use Academorix\Exceptions\Support\ExceptionMapper;
-use Academorix\Exceptions\Support\Redactor;
-use Academorix\Exceptions\Support\TraceCleaner;
-use Academorix\Foundation\Providers\AbstractModuleServiceProvider;
+use Stackra\Exceptions\Contracts\ErrorFormatterInterface;
+use Stackra\Exceptions\Contracts\ExceptionReporterInterface;
+use Stackra\Exceptions\Formatters\HtmlErrorFormatter;
+use Stackra\Exceptions\Formatters\JsonErrorFormatter;
+use Stackra\Exceptions\Handler;
+use Stackra\Exceptions\Ignition\StackraAiSolutionsProvider;
+use Stackra\Exceptions\Ignition\StackraSolutionsProvider;
+use Stackra\Exceptions\Reporters\LogReporter;
+use Stackra\Exceptions\Reporters\SentryReporter;
+use Stackra\Exceptions\Support\ExceptionMapper;
+use Stackra\Exceptions\Support\Redactor;
+use Stackra\Exceptions\Support\TraceCleaner;
+use Stackra\Foundation\Providers\AbstractModuleServiceProvider;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Debug\ExceptionHandler as ExceptionHandlerContract;
 use Illuminate\Contracts\Foundation\Application;
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
 
 #[AsModule(name: 'Exceptions', priority: 100)]
 #[LoadsResources()]
@@ -100,12 +100,12 @@ final class ExceptionsServiceProvider extends AbstractModuleServiceProvider
      * The Handler drains this tag at resolve time and sorts by
      * priority (descending).
      */
-    public const FORMATTERS_TAG = 'academorix.exception.formatters';
+    public const FORMATTERS_TAG = 'stackra.exception.formatters';
 
     /**
      * Container tag for {@see ExceptionReporterInterface} implementations.
      */
-    public const REPORTERS_TAG = 'academorix.exception.reporters';
+    public const REPORTERS_TAG = 'stackra.exception.reporters';
 
     /**
      * Prefix used by {@see AbstractModuleServiceProvider::normaliseConfigEntry()}
@@ -130,7 +130,7 @@ final class ExceptionsServiceProvider extends AbstractModuleServiceProvider
      *
      * The `exception-context` alias is registered by the Routing
      * package's `#[AsMiddleware]` discovery pass — see
-     * {@see \Academorix\Exceptions\Middleware\CaptureExceptionContext}.
+     * {@see \Stackra\Exceptions\Middleware\CaptureExceptionContext}.
      * Nothing to wire imperatively here.
      */
     protected array $middlewareAliases = [];
@@ -298,8 +298,8 @@ final class ExceptionsServiceProvider extends AbstractModuleServiceProvider
      */
     private function registerIgnitionBindings(): void
     {
-        $this->app->singleton(AcademorixSolutionsProvider::class, AcademorixSolutionsProvider::class);
-        $this->app->singleton(AcademorixAiSolutionsProvider::class, AcademorixAiSolutionsProvider::class);
+        $this->app->singleton(StackraSolutionsProvider::class, StackraSolutionsProvider::class);
+        $this->app->singleton(StackraAiSolutionsProvider::class, StackraAiSolutionsProvider::class);
     }
 
     // -----------------------------------------------------------------
@@ -307,7 +307,7 @@ final class ExceptionsServiceProvider extends AbstractModuleServiceProvider
     // -----------------------------------------------------------------
 
     /**
-     * Register both Academorix Ignition solution providers when
+     * Register both Stackra Ignition solution providers when
      * Spatie Ignition is loaded in the runtime.
      *
      * Guarded by `class_exists` + `interface_exists` checks so the
@@ -327,8 +327,8 @@ final class ExceptionsServiceProvider extends AbstractModuleServiceProvider
         }
 
         $providers = [
-            AcademorixSolutionsProvider::class,
-            AcademorixAiSolutionsProvider::class,
+            StackraSolutionsProvider::class,
+            StackraAiSolutionsProvider::class,
         ];
 
         if ($this->app->bound($ignitionClass)) {

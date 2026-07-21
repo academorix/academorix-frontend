@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Credentials\Contracts\Services;
+namespace Stackra\Credentials\Contracts\Services;
 
-use Academorix\Credentials\Services\GateHeartbeatMonitor;
+use Stackra\Credentials\Services\GateHeartbeatMonitor;
 use Illuminate\Container\Attributes\Bind;
 
 /**

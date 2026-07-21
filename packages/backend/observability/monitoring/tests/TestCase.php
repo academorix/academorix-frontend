@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Monitoring\Tests;
+namespace Stackra\Monitoring\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/monitoring.
+ * Base test case for stackra/monitoring.
  *
  * @category Monitoring
  *

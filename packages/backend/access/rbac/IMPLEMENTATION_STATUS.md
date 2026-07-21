@@ -6,7 +6,7 @@
 
 Roles + permissions with dual-guard (sanctum / platform_admin) + dual-scope
 (application_id, tenant_id) namespacing. Wraps spatie/laravel-permission with
-Academorix column-contract enforcement.
+Stackra column-contract enforcement.
 
 ### Actions to fill
 

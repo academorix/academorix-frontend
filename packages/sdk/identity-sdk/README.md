@@ -1,9 +1,9 @@
-# academorix/identity-sdk
+# stackra/identity-sdk
 
 Typed Saloon SDK for the Identity service — auth, MFA, sessions, OAuth clients,
 service accounts, JWKS.
 
-Per-service umbrella SDK built on the shared kernel (`academorix/api-sdk`). It
+Per-service umbrella SDK built on the shared kernel (`stackra/api-sdk`). It
 owns the Identity service connector (config `sdk.identity.*`), a typed
 `IdentitySdk` client, and a discovery pass scoped to
 `#[AsSdkResource(service: 'identity')]`.
@@ -11,7 +11,7 @@ owns the Identity service connector (config `sdk.identity.*`), a typed
 ## Usage
 
 ```php
-use Academorix\IdentitySdk\Client\IdentitySdk;
+use Stackra\IdentitySdk\Client\IdentitySdk;
 
 $identity = app(IdentitySdk::class);
 $identity->someResource()->find($id);

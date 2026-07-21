@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Application\Enums;
+namespace Stackra\Application\Enums;
 
-use Academorix\Authorization\Attributes\RoleMeta;
-use Academorix\Authorization\Contracts\RoleEnum;
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Authorization\Attributes\RoleMeta;
+use Stackra\Authorization\Contracts\RoleEnum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
  * Roles this module contributes to the `platform_admin` guard.
  *
  * `#[RoleMeta]` on every case declares the case's assigned permissions
- * — read by `academorix/authorization`'s role hydrator at boot which
+ * — read by `stackra/authorization`'s role hydrator at boot which
  * upserts the role + syncs its permission set into spatie/laravel-permission's
  * `role_has_permissions` pivot.
  *

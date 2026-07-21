@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Refund\Events;
+namespace Stackra\Refund\Events;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -22,7 +22,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  * - refund::ClawbackCoordinator (dispatches RefundClawbackReferral + RefundClawbackCoupon downstream)
  * - marketing::FireMarketingRefundIssuedOnRefundSucceeded (negative-value conversion — ad-network ROAS adjustment)
  * - notifications::DispatchRefundSucceededNotification (customer — money received; note: for cards, this is estimated delivery not exact)
- * - observability::MetricsCollector (academorix.refund.succeeded_total labelled by reason)
+ * - observability::MetricsCollector (stackra.refund.succeeded_total labelled by reason)
  *
  * @category Refund
  *

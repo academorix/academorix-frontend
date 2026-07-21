@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Season\Contracts\Repositories;
+namespace Stackra\Season\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Season\Models\Season}.
+ * Repository contract for {@see Stackra\Season\Models\Season}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `SeasonRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Season\Models\Season>
+ * @extends RepositoryInterface<\Stackra\Season\Models\Season>
  *
  * @category Season
  *

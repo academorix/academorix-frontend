@@ -12,7 +12,7 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Database\Attributes;
+namespace Stackra\Database\Attributes;
 
 use Attribute;
 
@@ -20,7 +20,7 @@ use Attribute;
  * Archivable Attribute for Model Classes.
  *
  * Configures the archiving behaviour for the
- * {@see \Academorix\Database\Concerns\Model\HasArchive} trait. When applied,
+ * {@see \Stackra\Database\Concerns\Model\HasArchive} trait. When applied,
  * the attribute values override the trait's hardcoded defaults.
  *
  * ```php
@@ -45,7 +45,7 @@ use Attribute;
  *
  * @since    2.0.0
  *
- * @see \Academorix\Database\Concerns\Model\HasArchive
+ * @see \Stackra\Database\Concerns\Model\HasArchive
  */
 #[Attribute(Attribute::TARGET_CLASS)]
 final readonly class Archivable

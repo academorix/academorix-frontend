@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Dunning\Exceptions;
+namespace Stackra\Dunning\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Requested transition not allowed from current status.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class DunningRunStateInvalidException extends AcademorixException
+final class DunningRunStateInvalidException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

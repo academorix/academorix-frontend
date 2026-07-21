@@ -1,11 +1,11 @@
 {
-  "id": "academorix://modules/age-group/observers",
+  "id": "stackra://modules/age-group/observers",
   "$version": 1,
   "title": "age-group — Eloquent observers",
   "observers": [
     {
       "model": "AgeGroup",
-      "observer": "Academorix\\Sports\\AgeGroup\\Observers\\AgeGroupObserver",
+      "observer": "Stackra\\Sports\\AgeGroup\\Observers\\AgeGroupObserver",
       "handles": [
         "creating → populate ULID prefix `age_`.",
         "creating → refuse when min_age_inclusive > max_age_inclusive (INVALID_AGE_BOUNDS 422 — the rule catches it in FormRequests; the observer catches direct-service callers).",

@@ -2,7 +2,7 @@
 inclusion: manual
 ---
 
-# Academorix — Module Dependency Graph
+# Stackra — Module Dependency Graph
 
 The canonical view of how the 24 backend blueprint modules relate. This steering
 doc is the human-readable index; the machine-readable source of truth lives at

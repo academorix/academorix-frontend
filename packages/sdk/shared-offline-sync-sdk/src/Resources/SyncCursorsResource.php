@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SharedOfflineSyncSdk\Resources;
+namespace Stackra\SharedOfflineSyncSdk\Resources;
 
-use Academorix\ApiSdk\Client\ApiConnector;
-use Academorix\ApiSdk\Data\PaginatedResponse;
-use Academorix\SharedOfflineSyncSdk\Data\SyncCursorData;
+use Stackra\ApiSdk\Client\ApiConnector;
+use Stackra\ApiSdk\Data\PaginatedResponse;
+use Stackra\SharedOfflineSyncSdk\Data\SyncCursorData;
 use Saloon\Http\Response;
 
 /**

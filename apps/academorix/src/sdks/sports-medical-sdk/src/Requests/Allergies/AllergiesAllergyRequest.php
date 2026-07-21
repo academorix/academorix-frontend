@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsMedicalSdk\Requests\Allergies;
+namespace Stackra\SportsMedicalSdk\Requests\Allergies;
 
-use Academorix\ApiSdk\Requests\BaseSdkRequest;
-use Academorix\SportsMedicalSdk\Data\AllergyData;
+use Stackra\ApiSdk\Requests\BaseSdkRequest;
+use Stackra\SportsMedicalSdk\Data\AllergyData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

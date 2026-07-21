@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Resolver\Layers;
+namespace Stackra\FeatureFlags\Resolver\Layers;
 
-use Academorix\FeatureFlags\Contracts\Repositories\FeatureKillSwitchRepositoryInterface;
-use Academorix\FeatureFlags\Resolver\FeatureResolution;
-use Academorix\FeatureFlags\Resolver\ResolutionContext;
+use Stackra\FeatureFlags\Contracts\Repositories\FeatureKillSwitchRepositoryInterface;
+use Stackra\FeatureFlags\Resolver\FeatureResolution;
+use Stackra\FeatureFlags\Resolver\ResolutionContext;
 
 /**
  * Topmost resolver layer — returns `(false, kill_switch)` when a matching row exists.

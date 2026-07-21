@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Geography\Events;
+namespace Stackra\Geography\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 
-use Academorix\Events\Attributes\AsEvent;
+use Stackra\Events\Attributes\AsEvent;
 /**
  * Fired when the geolocate service resolves an IP.
  *

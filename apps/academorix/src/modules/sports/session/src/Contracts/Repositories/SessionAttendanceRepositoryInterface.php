@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Session\Contracts\Repositories;
+namespace Stackra\Session\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Session\Models\SessionAttendance}.
+ * Repository contract for {@see Stackra\Session\Models\SessionAttendance}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `SessionAttendanceRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Session\Models\SessionAttendance>
+ * @extends RepositoryInterface<\Stackra\Session\Models\SessionAttendance>
  *
  * @category Session
  *

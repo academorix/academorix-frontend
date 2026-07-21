@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Concerns;
+namespace Stackra\Foundation\Concerns;
 
 /**
  * Trait — HasSystemFlag.

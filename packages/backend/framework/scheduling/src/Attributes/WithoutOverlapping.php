@@ -18,7 +18,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scheduling\Attributes;
+namespace Stackra\Scheduling\Attributes;
 
 use Attribute;
 

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\FeatureFlags\Attributes;
+namespace Stackra\FeatureFlags\Attributes;
 
 use Attribute;
 
 /**
  * Gate an action class (or specific method) behind a feature flag.
  *
- * The `RouteRegistrar` in `academorix/routing` appends the
+ * The `RouteRegistrar` in `stackra/routing` appends the
  * `feature:<name>` middleware to any route emitted from a class or
  * method carrying this attribute. `RequireFeatureMiddleware` then
  * evaluates the flag through `FeatureCheckerInterface`; a `false`

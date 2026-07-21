@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Console;
+namespace Stackra\Entitlements\Console;
 
-use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Commands\BaseCommand;
-use Academorix\Entitlements\Contracts\Services\EntitlementRegistryInterface;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
+use Stackra\Entitlements\Contracts\Services\EntitlementRegistryInterface;
 
 /**
  * `php artisan entitlements:describe` — describe every registered

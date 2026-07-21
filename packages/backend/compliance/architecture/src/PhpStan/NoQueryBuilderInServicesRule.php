@@ -6,7 +6,7 @@
  * @description
  * PHPStan rule: forbid Eloquent / query-builder entry points
  * inside classes in the Service / Action layer. Scope-aware
- * sibling of {@see \Academorix\Architecture\Rules\NoQueryBuilderInServicesRule}.
+ * sibling of {@see \Stackra\Architecture\Rules\NoQueryBuilderInServicesRule}.
  *
  * ## What it catches
  *
@@ -47,7 +47,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Architecture\PhpStan;
+namespace Stackra\Architecture\PhpStan;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\StaticCall;

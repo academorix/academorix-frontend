@@ -4,7 +4,7 @@
  * @file modules/shared/transfer/lang/en/transfer.php
  *
  * @description
- * English translations for the `academorix/transfer` module.
+ * English translations for the `stackra/transfer` module.
  */
 
 declare(strict_types=1);

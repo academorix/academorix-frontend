@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Data\Requests;
+namespace Stackra\Webhook\Data\Requests;
 
-use Academorix\Webhook\Enums\WebhookDestinationKind;
-use Academorix\Webhook\Rules\SupportedBackoffStrategy;
+use Stackra\Webhook\Enums\WebhookDestinationKind;
+use Stackra\Webhook\Rules\SupportedBackoffStrategy;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Enum;
 use Spatie\LaravelData\Attributes\Validation\Max;

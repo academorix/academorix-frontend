@@ -35,7 +35,7 @@ describe("printStartupBanner", () => {
     const lines = capture({
       devSubdomains: [],
       devMode: "localhost",
-      rootDomain: "academorix.app",
+      rootDomain: "stackra.app",
     });
     // The empty-list branch surfaces a pointer to the config option.
     expect(lines.some((l) => l.includes("router({devSubdomains})"))).toBe(true);
@@ -45,7 +45,7 @@ describe("printStartupBanner", () => {
     const lines = capture({
       devSubdomains: ["admin", "ops"],
       devMode: "localhost",
-      rootDomain: "academorix.app",
+      rootDomain: "stackra.app",
     });
     expect(lines.some((l) => l.includes("admin → http://admin.localhost:5173"))).toBe(true);
     expect(lines.some((l) => l.includes("ops   → http://ops.localhost:5173"))).toBe(true);
@@ -55,7 +55,7 @@ describe("printStartupBanner", () => {
     const lines = capture({
       devSubdomains: ["admin"],
       devMode: "localhost",
-      rootDomain: "academorix.app",
+      rootDomain: "stackra.app",
       port: 5174,
     });
     expect(lines.some((l) => l.includes(":5174"))).toBe(true);
@@ -65,17 +65,17 @@ describe("printStartupBanner", () => {
     const lines = capture({
       devSubdomains: ["admin"],
       devMode: "hosts-file",
-      rootDomain: "academorix.app",
+      rootDomain: "stackra.app",
     });
     // hosts-file mode uses the real rootDomain suffix.
-    expect(lines.some((l) => l.includes("admin.academorix.app"))).toBe(true);
+    expect(lines.some((l) => l.includes("admin.stackra.app"))).toBe(true);
   });
 
   it("describes the dev-mode in the header", () => {
     const lines = capture({
       devSubdomains: ["admin"],
       devMode: "localhost",
-      rootDomain: "academorix.app",
+      rootDomain: "stackra.app",
     });
     expect(lines.some((l) => l.includes("*.localhost — zero setup"))).toBe(true);
   });

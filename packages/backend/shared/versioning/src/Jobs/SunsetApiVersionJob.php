@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Jobs;
+namespace Stackra\Versioning\Jobs;
 
-use Academorix\Versioning\Contracts\Data\ApiVersionInterface;
-use Academorix\Versioning\Contracts\Repositories\ApiVersionRepositoryInterface;
-use Academorix\Versioning\Enums\ApiVersionStatus;
+use Stackra\Versioning\Contracts\Data\ApiVersionInterface;
+use Stackra\Versioning\Contracts\Repositories\ApiVersionRepositoryInterface;
+use Stackra\Versioning\Enums\ApiVersionStatus;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -21,7 +21,7 @@ use Illuminate\Queue\SerializesModels;
  *
  * Dispatched by the platform-admin sunset action + by the scheduled
  * scan that watches `(status = deprecated AND sunset_at < now())`.
- * The observer on the model emits {@see \Academorix\Versioning\Events\ApiVersionSunset}
+ * The observer on the model emits {@see \Stackra\Versioning\Events\ApiVersionSunset}
  * once the update commits.
  *
  * @category Versioning

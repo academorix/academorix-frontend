@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SportsRegistrationsSdk\Payloads\TrialBookings;
+namespace Stackra\SportsRegistrationsSdk\Payloads\TrialBookings;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\StringType;

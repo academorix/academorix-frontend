@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Delegation\Repositories;
+namespace Stackra\Delegation\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Delegation\Contracts\Data\RoleDelegationInterface;
-use Academorix\Delegation\Contracts\Repositories\RoleDelegationRepositoryInterface;
-use Academorix\Delegation\Models\RoleDelegation;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Delegation\Contracts\Data\RoleDelegationInterface;
+use Stackra\Delegation\Contracts\Repositories\RoleDelegationRepositoryInterface;
+use Stackra\Delegation\Models\RoleDelegation;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Delegation\Models\RoleDelegation}.
+ * Attribute-first Eloquent repository for {@see Stackra\Delegation\Models\RoleDelegation}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(RoleDelegationInterface::class)]` which resolves to
  * `RoleDelegation` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Delegation\Models\RoleDelegation>
+ * @extends Repository<\Stackra\Delegation\Models\RoleDelegation>
  *
  * @category Delegation
  *

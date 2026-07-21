@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Middleware;
+namespace Stackra\Storage\Middleware;
 
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Events\StorageQuotaExceeded;
-use Academorix\Storage\Models\File;
-use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Events\StorageQuotaExceeded;
+use Stackra\Storage\Models\File;
+use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

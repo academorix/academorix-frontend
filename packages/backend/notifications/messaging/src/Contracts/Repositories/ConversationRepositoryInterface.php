@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Messaging\Contracts\Repositories;
+namespace Stackra\Messaging\Contracts\Repositories;
 
-use Academorix\Crud\Contracts\RepositoryInterface;
+use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Academorix\Messaging\Models\Conversation}.
+ * Repository contract for {@see Stackra\Messaging\Models\Conversation}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `ConversationRepository`.
  *
- * @extends RepositoryInterface<\Academorix\Messaging\Models\Conversation>
+ * @extends RepositoryInterface<\Stackra\Messaging\Models\Conversation>
  *
  * @category Messaging
  *

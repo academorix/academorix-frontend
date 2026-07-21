@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\ServiceProvider\Dispatchers;
+namespace Stackra\ServiceProvider\Dispatchers;
 
-use Academorix\ServiceProvider\Contracts\TenancyHookInterface;
-use Academorix\ServiceProvider\Registry\TenancyHookRegistry;
-use Academorix\ServiceProvider\Support\TenantHookContext;
+use Stackra\ServiceProvider\Contracts\TenancyHookInterface;
+use Stackra\ServiceProvider\Registry\TenancyHookRegistry;
+use Stackra\ServiceProvider\Support\TenantHookContext;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Contracts\Container\Container;

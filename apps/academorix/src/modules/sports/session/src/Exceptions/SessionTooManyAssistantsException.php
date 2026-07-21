@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Session\Exceptions;
+namespace Stackra\Session\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * assistant_coach_ids array has more than 3 entries.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SessionTooManyAssistantsException extends AcademorixException
+final class SessionTooManyAssistantsException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

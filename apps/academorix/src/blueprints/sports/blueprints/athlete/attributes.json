@@ -1,13 +1,13 @@
 {
-  "id": "academorix://modules/athlete/attributes",
+  "id": "stackra://modules/athlete/attributes",
   "$version": 1,
   "title": "athlete — PHP attribute contracts",
   "description": "One attribute. `#[AsAthleteListener]` on a service class marks it as a subscriber to athlete-lifecycle events — AttributeDiscovery picks it up and wires it to the event map declared in `events.json`. Because AthleteMedicalUpdated is private-tier (routes on the medical-audit queue), subscribers to it MUST opt in explicitly (empty events list does NOT include it).",
-  "namespace": "Academorix\\Sports\\Athlete\\Attributes",
+  "namespace": "Stackra\\Sports\\Athlete\\Attributes",
   "attributes": [
     {
       "name": "AsAthleteListener",
-      "class": "Academorix\\Sports\\Athlete\\Attributes\\AsAthleteListener",
+      "class": "Stackra\\Sports\\Athlete\\Attributes\\AsAthleteListener",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a service as a subscriber to Athlete lifecycle events (AthleteCreated / AthleteUpdated / AthleteStatusChanged / AthletePausedForSafeguarding / AthleteGraduated / AthleteWithdrawn / AthleteArchived / AthleteRestored / AthleteLinkedToUser / AthleteAgeGroupSnapshotUpdated / AthleteConsentRecorded / AthleteConsentRevoked / AthletePhotoConsentChanged / AthleteMinorTurnedAdult / AthleteEmergencyContactUpdated). NOTE: AthleteMedicalUpdated is NOT included in the default event set — subscribers must opt in explicitly via `events: ['AthleteMedicalUpdated']` because that event routes on the medical-audit queue and has private-tier payload.",
@@ -16,7 +16,7 @@
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Array of event short names (`AthleteCreated`, `AthleteWithdrawn`, ...). Empty = subscribe to every `Academorix\\Sports\\Athlete\\Events\\Athlete*` event EXCEPT AthleteMedicalUpdated (which requires explicit opt-in). Names resolve against events.json at boot; typos abort boot with a discovery error."
+          "description": "Array of event short names (`AthleteCreated`, `AthleteWithdrawn`, ...). Empty = subscribe to every `Stackra\\Sports\\Athlete\\Events\\Athlete*` event EXCEPT AthleteMedicalUpdated (which requires explicit opt-in). Names resolve against events.json at boot; typos abort boot with a discovery error."
         },
         {
           "name": "queue",

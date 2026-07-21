@@ -32,14 +32,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Auth;
+namespace Stackra\Exceptions\Auth;
 
-use Academorix\Exceptions\AcademorixException;
-use Academorix\Exceptions\Enums\ErrorCategory;
-use Academorix\Exceptions\Enums\ErrorSeverity;
+use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Enums\ErrorCategory;
+use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class FeatureDisabledException extends AcademorixException
+class FeatureDisabledException extends StackraException
 {
     /**
      * Machine-readable code. Distinct from `auth.forbidden` so

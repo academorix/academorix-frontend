@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Transaction\Policies;
+namespace Stackra\Transaction\Policies;
 
-use Academorix\User\Models\User;
-use Academorix\Transaction\Models\Transaction;
+use Stackra\User\Models\User;
+use Stackra\Transaction\Models\Transaction;
 
 /**
- * Authorization policy for {@see \Academorix\Transaction\Models\Transaction}.
+ * Authorization policy for {@see \Stackra\Transaction\Models\Transaction}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

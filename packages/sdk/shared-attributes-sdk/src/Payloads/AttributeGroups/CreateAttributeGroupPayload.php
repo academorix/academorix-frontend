@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\SharedAttributesSdk\Payloads\AttributeGroups;
+namespace Stackra\SharedAttributesSdk\Payloads\AttributeGroups;
 
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Attributes\Validation\Max;

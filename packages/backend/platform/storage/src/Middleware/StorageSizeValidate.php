@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Middleware;
+namespace Stackra\Storage\Middleware;
 
-use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Storage\Contracts\Registries\FileKindRegistryInterface;
-use Academorix\Storage\Enums\FileKind;
+use Stackra\Routing\Attributes\AsMiddleware;
+use Stackra\Storage\Contracts\Registries\FileKindRegistryInterface;
+use Stackra\Storage\Enums\FileKind;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

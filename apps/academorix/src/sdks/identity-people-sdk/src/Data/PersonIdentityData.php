@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\IdentityPeopleSdk\Data;
+namespace Stackra\IdentityPeopleSdk\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
@@ -26,7 +26,7 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
  * ## Example
  *
  * ```php
- * use Academorix\IdentitySdk\Client\IdentitySdk;
+ * use Stackra\IdentitySdk\Client\IdentitySdk;
  *
  * $row = app(IdentitySdk::class)->people()->personIdentities()->show($id);
  * ```
@@ -40,7 +40,7 @@ final class PersonIdentityData extends Data
 {
     /**
      * @param  string                       $id                         Prefixed ULID: `pin_<26>`.
-     * @param  string                       $academorixId               Human-readable ID: AX-XXXX-YYYY (Crockford base32 segments).
+     * @param  string                       $stackraId               Human-readable ID: AX-XXXX-YYYY (Crockford base32 segments).
      * @param  string                       $legalName
      * @param  string                       $dateOfBirth
      * @param  string                       $verificationStatus         unverified / verified / disputed / frozen.
@@ -58,7 +58,7 @@ final class PersonIdentityData extends Data
      */
     public function __construct(
         public string $id,
-        public string $academorixId,
+        public string $stackraId,
         public string $legalName,
         public string $dateOfBirth,
         public string $verificationStatus,

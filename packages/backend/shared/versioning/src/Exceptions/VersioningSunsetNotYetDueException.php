@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Exceptions;
+namespace Stackra\Versioning\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Manual `versioning:sunset` invoked before sunset_at reached.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class VersioningSunsetNotYetDueException extends AcademorixException
+final class VersioningSunsetNotYetDueException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

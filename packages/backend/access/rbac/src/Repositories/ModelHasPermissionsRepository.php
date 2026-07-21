@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Rbac\Repositories;
+namespace Stackra\Rbac\Repositories;
 
-use Academorix\Crud\Attributes\AsRepository;
-use Academorix\Crud\Attributes\Cacheable;
-use Academorix\Crud\Attributes\Filterable;
-use Academorix\Crud\Attributes\UseModel;
-use Academorix\Crud\Repositories\Repository;
-use Academorix\Rbac\Contracts\Data\ModelHasPermissionsInterface;
-use Academorix\Rbac\Contracts\Repositories\ModelHasPermissionsRepositoryInterface;
-use Academorix\Rbac\Models\ModelHasPermissions;
+use Stackra\Crud\Attributes\AsRepository;
+use Stackra\Crud\Attributes\Cacheable;
+use Stackra\Crud\Attributes\Filterable;
+use Stackra\Crud\Attributes\UseModel;
+use Stackra\Crud\Repositories\Repository;
+use Stackra\Rbac\Contracts\Data\ModelHasPermissionsInterface;
+use Stackra\Rbac\Contracts\Repositories\ModelHasPermissionsRepositoryInterface;
+use Stackra\Rbac\Models\ModelHasPermissions;
 
 /**
- * Attribute-first Eloquent repository for {@see Academorix\Rbac\Models\ModelHasPermissions}.
+ * Attribute-first Eloquent repository for {@see Stackra\Rbac\Models\ModelHasPermissions}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ModelHasPermissionsInterface::class)]` which resolves to
  * `ModelHasPermissions` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Academorix\Rbac\Models\ModelHasPermissions>
+ * @extends Repository<\Stackra\Rbac\Models\ModelHasPermissions>
  *
  * @category Rbac
  *

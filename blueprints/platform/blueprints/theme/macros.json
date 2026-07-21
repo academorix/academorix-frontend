@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/theme/macros",
+  "id": "stackra://modules/theme/macros",
   "$version": 1,
   "title": "theme — framework macros",
   "description": "Blade / Response / Str macros registered via the module's service provider.",

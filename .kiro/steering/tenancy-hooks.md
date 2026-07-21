@@ -32,7 +32,7 @@ lightweight per-init callback that hangs off tenancy resolution.
 ## The contract
 
 Every tenancy hook implements
-`Academorix\ServiceProvider\Contracts\TenancyHookInterface`:
+`Stackra\ServiceProvider\Contracts\TenancyHookInterface`:
 
 ```php
 interface TenancyHookInterface

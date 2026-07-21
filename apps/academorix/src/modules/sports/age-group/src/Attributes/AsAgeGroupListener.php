@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\AgeGroup\Attributes;
+namespace Stackra\AgeGroup\Attributes;
 
 use Attribute;
 

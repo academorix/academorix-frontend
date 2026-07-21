@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/competition/retention",
+  "id": "stackra://modules/competition/retention",
   "$version": 1,
   "title": "competition — data retention windows",
   "description": "Career-timeline provenance means fixture + standing data retained indefinitely once a competition is completed. Cancelled or draft competitions can be purged after 90 days.",

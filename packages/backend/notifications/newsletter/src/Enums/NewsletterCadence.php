@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Newsletter\Enums;
+namespace Stackra\Newsletter\Enums;
 
-use Academorix\Enum\Attributes\Description;
-use Academorix\Enum\Attributes\Label;
-use Academorix\Enum\Attributes\Meta;
-use Academorix\Enum\Enum;
+use Stackra\Enum\Attributes\Description;
+use Stackra\Enum\Attributes\Label;
+use Stackra\Enum\Attributes\Meta;
+use Stackra\Enum\Enum;
 
 /**
- * Publishing cadence of a {@see \Academorix\Newsletter\Models\Newsletter}.
+ * Publishing cadence of a {@see \Stackra\Newsletter\Models\Newsletter}.
  *
  * Advisory metadata — the scheduler uses the cadence to hint the UI
  * and to auto-increment `issue_number` for regular cadences. Manual

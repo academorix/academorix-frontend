@@ -1,5 +1,5 @@
 {
-  "display": "@academorix/config-tsconfig — vite app",
+  "display": "@stackra/config-tsconfig — vite app",
   "extends": "./react-library.json",
   "compilerOptions": {
     "target": "ES2022",

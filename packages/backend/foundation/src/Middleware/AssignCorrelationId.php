@@ -21,10 +21,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Middleware;
+namespace Stackra\Foundation\Middleware;
 
-use Academorix\Foundation\Support\CorrelationId;
-use Academorix\Routing\Attributes\AsMiddleware;
+use Stackra\Foundation\Support\CorrelationId;
+use Stackra\Routing\Attributes\AsMiddleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;

@@ -17,12 +17,12 @@
  *     `#[RequirePermission]`.
  *   - Console commands: `#[AsCommand]` extending `BaseCommand`.
  *   - Seeder: `#[AsSeeder(priority: 47)]` — composes
- *     {@see \Academorix\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
+ *     {@see \Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum}.
  *   - Events: `#[AsEvent]` on every class.
  *   - Observers: `#[ObservedBy]` on the model.
  *   - Policies: `#[UsePolicy]` on the model.
  *   - Provider drivers: `#[AsPushProvider(name: '...')]` — populated into
- *     {@see \Academorix\Notifications\Push\Contracts\Services\PushSubscriptionRegistryInterface}
+ *     {@see \Stackra\Notifications\Push\Contracts\Services\PushSubscriptionRegistryInterface}
  *     via `#[HydratesFrom]` on the registry's `register()`.
  *   - Service implementations: interfaces carry `#[Bind]` pointing at the
  *     default concrete; consumer apps override by binding their own concrete
@@ -31,11 +31,11 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Notifications\Push\Providers;
+namespace Stackra\Notifications\Push\Providers;
 
-use Academorix\ServiceProvider\Attributes\AsModule;
-use Academorix\ServiceProvider\Attributes\LoadsResources;
-use Academorix\ServiceProvider\Providers\ServiceProvider;
+use Stackra\ServiceProvider\Attributes\AsModule;
+use Stackra\ServiceProvider\Attributes\LoadsResources;
+use Stackra\ServiceProvider\Providers\ServiceProvider;
 
 /**
  * notifications-push module service provider.

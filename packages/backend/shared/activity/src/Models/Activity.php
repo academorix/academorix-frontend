@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Activity\Models;
+namespace Stackra\Activity\Models;
 
-use Academorix\Activity\Contracts\Data\ActivityInterface;
-use Academorix\Activity\Database\Factories\ActivityFactory;
-use Academorix\Activity\Policies\ActivityPolicy;
-use Academorix\Database\Concerns\HasMetadata;
-use Academorix\Database\Concerns\HasPrefixedUlid;
-use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Stackra\Activity\Contracts\Data\ActivityInterface;
+use Stackra\Activity\Database\Factories\ActivityFactory;
+use Stackra\Activity\Policies\ActivityPolicy;
+use Stackra\Database\Concerns\HasMetadata;
+use Stackra\Database\Concerns\HasPrefixedUlid;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

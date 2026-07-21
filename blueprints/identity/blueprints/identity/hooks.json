@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/identity/hooks",
+  "id": "stackra://modules/identity/hooks",
   "$version": 1,
   "title": "identity \u2014 tenancy hooks",
   "description": "Identity has NO tenancy hooks. The module is GLOBAL by design \u2014 there is no `tenant_id` on the `identities` table, and no `TenantProvisioned` / `TenantErased` action mutates the Identity substrate directly. Downstream cascade (e.g. TenantErased \u2192 UserErased \u2192 optional IdentityMarkedForErasure) is handled by the listener chain in listeners.json, not by tenancy hooks.",

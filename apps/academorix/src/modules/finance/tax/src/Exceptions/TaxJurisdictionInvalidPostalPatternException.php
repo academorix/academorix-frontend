@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tax\Exceptions;
+namespace Stackra\Tax\Exceptions;
 
-use Academorix\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * postal_code_pattern is not a valid regex.
@@ -15,7 +15,7 @@ use Academorix\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TaxJurisdictionInvalidPostalPatternException extends AcademorixException
+final class TaxJurisdictionInvalidPostalPatternException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

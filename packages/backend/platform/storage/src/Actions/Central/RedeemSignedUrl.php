@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Actions\Central;
+namespace Stackra\Storage\Actions\Central;
 
-use Academorix\Routing\Attributes\AsAction;
-use Academorix\Routing\Attributes\Get;
-use Academorix\Routing\Attributes\Middleware;
-use Academorix\Routing\Concerns\AsController;
-use Academorix\Storage\Contracts\Data\FileInterface;
-use Academorix\Storage\Contracts\Data\SignedUrlAuditInterface;
-use Academorix\Storage\Contracts\Repositories\FileRepositoryInterface;
-use Academorix\Storage\Contracts\Repositories\SignedUrlAuditRepositoryInterface;
-use Academorix\Storage\Exceptions\FileNotFoundException;
-use Academorix\Storage\Exceptions\SignedUrlExpiredException;
-use Academorix\Storage\Exceptions\SignedUrlRevokedException;
+use Stackra\Routing\Attributes\AsAction;
+use Stackra\Routing\Attributes\Get;
+use Stackra\Routing\Attributes\Middleware;
+use Stackra\Routing\Concerns\AsController;
+use Stackra\Storage\Contracts\Data\FileInterface;
+use Stackra\Storage\Contracts\Data\SignedUrlAuditInterface;
+use Stackra\Storage\Contracts\Repositories\FileRepositoryInterface;
+use Stackra\Storage\Contracts\Repositories\SignedUrlAuditRepositoryInterface;
+use Stackra\Storage\Exceptions\FileNotFoundException;
+use Stackra\Storage\Exceptions\SignedUrlExpiredException;
+use Stackra\Storage\Exceptions\SignedUrlRevokedException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;

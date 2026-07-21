@@ -1,5 +1,5 @@
 {
-  "id": "academorix://modules/athlete/analytics",
+  "id": "stackra://modules/athlete/analytics",
   "$version": 1,
   "title": "athlete — product analytics",
   "sink": "segment",
