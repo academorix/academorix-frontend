@@ -1,0 +1,174 @@
+{
+  "id": "stackra://modules/monitoring/schemas/monitoring-alert",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "MonitoringAlert",
+  "description": "Fired alert record. Belongs to Tenant + MonitoringAlertPolicy (RESTRICT). Optionally attached to a MonitoringIncident (nullable — grouped asynchronously). Carries `tenant_id` + `monitoring_alert_policy_id`. NEVER carries `application_id`, `region_id`, `organization_id`, or `scope_node_id`.",
+  "type": "object",
+  "x-module": "monitoring",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "monitoring_alerts",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "mal_",
+    "incrementing": false,
+    "model": "Stackra\\Observability\\Monitoring\\Models\\MonitoringAlert",
+    "interface": "Stackra\\Observability\\Monitoring\\Contracts\\Data\\MonitoringAlertInterface",
+    "implements": ["Stackra\\Observability\\Monitoring\\Contracts\\Data\\MonitoringAlertInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToMonitoringAlertPolicy",
+      "BelongsToMonitoringIncident",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable"
+    ],
+    "casts": {
+      "severity": "MonitoringSeverity",
+      "status": "MonitoringAlertStatus",
+      "fired_at": "datetime",
+      "acknowledged_at": "datetime",
+      "resolved_at": "datetime",
+      "signal_value": "float",
+      "signal_context": "array",
+      "metadata": "array"
+    },
+    "observers": ["MonitoringAlertObserver"],
+    "appends": ["is_terminal", "time_to_ack_seconds", "time_to_resolve_seconds"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "monitoring_alert_policy_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "monitoring_alert_policies", "column": "id", "onDelete": "restrict" }
+      },
+      "monitoring_incident_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "monitoring_incidents", "column": "id", "onDelete": "set null" }
+      },
+      "severity": {
+        "type": "string",
+        "length": 8,
+        "nullable": false,
+        "description": "Enum matching policy severity."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'firing'",
+        "description": "Enum: firing / acknowledged / resolved / suppressed / expired."
+      },
+      "fired_at": { "type": "timestamptz", "nullable": false },
+      "acknowledged_at": { "type": "timestamptz", "nullable": true },
+      "acknowledged_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "resolved_at": { "type": "timestamptz", "nullable": true },
+      "resolved_by": {
+        "type": "string",
+        "length": 8,
+        "nullable": true,
+        "description": "Enum: auto / manual."
+      },
+      "resolved_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "signal_value": {
+        "type": "numeric",
+        "nullable": false,
+        "description": "The metric value that breached the threshold at fire time."
+      },
+      "signal_context": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Additional context: check_id, endpoint, source_service, correlated_metrics."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "status", "fired_at"], "name": "monitoring_alerts_status_idx" },
+      { "columns": ["tenant_id", "severity", "status"], "name": "monitoring_alerts_severity_idx" },
+      {
+        "columns": ["monitoring_alert_policy_id", "status", "fired_at"],
+        "name": "monitoring_alerts_by_policy_idx"
+      },
+      {
+        "columns": ["monitoring_incident_id"],
+        "name": "monitoring_alerts_incident_idx",
+        "predicate": "monitoring_incident_id IS NOT NULL"
+      },
+      { "columns": ["created_at"], "name": "monitoring_alerts_retention_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "monitoring_alert_policy_id",
+    "severity",
+    "status",
+    "fired_at",
+    "signal_value",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^mal_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "monitoring_alert_policy_id": { "type": "string", "pattern": "^map_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "monitoring_incident_id": {
+      "type": ["string", "null"],
+      "pattern": "^mci_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "severity": { "type": "string", "enum": ["p1", "p2", "p3", "p4"] },
+    "status": {
+      "type": "string",
+      "enum": ["firing", "acknowledged", "resolved", "suppressed", "expired"]
+    },
+    "fired_at": { "type": "string", "format": "date-time" },
+    "acknowledged_at": { "type": ["string", "null"], "format": "date-time" },
+    "acknowledged_by_user_id": { "type": ["string", "null"] },
+    "resolved_at": { "type": ["string", "null"], "format": "date-time" },
+    "resolved_by": { "type": ["string", "null"], "enum": ["auto", "manual", null] },
+    "resolved_by_user_id": { "type": ["string", "null"] },
+    "signal_value": { "type": "number" },
+    "signal_context": { "type": ["object", "null"] },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "state transitions: firing → acknowledged | resolved | suppressed | expired; acknowledged → resolved | expired; resolved / suppressed / expired terminal",
+    "acknowledged_at IS NOT NULL WHEN status IN (acknowledged, resolved) AND resolved_by IS NOT 'auto'",
+    "resolved_at IS NOT NULL WHEN status IN (resolved, expired, suppressed)",
+    "resolved_by='manual' requires resolved_by_user_id present",
+    "severity, monitoring_alert_policy_id, signal_value, signal_context immutable after create",
+    "signal_value + signal_context are captured at fire-time snapshot"
+  ]
+}
