@@ -41,15 +41,6 @@ export { TabRoleEnum } from "./enums";
 export { CoordinatorError } from "./errors";
 
 // ════════════════════════════════════════════════════════════════════════════════
-// Constants
-// ════════════════════════════════════════════════════════════════════════════════
-// TAB_LOCK_MANAGER is re-exported here for backwards compatibility with the
-// pre-`contract-reexports.md` public surface — new consumers should import
-// it directly from `@stackra/contracts`. See the retrofit note in
-// `.kiro/steering/contract-reexports.md`.
-export { TAB_LOCK_MANAGER } from "@stackra/contracts";
-
-// ════════════════════════════════════════════════════════════════════════════════
 // Types
 // ════════════════════════════════════════════════════════════════════════════════
 export type { TabRole } from "./types";
