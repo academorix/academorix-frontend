@@ -26,12 +26,8 @@ import { EventEmitter } from "./event-emitter.service";
 import { EventTransportRegistry } from "../registries/event-transport.registry";
 import { EventTransportError } from "@/core/errors";
 import { DISCOVERY_SERVICE } from "@stackra/contracts";
-import type {
-  IOnEventMetadata,
-  IOnEventOptions,
-  IEventTransportOptions,
-  IEventTransport,
-} from "@/core/interfaces";
+import type { IOnEventMetadata, IOnEventOptions, IEventTransportOptions } from "@stackra/contracts";
+import type { IEventTransport } from "@/core/interfaces";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Discovery Service Interface
@@ -119,6 +115,16 @@ export class EventSubscribersLoader implements OnApplicationBootstrap, OnModuleD
   /**
    * Check a method for `@OnEvent` metadata and subscribe it to the emitter.
    *
+   * The `@OnEvent` decorator stamps metadata on the class prototype at
+   * (prototype, propertyKey) via `defineMetadata(key, value, target,
+   * propertyKey)`. Reading from the method function directly returns
+   * `undefined` — the reader and writer must agree on the target.
+   *
+   * Normalises the raw stamp into an array: `@OnEvent` accumulates
+   * repeated applications into a `IOnEventMetadata[]` array, but the
+   * initial single-application stamp is a bare `IOnEventMetadata`
+   * (matches the `createDiscoverableMethodDecorator` `merge` shape).
+   *
    * @param instance - The provider instance
    * @param methodKey - Method name to check
    */
@@ -126,9 +132,21 @@ export class EventSubscribersLoader implements OnApplicationBootstrap, OnModuleD
     const method = instance[methodKey];
     if (typeof method !== "function") return;
 
-    const metadatas = getMetadata<IOnEventMetadata[]>(EVENT_LISTENER_METADATA, method as object);
+    // Read against the prototype + propertyKey — matches what
+    // `defineMetadata` writes inside the `@OnEvent` decorator.
+    const prototype = Object.getPrototypeOf(instance);
+    if (!prototype) return;
 
-    if (!metadatas || metadatas.length === 0) return;
+    const raw = getMetadata<IOnEventMetadata | IOnEventMetadata[]>(
+      EVENT_LISTENER_METADATA,
+      prototype,
+      methodKey,
+    );
+
+    if (raw === undefined) return;
+    const metadatas: readonly IOnEventMetadata[] = Array.isArray(raw) ? raw : [raw];
+
+    if (metadatas.length === 0) return;
 
     for (const metadata of metadatas) {
       const { event, options } = metadata;

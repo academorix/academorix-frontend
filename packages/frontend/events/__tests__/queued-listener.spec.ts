@@ -96,103 +96,88 @@ describe("EventSubscribersLoader — queued @OnEvent listener DI wiring", () => 
     delete (globalThis as Record<string, unknown>).__stackra_queue_manager__;
   });
 
-  // NOTE: marked `it.fails(...)` — the P0-1 DI wiring fix HAS
-  // landed (loader now takes `@Optional() @Inject(QUEUE_MANAGER)`
-  // as its 4th constructor arg and reads `this.queueManager`
-  // instead of `globalThis.__stackra_queue_manager__`). However,
-  // this direct-instantiation test can't reach that path because
-  // of an ORTHOGONAL pre-existing bug in `subscribeIfListener`:
-  // the loader reads `getMetadata(EVENT_LISTENER_METADATA, method)`
-  // — passing the method function — but the `@OnEvent` decorator
-  // stamps metadata on the prototype via
-  // `defineMetadata(key, value, prototype, propertyKey)`. Reader
-  // and writer disagree on the target, so no `@OnEvent` fires
-  // when this test's fake discovery is walked.
-  //
-  // Fix path forward: change `subscribeIfListener` to read
-  // `getMetadata(EVENT_LISTENER_METADATA, prototype, methodKey)`
-  // — that unblocks THIS test AND fixes any real-world
-  // `@OnEvent` listener that isn't stamped a second way (see
-  // notes in the DI reviewer's next report).
-  it.fails(
-    "REGRESSION — routes queued listeners through the DI-visible " +
-      "QUEUE_MANAGER (currently FAILING: orthogonal metadata-target bug)",
-    async () => {
-      const dispatch = vi.fn(async () => "job-1");
-      const fakeQueueManager = { dispatch };
+  // Both prerequisites for this test have now landed:
+  //   1. DI P0-1 fix — loader takes `@Optional() @Inject(QUEUE_MANAGER)`
+  //      as its 4th constructor arg and reads `this.queueManager`
+  //      instead of `globalThis.__stackra_queue_manager__`.
+  //   2. Loader metadata-target bug fix — `subscribeIfListener`
+  //      now reads `getMetadata(EVENT_LISTENER_METADATA, prototype,
+  //      methodKey)` matching what `@OnEvent` writes.
+  it("routes queued listeners through the DI-visible QUEUE_MANAGER", async () => {
+    const dispatch = vi.fn(async () => "job-1");
+    const fakeQueueManager = { dispatch };
 
-      const listener = new QueuedOrderListener();
-      const emitter = new EventEmitter();
-      const transportRegistry = new EventTransportRegistry();
-      const discovery = makeFakeDiscovery(listener);
+    const listener = new QueuedOrderListener();
+    const emitter = new EventEmitter();
+    const transportRegistry = new EventTransportRegistry();
+    const discovery = makeFakeDiscovery(listener);
 
-      // Direct instantiation — bypasses the container's dist-bundle
-      // paramtypes emission quirk on ContainerDiscoveryService. The
-      // regression under test is in the LOADER, not in the container.
-      //
-      // After the P0-1 fix: the loader accepts an optional
-      // `IQueueManager` as its 4th constructor arg (mapped to
-      // `@Optional() @Inject(QUEUE_MANAGER)` in the DI graph). We
-      // pass the fake queue directly to simulate the DI wiring.
-      const loader = new EventSubscribersLoader(
-        emitter,
-        transportRegistry,
-        discovery,
-        fakeQueueManager,
-      );
+    // Direct instantiation — bypasses the container's dist-bundle
+    // paramtypes emission quirk on ContainerDiscoveryService. The
+    // regression under test is in the LOADER, not in the container.
+    //
+    // After the P0-1 fix: the loader accepts an optional
+    // `IQueueManager` as its 4th constructor arg (mapped to
+    // `@Optional() @Inject(QUEUE_MANAGER)` in the DI graph). We
+    // pass the fake queue directly to simulate the DI wiring.
+    const loader = new EventSubscribersLoader(
+      emitter,
+      transportRegistry,
+      discovery,
+      fakeQueueManager,
+    );
 
-      // ── The fix wires the queue manager through DI ─────────────
-      //
-      // Before the fix: `dispatchToQueue()` read
-      // `(globalThis as any).__stackra_queue_manager__`. Nothing wrote
-      // that slot, so the queued branch fell through to `safeInvoke`
-      // and the listener body fired INLINE.
-      //
-      // After the fix: `@Optional() @Inject(QUEUE_MANAGER)` resolves
-      // to whatever `QueueModule.forRoot()` binds. In this test we
-      // stand in for the DI container by passing `fakeQueueManager`
-      // as the 4th constructor argument directly.
-      //
-      // We deliberately do NOT set globalThis here — the fix does
-      // not rely on globalThis at all.
+    // ── The fix wires the queue manager through DI ─────────────
+    //
+    // Before the fix: `dispatchToQueue()` read
+    // `(globalThis as any).__stackra_queue_manager__`. Nothing wrote
+    // that slot, so the queued branch fell through to `safeInvoke`
+    // and the listener body fired INLINE.
+    //
+    // After the fix: `@Optional() @Inject(QUEUE_MANAGER)` resolves
+    // to whatever `QueueModule.forRoot()` binds. In this test we
+    // stand in for the DI container by passing `fakeQueueManager`
+    // as the 4th constructor argument directly.
+    //
+    // We deliberately do NOT set globalThis here — the fix does
+    // not rely on globalThis at all.
 
-      // Trigger discovery — this walks the fake discovery service,
-      // reads `@OnEvent` metadata on the listener, and subscribes.
-      loader.onApplicationBootstrap();
+    // Trigger discovery — this walks the fake discovery service,
+    // reads `@OnEvent` metadata on the listener, and subscribes.
+    loader.onApplicationBootstrap();
 
-      // Emit the event — the loader's listener fn calls
-      // `dispatchToQueue(...)` under `options.queued: true`.
-      emitter.emit("order.placed", { orderId: "ord-001" });
+    // Emit the event — the loader's listener fn calls
+    // `dispatchToQueue(...)` under `options.queued: true`.
+    emitter.emit("order.placed", { orderId: "ord-001" });
 
-      // `dispatchToQueue` is async. Let its microtasks settle.
-      await Promise.resolve();
-      await Promise.resolve();
+    // `dispatchToQueue` is async. Let its microtasks settle.
+    await Promise.resolve();
+    await Promise.resolve();
 
-      // ── The regression assertion ────────────────────────────────
-      //
-      // Today's behaviour: `dispatch` is NEVER called, and the
-      // listener's `handle()` fires inline (through `safeInvoke`),
-      // so `inlineCalls` has one entry.
-      //
-      // Expected AFTER the fix: `dispatch` IS called with the queue
-      // job payload, and `inlineCalls` remains empty.
-      expect(dispatch).toHaveBeenCalledOnce();
-      expect(dispatch).toHaveBeenCalledWith(
-        "event-listener:QueuedOrderListener.handle",
-        expect.objectContaining({
-          event: "order.placed",
-          args: [{ orderId: "ord-001" }],
-          className: "QueuedOrderListener",
-          methodKey: "handle",
-        }),
-        expect.objectContaining({ queue: "orders" }),
-      );
+    // ── The regression assertion ────────────────────────────────
+    //
+    // Today's behaviour: `dispatch` is NEVER called, and the
+    // listener's `handle()` fires inline (through `safeInvoke`),
+    // so `inlineCalls` has one entry.
+    //
+    // Expected AFTER the fix: `dispatch` IS called with the queue
+    // job payload, and `inlineCalls` remains empty.
+    expect(dispatch).toHaveBeenCalledOnce();
+    expect(dispatch).toHaveBeenCalledWith(
+      "event-listener:QueuedOrderListener.handle",
+      expect.objectContaining({
+        event: "order.placed",
+        args: [{ orderId: "ord-001" }],
+        className: "QueuedOrderListener",
+        methodKey: "handle",
+      }),
+      expect.objectContaining({ queue: "orders" }),
+    );
 
-      // The queued branch must dispatch — the inline fallback must
-      // not fire. Today this ALSO fails: `inlineCalls` has one
-      // entry because the loader's globalThis check misses and the
-      // fallback runs.
-      expect(listener.inlineCalls).toEqual([]);
-    },
-  );
+    // The queued branch must dispatch — the inline fallback must
+    // not fire. Today this ALSO fails: `inlineCalls` has one
+    // entry because the loader's globalThis check misses and the
+    // fallback runs.
+    expect(listener.inlineCalls).toEqual([]);
+  });
 });

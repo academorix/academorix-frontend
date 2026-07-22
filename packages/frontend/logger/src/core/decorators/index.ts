@@ -5,4 +5,7 @@
  */
 
 export { Reporter } from "./reporter.decorator";
-export { REPORTER_METADATA_KEY } from "./reporter-metadata.constant";
+
+// The historical `REPORTER_METADATA_KEY` legacy alias is retired.
+// Import `LOGGER_REPORTER_METADATA_KEY` directly from
+// `@stackra/contracts` per contract-reexports.md.

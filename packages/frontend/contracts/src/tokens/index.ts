@@ -171,7 +171,7 @@ export {
   SDUI_DATA_SOURCE_RESOLVER,
   SDUI_CLIENT,
 } from "./sdui.tokens";
-export { QUERY_CONFIG, QUERY_CLIENT, UNDOABLE_QUEUE } from "./query.tokens";
+export { QUERY_CLIENT, UNDOABLE_QUEUE } from "./query.tokens";
 export { TOAST_SERVICE, DIALOG_SERVICE, OVERLAY_REGISTRY } from "./ui.tokens";
 export {
   ACTION_CONFIG,

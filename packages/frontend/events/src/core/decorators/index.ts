@@ -12,9 +12,7 @@ export { EventTransport } from "./event-transport.decorator";
 export { InjectEventEmitter } from "./inject-event-emitter.decorator";
 export { EventSubscriber } from "./event-subscriber.decorator";
 
-// The old `EVENT_SUBSCRIBER_METADATA` string constant now lives in
-// `@stackra/contracts` under the canonical name. Re-export both the
-// legacy alias and the new name so migrations can happen at their
-// own pace.
-export { EVENT_SUBSCRIBER_METADATA_KEY as EVENT_SUBSCRIBER_METADATA } from "@stackra/contracts";
-export type { IEventSubscriberMap } from "@stackra/contracts";
+// Contract tokens + shapes previously re-exported here have been
+// retired. Import `EVENT_SUBSCRIBER_METADATA_KEY` +
+// `IEventSubscriberMap` directly from `@stackra/contracts` per
+// `.kiro/steering/contract-reexports.md`.

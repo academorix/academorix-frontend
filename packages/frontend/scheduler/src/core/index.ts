@@ -14,7 +14,7 @@ export type { ISchedulerModuleOptions } from "./interfaces/scheduler-module-opti
 // ════════════════════════════════════════════════════════════════════════════════
 // Services
 // ════════════════════════════════════════════════════════════════════════════════
-export { SchedulerService, SCHEDULER_EVENTS } from "./services";
+export { SchedulerService } from "./services";
 export { DefaultTaskRunner } from "./services";
 export { ScheduledTaskLoader } from "./services";
 

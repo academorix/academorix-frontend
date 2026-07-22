@@ -5,6 +5,7 @@
  */
 
 import type { ICacheStore } from "./cache-store.interface";
+import type { ITaggedCache } from "./tagged-cache.interface";
 
 /**
  * Cache manager contract.
@@ -20,4 +21,18 @@ export interface ICacheManager {
 
   /** Register a custom store driver at runtime. */
   extend(name: string, creator: () => ICacheStore): void;
+
+  /**
+   * Resolve a tag-scoped cache. Every entry stored through the
+   * returned `ITaggedCache` is namespaced by the tag set — a
+   * `flush()` on the tagged cache invalidates every entry
+   * previously stored under the same tag combination.
+   *
+   * Every concrete manager in `@stackra/cache` implements this;
+   * minimal null/mock implementations should still surface a
+   * `tags()` method (may return a no-op `ITaggedCache`).
+   *
+   * @param tags - Tag names composing the namespace.
+   */
+  tags(tags: string[]): ITaggedCache;
 }

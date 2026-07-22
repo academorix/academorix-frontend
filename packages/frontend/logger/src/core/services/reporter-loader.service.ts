@@ -20,7 +20,7 @@ import {
   type OnApplicationBootstrap,
 } from "@stackra/contracts";
 
-import { REPORTER_METADATA_KEY } from "@/core/decorators/reporter-metadata.constant";
+import { LOGGER_REPORTER_METADATA_KEY } from "@stackra/contracts";
 
 /**
  * Reporter loader — auto-discovers and registers all @Reporter-decorated providers.
@@ -79,7 +79,7 @@ export class ReporterLoader implements OnApplicationBootstrap {
   public onApplicationBootstrap(): void {
     if (!this.discovery) return;
 
-    const providers = this.discovery.getProvidersByMetadata(REPORTER_METADATA_KEY);
+    const providers = this.discovery.getProvidersByMetadata(LOGGER_REPORTER_METADATA_KEY);
 
     for (const { instance } of providers) {
       if (this.isReporter(instance)) {

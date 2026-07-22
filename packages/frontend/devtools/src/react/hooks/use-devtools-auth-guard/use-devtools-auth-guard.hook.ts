@@ -13,7 +13,7 @@
  */
 
 import { useMemo } from "react";
-import type { IDevtoolsAuthGate } from "@stackra/contracts";
+import type { IAuthGuard, IDevtoolsAuthGate } from "@stackra/contracts";
 import { useOptionalInject } from "@stackra/container/react";
 import { AUTH_SERVICE } from "@stackra/contracts";
 
@@ -32,24 +32,18 @@ export interface IUseDevtoolsAuthGuardResult {
 }
 
 /**
- * Minimal `IAuthService` shape we consume — kept private to avoid
- * coupling to the full `@stackra/auth` runtime surface (which we
- * only optionally peer-depend on).
- */
-interface IAuthServiceLike {
-  readonly isAuthenticated?: boolean | (() => boolean);
-  readonly currentUser?: unknown;
-  can?: (ability: string, resource?: unknown) => boolean;
-}
-
-/**
  * Resolve a gate to `{ allowed, reason }`.
+ *
+ * Uses `IAuthGuard` (contracts) — the policy-shaped auth surface
+ * (isAuthenticated / currentUser / can) — rather than the full
+ * `IAuthService` workflow. Consumers who don't need login/logout
+ * pick the narrower shape.
  *
  * @param gate - Optional gate. When omitted, the hook always
  *   returns `{ allowed: true }`.
  */
 export function useDevtoolsAuthGuard(gate?: IDevtoolsAuthGate): IUseDevtoolsAuthGuardResult {
-  const authService = useOptionalInject<IAuthServiceLike>(AUTH_SERVICE);
+  const authService = useOptionalInject<IAuthGuard>(AUTH_SERVICE);
 
   return useMemo<IUseDevtoolsAuthGuardResult>(() => {
     // No gate → allow. This is the common case for the vast

@@ -17,6 +17,7 @@ import {
   CACHE_MANAGER,
   HTTP_CONFIG,
   HttpMethod,
+  type ICacheManager,
   type IHttpContext,
   type IHttpInterceptor,
   type IHttpModuleOptions,
@@ -41,22 +42,6 @@ interface ICachedResponse {
 }
 
 /**
- * Tagged-cache shape we depend on (subset of `@stackra/cache`).
- */
-interface ITaggedCacheLike {
-  get<T>(key: string): Promise<T | null>;
-  put<T>(key: string, value: T, ttlSeconds?: number): Promise<void>;
-  flush(): Promise<void>;
-}
-
-/**
- * Cache-manager shape we depend on.
- */
-interface ICacheManagerLike {
-  tags(tags: string[]): ITaggedCacheLike;
-}
-
-/**
  * Cache interceptor.
  */
 @HttpInterceptor({ priority: 60, name: "cache" })
@@ -70,7 +55,7 @@ export class CacheInterceptor implements IHttpInterceptor {
    */
   public constructor(
     @Inject(HTTP_CONFIG) private readonly config: IHttpModuleOptions,
-    @Optional() @Inject(CACHE_MANAGER) private readonly cache?: ICacheManagerLike,
+    @Optional() @Inject(CACHE_MANAGER) private readonly cache?: ICacheManager,
   ) {}
 
   /** @inheritdoc */

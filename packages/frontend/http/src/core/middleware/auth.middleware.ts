@@ -21,27 +21,11 @@ import {
   type IHttpMiddleware,
   type IHttpNextFunction,
   type IHttpResponse,
+  type ILockManager,
   type ITokenProvider,
 } from "@stackra/contracts";
 
 import { HttpMiddleware } from "../decorators/http-middleware.decorator";
-
-/**
- * Minimal `LockManager` shape used here. Avoids a hard import on
- * `@stackra/coordinator` so the auth middleware works in apps
- * without the coordinator package.
- */
-interface ILockManagerLike {
-  /**
-   * Run a critical section under a named lock.
-   *
-   * @typeParam T - Return value of `task`.
-   * @param name    - Lock name.
-   * @param task    - Critical section.
-   * @param options - Optional timeout etc.
-   */
-  run<T>(name: string, task: () => Promise<T>, options?: { timeoutMs?: number }): Promise<T>;
-}
 
 /**
  * Bearer-token auth middleware.
@@ -54,7 +38,7 @@ export class AuthMiddleware implements IHttpMiddleware {
    */
   public constructor(
     @Optional() @Inject(HTTP_TOKEN_PROVIDER) private readonly tokenProvider?: ITokenProvider,
-    @Optional() @Inject(TAB_LOCK_MANAGER) private readonly lockManager?: ILockManagerLike,
+    @Optional() @Inject(TAB_LOCK_MANAGER) private readonly lockManager?: ILockManager,
   ) {}
 
   /** @inheritdoc */

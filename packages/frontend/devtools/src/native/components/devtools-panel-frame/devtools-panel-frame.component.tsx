@@ -15,19 +15,12 @@ import { useEffect, useMemo, type ReactElement } from "react";
 import { Text, View } from "react-native";
 import { Card, Chip } from "@stackra/ui/native";
 import { useOptionalInject } from "@stackra/container/react";
-import { AUTH_SERVICE, type IDevtoolsAuthGate } from "@stackra/contracts";
+import { AUTH_SERVICE, type IAuthGuard, type IDevtoolsAuthGate } from "@stackra/contracts";
 
 import { useNativeDevtoolsContext } from "../../hooks/use-native-devtools-context";
 import { DevtoolsPanelLocked } from "../devtools-panel-locked";
 import { DevtoolsPanelView } from "../devtools-panel-view";
 import type { DevtoolsPanelFrameProps } from "./devtools-panel-frame.interface";
-
-/** Minimal shape we consume from the optional auth service. */
-interface IAuthServiceLike {
-  readonly isAuthenticated?: boolean | (() => boolean);
-  readonly currentUser?: unknown;
-  can?: (ability: string, resource?: unknown) => boolean;
-}
 
 /** Resolved gate state for the frame. */
 type GateState =
@@ -40,7 +33,7 @@ type GateState =
  */
 function resolveGate(
   gate: IDevtoolsAuthGate | undefined,
-  authService: IAuthServiceLike | undefined,
+  authService: IAuthGuard | undefined,
 ): GateState {
   if (!gate) return { allowed: true };
   if (!authService) return { allowed: true };
@@ -57,7 +50,7 @@ function resolveGate(
  * Renders the current panel with a header + gate + view.
  */
 export function DevtoolsPanelFrame({ panel }: DevtoolsPanelFrameProps): ReactElement {
-  const authService = useOptionalInject<IAuthServiceLike>(AUTH_SERVICE);
+  const authService = useOptionalInject<IAuthGuard>(AUTH_SERVICE);
   const { analytics } = useNativeDevtoolsContext();
 
   // Emit `PANEL_ACTIVATED` once per activation (fresh mount).

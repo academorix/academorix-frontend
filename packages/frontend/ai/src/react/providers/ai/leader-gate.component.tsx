@@ -13,15 +13,9 @@
 
 import { useEffect } from "react";
 import { useInject, useOptionalInject } from "@stackra/container/react";
-import { AI_CONTEXT_COLLECTOR, TAB_COORDINATOR } from "@stackra/contracts";
+import { AI_CONTEXT_COLLECTOR, TAB_COORDINATOR, type ITabCoordinator } from "@stackra/contracts";
 
 import { ContextCollector } from "@/core/services/context-collector.service";
-
-/** Minimal structural view of the coordinator's `TabCoordinator`. */
-interface ITabCoordinatorLike {
-  isLeader(): boolean;
-  onRoleChange(cb: (role: "leader" | "follower") => void): () => void;
-}
 
 /**
  * Wires `TabCoordinator.onRoleChange` into `ContextCollector.setLeader`.
@@ -32,11 +26,14 @@ interface ITabCoordinatorLike {
  */
 export function LeaderGate(): null {
   const collector = useInject<ContextCollector>(AI_CONTEXT_COLLECTOR);
-  const coordinator = useOptionalInject<ITabCoordinatorLike>(TAB_COORDINATOR);
+  const coordinator = useOptionalInject<ITabCoordinator>(TAB_COORDINATOR);
 
   useEffect(() => {
     if (!coordinator) return;
     collector.setLeader(coordinator.isLeader());
+    // TabRole is a string-union enum with 'leader' / 'follower' values —
+    // the tuple listener signature is compatible with the single-arg
+    // callback here (extra `previous` param is ignored).
     return coordinator.onRoleChange((role) => {
       collector.setLeader(role === "leader");
     });

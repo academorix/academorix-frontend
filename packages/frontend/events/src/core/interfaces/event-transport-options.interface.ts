@@ -1,44 +1,27 @@
 /**
  * @file event-transport-options.interface.ts
  * @module @stackra/events/core/interfaces
- *
- * @description
- * Legacy re-export of `IEventTransportOptions` + the `IEventTransport`
- * contract. The canonical shapes now live in
- * `@stackra/contracts/interfaces/events`.
+ * @description Package-owned `IEventTransport` behavior interface.
+ *   `IEventTransportOptions` is contract vocabulary — import it
+ *   directly from `@stackra/contracts` per
+ *   `.kiro/steering/contract-reexports.md`.
  */
 
-export type { IEventTransportOptions } from "@stackra/contracts";
-
-import type { IEventEmitterSync } from "@stackra/contracts";
+import type { EventEmitter } from "../services/event-emitter.service";
 
 /**
- * Contract that transport classes must implement.
- *
- * At bootstrap, the `EventSubscribersLoader` calls `connect(emitter)`
- * on each discovered transport. The transport then listens to its
- * external source and re-emits events on the provided emitter. On
- * shutdown, `disconnect()` is called to clean up resources.
- *
- * NOTE: this contract lives in the events package (not contracts)
- * because it describes a runtime concern — transports call into the
- * emitter. Options interfaces live in contracts; behavior contracts
- * live with their runtime.
+ * Behavior interface every `@EventTransport()`-decorated class must
+ * implement. The `EventSubscribersLoader` connects each discovered
+ * transport at bootstrap and disconnects it at shutdown.
  */
 export interface IEventTransport {
-  /**
-   * Connect the transport to the event emitter.
-   *
-   * Called once at application bootstrap. The transport should start
-   * listening to its external source and forward events to the emitter.
-   *
-   * @param emitter - The application's EventEmitter instance
-   */
-  connect(emitter: IEventEmitterSync): void;
+  /** Attach the transport to the active emitter. */
+  connect(emitter: EventEmitter): void | Promise<void>;
 
   /**
-   * Disconnect the transport and release resources.
-   * Called on application shutdown. Close sockets, clear intervals, etc.
+   * Detach the transport. Called on shutdown / disconnect. Required
+   * — matches the historical shape the `EventTransportRegistry`
+   * relies on.
    */
-  disconnect(): void;
+  disconnect(): void | Promise<void>;
 }

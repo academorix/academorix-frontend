@@ -25,7 +25,7 @@ export { EventSubscribersLoader } from "./services";
 export { OnEvent } from "./decorators";
 export { EventTransport } from "./decorators";
 export { InjectEventEmitter } from "./decorators";
-export { EventSubscriber, EVENT_SUBSCRIBER_METADATA } from "./decorators";
+export { EventSubscriber } from "./decorators";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Errors
@@ -44,11 +44,13 @@ export {
 } from "./constants";
 
 // ════════════════════════════════════════════════════════════════════════════════
-// Interfaces
+// Interfaces — package-owned only. Contract shapes
+// (IOnEventMetadata, IOnEventOptions, IEventTransportOptions,
+// IEventSubscriberMap) live in @stackra/contracts; import from
+// there directly per contract-reexports.md.
 // ════════════════════════════════════════════════════════════════════════════════
 export type { IEventEmitterConfig } from "./interfaces";
-export type { IOnEventMetadata, IOnEventOptions } from "./interfaces";
-export type { IEventTransportOptions, IEventTransport } from "./interfaces";
+export type { IEventTransport } from "./interfaces";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Utilities

@@ -46,7 +46,7 @@ export { PrettyFormatter } from "./formatters";
 // ============================================================================
 // Decorators
 // ============================================================================
-export { Reporter, REPORTER_METADATA_KEY } from "./decorators";
+export { Reporter } from "./decorators";
 
 // ============================================================================
 // Utilities

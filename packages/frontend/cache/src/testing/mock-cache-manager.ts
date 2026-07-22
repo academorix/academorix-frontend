@@ -8,7 +8,7 @@
  *   mock is a drop-in replacement for a real `CacheManager`.
  */
 
-import type { ICacheManager, ICacheStore } from "@stackra/contracts";
+import type { ICacheManager, ICacheStore, ITaggedCache } from "@stackra/contracts";
 import { MockCacheStore } from "./mock-cache-store";
 
 /**
@@ -51,5 +51,26 @@ export class MockCacheManager implements ICacheManager {
     this.creators.set(name, creator);
     // Invalidate any cached instance so the next `.store(name)` re-creates.
     this.stores.delete(name);
+  }
+
+  /**
+   * Minimal `tags()` for testing — returns a bare `ITaggedCache`
+   * shaped as a per-tag-set in-memory map. Not a full production
+   * `TaggedCache` (no namespacing / hashing); tests that need
+   * realistic tag behaviour should mount the real `CacheManager`.
+   */
+  public tags(_tags: string[]): ITaggedCache {
+    const local = new Map<string, unknown>();
+    return {
+      async get<T>(key: string): Promise<T | undefined> {
+        return local.get(key) as T | undefined;
+      },
+      async put<T>(key: string, value: T): Promise<void> {
+        local.set(key, value);
+      },
+      async flush(): Promise<void> {
+        local.clear();
+      },
+    };
   }
 }

@@ -127,26 +127,30 @@ export class InstanceLoader {
       (a, b) => a.distance - b.distance,
     ); // Sort by distance for breadth-first
 
-    // ══════════════════════════════════════════════════════════════
-    // DIAGNOSTIC LOGGING — unconditional, always on. Prints every
-    // provider being instantiated + every lifecycle hook firing so a
-    // hang can be traced to the exact provider/hook responsible.
-    // Remove or gate behind `logger?.enabled` once boot is healthy.
-    // ══════════════════════════════════════════════════════════════
+    // Diagnostic logging + per-hook watchdogs are gated behind
+    // `logger?.enabled`. Consumers who want boot tracing wire a
+    // `ContainerLogger` (enabled=true) into `createInstances(logger)`.
+    // Without it, no framework logs land in the console — the
+    // framework kernel stays quiet in production.
+    const debug = logger?.enabled === true;
     const TAG = "%c[loader]";
     const STYLE = "color: #f59e0b; font-weight: bold";
-    console.log(TAG, STYLE, `createInstances start — ${modules.length} module(s) queued`);
+    if (debug) {
+      console.log(TAG, STYLE, `createInstances start — ${modules.length} module(s) queued`);
+      console.log(TAG, STYLE, "phase 1 — resolving providers");
+    }
 
     // Phase 1: Resolve all providers
-    console.log(TAG, STYLE, "phase 1 — resolving providers");
     for (const moduleRef of modules) {
       const t = performance.now();
       await this.injector.resolveProviders(moduleRef);
-      console.log(
-        TAG,
-        STYLE,
-        `  resolved module "${String(moduleRef.token)}" in ${(performance.now() - t).toFixed(0)}ms`,
-      );
+      if (debug) {
+        console.log(
+          TAG,
+          STYLE,
+          `  resolved module "${String(moduleRef.token)}" in ${(performance.now() - t).toFixed(0)}ms`,
+        );
+      }
 
       // Log resolutions for this module
       if (logger?.enabled) {
@@ -165,18 +169,18 @@ export class InstanceLoader {
     }
 
     // Phase 2: Call onModuleInit() lifecycle hooks
-    console.log(TAG, STYLE, "phase 2 — onModuleInit hooks");
+    if (debug) console.log(TAG, STYLE, "phase 2 — onModuleInit hooks");
     for (const moduleRef of modules) {
       await this.callModuleInitHooks(moduleRef, logger);
     }
 
     // Phase 3: Call onApplicationBootstrap() lifecycle hooks
-    console.log(TAG, STYLE, "phase 3 — onApplicationBootstrap hooks");
+    if (debug) console.log(TAG, STYLE, "phase 3 — onApplicationBootstrap hooks");
     for (const moduleRef of modules) {
       await this.callApplicationBootstrapHooks(moduleRef, logger);
     }
 
-    console.log(TAG, STYLE, "createInstances complete");
+    if (debug) console.log(TAG, STYLE, "createInstances complete");
   }
 
   /**
@@ -254,33 +258,38 @@ export class InstanceLoader {
       if (wrapper.isResolved && wrapper.instance && hasOnModuleInit(wrapper.instance)) {
         const name = wrapper.metatype?.name ?? wrapper.token?.toString() ?? "unknown";
         const t0 = performance.now();
+        const debug = logger?.enabled === true;
 
-        // Diagnostic: unconditional log before each hook so a hang
-        // is attributable to the last-logged provider. Arm a
-        // watchdog that fires if the hook takes > 5 s to hint at
-        // network/IO hangs.
-        console.log(
-          "%c[loader]",
-          "color: #f59e0b; font-weight: bold",
-          `  onModuleInit → ${name} (module "${String(moduleRef.token)}")`,
-        );
-        const watchdog = setTimeout(() => {
-          console.warn(
-            "%c[loader]",
-            "color: #dc2626; font-weight: bold",
-            `  ⚠ onModuleInit → ${name} STILL RUNNING after 5s — potential hang`,
-          );
-        }, 5000);
-
-        try {
-          await wrapper.instance.onModuleInit();
-          clearTimeout(watchdog);
-          const elapsed = performance.now() - t0;
+        // Debug tracing + 5s watchdog only when a ContainerLogger
+        // is wired. See `createInstances` header comment.
+        if (debug) {
           console.log(
             "%c[loader]",
             "color: #f59e0b; font-weight: bold",
-            `  onModuleInit ← ${name} (${elapsed.toFixed(0)}ms)`,
+            `  onModuleInit → ${name} (module "${String(moduleRef.token)}")`,
           );
+        }
+        const watchdog = debug
+          ? setTimeout(() => {
+              console.warn(
+                "%c[loader]",
+                "color: #dc2626; font-weight: bold",
+                `  ⚠ onModuleInit → ${name} STILL RUNNING after 5s — potential hang`,
+              );
+            }, 5000)
+          : undefined;
+
+        try {
+          await wrapper.instance.onModuleInit();
+          if (watchdog !== undefined) clearTimeout(watchdog);
+          const elapsed = performance.now() - t0;
+          if (debug) {
+            console.log(
+              "%c[loader]",
+              "color: #f59e0b; font-weight: bold",
+              `  onModuleInit ← ${name} (${elapsed.toFixed(0)}ms)`,
+            );
+          }
           if (logger?.enabled) {
             logger.logLifecycle({
               provider: name,
@@ -290,8 +299,10 @@ export class InstanceLoader {
             });
           }
         } catch (error: Error | any) {
-          clearTimeout(watchdog);
+          if (watchdog !== undefined) clearTimeout(watchdog);
           const elapsed = performance.now() - t0;
+          // Errors always surface — even in production. A silent
+          // lifecycle failure is worse than a noisy one.
           console.error(
             "%c[loader]",
             "color: #dc2626; font-weight: bold",
@@ -328,30 +339,38 @@ export class InstanceLoader {
       if (wrapper.isResolved && wrapper.instance && hasOnApplicationBootstrap(wrapper.instance)) {
         const name = wrapper.metatype?.name ?? wrapper.token?.toString() ?? "unknown";
         const t0 = performance.now();
+        const debug = logger?.enabled === true;
 
-        // Diagnostic: unconditional log + 5-second watchdog per hook.
-        console.log(
-          "%c[loader]",
-          "color: #f59e0b; font-weight: bold",
-          `  onApplicationBootstrap → ${name} (module "${String(moduleRef.token)}")`,
-        );
-        const watchdog = setTimeout(() => {
-          console.warn(
-            "%c[loader]",
-            "color: #dc2626; font-weight: bold",
-            `  ⚠ onApplicationBootstrap → ${name} STILL RUNNING after 5s — potential hang`,
-          );
-        }, 5000);
-
-        try {
-          await wrapper.instance.onApplicationBootstrap();
-          clearTimeout(watchdog);
-          const elapsed = performance.now() - t0;
+        // Debug tracing + 5s watchdog only when a ContainerLogger
+        // is wired. See `createInstances` header comment.
+        if (debug) {
           console.log(
             "%c[loader]",
             "color: #f59e0b; font-weight: bold",
-            `  onApplicationBootstrap ← ${name} (${elapsed.toFixed(0)}ms)`,
+            `  onApplicationBootstrap → ${name} (module "${String(moduleRef.token)}")`,
           );
+        }
+        const watchdog = debug
+          ? setTimeout(() => {
+              console.warn(
+                "%c[loader]",
+                "color: #dc2626; font-weight: bold",
+                `  ⚠ onApplicationBootstrap → ${name} STILL RUNNING after 5s — potential hang`,
+              );
+            }, 5000)
+          : undefined;
+
+        try {
+          await wrapper.instance.onApplicationBootstrap();
+          if (watchdog !== undefined) clearTimeout(watchdog);
+          const elapsed = performance.now() - t0;
+          if (debug) {
+            console.log(
+              "%c[loader]",
+              "color: #f59e0b; font-weight: bold",
+              `  onApplicationBootstrap ← ${name} (${elapsed.toFixed(0)}ms)`,
+            );
+          }
           if (logger?.enabled) {
             logger.logLifecycle({
               provider: name,
@@ -361,8 +380,10 @@ export class InstanceLoader {
             });
           }
         } catch (error: Error | any) {
-          clearTimeout(watchdog);
+          if (watchdog !== undefined) clearTimeout(watchdog);
           const elapsed = performance.now() - t0;
+          // Errors always surface — even in production. A silent
+          // lifecycle failure is worse than a noisy one.
           console.error(
             "%c[loader]",
             "color: #dc2626; font-weight: bold",

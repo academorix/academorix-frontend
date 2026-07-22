@@ -6,6 +6,7 @@
 
 export type { ICacheStore } from "./cache-store.interface";
 export type { ICacheManager } from "./cache-manager.interface";
+export type { ITaggedCache } from "./tagged-cache.interface";
 export type {
   ICacheEventBase,
   ICacheHitPayload,
