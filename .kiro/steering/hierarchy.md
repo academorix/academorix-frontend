@@ -61,7 +61,7 @@ canonical class name; synonyms are rejected in review.
 | Employed/engaged person, wraps a User with employment metadata                          | **Staff**                | Employee, StaffMember                                 |
 | A Staff row acting as a coach with a sport-specific profile                             | **Coach**                | Trainer, Instructor                                   |
 | The parent's paid subscription enrolling an Athlete on a plan (renewing money contract) | **Membership** (Finance) | Enrolment, Signup, Subscription (that's the SaaS one) |
-| The academy's SaaS subscription to Stackra (money the tenant owes Stackra)        | **TenantSubscription**   | Subscription (ambiguous with Membership)              |
+| The academy's SaaS subscription to Stackra (money the tenant owes Stackra)              | **TenantSubscription**   | Subscription (ambiguous with Membership)              |
 | A single admission/visit a Membership entitles the Athlete to                           | **Pass**                 | Ticket, Voucher, Credit                               |
 | 1:1 PII satellite of a User (name, phone, avatar, locale, tz)                           | **Profile**              | UserProfile (redundant), Details                      |
 | Polymorphic roster row on a Team (usually points at an AthleteEnrollment)               | **TeamMember**           | Roster, Player, TeamPlayer                            |
@@ -364,6 +364,14 @@ Full decision tree lives at `.kiro/specs/observability/design.md`.
 
 ## 12. Service split
 
+> **ADR anchor.** This section codifies
+> [ADR-0032](../../docs/adr/0032-six-service-split.md) — six-service deployment
+> split (Option B). Cross-service authentication (user JWT +
+> `X-Service-Identity` header) is codified in
+> [ADR-0033](../../docs/adr/0033-cross-service-authentication-contract.md).
+> Operational contract + per-service ownership map lives at
+> [`docs/services.md`](../../docs/services.md).
+
 ```
 identity-service              SHARED across all Applications
     ├── modules/foundation
@@ -551,11 +559,10 @@ the parent's module. If it's a new domain, spin up a new module under
 - ADR-0019 — Tenant settings go through `stackra/settings`.
 - ADR-0020 — Bootstrapper vs TenancyHook are two different concepts.
 
-Architecture rules the aggregate must satisfy:
-`EnumUsesEnumTraitRule`, `ServiceProviderHasModuleAttributeRule`,
-`ExceptionsExtendBaseRule`, `ActionHasAsActionAttributeRule`,
-`NoServiceLayerRule`, `NoBaseControllerRule`, `NoWorkspaceInBackendRule`,
-`NoTenantMembershipTokenRule`.
+Architecture rules the aggregate must satisfy: `EnumUsesEnumTraitRule`,
+`ServiceProviderHasModuleAttributeRule`, `ExceptionsExtendBaseRule`,
+`ActionHasAsActionAttributeRule`, `NoServiceLayerRule`, `NoBaseControllerRule`,
+`NoWorkspaceInBackendRule`, `NoTenantMembershipTokenRule`.
 
 **Step 5 — Which SDK?**
 

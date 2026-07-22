@@ -6,9 +6,11 @@ fileMatchPattern: "**/*.php"
 # Octane-first dependency injection
 
 > **ADR anchor.** This steering codifies
-> [ADR-0025](../../docs/adr/0025-runtime-target-laravel-octane.md) — Runtime
+> [ADR-0028](../../docs/adr/0028-runtime-target-laravel-octane.md) — Runtime
 > target: Laravel Octane; every service is Octane-safe by construction. The
-> "when in doubt, `#[Scoped]`" rule below is the invariant that ADR pins.
+> "when in doubt, `#[Scoped]`" rule below is the invariant that ADR pins. Driver
+> selection (Swoole today) lives in
+> [ADR-0034](../../docs/adr/0034-octane-driver-swoole.md).
 
 Every Stackra backend app targets Laravel Octane in production (Roadrunner or
 Swoole worker pool). Octane keeps the framework + the container **alive between

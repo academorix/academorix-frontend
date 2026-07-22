@@ -5,6 +5,13 @@ fileMatchPattern: "**/{Models,Contracts/Data,database/migrations,Repositories,Co
 
 # Models, migrations, and column constants
 
+> **ADR anchor.** Migration dependency ordering (transitive resolution across
+> the ~90-package boot graph) is codified by
+> [ADR-0035](../../docs/adr/0035-migration-dependency-ordering.md). Every base
+> migration ships a marker class under `src/Database/Markers/`; every dependent
+> migration declares `#[DependsOn(<Table>Table::class)]`. See §Migration
+> ordering below.
+
 Reference implementation:
 `old/backend/modules/reviewing/**/{Models,Contracts/Data,database/migrations,Repositories}/*.php`.
 Match that style when writing anything in `Models/`, `Contracts/Data/`,
@@ -238,14 +245,14 @@ return new class() extends Migration
 
 ## 4. Anti-patterns
 
-| Anti-pattern                                                | Preferred                                                                           |
-| ----------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `->where('tenant_id', $id)` in a repo                       | `->where(<Model>Interface::ATTR_TENANT_ID, $id)`                                    |
-| `#[Fillable('name', 'email')]`                              | `#[Fillable([<Model>Interface::ATTR_NAME, <Model>Interface::ATTR_EMAIL])]`          |
-| `$table->string('name')` in a migration                     | `$table->string(<Model>Interface::ATTR_NAME)`                                       |
-| Multi-section class docblock with `## Why` / `## Rationale` | 3-8 line class docblock; put rationale in an ADR                                    |
-| Per-package `xyz_audit_log` table                           | Compose `Auditable` on the writable model; use shared `audits` table                |
-| `@property string $name` dump on the model                  | Skip — `implements <Model>Interface` already documents columns                      |
+| Anti-pattern                                                | Preferred                                                                        |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `->where('tenant_id', $id)` in a repo                       | `->where(<Model>Interface::ATTR_TENANT_ID, $id)`                                 |
+| `#[Fillable('name', 'email')]`                              | `#[Fillable([<Model>Interface::ATTR_NAME, <Model>Interface::ATTR_EMAIL])]`       |
+| `$table->string('name')` in a migration                     | `$table->string(<Model>Interface::ATTR_NAME)`                                    |
+| Multi-section class docblock with `## Why` / `## Rationale` | 3-8 line class docblock; put rationale in an ADR                                 |
+| Per-package `xyz_audit_log` table                           | Compose `Auditable` on the writable model; use shared `audits` table             |
+| `@property string $name` dump on the model                  | Skip — `implements <Model>Interface` already documents columns                   |
 | Duplicating `paginate` / `findById` on the repo interface   | Extend `RepositoryInterface<Model>` from `stackra/crud`; add only domain finders |
 
 ## 5. File structure and traits — one file per model

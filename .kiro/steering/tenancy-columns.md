@@ -5,7 +5,7 @@ inclusion: always
 # Tenancy, application, and scope columns
 
 > **ADR anchor.** This steering codifies
-> [ADR-0024](../../docs/adr/0024-row-level-attribution-three-axes.md) —
+> [ADR-0027](../../docs/adr/0027-row-level-attribution-three-axes.md) —
 > Row-level attribution: three-axes column contract (`tenant_id` /
 > `application_id` / `scope_node_id`). §§1-5 below are the enforceable surface
 > of that ADR; §§6-9 are its operational tail (enforcement points, auditor
@@ -25,32 +25,57 @@ such.
 Three column families answer three different questions. They do NOT substitute
 for each other. A row can need one, two, or three of them; most rows need one.
 
-| Axis            | Column                                 | Answers                                                        | Substrate                                                                                                      |
-| --------------- | -------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| **Tenant**      | `tenant_id` (uuid)                     | "Which tenant owns this row?"                                  | Direct FK. `BelongsToTenant` trait applies the global scope + fills the column on save.                        |
-| **Application** | `application_id` (uuid)                | "Which of the N Stackra products does this row belong to?"  | Direct FK on the 8 top-level rows only. Cascades through `tenant_id` for everything else — never a shortcut.   |
-| **Scope**       | `scope_node_id` (uuid) + `#[ScopedTo]` | "What cascading-resolution path does this row participate in?" | `stackra/scope` substrate. Materialised path. **Configuration consumers only** — never on domain data rows. |
+| Axis            | Column                                 | Answers                                                        | Substrate                                                                                                    |
+| --------------- | -------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **Tenant**      | `tenant_id` (uuid)                     | "Which tenant owns this row?"                                  | Direct FK. `BelongsToTenant` trait applies the global scope + fills the column on save.                      |
+| **Application** | `application_id` (uuid)                | "Which of the N Stackra products does this row belong to?"     | Direct FK on the 8 top-level rows only. Cascades through `tenant_id` for everything else — never a shortcut. |
+| **Scope**       | `scope_node_id` (uuid) + `#[ScopedTo]` | "What cascading-resolution path does this row participate in?" | `stackra/scope` substrate. Materialised path. **Configuration consumers only** — never on domain data rows.  |
 
 Rule of thumb: if you can't state the question your column answers in one
 sentence from that table, you're using the wrong axis.
 
-## 2. The `application_id` mandate (locked)
+## 2. The `application_id` mandate (locked, 12 rows)
 
-Only **eight** row types carry `application_id` directly. Every other row
-cascades through `tenant_id`.
+> **ADR anchor.** The base 8-row mandate is codified by
+> [ADR-0027](../../docs/adr/0027-row-level-attribution-three-axes.md) §D2. The
+> extension from 8 → 12 rows for central-plane infrastructure is codified by
+> [ADR-0031](../../docs/adr/0031-application-id-central-plane-extension.md).
+
+Only **twelve** row types carry `application_id` directly. Every other row
+cascades through `tenant_id`. The list is CLOSED — adding a 13th row requires a
+new ADR that names it.
+
+The 12 rows split into two subgroups:
+
+- **The base 8 (ADR-0027 §D2)** — per-Application top-level aggregates that
+  every tenant-scoped row cascades through.
+- **The 4 central-plane extensions (ADR-0031 §D1)** — infrastructure rows that
+  operate ABOVE the tenant plane; no cascade path through `tenants` exists at
+  their layer.
 
 ```
-Row                        Column                Notes
-─────────────────────────  ────────────────────  ──────────────────────────
-tenants                    application_id  ✅    required, UNIQUE(application_id, slug)
-users                      application_id  ✅    required, UNIQUE(identity_id, application_id)
-roles                      application_id  ✅    nullable (null = platform_admin guard)
-permissions                application_id  ✅    nullable (null = platform_admin guard)
-tenant_subscriptions       application_id  ✅    required, scoped by (application_id, tenant_id)
-entitlement_licenses       application_id  ✅    required, scoped by (application_id, tenant_id)
-audits                     application_id  ✅    required for tenant-audience, nullable for platform
-activity_log               application_id  ✅    required for tenant-audience, nullable for platform
+Row                        Column                Notes                                                     Group
+─────────────────────────  ────────────────────  ────────────────────────────────────────────────────────  ─────────────
+tenants                    application_id  ✅    required, UNIQUE(application_id, slug)                    base (0027)
+users                      application_id  ✅    required, UNIQUE(identity_id, application_id)             base (0027)
+roles                      application_id  ✅    nullable (null = platform_admin guard)                    base (0027)
+permissions                application_id  ✅    nullable (null = platform_admin guard)                    base (0027)
+tenant_subscriptions       application_id  ✅    required, scoped by (application_id, tenant_id)           base (0027)
+entitlement_licenses       application_id  ✅    required, scoped by (application_id, tenant_id)           base (0027)
+audits                     application_id  ✅    required for tenant-audience, nullable for platform       base (0027)
+activity_log               application_id  ✅    required for tenant-audience, nullable for platform       base (0027)
+plans                      application_id  ✅    required — product catalog is per-Application             extension (0031)
+auth_jwt_signing_keys      application_id  ✅    required — JWKS keyring is per-Application                extension (0031)
+service_accounts           application_id  ✅    required — machine credentials scoped per Application     extension (0031)
+domains                    application_id  ✅    required — host resolution runs above tenant plane        extension (0031)
 ```
+
+The four extension rows carry `application_id` as **required**, not nullable.
+Their central-plane role has no "platform-wide" audience (unlike `audits` and
+`activity_log`, which can be platform-audience because a super-admin action
+legitimately has no tenant / no application). Plans + JWKS + service accounts
+
+- domains are always per-Application by construction.
 
 **Everything else is forbidden from carrying `application_id`.** Application
 flows through `tenant_id → tenants.application_id`. Adding `application_id` to
@@ -60,16 +85,17 @@ AI/Auth/Access domain row is a schema violation.
 Enforced by:
 
 - Migration review — every new migration that adds `application_id` outside the
-  8 rows must be rejected.
+  12 rows must be rejected.
 - `ApplicationMismatch` (422) on cross-app writes at the write path.
-- The **tenancy-compliance-auditor** agent (see §7).
+- The **tenancy-compliance-auditor** agent (see §7) — its R3 allow-list
+  recognises all 12 rows as compliant per ADR-0031 §D5.
 
 ## 3. The `tenant_id` mandate
 
 Every domain row that lives below Tenant carries `tenant_id`. Every module below
 owns rows tenant-scoped this way. Use the
-`Stackra\Tenancy\Concerns\BelongsToTenant` trait — it applies the global
-scope + auto-fills on save + registers the FK.
+`Stackra\Tenancy\Concerns\BelongsToTenant` trait — it applies the global scope +
+auto-fills on save + registers the FK.
 
 ### Package matrix (current + target)
 
@@ -156,7 +182,7 @@ shortcut always drifts.
 
 | Forbidden                                                         | On                                                        | Why                                                               | Correct path                                        |
 | ----------------------------------------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------------- | --------------------------------------------------- |
-| `application_id`                                                  | Any row below Tenant except the 8 named in §2             | Cascades through `tenant_id`                                      | Join through `tenants` if the answer's ever needed  |
+| `application_id`                                                  | Any row below Tenant except the 12 named in §2            | Cascades through `tenant_id`                                      | Join through `tenants` if the answer's ever needed  |
 | `region_id`                                                       | `organizations`                                           | Regions + Orgs are orthogonal                                     | They meet at Branch                                 |
 | `organization_id`                                                 | `facilities`, `regions`                                   | Facilities cascade through `branch_id`; Regions are tenant-scoped | Join through `branches` for facility→org            |
 | `scope_node_id`                                                   | Any tenant-scoped domain row that isn't a config consumer | Not what scope is for                                             | Use `tenant_id`                                     |
@@ -313,22 +339,45 @@ Update this section every time a schema change lands or a new package joins the
 codebase. The auditor agent reads it to know what's expected to exist vs what's
 a known deferred fix.
 
-| Gap                                                                                                                               | Owner                       | Blocker                                      | Priority |
-| --------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | -------------------------------------------- | -------- |
-| Add `tenant_id` to `audits`                                                                                                       | Audit module                | None                                         | High     |
-| Add `tenant_id` to `activity_log`                                                                                                 | Activity module             | None                                         | High     |
-| Split `User` into `Identity` + `User` (per-app)                                                                                   | Identity + User modules     | Identity spec landing                        | High     |
-| Add `application_id` to `tenants`                                                                                                 | Tenancy module              | Application module scaffold                  | High     |
-| Add `application_id` to `users` (post-split)                                                                                      | User module                 | Identity split                               | High     |
-| Add `application_id` to `roles`, `permissions`                                                                                    | Access module               | Application module scaffold                  | High     |
-| Add `application_id` to `tenant_subscriptions`, `entitlement_licenses`                                                            | Subscription + Entitlements | Application module scaffold                  | High     |
-| Add `application_id` to `audits`, `activity_log`                                                                                  | Audit + Activity            | Post-tenant_id + Application module scaffold | Medium   |
-| Register `settings` as scope consumer                                                                                             | settings module             | None                                         | Medium   |
-| Register `Access` permission overlay as scope consumer                                                                            | Access module               | Post-Identity split                          | Low      |
-| Verify Auth models against Identity split                                                                                         | Auth module                 | Identity spec landing                        | Deferred |
-| `ServiceAccount` model + `service_accounts` migration (Laravel side of `docs/contracts/service-identity.schema.json`)             | Auth / Access               | None                                         | High     |
-| `ServiceJwt` signer + verifier (Laravel side of `docs/contracts/service-jwt.schema.json`; HS256, `>=32`-byte secret from Doppler) | Auth                        | `ServiceAccount` landing                     | High     |
-| `packages/domain/` — shared HTTP-DTO package referenced by `docs/service-boundary.md` + `docs/contracts/README.md`                | Foundation                  | `docs/contracts/*.schema.json` finalised     | Medium   |
+### 9a. Open gaps
+
+| Gap                                                                                                                                  | Owner                       | Blocker                                      | Priority |
+| ------------------------------------------------------------------------------------------------------------------------------------ | --------------------------- | -------------------------------------------- | -------- |
+| Add `tenant_id` to `audits`                                                                                                          | Audit module                | None                                         | High     |
+| Add `tenant_id` to `activity_log`                                                                                                    | Activity module             | None                                         | High     |
+| Split `User` into `Identity` + `User` (per-app)                                                                                      | Identity + User modules     | Identity spec landing                        | High     |
+| Add `application_id` to `tenants`                                                                                                    | Tenancy module              | Application module scaffold                  | High     |
+| Add `application_id` to `users` (post-split)                                                                                         | User module                 | Identity split                               | High     |
+| Add `application_id` to `roles`, `permissions`                                                                                       | Access module               | Application module scaffold                  | High     |
+| Add `application_id` to `tenant_subscriptions`, `entitlement_licenses`                                                               | Subscription + Entitlements | Application module scaffold                  | High     |
+| Add `application_id` to `audits`, `activity_log`                                                                                     | Audit + Activity            | Post-tenant_id + Application module scaffold | Medium   |
+| Register `settings` as scope consumer                                                                                                | settings module             | None                                         | Medium   |
+| Register `Access` permission overlay as scope consumer                                                                               | Access module               | Post-Identity split                          | Low      |
+| Verify Auth models against Identity split                                                                                            | Auth module                 | Identity spec landing                        | Deferred |
+| `ServiceAccount` model + `service_accounts` migration (Laravel side of `docs/contracts/service-identity.v1.schema.json`)             | Auth / Access               | None                                         | High     |
+| `ServiceJwt` signer + verifier (Laravel side of `docs/contracts/service-jwt.v1.schema.json`; HS256, `>=32`-byte secret from Doppler) | Auth                        | `ServiceAccount` landing                     | High     |
+| `packages/domain/` — shared HTTP-DTO package referenced by `docs/service-boundary.md` + `docs/contracts/README.md`                   | Foundation                  | `docs/contracts/*.schema.json` finalised     | Medium   |
+
+### 9b. Closed rows (E9 batch — ADR-0031 §D3)
+
+The E9 batch drops `application_id` from 11 domain rows and rewrites 2 composite
+unique indexes to their natural keys. Every row cascades through a legitimate
+parent (`tenants.application_id`, `users.application_id`,
+`roles.application_id`, `permissions.application_id`) so no attribution is lost.
+
+| Row                          | Package                            | Cascade path                 | Index change                                                                                        |
+| ---------------------------- | ---------------------------------- | ---------------------------- | --------------------------------------------------------------------------------------------------- |
+| `role_delegations`           | access/delegation                  | `roles.application_id`       | none                                                                                                |
+| `invitations`                | access/invitations                 | `tenants.application_id`     | none                                                                                                |
+| `invitation_events`          | access/invitations                 | `invitations.tenant_id`      | none                                                                                                |
+| `model_has_permissions`      | access/rbac (spatie pivot)         | `permissions.application_id` | none                                                                                                |
+| `model_has_roles`            | access/rbac (spatie pivot)         | `roles.application_id`       | none                                                                                                |
+| `role_has_permissions`       | access/rbac (spatie pivot)         | both parents                 | none                                                                                                |
+| `access_request_projections` | access/requests                    | `users.application_id`       | none                                                                                                |
+| `in_app_messages`            | notifications/notifications-in-app | `tenants.application_id`     | none                                                                                                |
+| `push_subscriptions`         | notifications/notifications-push   | `users.application_id`       | `(user_id, application_id, device_token_fingerprint)` → `(user_id, device_token_fingerprint)`       |
+| `notifications`              | notifications/notifications        | `tenants.application_id`     | none                                                                                                |
+| `approval_templates`         | workflow/approvals                 | `tenants.application_id`     | `(tenant_id, application_id, action_key, name, version)` → `(tenant_id, action_key, name, version)` |
 
 ## 10. Cross-references
 
