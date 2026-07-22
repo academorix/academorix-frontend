@@ -1,0 +1,3 @@
+setup:
+  project: stackra-identity
+  config: dev_identity

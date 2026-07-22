@@ -1,0 +1,3 @@
+setup:
+  project: stackra-notifications
+  config: dev_notifications

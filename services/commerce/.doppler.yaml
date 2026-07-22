@@ -1,0 +1,3 @@
+setup:
+  project: stackra-commerce
+  config: dev_commerce

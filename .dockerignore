@@ -1,0 +1,116 @@
+# =============================================================================
+# .dockerignore
+# =============================================================================
+#
+# Every service Dockerfile uses `context: ..` from docker/compose.dev.yml,
+# which means the ENTIRE workspace ships to the daemon per build. Without
+# this ignore file that's ~4 GB of node_modules + vendor + .git + build
+# artefacts — kills iteration speed.
+#
+# Docker's ignore syntax matches `.gitignore` — one pattern per line, `!`
+# to negate. Patterns are relative to the build context root
+# (the workspace root, since `context: ..`).
+#
+# ## What we EXCLUDE
+#
+# Everything a container doesn't need at build time:
+#   * VCS metadata (.git, .git/)
+#   * Composer / npm caches + installed deps (vendor/, node_modules/)
+#   * Editor / OS junk (.DS_Store, .vscode/, .idea/, Thumbs.db)
+#   * Local doppler state (.doppler/)
+#   * Test snapshots + coverage reports
+#   * Frontend build outputs (dist/, public/build/, public/hot/)
+#   * Bootstrap caches (bootstrap/cache/ — the container regenerates them)
+#   * Storage runtime dirs (logs, sessions, views — always regenerated)
+#
+# ## What we DON'T exclude
+#
+# Everything Composer + Laravel need at boot:
+#   * Every composer.json + composer.lock (path-repo resolution)
+#   * Every src/ + bootstrap/ + config/ + database/
+#   * docker/ (the Dockerfile itself)
+#
+# ## Sanity check
+#
+# After editing, verify: `docker build ...` shows the build-context
+# transfer at <200 MB, not 4 GB.
+
+# ── VCS ────────────────────────────────────────────────────────────
+.git/
+.git*
+!.gitignore
+!.gitattributes
+!.github/
+
+# ── Dep + build artefacts ──────────────────────────────────────────
+**/vendor/
+**/node_modules/
+**/dist/
+**/build/
+**/.turbo/
+
+# ── Composer + npm caches ──────────────────────────────────────────
+.composer/
+.npm/
+
+# ── Editor / OS ────────────────────────────────────────────────────
+.DS_Store
+.vscode/
+.idea/
+.zed/
+.nova/
+.cursor/
+.codex/
+.phpactor.json
+Thumbs.db
+
+# ── Test artefacts ─────────────────────────────────────────────────
+**/.phpunit.cache/
+**/.phpunit.result.cache
+**/coverage/
+**/.pest-cache/
+
+# ── Doppler local state (never bake secrets into images) ───────────
+.doppler/
+**/.doppler/
+
+# ── Laravel runtime dirs ───────────────────────────────────────────
+**/bootstrap/cache/*
+!**/bootstrap/cache/.gitignore
+**/storage/logs/*
+!**/storage/logs/.gitignore
+**/storage/framework/cache/data/*
+**/storage/framework/sessions/*
+!**/storage/framework/sessions/.gitignore
+**/storage/framework/views/*
+!**/storage/framework/views/.gitignore
+**/storage/pail
+**/storage/*.key
+
+# ── Front-end build outputs ────────────────────────────────────────
+**/public/build/
+**/public/hot
+**/public/fonts-manifest.dev.json
+**/public/storage
+
+# ── Kiro state (not needed inside containers) ──────────────────────
+.kiro/settings/mcp.json
+.kiro/hooks/
+.kiro/agents/
+.kiro/specs/
+# Keep .kiro/reports/ — the CI job runs the audit scripts there.
+!.kiro/reports/
+# Keep .kiro/steering/ — reviewers look at rules; also referenced by docs.
+!.kiro/steering/
+
+# ── Refs, historical ──────────────────────────────────────────────
+.ref/
+old/
+
+# ── Frontend workspace nooks (we don't build the frontend in the PHP images) ──
+packages/frontend/
+apps/react-native-template/
+apps/vite-template/
+
+# ── Ignore Dockerfiles + compose from OTHER contexts leaking in ──
+# (the build context still needs docker/service.Dockerfile itself)

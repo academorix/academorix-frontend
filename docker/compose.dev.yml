@@ -1,0 +1,442 @@
+# =============================================================================
+# docker/compose.dev.yml
+# =============================================================================
+#
+# Multi-service local-dev entry point for the Stackra workspace.
+#
+# ONE compose file boots every service (shared + per-Application) plus
+# their shared substrate (Postgres, Redis, MailHog). Every service
+# builds from `docker/service.Dockerfile` with per-service build args
+# picking its source path + port.
+#
+# ## Not for production
+#
+# This compose file is DEV-ONLY. Production uses one k8s Deployment
+# per service (see `docker/k8s/` — pending Sprint 2f). Rationale:
+#
+#   * Shared Postgres + Redis is fine for `pnpm turbo dev` but violates
+#     ADR-0032's per-service DB isolation invariant in prod.
+#   * Doppler service tokens live in each dev's `~/.doppler` state; in
+#     prod they inject via k8s Secret + serviceAccount.
+#   * Compose's healthcheck retries + start_period are tuned for
+#     laptop-scale start-up; prod uses k8s readiness/liveness probes.
+#
+# ## Usage
+#
+#   docker compose -f docker/compose.dev.yml up identity commerce
+#   docker compose -f docker/compose.dev.yml up   # bring the whole stack up
+#   docker compose -f docker/compose.dev.yml down -v   # wipe DBs
+#
+# ## Doppler
+#
+# Each service reads its own Doppler config
+# (`stackra-<service>` / `dev_<service>`) via the mounted
+# `~/.doppler` state on the host. First-time dev on a fresh laptop:
+#
+#   cd services/identity && doppler setup   # creates ~/.doppler entry
+#   # repeat per service, then:
+#   docker compose -f docker/compose.dev.yml up
+#
+# ## Ports
+#
+#   identity        → 8001
+#   commerce        → 8002
+#   notifications   → 8003
+#   observability   → 8004
+#   academorix-api  → 8000     (per-Application backend — Sports)
+#   academorix-ai   → 8100     (per-Application AI runtime — Sports)
+#
+# ## Related
+#
+#   * ADR-0032 — Six-service split.
+#   * ADR-0028 — Runtime target: Laravel Octane.
+#   * docker/service.Dockerfile — the shared build shape.
+
+# NOTE: the top-level `version:` field is deprecated in Compose v2+.
+# Every feature we use (healthcheck.start_period, depends_on.condition,
+# service healthchecks) is available without a version pin.
+
+# ─────────────────────────────────────────────────────────────────────
+# Networks
+# ─────────────────────────────────────────────────────────────────────
+#
+# ONE shared bridge — every service resolves peers by service name.
+# `identity` at http://identity:8001 from inside `commerce`.
+networks:
+  stackra:
+    driver: bridge
+    name: stackra-dev
+
+# ─────────────────────────────────────────────────────────────────────
+# Volumes
+# ─────────────────────────────────────────────────────────────────────
+#
+# One named volume per stateful service. Named (not anonymous) so
+# `docker compose down -v` cleanly removes them, but a normal
+# `docker compose down` PRESERVES them between restarts.
+volumes:
+  postgres_data:
+    name: stackra-dev-postgres
+  redis_data:
+    name: stackra-dev-redis
+
+# ─────────────────────────────────────────────────────────────────────
+# Services
+# ─────────────────────────────────────────────────────────────────────
+services:
+  # ═══════════════════════════════════════════════════════════════════
+  # Shared substrate — Postgres + Redis + MailHog
+  # ═══════════════════════════════════════════════════════════════════
+
+  # Postgres 16 — the workspace-wide database engine. One DB per
+  # service; DBs auto-created via the entrypoint init script below.
+  postgres:
+    image: postgres:16-alpine
+    container_name: stackra-dev-postgres
+    restart: unless-stopped
+    ports:
+      # Expose to the host on 5433 to avoid colliding with any host
+      # Postgres install on the default 5432.
+      - "5433:5432"
+    environment:
+      POSTGRES_PASSWORD: dev_password_do_not_use_in_prod
+      POSTGRES_USER: stackra
+      # POSTGRES_DB is the FIRST DB created; every service's per-DB
+      # bootstrap runs from the init script below.
+      POSTGRES_DB: stackra_identity
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Init script — creates one DB per service on first boot.
+      # Re-runs do nothing (data volume persists the DBs).
+      - ./postgres-init.sh:/docker-entrypoint-initdb.d/00-init.sh:ro
+    networks:
+      - stackra
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stackra -d stackra_identity"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # Redis 7 — shared cache + session + queue backend.
+  # Every service uses its own Redis DB index (0..5) to avoid key
+  # collisions between services on the shared instance.
+  redis:
+    image: redis:7-alpine
+    container_name: stackra-dev-redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    networks:
+      - stackra
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # MailHog — SMTP + web UI for dev mail. Every service points its
+  # MAIL_HOST at `mailhog:1025`.
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: stackra-dev-mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web UI at http://localhost:8025
+    networks:
+      - stackra
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Application services — 4 shared + 2 per-Application
+  # ═══════════════════════════════════════════════════════════════════
+
+  # ── stackra-identity ─────────────────────────────────────────────────
+  #
+  # The identity plane. Owns Application + Tenancy + Identity + User +
+  # Auth + MFA + Access + ServiceAccount + Credentials. Every other
+  # service verifies inbound JWTs against this service's JWKS.
+  identity:
+    build:
+      # Build from the workspace root so path-repos in the service's
+      # composer.json can resolve.
+      context: ..
+      dockerfile: docker/service.Dockerfile
+      args:
+        # Which sub-directory to serve.
+        SERVICE_NAME: identity
+        SERVICE_PATH: services/identity
+        SERVICE_PORT: "8001"
+        PHP_VERSION: "8.4"
+    container_name: stackra-dev-identity
+    restart: unless-stopped
+    ports:
+      # Expose to the host — devs point their frontend at
+      # http://localhost:8001/api/v1/auth/*.
+      - "8001:8001"
+    environment:
+      # DB — per-service DB on the shared Postgres instance.
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: stackra_identity
+      DB_USERNAME: stackra
+      DB_PASSWORD: dev_password_do_not_use_in_prod
+      # Redis — dedicated DB index to keep keys per-service.
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      # Mail — every service points here for outbound mail in dev.
+      MAIL_MAILER: smtp
+      MAIL_HOST: mailhog
+      MAIL_PORT: 1025
+      MAIL_FROM_ADDRESS: no-reply@stackra.local
+      # Octane binding — the Dockerfile CMD reads these.
+      OCTANE_PORT: "8001"
+      # Doppler wraps the entry command; the CLI needs a token to auth.
+      # Local dev uses the `dev_identity` config from the mounted ~/.doppler.
+      DOPPLER_CONFIG: dev_identity
+      DOPPLER_PROJECT: stackra-identity
+    volumes:
+      # Mount the host's Doppler state so the CLI inside the container
+      # sees the same auth as the host developer's `doppler setup`.
+      - "${HOME}/.doppler:/home/stackra/.doppler:ro"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - stackra
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health/ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+
+  # ── stackra-commerce ─────────────────────────────────────────────────
+  #
+  # Money + capability plane. Owns Subscription + Entitlements. Reads
+  # user JWTs from every caller; writes audit + activity signals to
+  # observability via X-Service-Identity.
+  commerce:
+    build:
+      context: ..
+      dockerfile: docker/service.Dockerfile
+      args:
+        SERVICE_NAME: commerce
+        SERVICE_PATH: services/commerce
+        SERVICE_PORT: "8002"
+        PHP_VERSION: "8.4"
+    container_name: stackra-dev-commerce
+    restart: unless-stopped
+    ports:
+      - "8002:8002"
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: stackra_commerce
+      DB_USERNAME: stackra
+      DB_PASSWORD: dev_password_do_not_use_in_prod
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 1
+      MAIL_MAILER: smtp
+      MAIL_HOST: mailhog
+      MAIL_PORT: 1025
+      OCTANE_PORT: "8002"
+      DOPPLER_CONFIG: dev_commerce
+      DOPPLER_PROJECT: stackra-commerce
+      # Identity's URL for JWT + JWKS fetch on boot.
+      IDENTITY_SERVICE_URL: http://identity:8001
+    volumes:
+      - "${HOME}/.doppler:/home/stackra/.doppler:ro"
+    depends_on:
+      identity:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - stackra
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health/ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+
+  # ── stackra-notifications ────────────────────────────────────────────
+  #
+  # Fan-out messaging across 5 channels (in-app, mail, push, SMS,
+  # messaging). Reads recipient contact prefs via HTTP from identity.
+  notifications:
+    build:
+      context: ..
+      dockerfile: docker/service.Dockerfile
+      args:
+        SERVICE_NAME: notifications
+        SERVICE_PATH: services/notifications
+        SERVICE_PORT: "8003"
+        PHP_VERSION: "8.4"
+    container_name: stackra-dev-notifications
+    restart: unless-stopped
+    ports:
+      - "8003:8003"
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: stackra_notifications
+      DB_USERNAME: stackra
+      DB_PASSWORD: dev_password_do_not_use_in_prod
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 2
+      MAIL_MAILER: smtp
+      MAIL_HOST: mailhog
+      MAIL_PORT: 1025
+      OCTANE_PORT: "8003"
+      DOPPLER_CONFIG: dev_notifications
+      DOPPLER_PROJECT: stackra-notifications
+      IDENTITY_SERVICE_URL: http://identity:8001
+    volumes:
+      - "${HOME}/.doppler:/home/stackra/.doppler:ro"
+    depends_on:
+      identity:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - stackra
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health/ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+
+  # ── stackra-observability ────────────────────────────────────────────
+  #
+  # Audit + activity + monitoring + compliance evidence + retention.
+  # Every other service writes audit / activity events here via
+  # X-Service-Identity.
+  observability:
+    build:
+      context: ..
+      dockerfile: docker/service.Dockerfile
+      args:
+        SERVICE_NAME: observability
+        SERVICE_PATH: services/observability
+        SERVICE_PORT: "8004"
+        PHP_VERSION: "8.4"
+    container_name: stackra-dev-observability
+    restart: unless-stopped
+    ports:
+      - "8004:8004"
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: stackra_observability
+      DB_USERNAME: stackra
+      DB_PASSWORD: dev_password_do_not_use_in_prod
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 3
+      OCTANE_PORT: "8004"
+      DOPPLER_CONFIG: dev_observability
+      DOPPLER_PROJECT: stackra-observability
+      IDENTITY_SERVICE_URL: http://identity:8001
+    volumes:
+      - "${HOME}/.doppler:/home/stackra/.doppler:ro"
+    depends_on:
+      identity:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - stackra
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8004/health/ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+
+  # ── academorix-api ───────────────────────────────────────────────────
+  #
+  # Per-Application backend for the Sports product. Owns physical
+  # hierarchy + every academorix domain module + safeguarding. Reads
+  # user JWT + writes audit / activity to observability.
+  academorix-api:
+    build:
+      context: ..
+      dockerfile: docker/service.Dockerfile
+      args:
+        SERVICE_NAME: academorix-api
+        SERVICE_PATH: apps/laravel-template
+        SERVICE_PORT: "8000"
+        PHP_VERSION: "8.4"
+    container_name: stackra-dev-academorix-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: academorix_api
+      DB_USERNAME: stackra
+      DB_PASSWORD: dev_password_do_not_use_in_prod
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 4
+      MAIL_MAILER: smtp
+      MAIL_HOST: mailhog
+      MAIL_PORT: 1025
+      OCTANE_PORT: "8000"
+      DOPPLER_CONFIG: dev_api
+      DOPPLER_PROJECT: stackra-api
+      IDENTITY_SERVICE_URL: http://identity:8001
+      COMMERCE_SERVICE_URL: http://commerce:8002
+      NOTIFICATIONS_SERVICE_URL: http://notifications:8003
+      OBSERVABILITY_SERVICE_URL: http://observability:8004
+    volumes:
+      - "${HOME}/.doppler:/home/stackra/.doppler:ro"
+    depends_on:
+      identity:
+        condition: service_healthy
+      commerce:
+        condition: service_healthy
+      notifications:
+        condition: service_healthy
+      observability:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - stackra
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s

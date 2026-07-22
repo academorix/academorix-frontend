@@ -1,0 +1,713 @@
+{
+  "$schema": "https://getcomposer.org/schema.json",
+  "name": "stackra/observability-service",
+  "type": "project",
+  "description": "Stackra Observability service — audit + activity + monitoring + compliance evidence + retention. SHARED across every Application. Delivers the two-signal split (compliance audit vs. product activity) plus the retention runner.",
+  "keywords": [
+    "stackra",
+    "service",
+    "observability",
+    "laravel",
+    "octane"
+  ],
+  "license": "proprietary",
+  "require": {
+    "laravel/framework": "^13.8",
+    "laravel/horizon": "^5.34",
+    "laravel/octane": "^2.10",
+    "laravel/sanctum": "^4.0",
+    "laravel/tinker": "^3.0",
+    "php": "^8.3",
+    "stackra-observability/activity": "@dev",
+    "stackra-observability/audit": "@dev",
+    "stackra-shared/foundation": "@dev",
+    "stackra/architecture": "@dev",
+    "stackra/attributes": "@dev",
+    "stackra/authorization": "@dev",
+    "stackra/caching": "@dev",
+    "stackra/compliance": "@dev",
+    "stackra/console": "@dev",
+    "stackra/container": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/database": "@dev",
+    "stackra/debugbar": "@dev",
+    "stackra/enum": "@dev",
+    "stackra/events": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/feature-flags": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/geography": "@dev",
+    "stackra/health": "@dev",
+    "stackra/horizon": "@dev",
+    "stackra/localization": "@dev",
+    "stackra/monitoring": "@dev",
+    "stackra/nightwatch": "@dev",
+    "stackra/offline-sync": "@dev",
+    "stackra/retention": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/scheduling": "@dev",
+    "stackra/scope": "@dev",
+    "stackra/search": "@dev",
+    "stackra/sentry": "@dev",
+    "stackra/serializer": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/settings": "@dev",
+    "stackra/support": "@dev",
+    "stackra/transfer": "@dev",
+    "stackra/versioning": "@dev"
+  },
+  "require-dev": {
+    "fakerphp/faker": "^1.23",
+    "laravel/boost": "^2.2",
+    "laravel/pail": "^1.2",
+    "laravel/pint": "^1.27",
+    "larastan/larastan": "^3.0",
+    "mockery/mockery": "^1.6",
+    "nunomaduro/collision": "^8.6",
+    "pestphp/pest": "^4.7",
+    "pestphp/pest-plugin-laravel": "^4.1",
+    "phpstan/phpstan": "^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Stackra\\Observability\\": "src/",
+      "Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+      "@php artisan package:discover --ansi"
+    ],
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "cache:clear": "doppler run -- php artisan cache:flush",
+    "cache:warm": "doppler run -- php artisan cache:build",
+    "db:migrate": "Stackra\\Foundation\\Scripts\\DatabaseScripts::migrate",
+    "db:migrate:fresh": "Stackra\\Foundation\\Scripts\\DatabaseScripts::fresh",
+    "db:migrate:rollback": "Stackra\\Foundation\\Scripts\\DatabaseScripts::rollback",
+    "db:migrate:status": "Stackra\\Foundation\\Scripts\\DatabaseScripts::status",
+    "db:seed": "Stackra\\Foundation\\Scripts\\DatabaseScripts::seed",
+    "db:reset": "Stackra\\Foundation\\Scripts\\DatabaseScripts::reset",
+    "db:wipe": "Stackra\\Foundation\\Scripts\\DatabaseScripts::wipe",
+    "db:show": "Stackra\\Foundation\\Scripts\\DatabaseScripts::show",
+    "dev": [
+      "Composer\\Config::disableProcessTimeout",
+      "doppler run -- npx concurrently -c '#93c5fd,#c4b5fd,#fb7185' 'php artisan octane:start --watch' 'php artisan queue:listen --tries=1 --timeout=0' 'php artisan pail --timeout=0' --names=server,queue,logs --kill-others"
+    ],
+    "serve": "doppler run -- php artisan octane:start",
+    "queue": "doppler run -- php artisan queue:work",
+    "horizon": "doppler run -- php artisan horizon"
+  },
+  "extra": {
+    "laravel": {
+      "dont-discover": []
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "php-http/discovery": true,
+      "olvlvl/composer-attribute-collector": true
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../packages/backend/observability/activity",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/observability/audit",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/shared/foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/admin-console",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/ai",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/notifications/announcements",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/application",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/workflow/approvals",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/compliance/architecture",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/shared/attributes",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/identity/auth",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/authorization",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/branch",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/branding",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/caching",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/compliance/compliance",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/console",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/container",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/credentials",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/crud",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/database",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/telemetry/debug-bar",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/access/delegation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/domains",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/billing/entitlements",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/enum",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/events",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/exceptions",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/facility",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/feature-flags",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/forms",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/shared/geography",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/access/grants",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/telemetry/health",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/telemetry/horizon",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/identity/identity",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/integrations",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/access/invitations",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/shared/localization",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/notifications/messaging",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/identity/mfa",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/observability/monitoring",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/notifications/newsletter",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/telemetry/nightwatch",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/notifications/notifications",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/notifications/notifications-in-app",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/notifications/notifications-mail",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/notifications/notifications-push",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/notifications/notifications-sms",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/shared/offline-sync",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/organization",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/identity/people",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/identity/platform-user",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/public-site",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/access/rbac",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/realtime",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/reception",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/region",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/reporting",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/access/requests",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/compliance/retention",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/routing",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/scheduling",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/scope",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/shared/search",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/telemetry/sentry",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/serializer",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/identity/service-accounts",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/service-provider",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/settings",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/staff",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/storage",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/billing/subscription",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/support",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/workflow/tasks",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/teams",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/tenancy",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/theme",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/shared/transfer",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/identity/user",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/shared/versioning",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/webhook",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
+}
