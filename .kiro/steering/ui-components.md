@@ -83,6 +83,25 @@ controlled-value contract) against the HeroUI MCP (`get_component_docs`). HeroUI
 v3 is compound-first and the exact part names differ per component — never guess
 them.
 
+## Rule — Title-Case headings, no ALL-CAPS
+
+Design taste rule (mirrors `.kiro/agents/heroui-ui-builder.md` "Title Case
+(never ALL CAPS) headings"): every heading, section label, and micro-header
+renders in Title Case. Do not apply the Tailwind `uppercase` utility to
+headings, `<h1..h6>`, or nav-rail category labels.
+
+### Exemption — command-palette aesthetic in `@stackra/kbd`
+
+The `@stackra/kbd` package (Command Palette + Keyboard Catalog) intentionally
+inherits the Raycast / Linear / Shopify command-palette visual language, which
+uses ALL-CAPS + `tracking-[0.08em]` micro- headers as a genre convention. Both
+hits in `keyboard-catalog.component.tsx` (section headers + inline scope labels)
+are exempt.
+
+Every exemption call site carries an inline
+`// uppercase — kbd command-palette aesthetic` comment so reviewers see the
+rationale without opening this file.
+
 ## Note — known upstream gap: `Popover` trigger + `aria-haspopup`
 
 HeroUI's `Popover` does not stamp `aria-haspopup="dialog"` on its trigger — it

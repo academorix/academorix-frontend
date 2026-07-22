@@ -14,23 +14,24 @@
  * @category Components
  */
 
-import { Fragment, useMemo, type ReactElement, type ReactNode } from "react";
+import { useInject } from "@stackra/container/react";
+import { useI18n } from "@stackra/i18n/react";
+import { Str } from "@stackra/support";
 import { Kbd, Modal, ScrollShadow, SearchField } from "@stackra/ui/react";
 import { Segment } from "@stackra/ui/react";
-import { Str } from "@stackra/support";
-import { useInject } from "@stackra/container/react";
+import { Fragment, useMemo, type ReactElement, type ReactNode } from "react";
 
-import { COMMAND_TYPE_REGISTRY, SHORTCUT_REGISTRY } from "../../tokens";
-import type { KeyboardCatalogProps } from "../../interfaces/keyboard-catalog-props.interface";
 import { useKeyboardCatalog } from "../../hooks/use-keyboard-catalog/use-keyboard-catalog.hook";
 import { useShortcutScope } from "../../hooks/use-shortcut-scope/use-shortcut-scope.hook";
+import { COMMAND_TYPE_REGISTRY, SHORTCUT_REGISTRY } from "../../tokens";
+
+import { KeyboardShortcut } from "./../keyboard-shortcut/keyboard-shortcut.component";
+
 import type { CommandType } from "../../interfaces/command-type.interface";
+import type { KeyboardCatalogProps } from "../../interfaces/keyboard-catalog-props.interface";
 import type { Shortcut } from "../../interfaces/shortcut.interface";
 import type { CommandTypeRegistry } from "../../registries/command-type.registry";
 import type { ShortcutRegistry } from "../../registries/shortcut.registry";
-
-import { KeyboardShortcut } from "./../keyboard-shortcut/keyboard-shortcut.component";
-import { useI18n } from "@stackra/i18n/react";
 
 /**
  * Modal browser for every registered keyboard shortcut.
@@ -98,7 +99,7 @@ export function KeyboardCatalog({
   const tabIds = useMemo(() => ["all", ...tabs.map((t) => t.id)], [tabs]);
   const visibleTab = tabIds.includes(activeTab) ? activeTab : "all";
 
-  const visibleEntries = useMemo<Array<[string, Shortcut[]]>>(() => {
+  const visibleEntries = useMemo<[string, Shortcut[]][]>(() => {
     if (visibleTab === "all") return Array.from(grouped.entries());
     const items = grouped.get(visibleTab);
     return items ? [[visibleTab, items]] : [];
@@ -128,6 +129,13 @@ export function KeyboardCatalog({
           {/* ── Search ──────────────────────────────────────────── */}
           <div className="border-default-100 border-b px-4 py-3">
             <SearchField
+              // Legitimate autofocus — the KeyboardCatalog is a modal
+              // dialog opened by an explicit user gesture (keyboard
+              // shortcut or menu click), and the search field is the
+              // primary interactive control. Landing focus in it on
+              // open matches WAI-ARIA modal dialog authoring practice
+              // + every command-palette / spotlight-search convention.
+              // eslint-disable-next-line jsx-a11y/no-autofocus -- see comment above
               autoFocus
               fullWidth
               aria-label={t("kbd.components.keyboard_catalog.search_shortcuts")}
@@ -178,6 +186,10 @@ export function KeyboardCatalog({
                   return (
                     <section key={typeId} className="flex flex-col gap-2">
                       <header className="flex items-center gap-2 px-1">
+                        {/* `uppercase` is intentional here — the kbd command-palette
+                            aesthetic (Raycast/Linear/Shopify) uses ALL-CAPS section
+                            micro-headers as a genre convention. Exemption is codified
+                            in `.kiro/steering/ui-components.md`. */}
                         <h3 className="text-default-500 text-[11px] font-semibold tracking-[0.08em] uppercase">
                           {t(commandType.label)}
                         </h3>
@@ -236,6 +248,8 @@ function ShortcutRow({ shortcut }: ShortcutRowProps): ReactElement {
       <div className="flex min-w-0 flex-col">
         <span className="text-foreground truncate text-sm">{shortcut.description}</span>
         {shortcut.scope && shortcut.scope !== "global" && (
+          // `uppercase` — kbd command-palette aesthetic (see the section
+          // header above for the full rationale + steering reference).
           <span className="text-default-400 text-[11px] tracking-wide uppercase">
             {t("kbd.catalog.scope_label", { args: { scope: shortcut.scope } })}
           </span>

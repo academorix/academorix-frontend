@@ -9,15 +9,16 @@
  *   panel is rendered via {@link DevtoolsNavItem}.
  */
 
-import { useMemo, type ReactElement } from "react";
-import { ScrollShadow } from "@stackra/ui/react";
 import { Str } from "@stackra/support";
-import type { DevtoolsCategory, IDevtoolsPanel } from "@stackra/contracts";
+import { ScrollShadow } from "@stackra/ui/react";
+import { useMemo, type ReactElement } from "react";
 
 import { useDevtoolsContext } from "../../hooks/use-devtools-context";
 import { useDevtoolsPanels } from "../../hooks/use-devtools-panels";
 import { DevtoolsNavItem } from "../devtools-nav-item";
+
 import type { DevtoolsNavRailProps } from "./devtools-nav-rail.interface";
+import type { DevtoolsCategory, IDevtoolsPanel } from "@stackra/contracts";
 
 /** Rendered label for each category. */
 const CATEGORY_LABELS: Record<DevtoolsCategory, string> = {
@@ -85,7 +86,7 @@ export function DevtoolsNavRail({
       >
         {rendered.map((section) => (
           <section key={section.category} className="flex flex-col gap-0.5">
-            <h3 className="text-muted px-3 pb-1 text-xs font-semibold tracking-wide uppercase">
+            <h3 className="text-muted px-3 pb-1 text-xs font-semibold tracking-wide">
               {CATEGORY_LABELS[section.category]}
             </h3>
             {section.panels.map((panel) => (
