@@ -34,7 +34,7 @@ export const SETTINGS_SERVICE = Symbol.for("SETTINGS_SERVICE");
  *
  * @remarks Bound in `SettingsModule.forRoot` to the `SettingsRegistry`
  *   implementation. Populated at boot by `SettingsModule.forFeature` and
- *   `SettingsSchemaLoader`.
+ *   `SettingsSchemaFetcher`.
  */
 export const SETTINGS_REGISTRY = Symbol.for("SETTINGS_REGISTRY");
 

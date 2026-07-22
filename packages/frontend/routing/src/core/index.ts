@@ -30,7 +30,7 @@ export { RouteRegistryService, RouteMatcherService, AiRouteContextService } from
 export {
   MiddlewareRegistryService,
   MiddlewareResolverService,
-  MiddlewareLoaderService,
+  MiddlewareLoader,
   RedirectSignal,
   NotFoundSignal,
   MiddlewareAbortSignal,
@@ -41,7 +41,7 @@ export {
 } from "@/middleware";
 
 // ── Guard subsystem re-exports ──────────────────────────────────
-export { GuardRegistryService, GuardAdapterService, GuardLoaderService } from "@/guards";
+export { GuardRegistryService, GuardAdapterService, GuardLoader } from "@/guards";
 
 // ── SEO subsystem re-exports ────────────────────────────────────
 export { SeoService } from "@/seo";

@@ -9,7 +9,7 @@
  * Stamps `IDevtoolsPanelOptions` metadata under
  * `DEVTOOLS_PANEL_METADATA_KEY` and applies `@Injectable()` so the
  * container can construct the panel via DI. The eventual
- * `DevtoolsPanelsLoaderService` (in `@stackra/devtools`) queries the
+ * `DevtoolsPanelsLoader` (in `@stackra/devtools`) queries the
  * container at `onApplicationBootstrap` via
  * `discovery.getProvidersByMetadata(DEVTOOLS_PANEL_METADATA_KEY)`
  * and registers every discovered instance on the panels registry.
@@ -54,7 +54,7 @@ export const DevtoolsPanel = createDiscoverableClassDecorator<IDevtoolsPanelOpti
 
 /**
  * Reader for `@DevtoolsPanel(...)` metadata — used by the eventual
- * `DevtoolsPanelsLoaderService`. Exposes `get`, `has`, and `hasOwn`
+ * `DevtoolsPanelsLoader`. Exposes `get`, `has`, and `hasOwn`
  * with inheritance-aware semantics.
  *
  * @example

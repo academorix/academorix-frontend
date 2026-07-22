@@ -5,15 +5,21 @@
  */
 
 import { Module, type DynamicModule } from "@stackra/container";
-import type { IAsyncModuleOptions } from "@stackra/contracts";
-import { COORDINATOR_CONFIG, TAB_COORDINATOR, TAB_TRANSPORT_MANAGER } from "@stackra/contracts";
-import { TAB_LOCK_MANAGER } from "./constants";
-import { TabCoordinator } from "./services/tab-coordinator.service";
-import { LockManager } from "./services/lock-manager.service";
+import {
+  COORDINATOR_CONFIG,
+  TAB_COORDINATOR,
+  TAB_LOCK_MANAGER,
+  TAB_TRANSPORT_MANAGER,
+} from "@stackra/contracts";
+
 import { CoordinatorTransport } from "./services/coordinator-transport.service";
+import { LockManager } from "./services/lock-manager.service";
+import { TabCoordinator } from "./services/tab-coordinator.service";
 import { TabTransportManager } from "./services/tab-transport-manager.service";
-import type { ICoordinatorModuleOptions } from "./interfaces";
 import { mergeConfig } from "./utils/merge-config.util";
+
+import type { ICoordinatorModuleOptions } from "./interfaces";
+import type { IAsyncModuleOptions } from "@stackra/contracts";
 
 /**
  * Coordinator DI module — cross-tab leader election and distributed locks.

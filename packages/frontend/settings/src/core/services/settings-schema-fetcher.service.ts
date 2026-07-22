@@ -1,9 +1,14 @@
 /**
- * @file settings-schema-loader.service.ts
+ * @file settings-schema-fetcher.service.ts
  * @module @stackra/settings/core/services
  * @description Fetches the remote settings schema on module init
  *   when `config.api.autoLoadSchema === true`, and registers every
  *   returned group with the `SettingsRegistry`.
+ *
+ *   Named `Fetcher`, not `Loader`, because it is NOT a discovery
+ *   loader in the `discovery-vs-loader.md` sense — it does not scan
+ *   the DI graph for decorated providers. It runs at
+ *   `OnModuleInit` and pulls a schema payload from an HTTP endpoint.
  *
  *   The fetch is fail-soft — a network error only logs a warning
  *   through the optional `LOGGER_MANAGER`. Client-declared DTOs
@@ -12,7 +17,6 @@
  */
 
 import { Injectable, Inject, Optional, OnModuleInit } from "@stackra/container";
-import { retry, Uri } from "@stackra/support";
 import {
   HTTP_MANAGER,
   LOGGER_MANAGER,
@@ -28,11 +32,12 @@ import {
   type ISettingsRegistry,
   type ISettingsService,
 } from "@stackra/contracts";
+import { retry, Uri } from "@stackra/support";
 
 import { parseSchemaPayload } from "@/core/utils/parse-schema.util";
 
 /**
- * Loads the settings schema from the backend at boot when opted in.
+ * Fetches the settings schema from the backend at boot when opted in.
  *
  * Two-tier fetch:
  * 1. Optional local cache — when
@@ -43,13 +48,13 @@ import { parseSchemaPayload } from "@/core/utils/parse-schema.util";
  *    small.)
  * 2. Network fetch through the configured HTTP client.
  *
- * The loader registers definitions into the registry and emits
+ * Registers definitions into the registry and emits
  * `SETTINGS_EVENTS.SCHEMA_LOADED` on the event bus. If registration
  * fails for a specific group, the error is captured and the batch
  * continues so a single malformed group cannot break the boot.
  */
 @Injectable()
-export class SettingsSchemaLoader implements OnModuleInit {
+export class SettingsSchemaFetcher implements OnModuleInit {
   public constructor(
     @Inject(SETTINGS_CONFIG) private readonly config: ISettingsConfig,
     @Inject(SETTINGS_REGISTRY) private readonly registry: ISettingsRegistry,
@@ -131,10 +136,29 @@ export class SettingsSchemaLoader implements OnModuleInit {
   private warn(message: string, cause?: unknown): void {
     if (!this.logger) return;
     try {
-      const suffix = cause ? `: ${String(cause)}` : "";
+      const suffix = cause === undefined ? "" : `: ${formatCause(cause)}`;
       this.logger.create("settings").warn(`${message}${suffix}`);
     } catch {
       /* fail-soft */
     }
+  }
+}
+
+/**
+ * Serialise an unknown thrown value into a readable log suffix. Errors
+ * yield their `.message`; primitives coerce through `String`; objects
+ * go through `JSON.stringify` so the log never carries the useless
+ * `[object Object]` — which is what native template-string coercion
+ * would produce (and what `@typescript-eslint/no-base-to-string`
+ * legitimately flags).
+ */
+function formatCause(cause: unknown): string {
+  if (cause instanceof Error) return cause.message;
+  if (typeof cause === "string") return cause;
+  if (typeof cause === "number" || typeof cause === "boolean") return String(cause);
+  try {
+    return JSON.stringify(cause);
+  } catch {
+    return "[unserialisable]";
   }
 }

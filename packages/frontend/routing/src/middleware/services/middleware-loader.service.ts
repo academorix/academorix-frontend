@@ -14,6 +14,11 @@
  */
 
 import { Inject, Injectable, Optional } from "@stackra/container";
+import { DISCOVERY_SERVICE, LOGGER_MANAGER, MIDDLEWARE_METADATA_KEY } from "@stackra/contracts";
+import { getMetadata } from "@vivtel/metadata";
+
+import { MiddlewareRegistryService } from "./middleware-registry.service";
+
 import type {
   IDiscoveryService,
   ILoggerManager,
@@ -21,16 +26,12 @@ import type {
   IMiddlewareOptions,
   OnApplicationBootstrap,
 } from "@stackra/contracts";
-import { DISCOVERY_SERVICE, LOGGER_MANAGER, MIDDLEWARE_METADATA_KEY } from "@stackra/contracts";
-import { getMetadata } from "@vivtel/metadata";
-
-import { MiddlewareRegistryService } from "./middleware-registry.service";
 
 /**
  * Discovery loader for `@Middleware`-decorated classes.
  */
 @Injectable()
-export class MiddlewareLoaderService implements OnApplicationBootstrap {
+export class MiddlewareLoader implements OnApplicationBootstrap {
   public constructor(
     private readonly registry: MiddlewareRegistryService,
     @Optional()

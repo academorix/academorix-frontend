@@ -6,4 +6,4 @@
 
 export { GuardRegistryService } from "./guard-registry.service";
 export { GuardAdapterService } from "./guard-adapter.service";
-export { GuardLoaderService } from "./guard-loader.service";
+export { GuardLoader } from "./guard-loader.service";

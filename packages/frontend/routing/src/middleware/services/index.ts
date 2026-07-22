@@ -6,4 +6,4 @@
 
 export { MiddlewareRegistryService } from "./middleware-registry.service";
 export { MiddlewareResolverService } from "./middleware-resolver.service";
-export { MiddlewareLoaderService } from "./middleware-loader.service";
+export { MiddlewareLoader } from "./middleware-loader.service";

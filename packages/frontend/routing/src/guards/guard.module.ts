@@ -11,7 +11,7 @@
 import { Module, type DynamicModule } from "@stackra/container";
 
 import { GuardAdapterService } from "./services/guard-adapter.service";
-import { GuardLoaderService } from "./services/guard-loader.service";
+import { GuardLoader } from "./services/guard-loader.service";
 import { GuardRegistryService } from "./services/guard-registry.service";
 
 /**
@@ -27,7 +27,7 @@ export class GuardModule {
     return {
       module: GuardModule,
       global: true,
-      providers: [GuardRegistryService, GuardAdapterService, GuardLoaderService],
+      providers: [GuardRegistryService, GuardAdapterService, GuardLoader],
       exports: [GuardRegistryService, GuardAdapterService],
     };
   }

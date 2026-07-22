@@ -8,7 +8,7 @@
  *
  * Stamps `IDevtoolsInspectorSourceOptions` under
  * `DEVTOOLS_INSPECTOR_SOURCE_METADATA_KEY` and applies
- * `@Injectable()`. The eventual `DevtoolsInspectorLoaderService`
+ * `@Injectable()`. The eventual `DevtoolsInspectorLoader`
  * (in `@stackra/devtools`) reads the metadata at bootstrap and
  * hydrates the inspector registry.
  */

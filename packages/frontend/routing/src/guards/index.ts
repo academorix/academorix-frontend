@@ -5,4 +5,4 @@
  */
 
 export { GuardModule } from "./guard.module";
-export { GuardRegistryService, GuardAdapterService, GuardLoaderService } from "./services";
+export { GuardRegistryService, GuardAdapterService, GuardLoader } from "./services";

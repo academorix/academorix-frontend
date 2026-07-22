@@ -11,7 +11,7 @@
 
 import { Module, type DynamicModule } from "@stackra/container";
 
-import { MiddlewareLoaderService } from "./services/middleware-loader.service";
+import { MiddlewareLoader } from "./services/middleware-loader.service";
 import { MiddlewareRegistryService } from "./services/middleware-registry.service";
 import { MiddlewareResolverService } from "./services/middleware-resolver.service";
 
@@ -28,7 +28,7 @@ export class MiddlewareModule {
     return {
       module: MiddlewareModule,
       global: true,
-      providers: [MiddlewareRegistryService, MiddlewareResolverService, MiddlewareLoaderService],
+      providers: [MiddlewareRegistryService, MiddlewareResolverService, MiddlewareLoader],
       exports: [MiddlewareRegistryService, MiddlewareResolverService],
     };
   }

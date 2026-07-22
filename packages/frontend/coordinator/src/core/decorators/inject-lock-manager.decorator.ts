@@ -5,7 +5,7 @@
  */
 
 import { Inject } from "@stackra/container";
-import { TAB_LOCK_MANAGER } from "@/core/constants";
+import { TAB_LOCK_MANAGER } from "@stackra/contracts";
 
 /**
  * Inject the LockManager service.

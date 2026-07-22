@@ -49,7 +49,7 @@ function isPanel(value: unknown): value is IDevtoolsPanel {
  * them on the panels registry at bootstrap.
  */
 @Injectable()
-export class DevtoolsPanelsLoaderService implements OnApplicationBootstrap {
+export class DevtoolsPanelsLoader implements OnApplicationBootstrap {
   /**
    * @param registry - The panels registry to register discovered
    *   panels into.

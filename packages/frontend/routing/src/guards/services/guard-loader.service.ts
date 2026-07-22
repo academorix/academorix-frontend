@@ -10,6 +10,11 @@
  */
 
 import { Inject, Injectable, Optional } from "@stackra/container";
+import { DISCOVERY_SERVICE, GUARD_METADATA_KEY, LOGGER_MANAGER } from "@stackra/contracts";
+import { getMetadata } from "@vivtel/metadata";
+
+import { GuardRegistryService } from "./guard-registry.service";
+
 import type {
   ICanActivate,
   IDiscoveryService,
@@ -17,16 +22,12 @@ import type {
   ILoggerManager,
   OnApplicationBootstrap,
 } from "@stackra/contracts";
-import { DISCOVERY_SERVICE, GUARD_METADATA_KEY, LOGGER_MANAGER } from "@stackra/contracts";
-import { getMetadata } from "@vivtel/metadata";
-
-import { GuardRegistryService } from "./guard-registry.service";
 
 /**
  * Discovery loader for `@Guard`-decorated classes.
  */
 @Injectable()
-export class GuardLoaderService implements OnApplicationBootstrap {
+export class GuardLoader implements OnApplicationBootstrap {
   public constructor(
     private readonly registry: GuardRegistryService,
     @Optional()

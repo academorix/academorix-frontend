@@ -17,7 +17,7 @@ import type { ISettingDefinition } from "./setting-definition.interface";
  * Registry of every registered setting group.
  *
  * Populated at boot by `SettingsModule.forFeature([Dto, ...])` and /
- * or `SettingsSchemaLoader.onModuleInit`. Read by the service, the
+ * or `SettingsSchemaFetcher.onModuleInit`. Read by the service, the
  * broadcast listener, and the React renderer.
  */
 export interface ISettingsRegistry {

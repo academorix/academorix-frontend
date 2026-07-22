@@ -17,17 +17,19 @@
  */
 
 import { Module, type DynamicModule, type Provider } from "@stackra/container";
+import { SCOPE_PERSIST_ADAPTER, SCOPE_SERVICE, type IAsyncModuleOptions } from "@stackra/contracts";
 import { DevtoolsModule } from "@stackra/devtools";
-import { SCOPE_PERSIST_ADAPTER, type IAsyncModuleOptions } from "@stackra/contracts";
 
-import { SCOPE_CONFIG, SCOPE_DATA_SOURCE, SCOPE_SERVICE } from "./constants";
-import { StorageBackedScopePersistAdapter } from "./adapters/storage-backed-scope-persist.adapter";
-import { mergeConfig } from "./utils/merge-config.util";
-import { withPersistAdapter } from "./utils/with-persist-adapter.util";
-import { ScopeService } from "./services/scope.service";
-import type { IScopeDataSource, IScopeModuleOptions, IScopePersistAdapter } from "./interfaces";
 import { ScopeDevtoolsPanel } from "../react/devtools/scope.devtools-panel";
 import { ScopeInspectorSource } from "../react/devtools/scope.inspector-source";
+
+import { StorageBackedScopePersistAdapter } from "./adapters/storage-backed-scope-persist.adapter";
+import { SCOPE_CONFIG, SCOPE_DATA_SOURCE } from "./constants";
+import { ScopeService } from "./services/scope.service";
+import { mergeConfig } from "./utils/merge-config.util";
+import { withPersistAdapter } from "./utils/with-persist-adapter.util";
+
+import type { IScopeDataSource, IScopeModuleOptions, IScopePersistAdapter } from "./interfaces";
 
 /** Options accepted by `ScopeModule.forRoot`. */
 export interface ScopeRootOptions extends IScopeModuleOptions {

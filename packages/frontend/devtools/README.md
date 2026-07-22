@@ -15,8 +15,8 @@ production.
   `DevtoolsFrameStateService` (open state / position / size / active panel —
   persisted through `@stackra/storage` when present), a
   `DevtoolsAnalyticsService` (fires `DEVTOOLS_EVENTS.*` on the shared
-  `EVENT_EMITTER`), plus two discovery loaders (`DevtoolsPanelsLoaderService` +
-  `DevtoolsInspectorLoaderService`) that scan the container at
+  `EVENT_EMITTER`), plus two discovery loaders (`DevtoolsPanelsLoader` +
+  `DevtoolsInspectorLoader`) that scan the container at
   `onApplicationBootstrap`.
 - **Decorators + contribution API** — `@DevtoolsPanel(options)` stamps a class
   with `DEVTOOLS_PANEL_METADATA_KEY` and applies `@Injectable()`;
@@ -234,7 +234,7 @@ export class NetworkModule {}
 The panel appears in the shell's nav rail at bootstrap. Auto-discovery via the
 `@stackra/container/discovery` module works too — every
 `@DevtoolsPanel`-decorated class in the container is picked up by
-`DevtoolsPanelsLoaderService.onApplicationBootstrap()`.
+`DevtoolsPanelsLoader.onApplicationBootstrap()`.
 
 ## Component inspector
 

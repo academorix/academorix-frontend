@@ -8,11 +8,7 @@
 export { MiddlewareModule } from "./middleware.module";
 
 // ── Services ──
-export {
-  MiddlewareRegistryService,
-  MiddlewareResolverService,
-  MiddlewareLoaderService,
-} from "./services";
+export { MiddlewareRegistryService, MiddlewareResolverService, MiddlewareLoader } from "./services";
 
 // ── Signals + helpers ──
 export {

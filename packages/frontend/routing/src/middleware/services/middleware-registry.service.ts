@@ -4,17 +4,17 @@
  * @description The runtime middleware registry.
  *
  *   Holds every discovered `@Middleware`-decorated class + every named
- *   group. Populated by `MiddlewareLoaderService` at
+ *   group. Populated by `MiddlewareLoader` at
  *   `onApplicationBootstrap` and (optionally) by
  *   `RoutingModule.forFeature({...})` seed loaders.
  */
 
 import { Inject, Injectable, Optional } from "@stackra/container";
-import { BaseRegistry } from "@stackra/support";
-import type { ILoggerManager, IMiddlewareOptions } from "@stackra/contracts";
 import { LOGGER_MANAGER } from "@stackra/contracts";
+import { BaseRegistry } from "@stackra/support";
 
 import type { IMiddlewareEntry, IMiddlewareGroup } from "@/core/interfaces";
+import type { ILoggerManager, IMiddlewareOptions } from "@stackra/contracts";
 
 /**
  * The routing middleware registry.
@@ -32,7 +32,7 @@ import type { IMiddlewareEntry, IMiddlewareGroup } from "@/core/interfaces";
 @Injectable()
 export class MiddlewareRegistryService extends BaseRegistry<string, IMiddlewareEntry> {
   /** Named groups — separate index because groups and entries share names spaces. */
-  private readonly groups: Map<string, IMiddlewareGroup> = new Map();
+  private readonly groups = new Map<string, IMiddlewareGroup>();
 
   /** Monotonic counter used to break priority ties by declaration order. */
   private declarationCounter = 0;

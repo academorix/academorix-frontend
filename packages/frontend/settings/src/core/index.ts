@@ -20,7 +20,7 @@ export { SettingsModule } from "./settings.module";
 // ════════════════════════════════════════════════════════════════════════════════
 export { SettingsService } from "./services";
 export { SettingsStoreManager } from "./services";
-export { SettingsSchemaLoader } from "./services";
+export { SettingsSchemaFetcher } from "./services";
 export { SettingsBroadcastListener } from "./services";
 
 // ════════════════════════════════════════════════════════════════════════════════

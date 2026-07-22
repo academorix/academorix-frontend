@@ -38,8 +38,8 @@ export { DevtoolsPanelsRegistry, DevtoolsInspectorRegistry } from "./registries"
 export {
   DevtoolsAnalyticsService,
   DevtoolsFrameStateService,
-  DevtoolsInspectorLoaderService,
-  DevtoolsPanelsLoaderService,
+  DevtoolsInspectorLoader,
+  DevtoolsPanelsLoader,
   type DevtoolsFrameStateListener,
 } from "./services";
 

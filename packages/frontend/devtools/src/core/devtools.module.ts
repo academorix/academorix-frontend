@@ -40,14 +40,15 @@ import {
 import { createSeedLoader, seedLoaderToken } from "@stackra/support";
 
 import { DEVTOOLS_CONFIG } from "./constants";
-import type { IDevtoolsModuleOptions } from "./interfaces/devtools-module-options.interface";
-import { DevtoolsPanelsRegistry } from "./registries/devtools-panels.registry";
 import { DevtoolsInspectorRegistry } from "./registries/devtools-inspector.registry";
-import { DevtoolsPanelsLoaderService } from "./services/devtools-panels-loader.service";
-import { DevtoolsInspectorLoaderService } from "./services/devtools-inspector-loader.service";
-import { DevtoolsFrameStateService } from "./services/devtools-frame-state.service";
+import { DevtoolsPanelsRegistry } from "./registries/devtools-panels.registry";
 import { DevtoolsAnalyticsService } from "./services/devtools-analytics.service";
+import { DevtoolsFrameStateService } from "./services/devtools-frame-state.service";
+import { DevtoolsInspectorLoader } from "./services/devtools-inspector-loader.service";
+import { DevtoolsPanelsLoader } from "./services/devtools-panels-loader.service";
 import { mergeConfig } from "./utils/merge-config.util";
+
+import type { IDevtoolsModuleOptions } from "./interfaces/devtools-module-options.interface";
 
 /**
  * The devtools DI module.
@@ -94,8 +95,8 @@ export class DevtoolsModule {
         // Discovery loaders — pick up every `@DevtoolsPanel(...)`
         // and `@DevtoolsInspectorSource(...)` at
         // `onApplicationBootstrap`.
-        DevtoolsPanelsLoaderService,
-        DevtoolsInspectorLoaderService,
+        DevtoolsPanelsLoader,
+        DevtoolsInspectorLoader,
         // Frame-state + analytics services — both accept optional
         // dependencies internally so they resolve cleanly even
         // when `@stackra/storage` / `@stackra/events` aren't wired.
@@ -140,8 +141,8 @@ export class DevtoolsModule {
           provide: DEVTOOLS_INSPECTOR_REGISTRY,
           useExisting: DevtoolsInspectorRegistry,
         },
-        DevtoolsPanelsLoaderService,
-        DevtoolsInspectorLoaderService,
+        DevtoolsPanelsLoader,
+        DevtoolsInspectorLoader,
         DevtoolsFrameStateService,
         DevtoolsAnalyticsService,
       ],
@@ -188,10 +189,14 @@ export class DevtoolsModule {
   public static forFeature(
     panels: Type<IDevtoolsPanel> | readonly Type<IDevtoolsPanel>[],
   ): DynamicModule {
-    const classes = Array.isArray(panels) ? panels : [panels as Type<IDevtoolsPanel>];
+    // Normalise once so the flatMap below has a properly-typed array.
+    // `Array.isArray(...)` widens a `readonly T[]` union member to
+    // `any[]` in the strict lint preset — bind through a typed const
+    // instead of re-narrowing at every callsite.
+    const classes: readonly Type<IDevtoolsPanel>[] = Array.isArray(panels) ? panels : [panels];
     return {
       module: DevtoolsModule,
-      providers: classes.flatMap((panelClass) => [
+      providers: classes.flatMap((panelClass: Type<IDevtoolsPanel>) => [
         panelClass,
         {
           // Unique seed token per panel class so contributions don't
@@ -203,13 +208,17 @@ export class DevtoolsModule {
             // panel just doesn't appear anywhere. Feature packages
             // therefore call `forFeature` unconditionally without
             // making `@stackra/devtools` a required peer.
-            if (!registry) return createSeedLoader(() => {});
+            if (!registry) {
+              return createSeedLoader(() => {
+                /* no-op — devtools not mounted */
+              });
+            }
             return createSeedLoader(() => registry.register(instance));
           },
           inject: [{ token: DEVTOOLS_REGISTRY, optional: true }, panelClass],
         },
       ]),
-      exports: classes,
+      exports: [...classes],
     };
   }
 
@@ -226,12 +235,15 @@ export class DevtoolsModule {
   public static forInspectorSource(
     sources: Type<IDevtoolsInspectorRegionSource> | readonly Type<IDevtoolsInspectorRegionSource>[],
   ): DynamicModule {
-    const classes = Array.isArray(sources)
+    // Same normalisation pattern as `forFeature` above — see the note
+    // there for why the `Array.isArray` result is re-bound through a
+    // typed const.
+    const classes: readonly Type<IDevtoolsInspectorRegionSource>[] = Array.isArray(sources)
       ? sources
-      : [sources as Type<IDevtoolsInspectorRegionSource>];
+      : [sources];
     return {
       module: DevtoolsModule,
-      providers: classes.flatMap((sourceClass) => [
+      providers: classes.flatMap((sourceClass: Type<IDevtoolsInspectorRegionSource>) => [
         sourceClass,
         {
           provide: seedLoaderToken(`devtools:inspector:${sourceClass.name}`),
@@ -240,13 +252,17 @@ export class DevtoolsModule {
             instance: IDevtoolsInspectorRegionSource,
           ) => {
             // Fail-soft — see `forFeature` above.
-            if (!registry) return createSeedLoader(() => {});
+            if (!registry) {
+              return createSeedLoader(() => {
+                /* no-op — devtools not mounted */
+              });
+            }
             return createSeedLoader(() => registry.register(instance));
           },
           inject: [{ token: DEVTOOLS_INSPECTOR_REGISTRY, optional: true }, sourceClass],
         },
       ]),
-      exports: classes,
+      exports: [...classes],
     };
   }
 }

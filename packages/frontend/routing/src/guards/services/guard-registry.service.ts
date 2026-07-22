@@ -4,16 +4,16 @@
  * @description The routing guard registry.
  *
  *   Extends `BaseRegistry<string, IGuardEntry>` from `@stackra/support`.
- *   Populated by `GuardLoaderService` at `onApplicationBootstrap` from
+ *   Populated by `GuardLoader` at `onApplicationBootstrap` from
  *   every `@Guard`-decorated class in the DI graph.
  */
 
 import { Inject, Injectable, Optional } from "@stackra/container";
-import { BaseRegistry } from "@stackra/support";
-import type { ICanActivate, IGuardOptions, ILoggerManager } from "@stackra/contracts";
 import { LOGGER_MANAGER } from "@stackra/contracts";
+import { BaseRegistry } from "@stackra/support";
 
 import type { IGuardEntry } from "@/core/interfaces";
+import type { ICanActivate, IGuardOptions, ILoggerManager } from "@stackra/contracts";
 
 /**
  * The routing guard registry.

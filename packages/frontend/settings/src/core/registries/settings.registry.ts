@@ -33,7 +33,7 @@ import { SettingsError } from "@/core/errors";
  * In-memory registry of every registered setting group.
  *
  * Populated at boot by `SettingsModule.forFeature([Dto])` and / or by
- * `SettingsSchemaLoader` when the API is configured. Read by the
+ * `SettingsSchemaFetcher` when the API is configured. Read by the
  * service, the broadcast listener, and the React renderer.
  */
 @Injectable()
@@ -196,10 +196,29 @@ export class SettingsRegistry implements ISettingsRegistry {
   private warn(message: string, cause?: unknown): void {
     if (!this.logger) return;
     try {
-      const suffix = cause ? `: ${String(cause)}` : "";
+      const suffix = cause === undefined ? "" : `: ${formatCause(cause)}`;
       this.logger.create("settings").warn(`${message}${suffix}`);
     } catch {
       // Fail-soft — internal logging must never surface.
     }
+  }
+}
+
+/**
+ * Serialise an unknown thrown value into a readable log suffix. Errors
+ * yield their `.message`; primitives coerce through `String`; objects
+ * go through `JSON.stringify` so the log never carries the useless
+ * `[object Object]` — which is what native template-string coercion
+ * would produce (and what `@typescript-eslint/no-base-to-string`
+ * legitimately flags).
+ */
+function formatCause(cause: unknown): string {
+  if (cause instanceof Error) return cause.message;
+  if (typeof cause === "string") return cause;
+  if (typeof cause === "number" || typeof cause === "boolean") return String(cause);
+  try {
+    return JSON.stringify(cause);
+  } catch {
+    return "[unserialisable]";
   }
 }

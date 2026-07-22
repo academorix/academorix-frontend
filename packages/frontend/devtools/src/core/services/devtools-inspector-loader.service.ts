@@ -35,7 +35,7 @@ function isInspectorSource(value: unknown): value is IDevtoolsInspectorRegionSou
  * registers them on the inspector registry at bootstrap.
  */
 @Injectable()
-export class DevtoolsInspectorLoaderService implements OnApplicationBootstrap {
+export class DevtoolsInspectorLoader implements OnApplicationBootstrap {
   public constructor(
     @Inject(DEVTOOLS_INSPECTOR_REGISTRY)
     private readonly registry: IDevtoolsInspectorRegistry,

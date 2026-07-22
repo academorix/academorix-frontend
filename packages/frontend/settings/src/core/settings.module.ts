@@ -4,7 +4,7 @@
  * @description DI module for the settings system.
  *
  *   `forRoot(options?)` binds config + service + registry + manager +
- *   schema loader + broadcast listener. `forRootAsync(options)` does
+ *   schema fetcher + broadcast listener. `forRootAsync(options)` does
  *   the same via an async factory. `forFeature([Dto])` registers a
  *   client-declared DTO through the canonical `createSeedLoader` /
  *   `seedLoaderToken` pair so registration runs in the proper
@@ -12,7 +12,6 @@
  */
 
 import { Module, type DynamicModule, type Type } from "@stackra/container";
-import { createSeedLoader, seedLoaderToken } from "@stackra/support";
 import {
   IAsyncModuleOptions,
   SETTINGS_CONFIG,
@@ -22,11 +21,12 @@ import {
   type ISettingsModuleOptions,
   type ISettingsRegistry,
 } from "@stackra/contracts";
+import { createSeedLoader, seedLoaderToken } from "@stackra/support";
 
 import { SettingsRegistry } from "@/core/registries/settings.registry";
 import {
   SettingsBroadcastListener,
-  SettingsSchemaLoader,
+  SettingsSchemaFetcher,
   SettingsService,
   SettingsStoreManager,
 } from "@/core/services";
@@ -75,8 +75,8 @@ export class SettingsModule {
         SettingsService,
         { provide: SETTINGS_SERVICE, useExisting: SettingsService },
 
-        // Schema loader runs at onModuleInit when autoLoadSchema is on.
-        SettingsSchemaLoader,
+        // Schema fetcher runs at onModuleInit when autoLoadSchema is on.
+        SettingsSchemaFetcher,
 
         // Broadcast listener runs at onApplicationBootstrap when
         // broadcasting is enabled.
@@ -90,7 +90,7 @@ export class SettingsModule {
         SettingsStoreManager,
         SETTINGS_SERVICE,
         SettingsService,
-        SettingsSchemaLoader,
+        SettingsSchemaFetcher,
       ],
     };
   }
@@ -122,7 +122,7 @@ export class SettingsModule {
         SettingsService,
         { provide: SETTINGS_SERVICE, useExisting: SettingsService },
 
-        SettingsSchemaLoader,
+        SettingsSchemaFetcher,
         SettingsBroadcastListener,
       ],
       exports: [
@@ -133,7 +133,7 @@ export class SettingsModule {
         SettingsStoreManager,
         SETTINGS_SERVICE,
         SettingsService,
-        SettingsSchemaLoader,
+        SettingsSchemaFetcher,
       ],
     };
   }

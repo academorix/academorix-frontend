@@ -2,7 +2,7 @@
 /**
  * @file devtools-panels-loader.spec.ts
  * @module @stackra/devtools/tests/unit
- * @description Unit tests for `DevtoolsPanelsLoaderService`.
+ * @description Unit tests for `DevtoolsPanelsLoader`.
  *
  *   The loader is the discovery half of the panels-registration
  *   contract — it queries `IDiscoveryService.getProvidersByMetadata`
@@ -10,6 +10,7 @@
  */
 
 import { describe, expect, it, vi } from "vitest";
+
 import type {
   IDevtoolsPanel,
   IDevtoolsPanelsRegistry,
@@ -17,7 +18,7 @@ import type {
   IDiscoveryService,
 } from "@stackra/contracts";
 
-import { DevtoolsPanelsLoaderService } from "@/core/services/devtools-panels-loader.service";
+import { DevtoolsPanelsLoader } from "@/core/services/devtools-panels-loader.service";
 import { createMockDevtoolsPanel } from "@/testing/create-mock-devtools-panel.util";
 
 /** Build a minimal `IDevtoolsPanelsRegistry` mock. */
@@ -57,10 +58,10 @@ function wrap(instance: unknown, name = "X"): IDiscoveryProvider {
   } as unknown as IDiscoveryProvider;
 }
 
-describe("DevtoolsPanelsLoaderService", () => {
+describe("DevtoolsPanelsLoader", () => {
   it("is a no-op when no discovery service is bound", () => {
     const registry = makeRegistry();
-    const loader = new DevtoolsPanelsLoaderService(registry);
+    const loader = new DevtoolsPanelsLoader(registry);
     loader.onApplicationBootstrap();
     expect(registry.registered).toHaveLength(0);
   });
@@ -70,7 +71,7 @@ describe("DevtoolsPanelsLoaderService", () => {
     const p1 = createMockDevtoolsPanel({ id: "a" });
     const p2 = createMockDevtoolsPanel({ id: "b" });
     const discovery = makeDiscovery([wrap(p1), wrap(p2)]);
-    const loader = new DevtoolsPanelsLoaderService(registry, discovery);
+    const loader = new DevtoolsPanelsLoader(registry, discovery);
     loader.onApplicationBootstrap();
     expect(registry.registered.map((p) => p.id)).toEqual(["a", "b"]);
   });
@@ -78,7 +79,7 @@ describe("DevtoolsPanelsLoaderService", () => {
   it("handles the zero-panels case", () => {
     const registry = makeRegistry();
     const discovery = makeDiscovery([]);
-    const loader = new DevtoolsPanelsLoaderService(registry, discovery);
+    const loader = new DevtoolsPanelsLoader(registry, discovery);
     loader.onApplicationBootstrap();
     expect(registry.registered).toHaveLength(0);
   });
@@ -89,7 +90,7 @@ describe("DevtoolsPanelsLoaderService", () => {
     // doesn't carry the required fields yet. Loader must skip
     // silently.
     const discovery = makeDiscovery([wrap({ id: 42, notAPanel: true })]);
-    const loader = new DevtoolsPanelsLoaderService(registry, discovery);
+    const loader = new DevtoolsPanelsLoader(registry, discovery);
     loader.onApplicationBootstrap();
     expect(registry.registered).toHaveLength(0);
   });
@@ -99,7 +100,7 @@ describe("DevtoolsPanelsLoaderService", () => {
     const providers = [wrap(createMockDevtoolsPanel({ id: "x" }))];
     const discovery = makeDiscovery(providers);
     const spy = vi.spyOn(discovery, "getProvidersByMetadata");
-    const loader = new DevtoolsPanelsLoaderService(registry, discovery);
+    const loader = new DevtoolsPanelsLoader(registry, discovery);
     loader.onApplicationBootstrap();
     expect(spy).toHaveBeenCalledTimes(1);
   });
@@ -113,7 +114,7 @@ describe("DevtoolsPanelsLoaderService", () => {
     const first = createMockDevtoolsPanel({ id: "dup", title: "First" });
     const second = createMockDevtoolsPanel({ id: "dup", title: "Second" });
     const discovery = makeDiscovery([wrap(first), wrap(second)]);
-    const loader = new DevtoolsPanelsLoaderService(registry, discovery);
+    const loader = new DevtoolsPanelsLoader(registry, discovery);
     loader.onApplicationBootstrap();
     expect(registry.registered).toHaveLength(2);
   });

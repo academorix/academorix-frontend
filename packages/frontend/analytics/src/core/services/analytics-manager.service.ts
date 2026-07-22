@@ -15,8 +15,21 @@
  */
 
 import { Inject, Injectable, Optional, OnApplicationBootstrap } from "@stackra/container";
+import { ANALYTICS_CONFIG, CONSENT_MANAGER, LOGGER_MANAGER } from "@stackra/contracts";
 import { MultipleInstanceManager } from "@stackra/support";
-import { ANALYTICS_CONFIG, LOGGER_MANAGER } from "@stackra/contracts";
+
+import { ConsoleAnalyticsProvider } from "../providers/console-analytics.provider";
+import { Ga4AnalyticsProvider } from "../providers/ga4-analytics.provider";
+import { MetaPixelProvider } from "../providers/meta-pixel.provider";
+import { SnapchatPixelProvider } from "../providers/snapchat-pixel.provider";
+import { TiktokPixelProvider } from "../providers/tiktok-pixel.provider";
+
+import type {
+  IAnalyticsModuleOptions,
+  IConsentGate,
+  IGa4ProviderOptions,
+  IPixelProviderOptions,
+} from "../interfaces";
 import type {
   IAnalyticsEvent,
   IAnalyticsIdentity,
@@ -25,19 +38,6 @@ import type {
   IAnalyticsProvider,
   ILoggerManager,
 } from "@stackra/contracts";
-
-import type {
-  IAnalyticsModuleOptions,
-  IConsentGate,
-  IGa4ProviderOptions,
-  IPixelProviderOptions,
-} from "../interfaces";
-import { CONSENT_MANAGER_TOKEN } from "../constants";
-import { ConsoleAnalyticsProvider } from "../providers/console-analytics.provider";
-import { Ga4AnalyticsProvider } from "../providers/ga4-analytics.provider";
-import { MetaPixelProvider } from "../providers/meta-pixel.provider";
-import { TiktokPixelProvider } from "../providers/tiktok-pixel.provider";
-import { SnapchatPixelProvider } from "../providers/snapchat-pixel.provider";
 
 /** A queued analytics call awaiting consent. */
 type QueuedCall =
@@ -71,12 +71,15 @@ export class AnalyticsManager
 
   /**
    * @param config - Merged analytics configuration.
-   * @param consent - Optional consent gate (decoupled via `Symbol.for`).
+   * @param consent - Optional consent gate (imported from
+   *   `@stackra/contracts` as `CONSENT_MANAGER`; kept optional so the
+   *   analytics package does not force a hard dependency on the consent
+   *   package at runtime).
    * @param loggerManager - Optional logger for internal warnings.
    */
   public constructor(
     @Inject(ANALYTICS_CONFIG) private readonly config: IAnalyticsModuleOptions,
-    @Optional() @Inject(CONSENT_MANAGER_TOKEN) private readonly consent?: IConsentGate,
+    @Optional() @Inject(CONSENT_MANAGER) private readonly consent?: IConsentGate,
     @Optional() @Inject(LOGGER_MANAGER) private readonly loggerManager?: ILoggerManager,
   ) {
     super();

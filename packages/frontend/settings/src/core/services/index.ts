@@ -6,5 +6,5 @@
 
 export { SettingsService } from "./settings.service";
 export { SettingsStoreManager } from "./settings-manager.service";
-export { SettingsSchemaLoader } from "./settings-schema-loader.service";
+export { SettingsSchemaFetcher } from "./settings-schema-fetcher.service";
 export { SettingsBroadcastListener } from "./settings-broadcast-listener.service";
