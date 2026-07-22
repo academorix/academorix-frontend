@@ -1,0 +1,86 @@
+{
+  "_comment_1": "packages/config/pint.json — the shared Laravel Pint (code style) config for every backend package.",
+  "_comment_2": "Pint does not have an 'includes' mechanism like PHPStan. Each package either copies this file into its root OR points at it via a composer script that calls `pint --config=../../packages/config/pint.json`. The workspace convention is: this is the single source of truth; per-package overrides are rare + reviewed.",
+  "_comment_3": "Preset chosen: 'laravel' — the maintained standard for Laravel projects. Adds strict types, single-quote strings, aligned array syntax, phpdoc-summary discipline, class-attribute ordering, and typed_class_constants (PHP 8.3+).",
+  "_comment_4": "Rules below OVERRIDE / EXTEND the Laravel preset. Each entry MUST carry a rationale comment naming why it deviates from the preset.",
+
+  "preset": "laravel",
+
+  "rules": {
+    "_comment_declare_strict_types": "Every non-config PHP file declares strict types per `.kiro/steering/conventions.md`.",
+    "declare_strict_types": true,
+
+    "_comment_class_attributes_separation": "One blank line between constants + properties; two blank lines between methods. Matches every hand-authored class in the workspace.",
+    "class_attributes_separation": {
+      "elements": {
+        "const": "one",
+        "method": "one",
+        "property": "one",
+        "trait_import": "none",
+        "case": "none"
+      }
+    },
+
+    "_comment_ordered_imports": "Alphabetical use imports so that imports across a class read as a discoverable list.",
+    "ordered_imports": {
+      "sort_algorithm": "alpha",
+      "imports_order": ["class", "function", "const"]
+    },
+
+    "_comment_no_unused_imports": "PHPStan level max catches these too, but Pint fixes them automatically on `lint:fix`.",
+    "no_unused_imports": true,
+
+    "_comment_single_quote": "String literals use single quotes unless interpolating or escaping. Matches Laravel core.",
+    "single_quote": true,
+
+    "_comment_trailing_comma": "Trailing commas in every multi-line array/method call. Reduces diff noise on adds.",
+    "trailing_comma_in_multiline": {
+      "elements": ["arrays", "arguments", "parameters", "match"]
+    },
+
+    "_comment_binary_operator_spaces": "Never align = signs across statements. Aligned = drifts as the longest identifier changes.",
+    "binary_operator_spaces": {
+      "default": "single_space"
+    },
+
+    "_comment_concat_space": "Single space around . concatenation. Matches Laravel core.",
+    "concat_space": {
+      "spacing": "one"
+    },
+
+    "_comment_phpdoc_align": "Docblock params + returns aligned in a single column — reads better in wide files.",
+    "phpdoc_align": {
+      "align": "vertical",
+      "tags": ["param", "return", "throws", "type", "var"]
+    },
+
+    "_comment_phpdoc_order": "Fixed docblock tag order: summary → description → @param → @return → @throws → @see → @deprecated.",
+    "phpdoc_order": true,
+
+    "_comment_phpdoc_separation": "Blank line between the summary/description block and the @tag group; blank line between @param/@return group and @throws.",
+    "phpdoc_separation": {
+      "groups": [
+        ["deprecated", "link", "see", "since"],
+        ["author", "copyright", "license"],
+        ["category", "package", "subpackage"],
+        ["property", "property-read", "property-write"],
+        ["param", "return"],
+        ["throws"]
+      ]
+    },
+
+    "_comment_native_function_invocation": "Prefix native functions with \\ inside namespaced code (\\count, \\array_map) — small perf win + explicit intent.",
+    "native_function_invocation": {
+      "include": ["@compiler_optimized"],
+      "scope": "namespaced",
+      "strict": true
+    },
+
+    "_comment_no_superfluous_phpdoc_tags": "Remove @param/@return tags that add nothing over the signature — the workspace docblock rule requires tags to add facts, not restate signatures.",
+    "no_superfluous_phpdoc_tags": {
+      "allow_mixed": true,
+      "allow_unused_params": false,
+      "remove_inheritdoc": false
+    }
+  }
+}

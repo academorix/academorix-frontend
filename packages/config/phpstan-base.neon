@@ -1,0 +1,89 @@
+#
+# packages/config/phpstan-base.neon
+#
+# Shared PHPStan / Larastan base configuration for every backend package.
+#
+# Every package's own `phpstan.neon` includes this file via
+# `../../config/phpstan-base.neon` — the two-levels-up path resolves to
+# `packages/config/` from a package sitting at `packages/backend/<name>/`.
+#
+# ## Purpose
+#
+# One place to pin:
+#   * The Larastan extension (Laravel-aware type inference).
+#   * The analysis level (max — level 9).
+#   * Cross-package `ignoreErrors` that would otherwise repeat per package.
+#   * `bootstrapFiles` that need loading for attribute discovery to work.
+#
+# ## What each package adds on top
+#
+# Every package's local `phpstan.neon` overrides / extends:
+#   * `parameters.paths` — the source directories to scan.
+#   * `parameters.excludePaths` — vendor/, dist/, cache dirs.
+#   * `parameters.ignoreErrors` — package-specific false positives (with a
+#     TODO reference so they don't become permanent).
+#
+# ## Why level max
+#
+# Every workspace package targets PHPStan level max (9). Legacy code with
+# open baselines carries its own `phpstan-baseline.neon` next to its
+# `phpstan.neon` — those baselines shrink toward zero over time.
+#
+# ## Related
+#
+#   * `.kiro/steering/php-attributes.md` — attribute usage this config
+#     needs to see via bootstrapFiles.
+#   * Each package's `phpstan.neon` — includes this file.
+#   * `.kiro/steering/conventions.md` — the level max mandate.
+
+includes:
+    # Larastan brings Laravel-flavored inference — Eloquent scopes,
+    # container bindings, macroable classes, config() return types.
+    # Every service is Laravel; every package participates in the Laravel
+    # container graph; this include is non-negotiable.
+    - ../../packages/backend/framework/scope/vendor/larastan/larastan/extension.neon
+
+parameters:
+    # Analysis level — max (equivalent to level 9).
+    #
+    # Level max checks: strict comparison, dead code, function signature
+    # match, template types, union types, class existence, etc.
+    #
+    # If a package cannot meet level max yet, it ships its own
+    # `phpstan-baseline.neon` and shrinks it over time. NEVER lower the
+    # level in a package's phpstan.neon — the workspace-wide agreement is
+    # level max at the base.
+    level: max
+
+    # Treat PHP native functions as if they returned exactly what they
+    # document. Prevents drift when a wrapper package accepts a mixed
+    # return the underlying function actually types more precisely.
+    treatPhpDocTypesAsCertain: true
+
+    # Read Larastan's own default parameters.
+    reportUnmatchedIgnoredErrors: true
+
+    # Cross-package globally-ignored patterns.
+    #
+    # Every entry MUST carry a comment naming WHY it's ignored + a
+    # (TODO or reference) so we can lift the ignore later. Adding an
+    # ignore without a rationale is a review-block violation.
+    ignoreErrors:
+        # Spatie's Data classes generate __construct signatures that
+        # PHPStan can't fully verify against arbitrary child DTOs. This
+        # is documented in spatie/laravel-data#901; fixed upstream in
+        # v5.x. Remove once we bump the workspace to laravel-data 5.
+        - '#^Method .* has parameter \$attributes with generic class Spatie\\LaravelData\\Data#'
+
+        # laravel/framework 13.x IdeHelperContract facade macros — the
+        # facade docstring is not enough for PHPStan to resolve at max.
+        - '#^Call to an undefined method Illuminate\\Support\\Facades\\Facade::#'
+
+    # Where to look for autoloaded namespaces during analysis.
+    #
+    # Every package's own vendor is walked automatically once its
+    # `paths:` scans it. The workspace-root `vendor/` is NOT scanned by
+    # default — each package is its own composer install root.
+    #
+    # bootstrapFiles are per-package (attribute discovery lives in
+    # foundation, not here) — do NOT add global bootstraps.

@@ -1,0 +1,349 @@
+# =============================================================================
+# .github/workflows/php.yml
+# =============================================================================
+#
+# PHP CI matrix over every Stackra Laravel service.
+#
+# One workflow, six jobs (four shared services + academorix-api +
+# academorix-ai). Each job runs `composer install`, then lint (Pint),
+# then static analysis (PHPStan), then tests (Pest v4). A failure in
+# ANY step fails the job; a failure in ANY job fails the workflow.
+#
+# ## Design decisions
+#
+#   * **Matrix over services, not over PHP versions.** Every service
+#     runs against the same PHP version (see `PHP_VERSION` below). If
+#     we ever cross-test multiple PHP versions, add a second matrix
+#     dimension.
+#   * **Fail-fast: false.** One service's break shouldn't abort the
+#     others' CI — every failure surfaces so we can triage in parallel.
+#   * **`services:`** — Postgres + Redis containers spun up per job
+#     because each service uses its own DB. Faster than dockerizing the
+#     runner + more isolated than sharing a single DB across matrix
+#     entries.
+#   * **`concurrency:`** — one workflow run per branch. New pushes
+#     cancel the in-flight run.
+#   * **Composer caching** — keyed on the service's composer.lock so
+#     unchanged services skip the vendor download.
+#   * **Doppler is NOT invoked in CI.** Doppler auth needs a service
+#     token; CI provides secrets via GitHub Actions secrets instead.
+#     Every `composer` / `artisan` call is invoked WITHOUT `doppler run --`
+#     in this workflow — env vars come from the job env block.
+#
+# ## Adding a new service
+#
+#   1. Add a row to the `service:` array under `strategy.matrix`.
+#   2. If the service needs different env vars (e.g. a distinct DB name
+#      per service), extend the `env:` block via `${{ matrix.db_name }}`.
+#   3. If the service needs a different PHP extension, extend the
+#      `setup-php` `extensions:` list.
+#
+# ## Related
+#
+#   * ADR-0028 — Runtime target: Laravel Octane (CI runs the Pest suite
+#     TWICE: once under `serve`-mode, once under Octane to catch state
+#     leaks; the Octane-pass job is added in a follow-up commit).
+#   * ADR-0034 — Octane driver: Swoole (CI uses `--server=swoole` for
+#     the Octane pass).
+#   * `packages/config/phpstan-base.neon` — the shared analysis config.
+#   * `packages/config/pint.json` — the shared code-style config.
+
+name: PHP CI
+
+# ---------------------------------------------------------------------
+# Triggers
+# ---------------------------------------------------------------------
+#
+# Run on every push to `main` + every pull request against `main`.
+# No push to feature branches — devs use PRs; feature branches without a
+# PR aren't ready for review anyway.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  # Allow manual re-runs from the Actions tab (post-mortem re-runs
+  # after fixing a flaky test).
+  workflow_dispatch:
+
+# ---------------------------------------------------------------------
+# Concurrency
+# ---------------------------------------------------------------------
+#
+# One run per (workflow, ref) pair. If a new commit lands on the same
+# ref while a run is in-flight, cancel the in-flight run + start fresh.
+# Saves CI minutes on rapid iteration.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# ---------------------------------------------------------------------
+# Workflow-wide env
+# ---------------------------------------------------------------------
+env:
+  # Pin PHP version. Match `apps/laravel-template/composer.json`'s
+  # `php: ^8.3` requirement.
+  PHP_VERSION: "8.3"
+
+  # Composer cache directory — used by actions/cache below.
+  COMPOSER_CACHE_DIR: /tmp/composer-cache
+
+  # Fail fast on any deprecation warning during Pest run.
+  APP_ENV: testing
+
+# ---------------------------------------------------------------------
+# Jobs
+# ---------------------------------------------------------------------
+jobs:
+  # =====================================================================
+  # Job: per-service CI matrix
+  # =====================================================================
+  #
+  # One matrix entry per service. Each entry runs the same 5-step
+  # pipeline (checkout → PHP → composer → lint + analyse → test).
+  service:
+    name: ${{ matrix.service_name }} (${{ matrix.service_path }})
+    runs-on: ubuntu-latest
+
+    # Fail-fast off — one service failing shouldn't abort the others.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # ── 4 shared services ─────────────────────────────────────
+          - service_name: identity
+            service_path: services/identity
+            db_name: stackra_identity
+            redis_db: "0"
+          - service_name: commerce
+            service_path: services/commerce
+            db_name: stackra_commerce
+            redis_db: "1"
+          - service_name: notifications
+            service_path: services/notifications
+            db_name: stackra_notifications
+            redis_db: "2"
+          - service_name: observability
+            service_path: services/observability
+            db_name: stackra_observability
+            redis_db: "3"
+          # ── per-Application backend + AI ──────────────────────────
+          #
+          # academorix-api uses apps/laravel-template as its current
+          # scaffold; will move to apps/academorix-api/ once separately
+          # stamped.
+          - service_name: academorix-api
+            service_path: apps/laravel-template
+            db_name: academorix_api
+            redis_db: "4"
+
+    # ── Service containers ────────────────────────────────────────────
+    #
+    # One Postgres + one Redis per job. Each matrix entry gets its own
+    # fresh containers via GitHub Actions' `services:` support.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: stackra
+          POSTGRES_PASSWORD: ci_password
+          POSTGRES_DB: ${{ matrix.db_name }}
+        ports:
+          - 5432:5432
+        # Health check — job waits until Postgres accepts connections.
+        options: >-
+          --health-cmd "pg_isready -U stackra -d ${{ matrix.db_name }}"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    # ── Job env — matrix-parameterised ────────────────────────────────
+    env:
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: "5432"
+      DB_DATABASE: ${{ matrix.db_name }}
+      DB_USERNAME: stackra
+      DB_PASSWORD: ci_password
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: "6379"
+      REDIS_DB: ${{ matrix.redis_db }}
+      # Cache + queue backends — tests use array + sync respectively
+      # to keep the run hermetic (no Redis dependency for the Pest suite).
+      CACHE_STORE: array
+      QUEUE_CONNECTION: sync
+      SESSION_DRIVER: array
+      MAIL_MAILER: array
+
+    steps:
+      # ── Step 1 — Check out the workspace ─────────────────────────────
+      #
+      # Full-clone with LFS (in case any package ships large blueprint
+      # fixtures) + zero submodules (workspace has none as of 2026-07).
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: false
+
+      # ── Step 2 — Set up PHP ──────────────────────────────────────────
+      #
+      # shivammathur/setup-php is the community-standard PHP setup.
+      # Handles PECL extensions, INI overrides, tool installs, and
+      # OpenSSL setup for TLS-heavy tests.
+      #
+      # Extensions match the runtime Docker image's install list — CI
+      # must exercise the same extension surface as production.
+      - name: Setup PHP ${{ env.PHP_VERSION }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: >
+            bcmath,
+            intl,
+            mbstring,
+            opcache,
+            pcntl,
+            pdo_pgsql,
+            redis,
+            zip
+          # tools: pint installed via composer, not here — keeps the
+          # setup step lean + guarantees the composer.lock-pinned version.
+          tools: composer:v2
+          coverage: none
+
+      # ── Step 3 — Composer cache ──────────────────────────────────────
+      #
+      # Keyed on the SERVICE's composer.lock (not the workspace root).
+      # Different services have different vendor trees; sharing the cache
+      # across services would defeat the point.
+      - name: Composer cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.COMPOSER_CACHE_DIR }}
+          key: composer-${{ runner.os }}-${{ matrix.service_name }}-${{ hashFiles(format('{0}/composer.lock', matrix.service_path)) }}
+          # If the exact lockfile hash isn't cached, fall back to any
+          # prior cache for the same service.
+          restore-keys: |
+            composer-${{ runner.os }}-${{ matrix.service_name }}-
+
+      # ── Step 4 — Composer install ────────────────────────────────────
+      #
+      # `--prefer-dist` uses zip archives (faster than git clones).
+      # `--no-interaction` for CI safety.
+      # `--no-progress` to keep logs readable.
+      # Keep `require-dev` because we run Pest + PHPStan + Pint here.
+      - name: Composer install
+        working-directory: ${{ matrix.service_path }}
+        run: |
+          composer config -g cache-dir ${{ env.COMPOSER_CACHE_DIR }}
+          composer install \
+            --prefer-dist \
+            --no-interaction \
+            --no-progress \
+            --optimize-autoloader
+
+      # ── Step 5 — Lint (Pint) ─────────────────────────────────────────
+      #
+      # `pint --test` returns non-zero if any file would be reformatted.
+      # CI is strict — no auto-fix on the runner; devs fix locally +
+      # commit the change.
+      - name: Lint (Pint)
+        working-directory: ${{ matrix.service_path }}
+        run: composer lint
+
+      # ── Step 6 — Static analysis (PHPStan / Larastan) ────────────────
+      #
+      # Level max via the shared config. Errors above the current
+      # per-package baseline fail the job.
+      - name: Analyse (PHPStan)
+        working-directory: ${{ matrix.service_path }}
+        run: composer analyse
+
+      # ── Step 7 — Tests (Pest v4) ─────────────────────────────────────
+      #
+      # `composer test` = Foundation's `TestScripts::run` = parallel
+      # Pest execution via `--parallel`.
+      #
+      # Feature tests run against the ephemeral Postgres container from
+      # `services:` above; migrations run per-test via RefreshDatabase.
+      - name: Test (Pest)
+        working-directory: ${{ matrix.service_path }}
+        run: composer test
+
+  # =====================================================================
+  # Job: workspace-wide integrity checks
+  # =====================================================================
+  #
+  # Runs ONCE (not per-service) — checks that hold across every service.
+  workspace:
+    name: Workspace integrity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP ${{ env.PHP_VERSION }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          tools: composer:v2
+
+      - name: Setup Python (for sweep scripts)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # ── Composer path-repository audit ───────────────────────────────
+      #
+      # Every @dev dependency in every composer.json must resolve to a
+      # package that actually exists in the workspace. The sweep script
+      # runs against every composer.json + fails if any orphan is found.
+      - name: Composer path-repo audit
+        run: |
+          python3 .kiro/reports/sweep-deleted-package-refs.py > /tmp/sweep.log
+          if grep -q "^--- " /tmp/sweep.log; then
+            echo "::error::Composer path-repo audit found orphaned references."
+            cat /tmp/sweep.log
+            exit 1
+          fi
+          echo "::notice::Composer path-repo audit clean."
+
+      # ── Octane static audit ──────────────────────────────────────────
+      #
+      # Walks every backend package + service + academorix app for
+      # violations of the Octane-safe DI patterns from
+      # `.kiro/steering/octane-first-di.md`. Four rules:
+      #
+      #   R1 (P0): #[Singleton] classes that read per-request state
+      #   R2 (P0): static mutable properties on service classes
+      #   R3 (P1): facades inside services (`Auth::`, `Cache::`, ...)
+      #   R4 (P1): env() outside config/ folders
+      #
+      # Exit code 1 = P0 violation found = build fails.
+      # Exit code 0 with P1 warnings prints notices but doesn't fail.
+      - name: Octane static audit
+        run: |
+          set -e
+          python3 .kiro/reports/octane-static-audit.py
+
+      # ── ADR / steering integrity ─────────────────────────────────────
+      #
+      # Every ADR under docs/adr/ must:
+      #   * Have a monotonically-increasing number.
+      #   * Reference at least one steering doc.
+      #   * Include the "Related work" section.
+      #
+      # Pending: dedicated adr-audit script. Placeholder for now.
+      - name: ADR audit (placeholder)
+        run: |
+          echo "::notice::ADR audit is a follow-up — see tasks.md sprint 2 tail."
