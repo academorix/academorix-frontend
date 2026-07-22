@@ -1,0 +1,71 @@
+chore(backend): complete Phase A-E compliance sweep + Phase F laravel-template conversion
+
+Phase A — deployment blockers (5/6):
+- Delete 9 duplicate/typo migrations (branchs, day_passes, facilities,
+  passes, resource_bookings, keies, webauthn_credentials dup, coachs,
+  development_pathwaies)
+- Renumber 4 migrations to fix child-before-parent ordering (teams,
+  mfa/webauthn_credentials, staff, finance/order — parents to 115959)
+- Rename StaffInterface::TABLE 'staffs' → 'staff' and matching migration
+  filename to match downstream FK targets
+
+Phase B — runtime correctness (3/3):
+- SentryService rewritten as instance service with #[Scoped] + attribute
+  injection (Auth, Config, Container, Request) — no more static-locator
+  Octane leak
+- TenancyHookDispatcher wiring bug fixed — ResolveTenant middleware was
+  passing a TenantHookContext wrapper instead of the raw tenant model
+- CrudController + InteractsWithServices + InteractsWithCrudDeclarations
+  deleted as dead scaffolding (violates ADR-0016 Actions-only mandate)
+
+Phase C — headless mandate + folder cleanup (4/4 + 4 follow-ups):
+- Delete VerifyCsrfToken + EncryptCookies middleware (headless per
+  ADR-0021)
+- Move 53 Registry classes from Services/ to Registry/ (folder-per-kind
+  taxonomy)
+- Flatten foundation/Middlewares/{Request,Response,Security}/ into
+  Middleware/ (singular + flat)
+- Move 45 Contracts/Services/*RegistryInterface.php to Contracts/Registry/
+- Rename crud/Registries/ (plural) to Registry/ (singular) — 3 files
+- Move routing/Support/ApiVersionRegistry.php to Registry/
+- Restore HtmlErrorFormatter with $resources declarative wiring for the
+  browser-fallback path — Blade views live at src/views/errors/*.blade.php
+
+Phase D — ADR authoring:
+- Land 6 restored ADRs (0008 authorization+access split, 0011 seeder
+  discovery, 0016 actions-only, 0017 delete workspace terminology,
+  0018 business types dual-source, 0022 service boundary)
+- Land 3 unblocking ADRs (0029 audit consolidation, 0030 payment_methods
+  ownership, 0031 application_id central-plane extension)
+
+Phase E — compliance sweep (9/10):
+- declare(strict_types=1) added to 35 attribute + middleware files
+- ToolDiscoveryBootstrapper moved from Services/ to Bootstrappers/
+- 18 Actions flattened from Actions/Ctx/Sub/ to Actions/Ctx/ nesting
+- BelongsToTenant trait added to AccessRequestProjection + ServiceAccount
+  (trait order: BelongsToTenant first per hierarchy.md §14)
+- entitlements table gains application_id + composite index (§2 mandate)
+- 10 residual Workspace strings renamed to Tenant in SDK docblocks
+
+Phase F — apps/laravel-template headless conversion:
+- Delete frontend surface (resources/{css,js,views}, node_modules,
+  package.json, package-lock.json, vite.config.js, public/build,
+  public/favicon.ico, public/robots.txt)
+- Delete routes/web.php (no web routes)
+- Delete config/{mail,session}.php (no mail lane, no sessions)
+- Delete stock app/ skeleton (source root moves to src/)
+- Delete CLAUDE.md (byte-identical to AGENTS.md)
+- Retarget .doppler.yaml to project=stackra-api, config=dev_api
+- Rewrite .env.example for API-only shape (OCTANE + HORIZON + SANCTUM)
+- Rewrite README.md, bootstrap/app.php (src/ retarget + no web routing),
+  bootstrap/providers.php (drop AppServiceProvider + scaffold package
+  providers)
+- Rewrite composer.json — name=stackra/api, requires 87 backend packages
+  as @dev via 87 path repositories, adds Octane + Horizon + Sanctum
+
+Documentation:
+- tasks.md at workspace root — full plan for Phase A-H with per-phase
+  status
+- 10 markdown reports under .kiro/reports/ documenting each phase's
+  outcome
+- 6 Python mover scripts under .kiro/reports/ as audit trail

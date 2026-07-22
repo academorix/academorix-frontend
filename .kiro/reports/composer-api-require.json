@@ -1,0 +1,702 @@
+{
+  "require": {
+    "stackra-observability/activity": "@dev",
+    "stackra-observability/audit": "@dev",
+    "stackra-shared/foundation": "@dev",
+    "stackra/activity": "@dev",
+    "stackra/admin-console": "@dev",
+    "stackra/ai": "@dev",
+    "stackra/announcements": "@dev",
+    "stackra/application": "@dev",
+    "stackra/approvals": "@dev",
+    "stackra/architecture": "@dev",
+    "stackra/attributes": "@dev",
+    "stackra/audit": "@dev",
+    "stackra/auth": "@dev",
+    "stackra/authorization": "@dev",
+    "stackra/branch": "@dev",
+    "stackra/branding": "@dev",
+    "stackra/caching": "@dev",
+    "stackra/compliance": "@dev",
+    "stackra/console": "@dev",
+    "stackra/container": "@dev",
+    "stackra/credentials": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/database": "@dev",
+    "stackra/debugbar": "@dev",
+    "stackra/delegation": "@dev",
+    "stackra/domains": "@dev",
+    "stackra/entitlements": "@dev",
+    "stackra/enum": "@dev",
+    "stackra/events": "@dev",
+    "stackra/exceptions": "@dev",
+    "stackra/facility": "@dev",
+    "stackra/feature-flags": "@dev",
+    "stackra/forms": "@dev",
+    "stackra/foundation": "@dev",
+    "stackra/geography": "@dev",
+    "stackra/grants": "@dev",
+    "stackra/health": "@dev",
+    "stackra/horizon": "@dev",
+    "stackra/identity": "@dev",
+    "stackra/integrations": "@dev",
+    "stackra/invitations": "@dev",
+    "stackra/localization": "@dev",
+    "stackra/messaging": "@dev",
+    "stackra/mfa": "@dev",
+    "stackra/monitoring": "@dev",
+    "stackra/newsletter": "@dev",
+    "stackra/nightwatch": "@dev",
+    "stackra/notifications": "@dev",
+    "stackra/notifications-in-app": "@dev",
+    "stackra/notifications-mail": "@dev",
+    "stackra/notifications-push": "@dev",
+    "stackra/notifications-sms": "@dev",
+    "stackra/offline-sync": "@dev",
+    "stackra/organization": "@dev",
+    "stackra/people": "@dev",
+    "stackra/platform-user": "@dev",
+    "stackra/public-site": "@dev",
+    "stackra/rbac": "@dev",
+    "stackra/realtime": "@dev",
+    "stackra/reception": "@dev",
+    "stackra/region": "@dev",
+    "stackra/reporting": "@dev",
+    "stackra/requests": "@dev",
+    "stackra/retention": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/safeguarding": "@dev",
+    "stackra/scheduling": "@dev",
+    "stackra/scope": "@dev",
+    "stackra/search": "@dev",
+    "stackra/sentry": "@dev",
+    "stackra/serializer": "@dev",
+    "stackra/service-accounts": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/settings": "@dev",
+    "stackra/staff": "@dev",
+    "stackra/storage": "@dev",
+    "stackra/subscription": "@dev",
+    "stackra/support": "@dev",
+    "stackra/tasks": "@dev",
+    "stackra/teams": "@dev",
+    "stackra/telemetry": "@dev",
+    "stackra/tenancy": "@dev",
+    "stackra/theme": "@dev",
+    "stackra/transfer": "@dev",
+    "stackra/user": "@dev",
+    "stackra/versioning": "@dev",
+    "stackra/webhook": "@dev"
+  },
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../packages/backend/observability/activity",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/observability/audit",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/shared/foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/shared/activity",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/admin-console",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/ai",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/notifications/announcements",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/application",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/workflow/approvals",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/compliance/architecture",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/shared/attributes",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/shared/audit",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/identity/auth",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/authorization",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/branch",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/branding",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/caching",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/compliance/compliance",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/console",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/container",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/credentials",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/crud",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/database",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/telemetry/debug-bar",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/access/delegation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/domains",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/billing/entitlements",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/enum",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/events",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/exceptions",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/facility",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/feature-flags",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/forms",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/shared/geography",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/access/grants",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/telemetry/health",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/telemetry/horizon",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/identity/identity",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/integrations",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/access/invitations",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/shared/localization",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/notifications/messaging",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/identity/mfa",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/observability/monitoring",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/notifications/newsletter",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/telemetry/nightwatch",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/notifications/notifications",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/notifications/notifications-in-app",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/notifications/notifications-mail",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/notifications/notifications-push",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/notifications/notifications-sms",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/shared/offline-sync",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/organization",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/identity/people",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/identity/platform-user",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/public-site",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/access/rbac",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/realtime",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/reception",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/region",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/reporting",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/access/requests",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/compliance/retention",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/routing",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/safeguarding",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/scheduling",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/scope",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/shared/search",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/telemetry/sentry",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/serializer",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/identity/service-accounts",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/service-provider",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/settings",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/staff",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/storage",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/billing/subscription",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/framework/support",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/workflow/tasks",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/teams",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/shared/telemetry",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/tenancy",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/theme",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/shared/transfer",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/identity/user",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/shared/versioning",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../packages/backend/platform/webhook",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
+}

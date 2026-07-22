@@ -1,0 +1,14 @@
+chore(blueprints): move each module blueprint into its package under blueprint/
+
+Reorganise the top-level blueprints/ tree — every module blueprint moves
+from blueprints/<domain>/blueprints/<module>/ into its owning backend
+package at packages/backend/<domain>/<module>/blueprint/
+
+The top-level blueprints/ directory is removed. The 60 module blueprints
+now live alongside the source code they describe; the language-neutral
+JSON manifests stay the source of truth for both codegen and SDK type
+generation
+
+- 60 blueprint folders moved
+- 2582 files renamed (100% content preserved per git R100)
+- blueprints/ top-level deleted
