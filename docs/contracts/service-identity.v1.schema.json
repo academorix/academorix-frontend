@@ -1,0 +1,87 @@
+{
+  "$id": "stackra:contracts:service-identity:v1",
+  "title": "Service Identity Envelope",
+  "description": "Sanctum PAT identity envelope plus the ServiceAccount projection returned from Laravel's identity plane. Every service authenticates cross-service HTTP calls with a Sanctum PAT; this schema is the shape Laravel returns when a service resolves 'who am I' at boot.",
+  "type": "object",
+  "$comment": "JSON Schema draft 2020-12. Seam 1 (Identity). Owner: packages/backend/identity/service-accounts. Consumed by every service that talks to the tenant API — api itself (self-introspection), ai-service, stream-gateway (planned). See ADR-0022 D1 for the identity mandate; see .kiro/steering/tenancy-columns.md §9 (row 12) for the ServiceAccount + service_accounts landing.",
+  "required": ["kind", "service_account", "abilities", "issued_at"],
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "service_identity",
+      "description": "Discriminator. Always the literal string 'service_identity'. Distinguishes this envelope from a tenant-user identity envelope on the same endpoint."
+    },
+    "service_account": {
+      "type": "object",
+      "description": "The ServiceAccount row that owns the PAT authenticating this request.",
+      "required": ["id", "slug", "name", "tenant_id", "created_at"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^sacc_[0-9A-Z]{26}$",
+          "description": "Prefixed ULID. 'sacc_' + 26-char Crockford ULID.",
+          "$comment": "The 'sacc_' prefix is registered in packages/backend/identity/service-accounts. Any other prefix on this field is a schema violation."
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{1,62}[a-z0-9]$",
+          "description": "Stable slug identifying the service ('api', 'ai-service', 'stream-gateway'). Matches the JWT 'iss' + 'aud' claims. Lowercase kebab. 3-64 chars."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255,
+          "description": "Human-readable display name. Rendered in the admin service-account list. Never used for identity decisions."
+        },
+        "tenant_id": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^tnt_[0-9A-Z]{26}$",
+              "description": "Prefixed ULID of the owning tenant when the service is tenant-scoped."
+            },
+            {
+              "type": "null",
+              "description": "Null when the service is central-plane (platform-admin). Central services never carry a tenant_id."
+            }
+          ],
+          "description": "Tenant scope. Tenant-scoped services have a tenant_id; central-plane services (platform-admin) carry null.",
+          "$comment": "Central-plane services (tenant_id: null) NEVER use the Seam 2 service JWT path. They use a distinct platform-admin PAT with cross-tenant abilities. See ADR-0022 D4."
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "RFC 3339 timestamp of when the service account was provisioned."
+        },
+        "last_used_at": {
+          "oneOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+          "description": "RFC 3339 timestamp of last successful authentication with this PAT. Null when the PAT has never been used. Updated at most once per minute (rate-limited by Sanctum's touch tracker)."
+        }
+      }
+    },
+    "abilities": {
+      "type": "array",
+      "description": "Explicit ability list granted to this PAT. Default-deny — an empty array means no permissions, and there is no wildcard entry. Every ability string maps to a documented Laravel gate / policy check.",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9._-]{0,127}$",
+        "description": "Ability string. Lowercase, dot-separated for scoping. Examples: 'ai.draft.write', 'invoice.read', 'tenant.settings.read'."
+      },
+      "uniqueItems": true,
+      "$comment": "Contract Rule 3 — no wildcard entry. See docs/contracts/README.md §Rule 3."
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC 3339 timestamp of when this identity envelope was produced. Not the PAT issuance time — that lives on service_account.created_at. Consumers use this to detect stale caches of the identity envelope."
+    },
+    "rotation_deadline": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC 3339 timestamp of when this PAT MUST be rotated. Ships as issued_at + 90 days. Consumers SHOULD log a warning within 14 days of the deadline and refuse to boot after the deadline.",
+      "$comment": "Enforced by ops rotation policy. See docs/service-boundary.md §Seam 1 rotation."
+    }
+  }
+}

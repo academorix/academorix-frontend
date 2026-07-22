@@ -1,0 +1,35 @@
+{
+  "$id": "stackra:contracts:error-envelope:v1",
+  "title": "Error Response Envelope",
+  "description": "The canonical HTTP response shape for every 4xx and 5xx error emitted by any service. Aligns with Laravel's default validation-error shape (spatie/laravel-data + FormRequest fallback) so downstream clients can unwrap errors uniformly.",
+  "type": "object",
+  "$comment": "JSON Schema draft 2020-12. Seam 3 (Data). Producer: every HTTP surface. Consumer: every HTTP client. The HTTP status code is the single source of truth for the class of error; the body carries the display copy + optional field-level validation details. Body-level 'success': false / 'status' flags are BANNED — they duplicate the HTTP status.",
+  "required": ["message"],
+  "additionalProperties": false,
+  "properties": {
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "description": "User-facing error message. Rendered as a toast or an inline alert on the frontend. Never contains a stack trace, request id, or internal token. For 5xx errors this is a generic 'Something went wrong' — actionable details live in server logs."
+    },
+    "errors": {
+      "type": "object",
+      "description": "Optional field-level validation errors. Present only on 422 Unprocessable Entity responses; absent on other status codes. Keys are the field paths (dot-separated for nested fields); values are arrays of translated error strings.",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minItems": 1
+      }
+    },
+    "correlation_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "description": "Optional X-Correlation-Id echo. Present when the server catches the error mid-request; the frontend surfaces it in support tickets so ops can grep logs."
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "$id": "stackra:contracts:service-jwt:v1",
+  "title": "Service JWT Payload (HS256)",
+  "description": "The payload shape for the short-lived HS256 JWT used on the Seam 2 (inbound trust) service-to-service RPC path. Verification order is fixed at 13 steps — see the companion service-jwt.v1.md document.",
+  "type": "object",
+  "$comment": "JSON Schema draft 2020-12. Seam 2 (Inbound trust). Signature: HS256 over a >=32-byte Doppler secret (SERVICE_JWT_SIGNING_KEY). Producer: any service that authored the token (self-identified in 'iss'). Consumer: the service named in 'aud'. See ADR-0022 D2 for the seam definition; see service-jwt.v1.md for the verification steps.",
+  "required": ["iss", "aud", "sub", "iat", "exp", "jti", "tenant_id"],
+  "additionalProperties": false,
+  "properties": {
+    "iss": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{1,62}[a-z0-9]$",
+      "description": "Issuer — the service slug of the caller. Matches the service_account.slug of the calling service. Verification step 9 rejects an empty issuer."
+    },
+    "aud": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{1,62}[a-z0-9]$",
+      "description": "Audience — the service slug of the intended receiver. The receiver verifies aud == its own slug (verification step 8). A token addressed to 'ai-service' is refused by any other consumer."
+    },
+    "sub": {
+      "type": "string",
+      "pattern": "^sacc_[0-9A-Z]{26}$",
+      "description": "Subject — the ServiceAccount ID of the caller. 'sacc_' prefixed ULID."
+    },
+    "iat": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Issued-at time as a Unix epoch integer (seconds since 1970-01-01T00:00:00Z). Verification step 5 rejects iat > now + 30s (clock skew tolerance)."
+    },
+    "exp": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Expiration time as a Unix epoch integer. Every token expires within 60 seconds of iat — Seam 2 tokens are short-lived by design. Verification step 6 rejects exp < now - 30s."
+    },
+    "jti": {
+      "type": "string",
+      "pattern": "^[0-9A-Z]{26}$",
+      "description": "JWT ID — a fresh Crockford ULID (26 chars) per token. Used for replay-prevention nonce tracking. Verification step 13 (optional) rejects duplicate JTIs seen within the exp window."
+    },
+    "tenant_id": {
+      "type": "string",
+      "pattern": "^tnt_[0-9A-Z]{26}$",
+      "description": "The tenant the caller is acting on behalf of. Every Seam 2 token is tenant-scoped. Verification step 11 rejects tokens with a missing or empty tenant_id.",
+      "$comment": "Contract Rule 4 — every cross-service token is tenant-scoped. Central-plane admin operations use a distinct platform-admin PAT with tenant_id: null in the identity envelope, and NEVER use the Seam 2 JWT path. See ADR-0022 D4 + docs/contracts/README.md §Rule 4."
+    },
+    "on_behalf_of_user_id": {
+      "type": "string",
+      "pattern": "^usr_[0-9A-Z]{26}$",
+      "description": "Optional. The tenant user whose intent triggered this cross-service call. Downstream services log it for audit + can enforce user-level policies on top of the service-level authorization."
+    },
+    "abilities": {
+      "type": "array",
+      "description": "Optional subset of the caller's ability list scoped to this specific token. Empty or absent = the caller's full ability list applies. Populated when the caller wants to narrow a specific call to a subset of its abilities (defense-in-depth).",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9._-]{0,127}$"
+      },
+      "uniqueItems": true
+    },
+    "correlation_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "description": "Optional X-Correlation-Id echo. When present, the receiver adopts this correlation id for its log lines + spans; when absent, the receiver reads the id from the X-Correlation-Id HTTP header."
+    }
+  }
+}

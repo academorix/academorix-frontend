@@ -1,0 +1,79 @@
+{
+  "$id": "stackra:contracts:list-envelope:v1",
+  "title": "List Response Envelope",
+  "description": "The canonical HTTP response shape for paginated list endpoints. Every list endpoint on every service returns this shape.",
+  "type": "object",
+  "$comment": "JSON Schema draft 2020-12. Seam 3 (Data). Producer: every HTTP surface. Consumer: every HTTP client. Aligns with Laravel's LengthAwarePaginator + spatie/laravel-data wrap='data' convention. The 'data' item shape varies per endpoint and is documented in the endpoint's OpenAPI operation.",
+  "required": ["data", "meta"],
+  "additionalProperties": false,
+  "properties": {
+    "data": {
+      "type": "array",
+      "description": "The list of items on the current page. Item shape varies per endpoint.",
+      "items": {
+        "type": ["object", "string", "number"],
+        "description": "Placeholder — actual item shape is documented per endpoint in OpenAPI."
+      }
+    },
+    "meta": {
+      "type": "object",
+      "description": "Pagination metadata for the current response.",
+      "required": ["current_page", "per_page", "total", "last_page"],
+      "additionalProperties": true,
+      "properties": {
+        "current_page": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "1-indexed page number for the current response."
+        },
+        "per_page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "description": "Number of items per page. Every endpoint documents its own max; the schema-wide cap is 500."
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of items across every page."
+        },
+        "last_page": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "1-indexed page number of the last page. Equal to ceil(total / per_page)."
+        },
+        "from": {
+          "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }],
+          "description": "1-indexed row number of the first item on the current page. Null when the page is empty."
+        },
+        "to": {
+          "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }],
+          "description": "1-indexed row number of the last item on the current page. Null when the page is empty."
+        }
+      }
+    },
+    "links": {
+      "type": "object",
+      "description": "Optional URL links to sibling pages. Every URL is absolute + includes any active filter / sort / include query params.",
+      "additionalProperties": false,
+      "properties": {
+        "first": {
+          "oneOf": [{ "type": "string", "format": "uri" }, { "type": "null" }],
+          "description": "URL to the first page. Null when there's only one page."
+        },
+        "last": {
+          "oneOf": [{ "type": "string", "format": "uri" }, { "type": "null" }],
+          "description": "URL to the last page. Null when there's only one page."
+        },
+        "prev": {
+          "oneOf": [{ "type": "string", "format": "uri" }, { "type": "null" }],
+          "description": "URL to the previous page. Null on the first page."
+        },
+        "next": {
+          "oneOf": [{ "type": "string", "format": "uri" }, { "type": "null" }],
+          "description": "URL to the next page. Null on the last page."
+        }
+      }
+    }
+  }
+}

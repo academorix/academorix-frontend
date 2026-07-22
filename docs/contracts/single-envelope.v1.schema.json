@@ -1,0 +1,22 @@
+{
+  "$id": "stackra:contracts:single-envelope:v1",
+  "title": "Single Item Response Envelope",
+  "description": "The canonical HTTP response shape for endpoints returning a single item (show, create, update). Delete endpoints return 204 No Content and do NOT use this envelope.",
+  "type": "object",
+  "$comment": "JSON Schema draft 2020-12. Seam 3 (Data). Producer: every HTTP surface. Consumer: every HTTP client. The 'data' shape varies per endpoint and is documented in the endpoint's OpenAPI operation. The 'message' field is present on mutations (create/update) and used for toast notifications; it is absent on reads (show) to keep read responses cache-friendly.",
+  "required": ["data"],
+  "additionalProperties": false,
+  "properties": {
+    "data": {
+      "description": "The item returned by the endpoint. Shape varies per endpoint.",
+      "type": ["object", "string", "number", "boolean", "null"]
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "description": "Optional user-facing status message. Present on mutation responses (POST / PATCH / PUT); rendered in the frontend as a toast. Absent on read responses (GET show).",
+      "$comment": "Never used for read responses — reads must be cache-friendly. See docs/service-boundary.md §Seam 3 for the envelope contract."
+    }
+  }
+}
