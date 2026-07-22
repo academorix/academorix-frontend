@@ -11,32 +11,32 @@ fileMatchPattern: "packages/framework/**/{composer.json,README.md,src/**/*.php}"
 > below is enforceable; change the rule means amending the ADR.
 
 Every backend framework package under `packages/framework/*` gets a matching
-TypeScript + React package at `stackra-frontend/packages/<name>/`. The
-frontend package is created **after** the backend package is diagnostics-clean
-and its SDK sibling ships stable wire-visible DTOs. Never colocate a `/react`
-folder inside a backend package.
+TypeScript + React package at `packages/frontend/<name>/`. The frontend package
+is created **after** the backend package is diagnostics-clean and its SDK
+sibling ships stable wire-visible DTOs. Never colocate a `/react` folder inside
+a backend package.
 
 Reference implementation: `stackra/feature-flags` (backend) ↔
 `@stackra/feature-flags` (frontend).
 
 ## 1. Naming and location
 
-| Backend                            | Frontend                                     |
-| ---------------------------------- | -------------------------------------------- |
-| Composer: `stackra/<name>`      | npm: `@stackra/<name>`                    |
-| Path: `packages/framework/<name>/` | Path: `stackra-frontend/packages/<name>/` |
-| PHP namespace: `Stackra\<Name>` | TS exports: `@stackra/<name>` barrel      |
-| SDK sibling: `sdk/` (Saloon)       | Consumer of that SDK: this frontend package  |
+| Backend                            | Frontend                                    |
+| ---------------------------------- | ------------------------------------------- |
+| Composer: `stackra/<name>`         | npm: `@stackra/<name>`                      |
+| Path: `packages/framework/<name>/` | Path: `packages/frontend/<name>/`           |
+| PHP namespace: `Stackra\<Name>`    | TS exports: `@stackra/<name>` barrel        |
+| SDK sibling: `sdk/` (Saloon)       | Consumer of that SDK: this frontend package |
 
-Directory name matches on both sides (kebab-case). Register the package in
-`stackra-frontend/pnpm-workspace.yaml` under the `packages: - "packages/*"`
-glob — no config change needed for a new package as long as it lives at the top
-level of `packages/`.
+Directory name matches on both sides (kebab-case). Register the package in the
+workspace root's `pnpm-workspace.yaml` under the
+`packages: - "packages/frontend/*"` glob — no config change needed for a new
+package as long as it lives at the top level of `packages/frontend/`.
 
 ## 2. Canonical file structure
 
 ```
-stackra-frontend/packages/<name>/
+packages/frontend/<name>/
 ├── package.json                  ← "@stackra/<name>"
 ├── tsconfig.json                 ← extends monorepo tsconfig.base.json
 ├── vitest.config.ts              ← extends @stackra/testing/preset
@@ -220,18 +220,18 @@ tree-shakes out of production bundles.
 
 ## 11. Anti-patterns
 
-| Anti-pattern                                             | Correct                                                                   |
-| -------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `/react` folder inside a backend package                 | Frontend package at `stackra-frontend/packages/<name>/`                |
-| TypeScript `enum {}`                                     | `const {} as const` + literal-union type                                  |
-| `fetch()` per `useFeature()` call                        | Read from context populated by boot payload                               |
-| Custom design system components                          | Compose `@heroui/react` primitives                                        |
-| Duplicating validation rules from Spatie Data attributes | Trust the server; surface server errors in the UI                         |
-| Hand-syncing types across 3+ packages                    | OpenAPI generation via Scramble                                           |
-| Query key strings                                        | Typed query-key factories (`featureFlagsKeys.override(id)`)               |
-| Mutation without invalidation                            | Every mutation invalidates its matching query key                         |
+| Anti-pattern                                             | Correct                                                                |
+| -------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `/react` folder inside a backend package                 | Frontend package at `packages/frontend/<name>/`                        |
+| TypeScript `enum {}`                                     | `const {} as const` + literal-union type                               |
+| `fetch()` per `useFeature()` call                        | Read from context populated by boot payload                            |
+| Custom design system components                          | Compose `@heroui/react` primitives                                     |
+| Duplicating validation rules from Spatie Data attributes | Trust the server; surface server errors in the UI                      |
+| Hand-syncing types across 3+ packages                    | OpenAPI generation via Scramble                                        |
+| Query key strings                                        | Typed query-key factories (`featureFlagsKeys.override(id)`)            |
+| Mutation without invalidation                            | Every mutation invalidates its matching query key                      |
 | Ad-hoc mocks in downstream tests                         | Import `Test<Name>Provider` + `mockApi` from `@stackra/<name>/testing` |
-| Frontend algorithm without a parity test                 | Property test that snapshots backend outputs                              |
+| Frontend algorithm without a parity test                 | Property test that snapshots backend outputs                           |
 
 ## 12. Package.json conventions
 
@@ -263,16 +263,18 @@ docblocks + focused prose in class docblocks).
 
 ## 14. File naming and layout conventions
 
-Verified against `stackra-frontend/packages/ui/src/react/**`. Every new
-frontend package must match this convention exactly. Reference files:
+Verified against `packages/frontend/ui/src/react/**`. Every new frontend package
+must match this convention exactly. Reference files:
 
-- Component: `packages/ui/src/react/components/pin-lock/pin-lock.component.tsx`
-- Hook: `packages/ui/src/core/hooks/use-debounce/use-debounce.hook.ts`
+- Component:
+  `packages/frontend/ui/src/react/components/pin-lock/pin-lock.component.tsx`
+- Hook: `packages/frontend/ui/src/core/hooks/use-debounce/use-debounce.hook.ts`
 - Provider:
-  `packages/ui/src/react/providers/page-progress/page-progress.provider.tsx`
+  `packages/frontend/ui/src/react/providers/page-progress/page-progress.provider.tsx`
 - Context:
-  `packages/ui/src/react/contexts/page-progress/page-progress.context.ts`
-- Interface: `packages/ui/src/react/components/pin-lock/pin-lock.interface.ts`
+  `packages/frontend/ui/src/react/contexts/page-progress/page-progress.context.ts`
+- Interface:
+  `packages/frontend/ui/src/react/components/pin-lock/pin-lock.interface.ts`
 
 ### 14.1 File-name shape — kebab-case with role suffix
 
@@ -858,7 +860,8 @@ package.
 
 ## 21. Final layout — reference
 
-Verified against `stackra-frontend/packages/feature-flags/`:
+Verified against `packages/frontend/feature-flags/` (planned reference
+implementation):
 
 ```
 src/
@@ -921,7 +924,7 @@ Anti-patterns collected in one place:
 | --------------------------------------------------- | --------------------------------------------- |
 | `src/module/` folder for one file                   | `src/<name>.module.ts` flat                   |
 | `src/query-keys/` folder for one file               | `src/constants/query-keys.constant.ts`        |
-| Per-domain HTTP wrapper                             | Inject `HTTP_SERVICE` from `@stackra/http` |
+| Per-domain HTTP wrapper                             | Inject `HTTP_SERVICE` from `@stackra/http`    |
 | Inline `IContextValue` in the context file          | Colocated in the provider's `.interface.ts`   |
 | Central `types/service-contracts.ts`                | `services/<name>/<name>.service.interface.ts` |
 | Hand-declared TS interface duplicating a Zod schema | `type X = z.infer<typeof xSchema>`            |

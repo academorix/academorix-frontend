@@ -8,6 +8,7 @@ bindings.
 
 ```ts
 import { MonitoringModule } from "@stackra/monitoring";
+import { Env } from "@stackra/support";
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { MonitoringModule } from "@stackra/monitoring";
       default: "sentry",
       providers: {
         console: { driver: "console" },
-        sentry: { driver: "sentry", dsn: process.env.SENTRY_DSN },
+        sentry: { driver: "sentry", dsn: Env.get("SENTRY_DSN") },
       },
       // stack: ['sentry'],  // optional — restrict fan-out to a subset
     }),
