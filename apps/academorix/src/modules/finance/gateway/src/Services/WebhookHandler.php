@@ -9,10 +9,11 @@ use Academorix\Gateway\Contracts\Repositories\GatewayWebhookEventRepositoryInter
 use Academorix\Gateway\Contracts\Services\WebhookHandlerInterface;
 use Academorix\Gateway\Data\WebhookEnvelope;
 use Academorix\Gateway\Exceptions\WebhookAlreadyProcessedException;
+use Illuminate\Container\Attributes\Log;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Log;
+use Psr\Log\LoggerInterface;
 
 /**
  * Reference implementation of
@@ -64,8 +65,20 @@ final class WebhookHandler implements WebhookHandlerInterface
         // 'payout.failed'               => \Academorix\Payout\Events\PayoutFailed::class,
     ];
 
+    /**
+     * @param  GatewayWebhookEventRepositoryInterface  $events  Persistence boundary for
+     *                                                          `gateway_webhook_events` rows.
+     * @param  LoggerInterface                         $log     Injected via `#[Log]` so
+     *                                                          duplicate-delivery no-ops
+     *                                                          route to the default log
+     *                                                          channel — no facade under
+     *                                                          Octane (see
+     *                                                          `.kiro/steering/octane-first-di.md`
+     *                                                          §Rules-don't #2).
+     */
     public function __construct(
         private readonly GatewayWebhookEventRepositoryInterface $events,
+        #[Log] private readonly LoggerInterface $log,
     ) {
     }
 
@@ -92,7 +105,9 @@ final class WebhookHandler implements WebhookHandlerInterface
             });
         } catch (WebhookAlreadyProcessedException $e) {
             // Idempotent no-op — a retried delivery of the same event.
-            Log::info('WebhookHandler: duplicate delivery ignored', [
+            // Migrated on 2026-07-21 (Phase E5) from `Log::info(...)`
+            // to injected `LoggerInterface` per octane-first-di.md.
+            $this->log->info('WebhookHandler: duplicate delivery ignored', [
                 'provider' => $envelope->provider,
                 'provider_event_id' => $envelope->providerEventId,
             ]);

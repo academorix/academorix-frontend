@@ -19,7 +19,7 @@ use Academorix\Transaction\Policies\TransactionLedgerEntryPolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Mattiverse\Userstamps\Traits\Userstamps;
+use Wildside\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 

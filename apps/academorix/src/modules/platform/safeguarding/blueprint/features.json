@@ -1,0 +1,49 @@
+{
+  "id": "stackra://modules/safeguarding/features",
+  "$version": 1,
+  "title": "safeguarding — feature keys",
+  "features": [
+    {
+      "key": "safeguarding.core",
+      "displayName": "Safeguarding + staff compliance",
+      "description": "Master feature. Incident reporting + DBS/background check tracking.",
+      "defaultEnabled": false,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "safeguarding.dbs_tracking",
+      "displayName": "DBS check tracking",
+      "description": "UK Disclosure and Barring Service check lifecycle + expiry alerts.",
+      "defaultEnabled": false,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "safeguarding.medical_clearance_tracking",
+      "displayName": "Medical clearance tracking",
+      "description": "First-aid certs + medical qualifications tracking.",
+      "defaultEnabled": false,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "safeguarding.incident_escalation",
+      "displayName": "External escalation workflow",
+      "description": "Escalation flow to police / CPS / Ofsted with legal-hold. Enterprise + K-12.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "safeguarding.auto_stand_down",
+      "displayName": "Auto stand-down on expired check",
+      "description": "Automatically revoke athlete-facing roles when a required check expires. K-12 compliance.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "safeguarding.regulatory_reporting",
+      "displayName": "Regulatory reporting",
+      "description": "Anonymised metrics feed for Ofsted / regional regulators. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
+}

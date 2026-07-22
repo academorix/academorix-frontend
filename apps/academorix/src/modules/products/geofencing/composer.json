@@ -51,7 +51,7 @@
   "suggest": {
     "clickbar/laravel-magellan": "PostGIS spatial column types on Eloquent models (^0.7). Required for production polygon fences.",
     "spinen/laravel-geometry": "Runtime geometry math wrapping geoPHP (^3.0). Preferred over the hand-rolled fallback for precise polygon math.",
-    "stackra/activity": "Activity feed integration — emits `geofence.evaluated` product-facing lines when installed.",
+    "stackra/activity": "Activity feed integration \u2014 emits `geofence.evaluated` product-facing lines when installed.",
     "stackra/audit": "Compliance-grade audit trail integration."
   },
   "require-dev": {
@@ -181,5 +181,17 @@
         "symlink": true
       }
     }
-  ]
+  ],
+  "scripts": {
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
+  }
 }

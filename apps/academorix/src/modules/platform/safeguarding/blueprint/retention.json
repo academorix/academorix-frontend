@@ -1,0 +1,48 @@
+{
+  "id": "stackra://modules/safeguarding/retention",
+  "$version": 1,
+  "title": "safeguarding — data retention windows",
+  "description": "Legal-hold module. Every incident record is retained for the STATUTE OF LIMITATIONS of the involved incident type (up to indefinite for child protection escalations). StaffCheck rows retained 7yr post-expiry for compliance audit.",
+  "policies": [
+    {
+      "entity": "Incident",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "conditions": ["escalated_to IS NOT NULL"],
+      "description": "Externally-escalated incidents retained indefinitely under legal-hold. NEVER purged."
+    },
+    {
+      "entity": "Incident",
+      "hot_days": null,
+      "warm_days": 2555,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "conditions": ["escalated_to IS NULL AND severity IN ('low', 'medium')"],
+      "description": "Non-escalated low/medium incidents: 7yr retention."
+    },
+    {
+      "entity": "Incident",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "conditions": ["escalated_to IS NULL AND severity IN ('high', 'critical')"],
+      "description": "High/critical incidents (not escalated) retained indefinitely."
+    },
+    {
+      "entity": "IncidentAttachment",
+      "hot_days": null,
+      "on_purge": "cascade_with_parent",
+      "description": "Attachments follow parent incident retention. Cold-tier storage after 1yr."
+    },
+    { "entity": "IncidentAccessGrant", "hot_days": null, "on_purge": "cascade_with_parent" },
+    {
+      "entity": "StaffCheck",
+      "hot_days": null,
+      "warm_days": 2555,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "description": "7yr retention post-expiry — UK safeguarding regulation."
+    },
+    { "entity": "StaffCheckAttachment", "hot_days": null, "on_purge": "cascade_with_parent" }
+  ],
+  "legal_hold_exception": "Any incident escalated to external authorities OR involving a minor's safety marks the entire incident chain (incident + attachments + access grants + linked messages) as legal-hold. Legal-hold records are NEVER deleted regardless of tenant termination — they persist under Stackra's compliance obligation to authorities."
+}

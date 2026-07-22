@@ -11,7 +11,7 @@ use Stackra\Exceptions\Exception;
  * specific gateway exceptions.
  *
  * Consumers catch this broad type in the outermost handler; the specific
- * subclasses (WebhookSignatureInvalidException, PaymentMethodExpiredException,
+ * subclasses (WebhookSignatureInvalidException,
  * ...) are caught closer to the call site when the recovery differs per case.
  *
  * @category Gateway

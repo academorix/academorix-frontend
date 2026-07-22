@@ -42,7 +42,7 @@ final class LeadFactory extends Factory
             LeadInterface::ATTR_SOURCE => fake()->randomElement(['web_form', 'referral', 'walk_in', 'call', 'email', 'social', 'trial_signup', 'import', 'api']),
             LeadInterface::ATTR_SOURCE_REFERENCE => null,
             LeadInterface::ATTR_STAGE => fake()->randomElement(['NEW', 'CONTACTED', 'QUALIFIED', 'TRIAL', 'WON', 'LOST']),
-            LeadInterface::ATTR_OWNER_ID => null,
+            LeadInterface::ATTR_ASSIGNED_USER_ID => null,
             LeadInterface::ATTR_CONTACT_NAME => fake()->sentence(3),
             LeadInterface::ATTR_CONTACT_EMAIL => null,
             LeadInterface::ATTR_CONTACT_PHONE => null,

@@ -43,7 +43,7 @@ interface LeadInterface
     public const string ATTR_SOURCE                         = 'source';
     public const string ATTR_SOURCE_REFERENCE               = 'source_reference';
     public const string ATTR_STAGE                          = 'stage';
-    public const string ATTR_OWNER_ID                       = 'owner_id';
+    public const string ATTR_ASSIGNED_USER_ID               = 'assigned_user_id';
     public const string ATTR_CONTACT_NAME                   = 'contact_name';
     public const string ATTR_CONTACT_EMAIL                  = 'contact_email';
     public const string ATTR_CONTACT_PHONE                  = 'contact_phone';

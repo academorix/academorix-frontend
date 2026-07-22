@@ -1,0 +1,7 @@
+{
+  "id": "stackra://modules/safeguarding/schedule",
+  "$version": 1,
+  "title": "safeguarding — scheduled tasks",
+  "description": "Artisan / cron entries this module registers.",
+  "schedule": []
+}

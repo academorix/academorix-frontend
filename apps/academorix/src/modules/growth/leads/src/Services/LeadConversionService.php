@@ -116,7 +116,7 @@ final class LeadConversionService implements LeadConversionServiceInterface
         $this->events->dispatch(new LeadConverted(
             leadId: (string) $lead->getKey(),
             tenantId: (string) $lead->getAttribute(LeadInterface::ATTR_TENANT_ID),
-            ownerId: (string) ($lead->getAttribute(LeadInterface::ATTR_OWNER_ID) ?? ''),
+            ownerId: (string) ($lead->getAttribute(LeadInterface::ATTR_ASSIGNED_USER_ID) ?? ''),
             source: (string) $lead->getAttribute(LeadInterface::ATTR_SOURCE)?->value,
             convertedAthleteIds: '', // filled in by the sports listener.
             attributionSnapshot: (array) ($lead->getAttribute(LeadInterface::ATTR_ATTRIBUTION_SNAPSHOT) ?? []),

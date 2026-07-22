@@ -1,0 +1,7 @@
+{
+  "id": "stackra://modules/safeguarding/metrics",
+  "$version": 1,
+  "title": "safeguarding — OpenTelemetry metrics",
+  "description": "OTel / Prometheus metrics this module emits.",
+  "metrics": []
+}

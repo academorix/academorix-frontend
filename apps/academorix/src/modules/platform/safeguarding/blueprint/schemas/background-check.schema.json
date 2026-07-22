@@ -1,0 +1,103 @@
+{
+  "id": "stackra://modules/safeguarding/schemas/background-check",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "BackgroundCheck",
+  "description": "Per-Staff clearance record — DBS / SafeSport / state-BCI / custom. Blocks assignment when unverified or expired.",
+  "type": "object",
+  "x-module": "safeguarding",
+  "x-eloquent": {
+    "table": "background_checks",
+    "keyPrefix": "bgc_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToStaff",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "staff_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "staff", "column": "id", "onDelete": "cascade" }
+      },
+      "check_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "dbs_enhanced / dbs_basic / state_bci / safesport / custom."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "pending / verified / expired / revoked."
+      },
+      "issuing_authority": { "type": "string", "length": 200, "nullable": true },
+      "issued_at": { "type": "date", "nullable": true },
+      "expires_at": { "type": "date", "nullable": true },
+      "verified_at": { "type": "timestamptz", "nullable": true },
+      "verified_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" }
+      },
+      "verification_url": { "type": "string", "length": 512, "nullable": true },
+      "document_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "files", "column": "id", "onDelete": "set null" }
+      },
+      "reference_number": { "type": "string", "length": 128, "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "staff_id", "check_type", "expires_at"],
+        "name": "background_checks_staff_expiry_idx"
+      },
+      {
+        "columns": ["tenant_id", "status", "expires_at"],
+        "name": "background_checks_expiring_idx",
+        "predicate": "status = 'verified'"
+      }
+    ]
+  },
+  "required": ["id", "tenant_id", "staff_id", "check_type", "status", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^bgc_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "check_type": {
+      "type": "string",
+      "enum": ["dbs_enhanced", "dbs_basic", "state_bci", "safesport", "custom"]
+    },
+    "status": { "type": "string", "enum": ["pending", "verified", "expired", "revoked"] }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "verified_at + verified_by_user_id REQUIRED when status = 'verified'.",
+    "expires_at REQUIRED when status = 'verified'."
+  ]
+}

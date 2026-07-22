@@ -32,8 +32,14 @@ return new class() extends Migration {
             $table->string(LeadInterface::ATTR_SOURCE, 32);
             $table->string(LeadInterface::ATTR_SOURCE_REFERENCE, 255)->nullable();
             $table->string(LeadInterface::ATTR_STAGE, 32)->default('NEW');
-            $table->string(LeadInterface::ATTR_OWNER_ID, 64)->nullable();
-            $table->foreign(LeadInterface::ATTR_OWNER_ID)->references('id')->on('users')->onDelete('set null');
+            // Renamed from `owner_id` on 2026-07-21 (Phase E7) —
+            // `owner_id` is reserved for the scope substrate
+            // (`.kiro/steering/tenancy-columns.md` §5 forbidden-
+            // columns). The assigned salesperson is a `users.id`
+            // FK, so the domain-correct column name is
+            // `assigned_user_id`.
+            $table->string(LeadInterface::ATTR_ASSIGNED_USER_ID, 64)->nullable();
+            $table->foreign(LeadInterface::ATTR_ASSIGNED_USER_ID)->references('id')->on('users')->onDelete('set null');
             $table->string(LeadInterface::ATTR_CONTACT_NAME, 255);
             $table->string(LeadInterface::ATTR_CONTACT_EMAIL, 255)->nullable();
             $table->string(LeadInterface::ATTR_CONTACT_PHONE, 64)->nullable();
@@ -60,7 +66,7 @@ return new class() extends Migration {
             $table->timestampTz(LeadInterface::ATTR_CREATED_AT);
             $table->timestampTz(LeadInterface::ATTR_UPDATED_AT);
             $table->index([LeadInterface::ATTR_TENANT_ID, LeadInterface::ATTR_STAGE, LeadInterface::ATTR_CREATED_AT], 'leads_stage_idx');
-            $table->index([LeadInterface::ATTR_TENANT_ID, LeadInterface::ATTR_OWNER_ID, LeadInterface::ATTR_STAGE], 'leads_owner_stage_idx');
+            $table->index([LeadInterface::ATTR_TENANT_ID, LeadInterface::ATTR_ASSIGNED_USER_ID, LeadInterface::ATTR_STAGE], 'leads_assigned_user_stage_idx');
             $table->index([LeadInterface::ATTR_TENANT_ID, LeadInterface::ATTR_SOURCE], 'leads_source_idx');
             $table->index([LeadInterface::ATTR_TENANT_ID, LeadInterface::ATTR_CREATED_AT], 'leads_recent_idx');
         });

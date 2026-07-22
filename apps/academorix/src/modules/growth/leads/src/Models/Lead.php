@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
-use Mattiverse\Userstamps\Traits\Userstamps;
+use Wildside\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -45,7 +45,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
         LeadInterface::ATTR_SOURCE,
         LeadInterface::ATTR_SOURCE_REFERENCE,
         LeadInterface::ATTR_STAGE,
-        LeadInterface::ATTR_OWNER_ID,
+        LeadInterface::ATTR_ASSIGNED_USER_ID,
         LeadInterface::ATTR_CONTACT_NAME,
         LeadInterface::ATTR_CONTACT_EMAIL,
         LeadInterface::ATTR_CONTACT_PHONE,

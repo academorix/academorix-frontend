@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\DB;
  *
  * Writes three side effects atomically:
  *
- *   1. `leads.owner_id` is set to the new owner.
+ *   1. `leads.assigned_user_id` is set to the new owner.
  *   2. A `LeadActivity` row of type `assignment` is written, carrying
  *      the previous + new owner ids in metadata for the audit trail.
  *   3. `LeadReassigned` fires after commit, so the tasks module (or
@@ -36,7 +36,11 @@ use Illuminate\Support\Facades\DB;
  *      item for the newly-assigned owner.
  *
  * Idempotent when the payload's `ownerId` equals the lead's current
- * `owner_id` — no state change is recorded and no event fires.
+ * `assigned_user_id` — no state change is recorded and no event fires.
+ *
+ * Column renamed from `owner_id` → `assigned_user_id` on 2026-07-21
+ * (Phase E7) — `.kiro/steering/tenancy-columns.md` §5 forbidden-
+ * columns table row 8 reserves `owner_id` for the scope substrate.
  *
  * @category Leads
  *
@@ -70,7 +74,7 @@ final class AssignAction
     {
         $row = $this->leads->findOrFail($lead);
 
-        $previousOwnerId = $row->getAttribute(LeadInterface::ATTR_OWNER_ID);
+        $previousOwnerId = $row->getAttribute(LeadInterface::ATTR_ASSIGNED_USER_ID);
 
         // Idempotent guard — same owner, nothing to do.
         if ($previousOwnerId === $data->ownerId) {
@@ -82,7 +86,7 @@ final class AssignAction
 
         DB::transaction(function () use ($row, $data, $previousOwnerId, $now, $actorId): void {
             $row->forceFill([
-                LeadInterface::ATTR_OWNER_ID => $data->ownerId,
+                LeadInterface::ATTR_ASSIGNED_USER_ID => $data->ownerId,
             ])->save();
 
             $this->activities->create([

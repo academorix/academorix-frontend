@@ -80,41 +80,6 @@ enum GatewayPermission: string implements PermissionEnum
     case GatewaysConnectOauth = 'gateways.connect-oauth';
 
     /**
-     * `payment-methods.viewAny` — Guardian sees own; admin + owner + finance see all tenant methods (redacted).
-     */
-    #[Label('Guardian sees own; admin + owner + finance see all tenant methods (redacted)')]
-    #[Description('Guardian sees own; admin + owner + finance see all tenant methods (redacted).')]
-    case PaymentMethodsViewAny = 'payment-methods.viewAny';
-
-    /**
-     * `payment-methods.view` — Payment-methods View
-     */
-    #[Label('Payment-methods View')]
-    #[Description('Payment-methods View')]
-    case PaymentMethodsView = 'payment-methods.view';
-
-    /**
-     * `payment-methods.create` — Payment-methods Create
-     */
-    #[Label('Payment-methods Create')]
-    #[Description('Payment-methods Create')]
-    case PaymentMethodsCreate = 'payment-methods.create';
-
-    /**
-     * `payment-methods.delete` — Guardian can delete own; admin + owner can delete any.
-     */
-    #[Label('Guardian can delete own; admin + owner can delete any')]
-    #[Description('Guardian can delete own; admin + owner can delete any.')]
-    case PaymentMethodsDelete = 'payment-methods.delete';
-
-    /**
-     * `payment-methods.set-default` — Payment-methods Set-default
-     */
-    #[Label('Payment-methods Set-default')]
-    #[Description('Payment-methods Set-default')]
-    case PaymentMethodsSetDefault = 'payment-methods.set-default';
-
-    /**
      * `gateway-webhooks.viewAny` — Gateway-webhooks ViewAny
      */
     #[Label('Gateway-webhooks ViewAny')]
@@ -171,11 +136,6 @@ enum GatewayPermission: string implements PermissionEnum
             self::GatewaysDelete => Guard::Sanctum,
             self::GatewaysTest => Guard::Sanctum,
             self::GatewaysConnectOauth => Guard::Sanctum,
-            self::PaymentMethodsViewAny => Guard::Sanctum,
-            self::PaymentMethodsView => Guard::Sanctum,
-            self::PaymentMethodsCreate => Guard::Sanctum,
-            self::PaymentMethodsDelete => Guard::Sanctum,
-            self::PaymentMethodsSetDefault => Guard::Sanctum,
             self::GatewayWebhooksViewAny => Guard::Sanctum,
             self::GatewayWebhooksView => Guard::Sanctum,
             self::GatewayWebhooksReplay => Guard::Sanctum,

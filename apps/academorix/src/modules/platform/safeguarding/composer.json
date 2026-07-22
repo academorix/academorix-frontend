@@ -1,0 +1,109 @@
+{
+  "name": "academorix/safeguarding",
+  "type": "library",
+  "description": "Academorix Safeguarding module — cross-domain safeguarding + minor consent surface. Lives under apps/academorix/src/modules/platform/safeguarding/ so it deploys with the per-Application backend service (safeguarding is a per-Application concern, not a shared identity-plane one).",
+  "license": "proprietary",
+  "keywords": [
+    "academorix",
+    "module",
+    "laravel",
+    "platform",
+    "safeguarding"
+  ],
+  "require": {
+    "php": "^8.3",
+    "illuminate/support": "^13.0",
+    "illuminate/database": "^13.0",
+    "illuminate/container": "^13.0",
+    "illuminate/contracts": "^13.0",
+    "spatie/laravel-data": "^4.11",
+    "stackra/foundation": "@dev",
+    "stackra/crud": "@dev",
+    "stackra/routing": "@dev",
+    "stackra/service-provider": "@dev",
+    "stackra/support": "@dev"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^11.0",
+    "pestphp/pest": "^4.0",
+    "pestphp/pest-plugin-laravel": "^4.0",
+    "phpstan/phpstan": "^2.0",
+    "mockery/mockery": "^1.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "Academorix\\Safeguarding\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Academorix\\Safeguarding\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Academorix\\Safeguarding\\Providers\\SafeguardingServiceProvider"
+      ],
+      "aliases": []
+    }
+  },
+  "scripts": {
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "olvlvl/composer-attribute-collector": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/framework/crud",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/framework/routing",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/framework/service-provider",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/framework/support",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
+}

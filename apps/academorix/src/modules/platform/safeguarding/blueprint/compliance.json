@@ -1,0 +1,7 @@
+{
+  "id": "stackra://modules/safeguarding/compliance",
+  "$version": 1,
+  "title": "safeguarding — self-compliance posture",
+  "description": "Regulatory regimes this module's data touches + how each is discharged.",
+  "regimes": []
+}
