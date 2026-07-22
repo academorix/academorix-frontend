@@ -172,9 +172,12 @@ final class HydrationBootstrapper extends AbstractBootstrapper
         $payload = [];
 
         foreach ($bindings as $binding) {
+            // Materialise + apply the binding's sortBy semantics so
+            // the cached playback order matches the live-scan order.
+            $sortedTargets = $this->sortedTargetsFor($binding['attribute']);
             $targets = [];
 
-            foreach ($this->discovery->forClass($binding['attribute']->attribute) as $target) {
+            foreach ($sortedTargets as $target) {
                 $targets[] = [
                     'class' => $target->className,
                     'attribute' => \serialize($target->attribute),
@@ -338,7 +341,7 @@ final class HydrationBootstrapper extends AbstractBootstrapper
 
         $count = 0;
 
-        foreach ($this->discovery->forClass($binding->attribute) as $target) {
+        foreach ($this->sortedTargetsFor($binding) as $target) {
             try {
                 $registry->{$method}($target->className, $target->attribute);
                 $count++;
@@ -361,5 +364,61 @@ final class HydrationBootstrapper extends AbstractBootstrapper
         ]);
 
         return $count;
+    }
+
+    /**
+     * Discover every target of `$binding->attribute` and materialise
+     * the iterable into an ordered array. When the binding declared
+     * `sortBy`, sort ASCENDING by that public property on each
+     * target's attribute instance; otherwise preserve manifest
+     * order.
+     *
+     * Fail-soft: a `sortBy` naming a property the attribute doesn't
+     * expose logs a WARNING once per hydration pass and falls back
+     * to manifest order — a misconfigured attribute never halts
+     * boot.
+     *
+     * @return list<\Stackra\Foundation\Discovery\ClassTarget<object>>
+     */
+    private function sortedTargetsFor(HydratesFrom $binding): array
+    {
+        // Materialise the discovery iterable once — every subsequent
+        // read (sort + iteration) needs an array.
+        $targets = [];
+        foreach ($this->discovery->forClass($binding->attribute) as $target) {
+            $targets[] = $target;
+        }
+
+        if ($binding->sortBy === null || $targets === []) {
+            return $targets;
+        }
+
+        $sortBy = $binding->sortBy;
+
+        // Verify the property exists on the first target's attribute
+        // instance before committing to the sort. `property_exists()`
+        // is cheap and never triggers a magic getter — safe for the
+        // one probe we need per binding.
+        $probe = $targets[0]->attribute;
+        if (! \property_exists($probe, $sortBy)) {
+            $this->log->warning('hydration: sortBy property missing on attribute — falling back to manifest order', [
+                'attribute' => $binding->attribute,
+                'sortBy' => $sortBy,
+                'probe_class' => $probe::class,
+            ]);
+
+            return $targets;
+        }
+
+        \usort(
+            $targets,
+            /**
+             * @param  \Stackra\Foundation\Discovery\ClassTarget<object>  $a
+             * @param  \Stackra\Foundation\Discovery\ClassTarget<object>  $b
+             */
+            static fn ($a, $b): int => $a->attribute->{$sortBy} <=> $b->attribute->{$sortBy},
+        );
+
+        return $targets;
     }
 }
