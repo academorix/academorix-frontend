@@ -19,8 +19,8 @@ import {
 } from "@stackra/container";
 import { getMetadata } from "@vivtel/metadata";
 
-import type { IDiscoveryService } from "@stackra/contracts";
-import { EVENT_EMITTER } from "@stackra/contracts";
+import type { IDiscoveryService, IQueueManager } from "@stackra/contracts";
+import { EVENT_EMITTER, QUEUE_MANAGER } from "@stackra/contracts";
 import { EVENT_TRANSPORT_METADATA, EVENT_LISTENER_METADATA } from "@/core/constants";
 import { EventEmitter } from "./event-emitter.service";
 import { EventTransportRegistry } from "../registries/event-transport.registry";
@@ -54,11 +54,17 @@ export class EventSubscribersLoader implements OnApplicationBootstrap, OnModuleD
    * @param emitter - The active EventEmitter instance
    * @param transportRegistry - Registry for tracking connected transports
    * @param discoveryService - Optional provider scanner (absent in tests)
+   * @param queueManager - Optional queue manager for `@OnEvent({ queued: true })`
+   *   listeners. When absent, queued listeners fall back to synchronous
+   *   execution. Resolved via DI (`@Inject(QUEUE_MANAGER)`) — used to
+   *   read `(globalThis as any).__stackra_queue_manager__`, which was
+   *   dead code (nothing wrote that slot).
    */
   public constructor(
     @Inject(EVENT_EMITTER) private readonly emitter: EventEmitter,
     private readonly transportRegistry: EventTransportRegistry,
     @Optional() @Inject(DISCOVERY_SERVICE) private readonly discoveryService?: IDiscoveryService,
+    @Optional() @Inject(QUEUE_MANAGER) private readonly queueManager?: IQueueManager,
   ) {}
 
   /**
@@ -260,28 +266,32 @@ export class EventSubscribersLoader implements OnApplicationBootstrap, OnModuleD
     args: unknown[],
     options?: IOnEventOptions,
   ): Promise<void> {
-    // Attempt to resolve the queue manager from the container
-    // This is a lazy resolution — queue package is an optional peer
-    try {
-      // Try to get the queue manager from the global DI context
-      // If not available, fall back to sync execution
-      const queueManager = (globalThis as any).__stackra_queue_manager__;
-
-      if (queueManager && typeof queueManager.dispatch === "function") {
+    // DI-wired path — the queue manager is resolved via `@Inject(QUEUE_MANAGER)`
+    // when `@stackra/queue`'s `QueueModule` is imported. When it's absent, the
+    // optional injection leaves `this.queueManager` undefined and we fall
+    // through to sync execution.
+    //
+    // The prior implementation read `(globalThis as any).__stackra_queue_manager__`
+    // and expected some other code to write that slot — nothing ever did, so
+    // the queued branch was dead code. Fix per
+    // `.kiro/reports/container-di-architecture-reviewer-2026-07-21.md` §P0-1.
+    if (this.queueManager) {
+      try {
         const queueName = options?.queue ?? "events";
         const className = (instance.constructor as Function).name;
-        await queueManager.dispatch(
+        await this.queueManager.dispatch(
           `event-listener:${className}.${methodKey}`,
           { event: String(eventName), args, className, methodKey },
           { queue: queueName, delayMs: options?.delay },
         );
         return;
+      } catch {
+        // Queue dispatch failed — fall through to sync so the listener
+        // still fires locally rather than being dropped entirely.
       }
-    } catch {
-      // Queue not available — fall through to sync
     }
 
-    // Fallback: execute synchronously
+    // Fallback: execute synchronously.
     await this.safeInvoke(instance, methodKey, args, options);
   }
 }

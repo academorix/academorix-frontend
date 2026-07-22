@@ -11,3 +11,4 @@
 export type { JobEventType } from "./job-event-type.type";
 export type { IProcessorOptions } from "./processor-options.interface";
 export type { IOnJobEventOptions } from "./on-job-event-options.interface";
+export type { IQueueManager, IQueueDispatchOptions } from "./queue-manager.interface";
