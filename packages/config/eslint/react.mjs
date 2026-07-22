@@ -21,13 +21,12 @@ import baseConfig from "./base.mjs";
 export default [
   ...baseConfig,
 
+  // Register the plugins at the config-array level (no `files` scope) so
+  // downstream root/package configs can reference their rules without a
+  // second `plugins: { "jsx-a11y": ... }` declaration — ESLint 9 flat
+  // config rejects "Cannot redefine plugin" when two matching config
+  // objects declare the same plugin key against overlapping files.
   {
-    files: ["**/*.{jsx,tsx}"],
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-      },
-    },
     plugins: {
       react: reactPlugin,
       "react-hooks": reactHooksPlugin,
@@ -35,6 +34,15 @@ export default [
     },
     settings: {
       react: { version: "detect" },
+    },
+  },
+
+  {
+    files: ["**/*.{jsx,tsx}"],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+      },
     },
     rules: {
       ...reactPlugin.configs.recommended.rules,

@@ -55,6 +55,7 @@
     "@stackra/config-tsconfig": "workspace:*",
     "@stackra/config-tsup": "workspace:*",
     "eslint": "catalog:",
+    "eslint-plugin-jsx-a11y": "catalog:",
     "husky": "catalog:",
     "knip": "catalog:",
     "lint-staged": "catalog:",
