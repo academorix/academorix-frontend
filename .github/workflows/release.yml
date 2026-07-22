@@ -1,0 +1,108 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+concurrency:
+  group: release-${{ github.workflow }}-${{ github.ref }}
+  # Do NOT cancel in-progress release runs; a partial `changeset publish`
+  # is worse than a queued full run. Cancels only on redundant queued
+  # runs before they start (default: false).
+
+# Workflow-level env — inherited by every job unless overridden.
+env:
+  # Match the CI workflow's heap ceiling; changeset version + publish
+  # walks the whole workspace's package.json tree and can spike heap use
+  # on large dependency graphs.
+  NODE_OPTIONS: "--max-old-space-size=4096"
+
+jobs:
+  release:
+    name: Version + publish via Changesets
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      # `@heroui-pro/react` has a postinstall step that authenticates
+      # against the private Pro registry. Every install step needs this
+      # or the postinstall fails.
+      HEROUI_AUTH_TOKEN: ${{ secrets.HEROUI_AUTH_TOKEN }}
+      HEROUI_PERSONAL_TOKEN: ${{ secrets.HEROUI_PERSONAL_TOKEN }}
+      # Turborepo remote-cache credentials — empty values disable it silently.
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full history is required for Changesets to compute the
+          # correct version-bump range from the pending changeset files.
+          fetch-depth: 0
+
+      # Match .nvmrc + package.json engines (`node: >=22`).
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          # `registry-url` is what enables `NODE_AUTH_TOKEN` — pnpm reads
+          # both the `.npmrc` `//registry.npmjs.org/:_authToken=` line
+          # that this step writes and the `NODE_AUTH_TOKEN` env var below.
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        # `packageManager` in package.json pins the exact pnpm version.
+        with:
+          run_install: false
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/pnpm/store
+          key: pnpm-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: pnpm-${{ runner.os }}-
+
+      - name: Install dependencies
+        # --frozen-lockfile aborts if pnpm-lock.yaml is out of sync with
+        # any package.json in the workspace — the workflow must reject
+        # a release attempt that would ship an inconsistent tree.
+        run: pnpm install --frozen-lockfile
+
+      - name: Build every package
+        # Every package's `dist/` must be up-to-date before publish —
+        # `changesets/action`'s publish step calls `pnpm publish` per
+        # package, which ships the on-disk `dist/` verbatim.
+        run: pnpm build
+
+      - name: Create Release PR or publish to npm
+        id: changesets
+        # https://github.com/changesets/action
+        #
+        # Behaviour:
+        #   - When pending changesets exist in `.changeset/*.md`: opens
+        #     (or updates) the "Version Packages" PR. The PR contains the
+        #     `changeset version` output — bumped package.json versions
+        #     + regenerated CHANGELOG.md files.
+        #   - When the "Version Packages" PR is merged back to main:
+        #     runs `pnpm changeset publish`, which npm-publishes every
+        #     bumped package, then creates matching GitHub releases + tags.
+        uses: changesets/action@v1
+        with:
+          version: pnpm changeset version
+          publish: pnpm changeset publish
+          commit: "chore(release): version packages"
+          title: "chore(release): version packages"
+          # createGithubReleases: default true — tags + release notes
+          # land alongside the publish, matching the changeset entries.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Reads from Node's `~/.npmrc` written by `setup-node`. If
+          # NPM_TOKEN is missing, the publish step surfaces a 401 from
+          # npm rather than silently degrading.
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
