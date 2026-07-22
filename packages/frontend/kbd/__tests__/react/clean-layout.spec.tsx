@@ -2,75 +2,46 @@
 /**
  * @file clean-layout.spec.tsx
  * @module @stackra/kbd/__tests__/react
- * @description REGRESSION test — Round 6 UI reviewer finding P1.
+ * @description Regression coverage — Round 6 UI reviewer P1.
  *
  *   `packages/frontend/kbd/src/components/command-palette/layouts/`
- *   `clean.layout.tsx` renders breadcrumb chips inside the palette
- *   header when nested pages are open:
+ *   `clean.layout.tsx` used to render breadcrumb chips as
+ *   `<Chip onClick=...>`. Three compounding a11y bugs:
  *
- *   ```tsx
- *   {pages.map((page) => (
- *     <Chip
- *       key={page}
- *       size="sm"
- *       variant="tertiary"
- *       className="cursor-pointer"
- *       onClick={() => setPages((p) => p.slice(0, p.indexOf(page) + 1))}
- *     >
- *       {page}
- *     </Chip>
- *   ))}
- *   ```
+ *     1. HeroUI `Chip` has no documented `onClick` prop — a
+ *        contract violation that could break under any release.
+ *     2. `Chip` renders a decorative `<span>` / `<div>` — no
+ *        `role="button"`, no keyboard support, no tabindex.
+ *     3. Enter / Space on a focused chip did nothing.
  *
- *   Three P1 accessibility bugs in that pattern:
+ *   Both compound WCAG 2.2 AA Success Criteria: 2.1.1 (Keyboard)
+ *   and 4.1.2 (Name, Role, Value).
  *
- *     1. **`Chip` has no documented `onClick` prop.** HeroUI's `Chip`
- *        is a decorative badge; adding `onClick` may fire (React
- *        forwards it to the underlying DOM node) but it is a
- *        contract violation — the next `@heroui/react` release can
- *        break it.
- *     2. **No `role="button"`.** The Chip renders as a decorative
- *        `<span>` / `<div>`. Screen readers announce it as static
- *        text — a keyboard-only user has no signal that it is
- *        interactive.
- *     3. **No keyboard activation.** Enter / Space on a focused
- *        Chip does nothing — there's no `onKeyDown` handler and no
- *        native button semantics.
+ *   Fix (2026-07-21): the chip pattern was replaced with a HeroUI
+ *   `<Button variant="tertiary" size="sm" onPress={...}>`. Button
+ *   renders as `<button>` with a real role, tabindex, keyboard
+ *   activation, and accessible name from its children.
  *
- *   Compound WCAG 2.2 AA failures: SC 2.1.1 (Keyboard) and 4.1.2
- *   (Name, Role, Value).
- *
- *   Fix suggested by the UI reviewer report:
- *   Wrap the Chip in a HeroUI `<Button variant="tertiary" size="sm"
- *   onPress={...}>` so the trigger gets `role="button"`, keyboard
- *   activation, and a native accessible name — OR replace the Chip
- *   pattern with a HeroUI `Breadcrumbs` compound (which handles
- *   this natively).
- *
- *   See `.kiro/reports/ui-design-a11y-reviewer-2026-07-21.md`
- *   §"P1 findings > kbd clean-layout Chip".
- *
- *   This spec renders the offending pattern in isolation — the full
+ *   The spec renders the fixed pattern in isolation — the full
  *   `CleanPaletteLayout` depends on i18n + DI + HeroUI Command
- *   state, and the reviewer's finding is at the pattern level, not
- *   the layout wiring level.
+ *   state, and this regression is at the pattern level, not the
+ *   layout wiring level.
+ *
+ *   See `.kiro/reports/ui-p1-fixes-2026-07-21.md`.
  */
 
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { Chip } from "@stackra/ui/react";
+import { Button } from "@stackra/ui/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 afterEach(cleanup);
 
-// REGRESSION — Round 6 UI reviewer P1. Fix by replacing the
-// `<Chip onClick>` pattern with `<Button onPress>` (or a HeroUI
-// `Breadcrumbs` compound) — the Chip carries no button semantics.
-
 /**
- * Repro of the breadcrumb pattern from `clean.layout.tsx:65`.
+ * Repro of the fixed breadcrumb pattern from `clean.layout.tsx`.
  *
- * Faithful to the layout's own source: same props, same handler
- * shape, same lack of `role` / `aria-label` / keyboard handler.
+ * Mirrors the layout's real render: same variant / size, same
+ * handler wiring. `<Button>` provides `role="button"`, keyboard
+ * activation, and focus semantics natively.
  */
 function CleanBreadcrumbRepro({
   page,
@@ -80,68 +51,52 @@ function CleanBreadcrumbRepro({
   onClear: () => void;
 }): React.ReactElement {
   return (
-    <Chip
-      size="sm"
-      variant="tertiary"
-      className="cursor-pointer"
-      // The problematic pattern — Chip has no documented onClick,
-      // no role="button", no keyboard support. Reviewers reject
-      // this in code review; the layout still ships with it.
-      onClick={onClear}
-    >
+    <Button size="sm" variant="tertiary" onPress={onClear}>
       {page}
-    </Chip>
+    </Button>
   );
 }
 
-describe("kbd clean layout — breadcrumb Chip accessibility", () => {
-  it.fails("REGRESSION — the breadcrumb chip is queryable via `getByRole('button')`", () => {
+describe("kbd clean layout — breadcrumb button accessibility", () => {
+  it("the breadcrumb button is queryable via `getByRole('button')`", () => {
     render(<CleanBreadcrumbRepro page="settings" onClear={() => undefined} />);
 
-    // The reviewer's expected behavior — the breadcrumb chip must
-    // announce itself as a button so keyboard-only + screen reader
-    // users can activate it.
-    //
-    // Today `Chip` renders as a `<span>` (or `<div>`); no matching
-    // `role="button"` node exists. This assertion FAILS.
+    // `<Button>` renders a real `<button>` — screen readers and
+    // keyboard users can find + operate it without any custom
+    // ARIA scaffolding.
     expect(() => screen.getByRole("button", { name: /settings/i })).not.toThrow();
   });
 
-  it.fails(
-    "REGRESSION — pressing Enter on a focused breadcrumb chip fires the clear handler",
-    () => {
-      const onClear = vi.fn();
-      render(<CleanBreadcrumbRepro page="settings" onClear={onClear} />);
+  it("pressing Enter on a focused breadcrumb button fires the clear handler", () => {
+    const onClear = vi.fn();
 
-      // The chip renders as a span — find it by its text content.
-      const chip = screen.getByText("settings");
+    render(<CleanBreadcrumbRepro page="settings" onClear={onClear} />);
 
-      // Focus + press Enter — the standard keyboard-activation
-      // path for a button. Today the chip has no keydown handler,
-      // so the callback never fires.
-      (chip as HTMLElement).focus();
-      fireEvent.keyDown(chip as HTMLElement, { key: "Enter", code: "Enter" });
-      fireEvent.keyUp(chip as HTMLElement, { key: "Enter", code: "Enter" });
+    const button = screen.getByRole("button", { name: /settings/i });
 
-      expect(onClear).toHaveBeenCalledOnce();
-    },
-  );
+    // Focus + press Enter — the standard keyboard-activation
+    // path for a button. React Aria's Button hooks up Enter and
+    // Space activation on `<button>` elements, so onPress fires
+    // just like a mouse click.
+    button.focus();
+    fireEvent.keyDown(button, { key: "Enter", code: "Enter" });
+    fireEvent.keyUp(button, { key: "Enter", code: "Enter" });
 
-  it.fails("REGRESSION — the breadcrumb chip is keyboard-focusable (tabIndex present)", () => {
+    expect(onClear).toHaveBeenCalledOnce();
+  });
+
+  it("the breadcrumb button is keyboard-focusable (tabIndex not -1)", () => {
     render(<CleanBreadcrumbRepro page="settings" onClear={() => undefined} />);
 
-    const chip = screen.getByText("settings");
+    const button = screen.getByRole("button", { name: /settings/i });
 
-    // Chip renders without `tabIndex` — a screen-reader user
-    // TAB-ing through the palette skips it entirely. WAI-ARIA
-    // requires interactive controls to be reachable via the
-    // keyboard. This assertion documents the missing
-    // `tabIndex="0"` on the DOM node.
-    const tabIndex = chip.getAttribute("tabindex") ?? chip.getAttribute("tabIndex");
-    expect(
-      tabIndex,
-      "Breadcrumb chip is not keyboard-focusable — Chip has no tabIndex. " +
-        "Replace with <Button> or wrap in a focusable element.",
-    ).not.toBeNull();
+    // Native `<button>` elements are keyboard-focusable by default
+    // — either `tabindex` is absent (implicit 0) or explicitly `0`.
+    // The regression was that `Chip` rendered as `<span>` with no
+    // tabindex, skipping it in the tab order entirely.
+    const tabIndexAttr = button.getAttribute("tabindex") ?? button.getAttribute("tabIndex");
+    const tabIndexValue = tabIndexAttr === null ? 0 : Number(tabIndexAttr);
+
+    expect(tabIndexValue).not.toBe(-1);
   });
 });

@@ -2,32 +2,24 @@
 /**
  * @file progress-tabs.spec.tsx
  * @module @stackra/ui/__tests__/react
- * @description REGRESSION test — Round 6 UI reviewer finding P1 (A).
+ * @description Regression coverage — Round 6 UI reviewer P1 (A).
  *
- *   `progress-tabs.component.tsx` stamps `role="tab"` on every
- *   trigger and `role="tabpanel"` with `aria-labelledby={`tab-${value}`}`
- *   on every content panel, but:
+ *   The previous `<ProgressTabs>` implementation stamped
+ *   `role="tab"` / `role="tabpanel"` on its Stepper-based DOM but:
  *
- *     1. The triggers have no matching `id="tab-<value>"` attribute
- *        — so `aria-labelledby` dangles. Screen readers cannot resolve
- *        the panel's programmatic label to its owning tab.
- *     2. `ProgressTabsList` renders a bare `role="tablist"` around
- *        HeroUI Pro's `Stepper` — there is no ArrowLeft / ArrowRight
- *        / Home / End key handling per WAI-ARIA Authoring Practices
- *        for tabs.
+ *     1. Content panels' `aria-labelledby={"tab-${value}"}` never
+ *        resolved — no DOM node carried that id.
+ *     2. `role="tablist"` had no ArrowLeft / ArrowRight / Home /
+ *        End keyboard handling per the WAI-ARIA "Tabs" pattern.
  *
- *   Both are P1 accessibility regressions that fail WCAG 2.2 AA
+ *   Both were P1 accessibility regressions that failed WCAG 2.2 AA
  *   (Success Criterion 2.1.1 — Keyboard, and 4.1.2 — Name, Role,
  *   Value).
  *
- *   Fix suggested by the UI reviewer report:
- *   - Stamp `id="tab-<value>"` on every trigger DOM node.
- *   - Wire ArrowLeft / ArrowRight (Home / End) on `role="tablist"`
- *     to move focus among the triggers, per the WAI-ARIA authoring
- *     practices "Tabs with automatic activation" pattern.
- *   - See
- *     `.kiro/reports/ui-design-a11y-reviewer-2026-07-21.md`
- *     §"P1 findings > progress-tabs".
+ *   Fix (2026-07-21): the compound was rebuilt on HeroUI `Tabs` —
+ *   React Aria owns the a11y contract, so every assertion below
+ *   passes without hand-rolling id linkage or keyboard handlers.
+ *   See `.kiro/reports/ui-p1-fixes-2026-07-21.md`.
  */
 
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
@@ -36,10 +28,6 @@ import { afterEach, describe, expect, it } from "vitest";
 import { ProgressTabs } from "@/react/components/progress-tabs/progress-tabs.component";
 
 afterEach(cleanup);
-
-// REGRESSION — Round 6 UI reviewer P1 (A). Fix by stamping
-// `id="tab-<value>"` on every trigger + wiring ArrowLeft/ArrowRight
-// keyboard nav on the `role="tablist"` node per the WAI-ARIA tab pattern.
 
 describe("<ProgressTabs> — WAI-ARIA tab pattern", () => {
   /**
@@ -68,80 +56,59 @@ describe("<ProgressTabs> — WAI-ARIA tab pattern", () => {
     );
   }
 
-  it.fails("REGRESSION — every panel's `aria-labelledby` target id exists in the DOM", () => {
+  it("every panel's `aria-labelledby` target id exists in the DOM", () => {
     renderThreeTab();
 
-    // The content panels reference `tab-<value>` via aria-labelledby.
-    // WAI-ARIA requires the referenced id to exist on a real DOM
-    // node — screen readers use it to announce the panel's owning
-    // tab.
+    // WAI-ARIA requires the id referenced by `aria-labelledby` to
+    // resolve to a real DOM node — screen readers use it to
+    // announce the panel's owning tab. React Aria's Tabs generates
+    // a stable id for every tab and points every panel at it via
+    // `aria-labelledby`, so this chain closes automatically.
     const panels = document.querySelectorAll<HTMLElement>('[role="tabpanel"]');
     expect(panels.length).toBeGreaterThan(0);
 
     for (const panel of Array.from(panels)) {
       const referencedId = panel.getAttribute("aria-labelledby");
       expect(referencedId).not.toBeNull();
-      // The referenced id must resolve to a real DOM node —
-      // aria-labelledby is a required navigation contract for
-      // screen readers.
       const target = referencedId ? document.getElementById(referencedId) : null;
       expect(
         target,
-        `Panel labelled by "${referencedId}" — no DOM node with that id exists. ` +
-          "Trigger must stamp `id=tab-<value>` to close the aria-labelledby chain.",
+        `Panel labelled by "${referencedId}" — no DOM node with that id exists.`,
       ).not.toBeNull();
     }
   });
 
-  it.fails(
-    "REGRESSION — `role=tab` elements are exposed on every trigger (screen readers rely on it)",
-    () => {
-      renderThreeTab();
+  it("exposes `role=tab` on every trigger", () => {
+    renderThreeTab();
 
-      // Query permissively — a Stepper.Step may render as <li>, <button>,
-      // or a bespoke shape. The regression is that NONE of them carry
-      // `role="tab"`, so a screen reader in tab-navigation mode sees an
-      // empty tab list.
-      const tabs = document.querySelectorAll<HTMLElement>('[role="tab"]');
+    // Every Tabs.Tab renders `role="tab"` on its underlying button
+    // (React Aria's Tab primitive). Three triggers ⇒ three tabs.
+    const tabs = document.querySelectorAll<HTMLElement>('[role="tab"]');
 
-      // Today: 0 elements have role="tab" — the Stepper renders <li>
-      // items with no explicit role. This assertion documents the
-      // regression.
-      expect(tabs.length).toBeGreaterThanOrEqual(3);
-    },
-  );
+    expect(tabs.length).toBeGreaterThanOrEqual(3);
+  });
 
-  it.fails(
-    "REGRESSION — ArrowRight on a focused tab moves focus to the next tab (WAI-ARIA tab pattern)",
-    () => {
-      renderThreeTab();
+  it("ArrowRight on a focused tab moves focus to the next tab (WAI-ARIA tab pattern)", () => {
+    renderThreeTab();
 
-      // Whatever the triggers render as (button, li, div), we look
-      // up focusable candidates that carry `role="tab"`. If the
-      // regression is fixed, this yields the trigger buttons.
-      const tabs = Array.from(document.querySelectorAll<HTMLElement>('[role="tab"]'));
+    // Whatever HeroUI's Tab renders as, it carries `role="tab"`.
+    // Grab the focusable trio + drive keyboard nav directly.
+    const tabs = Array.from(document.querySelectorAll<HTMLElement>('[role="tab"]'));
 
-      // Guard: if the role="tab" markup is missing, this assertion
-      // fails clearly — no need to run the ArrowRight simulation on
-      // a phantom element.
-      expect(tabs.length).toBeGreaterThanOrEqual(2);
+    expect(tabs.length).toBeGreaterThanOrEqual(2);
 
-      const [first, second] = tabs;
+    const [first, second] = tabs;
 
-      // Simulate the user tabbing to the first trigger + pressing
-      // ArrowRight. WAI-ARIA "Tabs with automatic activation" says
-      // focus should advance to the second tab.
-      (first as HTMLElement).focus();
-      expect(document.activeElement).toBe(first);
+    (first as HTMLElement).focus();
+    expect(document.activeElement).toBe(first);
 
-      fireEvent.keyDown(first as HTMLElement, {
-        key: "ArrowRight",
-        code: "ArrowRight",
-      });
+    // React Aria's Tabs listens for ArrowRight on the tablist and
+    // moves focus to the next enabled tab, wrapping at the end.
+    fireEvent.keyDown(first as HTMLElement, {
+      key: "ArrowRight",
+      code: "ArrowRight",
+    });
 
-      // Today the tablist has no ArrowRight handler — focus stays on
-      // the first tab. This assertion documents the missing behavior.
-      expect(document.activeElement).toBe(second);
-    },
-  );
+    expect(document.activeElement).toBe(second);
+  });
 });

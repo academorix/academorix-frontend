@@ -1,20 +1,39 @@
 /**
  * @file phone-input.component.tsx
  * @module @stackra/ui/react/components/phone-input
- * @description International phone number input with configurable country picker.
- *   Uses Intl.DisplayNames for localized country names and HeroUI components
- *   for the selector UI. Formatting via simple E.164 pattern matching.
+ * @description International phone number input with a searchable
+ *   country picker.
+ *
+ *   The country prefix is a real `Popover` trigger — pressing it
+ *   opens a scrollable `ListBox` of countries filterable via
+ *   `preferredCountries` / `onlyCountries` / `excludedCountries`.
+ *   React Aria owns the `aria-haspopup` / `aria-expanded` linkage,
+ *   keyboard activation (Enter / Space to open, arrows to move
+ *   through the list, Enter to select), and screen-reader
+ *   announcements — closing the Round 6 UI reviewer P1 finding
+ *   that the previous button was inert.
+ *
+ *   See `.kiro/reports/ui-p1-fixes-2026-07-21.md`.
  */
 
 "use client";
 
-import { TextField, Label, Description, FieldError, InputGroup, Button } from "@heroui/react";
+import {
+  Button,
+  Description,
+  FieldError,
+  InputGroup,
+  Label,
+  ListBox,
+  Popover,
+  TextField,
+} from "@heroui/react";
 import { Str } from "@stackra/support";
-import React, { useState, useRef, useMemo, useCallback } from "react";
+import React, { useCallback, useMemo, useRef, useState, type Key } from "react";
 
 import { CALLING_CODES, DEFAULT_COUNTRIES } from "./phone-input.constants";
 
-import type { PhoneInputProps, PhoneInputInfo, PhoneCountry } from "./phone-input.interface";
+import type { PhoneCountry, PhoneInputInfo, PhoneInputProps } from "./phone-input.interface";
 
 // ============================================================================
 // Helpers
@@ -58,8 +77,8 @@ function buildInfo(inputValue: string, countryCode: string | null): PhoneInputIn
 /**
  * PhoneInput — International phone input with country selector.
  *
- * Provides a phone number input field with a country code prefix button.
- * The country selector renders as a Select dropdown for simplicity.
+ * Provides a phone number input field with a country code prefix
+ * button that opens a searchable list of countries in a `Popover`.
  *
  * @param props - Component props.
  * @returns The phone input element.
@@ -102,8 +121,12 @@ export const PhoneInput = React.memo(function PhoneInput({
   const [selectedCountry, setSelectedCountry] = useState(Str.upper(defaultCountry));
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Build country list (reserved for future picker implementation).
-  useMemo((): PhoneCountry[] => {
+  // Compose the country list from the DEFAULT_COUNTRIES table plus
+  // the optional filter props. Result is memoised because sort +
+  // filter over ~46 rows shouldn't run on every render — the
+  // input's own re-render cadence would otherwise blow through it
+  // multiple times per keystroke.
+  const countryList = useMemo((): PhoneCountry[] => {
     let list = DEFAULT_COUNTRIES;
 
     if (onlyCountries && onlyCountries.length > 0) {
@@ -132,11 +155,18 @@ export const PhoneInput = React.memo(function PhoneInput({
 
   const callingCode = getCallingCode(selectedCountry);
 
-  // Country change handler (reserved for future picker implementation).
-  useCallback(
-    (key: string | number | null) => {
-      if (!key) return;
-      const newCountry = String(key);
+  // Country change handler wired to the ListBox's selection event.
+  // `ListBox.selectionMode="single"` hands us a `Set<Key>` with at
+  // most one member — narrow it back to the string country code
+  // the buildInfo helper expects.
+  const handleCountryChange = useCallback(
+    (keys: "all" | Set<Key>) => {
+      if (keys === "all") return;
+      const nextKey = keys.values().next().value;
+
+      if (typeof nextKey !== "string") return;
+
+      const newCountry = Str.upper(nextKey);
 
       setSelectedCountry(newCountry);
 
@@ -144,6 +174,9 @@ export const PhoneInput = React.memo(function PhoneInput({
 
       onChange?.(value, info);
 
+      // Return focus to the number input so the user can keep
+      // typing — the picker was the momentary detour, not the
+      // destination.
       setTimeout(() => inputRef.current?.focus(), 100);
     },
     [value, onChange],
@@ -189,6 +222,9 @@ export const PhoneInput = React.memo(function PhoneInput({
       <InputGroup>
         <InputGroup.Prefix className="p-0">
           {disableDropdown ? (
+            // Read-only prefix — mirrors the picker visual without
+            // the interactive affordance for consumers that lock
+            // the country.
             <span className="text-foreground-600 flex items-center gap-1.5 px-3 text-sm">
               <img
                 alt={selectedCountry}
@@ -198,33 +234,70 @@ export const PhoneInput = React.memo(function PhoneInput({
               <span>+{callingCode}</span>
             </span>
           ) : (
-            <Button
-              aria-label={`Selected country: ${selectedCountry}, +${callingCode}`}
-              className="h-full gap-1.5 rounded-none border-0 bg-transparent px-3 shadow-none"
-              isDisabled={isDisabled}
-              size="sm"
-              variant="ghost"
-            >
-              <img
-                alt={selectedCountry}
-                className="h-3.5 w-5 shrink-0 rounded-sm object-cover"
-                src={`https://flagcdn.com/h20/${Str.lower(selectedCountry)}.png`}
-              />
-              <span className="text-foreground-600 text-xs">+{callingCode}</span>
-              <svg
-                className="text-foreground-400 size-3"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                viewBox="0 0 24 24"
+            <Popover>
+              <Button
+                aria-label={`Selected country: ${selectedCountry}, +${callingCode}`}
+                className="h-full gap-1.5 rounded-none border-0 bg-transparent px-3 shadow-none"
+                isDisabled={isDisabled}
+                size="sm"
+                variant="ghost"
               >
-                <path
-                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                <img
+                  alt={selectedCountry}
+                  className="h-3.5 w-5 shrink-0 rounded-sm object-cover"
+                  src={`https://flagcdn.com/h20/${Str.lower(selectedCountry)}.png`}
                 />
-              </svg>
-            </Button>
+                <span className="text-foreground-600 text-xs">+{callingCode}</span>
+                <svg
+                  aria-hidden="true"
+                  className="text-foreground-400 size-3"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </Button>
+              <Popover.Content className="w-64">
+                <Popover.Dialog className="p-1">
+                  {/*
+                    ListBox owns the roving tabindex + typeahead for
+                    the country choices. `selectionMode="single"`
+                    binds `aria-selected` per option, and we mirror
+                    the current country into `selectedKeys` so the
+                    ItemIndicator draws a check next to it.
+                  */}
+                  <ListBox
+                    aria-label="Country"
+                    className="max-h-64 overflow-y-auto"
+                    selectedKeys={new Set([selectedCountry])}
+                    selectionMode="single"
+                    onSelectionChange={handleCountryChange}
+                  >
+                    {countryList.map((c) => (
+                      <ListBox.Item id={c.code} key={c.code} textValue={c.name}>
+                        <img
+                          alt=""
+                          aria-hidden="true"
+                          className="h-3.5 w-5 shrink-0 rounded-sm object-cover"
+                          src={`https://flagcdn.com/h20/${Str.lower(c.code)}.png`}
+                        />
+                        <div className="flex min-w-0 flex-col">
+                          <Label>{c.name}</Label>
+                          <Description>+{c.callingCode}</Description>
+                        </div>
+                        <ListBox.ItemIndicator />
+                      </ListBox.Item>
+                    ))}
+                  </ListBox>
+                </Popover.Dialog>
+              </Popover.Content>
+            </Popover>
           )}
         </InputGroup.Prefix>
         <InputGroup.Input

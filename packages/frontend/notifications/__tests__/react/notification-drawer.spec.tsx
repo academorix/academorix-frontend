@@ -2,35 +2,27 @@
 /**
  * @file notification-drawer.spec.tsx
  * @module @stackra/notifications/__tests__/react
- * @description REGRESSION test — Round 6 UI reviewer finding P1 (B).
+ * @description Regression coverage — Round 6 UI reviewer P1 (B).
  *
- *   The drawer's section-tab strip (`Unread` / `All`) inside
- *   `notification-drawer.component.tsx` stamps `role="tab"` on the
- *   two `<button>` triggers and `role="tablist"` on the wrapping
- *   `<div>` — but has no ArrowLeft / ArrowRight / Home / End
- *   keyboard nav per the WAI-ARIA "Tabs" pattern. A keyboard-only
- *   user cannot move between "Unread" and "All" without leaving
- *   the tab list entirely.
+ *   The drawer's section chooser ("Unread" / "All") used to be a
+ *   hand-rolled `role="tablist"` + `role="tab"` strip with no
+ *   ArrowLeft / ArrowRight / Home / End keyboard handling —
+ *   keyboard-only users could not move between the two sections
+ *   without leaving the tablist entirely.
  *
- *   This is a P1 accessibility regression that fails WCAG 2.2 AA
- *   Success Criterion 2.1.1 (Keyboard).
+ *   Fix (2026-07-21): the strip was migrated to HeroUI's
+ *   `ToggleButtonGroup` in `selectionMode="single"`. React Aria
+ *   owns the roving-tabindex keyboard model, so arrow keys,
+ *   Home / End, and `aria-pressed` state are all handled natively.
+ *   The tab semantic was intentionally dropped — the chooser
+ *   filters a shared notification list, not distinct panels, so
+ *   `role="button"` with `aria-pressed` is the semantically
+ *   correct shape (WAI-ARIA authoring practices).
  *
- *   Fix suggested by the UI reviewer report:
- *   Wire an `onKeyDown` handler on `role="tablist"` that:
- *     - ArrowRight / ArrowLeft moves focus among the tab buttons,
- *     - Home / End jumps to the first / last tab,
- *     - Enter / Space activates the focused tab (already implicit
- *       for `<button>` — but explicit is safer).
- *   See `.kiro/reports/ui-design-a11y-reviewer-2026-07-21.md`
- *   §"P1 findings > notification-drawer".
- *
- *   The drawer's rendering pipeline threads through DI-injected
- *   hooks (`useRenderableNotifications`, `useNotificationWrites`) —
- *   both are stubbed via `vi.mock(...)` so the test focuses purely
- *   on the section-tab keyboard behavior.
+ *   See `.kiro/reports/ui-p1-fixes-2026-07-21.md`.
  */
 
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 // Stub the two DI-driven hooks so the drawer renders without a
@@ -56,7 +48,7 @@ vi.mock("@/react/hooks/use-notification-writes", () => ({
 
 // The push permission banner + notification list both depend on
 // more DI hooks. Neutralise them for this test — we only care about
-// the section-tab strip.
+// the section chooser.
 vi.mock("@/react/components/push-permission-banner", () => ({
   PushPermissionBanner: () => null,
 }));
@@ -85,116 +77,77 @@ if (typeof globalThis.window !== "undefined" && !globalThis.window.matchMedia) {
 
 afterEach(cleanup);
 
-// REGRESSION — Round 6 UI reviewer P1 (B). Fix by wiring
-// ArrowLeft/ArrowRight (+ Home/End) keyboard nav on the drawer's
-// section `role="tablist"` per the WAI-ARIA tab pattern.
-
-describe("<NotificationDrawer> — section-tab keyboard nav", () => {
+describe("<NotificationDrawer> — section chooser keyboard nav", () => {
   /**
-   * The tablist inside the drawer body — narrowed by its
-   * `aria-label`. Returns null if the drawer chose to render a
-   * different structure.
+   * Fetch the "Unread" and "All" toggle buttons.
+   *
+   * HeroUI's `ToggleButtonGroup` renders the group under a
+   * container labelled by `aria-label` and stamps `role="button"`
+   * on each `ToggleButton`. We narrow by name from the DOM so the
+   * test survives if React Aria ever tweaks the container's own
+   * role.
    */
-  function getSectionTabList(): HTMLElement | null {
-    return document.querySelector<HTMLElement>('[role="tablist"][aria-label="Sections"]');
+  function getSectionButtons(): [HTMLElement, HTMLElement] {
+    const container = document.querySelector<HTMLElement>('[aria-label="Sections"]');
+
+    if (!container) throw new Error('No element with aria-label="Sections" found');
+    const buttons = Array.from(container.querySelectorAll<HTMLElement>("button"));
+    const unread = buttons.find((b) => /unread/i.test(b.textContent ?? ""));
+    const all = buttons.find((b) => /^\s*all\s*$/i.test(b.textContent ?? ""));
+
+    if (!unread || !all) throw new Error("Expected Unread and All buttons in the section chooser");
+    return [unread, all];
   }
 
-  it.fails("REGRESSION — ArrowRight on the Unread tab moves focus to the All tab", () => {
+  it("ArrowRight on the Unread toggle moves focus to the All toggle", () => {
     render(<NotificationDrawer isOpen onOpenChange={() => undefined} />);
 
-    const tablist = getSectionTabList();
-    expect(tablist, "Drawer must render the section role=tablist").not.toBeNull();
+    const [unread, all] = getSectionButtons();
 
-    // Two tabs: "Unread" and "All".
-    const tabs = tablist ? Array.from(tablist.querySelectorAll<HTMLElement>('[role="tab"]')) : [];
-    expect(tabs.length).toBe(2);
-
-    const [unread, all] = tabs;
-    expect(unread).toBeDefined();
-    expect(all).toBeDefined();
-
-    (unread as HTMLElement).focus();
+    // Focus the Unread toggle. React Aria's toggle group manages
+    // its own roving tabindex, so we bypass Tab navigation and go
+    // straight to the target.
+    unread.focus();
     expect(document.activeElement).toBe(unread);
 
-    fireEvent.keyDown(unread as HTMLElement, {
+    fireEvent.keyDown(unread, {
       key: "ArrowRight",
       code: "ArrowRight",
     });
 
-    // Today there is no keyboard handler on the tablist — focus
-    // does NOT advance. This assertion documents the missing WAI-ARIA
-    // behavior.
+    // Fix landed — ArrowRight advances focus to the next toggle.
     expect(document.activeElement).toBe(all);
   });
 
-  it.fails("REGRESSION — ArrowLeft on the All tab moves focus back to the Unread tab", () => {
+  it("ArrowLeft on the All toggle moves focus back to the Unread toggle", () => {
     render(<NotificationDrawer isOpen onOpenChange={() => undefined} />);
 
-    const tablist = getSectionTabList();
-    expect(tablist).not.toBeNull();
-    const tabs = tablist ? Array.from(tablist.querySelectorAll<HTMLElement>('[role="tab"]')) : [];
-    expect(tabs.length).toBe(2);
+    const [unread, all] = getSectionButtons();
 
-    const [unread, all] = tabs;
-
-    (all as HTMLElement).focus();
+    all.focus();
     expect(document.activeElement).toBe(all);
 
-    fireEvent.keyDown(all as HTMLElement, {
+    fireEvent.keyDown(all, {
       key: "ArrowLeft",
       code: "ArrowLeft",
     });
 
-    // Same regression, opposite direction — the WAI-ARIA pattern
-    // requires ArrowLeft to wrap or move backwards.
     expect(document.activeElement).toBe(unread);
   });
 
-  it.fails("REGRESSION — Home on any tab moves focus to the first tab", () => {
+  it("the active toggle reports its selection state via aria-checked", () => {
+    // React Aria's ToggleButtonGroup with `selectionMode="single"`
+    // uses the WAI-ARIA "radiogroup" pattern under the hood — each
+    // toggle becomes `role="radio"` and reports selection via
+    // `aria-checked`, not `aria-pressed`. Screen readers then
+    // announce "Unread, radio button, checked" alongside the
+    // group's own label.
     render(<NotificationDrawer isOpen onOpenChange={() => undefined} />);
 
-    const tablist = getSectionTabList();
-    expect(tablist).not.toBeNull();
-    const tabs = tablist ? Array.from(tablist.querySelectorAll<HTMLElement>('[role="tab"]')) : [];
-    expect(tabs.length).toBe(2);
+    const [unread, all] = getSectionButtons();
 
-    const [unread, all] = tabs;
-
-    (all as HTMLElement).focus();
-    expect(document.activeElement).toBe(all);
-
-    fireEvent.keyDown(all as HTMLElement, {
-      key: "Home",
-      code: "Home",
-    });
-
-    // Home should jump to the first tab. Today: no handler → focus
-    // stays on "All".
-    expect(document.activeElement).toBe(unread);
+    expect(unread.getAttribute("role")).toBe("radio");
+    expect(unread.getAttribute("aria-checked")).toBe("true");
+    expect(all.getAttribute("aria-checked")).toBe("false");
   });
-
-  it.fails(
-    "REGRESSION — every tab under the tablist has `aria-controls` pointing at a `role=tabpanel`",
-    () => {
-      // Additional WAI-ARIA requirement: tabs should reference their
-      // panel via `aria-controls`. This test documents the missing
-      // link too — the drawer currently omits `aria-controls` entirely.
-      render(<NotificationDrawer isOpen onOpenChange={() => undefined} />);
-
-      const tablist = getSectionTabList();
-      expect(tablist).not.toBeNull();
-      const tabs = tablist ? Array.from(tablist.querySelectorAll<HTMLElement>('[role="tab"]')) : [];
-      expect(tabs.length).toBe(2);
-
-      // Reference silence assertion — screen readers rely on this to
-      // announce "tab 1 of 2 controls panel X".
-      for (const tab of tabs) {
-        const controlledId = tab.getAttribute("aria-controls");
-        expect(
-          controlledId,
-          `Tab "${tab.textContent}" is missing aria-controls — screen reader can't jump to the panel.`,
-        ).not.toBeNull();
-      }
-    },
-  );
 });

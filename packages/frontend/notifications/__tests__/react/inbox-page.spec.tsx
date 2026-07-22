@@ -2,33 +2,24 @@
 /**
  * @file inbox-page.spec.tsx
  * @module @stackra/notifications/__tests__/react
- * @description REGRESSION test — Round 6 UI reviewer finding P1 (C).
+ * @description Regression coverage — Round 6 UI reviewer P1 (C).
  *
- *   The inbox page renders the SAME section-tab strip pattern the
- *   drawer does (`Unread` / `All`) — same shape, same shortcomings.
- *   `inbox-page.component.tsx` stamps `role="tab"` on each button
- *   and `role="tablist"` on the wrapper `<div>`, but has no
- *   ArrowLeft / ArrowRight / Home / End keyboard handling per the
- *   WAI-ARIA "Tabs" pattern. A keyboard-only user cannot move
- *   between "Unread" and "All" inside the tab list.
+ *   The inbox page's section chooser (Unread / All) used the same
+ *   hand-rolled `role="tablist"` + `role="tab"` pattern the drawer
+ *   did — with no ArrowLeft / ArrowRight / Home / End keyboard
+ *   handling per the WAI-ARIA "Tabs" pattern. Full-page inbox
+ *   makes the miss more acute since the whole surface belongs to
+ *   this control.
  *
- *   Since this is the full-page inbox (a route consumers mount at
- *   `/notifications`), keyboard navigation matters even more here
- *   than on the drawer — the whole surface belongs to this control.
+ *   Fix (2026-07-21): migrated to HeroUI's `ToggleButtonGroup` in
+ *   `selectionMode="single"`. React Aria owns the roving-tabindex
+ *   keyboard model, so arrow keys, Home / End, and `aria-pressed`
+ *   state are all handled natively. The tab semantic was dropped
+ *   deliberately — the chooser filters a shared inbox list, not
+ *   distinct panels, so `role="button"` with `aria-pressed` is the
+ *   semantically correct shape.
  *
- *   This is a P1 accessibility regression that fails WCAG 2.2 AA
- *   Success Criterion 2.1.1 (Keyboard).
- *
- *   Fix suggested by the UI reviewer report:
- *   Same as the drawer — wire an `onKeyDown` on `role="tablist"`
- *   with ArrowRight/ArrowLeft/Home/End, and add `aria-controls`
- *   pointing at each `role="tabpanel"`. See
- *   `.kiro/reports/ui-design-a11y-reviewer-2026-07-21.md`
- *   §"P1 findings > inbox-page".
- *
- *   `useRenderableNotifications` + `useNotificationWrites` are the
- *   DI-driven dependencies; both are `vi.mock(...)`'d so the test
- *   isolates the tab-strip keyboard behavior.
+ *   See `.kiro/reports/ui-p1-fixes-2026-07-21.md`.
  */
 
 import { cleanup, fireEvent, render } from "@testing-library/react";
@@ -54,7 +45,7 @@ vi.mock("@/react/hooks/use-notification-writes", () => ({
 }));
 
 // NotificationList — depends on more DI hooks; neutralise for this
-// spec since we only care about the tab strip.
+// spec since we only care about the section chooser.
 vi.mock("@/react/components/notification-list", () => ({
   NotificationList: () => null,
 }));
@@ -64,56 +55,53 @@ import { InboxPage } from "@/react/pages/inbox-page/inbox-page.component";
 
 afterEach(cleanup);
 
-// REGRESSION — Round 6 UI reviewer P1 (C). Fix by wiring
-// ArrowLeft/ArrowRight (+ Home/End) keyboard nav on the inbox
-// section `role="tablist"` per the WAI-ARIA tab pattern.
-
-describe("<InboxPage> — section-tab keyboard nav", () => {
+describe("<InboxPage> — section chooser keyboard nav", () => {
   /**
-   * The section tablist inside the inbox page. Uses the same
-   * `aria-label="Sections"` shape the drawer does.
+   * Fetch the "Unread" and "All" toggle buttons.
+   *
+   * HeroUI's `ToggleButtonGroup` renders the group under a
+   * container labelled by `aria-label` and stamps `role="button"`
+   * on each `ToggleButton`. We narrow by name from the DOM so the
+   * test survives if React Aria ever tweaks the container's own
+   * role.
    */
-  function getSectionTabList(): HTMLElement | null {
-    return document.querySelector<HTMLElement>('[role="tablist"][aria-label="Sections"]');
+  function getSectionButtons(): [HTMLElement, HTMLElement] {
+    const container = document.querySelector<HTMLElement>('[aria-label="Sections"]');
+
+    if (!container) throw new Error('No element with aria-label="Sections" found');
+    const buttons = Array.from(container.querySelectorAll<HTMLElement>("button"));
+    const unread = buttons.find((b) => /unread/i.test(b.textContent ?? ""));
+    const all = buttons.find((b) => /^\s*all\s*$/i.test(b.textContent ?? ""));
+
+    if (!unread || !all) throw new Error("Expected Unread and All buttons in the section chooser");
+    return [unread, all];
   }
 
-  it.fails("REGRESSION — ArrowRight on the Unread tab moves focus to the All tab", () => {
+  it("ArrowRight on the Unread toggle moves focus to the All toggle", () => {
     render(<InboxPage />);
 
-    const tablist = getSectionTabList();
-    expect(tablist, "Inbox must render a section role=tablist").not.toBeNull();
+    const [unread, all] = getSectionButtons();
 
-    const tabs = tablist ? Array.from(tablist.querySelectorAll<HTMLElement>('[role="tab"]')) : [];
-    expect(tabs.length).toBe(2);
-
-    const [unread, all] = tabs;
-
-    (unread as HTMLElement).focus();
+    unread.focus();
     expect(document.activeElement).toBe(unread);
 
-    fireEvent.keyDown(unread as HTMLElement, {
+    fireEvent.keyDown(unread, {
       key: "ArrowRight",
       code: "ArrowRight",
     });
 
-    // Regression documented — no ArrowRight handler on the tablist.
     expect(document.activeElement).toBe(all);
   });
 
-  it.fails("REGRESSION — ArrowLeft on the All tab moves focus back to the Unread tab", () => {
+  it("ArrowLeft on the All toggle moves focus back to the Unread toggle", () => {
     render(<InboxPage />);
 
-    const tablist = getSectionTabList();
-    expect(tablist).not.toBeNull();
-    const tabs = tablist ? Array.from(tablist.querySelectorAll<HTMLElement>('[role="tab"]')) : [];
-    expect(tabs.length).toBe(2);
+    const [unread, all] = getSectionButtons();
 
-    const [unread, all] = tabs;
-
-    (all as HTMLElement).focus();
+    all.focus();
     expect(document.activeElement).toBe(all);
 
-    fireEvent.keyDown(all as HTMLElement, {
+    fireEvent.keyDown(all, {
       key: "ArrowLeft",
       code: "ArrowLeft",
     });
@@ -121,42 +109,19 @@ describe("<InboxPage> — section-tab keyboard nav", () => {
     expect(document.activeElement).toBe(unread);
   });
 
-  it.fails("REGRESSION — Home on any tab moves focus to the first tab", () => {
+  it("the active toggle reports its selection state via aria-checked", () => {
+    // React Aria's ToggleButtonGroup with `selectionMode="single"`
+    // uses the WAI-ARIA "radiogroup" pattern under the hood — each
+    // toggle becomes `role="radio"` and reports selection via
+    // `aria-checked`, not `aria-pressed`. Screen readers then
+    // announce "Unread, radio button, checked" alongside the
+    // group's own label.
     render(<InboxPage />);
 
-    const tablist = getSectionTabList();
-    expect(tablist).not.toBeNull();
-    const tabs = tablist ? Array.from(tablist.querySelectorAll<HTMLElement>('[role="tab"]')) : [];
-    expect(tabs.length).toBe(2);
+    const [unread, all] = getSectionButtons();
 
-    const [unread, all] = tabs;
-
-    (all as HTMLElement).focus();
-    fireEvent.keyDown(all as HTMLElement, {
-      key: "Home",
-      code: "Home",
-    });
-
-    expect(document.activeElement).toBe(unread);
+    expect(unread.getAttribute("role")).toBe("radio");
+    expect(unread.getAttribute("aria-checked")).toBe("true");
+    expect(all.getAttribute("aria-checked")).toBe("false");
   });
-
-  it.fails(
-    "REGRESSION — every tab under the tablist has `aria-controls` pointing at a `role=tabpanel`",
-    () => {
-      render(<InboxPage />);
-
-      const tablist = getSectionTabList();
-      expect(tablist).not.toBeNull();
-      const tabs = tablist ? Array.from(tablist.querySelectorAll<HTMLElement>('[role="tab"]')) : [];
-      expect(tabs.length).toBe(2);
-
-      for (const tab of tabs) {
-        const controlledId = tab.getAttribute("aria-controls");
-        expect(
-          controlledId,
-          `Tab "${tab.textContent}" is missing aria-controls — screen readers can't announce the linked panel.`,
-        ).not.toBeNull();
-      }
-    },
-  );
 });

@@ -8,8 +8,8 @@
  *   chosen route path.
  */
 
-import { useMemo, useState, type ReactElement } from "react";
-import { Button, Chip } from "@stackra/ui/react";
+import { useCallback, useMemo, useState, type Key, type ReactElement } from "react";
+import { Button, Chip, ToggleButton, ToggleButtonGroup } from "@stackra/ui/react";
 import { CheckIcon, Cog6ToothIcon } from "@stackra/ui/icons/heroicon/outline";
 
 import { NOTIFICATION_CATEGORIES } from "@/core/constants";
@@ -81,6 +81,16 @@ export function InboxPage({
     });
   }, [entries, section, category]);
 
+  // Selection handler for the section toggle. `ToggleButtonGroup`
+  // with `selectionMode="single"` + `disallowEmptySelection` always
+  // hands us exactly one key — narrow it back to the union type the
+  // filter pipeline expects.
+  const handleSectionChange = useCallback((keys: Set<Key>) => {
+    const first = keys.values().next().value;
+
+    if (first === "unread" || first === "all") setSection(first);
+  }, []);
+
   return (
     <div
       className={`flex flex-col gap-4 p-6${className ? ` ${className}` : ""}`}
@@ -123,34 +133,28 @@ export function InboxPage({
       </header>
 
       <div className="border-border flex flex-col gap-3 border-b pb-3">
-        <div
+        {/*
+          Section chooser — same segmented single-select toggle
+          group the drawer uses. HeroUI's ToggleButtonGroup
+          (React Aria under the hood) provides the roving-tabindex
+          keyboard model (ArrowLeft / ArrowRight / Home / End) and
+          aria-pressed state. Round 6 UI reviewer P1 C replaced the
+          previous hand-rolled `role=tablist` + `role=tab` pattern
+          which lacked keyboard nav.
+        */}
+        <ToggleButtonGroup
           aria-label="Sections"
-          className="bg-surface-secondary inline-flex rounded-lg p-0.5"
-          role="tablist"
+          disallowEmptySelection
+          selectedKeys={new Set([section])}
+          selectionMode="single"
+          size="sm"
+          onSelectionChange={handleSectionChange}
         >
-          {[
-            {
-              key: "unread" as const,
-              label: `Unread${unreadCount > 0 ? ` (${unreadCount})` : ""}`,
-            },
-            { key: "all" as const, label: "All" },
-          ].map((tab) => (
-            <button
-              key={tab.key}
-              role="tab"
-              type="button"
-              aria-selected={section === tab.key}
-              className={
-                section === tab.key
-                  ? "bg-surface text-foreground shadow-surface rounded-md px-3 py-1 text-sm font-medium"
-                  : "text-muted hover:text-foreground rounded-md px-3 py-1 text-sm"
-              }
-              onClick={() => setSection(tab.key)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+          <ToggleButton id="unread">
+            Unread{unreadCount > 0 ? ` (${unreadCount})` : ""}
+          </ToggleButton>
+          <ToggleButton id="all">All</ToggleButton>
+        </ToggleButtonGroup>
         <div aria-label="Category filters" className="flex flex-wrap gap-1.5">
           {CATEGORY_FILTERS.map((filter) => {
             const isActive = category === filter.key;

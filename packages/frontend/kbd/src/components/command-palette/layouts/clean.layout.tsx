@@ -5,8 +5,7 @@
  * @category Components
  */
 import { useState, type ReactElement } from "react";
-import { Chip } from "@stackra/ui/react";
-import { Command } from "@stackra/ui/react";
+import { Button, Command } from "@stackra/ui/react";
 
 import type { Command as CommandItem } from "../../../interfaces/command.interface";
 import { formatCombo } from "../../../utils/format-combo.util";
@@ -55,17 +54,26 @@ export function CleanPaletteLayout({
           <Command.Dialog inputValue={query} onInputChange={handleInput}>
             {pages.length > 0 && (
               <Command.Header>
+                {/*
+                  Breadcrumb-style page navigation — a keyboard-friendly
+                  Button per crumb. HeroUI's `Chip` has no `onClick`
+                  contract in v3 and no button semantics, which meant
+                  keyboard users could not activate a crumb (Round 6
+                  UI reviewer P1). `Button variant="tertiary"` gives
+                  us the intended small-and-quiet look plus native
+                  keyboard activation, focus ring, and a real
+                  `role="button"` for screen readers.
+                */}
                 <div className="flex items-center gap-1">
                   {pages.map((page) => (
-                    <Chip
+                    <Button
                       key={page}
                       size="sm"
                       variant="tertiary"
-                      className="cursor-pointer"
-                      onClick={() => setPages((p) => p.slice(0, p.indexOf(page) + 1))}
+                      onPress={() => setPages((p) => p.slice(0, p.indexOf(page) + 1))}
                     >
                       {page}
-                    </Chip>
+                    </Button>
                   ))}
                 </div>
               </Command.Header>

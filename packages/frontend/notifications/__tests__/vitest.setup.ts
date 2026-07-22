@@ -25,3 +25,36 @@ if (typeof globalThis.window !== "undefined" && !globalThis.window.matchMedia) {
       dispatchEvent: () => false,
     }) as unknown as MediaQueryList;
 }
+
+// React Aria Components (HeroUI's underlying primitive for
+// ToggleButtonGroup, Tabs, ListBox, ...) calls
+// `element.getAnimations()` in layout effects for selection
+// transitions. jsdom does not implement the Web Animations API, so
+// we stub the method to return an empty array — no animations to
+// await.
+if (typeof globalThis.Element !== "undefined" && !("getAnimations" in Element.prototype)) {
+  Object.defineProperty(Element.prototype, "getAnimations", {
+    configurable: true,
+    value: (): Animation[] => [],
+    writable: true,
+  });
+}
+
+// React Aria's `useSelectableCollection` (and cousins) builds
+// `document.querySelector` strings via `CSS.escape(id)` when
+// moving focus among items. jsdom does not always expose `CSS` at
+// the module scope, so we install the smallest safe polyfill.
+if (typeof globalThis.CSS === "undefined") {
+  Object.defineProperty(globalThis, "CSS", {
+    configurable: true,
+    value: {
+      escape(value: string): string {
+        return String(value).replace(/[^a-zA-Z0-9_-]/g, (ch) => `\\${ch}`);
+      },
+      supports(): boolean {
+        return false;
+      },
+    },
+    writable: true,
+  });
+}
