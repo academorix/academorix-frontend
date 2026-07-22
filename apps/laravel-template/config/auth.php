@@ -1,6 +1,29 @@
 <?php
 
-use App\Models\User;
+/**
+ * @file apps/laravel-template/config/auth.php
+ *
+ * @description
+ * Auth config for the Stackra headless API — two guards,
+ * both Sanctum-based per ADR-0022 Seam 1.
+ *
+ *   - `sanctum` — the tenant-audience guard for /api/v1/*
+ *     routes. Personal access tokens issued from
+ *     `personal_access_tokens` (Sanctum default).
+ *   - `platform_admin` — the platform-audience guard for
+ *     /api/v1/platform/* routes. Same driver, different
+ *     user provider (`PlatformUser` model instead of the
+ *     tenant-scoped `User`).
+ *
+ * No session guard is defined — the API is stateless per
+ * `.kiro/steering/architecture.md` §Headless only.
+ * The user models are declared as `class-string` fallbacks
+ * on the packages; each user package's provider rebinds
+ * `AUTH_MODEL` / `AUTH_PLATFORM_MODEL` at boot when the
+ * package is present in `composer.json`.
+ */
+
+declare(strict_types=1);
 
 return [
 
@@ -8,15 +31,9 @@ return [
     |--------------------------------------------------------------------------
     | Authentication Defaults
     |--------------------------------------------------------------------------
-    |
-    | This option defines the default authentication "guard" and password
-    | reset "broker" for your application. You may change these values
-    | as required, but they're a perfect start for most applications.
-    |
     */
-
     'defaults' => [
-        'guard' => env('AUTH_GUARD', 'web'),
+        'guard' => env('AUTH_GUARD', 'sanctum'),
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
@@ -24,23 +41,19 @@ return [
     |--------------------------------------------------------------------------
     | Authentication Guards
     |--------------------------------------------------------------------------
-    |
-    | Next, you may define every authentication guard for your application.
-    | Of course, a great default configuration has been defined for you
-    | which utilizes session storage plus the Eloquent user provider.
-    |
-    | All authentication guards have a user provider, which defines how the
-    | users are actually retrieved out of your database or other storage
-    | system used by the application. Typically, Eloquent is utilized.
-    |
-    | Supported: "session"
-    |
+    | Both guards use the `sanctum` driver — the guard split lets
+    | routes attach `->middleware('auth:sanctum')` for tenant traffic
+    | and `->middleware('auth:platform_admin')` for platform-admin
+    | traffic while keeping one token issuance mechanism.
     */
-
     'guards' => [
-        'web' => [
-            'driver' => 'session',
+        'sanctum' => [
+            'driver' => 'sanctum',
             'provider' => 'users',
+        ],
+        'platform_admin' => [
+            'driver' => 'sanctum',
+            'provider' => 'platform_users',
         ],
     ],
 
@@ -48,50 +61,27 @@ return [
     |--------------------------------------------------------------------------
     | User Providers
     |--------------------------------------------------------------------------
-    |
-    | All authentication guards have a user provider, which defines how the
-    | users are actually retrieved out of your database or other storage
-    | system used by the application. Typically, Eloquent is utilized.
-    |
-    | If you have multiple user tables or models you may configure multiple
-    | providers to represent the model / table. These providers may then
-    | be assigned to any extra authentication guards you have defined.
-    |
-    | Supported: "database", "eloquent"
-    |
+    | The concrete User + PlatformUser models live in their own
+    | packages (`stackra/user` + `stackra/platform-user`). Each
+    | package's service provider replaces the placeholder class-
+    | string at boot with the resolved concrete class.
     */
-
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', User::class),
+            'model' => env('AUTH_MODEL', \Stackra\User\Models\User::class),
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'platform_users' => [
+            'driver' => 'eloquent',
+            'model' => env('AUTH_PLATFORM_MODEL', \Stackra\PlatformUser\Models\PlatformUser::class),
+        ],
     ],
 
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords
     |--------------------------------------------------------------------------
-    |
-    | These configuration options specify the behavior of Laravel's password
-    | reset functionality, including the table utilized for token storage
-    | and the user provider that is invoked to actually retrieve users.
-    |
-    | The expiry time is the number of minutes that each reset token will be
-    | considered valid. This security feature keeps tokens short-lived so
-    | they have less time to be guessed. You may change this as needed.
-    |
-    | The throttle setting is the number of seconds a user must wait before
-    | generating more password reset tokens. This prevents the user from
-    | quickly generating a very large amount of password reset tokens.
-    |
     */
-
     'passwords' => [
         'users' => [
             'provider' => 'users',
@@ -105,13 +95,7 @@ return [
     |--------------------------------------------------------------------------
     | Password Confirmation Timeout
     |--------------------------------------------------------------------------
-    |
-    | Here you may define the number of seconds before a password confirmation
-    | window expires and users are asked to re-enter their password via the
-    | confirmation screen. By default, the timeout lasts for three hours.
-    |
     */
-
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
 ];
