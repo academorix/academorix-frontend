@@ -16,13 +16,13 @@
 // ════════════════════════════════════════════════════════════════════════════════
 
 /** Internal cache for studly conversions to avoid repeated computation. */
-export const studlyCache: Map<string, string> = new Map();
+export const studlyCache = new Map<string, string>();
 
 /** Internal cache for snake conversions. */
-export const snakeCache: Map<string, string> = new Map();
+export const snakeCache = new Map<string, string>();
 
 /** Internal cache for camel conversions. */
-export const camelCache: Map<string, string> = new Map();
+export const camelCache = new Map<string, string>();
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Irregular plurals
@@ -455,7 +455,7 @@ export class Str {
    * Str.limit('Hi', 10);                  // 'Hi'
    * ```
    */
-  public static limit(value: string, length: number, end: string = "..."): string {
+  public static limit(value: string, length: number, end = "..."): string {
     if (value.length <= length) return value;
     return value.slice(0, length - end.length) + end;
   }
@@ -475,7 +475,7 @@ export class Str {
    * Str.words('Hello', 5);                     // 'Hello'
    * ```
    */
-  public static words(value: string, wordCount: number, end: string = "..."): string {
+  public static words(value: string, wordCount: number, end = "..."): string {
     const allWords = value.split(/\s+/).filter(Boolean);
     if (allWords.length <= wordCount) return value;
     return allWords.slice(0, wordCount).join(" ") + end;
@@ -495,7 +495,7 @@ export class Str {
    * Str.padLeft('hi', 5);     // '   hi'
    * ```
    */
-  public static padLeft(value: string, length: number, pad: string = " "): string {
+  public static padLeft(value: string, length: number, pad = " "): string {
     return value.padStart(length, pad);
   }
 
@@ -513,7 +513,7 @@ export class Str {
    * Str.padRight('hi', 5);     // 'hi   '
    * ```
    */
-  public static padRight(value: string, length: number, pad: string = " "): string {
+  public static padRight(value: string, length: number, pad = " "): string {
     return value.padEnd(length, pad);
   }
 
@@ -725,7 +725,7 @@ export class Str {
    * Str.slug('  Foo & Bar  ');       // 'foo-bar'
    * ```
    */
-  public static slug(value: string, separator: string = "-"): string {
+  public static slug(value: string, separator = "-"): string {
     // Normalize to ASCII-friendly form
     const normalized = value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
@@ -754,12 +754,14 @@ export class Str {
    * Str.random(8);  // e.g., 'x7k2m9p4'
    * ```
    */
-  public static random(length: number = 16): string {
+  public static random(length = 16): string {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     const charsLength = chars.length;
 
-    // Use crypto if available for better randomness
-    if (typeof globalThis.crypto !== "undefined" && globalThis.crypto.getRandomValues) {
+    // Use crypto if available for better randomness. Optional
+    // chaining collapses the `typeof crypto !== "undefined"` +
+    // `crypto.getRandomValues` guard into one expression.
+    if (globalThis.crypto?.getRandomValues) {
       const array = new Uint32Array(length);
       globalThis.crypto.getRandomValues(array);
       let result = "";
@@ -791,14 +793,14 @@ export class Str {
    * ```
    */
   public static uuid(): string {
-    // Use native randomUUID when available
-    if (typeof globalThis.crypto !== "undefined" && globalThis.crypto.randomUUID) {
+    // Use native randomUUID when available.
+    if (globalThis.crypto?.randomUUID) {
       return globalThis.crypto.randomUUID();
     }
 
-    // Fallback implementation
+    // Fallback implementation.
     const bytes = new Uint8Array(16);
-    if (typeof globalThis.crypto !== "undefined" && globalThis.crypto.getRandomValues) {
+    if (globalThis.crypto?.getRandomValues) {
       globalThis.crypto.getRandomValues(bytes);
     } else {
       for (let i = 0; i < 16; i++) {
@@ -946,7 +948,8 @@ export class Str {
     const irregular = IRREGULAR_PLURALS.get(lower);
     if (irregular) {
       // Preserve original casing of first char
-      if (value[0] === value[0]!.toUpperCase()) {
+      const firstUpper = value.charAt(0).toUpperCase();
+      if (value.startsWith(firstUpper)) {
         return irregular.charAt(0).toUpperCase() + irregular.slice(1);
       }
       return irregular;
@@ -1013,7 +1016,8 @@ export class Str {
     // Check irregular singulars first
     const irregular = IRREGULAR_SINGULARS.get(lower);
     if (irregular) {
-      if (value[0] === value[0]!.toUpperCase()) {
+      const firstUpper = value.charAt(0).toUpperCase();
+      if (value.startsWith(firstUpper)) {
         return irregular.charAt(0).toUpperCase() + irregular.slice(1);
       }
       return irregular;
