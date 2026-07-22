@@ -21,7 +21,9 @@ export { ScopeService, type ScopeListener } from "./services";
 // ════════════════════════════════════════════════════════════════════════════════
 // Constants / Tokens
 // ════════════════════════════════════════════════════════════════════════════════
-export { DEFAULT_SCOPE_OPTIONS, SCOPE_SERVICE, SCOPE_CONFIG, SCOPE_DATA_SOURCE } from "./constants";
+// `SCOPE_SERVICE` lives in `@stackra/contracts` (per contract-reexports.md);
+// import it from there directly. The package-owned tokens stay here.
+export { DEFAULT_SCOPE_OPTIONS, SCOPE_CONFIG, SCOPE_DATA_SOURCE } from "./constants";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Errors

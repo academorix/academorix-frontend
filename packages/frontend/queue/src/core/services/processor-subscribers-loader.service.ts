@@ -7,14 +7,19 @@
  */
 
 import { Injectable, Inject, Optional } from "@stackra/container";
-import { OnApplicationBootstrap } from "@stackra/contracts";
+import {
+  DISCOVERY_SERVICE,
+  OnApplicationBootstrap,
+  PROCESSOR_METADATA_KEY,
+  QUEUE_MANAGER,
+  type IDiscoveryService,
+  type IProcessorOptions,
+} from "@stackra/contracts";
 import { getMetadata } from "@vivtel/metadata";
 
-import { QUEUE_MANAGER, PROCESSOR_METADATA_KEY } from "@stackra/contracts";
 import { QueueManager } from "./queue-manager.service";
-import type { IProcessorOptions } from "@/core/interfaces/processor-options.interface";
-import type { IDiscoveryService } from "@stackra/contracts";
-import { DISCOVERY_SERVICE } from "@stackra/contracts";
+
+import type { IQueuedJob } from "@/core/interfaces/queued-job.interface";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Discovery Interface
@@ -47,7 +52,7 @@ import { DISCOVERY_SERVICE } from "@stackra/contracts";
 @Injectable()
 export class ProcessorSubscribersLoader implements OnApplicationBootstrap {
   /** Registered processors (queue → handler). */
-  private readonly processors = new Map<string, (job: any) => Promise<void>>();
+  private readonly processors = new Map<string, (job: IQueuedJob<unknown>) => Promise<void>>();
 
   public constructor(
     @Inject(QUEUE_MANAGER) public readonly queueManager: QueueManager,
@@ -69,7 +74,7 @@ export class ProcessorSubscribersLoader implements OnApplicationBootstrap {
    * @param queue - Queue name
    * @returns The processor handler, or undefined
    */
-  public getProcessor(queue: string): ((job: any) => Promise<void>) | undefined {
+  public getProcessor(queue: string): ((job: IQueuedJob<unknown>) => Promise<void>) | undefined {
     return this.processors.get(queue);
   }
 
@@ -86,13 +91,19 @@ export class ProcessorSubscribersLoader implements OnApplicationBootstrap {
       const { instance } = wrapper;
       if (!instance) continue;
 
-      const ctor = (instance as { constructor?: Function }).constructor;
+      // The instance's constructor is the metadata target; the
+      // `object` type is deliberately loose — `getMetadata` only needs
+      // a `WeakMap` key. `@typescript-eslint/no-unsafe-function-type`
+      // rejects the more precise `Function` type here.
+      const ctor = (instance as { constructor?: object }).constructor;
       if (!ctor) continue;
 
-      const options = getMetadata<IProcessorOptions>(PROCESSOR_METADATA_KEY, ctor as object);
+      const options = getMetadata<IProcessorOptions>(PROCESSOR_METADATA_KEY, ctor);
       if (!options) continue;
 
-      const processor = instance as { process?: (job: any) => Promise<void> };
+      const processor = instance as {
+        process?: (job: IQueuedJob<unknown>) => Promise<void>;
+      };
       if (typeof processor.process !== "function") continue;
 
       // Bind the process method to the instance
