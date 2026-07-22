@@ -9,11 +9,12 @@
  * @category Components
  */
 
-import { type ReactElement } from "react";
 import { Kbd } from "@stackra/ui/react";
+import { type ReactElement } from "react";
+
+import { formatCombo } from "../../utils/format-combo.util";
 
 import type { KeyCombo } from "../../interfaces/key-combo.interface";
-import { formatCombo } from "../../utils/format-combo.util";
 
 /**
  * Props for the {@link ShortcutDisplay} component.
@@ -63,6 +64,12 @@ export function ShortcutDisplay({
   );
 }
 
+/**
+ * `text-[10px]` — kbd command-palette aesthetic. Raycast / Linear use
+ * a sub-`text-xs` scale for the smallest Kbd chips in the palette
+ * footer; rounding up to `text-xs` (12px) breaks the density. Exempt
+ * per `.kiro/steering/ui-components.md`.
+ */
 function resolveKbdSize(size: "sm" | "md" | "lg"): string {
   switch (size) {
     case "sm":

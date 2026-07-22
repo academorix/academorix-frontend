@@ -4,14 +4,15 @@
  * @module @stackra/kbd
  * @category Components
  */
-import type { ReactElement } from "react";
+import { useI18n } from "@stackra/i18n/react";
+import { Str } from "@stackra/support";
 import { Chip, Kbd } from "@stackra/ui/react";
 import { Command } from "@stackra/ui/react";
-import { Str } from "@stackra/support";
+
+import { formatCombo } from "../../../utils/format-combo.util";
 
 import type { Command as CommandItem } from "../../../interfaces/command.interface";
-import { formatCombo } from "../../../utils/format-combo.util";
-import { useI18n } from "@stackra/i18n/react";
+import type { ReactElement } from "react";
 
 /* ── Input Bar ─────────────────────────────────────────────────── */
 
@@ -35,6 +36,7 @@ export function InputBar({
         {isLoading ? (
           <Spinner />
         ) : showKbd ? (
+          // text-[11px] — kbd command-palette aesthetic (steering exemption).
           <Kbd className="text-[11px]">
             <Kbd.Abbr keyValue="command" />
             <Kbd.Content>K</Kbd.Content>

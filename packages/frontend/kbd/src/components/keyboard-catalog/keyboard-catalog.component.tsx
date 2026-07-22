@@ -186,13 +186,15 @@ export function KeyboardCatalog({
                   return (
                     <section key={typeId} className="flex flex-col gap-2">
                       <header className="flex items-center gap-2 px-1">
-                        {/* `uppercase` is intentional here — the kbd command-palette
-                            aesthetic (Raycast/Linear/Shopify) uses ALL-CAPS section
-                            micro-headers as a genre convention. Exemption is codified
-                            in `.kiro/steering/ui-components.md`. */}
+                        {/* `uppercase` + `text-[11px]` + `tracking-[0.08em]` are
+                            intentional here — the kbd command-palette aesthetic
+                            (Raycast/Linear/Shopify) uses ALL-CAPS + sub-`text-xs`
+                            section micro-headers as a genre convention. Exemption
+                            is codified in `.kiro/steering/ui-components.md`. */}
                         <h3 className="text-default-500 text-[11px] font-semibold tracking-[0.08em] uppercase">
                           {t(commandType.label)}
                         </h3>
+                        {/* text-[11px] — kbd command-palette aesthetic (count chip). */}
                         <span className="text-default-400 text-[11px] font-medium">
                           {list.length}
                         </span>
@@ -210,6 +212,7 @@ export function KeyboardCatalog({
           </ScrollShadow>
 
           {/* ── Footer ──────────────────────────────────────────── */}
+          {/* text-[11px] on the footer — kbd command-palette aesthetic (compact hint bar). */}
           <footer className="border-default-100 bg-content2/40 text-default-500 flex items-center justify-between gap-3 border-t px-4 py-2 text-[11px]">
             <div className="flex items-center gap-3">
               <CatalogFooterHint keys={["↑", "↓"]}>
@@ -259,6 +262,7 @@ function ShortcutRow({ shortcut }: ShortcutRowProps): ReactElement {
         {combos.map((c, i) => (
           <Fragment key={i}>
             {i > 0 && (
+              // text-[11px] — kbd command-palette aesthetic (inline separator).
               <span className="text-default-400 text-[11px]">{t("kbd.catalog.or_separator")}</span>
             )}
             <KeyboardShortcut combo={c} />
@@ -321,6 +325,7 @@ function CatalogFooterHint({ keys, children }: CatalogFooterHintProps): ReactEle
     <span className="flex items-center gap-1.5">
       <span className="flex items-center gap-1">
         {keys.map((k) => (
+          // text-[10px] — kbd command-palette aesthetic (footer chips).
           <Kbd key={k} className="text-[10px]">
             <Kbd.Content>{k}</Kbd.Content>
           </Kbd>

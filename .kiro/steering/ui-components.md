@@ -93,14 +93,22 @@ headings, `<h1..h6>`, or nav-rail category labels.
 ### Exemption — command-palette aesthetic in `@stackra/kbd`
 
 The `@stackra/kbd` package (Command Palette + Keyboard Catalog) intentionally
-inherits the Raycast / Linear / Shopify command-palette visual language, which
-uses ALL-CAPS + `tracking-[0.08em]` micro- headers as a genre convention. Both
-hits in `keyboard-catalog.component.tsx` (section headers + inline scope labels)
-are exempt.
+inherits the Raycast / Linear / Shopify command-palette visual language. Three
+genre conventions are locally exempt:
 
-Every exemption call site carries an inline
-`// uppercase — kbd command-palette aesthetic` comment so reviewers see the
-rationale without opening this file.
+- **ALL-CAPS micro-headers** with `tracking-[0.08em]` on section labels + inline
+  scope labels — the "SECTION NAME" pattern every command palette uses.
+- **Sub-`text-xs` typography** — `text-[10px]` on `Kbd` glyphs inside the
+  palette and `text-[11px]` on section headers, footer legends, count chips, and
+  inline metadata. Both sizes are calibrated design values (Raycast uses 11px /
+  10px for the same slots); rounding them up to `text-xs` (12px) collapses the
+  palette's information density.
+
+The exemption is package-scoped — no other `@stackra/*` package may adopt
+sub-scale typography or ALL-CAPS headings. Each `text-[Xpx]` call site in
+`@stackra/kbd` gets a `// kbd command-palette aesthetic` inline comment; the
+uppercase spots already carry `// uppercase — kbd command-palette aesthetic`
+from the P3 drift pass.
 
 ## Note — known upstream gap: `Popover` trigger + `aria-haspopup`
 
