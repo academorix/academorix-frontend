@@ -83,6 +83,19 @@ controlled-value contract) against the HeroUI MCP (`get_component_docs`). HeroUI
 v3 is compound-first and the exact part names differ per component — never guess
 them.
 
+## Note — known upstream gap: `Popover` trigger + `aria-haspopup`
+
+HeroUI's `Popover` does not stamp `aria-haspopup="dialog"` on its trigger — it
+only stamps `aria-expanded` (from mount) and `aria-controls` (once open). Screen
+readers still get the disclosure signal, so this is not blocking, but axe-core
+and WAI-ARIA authoring practices both list `aria-haspopup` as the canonical
+attribute for "this control opens a popup".
+
+Do **not** hand-stamp `aria-haspopup="dialog"` on individual Popover triggers as
+a workaround — the noise is not worth carrying until HeroUI ships the fix. Full
+report + suggested upstream fix:
+[`.kiro/reports/heroui-aria-haspopup-upstream-2026-07-21.md`](../reports/heroui-aria-haspopup-upstream-2026-07-21.md).
+
 ## Enforcement
 
 - Search component `src/**/*.tsx` for bespoke class-name literals
