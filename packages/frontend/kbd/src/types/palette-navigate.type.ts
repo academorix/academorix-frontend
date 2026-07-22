@@ -1,4 +1,5 @@
 /**
+ * @file palette-navigate.type.ts
  * PaletteNavigate — Type.
  *
  * @module @stackra/kbd/types

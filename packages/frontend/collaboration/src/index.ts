@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * @stackra/collaboration
  *
  * Liveblocks-style collaboration features with a transport abstraction layer.

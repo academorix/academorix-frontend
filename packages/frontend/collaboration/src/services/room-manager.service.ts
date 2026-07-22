@@ -1,4 +1,5 @@
 /**
+ * @file room-manager.service.ts
  * RoomManager service — manages collaboration room lifecycle.
  *
  * Handles transport selection, room connections, and provides the

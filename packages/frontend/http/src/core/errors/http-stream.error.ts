@@ -1,4 +1,5 @@
 /**
+ * @file http-stream.error.ts
  * Streaming operation error.
  *
  * Thrown when a streaming request fails to open, the connector

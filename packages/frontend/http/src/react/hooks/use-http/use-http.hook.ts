@@ -1,4 +1,5 @@
 /**
+ * @file use-http.hook.ts
  * `useHttp` React hook.
  *
  * Resolves an `IHttpClient` for a named connection. The client is

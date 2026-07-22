@@ -4,13 +4,13 @@
  * @description Barrel for the native devtools hooks.
  */
 
-export { useNativeDevtoolsContext } from "./use-native-devtools-context.hook";
-export { useNativeDevtoolsEnabled } from "./use-native-devtools-enabled.hook";
+export { useNativeDevtoolsContext } from "./use-native-devtools-context";
+export { useNativeDevtoolsEnabled } from "./use-native-devtools-enabled";
 export {
   useNativeDevtoolsFrameState,
   type IUseNativeDevtoolsFrameStateResult,
-} from "./use-native-devtools-frame-state.hook";
+} from "./use-native-devtools-frame-state";
 export {
   useNativeDevtoolsPanels,
   type IUseNativeDevtoolsPanelsResult,
-} from "./use-native-devtools-panels.hook";
+} from "./use-native-devtools-panels";

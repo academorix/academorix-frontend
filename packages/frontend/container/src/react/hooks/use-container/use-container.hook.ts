@@ -1,4 +1,5 @@
 /**
+ * @file use-container.hook.ts
  * useContainer Hook
  *
  * Access the `ApplicationContext` from React context.
@@ -9,7 +10,7 @@
 import { useContext } from "react";
 
 import type { ApplicationContext } from "@/core/application/application-context.service";
-import { ContainerContext } from "@/react/contexts/container.context";
+import { ContainerContext } from "@/react/contexts/container";
 
 /**
  * Get the application context from React context.

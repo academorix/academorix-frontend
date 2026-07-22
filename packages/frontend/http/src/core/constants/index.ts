@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Constants barrel.
  *
  * @module @stackra/http/constants

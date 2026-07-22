@@ -18,6 +18,7 @@ import type {
   ISseEvent,
   IStreamConfig,
 } from "@stackra/contracts";
+import { Str } from "@stackra/support";
 
 /** A recorded request. */
 export interface RecordedRequest {
@@ -122,7 +123,7 @@ export class MockHttpClient implements IHttpClient {
 
   /** Requests filtered by method. */
   public requestsFor(method: string): RecordedRequest[] {
-    return this.requests.filter((r) => r.method === method.toUpperCase());
+    return this.requests.filter((r) => r.method === Str.upper(method));
   }
 
   /** Drop recorded requests (keeps stubs). */
@@ -138,7 +139,7 @@ export class MockHttpClient implements IHttpClient {
     data: unknown,
     config?: IHttpRequestConfig,
   ): Promise<IHttpResponse<T>> {
-    const upper = method.toUpperCase();
+    const upper = Str.upper(method);
     this.requests.push({ method: upper, url, data, config, requestedAt: Date.now() });
     const stub = this.stubs.get(this.key(upper, url));
     return {
@@ -151,7 +152,7 @@ export class MockHttpClient implements IHttpClient {
   }
 
   private key(method: string, url: string): string {
-    return `${method.toUpperCase()} ${url}`;
+    return `${Str.upper(method)} ${url}`;
   }
 
   private static toStream<T>(values: readonly T[]): IHttpStream<T> {

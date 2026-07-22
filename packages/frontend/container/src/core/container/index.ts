@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Container Barrel Export
  *
  * Pure DI engine: injector, registries, scanner, instance loader, module internals.

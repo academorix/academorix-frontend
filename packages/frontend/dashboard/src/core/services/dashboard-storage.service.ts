@@ -30,6 +30,7 @@
  */
 
 import { Inject, Injectable, Optional } from "@stackra/container";
+import { Str } from "@stackra/support";
 
 import {
   BUILT_IN_ANALYTICS_ID,
@@ -388,7 +389,7 @@ export class DashboardStorageService implements IDashboardStorageAdapter {
   public async duplicate(id: string): Promise<IDashboard> {
     const source = await this.get(id);
     const suffix = " (Copy)";
-    const trimmed = source.name.endsWith(suffix) ? source.name : `${source.name}${suffix}`;
+    const trimmed = Str.endsWith(source.name, suffix) ? source.name : `${source.name}${suffix}`;
 
     return this.create({
       name: trimmed,
@@ -440,10 +441,10 @@ export class DashboardStorageService implements IDashboardStorageAdapter {
     const ipAllowlist = normaliseStringList(input.ipAllowlist);
     const refererAllowlist = normaliseStringList(input.refererAllowlist);
     const viewerEmailAllowlist = normaliseStringList(
-      input.viewerEmailAllowlist?.map((entry) => entry.toLowerCase()),
+      input.viewerEmailAllowlist?.map((entry) => Str.lower(entry)),
     );
     const viewerDomainAllowlist = normaliseStringList(
-      input.viewerDomainAllowlist?.map((entry) => entry.toLowerCase()),
+      input.viewerDomainAllowlist?.map((entry) => Str.lower(entry)),
     );
     const maxUses =
       typeof input.maxUses === "number" && input.maxUses > 0 ? input.maxUses : undefined;
@@ -452,7 +453,7 @@ export class DashboardStorageService implements IDashboardStorageAdapter {
       input.watermark && input.watermark.enabled
         ? {
             enabled: true,
-            text: input.watermark.text?.trim() || undefined,
+            text: Str.trim(input.watermark.text ?? "") || undefined,
           }
         : undefined;
 
@@ -478,8 +479,8 @@ export class DashboardStorageService implements IDashboardStorageAdapter {
       maxUses,
       watermark,
       disableCopy: input.disableCopy === true ? true : undefined,
-      dataWindowFrom: input.dataWindowFrom?.trim() || undefined,
-      dataWindowTo: input.dataWindowTo?.trim() || undefined,
+      dataWindowFrom: Str.trim(input.dataWindowFrom ?? "") || undefined,
+      dataWindowTo: Str.trim(input.dataWindowTo ?? "") || undefined,
       piiMask: input.piiMask === true ? true : undefined,
       whitelabel,
     };
@@ -930,7 +931,7 @@ export class DashboardStorageService implements IDashboardStorageAdapter {
   public async createBroadcastTemplate(
     input: ICreateBroadcastTemplateInput,
   ): Promise<IBroadcastTemplate> {
-    const name = input.name.trim();
+    const name = Str.trim(input.name);
 
     if (!name) {
       throw new Error("Template name is required.");
@@ -941,8 +942,8 @@ export class DashboardStorageService implements IDashboardStorageAdapter {
     const template: IBroadcastTemplate = {
       id: randomId(),
       name,
-      description: input.description?.trim() || undefined,
-      icon: input.icon?.trim() || undefined,
+      description: Str.trim(input.description ?? "") || undefined,
+      icon: Str.trim(input.icon ?? "") || undefined,
       config: input.config,
       isShared: input.isShared === true,
       useCount: 0,

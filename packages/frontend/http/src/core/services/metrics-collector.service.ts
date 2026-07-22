@@ -1,4 +1,5 @@
 /**
+ * @file metrics-collector.service.ts
  * MetricsCollectorService.
  *
  * In-memory metrics aggregator. Records last-N durations per

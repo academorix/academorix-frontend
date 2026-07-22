@@ -1,4 +1,5 @@
 /**
+ * @file token-name.util.ts
  * tokenName Utility
  *
  * Converts an arbitrary injection token into a human-readable string for

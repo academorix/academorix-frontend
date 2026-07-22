@@ -1,4 +1,5 @@
 /**
+ * @file cache-store-options.interface.ts
  * Options stored by the `@CacheStore()` decorator.
  */
 export interface ICacheStoreOptions {

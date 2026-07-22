@@ -7,6 +7,8 @@
  *   No side effects — the caller decides whether to write.
  */
 
+import { Str } from "@stackra/support";
+
 import { HOST_BLOCK_BEGIN, HOST_BLOCK_END } from "../constants";
 import type { IHostDiff } from "../interfaces";
 
@@ -68,7 +70,7 @@ export function computeHostDiff(
 
   // No block yet — append one at the end. Use a two-line separator
   // when the file doesn't end with a newline for readability.
-  const separator = currentContent.endsWith("\n") ? "\n" : "\n\n";
+  const separator = Str.endsWith(currentContent, "\n") ? "\n" : "\n\n";
   const next = `${currentContent}${separator}${newBlock}\n`;
   return {
     changed: true,

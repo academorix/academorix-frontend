@@ -1,4 +1,5 @@
 /**
+ * @file is-existing-provider.util.ts
  * isExistingProvider Type Guard
  *
  * Determines whether a provider uses `useExisting` to alias one token

@@ -142,5 +142,5 @@ function normalizeKeyForTanStack(key: string): string {
   if (/^f\d+$/.test(lower)) return Str.upper(lower);
 
   // Default: capitalize first letter
-  return lower.charAt(0).toUpperCase() + lower.slice(1);
+  return Str.ucfirst(lower);
 }

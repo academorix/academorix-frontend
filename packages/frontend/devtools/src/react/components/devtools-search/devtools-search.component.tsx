@@ -9,7 +9,7 @@ import { type ChangeEvent, type ReactElement } from "react";
 import { InputGroup } from "@stackra/ui/react";
 import { MagnifyingGlassIcon } from "@stackra/ui/icons/heroicon/outline";
 
-import { useDevtoolsSearch } from "../../hooks/use-devtools-search.hook";
+import { useDevtoolsSearch } from "../../hooks/use-devtools-search";
 import type { DevtoolsSearchProps } from "./devtools-search.interface";
 
 /**

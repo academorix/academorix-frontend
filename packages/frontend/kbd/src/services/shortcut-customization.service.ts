@@ -14,6 +14,7 @@
 
 import { Inject, Injectable, Optional, type OnModuleInit } from "@stackra/container";
 import { STORAGE_MANAGER, type IStorageManager } from "@stackra/contracts";
+import { Str } from "@stackra/support";
 
 import { SHORTCUT_REGISTRY } from "../tokens";
 import type { KeyCombo } from "../interfaces/key-combo.interface";
@@ -223,13 +224,15 @@ export class ShortcutCustomizationService implements OnModuleInit {
     // Sequence comparison
     if (a.sequence && b.sequence) {
       if (a.sequence.length !== b.sequence.length) return false;
-      return a.sequence.every((k, i) => k.toLowerCase() === b.sequence![i]?.toLowerCase());
+      return a.sequence.every(
+        (k, i) => Str.lower(k) === (b.sequence![i] ? Str.lower(b.sequence![i]!) : undefined),
+      );
     }
 
     // Single key comparison
     if (a.key && b.key) {
       return (
-        a.key.toLowerCase() === b.key.toLowerCase() &&
+        Str.lower(a.key) === Str.lower(b.key) &&
         !!a.mod === !!b.mod &&
         !!a.ctrl === !!b.ctrl &&
         !!a.meta === !!b.meta &&

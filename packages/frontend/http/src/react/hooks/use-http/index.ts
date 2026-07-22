@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * `useHttp` hook barrel.
  *
  * @module @stackra/http/react/hooks/use-http

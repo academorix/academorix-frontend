@@ -13,5 +13,20 @@
   },
   "defaultPendingFallback": {
     "ariaLabel": "جارٍ تحميل الصفحة"
+  },
+  "routingDevtoolsPanel": {
+    "heading": "زمن تشغيل التوجيه",
+    "description": "حالة الترطيب المباشرة وتكوين سجل المسارات.",
+    "hydrationTitle": "الترطيب",
+    "hydrationComplete": "مكتمل",
+    "hydrationPending": "قيد الانتظار",
+    "currentUrlLabel": "العنوان الحالي:",
+    "currentUrlEmpty": "(لا يوجد)",
+    "routesTitle": "المسارات",
+    "routesCountSingular": "{{count}} مسار مسجّل من جميع المصادر.",
+    "routesCountPlural": "{{count}} مسار مسجّل من جميع المصادر.",
+    "rootLabel": "الجذر (forRoot)",
+    "featureLabel": "الميزة (forFeature)",
+    "discoveryLabel": "الاكتشاف (@Route)"
   }
 }

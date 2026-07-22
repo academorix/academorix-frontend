@@ -1,4 +1,5 @@
 /**
+ * @file rxjs.ts
  * `@stackra/http/rxjs` — Observable helpers.
  *
  * Optional adapter that converts `IHttpStream<T>` returned by

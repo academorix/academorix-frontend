@@ -1,4 +1,5 @@
 /**
+ * @file on-application-shutdown.interface.ts
  * Interface defining method to respond to system signals (when application gets
  * shutdown by, e.g., SIGTERM)
  *

@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * `useSse` hook barrel.
  *
  * @module @stackra/http/react/hooks/use-sse

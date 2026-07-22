@@ -14,6 +14,7 @@
 
 import { Inject, Injectable } from "@stackra/container";
 import { STORAGE_MANAGER, type IStorage, type IStorageManager } from "@stackra/contracts";
+import { Str } from "@stackra/support";
 
 import type {
   IJobOptions,
@@ -199,7 +200,7 @@ export class LocalStorageConnection implements IQueueConnection {
 
   private async getAllQueueKeys(): Promise<string[]> {
     const keys = await this.storage().keys();
-    return keys.filter((k) => k.startsWith(this.prefix));
+    return keys.filter((k) => Str.startsWith(k, this.prefix));
   }
 }
 

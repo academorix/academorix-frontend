@@ -1,4 +1,5 @@
 /**
+ * @file stream-parser.interface.ts
  * Streaming parser contract.
  *
  * Stateful parser fed `Uint8Array` chunks from the connector. Returns

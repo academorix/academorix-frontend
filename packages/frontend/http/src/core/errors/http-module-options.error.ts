@@ -1,4 +1,5 @@
 /**
+ * @file http-module-options.error.ts
  * Module-options validation error.
  *
  * Thrown by `HttpModule.forRoot()` when the configuration is

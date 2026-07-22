@@ -16,7 +16,7 @@
  */
 
 import { Injectable } from "@stackra/container";
-import { collect } from "@stackra/support";
+import { Str, collect } from "@stackra/support";
 import { DevtoolsInspectorSource } from "@stackra/devtools";
 import type { IDevtoolsInspectorRegion, IDevtoolsInspectorRegionSource } from "@stackra/contracts";
 
@@ -69,7 +69,7 @@ export class ScopeInspectorSource implements IDevtoolsInspectorRegionSource {
     // Prefer the `data-scope` attribute value as the label — it names
     // the region in the app's own terms. Fall back to the element's
     // tag name so the tooltip is never empty.
-    const rawLabel = element.dataset.scope || element.tagName.toLowerCase();
+    const rawLabel = element.dataset.scope || Str.lower(element.tagName);
     return {
       id: `scope-${index}`,
       label: `${rawLabel} scope`,

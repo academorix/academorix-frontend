@@ -1,0 +1,46 @@
+{
+  "aiChat": {
+    "thinkingLabel": "Thinking..."
+  },
+  "aiPrompt": {
+    "placeholder": "Message the assistant..."
+  },
+  "aiLoader": {
+    "defaultLabel": "Thinking..."
+  },
+  "aiMessage": {
+    "assistantAvatarAlt": "Assistant",
+    "assistantAvatarFallback": "AI",
+    "copyAriaLabel": "Copy",
+    "copyTooltip": "Copy",
+    "thumbsUpAriaLabel": "Good response",
+    "thumbsUpTooltip": "Good response",
+    "thumbsDownAriaLabel": "Bad response",
+    "thumbsDownTooltip": "Bad response"
+  },
+  "aiToolCall": {
+    "serverToolPrefix": "Server tool: ",
+    "approvalNeededPrefix": "Approval needed: ",
+    "usedToolPrefix": "Used tool: ",
+    "approveLabel": "Approve",
+    "rejectLabel": "Reject"
+  },
+  "aiThreadList": {
+    "defaultAriaLabel": "Recent conversations"
+  },
+  "aiSources": {
+    "triggerCount": "{{count}} sources"
+  },
+  "aiReasoning": {
+    "defaultTriggerLabel": "Reasoning"
+  },
+  "aiContextIndicator": {
+    "ariaLabelSingular": "AI context: {{count}} frame",
+    "ariaLabelPlural": "AI context: {{count}} frames",
+    "chipSingular": "{{count}} context frame",
+    "chipPlural": "{{count}} context frames",
+    "focusStackLabel": "Focus stack (topmost first)",
+    "emptyMessage": "No context frames registered.",
+    "priorityLabel": "priority {{priority}}"
+  }
+}

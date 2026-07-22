@@ -24,6 +24,8 @@
  *   (Node runtime, worker, hardened iframe).
  */
 
+import { Str } from "@stackra/support";
+
 import type { II18nResolver } from "@/core/interfaces";
 import type { CookieResolverOptions } from "../interfaces";
 
@@ -104,8 +106,8 @@ export class CookieResolver implements II18nResolver {
 function readCookieValue(cookieString: string, name: string): string | undefined {
   const target = `${name}=`;
   for (const part of cookieString.split(";")) {
-    const trimmed = part.trim();
-    if (trimmed.startsWith(target)) {
+    const trimmed = Str.trim(part);
+    if (Str.startsWith(trimmed, target)) {
       return decodeURIComponent(trimmed.slice(target.length));
     }
   }

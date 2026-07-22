@@ -1,4 +1,5 @@
 /**
+ * @file middleware.registry.ts
  * Per-connection middleware registry.
  *
  * Stores `IHttpMiddleware` instances keyed by name, sorted by

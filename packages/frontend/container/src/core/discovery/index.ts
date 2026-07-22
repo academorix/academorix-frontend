@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Discovery Barrel Export
  *
  * Metadata scanning and provider discovery.

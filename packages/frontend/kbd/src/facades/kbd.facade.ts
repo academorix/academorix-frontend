@@ -1,4 +1,5 @@
 /**
+ * @file kbd.facade.ts
  * Kbd Facades — Lazy DI proxies for keyboard services.
  *
  * @module @stackra/kbd

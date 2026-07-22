@@ -4,6 +4,8 @@
  * @description Splits a flat token object into light and dark groups.
  */
 
+import { Str } from "@stackra/support";
+
 // ============================================================================
 // Utility
 // ============================================================================
@@ -42,7 +44,7 @@ export function separateTokensByMode(tokens: Record<string, unknown>): {
 
     const stringValue = String(value);
 
-    if (key.startsWith("dark_")) {
+    if (Str.startsWith(key, "dark_")) {
       const strippedKey = key.slice(5);
       dark[strippedKey] = stringValue;
     } else {

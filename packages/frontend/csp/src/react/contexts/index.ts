@@ -4,4 +4,4 @@
  * @description Contexts barrel export.
  */
 
-export { NonceContext } from "./nonce.context";
+export { NonceContext } from "./nonce";

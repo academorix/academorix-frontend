@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Constants Barrel Export
  *
  * @module @stackra/kbd

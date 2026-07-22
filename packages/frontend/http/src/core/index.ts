@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * `@stackra/http` — multi-driver HTTP client.
  *
  * Public surface:

@@ -31,7 +31,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=22.0.0"
   },
@@ -90,8 +89,8 @@
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-store": "catalog:",
     "@tanstack/store": "catalog:",
-    "react": "*",
-    "reflect-metadata": "*"
+    "react": "catalog:",
+    "reflect-metadata": "catalog:"
   },
   "peerDependenciesMeta": {
     "@stackra/actions": {

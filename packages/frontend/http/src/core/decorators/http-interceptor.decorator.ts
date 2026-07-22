@@ -1,4 +1,5 @@
 /**
+ * @file http-interceptor.decorator.ts
  * `@HttpInterceptor()` class decorator.
  *
  * Marks a class as an HTTP interceptor and stores priority/name

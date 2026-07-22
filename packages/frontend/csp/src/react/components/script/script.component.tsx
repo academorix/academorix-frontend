@@ -12,7 +12,7 @@
 
 import { useEffect, useRef, type ReactElement } from "react";
 
-import { useNonce } from "@/react/hooks/use-nonce.hook";
+import { useNonce } from "@/react/hooks/use-nonce";
 import type { ScriptProps } from "@/react/interfaces/script-props.interface";
 
 /**

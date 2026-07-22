@@ -1,4 +1,5 @@
 /**
+ * @file circuit-breaker-open.error.ts
  * Circuit-breaker open error.
  *
  * Raised by `CircuitBreakerMiddleware` when an endpoint's breaker is

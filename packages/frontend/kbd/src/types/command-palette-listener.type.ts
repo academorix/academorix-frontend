@@ -1,4 +1,5 @@
 /**
+ * @file command-palette-listener.type.ts
  * CommandPaletteListener — Type.
  *
  * @module @stackra/kbd/types

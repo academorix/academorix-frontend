@@ -1,4 +1,5 @@
 /**
+ * @file room-options.interface.ts
  * Configuration options for joining a collaboration room.
  *
  * @module @stackra/collaboration/interfaces

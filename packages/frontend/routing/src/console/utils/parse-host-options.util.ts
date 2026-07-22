@@ -10,6 +10,8 @@
  *   still delegate here if it wants a strict typed result.
  */
 
+import { Str } from "@stackra/support";
+
 import type { IHostOptions } from "../interfaces";
 
 /**
@@ -46,7 +48,7 @@ export function parseHostOptions(argv: readonly string[]): IHostOptions {
       i += 1;
       continue;
     }
-    if (token.startsWith("--rootDomain=")) {
+    if (Str.startsWith(token, "--rootDomain=")) {
       // Inline form: `--rootDomain=stackra.app`
       rootDomain = token.slice("--rootDomain=".length);
       continue;

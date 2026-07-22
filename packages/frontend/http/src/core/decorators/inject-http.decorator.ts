@@ -1,4 +1,5 @@
 /**
+ * @file inject-http.decorator.ts
  * `@InjectHttp()` parameter decorator.
  *
  * Convenience wrapper over `@Inject(getHttpConnectionToken(name))`.

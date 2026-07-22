@@ -1,4 +1,5 @@
 /**
+ * @file command-palette-props.interface.ts
  * CommandPaletteProps — Interface.
  *
  * @module @stackra/kbd/interfaces

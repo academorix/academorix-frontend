@@ -10,6 +10,7 @@
  */
 
 import type { ISduiExpression, ISduiEvalScope, SduiBindable } from "@stackra/contracts";
+import { Str } from "@stackra/support";
 import { OPERATORS } from "./operators";
 
 /**
@@ -29,7 +30,7 @@ export function isExpression(value: SduiBindable): value is ISduiExpression {
  * Returns `undefined` when any intermediate segment is missing.
  */
 function readPath(path: string, scope: ISduiEvalScope): unknown {
-  if (!path.startsWith("$.") && path !== "$") return undefined;
+  if (!Str.startsWith(path, "$.") && path !== "$") return undefined;
   const segments = path === "$" ? [] : path.slice(2).split(".").filter(Boolean);
   let cursor: unknown = scope;
   for (const segment of segments) {

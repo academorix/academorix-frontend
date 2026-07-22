@@ -33,7 +33,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=22.0.0"
   },
@@ -88,10 +87,10 @@
     "@stackra/testing": "workspace:^",
     "@stackra/ui": "workspace:^",
     "heroui-native-pro": "*",
-    "react": "*",
-    "react-dom": "*",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "react-native": "*",
-    "reflect-metadata": "*"
+    "reflect-metadata": "catalog:"
   },
   "peerDependenciesMeta": {
     "@heroicons/react": {

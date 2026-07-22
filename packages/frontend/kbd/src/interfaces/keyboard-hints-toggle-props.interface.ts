@@ -1,4 +1,5 @@
 /**
+ * @file keyboard-hints-toggle-props.interface.ts
  * KeyboardHintsToggleProps — Interface.
  *
  * @module @stackra/kbd/interfaces

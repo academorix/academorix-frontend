@@ -1,4 +1,5 @@
 /**
+ * @file discoverable-meta-host-collection.registry.ts
  * DiscoverableMetaHostCollection — Static index of provider classes
  * tagged by `DiscoveryService.createDecorator()`.
  *

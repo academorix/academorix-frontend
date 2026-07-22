@@ -21,6 +21,7 @@
  *      comments surfaces the customise panel + canvas consume.
  */
 
+import { Str } from "@stackra/support";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import type { IBroadcastTemplate } from "@/core/interfaces/broadcast-template.interface";
@@ -52,7 +53,7 @@ function isRelevantStorageEvent(event: StorageEvent): boolean {
   }
 
   return (
-    event.key.startsWith("stackra.dashboards.") ||
+    Str.startsWith(event.key, "stackra.dashboards.") ||
     event.key === "stackra.dashboard-share-grants.v1" ||
     event.key === "stackra.dashboard-versions.v1" ||
     event.key === "stackra.dashboard-annotations.v1" ||

@@ -7,8 +7,8 @@
 import type { ReactNode } from "react";
 
 import { ErrorBoundary } from "../error-boundary/error-boundary.component";
-import type { IErrorBoundaryProps } from "../error-boundary/error-boundary-props.interface";
-import { DefaultErrorFallback } from "../fallbacks/default-error-fallback.component";
+import type { IErrorBoundaryProps } from "../error-boundary/error-boundary.interface";
+import { DefaultErrorFallback } from "../fallbacks/default-error-fallback";
 
 /**
  * Props for {@link AppErrorBoundary}.

@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * @stackra/container/react
  *
  * React bindings for the DI container.
@@ -9,7 +10,7 @@
  */
 
 // Context
-export { ContainerContext } from "./contexts/container.context";
+export { ContainerContext } from "./contexts/container";
 
 // Hooks
 export { useInject } from "./hooks/use-inject";

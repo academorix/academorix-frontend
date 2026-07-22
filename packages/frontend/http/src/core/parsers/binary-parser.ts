@@ -1,4 +1,5 @@
 /**
+ * @file binary-parser.ts
  * Binary passthrough parser.
  *
  * Yields each chunk untouched. Useful for binary streams (audio,

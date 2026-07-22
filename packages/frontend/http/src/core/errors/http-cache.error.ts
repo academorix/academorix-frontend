@@ -1,4 +1,5 @@
 /**
+ * @file http-cache.error.ts
  * Cache operation error.
  *
  * Raised by the cache interceptor / middleware when a cache backend

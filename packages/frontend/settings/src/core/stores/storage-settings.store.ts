@@ -115,7 +115,7 @@ export class StorageSettingsStore implements ISettingsStore {
     const allKeys = await this.resolvedStorage.keys();
     // Filter to keys we own (matching the configured prefix) — a
     // shared IStorage may hold entries from other stores.
-    const owned = this.prefix ? allKeys.filter((k) => k.startsWith(this.prefix)) : allKeys;
+    const owned = this.prefix ? allKeys.filter((k) => Str.startsWith(k, this.prefix)) : allKeys;
 
     const entries = await Promise.all(
       owned.map(async (fullKey) => {

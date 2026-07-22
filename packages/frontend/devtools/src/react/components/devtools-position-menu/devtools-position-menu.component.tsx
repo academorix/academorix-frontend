@@ -14,7 +14,7 @@ import { Button, Dropdown, Tooltip } from "@stackra/ui/react";
 import { ViewColumnsIcon } from "@stackra/ui/icons/heroicon/outline";
 
 import type { DevtoolsShellPosition } from "@/core/types";
-import { useDevtoolsFrameState } from "../../hooks/use-devtools-frame-state.hook";
+import { useDevtoolsFrameState } from "../../hooks/use-devtools-frame-state";
 import type { DevtoolsPositionMenuProps } from "./devtools-position-menu.interface";
 
 /** Human-readable label for each position. */

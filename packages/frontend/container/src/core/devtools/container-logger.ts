@@ -1,4 +1,5 @@
 /**
+ * @file container-logger.ts
  * Container Logger — DI Resolution Graph Logging
  *
  * Provides detailed logging of the DI container's bootstrap process:

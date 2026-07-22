@@ -16,7 +16,7 @@ import { ErrorBoundary } from "../react/components/error-boundary/error-boundary
 import type {
   ErrorFallbackProps,
   IErrorBoundaryProps,
-} from "../react/components/error-boundary/error-boundary-props.interface";
+} from "../react/components/error-boundary/error-boundary.interface";
 import { MockErrorRecorder } from "./mock-error-recorder";
 import { MockFallback } from "./mock-fallback";
 

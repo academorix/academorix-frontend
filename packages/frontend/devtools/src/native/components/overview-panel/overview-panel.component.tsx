@@ -12,8 +12,8 @@ import { ScrollView, Text, View } from "react-native";
 import { Card, Chip } from "@stackra/ui/native";
 import { Env, Num } from "@stackra/support";
 
-import { useNativeDevtoolsContext } from "../../hooks/use-native-devtools-context.hook";
-import { useNativeDevtoolsPanels } from "../../hooks/use-native-devtools-panels.hook";
+import { useNativeDevtoolsContext } from "../../hooks/use-native-devtools-context";
+import { useNativeDevtoolsPanels } from "../../hooks/use-native-devtools-panels";
 import type { OverviewPanelProps } from "./overview-panel.interface";
 
 /**

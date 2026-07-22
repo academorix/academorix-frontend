@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
+ * @file set-metadata.decorator.ts
  * @SetMetadata() Decorator
  *
  * A generic metadata decorator that attaches arbitrary key-value pairs

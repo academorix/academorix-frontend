@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * @module @stackra/collaboration/interfaces
  */
 export type { CollaborationTransport } from "./transport.interface";

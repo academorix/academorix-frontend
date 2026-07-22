@@ -1,4 +1,5 @@
 /**
+ * @file shortcut-hint-props.interface.ts
  * ShortcutHintProps — Interface.
  *
  * @module @stackra/kbd/interfaces

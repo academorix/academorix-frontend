@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * useDiscovery Hook Barrel Export
  *
  * - {@link useDiscovery} — Resolve `DiscoveryService` from the container

@@ -1,0 +1,22 @@
+{
+  "$comment": "Machine-generated Modern Standard Arabic. Requires native-Arabic reviewer pass before production. Generated 2026-07-21.",
+  "installPromptBanner": {
+    "title": "تثبيت هذا التطبيق",
+    "description": "أضِفه إلى شاشتك الرئيسية للوصول دون اتصال وتجربة أقرب إلى التطبيقات الأصلية.",
+    "installLabel": "تثبيت",
+    "dismissLabel": "ليس الآن",
+    "iosStep1": "اضغط زر المشاركة في شريط أدوات Safari.",
+    "iosStep2": "اختر إضافة إلى الشاشة الرئيسية.",
+    "iosShareEmphasis": "مشاركة",
+    "iosAddToHomeEmphasis": "إضافة إلى الشاشة الرئيسية"
+  },
+  "updatePromptBanner": {
+    "title": "يتوفر تحديث",
+    "message": "إصدار جديد جاهز — قم بالتحديث لتطبيقه.",
+    "updateLabel": "تحديث",
+    "dismissLabel": "لاحقًا"
+  },
+  "splashScreen": {
+    "defaultMessage": "جارٍ التحميل..."
+  }
+}

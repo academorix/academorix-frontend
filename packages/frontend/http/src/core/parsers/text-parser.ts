@@ -1,4 +1,5 @@
 /**
+ * @file text-parser.ts
  * Text parser.
  *
  * Decodes raw bytes as UTF-8 strings without buffering frames —

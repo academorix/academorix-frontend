@@ -6,5 +6,5 @@
  *   base `./react` bundle stays router-agnostic.
  */
 
-export { RouteErrorBoundary } from "./route-error-boundary.component";
-export type { IRouteErrorBoundaryProps } from "./route-error-boundary.component";
+export { RouteErrorBoundary } from "./route-error-boundary";
+export type { IRouteErrorBoundaryProps } from "./route-error-boundary/route-error-boundary.component";

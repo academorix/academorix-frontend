@@ -1,0 +1,17 @@
+{
+  "$comment": "Machine-generated Modern Standard Arabic. Requires native-Arabic reviewer pass before production. Generated 2026-07-21.",
+  "nodeErrorBoundary": {
+    "title": "فشل عرض العقدة",
+    "detailTemplate": "{{nodeType}} ({{nodeId}}) — {{message}}"
+  },
+  "unknownComponent": {
+    "title": "مكوّن SDUI غير معروف \"{{type}}\"",
+    "descriptionPrefix": "لا يوجد مكوّن مسجّل للعقدة \"{{nodeId}}\". سجِّله عبر ",
+    "descriptionCode": "SduiModule.forFeature",
+    "descriptionSuffix": "."
+  },
+  "versionMismatch": {
+    "title": "إصدار مخطط SDUI غير مدعوم {{actual}}",
+    "description": "النطاق المدعوم: {{min}}–{{max}}."
+  }
+}

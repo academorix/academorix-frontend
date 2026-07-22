@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * React Hooks Barrel Export
  *
  * - {@link useContainer} — Access the raw `ContainerResolver` from context

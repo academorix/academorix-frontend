@@ -1,4 +1,5 @@
 /**
+ * @file rate-limit.middleware.ts
  * Rate-limit middleware.
  *
  * Token-bucket-based throttling. Looks up the rate limit for the

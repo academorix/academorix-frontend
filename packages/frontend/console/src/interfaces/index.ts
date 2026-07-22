@@ -1,3 +1,12 @@
+/**
+ * @file index.ts
+ * @module @stackra/console/interfaces
+ * @description Public API barrel for the `interfaces` category — re-exports
+ *   every interface owned by `@stackra/console`: command / argument / option
+ *   definitions, CLI options, module options, theme + icon + palette
+ *   contracts, parsed argv, and stub-render inputs / results.
+ */
+
 export * from "./argument-definition.interface";
 export * from "./banner-options.interface";
 export * from "./cli-options.interface";

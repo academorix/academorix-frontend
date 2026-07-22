@@ -1,4 +1,5 @@
 /**
+ * @file forward-ref.util.ts
  * forwardRef Utility
  *
  * Resolves circular module dependencies by wrapping a class reference

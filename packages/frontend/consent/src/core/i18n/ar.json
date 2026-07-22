@@ -1,0 +1,11 @@
+{
+  "$comment": "Machine-generated Modern Standard Arabic. Requires native-Arabic reviewer pass before production. Generated 2026-07-21.",
+  "consentBanner": {
+    "title": "خصوصيتك تهمّنا",
+    "description": "نستخدم ملفات تعريف الارتباط لتحسين تجربتك وتحليل حركة المرور وتخصيص المحتوى. اختر الفئات التي توافق عليها.",
+    "showDetailsLabel": "تخصيص",
+    "hideDetailsLabel": "إخفاء التفاصيل",
+    "rejectAllLabel": "رفض الكل",
+    "acceptAllLabel": "قبول الكل"
+  }
+}

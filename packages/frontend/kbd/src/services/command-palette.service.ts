@@ -201,9 +201,9 @@ function filterStatic(commands: Command[], query: string): Command[] {
     if (c.hidden) return false;
     const haystack = [c.label, c.description, ...(c.keywords ?? [])]
       .filter(Boolean)
-      .map((s) => String(s).toLowerCase())
+      .map((s) => Str.lower(String(s)))
       .join(" ");
-    return haystack.includes(lower);
+    return Str.contains(haystack, lower);
   });
 }
 
@@ -243,10 +243,10 @@ function scoreCommand(command: Command, query: string): number {
   const label = Str.lower(command.label);
   if (label === query) return 100;
   if (Str.startsWith(label, query)) return 80;
-  if (label.includes(query)) return 50;
+  if (Str.contains(label, query)) return 50;
   for (const kw of command.keywords ?? []) {
-    if (Str.lower(kw).includes(query)) return 30;
+    if (Str.contains(Str.lower(kw), query)) return 30;
   }
-  if (command.description?.toLowerCase().includes(query)) return 20;
+  if (command.description && Str.contains(Str.lower(command.description), query)) return 20;
   return 10;
 }

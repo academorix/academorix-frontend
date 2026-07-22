@@ -1,4 +1,5 @@
 /**
+ * @file instance-wrapper.ts
  * InstanceWrapper — Wraps a Provider Binding
  *
  * Every provider registered in a module gets wrapped in an InstanceWrapper.

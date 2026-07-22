@@ -1,4 +1,5 @@
 /**
+ * @file room-member.interface.ts
  * Represents a member currently present in a collaboration room.
  *
  * @module @stackra/collaboration/interfaces

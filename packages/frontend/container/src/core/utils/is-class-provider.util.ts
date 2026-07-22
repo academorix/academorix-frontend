@@ -1,4 +1,5 @@
 /**
+ * @file is-class-provider.util.ts
  * isClassProvider Type Guard
  *
  * Determines whether a provider uses `useClass` to bind a token

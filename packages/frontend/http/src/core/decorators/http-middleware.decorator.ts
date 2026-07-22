@@ -1,4 +1,5 @@
 /**
+ * @file http-middleware.decorator.ts
  * `@HttpMiddleware()` class decorator.
  *
  * Marks a class as an HTTP middleware and stores priority/name

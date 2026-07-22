@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
+ * @file register-with.util.ts
  * registerWith — Clean factory provider for registry registration.
  *
  * Encapsulates the "inject a DI-managed registry, run a callback"

@@ -1,4 +1,5 @@
 /**
+ * @file container.provider.tsx
  * ContainerProvider Component
  *
  * Wrap your application (or a subtree) with `<ContainerProvider>` to make
@@ -35,7 +36,7 @@
 
 import { createElement, type ReactNode } from "react";
 import type { ApplicationContext } from "@/core/application/application-context.service";
-import { ContainerContext } from "@/react/contexts/container.context";
+import { ContainerContext } from "@/react/contexts/container";
 import { getGlobalApplicationContext } from "@/core/utils/global-application.util";
 
 export interface ContainerProviderProps {

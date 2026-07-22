@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Components Barrel Export
  *
  * All kbd components are accessed via the `Kbd` and `Keyboard` compound

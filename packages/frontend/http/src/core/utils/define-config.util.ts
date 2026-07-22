@@ -1,4 +1,5 @@
 /**
+ * @file define-config.util.ts
  * Type-safe HTTP module configuration helper.
  *
  * Identity function that gives consumers full IDE autocomplete and

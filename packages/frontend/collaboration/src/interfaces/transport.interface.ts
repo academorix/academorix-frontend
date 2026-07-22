@@ -1,4 +1,5 @@
 /**
+ * @file transport.interface.ts
  * Transport abstraction layer for collaboration communication.
  *
  * @module @stackra/collaboration/interfaces

@@ -11,7 +11,7 @@
  *   without touching `console.log`. Default writer is `console.log`.
  */
 
-import { collect } from "@stackra/support";
+import { Str, collect } from "@stackra/support";
 
 /**
  * Input to `printStartupBanner`.
@@ -88,7 +88,7 @@ export function printStartupBanner(input: IStartupBannerInput): void {
     const widestLabel = collect(devSubdomains.map((sub) => sub.length)).max() ?? 0;
 
     for (const subdomain of devSubdomains) {
-      const padded = subdomain.padEnd(widestLabel, " ");
+      const padded = Str.padRight(subdomain, widestLabel, " ");
       // The URL uses the same subdomain plus the picked suffix so
       // the value contributors see matches what the middleware will
       // parse from `req.headers.host` (see `parse-subdomain.util`).

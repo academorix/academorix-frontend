@@ -1,4 +1,5 @@
 /**
+ * @file json-stream-parser.ts
  * JSON streaming parser.
  *
  * Parses a stream that emits one or more complete JSON values

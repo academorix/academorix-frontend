@@ -1,4 +1,5 @@
 /**
+ * @file rate-limit-exceeded.error.ts
  * Rate-limit exceeded error.
  *
  * Rare in practice — `RateLimitMiddleware` waits for tokens rather

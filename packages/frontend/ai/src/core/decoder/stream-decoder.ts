@@ -23,6 +23,7 @@
 
 import { Injectable } from "@stackra/container";
 import { AiStreamEventType, type IAiStreamDecoder, type IAiStreamEvent } from "@stackra/contracts";
+import { Str } from "@stackra/support";
 
 /** The sentinel signalling the stream has completed. */
 const DONE_SENTINEL = "[DONE]";
@@ -45,7 +46,7 @@ export class StreamDecoder implements IAiStreamDecoder {
    */
   public decode(frame: string): IAiStreamEvent | null {
     // 1. `[DONE]` terminates the stream (Req 4.5).
-    if (frame === DONE_SENTINEL || frame.trim() === DONE_SENTINEL) {
+    if (frame === DONE_SENTINEL || Str.trim(frame) === DONE_SENTINEL) {
       return null;
     }
 

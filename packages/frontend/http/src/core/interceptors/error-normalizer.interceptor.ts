@@ -1,4 +1,5 @@
 /**
+ * @file error-normalizer.interceptor.ts
  * Error-normalizer interceptor.
  *
  * Outermost interceptor (priority 5). Wraps the entire

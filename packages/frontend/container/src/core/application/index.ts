@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Application Barrel Export
  *
  * App lifecycle: bootstrap, context, builder, hooks.

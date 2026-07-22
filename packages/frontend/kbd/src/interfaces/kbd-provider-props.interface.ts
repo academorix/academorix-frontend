@@ -1,4 +1,5 @@
 /**
+ * @file kbd-provider-props.interface.ts
  * KbdProviderProps — Interface.
  *
  * @module @stackra/kbd/interfaces

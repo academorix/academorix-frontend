@@ -30,6 +30,7 @@ import {
   type PersistenceTarget,
 } from "@stackra/contracts";
 import { Logger } from "@stackra/logger";
+import { Str } from "@stackra/support";
 import type { Store } from "@tanstack/store";
 import { StateRegistry } from "../registries/state.registry";
 
@@ -209,7 +210,7 @@ export class PersistenceBroadcaster implements OnModuleInit {
     let matchedName: string | undefined;
     for (const name of this.enabledStores.keys()) {
       const suffix = `${STORAGE_PREFIX}${name}`;
-      if (event.key === suffix || event.key.endsWith(`:${suffix}`)) {
+      if (event.key === suffix || Str.endsWith(event.key, `:${suffix}`)) {
         matchedName = name;
         break;
       }

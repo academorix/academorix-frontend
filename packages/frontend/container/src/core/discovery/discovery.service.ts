@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
+ * @file discovery.service.ts
  * DiscoveryService — Public API for finding providers in the module graph.
  *
  * Mirrors NestJS's `DiscoveryService` from

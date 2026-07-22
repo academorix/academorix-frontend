@@ -11,6 +11,8 @@
  *   `[] === undefined`.
  */
 
+import { Str } from "@stackra/support";
+
 /**
  * Trim + dedupe + drop-empty pass on a user-supplied string list.
  *
@@ -27,7 +29,7 @@ export function normaliseStringList(
 
   for (const raw of input) {
     if (typeof raw !== "string") continue;
-    const trimmed = raw.trim();
+    const trimmed = Str.trim(raw);
 
     if (!trimmed) continue;
     if (seen.has(trimmed)) continue;

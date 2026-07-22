@@ -1,4 +1,5 @@
 /**
+ * @file has-on-module-init.util.ts
  * hasOnModuleInit Type Guard
  *
  * Checks if an object implements the `OnModuleInit` interface.

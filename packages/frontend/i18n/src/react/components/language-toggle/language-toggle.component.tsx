@@ -22,9 +22,10 @@
 
 import React, { useCallback, useMemo } from "react";
 import type { Key } from "react";
+import { Str } from "@stackra/support";
 import { ToggleButton, ToggleButtonGroup } from "@stackra/ui/react";
 
-import { useI18n } from "@/core/hooks/use-i18n.hook";
+import { useI18n } from "@/core/hooks/use-i18n";
 import type { LanguageToggleOption, LanguageToggleProps } from "@/react/interfaces";
 
 /**
@@ -34,7 +35,7 @@ export function LanguageToggle({ options, className }: LanguageToggleProps): Rea
   const { locale, setLocale, languages } = useI18n();
 
   const items: LanguageToggleOption[] = useMemo(
-    () => options ?? languages.map((code) => ({ code, label: code.toUpperCase() })),
+    () => options ?? languages.map((code) => ({ code, label: Str.upper(code) })),
     [options, languages],
   );
 

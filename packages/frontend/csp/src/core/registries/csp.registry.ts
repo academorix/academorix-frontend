@@ -14,6 +14,7 @@
  */
 
 import { Injectable } from "@stackra/container";
+import { Str } from "@stackra/support";
 
 import type { CspFeaturePolicy } from "../interfaces/csp-feature-policy.interface";
 import type { MergedCspSources } from "../types/merged-csp-sources.type";
@@ -82,7 +83,7 @@ export class CspRegistry {
    * @param policy - The feature's CSP contribution.
    */
   public register(name: string, policy: CspFeaturePolicy): void {
-    if (!name || name.trim().length === 0) return;
+    if (!name || Str.isEmpty(name)) return;
     this.policies.set(name, policy);
   }
 

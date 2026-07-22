@@ -33,6 +33,7 @@
  */
 
 import { type ReactElement, useEffect, useMemo, useState } from "react";
+import { Str } from "@stackra/support";
 import { Card, Chip } from "@stackra/ui/react";
 
 import type { IRoutingDevtoolsPanelViewProps } from "./routing-devtools-panel-view.interface";
@@ -57,8 +58,8 @@ function tallyBySource(registry: IRoutingDevtoolsPanelViewProps["registry"]): {
   for (const key of keys) {
     const source = registry.getSource(key) ?? "root";
     if (source === "root") root += 1;
-    else if (source.startsWith("feature:")) feature += 1;
-    else if (source.startsWith("discovery:") || source === "discovery") discovery += 1;
+    else if (Str.startsWith(source, "feature:")) feature += 1;
+    else if (Str.startsWith(source, "discovery:") || source === "discovery") discovery += 1;
   }
   return { total: list.length, root, feature, discovery };
 }

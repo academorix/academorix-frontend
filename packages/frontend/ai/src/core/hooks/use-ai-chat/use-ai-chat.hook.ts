@@ -26,6 +26,7 @@ import {
   AI_ORCHESTRATOR,
   type IAiMessage,
 } from "@stackra/contracts";
+import { Str } from "@stackra/support";
 
 import { ConnectionManager } from "@/core/services/connection-manager.service";
 import { ConversationStore } from "@/core/services/conversation-store.service";
@@ -110,7 +111,7 @@ export function useAiChat(options: IUseAiChatOptions): IUseAiChatResult {
 
   const send = useCallback(
     async (textOverride?: string): Promise<void> => {
-      const text = (textOverride ?? input).trim();
+      const text = Str.trim(textOverride ?? input);
       if (!text) return;
       if (!connectionManager.isConnected) return;
 
@@ -144,7 +145,7 @@ export function useAiChat(options: IUseAiChatOptions): IUseAiChatResult {
   const rejectTool = useCallback((id: string) => orchestrator.rejectTool(id), [orchestrator]);
 
   const canSubmit = useMemo(
-    () => connectionManager.isConnected && input.trim().length > 0,
+    () => connectionManager.isConnected && Str.isNotEmpty(input),
     [connectionManager, input],
   );
 

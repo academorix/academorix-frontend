@@ -1,4 +1,5 @@
 /**
+ * @file notification.interface.ts
  * Notification interface for collaboration events.
  *
  * @module @stackra/collaboration/interfaces

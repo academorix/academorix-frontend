@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Decorators Barrel Export
  *
  * All class and parameter decorators for the DI system. These decorators

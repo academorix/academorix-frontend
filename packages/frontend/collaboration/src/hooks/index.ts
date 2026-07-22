@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * @module @stackra/collaboration/hooks
  */
 export { useRoom } from "./use-room/use-room.hook";

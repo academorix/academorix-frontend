@@ -1,0 +1,19 @@
+{
+  "$comment": "Machine-generated Modern Standard Arabic. Requires native-Arabic reviewer pass before production. Generated 2026-07-21.",
+  "storageDevtoolsPanel": {
+    "emptyTitle": "لا توجد نسخ تخزين مُعدّة",
+    "emptyDescription": "سجِّل نسخة في {{code}} لعرضها هنا.",
+    "emptyCode": "StorageModule.forRoot({ stores: { ... } })",
+    "heading": "نسخ التخزين",
+    "description": "مُعدّة عبر {{code}}. تُقرأ المفاتيح مرة واحدة عند فتح اللوحة — لا تدعم {{iStorage}} واجهة اشتراك، لذا يُحدِّث الفتح مجددًا العيّنة.",
+    "descriptionCode": "StorageModule.forRoot()",
+    "descriptionIStorage": "IStorage",
+    "defaultChipLabel": "افتراضي",
+    "keysChipLabel": "{{count}} مفتاح",
+    "idleChipLabel": "خامل",
+    "driverLabel": "المشغِّل",
+    "moreKeysLabel": "… و{{count}} مفتاح إضافي",
+    "noKeysLabel": "لا توجد مفاتيح مخزّنة في هذه النسخة بعد.",
+    "managerUnavailableLabel": "لم يتم حلّ مدير التخزين — العيّنة غير متاحة."
+  }
+}

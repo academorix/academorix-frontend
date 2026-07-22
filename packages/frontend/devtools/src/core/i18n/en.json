@@ -1,0 +1,101 @@
+{
+  "devtoolsLauncher": {
+    "ariaLabel": "Open devtools",
+    "chipLabel": "Devtools"
+  },
+  "devtoolsShell": {
+    "heading": "Devtools",
+    "closeAriaLabel": "Close devtools",
+    "toggleFooterLabel": "Toggle",
+    "panelCountLabel": "{{count}} panels"
+  },
+  "devtoolsSearch": {
+    "placeholder": "Search panels",
+    "ariaLabel": "Search panels"
+  },
+  "devtoolsNavRail": {
+    "ariaLabel": "Devtools panels",
+    "openPanelAriaTemplate": "Open panel {{title}}",
+    "categories": {
+      "pinned": "Pinned",
+      "app": "App",
+      "framework": "Framework",
+      "data": "Data",
+      "ui": "UI",
+      "network": "Network",
+      "observability": "Observability",
+      "modules": "Modules"
+    }
+  },
+  "devtoolsPositionMenu": {
+    "ariaLabel": "Change devtools placement",
+    "tooltip": "Change placement",
+    "positions": {
+      "left": "Left",
+      "right": "Right",
+      "top": "Top",
+      "bottom": "Bottom"
+    }
+  },
+  "devtoolsInspectorToolbar": {
+    "enableAriaLabel": "Enable inspector",
+    "disableAriaLabel": "Disable inspector",
+    "tooltip": "Inspect regions"
+  },
+  "devtoolsPanelLocked": {
+    "unauthenticatedTitle": "Sign in required",
+    "unauthenticatedDescription": "This panel is gated. Sign in with an account that has access to view its contents.",
+    "forbiddenTitle": "You don't have permission",
+    "forbiddenDescription": "This panel is gated behind an ability your current account doesn't have. Contact an admin if you believe this is a mistake.",
+    "requiredAbilityLabel": "Required ability:",
+    "resourceSuffix": " · resource ",
+    "signInLabel": "Sign in"
+  },
+  "devtoolsPanelEmpty": {
+    "title": "No panel selected",
+    "description": "Select a panel from the rail on the left, or contribute one from a package with @DevtoolsPanel(...)."
+  },
+  "devtoolsPanelView": {
+    "confirmDefaultBody": "This action is irreversible. Continue?",
+    "cancelLabel": "Cancel",
+    "confirmLabel": "Confirm"
+  },
+  "overviewPanel": {
+    "heading": "Stackra Devtools",
+    "description": "Overview of the panels + inspector sources contributed by every module in this app.",
+    "statPanels": "Panels",
+    "statPanelsHintSingular": "{{count}} category",
+    "statPanelsHintPlural": "{{count}} categories",
+    "statInspectorSources": "Inspector sources",
+    "statInspectorSourcesHintSingular": "{{count}} region",
+    "statInspectorSourcesHintPlural": "{{count}} regions",
+    "statSessionUptime": "Session uptime",
+    "statCategories": "Categories",
+    "reloadLabel": "Reload page",
+    "docsLabel": "Docs"
+  },
+  "actionsPanel": {
+    "heading": "Maintenance",
+    "description": "One-shot maintenance actions. Optional dependencies are disabled when the corresponding package isn't installed in this app.",
+    "clearCachesLabel": "Clear all caches",
+    "clearCachesDescription": "Empty every registered @stackra/cache instance.",
+    "clearCachesRequirement": "Requires @stackra/cache to be installed.",
+    "drainQueuesLabel": "Drain queues",
+    "drainQueuesDescription": "Clear pending jobs in every registered queue.",
+    "drainQueuesRequirement": "Requires @stackra/queue to be installed.",
+    "resetScopesLabel": "Reset scopes",
+    "resetScopesDescription": "Purge every active scope in the scope tree.",
+    "resetScopesRequirement": "Requires @stackra/scope to be installed.",
+    "dumpStateLabel": "Dump state to console",
+    "dumpStateDescription": "Serialise every registered state store and log it.",
+    "dumpStateRequirement": "Requires @stackra/state to be installed.",
+    "copyDiGraphLabel": "Copy DI graph",
+    "copyDiGraphDescription": "Write a JSON graph of every provider to the clipboard.",
+    "copyDiGraphRequirement": "Requires @stackra/container discovery to be enabled.",
+    "reloadPageLabel": "Reload page",
+    "reloadPageDescription": "Perform a full window.location.reload().",
+    "confirmDefaultBody": "This action is irreversible.",
+    "cancelLabel": "Cancel",
+    "confirmLabel": "Confirm"
+  }
+}

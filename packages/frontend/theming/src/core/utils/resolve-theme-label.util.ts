@@ -5,6 +5,7 @@
  */
 
 import type { ITheme } from "@stackra/contracts";
+import { Str } from "@stackra/support";
 
 // ============================================================================
 // Utility
@@ -36,5 +37,5 @@ export function resolveThemeLabel(theme: ITheme, translate?: (key: string) => st
   }
 
   // Title-case fallback from ID
-  return theme.id.charAt(0).toUpperCase() + theme.id.slice(1);
+  return Str.ucfirst(theme.id);
 }

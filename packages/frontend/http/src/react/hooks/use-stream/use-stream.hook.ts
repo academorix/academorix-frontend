@@ -1,4 +1,5 @@
 /**
+ * @file use-stream.hook.ts
  * `useStream` React hook.
  *
  * Subscribes to a streaming HTTP request and exposes the latest

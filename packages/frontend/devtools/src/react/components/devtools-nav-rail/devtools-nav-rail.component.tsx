@@ -14,8 +14,8 @@ import { ScrollShadow } from "@stackra/ui/react";
 import { Str } from "@stackra/support";
 import type { DevtoolsCategory, IDevtoolsPanel } from "@stackra/contracts";
 
-import { useDevtoolsContext } from "../../hooks/use-devtools-context.hook";
-import { useDevtoolsPanels } from "../../hooks/use-devtools-panels.hook";
+import { useDevtoolsContext } from "../../hooks/use-devtools-context";
+import { useDevtoolsPanels } from "../../hooks/use-devtools-panels";
 import { DevtoolsNavItem } from "../devtools-nav-item";
 import type { DevtoolsNavRailProps } from "./devtools-nav-rail.interface";
 
@@ -63,7 +63,7 @@ export function DevtoolsNavRail({
   // changes.
   const rendered = useMemo(() => {
     const order = config.categoryOrder ?? [];
-    const trimmedQuery = (searchQuery ?? "").trim();
+    const trimmedQuery = Str.trim(searchQuery ?? "");
 
     return order
       .map((category) => {

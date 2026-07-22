@@ -10,6 +10,8 @@
  *   never stores real passwords.
  */
 
+import { Str } from "@stackra/support";
+
 /**
  * Compute the SHA-256 hex digest of a UTF-8 string.
  *
@@ -28,6 +30,6 @@ export async function sha256Hex(input: string): Promise<string> {
   const digest = await crypto.subtle.digest("SHA-256", bytes);
 
   return Array.from(new Uint8Array(digest))
-    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .map((byte) => Str.padLeft(byte.toString(16), 2, "0"))
     .join("");
 }

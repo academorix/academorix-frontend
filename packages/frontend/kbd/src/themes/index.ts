@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Built-in palette themes.
  *
  * Apps can add their own through `KbdModule.forFeature({ themes })`.

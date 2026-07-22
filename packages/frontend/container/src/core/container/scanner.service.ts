@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
+ * @file scanner.service.ts
  * DependenciesScanner — Module Tree Scanner
  *
  * The scanner is the first phase of the DI bootstrap. It walks the module

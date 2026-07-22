@@ -7,6 +7,8 @@
  *   multiple `IStorage` instances coexist without collision.
  */
 
+import { Str } from "@stackra/support";
+
 /**
  * Prepend the store's prefix to a raw key.
  *
@@ -41,6 +43,6 @@ export function prefixKey(prefix: string, key: string): string {
 export function stripPrefix(prefix: string, key: string): string | null {
   if (!prefix) return key;
   const full = `${prefix}:`;
-  if (!key.startsWith(full)) return null;
+  if (!Str.startsWith(key, full)) return null;
   return key.slice(full.length);
 }

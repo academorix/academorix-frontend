@@ -17,22 +17,22 @@
 export {
   useInAppNotifications,
   type IUseInAppNotificationsResult,
-} from "./use-in-app-notifications.hook";
+} from "./use-in-app-notifications";
 export {
   useNotificationPermission,
   type IUseNotificationPermissionResult,
-} from "./use-notification-permission.hook";
+} from "./use-notification-permission";
 export {
   useNotificationPreferences,
   type IUseNotificationPreferencesResult,
-} from "./use-notification-preferences.hook";
+} from "./use-notification-preferences";
 export {
   useNotificationWrites,
   type IUseNotificationWritesResult,
   type NotificationWriter,
-} from "./use-notification-writes.hook";
+} from "./use-notification-writes";
 export {
   useRenderableNotifications,
   type IUseRenderableNotificationsResult,
-} from "./use-renderable-notifications.hook";
-export { useSnoozeStore, type IUseSnoozeStoreResult } from "./use-snooze-store.hook";
+} from "./use-renderable-notifications";
+export { useSnoozeStore, type IUseSnoozeStoreResult } from "./use-snooze-store";

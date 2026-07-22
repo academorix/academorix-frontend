@@ -1,0 +1,32 @@
+{
+  "$comment": "Machine-generated Modern Standard Arabic. Requires native-Arabic reviewer pass before production. Generated 2026-07-21.",
+  "scopeSwitcher": {
+    "defaultLabel": "النطاق",
+    "searchPlaceholder": "ابحث عن نطاق...",
+    "emulatingChipLabel": "قيد المحاكاة",
+    "exitEmulationLabel": "خروج"
+  },
+  "scopeDevtoolsPanel": {
+    "unavailableTitle": "خدمة النطاق غير متاحة",
+    "unavailableDescription": "قم بتوصيل {{code}} لعرض النطاق النشط والشجرة هنا.",
+    "unavailableCode": "ScopeModule.forRoot(...)",
+    "heading": "النطاق",
+    "description": "سياق النطاق النشط المباشر وشجرة العقد القابلة للتبديل.",
+    "activeScopeTitle": "النطاق النشط",
+    "activeScopeCurrent": "حاليًا في {{level}}: {{entityId}}",
+    "activeScopeUnresolved": "لم يُحدَّد نطاق بعد.",
+    "emulatingChipLabel": "قيد المحاكاة",
+    "loadingChipLabel": "قيد التحميل",
+    "activeChipLabel": "نشط",
+    "disabledChipLabel": "معطّل",
+    "ownerLabel": "المالك",
+    "nodeLabel": "العقدة",
+    "levelLabel": "المستوى",
+    "entityLabel": "الكيان",
+    "pathDepthLabel": "عمق المسار",
+    "switchableTreeTitle": "الشجرة القابلة للتبديل",
+    "switchableTreeEmpty": "شجرة النطاق فارغة. حمِّلها من مصدر البيانات.",
+    "switchableTreeCountSingular": "{{count}} عقدة جذرية، مُصرَّح بها من الخلفية.",
+    "switchableTreeCountPlural": "{{count}} عقد جذرية، مُصرَّح بها من الخلفية."
+  }
+}

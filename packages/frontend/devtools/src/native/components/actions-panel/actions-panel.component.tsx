@@ -23,7 +23,7 @@ import {
   STATE_REGISTRY,
 } from "@stackra/contracts";
 
-import { useNativeDevtoolsContext } from "../../hooks/use-native-devtools-context.hook";
+import { useNativeDevtoolsContext } from "../../hooks/use-native-devtools-context";
 import type { ActionsPanelProps } from "./actions-panel.interface";
 
 /** Shape of a single row in the actions stack. */

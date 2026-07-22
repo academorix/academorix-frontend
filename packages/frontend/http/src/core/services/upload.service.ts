@@ -1,4 +1,5 @@
 /**
+ * @file upload.service.ts
  * UploadService.
  *
  * High-level file-upload helper built on the manager's default

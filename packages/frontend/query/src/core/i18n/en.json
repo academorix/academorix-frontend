@@ -1,0 +1,32 @@
+{
+  "queryDevtoolsPanel": {
+    "unavailableTitle": "Query client not available",
+    "unavailableDescription": "Wire {{code}} to see live TanStack Query cache stats here.",
+    "unavailableCode": "QueryModule.forRoot()",
+    "heading": "Query",
+    "description": "Live TanStack Query cache stats + Stackra's undoable-mutation queue.",
+    "cacheTitle": "Query cache",
+    "cacheCachedLabel": "{{count}} cached",
+    "cacheFetchingLabel": "{{count}} fetching",
+    "cacheStaleLabel": "{{count}} stale",
+    "cacheErroredLabel": "{{count}} errored",
+    "cacheDescriptionSome": "First {{count}} keys shown below.",
+    "cacheDescriptionEmpty": "No cached queries yet.",
+    "mutationsTitle": "Mutations",
+    "mutationsTotalLabel": "{{count}} total",
+    "mutationsInFlightLabel": "{{count}} in flight",
+    "mutationsErroredLabel": "{{count}} errored",
+    "mutationsUndoableLabel": "{{count}} undoable",
+    "mutationsDescription": "TanStack Query's live mutation cache plus Stackra's countdown queue for {{code}}.",
+    "mutationsDescriptionCode": "mutationMode: 'undoable'",
+    "statusPending": "pending",
+    "statusSuccess": "success",
+    "statusError": "error",
+    "statusIdle": "idle",
+    "fetchedNever": "never",
+    "fetchedNow": "now",
+    "fetchedSeconds": "{{count}}s ago",
+    "fetchedMinutes": "{{count}}m ago",
+    "fetchedHours": "{{count}}h ago"
+  }
+}

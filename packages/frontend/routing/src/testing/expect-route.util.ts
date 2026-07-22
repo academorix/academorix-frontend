@@ -5,6 +5,8 @@
  *   current path matches an expected pattern.
  */
 
+import { Str } from "@stackra/support";
+
 import type { ITestRouter } from "./create-test-router.util";
 
 /**
@@ -32,9 +34,9 @@ export function expectRoute(router: ITestRouter, pattern: string | RegExp): void
     return;
   }
   // String — either exact match or a trailing `*` wildcard.
-  if (pattern.endsWith("*")) {
+  if (Str.endsWith(pattern, "*")) {
     const prefix = pattern.slice(0, -1);
-    if (!current.startsWith(prefix)) {
+    if (!Str.startsWith(current, prefix)) {
       throw new Error(`expectRoute: router is at '${current}', expected prefix '${prefix}'.`);
     }
     return;

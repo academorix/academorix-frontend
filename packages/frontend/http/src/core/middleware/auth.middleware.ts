@@ -1,4 +1,5 @@
 /**
+ * @file auth.middleware.ts
  * Auth middleware.
  *
  * Injects Bearer tokens into outgoing requests via the

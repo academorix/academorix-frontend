@@ -1,4 +1,5 @@
 /**
+ * @file deduplication.middleware.ts
  * Deduplication middleware.
  *
  * Shares a single Promise across identical in-flight requests so

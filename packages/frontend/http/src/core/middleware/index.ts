@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Middleware barrel.
  *
  * Pre-handler middleware — they run BEFORE the connector terminal

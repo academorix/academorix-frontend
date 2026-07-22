@@ -1,4 +1,5 @@
 /**
+ * @file mock.transport.ts
  * Mock transport for unit testing collaboration hooks.
  *
  * Provides a fully in-memory implementation of the CollaborationTransport

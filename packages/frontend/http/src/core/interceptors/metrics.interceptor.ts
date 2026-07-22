@@ -1,4 +1,5 @@
 /**
+ * @file metrics.interceptor.ts
  * Metrics interceptor.
  *
  * Records request latency, status, and success/failure counts via

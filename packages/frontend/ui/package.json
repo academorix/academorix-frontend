@@ -31,7 +31,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=22.0.0"
   },
@@ -57,15 +56,15 @@
       "import": "./dist/native.mjs",
       "require": "./dist/native.js"
     },
-    "./actions": {
-      "types": "./dist/actions.d.ts",
-      "import": "./dist/actions.mjs",
-      "require": "./dist/actions.js"
-    },
     "./testing": {
       "types": "./dist/testing.d.ts",
       "import": "./dist/testing.mjs",
       "require": "./dist/testing.js"
+    },
+    "./actions": {
+      "types": "./dist/actions.d.ts",
+      "import": "./dist/actions.mjs",
+      "require": "./dist/actions.js"
     },
     "./icons": {
       "types": "./dist/icons/index.d.ts",
@@ -131,6 +130,7 @@
     "@stackra/container": "workspace:^",
     "@stackra/contracts": "workspace:^",
     "@stackra/logger": "workspace:^",
+    "@stackra/support": "workspace:^",
     "@stackra/testing": "workspace:^",
     "@tiptap/core": "catalog:",
     "@tiptap/extension-link": "catalog:",
@@ -143,7 +143,7 @@
     "embla-carousel": "catalog:",
     "embla-carousel-react": "catalog:",
     "heroui-native": "^1.0.0",
-    "heroui-native-pro": "^1.0.0-beta.1",
+    "heroui-native-pro": "catalog:",
     "marked": "catalog:",
     "motion": "catalog:",
     "react": "catalog:",
@@ -259,6 +259,7 @@
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/logger": "workspace:*",
+    "@stackra/support": "workspace:*",
     "@stackra/testing": "workspace:*",
     "@testing-library/react": "catalog:",
     "@tiptap/core": "catalog:",
@@ -275,7 +276,7 @@
     "embla-carousel": "catalog:",
     "embla-carousel-react": "catalog:",
     "heroui-native": "^1.0.0",
-    "heroui-native-pro": "^1.0.0-beta.1",
+    "heroui-native-pro": "catalog:",
     "jsdom": "catalog:",
     "marked": "catalog:",
     "motion": "catalog:",
@@ -283,7 +284,7 @@
     "react-aria-components": "catalog:",
     "react-dom": "catalog:",
     "react-markdown": "catalog:",
-    "react-native": "^0.76.0",
+    "react-native": "catalog:",
     "react-resizable-panels": "catalog:",
     "recharts": "catalog:",
     "remark-breaks": "catalog:",

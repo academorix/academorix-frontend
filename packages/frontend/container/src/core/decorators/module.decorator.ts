@@ -1,4 +1,5 @@
 /**
+ * @file module.decorator.ts
  * @Module() Decorator
  *
  * Defines a module — the organizational unit of the DI system.

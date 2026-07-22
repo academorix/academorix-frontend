@@ -1,4 +1,5 @@
 /**
+ * @file use-keyboard-hints-result.interface.ts
  * UseKeyboardHintsResult — Interface.
  *
  * @module @stackra/kbd/interfaces

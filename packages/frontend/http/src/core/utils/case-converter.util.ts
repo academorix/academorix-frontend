@@ -1,4 +1,5 @@
 /**
+ * @file case-converter.util.ts
  * Case conversion utility.
  *
  * Recursive camelCase ↔ snake_case conversion that preserves Date

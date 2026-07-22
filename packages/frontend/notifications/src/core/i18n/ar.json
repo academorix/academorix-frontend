@@ -1,0 +1,112 @@
+{
+  "$comment": "Machine-generated Modern Standard Arabic. Requires native-Arabic reviewer pass before production. Generated 2026-07-21.",
+  "notificationBell": {
+    "ariaLabelUnread": "الإشعارات، {{count}} غير مقروءة",
+    "ariaLabelNoUnread": "الإشعارات، لا توجد رسائل غير مقروءة"
+  },
+  "notificationDrawer": {
+    "heading": "الإشعارات",
+    "noUnreadLabel": "لا توجد غير مقروءة",
+    "unreadCountSingular": "{{count}} إشعار غير مقروء",
+    "unreadCountPlural": "{{count}} إشعارات غير مقروءة",
+    "markAllReadLabel": "تعليم الكل كمقروء",
+    "markAllReadAriaLabel": "تعليم الكل كمقروء",
+    "sectionsAriaLabel": "الأقسام",
+    "sectionUnreadLabel": "غير المقروءة",
+    "sectionUnreadCounted": "غير المقروءة ({{count}})",
+    "sectionAllLabel": "الكل",
+    "categoryFiltersAriaLabel": "مرشحات الفئات",
+    "categoryAllLabel": "الكل",
+    "preferencesLabel": "تفضيلات الإشعارات"
+  },
+  "notificationList": {
+    "ariaLabel": "الإشعارات"
+  },
+  "notificationRow": {
+    "unreadDotAriaLabel": "غير مقروء",
+    "priorityUrgent": "إشعار عاجل",
+    "priorityHigh": "إشعار ذو أولوية عالية",
+    "priorityNormal": "إشعار",
+    "priorityLow": "إشعار منخفض الأولوية",
+    "markAsReadAriaLabel": "تعليم كمقروء",
+    "snoozeAriaLabel": "تأجيل الإشعار",
+    "deleteAriaLabel": "حذف الإشعار",
+    "snoozeHour": "ساعة واحدة",
+    "snoozeThreeHours": "3 ساعات",
+    "snoozeTomorrow": "غدًا",
+    "snoozeNextWeek": "الأسبوع القادم",
+    "snoozeMenuItemAriaTemplate": "تأجيل {{label}}"
+  },
+  "notificationEmptyState": {
+    "title": "لقد اطّلعت على كل شيء",
+    "description": "ستظهر الإشعارات الجديدة هنا."
+  },
+  "pushPermissionBanner": {
+    "title": "احصل على التحديثات الفورية",
+    "description": "فعِّل إشعارات المتصفح ليتسنى لنا الوصول إليك عندما يعمل التطبيق في الخلفية.",
+    "enableLabel": "تفعيل",
+    "dismissLabel": "ليس الآن"
+  },
+  "inboxPage": {
+    "heading": "صندوق الوارد",
+    "upToDateMessage": "أنت على اطّلاع بكل شيء.",
+    "unreadCountSingular": "{{count}} إشعار غير مقروء.",
+    "unreadCountPlural": "{{count}} إشعارات غير مقروءة.",
+    "preferencesLabel": "التفضيلات",
+    "preferencesAriaLabel": "تفضيلات الإشعارات",
+    "markAllReadLabel": "تعليم الكل كمقروء",
+    "markAllReadAriaLabel": "تعليم الكل كمقروء",
+    "sectionsAriaLabel": "الأقسام",
+    "sectionUnreadLabel": "غير المقروءة",
+    "sectionUnreadCounted": "غير المقروءة ({{count}})",
+    "sectionAllLabel": "الكل",
+    "categoryFiltersAriaLabel": "مرشحات الفئات",
+    "categoryAllLabel": "الكل"
+  },
+  "preferencesPage": {
+    "heading": "تفضيلات الإشعارات",
+    "description": "اختر الفئات التي تصلك على القنوات التي تناسبك. تنبيهات السلامة تصل دائمًا عبر إشعارات النظام.",
+    "pushSectionHeading": "إشعارات المتصفح",
+    "pushSectionDescription": "تصل إشعارات المتصفح إليك عندما يكون التطبيق مغلقًا أو يعمل في الخلفية.",
+    "pushUnsupportedMessage": "هذا المتصفح لا يدعم Web Push.",
+    "pushPromptMessage": "الإشعارات معطّلة. فعِّلها لتصلك التنبيهات الفورية.",
+    "pushEnableLabel": "تفعيل الإشعارات",
+    "pushDeniedMessage": "الإشعارات محجوبة لهذا الموقع. حدِّث إذن الإشعارات من إعدادات المتصفح لإعادة تفعيلها.",
+    "pushEnabledMessage": "الإشعارات مفعّلة على هذا المتصفح.",
+    "pushEnabledToastMessage": "تم تفعيل إشعارات المتصفح",
+    "pushRemainsDisabledToastTitle": "إشعارات المتصفح لا تزال معطّلة",
+    "pushRemainsDisabledToastDescription": "يمكنك تفعيلها في أي وقت من هذه الصفحة.",
+    "dndHeading": "الرجاء عدم الإزعاج",
+    "dndSwitchLabel": "الرجاء عدم الإزعاج الشامل",
+    "dndSwitchDescription": "يكتم كل الإشعارات باستثناء تنبيهات السلامة.",
+    "dndAriaLabel": "الرجاء عدم الإزعاج",
+    "quietHoursHeading": "ساعات الهدوء",
+    "quietHoursDescription": "تُحجب إشعارات النظام خلال هذه النافذة؛ ستستمر الرسائل داخل التطبيق في الوصول.",
+    "clearQuietHoursLabel": "مسح ساعات الهدوء",
+    "categoriesHeading": "الفئات",
+    "saveLabel": "حفظ التفضيلات",
+    "saveAriaLabel": "حفظ التفضيلات",
+    "saveSuccessToastMessage": "تم حفظ التفضيلات",
+    "saveSuccessToastDescription": "تغييراتك سارية على هذا الحساب.",
+    "saveErrorToastMessage": "تعذّر حفظ التفضيلات",
+    "saveErrorToastDescription": "يُرجى إعادة المحاولة بعد قليل."
+  },
+  "quietHoursPicker": {
+    "fromLabel": "من",
+    "toLabel": "إلى",
+    "timezoneLabel": "المنطقة الزمنية",
+    "startAriaLabel": "بداية ساعات الهدوء",
+    "endAriaLabel": "نهاية ساعات الهدوء",
+    "timezoneAriaLabel": "المنطقة الزمنية لساعات الهدوء",
+    "timezonePlaceholder": "ابحث عن منطقة زمنية..."
+  },
+  "categoryPreferences": {
+    "mandatoryOnNote": "مفعّل دائمًا — تنبيهات السلامة تتجاوز جميع المرشحات."
+  },
+  "channels": {
+    "inApp": "داخل التطبيق",
+    "push": "إشعارات المتصفح",
+    "email": "البريد الإلكتروني",
+    "emailNote": "يتطلّب مهايئ البريد الإلكتروني."
+  }
+}

@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * useDiscovered Hook Barrel Export
  *
  * - {@link useDiscovered} — Get providers tagged by a discoverable decorator

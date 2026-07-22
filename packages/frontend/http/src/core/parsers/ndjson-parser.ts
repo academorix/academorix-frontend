@@ -1,4 +1,5 @@
 /**
+ * @file ndjson-parser.ts
  * NDJSON parser.
  *
  * Decodes newline-delimited JSON streams. Each line is parsed

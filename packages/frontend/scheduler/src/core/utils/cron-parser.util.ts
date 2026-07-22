@@ -9,6 +9,8 @@
  *   Does NOT support named days/months (use numbers: 0=Sun, 1=Mon, etc.).
  */
 
+import { Str } from "@stackra/support";
+
 import type { ICronFields } from "@/core/interfaces";
 
 /**
@@ -32,7 +34,7 @@ import type { ICronFields } from "@/core/interfaces";
  * ```
  */
 export function parseCron(expression: string): ICronFields {
-  const parts = expression.trim().split(/\s+/);
+  const parts = Str.trim(expression).split(/\s+/);
 
   if (parts.length === 5) {
     return {

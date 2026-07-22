@@ -1,4 +1,5 @@
 /**
+ * @file progress.middleware.ts
  * Progress middleware.
  *
  * Wires upload/download progress callbacks on the request and

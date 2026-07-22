@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
+ * @file injector.service.ts
  * Injector — Dependency Resolution Engine
  *
  * The injector is the engine that turns the module graph (built by the scanner)

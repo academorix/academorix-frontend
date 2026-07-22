@@ -31,7 +31,7 @@ import type {
 } from "@stackra/contracts";
 import { ActionKind, EVENT_EMITTER, SDUI_EVENTS, SDUI_RUNTIME_STORE } from "@stackra/contracts";
 import type { ISduiRuntime } from "@stackra/contracts";
-import { useSduiRuntime } from "../providers/sdui-runtime.provider";
+import { useSduiRuntime } from "../providers/sdui-runtime";
 
 /**
  * Result of `adaptAction` — the framework descriptor plus whether the

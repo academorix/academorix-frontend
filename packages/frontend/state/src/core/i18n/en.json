@@ -1,0 +1,15 @@
+{
+  "stateDevtoolsPanel": {
+    "unavailableTitle": "State registry not available",
+    "unavailableDescription": "Wire {{code}} to see registered stores here.",
+    "unavailableCode": "StateModule.forRoot()",
+    "emptyTitle": "No stores registered",
+    "emptyDescription": "Register a store with {{code}} to see it here.",
+    "emptyCode": "StateModule.forFeature({ name, token, initialState })",
+    "heading": "State stores",
+    "description": "Reactive stores registered via {{code}}. Every card is a live view — mutations reflect immediately via each store's {{subscribe}} API.",
+    "descriptionCode": "StateModule.forFeature()",
+    "descriptionSubscribe": "subscribe",
+    "cardDescription": "Current snapshot (preview truncated to {{depth}} levels deep)."
+  }
+}

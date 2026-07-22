@@ -3,6 +3,7 @@ import type { ModuleMetadata } from "./module-metadata.interface";
 import type { OptionalFactoryDependency } from "@/types/optional-factory-dependency.type";
 
 /**
+ * @file async-module-options.interface.ts
  * Canonical async-options shape for NestJS dynamic modules that register
  * a single resolved configuration via `forRootAsync()` / `forFeatureAsync()`.
  *

@@ -28,7 +28,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=22.0.0"
   },
@@ -75,9 +74,10 @@
     "@stackra/container": "workspace:^",
     "@stackra/contracts": "workspace:^",
     "@stackra/logger": "workspace:^",
+    "@stackra/support": "workspace:^",
     "@stackra/testing": "workspace:^",
-    "react": "*",
-    "reflect-metadata": "*"
+    "react": "catalog:",
+    "reflect-metadata": "catalog:"
   },
   "peerDependenciesMeta": {
     "@stackra/testing": {
@@ -93,6 +93,7 @@
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/logger": "workspace:*",
+    "@stackra/support": "workspace:*",
     "@stackra/testing": "workspace:*",
     "@types/node": "catalog:",
     "@types/react": "catalog:",

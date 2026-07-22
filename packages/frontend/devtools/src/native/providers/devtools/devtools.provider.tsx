@@ -25,7 +25,7 @@ import type { IDevtoolsModuleOptions } from "@/core/interfaces";
 import { DevtoolsAnalyticsService, DevtoolsFrameStateService } from "@/core/services";
 import { mergeConfig } from "@/core/utils";
 
-import { DevtoolsContext } from "../../contexts/devtools.context";
+import { DevtoolsContext } from "../../contexts/devtools";
 import type { IDevtoolsNativeContextValue } from "../../interfaces/devtools-context-value.interface";
 import { ActionsNativeDevtoolsPanel, OverviewNativeDevtoolsPanel } from "../../panels";
 

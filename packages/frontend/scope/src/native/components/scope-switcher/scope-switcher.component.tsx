@@ -29,7 +29,7 @@ interface ISelectOption {
   readonly label: string;
 }
 
-import { useScope } from "@/react/hooks/use-scope.hook";
+import { useScope } from "@/react/hooks/use-scope";
 import type { IScopeNodeTreeNode } from "@/core/interfaces";
 import type { NativeScopeSwitcherProps } from "@/native/interfaces";
 

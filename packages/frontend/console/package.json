@@ -29,7 +29,6 @@
     "access": "public"
   },
   "type": "module",
-  "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=22.0.0"
   },
@@ -94,7 +93,6 @@
   "devDependencies": {
     "@stackra/config-tsconfig": "workspace:*",
     "@stackra/config-tsup": "workspace:*",
-    "@stackra/typescript-config": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/support": "workspace:*",

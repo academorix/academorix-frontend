@@ -1,3 +1,11 @@
+/**
+ * @file module-metadata.interface.ts
+ * @module @stackra/contracts/interfaces/modules
+ * @description The `ModuleMetadata` interface — the property bag every
+ *   `@Module({...})` decorator receives (imports / controllers /
+ *   providers / exports).
+ */
+
 import type { Abstract } from "@/interfaces/abstract.interface";
 import type { Type } from "@/interfaces/type.interface";
 import type { Provider } from "@/types/provider.type";

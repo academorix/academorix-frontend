@@ -1,0 +1,16 @@
+{
+  "nodeErrorBoundary": {
+    "title": "Node failed to render",
+    "detailTemplate": "{{nodeType}} ({{nodeId}}) — {{message}}"
+  },
+  "unknownComponent": {
+    "title": "Unknown SDUI component \"{{type}}\"",
+    "descriptionPrefix": "No component is registered for node \"{{nodeId}}\". Register it via ",
+    "descriptionCode": "SduiModule.forFeature",
+    "descriptionSuffix": "."
+  },
+  "versionMismatch": {
+    "title": "Unsupported SDUI schema version {{actual}}",
+    "description": "Supported range: {{min}}–{{max}}."
+  }
+}

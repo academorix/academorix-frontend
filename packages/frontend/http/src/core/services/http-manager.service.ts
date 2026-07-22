@@ -1,4 +1,5 @@
 /**
+ * @file http-manager.service.ts
  * HttpManager.
  *
  * Multi-connection orchestrator. Mirrors the canonical

@@ -5,6 +5,8 @@
  *   Handles `{{variable}}` placeholders and `{{ name | uppercase }}` pipes.
  */
 
+import { Str } from "@stackra/support";
+
 import {
   PIPE_SEPARATOR,
   TRANSFORM_PIPES,
@@ -17,10 +19,12 @@ import {
 // ============================================================================
 
 const PIPE_FNS: Record<string, (value: string) => string> = {
-  [TRANSFORM_PIPES.UPPERCASE]: (v) => v.toUpperCase(),
-  [TRANSFORM_PIPES.LOWERCASE]: (v) => v.toLowerCase(),
-  [TRANSFORM_PIPES.CAPITALIZE]: (v) =>
-    v.length > 0 ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v,
+  [TRANSFORM_PIPES.UPPERCASE]: (v) => Str.upper(v),
+  [TRANSFORM_PIPES.LOWERCASE]: (v) => Str.lower(v),
+  // `ucfirst` uppercases the first character; the remainder is
+  // lowercased so "hELLO" → "Hello" (matching the CAPITALIZE
+  // convention).
+  [TRANSFORM_PIPES.CAPITALIZE]: (v) => (v.length > 0 ? Str.ucfirst(Str.lower(v)) : v),
 };
 
 // ============================================================================
@@ -67,7 +71,7 @@ export function interpolate(
   return template.replace(regex, (_match, rawExpression: string) => {
     const parts = rawExpression
       .split(PIPE_SEPARATOR)
-      .map((p) => p.trim())
+      .map((p) => Str.trim(p))
       .filter(Boolean);
 
     if (parts.length === 0) return _match;
@@ -84,7 +88,7 @@ export function interpolate(
 
     // Apply transform pipes
     for (const pipeName of transforms) {
-      const fn = PIPE_FNS[pipeName.toLowerCase()];
+      const fn = PIPE_FNS[Str.lower(pipeName)];
       if (fn) strValue = fn(strValue);
     }
 

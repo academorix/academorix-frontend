@@ -30,7 +30,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=22.0.0"
   },
@@ -88,9 +87,9 @@
     "@stackra/testing": "workspace:^",
     "@stackra/ui": "workspace:^",
     "heroui-native": "^1.0.0",
-    "react": "*",
+    "react": "catalog:",
     "react-native": "*",
-    "reflect-metadata": "*",
+    "reflect-metadata": "catalog:",
     "zod": ">=3"
   },
   "peerDependenciesMeta": {
@@ -140,12 +139,12 @@
     "@types/react": "catalog:",
     "heroui-native": "^1.0.0",
     "react": "catalog:",
-    "react-native": "^0.76.0",
+    "react-native": "catalog:",
     "reflect-metadata": "catalog:",
     "rimraf": "catalog:",
     "tsup": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",
-    "zod": "^3.23.0"
+    "zod": "catalog:"
   }
 }

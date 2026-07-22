@@ -1,4 +1,5 @@
 /**
+ * @file circuit-breaker.service.ts
  * CircuitBreakerService.
  *
  * One circuit breaker per endpoint — three-state machine that fails

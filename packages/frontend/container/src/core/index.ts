@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * @stackra/container
  *
  * NestJS-compatible dependency injection for both client and server.

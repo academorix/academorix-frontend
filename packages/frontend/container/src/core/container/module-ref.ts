@@ -1,4 +1,5 @@
 /**
+ * @file module-ref.ts
  * ModuleRef
  *
  * Public reference to the running DI context. Mirrors NestJS's

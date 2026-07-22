@@ -1,4 +1,5 @@
 /**
+ * @file compose-base-url.util.ts
  * Build a fully-qualified base URL from a connection's `baseURL`,
  * `apiPrefix`, and `version` fields. Strips slashes consistently so
  * the result never contains double slashes or trailing slashes.

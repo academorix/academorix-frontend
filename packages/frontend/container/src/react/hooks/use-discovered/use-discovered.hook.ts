@@ -1,4 +1,5 @@
 /**
+ * @file use-discovered.hook.ts
  * useDiscovered Hook
  *
  * Subscribe to providers tagged with a discoverable decorator. The result

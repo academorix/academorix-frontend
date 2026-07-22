@@ -6,7 +6,7 @@
 
 import type { IDevtoolsAuthGate } from "@stackra/contracts";
 
-import type { DevtoolsAuthDenyReason } from "../../hooks/use-devtools-auth-guard.hook";
+import type { DevtoolsAuthDenyReason } from "../../hooks/use-devtools-auth-guard";
 
 /**
  * Props accepted by {@link DevtoolsPanelLocked}.

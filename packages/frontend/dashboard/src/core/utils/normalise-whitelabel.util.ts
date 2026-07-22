@@ -7,6 +7,8 @@
  *   and then clears the section.
  */
 
+import { Str } from "@stackra/support";
+
 /**
  * Whitelabel input shape shared by
  * {@link IIssueEmbedTokenInput.whitelabel} and
@@ -34,9 +36,12 @@ export function normaliseWhitelabel(
 ): WhitelabelInput | undefined {
   if (!input) return undefined;
 
-  const logoUrl = input.logoUrl?.trim() || undefined;
-  const accent = input.accent?.trim() || undefined;
-  const welcomeText = input.welcomeText?.trim() || undefined;
+  // `Str.trim(x ?? "")` collapses undefined → "" so a subsequent
+  // `|| undefined` handles both "empty string after trim" and
+  // "missing input" cases uniformly.
+  const logoUrl = Str.trim(input.logoUrl ?? "") || undefined;
+  const accent = Str.trim(input.accent ?? "") || undefined;
+  const welcomeText = Str.trim(input.welcomeText ?? "") || undefined;
 
   if (!logoUrl && !accent && !welcomeText) return undefined;
 

@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * `useHttpManager` hook barrel.
  *
  * @module @stackra/http/react/hooks/use-http-manager

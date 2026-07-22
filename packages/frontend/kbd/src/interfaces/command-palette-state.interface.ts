@@ -1,4 +1,5 @@
 /**
+ * @file command-palette-state.interface.ts
  * CommandPaletteState — Interface.
  *
  * @module @stackra/kbd/interfaces

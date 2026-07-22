@@ -25,6 +25,7 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 
 import type { IApplication } from "@stackra/contracts";
+import { Str } from "@stackra/support";
 
 /**
  * Bootstrap a build-time DI container.
@@ -124,7 +125,7 @@ function pickAppModuleExport(module: unknown): unknown {
   // `Module`. If multiple match, fall back to the module record so
   // the caller can surface a clearer error.
   const moduleNames = Object.keys(record).filter(
-    (name) => name !== "default" && name.endsWith("Module"),
+    (name) => name !== "default" && Str.endsWith(name, "Module"),
   );
   if (moduleNames.length === 1) {
     const chosen = moduleNames[0];

@@ -8,8 +8,8 @@ import { useCallback, type ReactElement } from "react";
 import { Button, Tooltip } from "@stackra/ui/react";
 import { CursorArrowRaysIcon } from "@stackra/ui/icons/heroicon/outline";
 
-import { useDevtoolsContext } from "../../hooks/use-devtools-context.hook";
-import { useDevtoolsInspector } from "../../hooks/use-devtools-inspector.hook";
+import { useDevtoolsContext } from "../../hooks/use-devtools-context";
+import { useDevtoolsInspector } from "../../hooks/use-devtools-inspector";
 import type { DevtoolsInspectorToolbarProps } from "./devtools-inspector-toolbar.interface";
 
 /**

@@ -1,0 +1,111 @@
+{
+  "notificationBell": {
+    "ariaLabelUnread": "Notifications, {{count}} unread",
+    "ariaLabelNoUnread": "Notifications, no unread"
+  },
+  "notificationDrawer": {
+    "heading": "Notifications",
+    "noUnreadLabel": "No unread",
+    "unreadCountSingular": "{{count}} unread notification",
+    "unreadCountPlural": "{{count}} unread notifications",
+    "markAllReadLabel": "Mark all read",
+    "markAllReadAriaLabel": "Mark all as read",
+    "sectionsAriaLabel": "Sections",
+    "sectionUnreadLabel": "Unread",
+    "sectionUnreadCounted": "Unread ({{count}})",
+    "sectionAllLabel": "All",
+    "categoryFiltersAriaLabel": "Category filters",
+    "categoryAllLabel": "All",
+    "preferencesLabel": "Notification preferences"
+  },
+  "notificationList": {
+    "ariaLabel": "Notifications"
+  },
+  "notificationRow": {
+    "unreadDotAriaLabel": "Unread",
+    "priorityUrgent": "Urgent notification",
+    "priorityHigh": "High-priority notification",
+    "priorityNormal": "Notification",
+    "priorityLow": "Low-priority notification",
+    "markAsReadAriaLabel": "Mark as read",
+    "snoozeAriaLabel": "Snooze notification",
+    "deleteAriaLabel": "Delete notification",
+    "snoozeHour": "1 hour",
+    "snoozeThreeHours": "3 hours",
+    "snoozeTomorrow": "Tomorrow",
+    "snoozeNextWeek": "Next week",
+    "snoozeMenuItemAriaTemplate": "Snooze {{label}}"
+  },
+  "notificationEmptyState": {
+    "title": "You're all caught up",
+    "description": "New notifications will appear here."
+  },
+  "pushPermissionBanner": {
+    "title": "Get instant updates",
+    "description": "Enable browser notifications so we can reach you when the app is in the background.",
+    "enableLabel": "Enable",
+    "dismissLabel": "Not now"
+  },
+  "inboxPage": {
+    "heading": "Inbox",
+    "upToDateMessage": "You're up to date.",
+    "unreadCountSingular": "{{count}} unread notification.",
+    "unreadCountPlural": "{{count}} unread notifications.",
+    "preferencesLabel": "Preferences",
+    "preferencesAriaLabel": "Notification preferences",
+    "markAllReadLabel": "Mark all read",
+    "markAllReadAriaLabel": "Mark all as read",
+    "sectionsAriaLabel": "Sections",
+    "sectionUnreadLabel": "Unread",
+    "sectionUnreadCounted": "Unread ({{count}})",
+    "sectionAllLabel": "All",
+    "categoryFiltersAriaLabel": "Category filters",
+    "categoryAllLabel": "All"
+  },
+  "preferencesPage": {
+    "heading": "Notification preferences",
+    "description": "Choose which categories reach you on which channels. Safety alerts always come through OS notifications.",
+    "pushSectionHeading": "Browser push",
+    "pushSectionDescription": "Push notifications reach you when the app is closed or in the background.",
+    "pushUnsupportedMessage": "This browser doesn't support Web Push.",
+    "pushPromptMessage": "Push is off. Enable it to get instant alerts.",
+    "pushEnableLabel": "Enable push",
+    "pushDeniedMessage": "Push is blocked for this site. Update the notification permission in your browser settings to re-enable it.",
+    "pushEnabledMessage": "Push is on for this browser.",
+    "pushEnabledToastMessage": "Push notifications enabled",
+    "pushRemainsDisabledToastTitle": "Push notifications remain disabled",
+    "pushRemainsDisabledToastDescription": "You can enable them any time from this page.",
+    "dndHeading": "Do not disturb",
+    "dndSwitchLabel": "Global do-not-disturb",
+    "dndSwitchDescription": "Suppresses every notification except safety alerts.",
+    "dndAriaLabel": "Do not disturb",
+    "quietHoursHeading": "Quiet hours",
+    "quietHoursDescription": "OS-level notifications are held during this window; in-app entries still arrive.",
+    "clearQuietHoursLabel": "Clear quiet hours",
+    "categoriesHeading": "Categories",
+    "saveLabel": "Save preferences",
+    "saveAriaLabel": "Save preferences",
+    "saveSuccessToastMessage": "Preferences saved",
+    "saveSuccessToastDescription": "Your changes are live for this account.",
+    "saveErrorToastMessage": "Could not save preferences",
+    "saveErrorToastDescription": "Please retry in a moment."
+  },
+  "quietHoursPicker": {
+    "fromLabel": "From",
+    "toLabel": "To",
+    "timezoneLabel": "Timezone",
+    "startAriaLabel": "Quiet hours start",
+    "endAriaLabel": "Quiet hours end",
+    "timezoneAriaLabel": "Quiet hours timezone",
+    "timezonePlaceholder": "Search timezone..."
+  },
+  "categoryPreferences": {
+    "mandatoryOnNote": "Always on — safety alerts bypass every filter."
+  },
+  "channels": {
+    "inApp": "In-app",
+    "push": "Push",
+    "email": "Email",
+    "emailNote": "Requires the email adapter."
+  }
+}

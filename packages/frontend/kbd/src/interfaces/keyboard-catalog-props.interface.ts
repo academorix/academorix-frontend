@@ -1,4 +1,5 @@
 /**
+ * @file keyboard-catalog-props.interface.ts
  * KeyboardCatalogProps — Interface.
  *
  * @module @stackra/kbd/interfaces

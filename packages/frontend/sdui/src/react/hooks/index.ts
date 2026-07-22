@@ -4,7 +4,7 @@
  * @description Barrel for SDUI React hooks.
  */
 
-export { useSduiComponent } from "./use-sdui-component.hook";
-export { useSduiPage } from "./use-sdui-page.hook";
-export { useSchema, type IUseSchemaResult } from "./use-schema.hook";
-export { useDataSources, type IUseDataSourcesResult } from "./use-data-sources.hook";
+export { useSduiComponent } from "./use-sdui-component";
+export { useSduiPage } from "./use-sdui-page";
+export { useSchema, type IUseSchemaResult } from "./use-schema";
+export { useDataSources, type IUseDataSourcesResult } from "./use-data-sources";

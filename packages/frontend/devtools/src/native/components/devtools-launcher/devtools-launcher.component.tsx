@@ -14,8 +14,8 @@ import { type ReactElement } from "react";
 import { View } from "react-native";
 import { Chip, PressableFeedback } from "@stackra/ui/native";
 
-import { useNativeDevtoolsFrameState } from "../../hooks/use-native-devtools-frame-state.hook";
-import { useNativeDevtoolsPanels } from "../../hooks/use-native-devtools-panels.hook";
+import { useNativeDevtoolsFrameState } from "../../hooks/use-native-devtools-frame-state";
+import { useNativeDevtoolsPanels } from "../../hooks/use-native-devtools-panels";
 import type { DevtoolsLauncherProps } from "./devtools-launcher.interface";
 
 /**

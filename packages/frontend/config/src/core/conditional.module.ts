@@ -21,7 +21,7 @@ import type {
   ModuleMetadata,
   Type,
 } from "@stackra/contracts";
-import { Env } from "@stackra/support";
+import { Env, Str } from "@stackra/support";
 
 import { ConfigModule } from "./config.module";
 import { DEFAULT_CONDITIONAL_TIMEOUT } from "./constants";
@@ -152,13 +152,15 @@ export class ConditionalModule {
       exports: [],
     };
 
-    // Normalise the string form into a predicate. `env[key]?.toLowerCase() !== 'false'`
+    // Normalise the string form into a predicate. `Str.lower(env[key] ?? "") !== 'false'`
     // matches nestjs verbatim — a variable that IS set is truthy
-    // unless it's the literal string `'false'`.
+    // unless it's the literal string `'false'` (any case). An unset
+    // variable is treated as truthy (returns `true`) since the empty
+    // string lower-cases to itself and `"" !== "false"`.
     let predicate: ConditionPredicate;
     if (typeof condition === "string") {
       const key = condition;
-      predicate = (env) => env[key]?.toLowerCase() !== "false";
+      predicate = (env) => Str.lower(env[key] ?? "") !== "false";
     } else {
       predicate = condition;
     }

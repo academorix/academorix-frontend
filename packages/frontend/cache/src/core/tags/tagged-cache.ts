@@ -12,6 +12,7 @@
 
 import { TagSet } from "./tag-set";
 import type { ICacheStore } from "@stackra/contracts";
+import { Str } from "@stackra/support";
 import { requireStoreMethod } from "@/core/utils/require-store-method.util";
 
 // ════════════════════════════════════════════════════════════════════════════════
@@ -392,6 +393,6 @@ export class TaggedCache {
       hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
-    return Math.abs(hash).toString(16).padStart(8, "0");
+    return Str.padLeft(Math.abs(hash).toString(16), 8, "0");
   }
 }

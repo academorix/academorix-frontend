@@ -1,4 +1,5 @@
 /**
+ * @file generate-metadata-key.util.ts
  * generateMetadataKey Utility
  *
  * Internal helper used by `DiscoveryService.createDecorator()` to mint a

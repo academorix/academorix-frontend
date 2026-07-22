@@ -1,4 +1,5 @@
 /**
+ * @file shutdown-signal.enum.ts
  * System signals which shut down a process
  */
 export enum ShutdownSignal {

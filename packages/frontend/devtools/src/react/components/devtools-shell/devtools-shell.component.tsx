@@ -12,13 +12,14 @@
  */
 
 import { useCallback, useEffect, type ReactElement } from "react";
+import { Str } from "@stackra/support";
 import { Button, Drawer, Kbd } from "@stackra/ui/react";
 import { XMarkIcon } from "@stackra/ui/icons/heroicon/outline";
 
-import { useDevtoolsContext } from "../../hooks/use-devtools-context.hook";
-import { useDevtoolsFrameState } from "../../hooks/use-devtools-frame-state.hook";
-import { useDevtoolsPanels } from "../../hooks/use-devtools-panels.hook";
-import { useDevtoolsSearch } from "../../hooks/use-devtools-search.hook";
+import { useDevtoolsContext } from "../../hooks/use-devtools-context";
+import { useDevtoolsFrameState } from "../../hooks/use-devtools-frame-state";
+import { useDevtoolsPanels } from "../../hooks/use-devtools-panels";
+import { useDevtoolsSearch } from "../../hooks/use-devtools-search";
 import { DevtoolsInspectorToolbar } from "../devtools-inspector-toolbar";
 import { DevtoolsNavRail } from "../devtools-nav-rail";
 import { DevtoolsPanelEmpty } from "../devtools-panel-empty";
@@ -138,7 +139,7 @@ function renderShortcutLabel(
   if (shortcut.ctrl) parts.push("Ctrl");
   if (shortcut.alt) parts.push("Alt");
   if (shortcut.shift) parts.push("Shift");
-  parts.push(shortcut.key.toUpperCase());
+  parts.push(Str.upper(shortcut.key));
   return (
     <Kbd>
       <Kbd.Content>{parts.join(" + ")}</Kbd.Content>

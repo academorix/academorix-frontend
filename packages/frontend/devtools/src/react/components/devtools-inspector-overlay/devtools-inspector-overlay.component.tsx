@@ -10,9 +10,9 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } 
 import { Tooltip } from "@stackra/ui/react";
 import type { IDevtoolsInspectorRegion } from "@stackra/contracts";
 
-import { useDevtoolsContext } from "../../hooks/use-devtools-context.hook";
-import { useDevtoolsFrameState } from "../../hooks/use-devtools-frame-state.hook";
-import { useDevtoolsInspector } from "../../hooks/use-devtools-inspector.hook";
+import { useDevtoolsContext } from "../../hooks/use-devtools-context";
+import { useDevtoolsFrameState } from "../../hooks/use-devtools-frame-state";
+import { useDevtoolsInspector } from "../../hooks/use-devtools-inspector";
 import type { DevtoolsInspectorOverlayProps } from "./devtools-inspector-overlay.interface";
 
 /**

@@ -1,4 +1,5 @@
 /**
+ * @file use-discovery.hook.ts
  * useDiscovery Hook
  *
  * Resolve `DiscoveryService` from the active container. Convenience hook

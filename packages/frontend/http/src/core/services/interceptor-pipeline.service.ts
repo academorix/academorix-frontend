@@ -1,4 +1,5 @@
 /**
+ * @file interceptor-pipeline.service.ts
  * Interceptor pipeline.
  *
  * Mirrors `MiddlewarePipeline` but for `IHttpInterceptor` instances.

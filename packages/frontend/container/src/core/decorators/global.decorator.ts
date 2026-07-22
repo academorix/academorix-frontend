@@ -1,4 +1,5 @@
 /**
+ * @file global.decorator.ts
  * @Global() Decorator
  *
  * Makes a module's exported providers available globally to all other

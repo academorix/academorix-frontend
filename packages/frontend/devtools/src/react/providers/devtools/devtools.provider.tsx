@@ -30,11 +30,11 @@ import { DEFAULT_DEVTOOLS_CONFIG, DEVTOOLS_CONFIG } from "@/core/constants";
 import type { IDevtoolsModuleOptions } from "@/core/interfaces";
 import { DevtoolsAnalyticsService, DevtoolsFrameStateService } from "@/core/services";
 import { mergeConfig } from "@/core/utils";
-import { DevtoolsContext } from "../../contexts/devtools.context";
-import { DevtoolsInspectorContext } from "../../contexts/devtools-inspector.context";
-import type { IDevtoolsContextValue } from "../../contexts/devtools-context-value.interface";
-import type { IDevtoolsInspectorContextValue } from "../../contexts/devtools-inspector-context-value.interface";
-import { useDevtoolsShortcut } from "../../hooks/use-devtools-shortcut.hook";
+import { DevtoolsContext } from "../../contexts/devtools";
+import { DevtoolsInspectorContext } from "../../contexts/devtools-inspector";
+import type { IDevtoolsContextValue } from "../../contexts/devtools";
+import type { IDevtoolsInspectorContextValue } from "../../contexts/devtools-inspector";
+import { useDevtoolsShortcut } from "../../hooks/use-devtools-shortcut";
 import { ActionsDevtoolsPanel } from "../../panels/actions.devtools-panel";
 import { OverviewDevtoolsPanel } from "../../panels/overview.devtools-panel";
 

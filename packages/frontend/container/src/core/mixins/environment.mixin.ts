@@ -1,4 +1,5 @@
 /**
+ * @file environment.mixin.ts
  * Environment Mixin
  *
  * Adds environment detection helpers to any class. Applied to

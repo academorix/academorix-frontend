@@ -16,8 +16,8 @@ import { useCallback, type ReactElement } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { BottomSheet, Chip, PressableFeedback } from "@stackra/ui/native";
 
-import { useNativeDevtoolsFrameState } from "../../hooks/use-native-devtools-frame-state.hook";
-import { useNativeDevtoolsPanels } from "../../hooks/use-native-devtools-panels.hook";
+import { useNativeDevtoolsFrameState } from "../../hooks/use-native-devtools-frame-state";
+import { useNativeDevtoolsPanels } from "../../hooks/use-native-devtools-panels";
 import { DevtoolsPanelView } from "../devtools-panel-view";
 import type { DevtoolsShellProps } from "./devtools-shell.interface";
 

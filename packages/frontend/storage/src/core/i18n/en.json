@@ -1,0 +1,18 @@
+{
+  "storageDevtoolsPanel": {
+    "emptyTitle": "No storage instances configured",
+    "emptyDescription": "Register an instance in {{code}} to see it here.",
+    "emptyCode": "StorageModule.forRoot({ stores: { ... } })",
+    "heading": "Storage instances",
+    "description": "Configured via {{code}}. Keys are read once per open — {{iStorage}} has no subscribe API, so a re-open refreshes the sample.",
+    "descriptionCode": "StorageModule.forRoot()",
+    "descriptionIStorage": "IStorage",
+    "defaultChipLabel": "default",
+    "keysChipLabel": "{{count}} keys",
+    "idleChipLabel": "idle",
+    "driverLabel": "Driver",
+    "moreKeysLabel": "… and {{count}} more",
+    "noKeysLabel": "No keys stored in this instance yet.",
+    "managerUnavailableLabel": "Storage manager not resolved — sample keys unavailable."
+  }
+}

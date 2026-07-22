@@ -9,6 +9,7 @@
 "use client";
 
 import { TextField, Label, Description, FieldError, InputGroup, Button } from "@heroui/react";
+import { Str } from "@stackra/support";
 import React, { useState, useRef, useMemo, useCallback } from "react";
 
 import { CALLING_CODES, DEFAULT_COUNTRIES } from "./phone-input.constants";
@@ -26,7 +27,7 @@ import type { PhoneInputProps, PhoneInputInfo, PhoneCountry } from "./phone-inpu
  * @returns The calling code (without +).
  */
 function getCallingCode(countryCode: string): string {
-  return CALLING_CODES[countryCode.toUpperCase()] ?? "1";
+  return CALLING_CODES[Str.upper(countryCode)] ?? "1";
 }
 
 /**
@@ -98,7 +99,7 @@ export const PhoneInput = React.memo(function PhoneInput({
   name,
   className,
 }: PhoneInputProps): React.ReactElement {
-  const [selectedCountry, setSelectedCountry] = useState(defaultCountry.toUpperCase());
+  const [selectedCountry, setSelectedCountry] = useState(Str.upper(defaultCountry));
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Build country list (reserved for future picker implementation).
@@ -106,19 +107,19 @@ export const PhoneInput = React.memo(function PhoneInput({
     let list = DEFAULT_COUNTRIES;
 
     if (onlyCountries && onlyCountries.length > 0) {
-      const only = new Set(onlyCountries.map((c) => c.toUpperCase()));
+      const only = new Set(onlyCountries.map((c) => Str.upper(c)));
 
       list = list.filter((c) => only.has(c.code));
     }
 
     if (excludedCountries && excludedCountries.length > 0) {
-      const excluded = new Set(excludedCountries.map((c) => c.toUpperCase()));
+      const excluded = new Set(excludedCountries.map((c) => Str.upper(c)));
 
       list = list.filter((c) => !excluded.has(c.code));
     }
 
     if (preferredCountries && preferredCountries.length > 0) {
-      const preferred = preferredCountries.map((c) => c.toUpperCase());
+      const preferred = preferredCountries.map((c) => Str.upper(c));
       const preferredSet = new Set(preferred);
       const top = list.filter((c) => preferredSet.has(c.code));
       const rest = list.filter((c) => !preferredSet.has(c.code));
@@ -192,7 +193,7 @@ export const PhoneInput = React.memo(function PhoneInput({
               <img
                 alt={selectedCountry}
                 className="h-3.5 w-5 shrink-0 rounded-sm object-cover"
-                src={`https://flagcdn.com/h20/${selectedCountry.toLowerCase()}.png`}
+                src={`https://flagcdn.com/h20/${Str.lower(selectedCountry)}.png`}
               />
               <span>+{callingCode}</span>
             </span>
@@ -207,7 +208,7 @@ export const PhoneInput = React.memo(function PhoneInput({
               <img
                 alt={selectedCountry}
                 className="h-3.5 w-5 shrink-0 rounded-sm object-cover"
-                src={`https://flagcdn.com/h20/${selectedCountry.toLowerCase()}.png`}
+                src={`https://flagcdn.com/h20/${Str.lower(selectedCountry)}.png`}
               />
               <span className="text-foreground-600 text-xs">+{callingCode}</span>
               <svg

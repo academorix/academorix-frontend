@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * @module @stackra/collaboration/transports
  */
 export { BroadcastChannelTransport } from "./broadcast-channel.transport";

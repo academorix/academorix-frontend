@@ -1,4 +1,5 @@
 /**
+ * @file token-bucket.service.ts
  * TokenBucketService.
  *
  * Implements the token-bucket algorithm for client-side rate

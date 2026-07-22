@@ -1,4 +1,5 @@
 /**
+ * @file is-class-shorthand.util.ts
  * isClassShorthand Type Guard
  *
  * Determines whether a provider is a class shorthand — a plain class

@@ -1,4 +1,5 @@
 /**
+ * @file use-http-manager.hook.ts
  * `useHttpManager` React hook.
  *
  * Resolves the `IHttpManager` from the DI container so components

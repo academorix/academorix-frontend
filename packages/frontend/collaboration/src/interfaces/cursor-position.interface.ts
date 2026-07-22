@@ -1,4 +1,5 @@
 /**
+ * @file cursor-position.interface.ts
  * Represents a cursor position in a collaboration room.
  *
  * @module @stackra/collaboration/interfaces

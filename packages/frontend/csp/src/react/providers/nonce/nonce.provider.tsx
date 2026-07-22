@@ -10,7 +10,7 @@
 
 import { type PropsWithChildren, type ReactElement } from "react";
 
-import { NonceContext } from "@/react/contexts/nonce.context";
+import { NonceContext } from "@/react/contexts/nonce";
 import type { NonceProviderProps } from "@/react/interfaces/nonce-provider-props.interface";
 
 /**

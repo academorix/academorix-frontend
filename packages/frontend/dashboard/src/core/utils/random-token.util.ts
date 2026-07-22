@@ -10,6 +10,8 @@
  *   never used in production browsers.
  */
 
+import { Str } from "@stackra/support";
+
 import { randomId } from "./random-id.util";
 
 /**
@@ -25,7 +27,7 @@ export function randomToken(): string {
     crypto.getRandomValues(bytes);
 
     return Array.from(bytes)
-      .map((byte) => byte.toString(16).padStart(2, "0"))
+      .map((byte) => Str.padLeft(byte.toString(16), 2, "0"))
       .join("");
   }
 

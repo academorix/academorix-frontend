@@ -1,4 +1,5 @@
 /**
+ * @file on-application-bootstrap.interface.ts
  * Interface defining method called once the application has fully started and
  * is bootstrapped.
  *

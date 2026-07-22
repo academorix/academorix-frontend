@@ -13,8 +13,8 @@ import { useCallback, type ReactElement } from "react";
 import { Chip, PressableFeedback } from "@stackra/ui/react";
 import { WrenchScrewdriverIcon } from "@stackra/ui/icons/heroicon/outline";
 
-import { useDevtoolsFrameState } from "../../hooks/use-devtools-frame-state.hook";
-import { useDevtoolsPanels } from "../../hooks/use-devtools-panels.hook";
+import { useDevtoolsFrameState } from "../../hooks/use-devtools-frame-state";
+import { useDevtoolsPanels } from "../../hooks/use-devtools-panels";
 import type { DevtoolsLauncherProps } from "./devtools-launcher.interface";
 
 /**

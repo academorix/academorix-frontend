@@ -4,4 +4,4 @@
  * @description Hooks barrel export.
  */
 
-export { useNonce } from "./use-nonce.hook";
+export { useNonce } from "./use-nonce";

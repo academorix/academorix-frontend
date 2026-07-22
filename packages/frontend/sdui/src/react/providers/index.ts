@@ -11,5 +11,5 @@ export {
   SduiRuntimeProvider,
   useSduiRuntime,
   type ISduiRuntimeProviderProps,
-} from "./sdui-runtime.provider";
+} from "./sdui-runtime";
 export { SduiThemeScope, type ISduiThemeScopeProps } from "./sdui-theme-scope";

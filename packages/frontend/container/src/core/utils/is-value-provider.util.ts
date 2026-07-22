@@ -1,4 +1,5 @@
 /**
+ * @file is-value-provider.util.ts
  * isValueProvider Type Guard
  *
  * Determines whether a provider uses `useValue` to bind a token

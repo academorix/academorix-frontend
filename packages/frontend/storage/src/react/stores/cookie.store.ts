@@ -14,6 +14,7 @@
  */
 
 import type { IStorage, IStorageSetOptions } from "@stackra/contracts";
+import { Str } from "@stackra/support";
 
 import { prefixKey, stripPrefix } from "@/core/utils/prefix-key.util";
 
@@ -188,8 +189,8 @@ export class CookieStore implements IStorage {
 
     const target = `${name}=`;
     for (const part of cookieString.split(";")) {
-      const trimmed = part.trim();
-      if (trimmed.startsWith(target)) {
+      const trimmed = Str.trim(part);
+      if (Str.startsWith(trimmed, target)) {
         return decodeURIComponent(trimmed.slice(target.length));
       }
     }
@@ -206,7 +207,7 @@ export class CookieStore implements IStorage {
 
     const names: string[] = [];
     for (const part of cookieString.split(";")) {
-      const trimmed = part.trim();
+      const trimmed = Str.trim(part);
       const equalsIdx = trimmed.indexOf("=");
       if (equalsIdx < 0) continue;
       names.push(trimmed.slice(0, equalsIdx));

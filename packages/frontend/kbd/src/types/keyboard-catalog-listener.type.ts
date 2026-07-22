@@ -1,4 +1,5 @@
 /**
+ * @file keyboard-catalog-listener.type.ts
  * KeyboardCatalogListener — Type.
  *
  * @module @stackra/kbd/types

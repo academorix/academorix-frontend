@@ -1,4 +1,5 @@
 /**
+ * @file activity-entry.type.ts
  * Activity feed entry type for collaboration room events.
  *
  * @module @stackra/collaboration/types

@@ -30,7 +30,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=22.0.0"
   },
@@ -76,8 +75,8 @@
     "@stackra/storage": "workspace:^",
     "@stackra/testing": "workspace:^",
     "@stackra/ui": "workspace:^",
-    "react": "*",
-    "reflect-metadata": "*"
+    "react": "catalog:",
+    "reflect-metadata": "catalog:"
   },
   "peerDependenciesMeta": {
     "@stackra/testing": {

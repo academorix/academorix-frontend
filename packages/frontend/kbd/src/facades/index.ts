@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * injectables Barrel Export
  *
  * @module @stackra/kbd

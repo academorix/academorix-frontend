@@ -1,4 +1,5 @@
 /**
+ * @file use-sse.hook.ts
  * `useSse` React hook.
  *
  * Subscribes to an SSE endpoint. Identical state shape to

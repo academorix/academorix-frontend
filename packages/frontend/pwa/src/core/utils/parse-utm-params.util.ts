@@ -4,6 +4,8 @@
  * @description Parse UTM parameters out of a URL search string.
  */
 
+import { Str } from "@stackra/support";
+
 import type { IPwaUtmParams } from "../interfaces";
 
 /** UTM keys and the field they map to on {@link IPwaUtmParams}. */
@@ -34,7 +36,7 @@ export function parseUtmParams(search?: string): IPwaUtmParams {
   if (!raw) return {};
 
   // URLSearchParams tolerates a missing '?' but not `null`.
-  const normalised = raw.startsWith("?") ? raw : `?${raw}`;
+  const normalised = Str.startsWith(raw, "?") ? raw : `?${raw}`;
   const params = new URLSearchParams(normalised);
 
   const result: Record<string, string> = {};

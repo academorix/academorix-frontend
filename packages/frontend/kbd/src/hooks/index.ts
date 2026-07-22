@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Hooks Barrel Export
  *
  * @module @stackra/kbd

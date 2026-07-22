@@ -1,4 +1,5 @@
 /**
+ * @file tokens.constant.ts
  * Metadata Keys & Constants
  *
  * Container-specific constants used by the discovery engine.

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
+ * @file instance-loader.service.ts
  * InstanceLoader — Provider Instantiation & Lifecycle Orchestrator
  *
  * After the scanner has built the module graph, the InstanceLoader:

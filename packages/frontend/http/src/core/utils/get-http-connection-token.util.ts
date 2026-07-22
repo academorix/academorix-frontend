@@ -1,4 +1,5 @@
 /**
+ * @file get-http-connection-token.util.ts
  * HTTP connection token utility.
  *
  * Returns the DI injection token for a named HTTP connection.

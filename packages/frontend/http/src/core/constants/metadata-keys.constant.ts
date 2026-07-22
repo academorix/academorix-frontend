@@ -1,4 +1,5 @@
 /**
+ * @file metadata-keys.constant.ts
  * Decorator metadata keys used by the http package.
  *
  * Stable strings so external bundlers can't rewrite them across

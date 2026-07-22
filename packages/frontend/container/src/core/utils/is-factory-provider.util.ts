@@ -1,4 +1,5 @@
 /**
+ * @file is-factory-provider.util.ts
  * isFactoryProvider Type Guard
  *
  * Determines whether a provider uses `useFactory` to bind a token

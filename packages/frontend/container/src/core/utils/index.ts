@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Utilities Barrel Export
  *
  * Helper functions for working with the DI system.

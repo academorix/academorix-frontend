@@ -1,4 +1,5 @@
 /**
+ * @file inject.decorator.ts
  * @Inject() Decorator
  *
  * Explicitly specifies the injection token for a constructor parameter

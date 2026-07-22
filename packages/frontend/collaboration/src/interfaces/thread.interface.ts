@@ -1,4 +1,5 @@
 /**
+ * @file thread.interface.ts
  * Thread and message interfaces for collaboration comments.
  *
  * @module @stackra/collaboration/interfaces

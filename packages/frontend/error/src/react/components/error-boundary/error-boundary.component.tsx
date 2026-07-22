@@ -12,11 +12,11 @@
 
 import { Component, type ErrorInfo, type ReactNode } from "react";
 
-import { ErrorBoundaryContext } from "@/react/context/error-boundary-context";
+import { ErrorBoundaryContext } from "@/react/contexts";
 import type {
   ErrorBoundaryResetReason,
   IErrorBoundaryProps,
-} from "./error-boundary-props.interface";
+} from "./error-boundary.interface";
 
 /** Internal boundary state. */
 interface IErrorBoundaryState {

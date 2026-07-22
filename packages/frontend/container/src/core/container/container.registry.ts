@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
+ * @file container.registry.ts
  * ModuleContainer — Top-Level Module Registry
  *
  * This is the central registry of the DI system. It holds:

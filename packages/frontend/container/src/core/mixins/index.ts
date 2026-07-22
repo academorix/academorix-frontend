@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Mixins barrel export.
  *
  * @module @stackra/container/mixins

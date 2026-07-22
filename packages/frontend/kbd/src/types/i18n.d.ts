@@ -1,4 +1,5 @@
 /**
+ * @file i18n.d.ts
  * Global translation function provided by @stackra/i18n.
  *
  * @param key - Translation key with optional namespace prefix

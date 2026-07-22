@@ -39,6 +39,7 @@ import {
   type IAiClientToolDefinition,
   type IEventEmitter,
 } from "@stackra/contracts";
+import { Str } from "@stackra/support";
 
 import { AiSchemaError } from "../errors";
 import { deepEqual } from "../utils/deep-equal.util";
@@ -101,7 +102,7 @@ function primitiveType(schema: unknown): string {
   if (!schema || typeof schema !== "object") return "string";
   const s = schema as { _def?: { typeName?: string }; def?: { type?: string } };
   const name = s._def?.typeName ?? s.def?.type ?? "";
-  const lower = name.replace(/^Zod/, "").toLowerCase();
+  const lower = Str.lower(name.replace(/^Zod/, ""));
   switch (lower) {
     case "string":
       return "string";

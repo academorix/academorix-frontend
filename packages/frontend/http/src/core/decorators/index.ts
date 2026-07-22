@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Decorators barrel.
  *
  * @module @stackra/http/decorators

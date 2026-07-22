@@ -4,4 +4,4 @@
  * @description Barrel for the native devtools React contexts.
  */
 
-export { DevtoolsContext } from "./devtools.context";
+export { DevtoolsContext } from "./devtools";

@@ -11,7 +11,7 @@
 
 import type { ReactElement } from "react";
 
-import type { ErrorFallbackProps } from "../react/components/error-boundary/error-boundary-props.interface";
+import type { ErrorFallbackProps } from "../react/components/error-boundary/error-boundary.interface";
 import type { MockErrorRecorder } from "./mock-error-recorder";
 
 /** Props for {@link MockFallback}. */

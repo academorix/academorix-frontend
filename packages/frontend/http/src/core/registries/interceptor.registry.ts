@@ -1,4 +1,5 @@
 /**
+ * @file interceptor.registry.ts
  * Per-connection interceptor registry.
  *
  * Mirrors `MiddlewareRegistry` but for `IHttpInterceptor` instances.

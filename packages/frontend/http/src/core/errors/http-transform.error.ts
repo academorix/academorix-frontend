@@ -1,4 +1,5 @@
 /**
+ * @file http-transform.error.ts
  * Transform operation error.
  *
  * Raised when request/response transformation fails (case conversion,

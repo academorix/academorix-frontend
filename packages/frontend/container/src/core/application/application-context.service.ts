@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
+ * @file application-context.service.ts
  * ApplicationContext — The Bootstrapped DI Container
  *
  * Mirrors NestJS's `NestApplicationContext` — the runtime representation

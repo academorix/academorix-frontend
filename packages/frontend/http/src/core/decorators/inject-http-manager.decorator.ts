@@ -1,4 +1,5 @@
 /**
+ * @file inject-http-manager.decorator.ts
  * `@InjectHttpManager()` parameter decorator.
  *
  * Convenience wrapper over `@Inject(HTTP_MANAGER)`. Use when a

@@ -1,0 +1,47 @@
+{
+  "$comment": "Machine-generated Modern Standard Arabic. Requires native-Arabic reviewer pass before production. Generated 2026-07-21.",
+  "aiChat": {
+    "thinkingLabel": "جارٍ التفكير..."
+  },
+  "aiPrompt": {
+    "placeholder": "أرسل رسالة إلى المساعد..."
+  },
+  "aiLoader": {
+    "defaultLabel": "جارٍ التفكير..."
+  },
+  "aiMessage": {
+    "assistantAvatarAlt": "المساعد",
+    "assistantAvatarFallback": "AI",
+    "copyAriaLabel": "نسخ",
+    "copyTooltip": "نسخ",
+    "thumbsUpAriaLabel": "إجابة جيدة",
+    "thumbsUpTooltip": "إجابة جيدة",
+    "thumbsDownAriaLabel": "إجابة سيئة",
+    "thumbsDownTooltip": "إجابة سيئة"
+  },
+  "aiToolCall": {
+    "serverToolPrefix": "أداة الخادم: ",
+    "approvalNeededPrefix": "الموافقة مطلوبة: ",
+    "usedToolPrefix": "الأداة المستخدمة: ",
+    "approveLabel": "موافقة",
+    "rejectLabel": "رفض"
+  },
+  "aiThreadList": {
+    "defaultAriaLabel": "المحادثات الأخيرة"
+  },
+  "aiSources": {
+    "triggerCount": "{{count}} مصادر"
+  },
+  "aiReasoning": {
+    "defaultTriggerLabel": "الاستدلال"
+  },
+  "aiContextIndicator": {
+    "ariaLabelSingular": "سياق الذكاء الاصطناعي: إطار واحد",
+    "ariaLabelPlural": "سياق الذكاء الاصطناعي: {{count}} إطارات",
+    "chipSingular": "إطار سياق واحد",
+    "chipPlural": "{{count}} إطارات سياق",
+    "focusStackLabel": "مجموعة التركيز (الأعلى أولًا)",
+    "emptyMessage": "لا توجد إطارات سياق مسجّلة.",
+    "priorityLabel": "الأولوية {{priority}}"
+  }
+}

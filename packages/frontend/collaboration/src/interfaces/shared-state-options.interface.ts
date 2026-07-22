@@ -1,4 +1,5 @@
 /**
+ * @file shared-state-options.interface.ts
  * Options for the shared state hook.
  *
  * @module @stackra/collaboration/interfaces

@@ -23,6 +23,7 @@
 import { Inject, Injectable, Optional } from "@stackra/container";
 import type { ILoggerManager } from "@stackra/contracts";
 import { LOGGER_MANAGER } from "@stackra/contracts";
+import { Str } from "@stackra/support";
 
 import type {
   IMiddlewareGroup,
@@ -154,7 +155,7 @@ export class MiddlewareResolverService {
    */
   private resolveMiddlewareRef(ref: unknown): IResolvedPipelineEntry[] {
     // Group reference — starts with `@`. Expand via DFS.
-    if (typeof ref === "string" && ref.startsWith("@")) {
+    if (typeof ref === "string" && Str.startsWith(ref, "@")) {
       return this.expandGroup(ref, new Set(), []);
     }
 
@@ -233,7 +234,7 @@ export class MiddlewareResolverService {
 
     const out: IResolvedPipelineEntry[] = [];
     for (const member of this.enumerateMembers(group)) {
-      if (member.startsWith("@")) {
+      if (Str.startsWith(member, "@")) {
         // Nested group.
         out.push(...this.expandGroup(member, nextVisited, nextPath));
         continue;

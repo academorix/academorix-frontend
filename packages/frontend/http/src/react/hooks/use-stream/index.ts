@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * `useStream` hook barrel.
  *
  * @module @stackra/http/react/hooks/use-stream

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
+ * @file module.ts
  * Module — Runtime Representation of a @Module() Class
  *
  * Each `@Module()` decorated class gets a corresponding `Module` instance

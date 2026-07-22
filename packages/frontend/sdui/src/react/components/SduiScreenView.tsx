@@ -21,7 +21,7 @@ import {
   SDUI_SCHEMA_VERSION,
 } from "@/core/constants/sdui-version.constant";
 import type { ISduiNotification } from "@stackra/contracts";
-import { SduiRuntimeProvider } from "../providers/sdui-runtime.provider";
+import { SduiRuntimeProvider } from "../providers/sdui-runtime";
 import { SduiThemeScope } from "../providers/sdui-theme-scope";
 import { SduiTree } from "../renderer/sdui-tree";
 

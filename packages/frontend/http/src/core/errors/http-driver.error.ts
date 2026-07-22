@@ -1,4 +1,5 @@
 /**
+ * @file http-driver.error.ts
  * Driver resolution error.
  *
  * Thrown when the manager cannot resolve a connector for a driver

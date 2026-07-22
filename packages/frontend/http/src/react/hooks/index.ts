@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * React hooks barrel.
  *
  * @module @stackra/http/react/hooks

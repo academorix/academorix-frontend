@@ -1,4 +1,5 @@
 /**
+ * @file date-parser.util.ts
  * Date serialization / parsing helper.
  *
  * Bridges JavaScript `Date` objects with the ISO 8601 strings APIs

@@ -1,4 +1,5 @@
 /**
+ * @file circuit-breaker.middleware.ts
  * Circuit-breaker middleware.
  *
  * Per-endpoint failure isolator. Reads the `CircuitBreakerService`

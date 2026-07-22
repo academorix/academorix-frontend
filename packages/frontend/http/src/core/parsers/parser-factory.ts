@@ -1,4 +1,5 @@
 /**
+ * @file parser-factory.ts
  * Stream parser factory.
  *
  * Maps an `HttpStreamFormat` to its concrete parser instance. Used by

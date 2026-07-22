@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
+ * @file reflector.service.ts
  * Reflector — Typed Metadata Reader
  *
  * Mirrors NestJS's `Reflector` — a lightweight injectable service that

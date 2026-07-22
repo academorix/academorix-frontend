@@ -1,4 +1,5 @@
 /**
+ * @file middleware-pipeline.service.ts
  * Middleware pipeline.
  *
  * Builds a sequential `next()`-style chain over the registry's

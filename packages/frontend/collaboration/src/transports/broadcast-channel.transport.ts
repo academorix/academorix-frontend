@@ -1,4 +1,5 @@
 /**
+ * @file broadcast-channel.transport.ts
  * BroadcastChannel-based transport for local/cross-tab collaboration.
  *
  * Uses `@stackra/coordinator`'s shared `ITabTransportManager` to

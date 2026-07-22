@@ -1,4 +1,5 @@
 /**
+ * @file fetch.connector.ts
  * Fetch connector.
  *
  * Web-`fetch`-backed driver. Works in modern browsers, Node ≥ 18,
@@ -119,7 +120,7 @@ export class FetchConnector implements IHttpConnector {
     const base = request.baseURL ?? "";
 
     let url: string;
-    if (path.startsWith("http://") || path.startsWith("https://")) {
+    if (Str.startsWith(path, "http://") || Str.startsWith(path, "https://")) {
       url = path;
     } else {
       url = `${base.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
@@ -260,7 +261,7 @@ export class FetchConnector implements IHttpConnector {
   private static headersToObject(headers: Headers): Record<string, string> {
     const out: Record<string, string> = {};
     headers.forEach((value, key) => {
-      out[key.toLowerCase()] = value;
+      out[Str.lower(key)] = value;
     });
     return out;
   }

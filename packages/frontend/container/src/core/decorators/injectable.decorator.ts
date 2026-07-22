@@ -1,4 +1,5 @@
 /**
+ * @file injectable.decorator.ts
  * @Injectable() Decorator
  *
  * Marks a class as a provider that can be managed by the DI container.

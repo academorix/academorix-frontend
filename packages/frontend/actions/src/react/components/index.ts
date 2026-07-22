@@ -8,4 +8,4 @@
  *   `../../core/components/`.
  */
 
-export { ActionButton, type IActionButtonProps } from "./action-button.component";
+export { ActionButton, type IActionButtonProps } from "./action-button";

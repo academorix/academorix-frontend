@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Services barrel.
  *
  * @module @stackra/http/services

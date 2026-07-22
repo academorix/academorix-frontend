@@ -29,7 +29,7 @@ import {
   STATE_REGISTRY,
 } from "@stackra/contracts";
 
-import { useDevtoolsContext } from "../../hooks/use-devtools-context.hook";
+import { useDevtoolsContext } from "../../hooks/use-devtools-context";
 import type { ActionsPanelProps } from "./actions-panel.interface";
 
 /** Shape of a single row in the actions grid. */

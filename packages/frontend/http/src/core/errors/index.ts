@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Errors barrel.
  *
  * @module @stackra/http/errors

@@ -1,0 +1,31 @@
+{
+  "scopeSwitcher": {
+    "defaultLabel": "Scope",
+    "searchPlaceholder": "Search scope...",
+    "emulatingChipLabel": "Emulating",
+    "exitEmulationLabel": "Exit"
+  },
+  "scopeDevtoolsPanel": {
+    "unavailableTitle": "Scope service not available",
+    "unavailableDescription": "Wire {{code}} to see the active scope + tree here.",
+    "unavailableCode": "ScopeModule.forRoot(...)",
+    "heading": "Scope",
+    "description": "Live active scope context and the switch-target node tree.",
+    "activeScopeTitle": "Active scope",
+    "activeScopeCurrent": "Currently at {{level}}: {{entityId}}",
+    "activeScopeUnresolved": "No scope resolved yet.",
+    "emulatingChipLabel": "emulating",
+    "loadingChipLabel": "loading",
+    "activeChipLabel": "active",
+    "disabledChipLabel": "disabled",
+    "ownerLabel": "Owner",
+    "nodeLabel": "Node",
+    "levelLabel": "Level",
+    "entityLabel": "Entity",
+    "pathDepthLabel": "Path depth",
+    "switchableTreeTitle": "Switchable tree",
+    "switchableTreeEmpty": "The scope tree is empty. Load it via the data source.",
+    "switchableTreeCountSingular": "{{count}} root node, authorised backend-side.",
+    "switchableTreeCountPlural": "{{count}} root nodes, authorised backend-side."
+  }
+}

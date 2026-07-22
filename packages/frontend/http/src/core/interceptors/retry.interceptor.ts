@@ -1,4 +1,5 @@
 /**
+ * @file retry.interceptor.ts
  * Retry interceptor.
  *
  * Retries on 5xx server errors and network errors with backoff

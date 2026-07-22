@@ -1,0 +1,21 @@
+{
+  "installPromptBanner": {
+    "title": "Install this app",
+    "description": "Add to your home screen for offline access and a native feel.",
+    "installLabel": "Install",
+    "dismissLabel": "Not now",
+    "iosStep1": "Tap the Share button in Safari's toolbar.",
+    "iosStep2": "Choose Add to Home Screen.",
+    "iosShareEmphasis": "Share",
+    "iosAddToHomeEmphasis": "Add to Home Screen"
+  },
+  "updatePromptBanner": {
+    "title": "Update available",
+    "message": "A new version is ready — refresh to apply it.",
+    "updateLabel": "Refresh",
+    "dismissLabel": "Later"
+  },
+  "splashScreen": {
+    "defaultMessage": "Loading..."
+  }
+}

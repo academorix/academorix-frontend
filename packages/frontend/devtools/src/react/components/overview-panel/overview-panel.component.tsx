@@ -14,9 +14,9 @@ import { Button, Card, Chip } from "@stackra/ui/react";
 import { Env, Num } from "@stackra/support";
 import { ArrowPathIcon, BookOpenIcon } from "@stackra/ui/icons/heroicon/outline";
 
-import { useDevtoolsContext } from "../../hooks/use-devtools-context.hook";
-import { useDevtoolsInspector } from "../../hooks/use-devtools-inspector.hook";
-import { useDevtoolsPanels } from "../../hooks/use-devtools-panels.hook";
+import { useDevtoolsContext } from "../../hooks/use-devtools-context";
+import { useDevtoolsInspector } from "../../hooks/use-devtools-inspector";
+import { useDevtoolsPanels } from "../../hooks/use-devtools-panels";
 import type { OverviewPanelProps } from "./overview-panel.interface";
 
 /** Session-uptime label helper. */

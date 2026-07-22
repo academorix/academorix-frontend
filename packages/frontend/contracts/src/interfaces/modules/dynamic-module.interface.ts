@@ -2,6 +2,7 @@ import { Type } from "@/interfaces/type.interface";
 import type { ModuleMetadata } from "./module-metadata.interface";
 
 /**
+ * @file dynamic-module.interface.ts
  * Interface defining a Dynamic Module.
  *
  * @see Dynamic module contract used by `Module.forRoot()` / `Module.forRootAsync()`

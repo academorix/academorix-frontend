@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Constants Barrel Export
  *
  * Metadata keys and tokens used throughout the DI system. These constants

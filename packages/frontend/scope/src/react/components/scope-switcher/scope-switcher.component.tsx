@@ -19,7 +19,7 @@ import { useMemo } from "react";
 import type { Key } from "react";
 import { ComboBox, Input, Label, ListBox, Chip, Button } from "@stackra/ui/react";
 
-import { useScope } from "@/react/hooks/use-scope.hook";
+import { useScope } from "@/react/hooks/use-scope";
 import type { IScopeNodeTreeNode } from "@/core/interfaces";
 import type { ScopeSwitcherProps } from "@/react/interfaces";
 

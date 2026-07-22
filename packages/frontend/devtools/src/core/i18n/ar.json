@@ -1,0 +1,102 @@
+{
+  "$comment": "Machine-generated Modern Standard Arabic. Requires native-Arabic reviewer pass before production. Generated 2026-07-21.",
+  "devtoolsLauncher": {
+    "ariaLabel": "فتح أدوات المطوّرين",
+    "chipLabel": "أدوات المطوّرين"
+  },
+  "devtoolsShell": {
+    "heading": "أدوات المطوّرين",
+    "closeAriaLabel": "إغلاق أدوات المطوّرين",
+    "toggleFooterLabel": "تبديل",
+    "panelCountLabel": "{{count}} لوحة"
+  },
+  "devtoolsSearch": {
+    "placeholder": "ابحث في اللوحات",
+    "ariaLabel": "ابحث في اللوحات"
+  },
+  "devtoolsNavRail": {
+    "ariaLabel": "لوحات أدوات المطوّرين",
+    "openPanelAriaTemplate": "افتح اللوحة {{title}}",
+    "categories": {
+      "pinned": "المثبّتة",
+      "app": "التطبيق",
+      "framework": "إطار العمل",
+      "data": "البيانات",
+      "ui": "واجهة المستخدم",
+      "network": "الشبكة",
+      "observability": "المراقبة",
+      "modules": "الوحدات"
+    }
+  },
+  "devtoolsPositionMenu": {
+    "ariaLabel": "تغيير موضع أدوات المطوّرين",
+    "tooltip": "تغيير الموضع",
+    "positions": {
+      "left": "يسار",
+      "right": "يمين",
+      "top": "أعلى",
+      "bottom": "أسفل"
+    }
+  },
+  "devtoolsInspectorToolbar": {
+    "enableAriaLabel": "تفعيل الفاحص",
+    "disableAriaLabel": "تعطيل الفاحص",
+    "tooltip": "فحص المناطق"
+  },
+  "devtoolsPanelLocked": {
+    "unauthenticatedTitle": "تسجيل الدخول مطلوب",
+    "unauthenticatedDescription": "هذه اللوحة محمية. سجِّل الدخول بحساب يملك صلاحية عرض محتواها.",
+    "forbiddenTitle": "لا تملك الإذن",
+    "forbiddenDescription": "هذه اللوحة محمية بصلاحية لا يملكها حسابك الحالي. تواصل مع المشرف إذا اعتقدت أن هذا خطأ.",
+    "requiredAbilityLabel": "الصلاحية المطلوبة:",
+    "resourceSuffix": " · المورد ",
+    "signInLabel": "تسجيل الدخول"
+  },
+  "devtoolsPanelEmpty": {
+    "title": "لم يتم اختيار لوحة",
+    "description": "اختر لوحة من الشريط على اليسار، أو ساهم بواحدة من حزمة عبر @DevtoolsPanel(...)."
+  },
+  "devtoolsPanelView": {
+    "confirmDefaultBody": "هذا الإجراء لا يمكن التراجع عنه. هل تريد المتابعة؟",
+    "cancelLabel": "إلغاء",
+    "confirmLabel": "تأكيد"
+  },
+  "overviewPanel": {
+    "heading": "أدوات مطوّري Stackra",
+    "description": "نظرة عامة على اللوحات ومصادر الفاحص التي تُسهم بها كل وحدة في هذا التطبيق.",
+    "statPanels": "اللوحات",
+    "statPanelsHintSingular": "{{count}} فئة",
+    "statPanelsHintPlural": "{{count}} فئات",
+    "statInspectorSources": "مصادر الفاحص",
+    "statInspectorSourcesHintSingular": "{{count}} منطقة",
+    "statInspectorSourcesHintPlural": "{{count}} مناطق",
+    "statSessionUptime": "زمن الجلسة",
+    "statCategories": "الفئات",
+    "reloadLabel": "إعادة تحميل الصفحة",
+    "docsLabel": "الوثائق"
+  },
+  "actionsPanel": {
+    "heading": "الصيانة",
+    "description": "إجراءات صيانة تُنفَّذ مرة واحدة. تُعطَّل التبعيات الاختيارية عندما لا تكون الحزمة المناظرة مثبّتة في هذا التطبيق.",
+    "clearCachesLabel": "مسح جميع الذواكر المؤقتة",
+    "clearCachesDescription": "إفراغ كل نسخ @stackra/cache المسجّلة.",
+    "clearCachesRequirement": "يتطلّب تثبيت @stackra/cache.",
+    "drainQueuesLabel": "تفريغ الطوابير",
+    "drainQueuesDescription": "مسح المهام المعلّقة في كل طابور مسجّل.",
+    "drainQueuesRequirement": "يتطلّب تثبيت @stackra/queue.",
+    "resetScopesLabel": "إعادة تعيين النطاقات",
+    "resetScopesDescription": "إزالة كل نطاق نشط في شجرة النطاقات.",
+    "resetScopesRequirement": "يتطلّب تثبيت @stackra/scope.",
+    "dumpStateLabel": "طباعة الحالة في وحدة التحكم",
+    "dumpStateDescription": "تسلسل كل مخازن الحالة المسجّلة وطباعتها.",
+    "dumpStateRequirement": "يتطلّب تثبيت @stackra/state.",
+    "copyDiGraphLabel": "نسخ رسم DI البياني",
+    "copyDiGraphDescription": "كتابة رسم JSON بكل مزوّد إلى الحافظة.",
+    "copyDiGraphRequirement": "يتطلّب تفعيل اكتشاف @stackra/container.",
+    "reloadPageLabel": "إعادة تحميل الصفحة",
+    "reloadPageDescription": "تنفيذ window.location.reload() كامل.",
+    "confirmDefaultBody": "هذا الإجراء لا يمكن التراجع عنه.",
+    "cancelLabel": "إلغاء",
+    "confirmLabel": "تأكيد"
+  }
+}

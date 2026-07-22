@@ -1,4 +1,5 @@
 /**
+ * @file http.error.ts
  * Base error class for the HTTP package.
  *
  * Every error raised by `@stackra/http` extends this class so a

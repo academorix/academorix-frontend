@@ -20,6 +20,7 @@ import {
   type IStorage,
   type IStorageManager,
 } from "@stackra/contracts";
+import { Str } from "@stackra/support";
 
 import { STORAGE_STORE_OPTIONS } from "@/core/constants/storage-store.constants";
 import { CacheStore } from "@/core/decorators";
@@ -172,7 +173,7 @@ export class StorageStore implements ICacheStore {
    */
   public async clear(): Promise<void> {
     const keys = await this.storage().keys();
-    const owned = keys.filter((k) => k.startsWith(this.prefix));
+    const owned = keys.filter((k) => Str.startsWith(k, this.prefix));
     for (const k of owned) {
       await this.storage().delete(k);
     }
@@ -301,7 +302,7 @@ export class StorageStore implements ICacheStore {
     if (this.maxEntries <= 0 || this.maxEntries === Infinity) return;
 
     const allKeys = await this.storage().keys();
-    const ownedKeys = allKeys.filter((k) => k.startsWith(this.prefix));
+    const ownedKeys = allKeys.filter((k) => Str.startsWith(k, this.prefix));
     if (ownedKeys.length <= this.maxEntries) return;
 
     // Read each entry's createdAt in parallel — the sweep is

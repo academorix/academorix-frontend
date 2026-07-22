@@ -1,0 +1,16 @@
+{
+  "$comment": "Machine-generated Modern Standard Arabic. Requires native-Arabic reviewer pass before production. Generated 2026-07-21.",
+  "stateDevtoolsPanel": {
+    "unavailableTitle": "سجل الحالة غير متاح",
+    "unavailableDescription": "قم بتوصيل {{code}} لرؤية المخازن المسجّلة هنا.",
+    "unavailableCode": "StateModule.forRoot()",
+    "emptyTitle": "لا توجد مخازن مسجّلة",
+    "emptyDescription": "سجِّل مخزنًا باستخدام {{code}} لعرضه هنا.",
+    "emptyCode": "StateModule.forFeature({ name, token, initialState })",
+    "heading": "مخازن الحالة",
+    "description": "مخازن تفاعلية مسجّلة عبر {{code}}. كل بطاقة هي عرض مباشر — تنعكس التغييرات فورًا عبر واجهة {{subscribe}} لكل مخزن.",
+    "descriptionCode": "StateModule.forFeature()",
+    "descriptionSubscribe": "subscribe",
+    "cardDescription": "اللقطة الحالية (المعاينة مُختصرة إلى {{depth}} مستويات عمقًا)."
+  }
+}

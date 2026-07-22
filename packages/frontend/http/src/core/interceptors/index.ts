@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Interceptors barrel.
  *
  * Wrap-handler stages — they run BEFORE and AFTER the connector

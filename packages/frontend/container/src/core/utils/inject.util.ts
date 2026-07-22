@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
+ * @file inject.util.ts
  * inject() — Lazy DI resolution for module-level constants.
  *
  * Creates a typed Proxy that lazily resolves a service from the DI
@@ -47,6 +48,8 @@
  */
 
 import { InjectionToken } from "@stackra/contracts";
+import { Str } from "@stackra/support";
+
 import { getGlobalApplicationContext } from "./global-application.util";
 
 /**
@@ -115,7 +118,7 @@ export function inject<T extends object>(token: InjectionToken<T>): T {
         if (prop === "bind") return undefined;
 
         // Node.js / util.inspect
-        if (typeof prop === "string" && prop.startsWith("@@__IMMUTABLE")) return undefined;
+        if (typeof prop === "string" && Str.startsWith(prop, "@@__IMMUTABLE")) return undefined;
         if (prop === "inspect" || prop === "nodeType") return undefined;
 
         throw new Error(

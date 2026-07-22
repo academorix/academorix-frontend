@@ -21,7 +21,7 @@ import { Alert } from "@stackra/ui/react";
 import type { ISduiAction, ISduiNode } from "@stackra/contracts";
 import { evaluateBoolean, resolveBindable } from "@/core/expression/evaluator";
 import type { ComponentRegistry } from "@/core/registries/component.registry";
-import { useSduiRuntime } from "../providers/sdui-runtime.provider";
+import { useSduiRuntime } from "../providers/sdui-runtime";
 import { useSduiActionAdapter } from "../action-adapter/action-adapter";
 import { NodeErrorBoundary } from "./node-error-boundary";
 

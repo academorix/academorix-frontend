@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
+ * @file lazy-module-loader.service.ts
  * LazyModuleLoader — Runtime Module Loading
  *
  * Mirrors NestJS's `LazyModuleLoader` — allows loading modules after the

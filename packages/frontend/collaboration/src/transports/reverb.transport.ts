@@ -1,4 +1,5 @@
 /**
+ * @file reverb.transport.ts
  * Reverb transport using @stackra/realtime for remote collaboration.
  *
  * Uses the existing RealtimeManager to connect to Laravel Reverb/Pusher

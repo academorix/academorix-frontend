@@ -1,4 +1,5 @@
 /**
+ * @file use-command-palette-result.interface.ts
  * UseCommandPaletteResult — Interface.
  *
  * @module @stackra/kbd/interfaces

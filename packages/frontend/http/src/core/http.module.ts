@@ -1,4 +1,5 @@
 /**
+ * @file http.module.ts
  * HTTP module.
  *
  * Wires the manager + axios connector + per-connection middleware /

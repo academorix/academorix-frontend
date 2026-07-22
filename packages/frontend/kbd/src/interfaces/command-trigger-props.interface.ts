@@ -1,4 +1,5 @@
 /**
+ * @file command-trigger-props.interface.ts
  * CommandTriggerProps — Interface.
  *
  * @module @stackra/kbd/interfaces

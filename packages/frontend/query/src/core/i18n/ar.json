@@ -1,0 +1,33 @@
+{
+  "$comment": "Machine-generated Modern Standard Arabic. Requires native-Arabic reviewer pass before production. Generated 2026-07-21.",
+  "queryDevtoolsPanel": {
+    "unavailableTitle": "عميل الاستعلام غير متاح",
+    "unavailableDescription": "قم بتوصيل {{code}} لعرض إحصائيات ذاكرة TanStack Query المباشرة هنا.",
+    "unavailableCode": "QueryModule.forRoot()",
+    "heading": "الاستعلامات",
+    "description": "إحصائيات ذاكرة TanStack Query المباشرة إضافةً إلى طابور Stackra للتعديلات القابلة للتراجع.",
+    "cacheTitle": "ذاكرة الاستعلام",
+    "cacheCachedLabel": "{{count}} مخزّنة",
+    "cacheFetchingLabel": "{{count}} قيد الجلب",
+    "cacheStaleLabel": "{{count}} قديمة",
+    "cacheErroredLabel": "{{count}} فشلت",
+    "cacheDescriptionSome": "أول {{count}} مفاتيح معروضة أدناه.",
+    "cacheDescriptionEmpty": "لا توجد استعلامات مخزّنة بعد.",
+    "mutationsTitle": "التعديلات",
+    "mutationsTotalLabel": "{{count}} إجمالي",
+    "mutationsInFlightLabel": "{{count}} قيد التنفيذ",
+    "mutationsErroredLabel": "{{count}} فشلت",
+    "mutationsUndoableLabel": "{{count}} قابل للتراجع",
+    "mutationsDescription": "ذاكرة تعديلات TanStack Query المباشرة إضافةً إلى طابور العدّ التنازلي في Stackra لـ {{code}}.",
+    "mutationsDescriptionCode": "mutationMode: 'undoable'",
+    "statusPending": "قيد الانتظار",
+    "statusSuccess": "نجاح",
+    "statusError": "خطأ",
+    "statusIdle": "خامل",
+    "fetchedNever": "أبدًا",
+    "fetchedNow": "الآن",
+    "fetchedSeconds": "منذ {{count}} ثانية",
+    "fetchedMinutes": "منذ {{count}} دقيقة",
+    "fetchedHours": "منذ {{count}} ساعة"
+  }
+}

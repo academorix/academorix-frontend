@@ -1,4 +1,5 @@
 /**
+ * @file use-optional-inject.hook.ts
  * useOptionalInject Hook
  *
  * Like `useInject()`, but returns `undefined` instead of throwing

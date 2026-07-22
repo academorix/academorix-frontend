@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * `@stackra/http/react` — React entry point.
  *
  * Optional React surface for the HTTP package. Hooks compose

@@ -18,7 +18,7 @@ import type { IHashMatchers, IHashPredicate } from "@stackra/contracts";
  * behave identically.
  */
 function stripHash(hash: string): string {
-  return hash.startsWith("#") ? hash.slice(1) : hash;
+  return Str.startsWith(hash, "#") ? hash.slice(1) : hash;
 }
 
 /**

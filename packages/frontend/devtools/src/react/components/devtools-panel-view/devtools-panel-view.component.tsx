@@ -16,7 +16,7 @@ import { type ReactElement, type ReactNode, useCallback, useState } from "react"
 import { AlertDialog, Button, Card, ScrollShadow } from "@stackra/ui/react";
 import type { IDevtoolsAction, IDevtoolsPanel } from "@stackra/contracts";
 
-import { useDevtoolsContext } from "../../hooks/use-devtools-context.hook";
+import { useDevtoolsContext } from "../../hooks/use-devtools-context";
 import type { DevtoolsPanelViewProps } from "./devtools-panel-view.interface";
 
 /**

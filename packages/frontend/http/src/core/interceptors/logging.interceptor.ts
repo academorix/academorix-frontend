@@ -1,4 +1,5 @@
 /**
+ * @file logging.interceptor.ts
  * Logging interceptor.
  *
  * Records request/response duration and status. Always-on but the
@@ -9,6 +10,7 @@
  */
 
 import { Logger } from "@stackra/logger";
+import { Str } from "@stackra/support";
 
 import type {
   IHttpContext,
@@ -52,7 +54,7 @@ export class LoggingInterceptor implements IHttpInterceptor {
   /** Concatenate baseURL + url defensively. */
   private static fullUrl(baseURL?: string, url?: string): string {
     if (!url) return baseURL ?? "/";
-    if (url.startsWith("http")) return url;
+    if (Str.startsWith(url, "http")) return url;
     if (!baseURL) return url;
     return `${baseURL.replace(/\/+$/, "")}/${url.replace(/^\/+/, "")}`;
   }

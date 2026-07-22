@@ -1,4 +1,5 @@
 /**
+ * @file use-draggable-result.interface.ts
  * UseDraggableResult — Interface.
  *
  * @module @stackra/kbd/interfaces

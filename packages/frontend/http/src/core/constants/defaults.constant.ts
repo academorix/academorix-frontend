@@ -1,4 +1,5 @@
 /**
+ * @file defaults.constant.ts
  * Built-in defaults for HTTP middleware/interceptor configuration.
  *
  * Centralised so manager, middleware, and tests use the same numbers.

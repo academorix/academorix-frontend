@@ -1,0 +1,10 @@
+{
+  "consentBanner": {
+    "title": "We value your privacy",
+    "description": "We use cookies to enhance your experience, analyze traffic, and personalize content. Choose which categories you allow.",
+    "showDetailsLabel": "Customize",
+    "hideDetailsLabel": "Hide details",
+    "rejectAllLabel": "Reject all",
+    "acceptAllLabel": "Accept all"
+  }
+}

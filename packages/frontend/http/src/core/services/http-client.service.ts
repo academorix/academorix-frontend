@@ -1,4 +1,5 @@
 /**
+ * @file http-client.service.ts
  * HttpClient.
  *
  * Concrete `IHttpClient` for one connection. Built by `HttpManager`

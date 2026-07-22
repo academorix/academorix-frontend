@@ -1,4 +1,5 @@
 /**
+ * @file fetch.ts
  * `@stackra/http/fetch` — fetch driver.
  *
  * Optional `IHttpConnector` backed by the global `fetch` API. Use

@@ -1,4 +1,5 @@
 /**
+ * @file transform.interceptor.ts
  * Transform interceptor.
  *
  * Bridges TypeScript-style camelCase to API-style snake_case (and

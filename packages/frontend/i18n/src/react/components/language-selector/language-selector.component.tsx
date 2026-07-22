@@ -30,7 +30,7 @@ import React, { useCallback, useMemo } from "react";
 import type { Key } from "react";
 import { ComboBox, Input, Label, ListBox } from "@stackra/ui/react";
 
-import { useI18n } from "@/core/hooks/use-i18n.hook";
+import { useI18n } from "@/core/hooks/use-i18n";
 import type { LanguageSelectorProps, LocaleItem } from "@/react/interfaces";
 
 /**

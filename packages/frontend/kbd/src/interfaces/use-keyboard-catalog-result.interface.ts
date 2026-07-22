@@ -1,4 +1,5 @@
 /**
+ * @file use-keyboard-catalog-result.interface.ts
  * UseKeyboardCatalogResult — Interface.
  *
  * @module @stackra/kbd/interfaces

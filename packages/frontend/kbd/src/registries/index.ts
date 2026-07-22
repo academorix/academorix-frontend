@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Registries Barrel Export
  *
  * @module @stackra/kbd

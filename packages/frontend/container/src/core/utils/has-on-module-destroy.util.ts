@@ -1,4 +1,5 @@
 /**
+ * @file has-on-module-destroy.util.ts
  * hasOnModuleDestroy Type Guard
  *
  * Checks if an object implements the `OnModuleDestroy` interface.

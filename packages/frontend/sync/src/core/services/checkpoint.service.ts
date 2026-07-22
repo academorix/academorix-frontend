@@ -21,6 +21,7 @@ import {
   type IStorageManager,
 } from "@stackra/contracts";
 import { Logger } from "@stackra/logger";
+import { Str } from "@stackra/support";
 
 /** Key prefix for checkpoint entries inside the resolved `IStorage`. */
 const KEY_PREFIX = "sync:checkpoint:";
@@ -85,7 +86,7 @@ export class CheckpointService {
     if (!storage) return [];
 
     const keys = await storage.keys();
-    const owned = keys.filter((k) => k.startsWith(KEY_PREFIX));
+    const owned = keys.filter((k) => Str.startsWith(k, KEY_PREFIX));
     const results = await Promise.all(owned.map((k) => storage.get<ISyncCheckpoint>(k)));
     return results.filter((c): c is ISyncCheckpoint => c !== null);
   }
@@ -103,7 +104,7 @@ export class CheckpointService {
     if (!storage) return;
 
     const keys = await storage.keys();
-    const owned = keys.filter((k) => k.startsWith(KEY_PREFIX));
+    const owned = keys.filter((k) => Str.startsWith(k, KEY_PREFIX));
     for (const key of owned) {
       await storage.delete(key);
     }

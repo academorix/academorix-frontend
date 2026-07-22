@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * @stackra/kbd
  *
  * Keyboard shortcut registry, command palette (⌘K), help catalog,

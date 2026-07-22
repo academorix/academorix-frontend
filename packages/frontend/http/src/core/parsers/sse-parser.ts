@@ -1,4 +1,5 @@
 /**
+ * @file sse-parser.ts
  * Server-Sent Events parser.
  *
  * Implements the `text/event-stream` framing rules from the WHATWG
@@ -9,6 +10,7 @@
  */
 
 import type { ISseEvent } from "@stackra/contracts";
+import { Str } from "@stackra/support";
 
 import type { ISseParserOptions } from "../interfaces/sse-parser-options.interface";
 import type { IStreamParser } from "./stream-parser.interface";
@@ -109,13 +111,13 @@ export class SseStreamParser<T = unknown> implements IStreamParser<ISseEvent<T>>
       const line = rawLine.replace(/\r$/, "");
       if (line.length === 0) continue;
       // Comment lines start with `:` per spec.
-      if (line.startsWith(":")) continue;
+      if (Str.startsWith(line, ":")) continue;
 
       const colon = line.indexOf(":");
       const field = colon === -1 ? line : line.slice(0, colon);
       // Per spec: skip a single leading space after the colon if present.
       let value = colon === -1 ? "" : line.slice(colon + 1);
-      if (value.startsWith(" ")) value = value.slice(1);
+      if (Str.startsWith(value, " ")) value = value.slice(1);
 
       switch (field) {
         case "id":

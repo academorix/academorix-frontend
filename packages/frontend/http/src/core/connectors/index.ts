@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Connectors barrel.
  *
  * Only the default driver (axios) is re-exported from the root entry.

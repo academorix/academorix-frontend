@@ -1,4 +1,5 @@
 /**
+ * @file cache.interceptor.ts
  * Cache interceptor.
  *
  * GET-only HTTP response cache layered on `@stackra/cache`. Stores

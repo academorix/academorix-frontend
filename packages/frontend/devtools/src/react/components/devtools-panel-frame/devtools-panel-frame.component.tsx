@@ -13,8 +13,8 @@
 import { useEffect, useMemo, type ReactElement } from "react";
 import { Chip } from "@stackra/ui/react";
 
-import { useDevtoolsAuthGuard } from "../../hooks/use-devtools-auth-guard.hook";
-import { useDevtoolsContext } from "../../hooks/use-devtools-context.hook";
+import { useDevtoolsAuthGuard } from "../../hooks/use-devtools-auth-guard";
+import { useDevtoolsContext } from "../../hooks/use-devtools-context";
 import { formatPanelBadge } from "../../utils/format-panel-badge.util";
 import { DevtoolsPanelLocked } from "../devtools-panel-locked";
 import { DevtoolsPanelView } from "../devtools-panel-view";

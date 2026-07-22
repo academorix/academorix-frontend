@@ -42,6 +42,7 @@ import {
   type IHttpManager,
   type IHttpRequestConfig,
 } from "@stackra/contracts";
+import { Str } from "@stackra/support";
 
 import { AiAuthError, AiTransportError } from "../errors";
 
@@ -146,7 +147,7 @@ export class SseTransport implements IAiTransport {
   public async request<T>(spec: IAiRequestSpec): Promise<T> {
     const credentials = await this.authProvider.getCredentials();
     const client = await this.httpManager.connection(this.config.connection);
-    const url = `${this.trimSlash(this.config.baseUrl)}${spec.path.startsWith("/") ? spec.path : `/${spec.path}`}`;
+    const url = `${this.trimSlash(this.config.baseUrl)}${Str.startsWith(spec.path, "/") ? spec.path : `/${spec.path}`}`;
 
     const config: IHttpRequestConfig = {
       method: spec.method,
@@ -178,7 +179,7 @@ export class SseTransport implements IAiTransport {
 
   /** Strip a trailing slash so `${baseUrl}/api/...` never doubles up. */
   private trimSlash(url: string): string {
-    return url.endsWith("/") ? url.slice(0, -1) : url;
+    return Str.endsWith(url, "/") ? url.slice(0, -1) : url;
   }
 
   /** Update state and fan out to every registered listener. */

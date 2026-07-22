@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Parsers barrel.
  *
  * @module @stackra/http/parsers

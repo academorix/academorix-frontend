@@ -1,4 +1,5 @@
 /**
+ * @file keyboard-shortcut-props.interface.ts
  * KeyboardShortcutProps — Interface.
  *
  * @module @stackra/kbd/interfaces

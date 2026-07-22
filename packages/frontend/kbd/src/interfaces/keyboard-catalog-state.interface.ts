@@ -1,4 +1,5 @@
 /**
+ * @file keyboard-catalog-state.interface.ts
  * KeyboardCatalogState — Interface.
  *
  * @module @stackra/kbd/interfaces

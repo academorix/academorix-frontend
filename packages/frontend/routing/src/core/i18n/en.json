@@ -13,5 +13,20 @@
   },
   "defaultPendingFallback": {
     "ariaLabel": "Loading page"
+  },
+  "routingDevtoolsPanel": {
+    "heading": "Routing Runtime",
+    "description": "Live hydration state and the composition of the route registry.",
+    "hydrationTitle": "Hydration",
+    "hydrationComplete": "Complete",
+    "hydrationPending": "Pending",
+    "currentUrlLabel": "Current URL:",
+    "currentUrlEmpty": "(none)",
+    "routesTitle": "Routes",
+    "routesCountSingular": "{{count}} route registered across every source.",
+    "routesCountPlural": "{{count}} routes registered across every source.",
+    "rootLabel": "Root (forRoot)",
+    "featureLabel": "Feature (forFeature)",
+    "discoveryLabel": "Discovery (@Route)"
   }
 }

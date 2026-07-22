@@ -1,4 +1,5 @@
 /**
+ * @file keyboard-hints-listener.type.ts
  * KeyboardHintsListener — Type.
  *
  * @module @stackra/kbd/types

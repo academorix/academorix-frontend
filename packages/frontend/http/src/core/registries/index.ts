@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * Registries barrel.
  *
  * @module @stackra/http/registries

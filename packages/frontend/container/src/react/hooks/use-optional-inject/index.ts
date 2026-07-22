@@ -1,4 +1,5 @@
 /**
+ * @file index.ts
  * useOptionalInject Hook Barrel Export
  *
  * - {@link useOptionalInject} — Resolve a provider or get `undefined` if not found

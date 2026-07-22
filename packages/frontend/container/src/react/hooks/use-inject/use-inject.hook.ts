@@ -1,4 +1,5 @@
 /**
+ * @file use-inject.hook.ts
  * useInject Hook
  *
  * Resolve a provider from the DI container in a React component.

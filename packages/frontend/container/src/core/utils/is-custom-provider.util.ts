@@ -1,4 +1,5 @@
 /**
+ * @file is-custom-provider.util.ts
  * isCustomProvider Type Guard
  *
  * Determines whether a provider is a custom provider (has a `provide` property)

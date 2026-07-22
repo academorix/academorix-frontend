@@ -1,4 +1,5 @@
 /**
+ * @file use-http-connection.hook.ts
  * `useHttpConnection` React hook.
  *
  * Alias for {@link useHttp} kept for parity with the other packages

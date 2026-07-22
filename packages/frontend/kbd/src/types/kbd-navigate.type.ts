@@ -1,4 +1,5 @@
 /**
+ * @file kbd-navigate.type.ts
  * KbdNavigate — Type.
  *
  * @module @stackra/kbd/types

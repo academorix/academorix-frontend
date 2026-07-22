@@ -70,7 +70,7 @@ export function parseSubdomain(
   // family. Anything else is a foreign host — return `null` so the
   // runtime doesn't route it into a tenant shell.
   const suffix = `.${normalizedRoot}`;
-  if (!normalizedHost.endsWith(suffix)) return null;
+  if (!Str.endsWith(normalizedHost, suffix)) return null;
 
   // Strip the trailing suffix — what's left is the tenant path.
   const rawSubdomain = normalizedHost.slice(0, -suffix.length);

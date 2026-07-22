@@ -1,4 +1,5 @@
 /**
+ * @file use-draggable-options.interface.ts
  * UseDraggableOptions — Interface.
  *
  * @module @stackra/kbd/interfaces
