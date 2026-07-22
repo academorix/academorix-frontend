@@ -52,7 +52,7 @@ vi.mock("@stackra/ui/icons/heroicon/outline", () => ({
   ),
 }));
 
-import { DevtoolsContext } from "@/react/contexts/devtools.context";
+import { DevtoolsContext } from "@/react/contexts";
 import type { IDevtoolsContextValue } from "@/react/contexts/devtools-context-value.interface";
 import { DevtoolsFrameStateService } from "@/core/services/devtools-frame-state.service";
 import { DevtoolsLauncher } from "@/react/components/devtools-launcher";

@@ -19,8 +19,8 @@ import { createRoot } from "react-dom/client";
 
 import { AppErrorBoundary } from "@/react/components/app-error-boundary/app-error-boundary.component";
 import { ComponentErrorBoundary } from "@/react/components/component-error-boundary/component-error-boundary.component";
-import { DefaultErrorFallback } from "@/react/components/fallbacks/default-error-fallback.component";
-import { InlineErrorFallback } from "@/react/components/fallbacks/inline-error-fallback.component";
+import { DefaultErrorFallback } from "@/react/components/fallbacks/default-error-fallback";
+import { InlineErrorFallback } from "@/react/components/fallbacks/inline-error-fallback";
 
 // ────────────────────────────────────────────────────────────────────────
 // Helpers

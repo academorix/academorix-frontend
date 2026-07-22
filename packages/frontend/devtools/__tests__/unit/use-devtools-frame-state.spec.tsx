@@ -11,10 +11,10 @@ import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { type ReactNode } from "react";
 
-import { DevtoolsContext } from "@/react/contexts/devtools.context";
+import { DevtoolsContext } from "@/react/contexts";
 import type { IDevtoolsContextValue } from "@/react/contexts/devtools-context-value.interface";
 import { DevtoolsFrameStateService } from "@/core/services/devtools-frame-state.service";
-import { useDevtoolsFrameState } from "@/react/hooks/use-devtools-frame-state.hook";
+import { useDevtoolsFrameState } from "@/react/hooks/use-devtools-frame-state";
 import { mergeConfig } from "@/core/utils/merge-config.util";
 import { MockDevtoolsPanelsRegistry } from "@/testing/mock-devtools-panels-registry";
 

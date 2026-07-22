@@ -12,7 +12,7 @@
 import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { useScope } from "@/react/hooks/use-scope.hook";
+import { useScope } from "@/react/hooks/use-scope";
 import { MockScopeService } from "@/testing/mock-scope-service";
 import type { IScopeContext, IScopeNodeTreeNode } from "@/core/interfaces";
 

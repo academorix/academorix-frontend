@@ -14,7 +14,7 @@ import { act, createElement, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 
-import { RouteErrorBoundary } from "@/router/route-error-boundary.component";
+import { RouteErrorBoundary } from "@/router/route-error-boundary/route-error-boundary.component";
 
 // ────────────────────────────────────────────────────────────────────────
 // Helpers

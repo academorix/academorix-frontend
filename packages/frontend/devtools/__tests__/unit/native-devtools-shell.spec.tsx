@@ -75,14 +75,14 @@ const state = {
   panels: [] as { readonly id: string; readonly title: string; readonly view: unknown }[],
 };
 
-vi.mock("@/native/hooks/use-native-devtools-frame-state.hook", () => ({
+vi.mock("@/native/hooks/use-native-devtools-frame-state", () => ({
   useNativeDevtoolsFrameState: () => ({
     state: { isOpen: state.isOpen, activePanelId: state.activePanelId },
     update: state.update,
   }),
 }));
 
-vi.mock("@/native/hooks/use-native-devtools-panels.hook", () => ({
+vi.mock("@/native/hooks/use-native-devtools-panels", () => ({
   useNativeDevtoolsPanels: () => ({
     panels: state.panels,
     byCategory: new Map(),

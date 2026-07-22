@@ -10,9 +10,9 @@ import { act, cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { useEffect } from "react";
 
-import { DevtoolsContext } from "@/react/contexts/devtools.context";
+import { DevtoolsContext } from "@/react/contexts";
 import type { IDevtoolsContextValue } from "@/react/contexts/devtools-context-value.interface";
-import { useDevtoolsPanel } from "@/react/hooks/use-devtools-panel.hook";
+import { useDevtoolsPanel } from "@/react/hooks/use-devtools-panel";
 import { createMockDevtoolsPanel } from "@/testing/create-mock-devtools-panel.util";
 import { MockDevtoolsPanelsRegistry } from "@/testing/mock-devtools-panels-registry";
 

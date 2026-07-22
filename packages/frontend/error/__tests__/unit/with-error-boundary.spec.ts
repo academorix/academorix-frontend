@@ -12,7 +12,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, createElement, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 
-import { withErrorBoundary } from "@/react/hoc/with-error-boundary";
+import { withErrorBoundary } from "@/react/components/with-error-boundary/with-error-boundary.component";
 
 function mount(tree: ReactNode): { container: HTMLDivElement; unmount: () => void } {
   const container = document.createElement("div");

@@ -39,11 +39,11 @@ const inspectorState: {
   toggle: vi.fn(),
 };
 
-vi.mock("@/react/hooks/use-devtools-inspector.hook", () => ({
+vi.mock("@/react/hooks/use-devtools-inspector", () => ({
   useDevtoolsInspector: () => inspectorState,
 }));
 
-import { DevtoolsContext } from "@/react/contexts/devtools.context";
+import { DevtoolsContext } from "@/react/contexts";
 import type { IDevtoolsContextValue } from "@/react/contexts/devtools-context-value.interface";
 import { DevtoolsInspectorOverlay } from "@/react/components/devtools-inspector-overlay";
 import { DevtoolsFrameStateService } from "@/core/services/devtools-frame-state.service";

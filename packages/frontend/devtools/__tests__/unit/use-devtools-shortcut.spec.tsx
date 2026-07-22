@@ -9,7 +9,7 @@
 import { cleanup, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { useDevtoolsShortcut } from "@/react/hooks/use-devtools-shortcut.hook";
+import { useDevtoolsShortcut } from "@/react/hooks/use-devtools-shortcut";
 
 afterEach(() => {
   cleanup();

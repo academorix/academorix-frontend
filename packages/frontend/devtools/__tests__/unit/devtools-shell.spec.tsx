@@ -125,7 +125,7 @@ vi.mock("@/react/components/devtools-position-menu", () => ({
 vi.mock("@/react/components/devtools-search", () => ({
   DevtoolsSearch: () => <div data-testid="search" />,
 }));
-vi.mock("@/react/hooks/use-devtools-search.hook", () => ({
+vi.mock("@/react/hooks/use-devtools-search", () => ({
   useDevtoolsSearch: () => ({ query: "", setQuery: () => undefined }),
 }));
 vi.mock("@/react/components/devtools-nav-rail", () => ({
@@ -140,7 +140,7 @@ vi.mock("@/react/components/devtools-panel-frame", () => ({
   ),
 }));
 
-import { DevtoolsContext } from "@/react/contexts/devtools.context";
+import { DevtoolsContext } from "@/react/contexts";
 import type { IDevtoolsContextValue } from "@/react/contexts/devtools-context-value.interface";
 import { DevtoolsFrameStateService } from "@/core/services/devtools-frame-state.service";
 import { DevtoolsShell } from "@/react/components/devtools-shell";

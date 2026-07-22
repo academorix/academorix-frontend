@@ -50,7 +50,7 @@ vi.mock("@stackra/ui/icons/heroicon/outline", () => {
 });
 
 // Stub the inspector hook to avoid the collectAll re-render loop.
-vi.mock("@/react/hooks/use-devtools-inspector.hook", () => ({
+vi.mock("@/react/hooks/use-devtools-inspector", () => ({
   useDevtoolsInspector: () => ({
     enabled: false,
     setEnabled: vi.fn(),
@@ -59,7 +59,7 @@ vi.mock("@/react/hooks/use-devtools-inspector.hook", () => ({
   }),
 }));
 
-import { DevtoolsContext } from "@/react/contexts/devtools.context";
+import { DevtoolsContext } from "@/react/contexts";
 import type { IDevtoolsContextValue } from "@/react/contexts/devtools-context-value.interface";
 import { DevtoolsFrameStateService } from "@/core/services/devtools-frame-state.service";
 import { OverviewPanel } from "@/react/components/overview-panel";

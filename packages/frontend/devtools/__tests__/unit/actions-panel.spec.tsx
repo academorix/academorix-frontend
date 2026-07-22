@@ -101,7 +101,7 @@ import {
   STATE_REGISTRY,
 } from "@stackra/contracts";
 
-import { DevtoolsContext } from "@/react/contexts/devtools.context";
+import { DevtoolsContext } from "@/react/contexts";
 import type { IDevtoolsContextValue } from "@/react/contexts/devtools-context-value.interface";
 import { ActionsPanel } from "@/react/components/actions-panel";
 import { DevtoolsFrameStateService } from "@/core/services/devtools-frame-state.service";

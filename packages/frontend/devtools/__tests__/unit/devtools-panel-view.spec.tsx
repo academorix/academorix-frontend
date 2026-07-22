@@ -78,7 +78,7 @@ vi.mock("@stackra/ui/react", () => {
   return { AlertDialog, Button, Card, ScrollShadow };
 });
 
-import { DevtoolsContext } from "@/react/contexts/devtools.context";
+import { DevtoolsContext } from "@/react/contexts";
 import type { IDevtoolsContextValue } from "@/react/contexts/devtools-context-value.interface";
 import { DevtoolsPanelView } from "@/react/components/devtools-panel-view";
 import { createMockDevtoolsPanel } from "@/testing/create-mock-devtools-panel.util";

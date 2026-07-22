@@ -12,10 +12,8 @@ import { act, createElement, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 
 import { ErrorBoundary } from "@/react/components/error-boundary/error-boundary.component";
-import {
-  ErrorBoundaryContext,
-  useErrorBoundaryContext,
-} from "@/react/context/error-boundary-context";
+import { ErrorBoundaryContext } from "@/react/contexts";
+import { useErrorBoundaryContext } from "@/react/hooks/use-error-boundary-context";
 
 // ────────────────────────────────────────────────────────────────────────
 // Helpers
