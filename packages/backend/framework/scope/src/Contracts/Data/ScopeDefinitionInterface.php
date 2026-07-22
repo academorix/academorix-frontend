@@ -15,6 +15,9 @@ declare(strict_types=1);
 
 namespace Stackra\Scope\Contracts\Data;
 
+use Stackra\Scope\Models\ScopeDefinition;
+use Illuminate\Container\Attributes\Bind;
+
 /**
  * Table shape for the `scope_definitions` table — describes what
  * hierarchy levels EXIST per owner. Each row is one level in that
@@ -25,7 +28,16 @@ namespace Stackra\Scope\Contracts\Data;
  * would force every model to override each column explicitly — a
  * heavier commitment than the column-rename ergonomics this contract
  * is chartered to deliver.
+ *
+ * ## DI wiring
+ *
+ * `#[Bind(ScopeDefinition::class)]` wires this contract to its
+ * concrete Eloquent model so attribute-first repositories using
+ * `#[UseModel(ScopeDefinitionInterface::class)]` resolve at
+ * construction time (`.kiro/steering/php-attributes.md` §
+ * Stackra CRUD attributes).
  */
+#[Bind(ScopeDefinition::class)]
 interface ScopeDefinitionInterface
 {
     /** Table name. */

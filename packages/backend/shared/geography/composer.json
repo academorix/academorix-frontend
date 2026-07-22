@@ -1,7 +1,7 @@
 {
   "name": "stackra/geography",
   "type": "library",
-  "description": "Global reference catalog wrapping nnjeim/world. Six entities — Country, State, City, Currency, Language, Timezone — shipped as PUBLIC read-only reference data + an authenticated + rate-limited IP→location resolver on top of MaxMind GeoLite2 with ip-api.com fallback. Not tenant-scoped — the catalog is global platform reference data every marketing page, signup flow, and tenant UI depends on. nnjeim/world owns the six tables + migrations + seeder (installed once via `php artisan world:install`); this module ships subclass models rebinding `config('world.models.*')` so vendor relations return our subclasses, plus the Data / Repository / Service / Controller / Policy / Provider layers.",
+  "description": "Global reference catalog wrapping nnjeim/world. Six entities \u2014 Country, State, City, Currency, Language, Timezone \u2014 shipped as PUBLIC read-only reference data + an authenticated + rate-limited IP\u2192location resolver on top of MaxMind GeoLite2 with ip-api.com fallback. Not tenant-scoped \u2014 the catalog is global platform reference data every marketing page, signup flow, and tenant UI depends on. nnjeim/world owns the six tables + migrations + seeder (installed once via `php artisan world:install`); this module ships subclass models rebinding `config('world.models.*')` so vendor relations return our subclasses, plus the Data / Repository / Service / Controller / Policy / Provider layers.",
   "license": "proprietary",
   "keywords": [
     "stackra",
@@ -45,7 +45,7 @@
     "illuminate/queue": "^13.0",
     "illuminate/routing": "^13.0",
     "illuminate/support": "^13.0",
-    "mattiverse/userstamps": "^1.0",
+    "wildside/userstamps": "^1.0",
     "nesbot/carbon": "^3.0",
     "nnjeim/world": "^1.1",
     "olvlvl/composer-attribute-collector": "^2.0",
@@ -166,5 +166,17 @@
         "symlink": true
       }
     }
-  ]
+  ],
+  "scripts": {
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
+  }
 }

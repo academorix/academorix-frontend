@@ -41,7 +41,6 @@ interface ModelHasRolesInterface
     public const string ATTR_ROLE_ID        = 'role_id';
     public const string ATTR_MODEL_TYPE     = 'model_type';
     public const string ATTR_MODEL_ID       = 'model_id';
-    public const string ATTR_APPLICATION_ID = 'application_id';
     public const string ATTR_TENANT_ID      = 'tenant_id';
     public const string ATTR_ASSIGNED_BY    = 'assigned_by';
     public const string ATTR_ASSIGNED_AT    = 'assigned_at';

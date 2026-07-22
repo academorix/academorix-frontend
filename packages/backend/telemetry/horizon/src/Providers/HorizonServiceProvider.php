@@ -35,10 +35,16 @@ use Stackra\ServiceProvider\Attributes\LoadsResources;
  * instead of extending the Stackra ServiceProvider base class.
  *
  * ## Environment Variables
- * - HORIZON_MAIL_NOTIFICATIONS: Email address for notifications
- * - HORIZON_SLACK_WEBHOOK: Slack webhook URL
- * - HORIZON_SLACK_CHANNEL: Slack channel (default: #horizon)
- * - HORIZON_SMS_NOTIFICATIONS: SMS phone number
+ *
+ * Read through {@see config()} — never directly. Definitions live
+ * in `config/horizon-notifications.php`; the provider merges the
+ * file at boot (via {@see mergeConfigFrom()}) so operators + the
+ * config cache both see the same key surface.
+ *
+ * - `HORIZON_MAIL_NOTIFICATIONS` → `horizon-notifications.mail`
+ * - `HORIZON_SLACK_WEBHOOK`     → `horizon-notifications.slack.webhook`
+ * - `HORIZON_SLACK_CHANNEL`     → `horizon-notifications.slack.channel` (default `#horizon`)
+ * - `HORIZON_SMS_NOTIFICATIONS` → `horizon-notifications.sms`
  */
 #[AsModule(name: 'TelemetryHorizon')]
 #[LoadsResources()]
@@ -93,16 +99,37 @@ class HorizonServiceProvider extends BaseHorizonServiceProvider implements Servi
     }
 
     /**
-     * Configure Horizon notification channels from environment variables.
+     * Configure Horizon notification channels from the config.
+     *
+     * Values live in `config/horizon-notifications.php` (merged
+     * here via {@see mergeConfigFrom()}). Reading via `config()`
+     * instead of `env()` honours the Octane-safe config cache —
+     * see `.kiro/steering/octane-first-di.md` §Rules-don't #4.
+     *
+     * Migrated on 2026-07-21 (Phase E5) — the previous version
+     * read `env(...)` directly inside boot, which bypasses the
+     * cache and re-parses `.env` per Octane worker restart.
      *
      * @see https://laravel.com/docs/horizon#notifications
      */
     protected function configureNotifications(): void
     {
-        $mailTo = env('HORIZON_MAIL_NOTIFICATIONS');
-        $slackWebhook = env('HORIZON_SLACK_WEBHOOK');
-        $slackChannel = env('HORIZON_SLACK_CHANNEL', '#horizon');
-        $smsTo = env('HORIZON_SMS_NOTIFICATIONS');
+        // Package-level defaults + env-driven values live in
+        // config/horizon-notifications.php. Merging here is
+        // idempotent — safe on Octane worker restarts.
+        $this->mergeConfigFrom(
+            __DIR__.'/../../config/horizon-notifications.php',
+            'horizon-notifications',
+        );
+
+        /** @var string|null $mailTo */
+        $mailTo = config('horizon-notifications.mail');
+        /** @var string|null $slackWebhook */
+        $slackWebhook = config('horizon-notifications.slack.webhook');
+        /** @var string $slackChannel */
+        $slackChannel = config('horizon-notifications.slack.channel', '#horizon');
+        /** @var string|null $smsTo */
+        $smsTo = config('horizon-notifications.sms');
 
         if ($mailTo) {
             Horizon::routeMailNotificationsTo($mailTo);

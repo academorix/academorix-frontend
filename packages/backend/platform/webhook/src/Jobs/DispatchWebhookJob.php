@@ -9,7 +9,7 @@ use Stackra\Webhook\Contracts\Data\WebhookSubscriptionInterface;
 use Stackra\Webhook\Contracts\Repositories\WebhookDeliveryRepositoryInterface;
 use Stackra\Webhook\Contracts\Repositories\WebhookSubscriptionRepositoryInterface;
 use Stackra\Webhook\Contracts\Services\BackoffStrategyResolverInterface;
-use Stackra\Webhook\Contracts\Services\WebhookDestinationRegistryInterface;
+use Stackra\Webhook\Contracts\Registry\WebhookDestinationRegistryInterface;
 use Stackra\Webhook\Enums\WebhookDeliveryStatus;
 use Stackra\Webhook\Enums\WebhookSubscriptionStatus;
 use Stackra\Webhook\Events\WebhookDelivered;

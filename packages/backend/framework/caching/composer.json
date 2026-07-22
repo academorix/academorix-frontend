@@ -1,7 +1,7 @@
 {
   "name": "stackra/caching",
   "type": "library",
-  "description": "Framework primitive: attribute-driven cache composition. Ships #[Cacheable], #[CacheEvict], #[CachePut], #[CacheKey], #[CacheTag], #[CacheTtl], and #[AsCacheTagResolver], plus a driver-agnostic tag builder (CacheTagBuilder), a driver-capability guard (TaggableCacheGuard), a deterministic key composer (CacheKeyBuilder), the CacheTagResolver contract, and a boot-time discovery pass that hydrates a resolver registry via olvlvl/composer-attribute-collector. No knowledge of tenancy, no Eloquent dependency — this package is the cache substrate every other layer builds on.",
+  "description": "Framework primitive: attribute-driven cache composition. Ships #[Cacheable], #[CacheEvict], #[CachePut], #[CacheKey], #[CacheTag], #[CacheTtl], and #[AsCacheTagResolver], plus a driver-agnostic tag builder (CacheTagBuilder), a driver-capability guard (TaggableCacheGuard), a deterministic key composer (CacheKeyBuilder), the CacheTagResolver contract, and a boot-time discovery pass that hydrates a resolver registry via olvlvl/composer-attribute-collector. No knowledge of tenancy, no Eloquent dependency \u2014 this package is the cache substrate every other layer builds on.",
   "license": "proprietary",
   "keywords": [
     "stackra",
@@ -13,6 +13,7 @@
   ],
   "require": {
     "php": "^8.3",
+    "stackra/console": "@dev",
     "stackra/foundation": "@dev",
     "stackra/service-provider": "@dev",
     "illuminate/cache": "^13.0",
@@ -64,10 +65,29 @@
     },
     {
       "type": "path",
+      "url": "../console",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
       "url": "../service-provider",
       "options": {
         "symlink": true
       }
     }
-  ]
+  ],
+  "scripts": {
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
+  }
 }

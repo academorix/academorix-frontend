@@ -35,7 +35,6 @@ interface InvitationEventInterface
 
     public const string ATTR_ID             = 'id';
     public const string ATTR_INVITATION_ID  = 'invitation_id';
-    public const string ATTR_APPLICATION_ID = 'application_id';
     public const string ATTR_TENANT_ID      = 'tenant_id';
     public const string ATTR_EVENT          = 'event';
     public const string ATTR_OCCURRED_AT    = 'occurred_at';

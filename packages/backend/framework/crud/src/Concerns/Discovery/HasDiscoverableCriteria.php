@@ -36,7 +36,7 @@ namespace Stackra\Crud\Concerns\Discovery;
 
 use Stackra\Crud\Attributes\AsCriteria;
 use Stackra\Crud\Contracts\CriteriaInterface;
-use Stackra\Crud\Registries\CriteriaRegistry;
+use Stackra\Crud\Registry\CriteriaRegistry;
 use Stackra\Foundation\Contracts\DiscoversAttributes;
 use Throwable;
 

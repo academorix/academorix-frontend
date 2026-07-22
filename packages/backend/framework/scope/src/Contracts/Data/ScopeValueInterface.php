@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Stackra\Scope\Contracts\Data;
 
 use Stackra\Scope\Contracts\ScopeRegistryInterface;
+use Stackra\Scope\Models\ScopeValue;
+use Illuminate\Container\Attributes\Bind;
 
 /**
  * Table shape for the `scope_values` table.
@@ -34,7 +36,16 @@ use Stackra\Scope\Contracts\ScopeRegistryInterface;
  * The value's runtime type contract is enforced by the consumer's
  * `ScopeConsumerConfig::$validator` closure, NOT by the storage
  * engine — the scope package stays type-agnostic.
+ *
+ * ## DI wiring
+ *
+ * `#[Bind(ScopeValue::class)]` wires this contract to its concrete
+ * Eloquent model so attribute-first repositories using
+ * `#[UseModel(ScopeValueInterface::class)]` resolve at construction
+ * time (`.kiro/steering/php-attributes.md` § Stackra CRUD
+ * attributes).
  */
+#[Bind(ScopeValue::class)]
 interface ScopeValueInterface
 {
     public const string TABLE = 'scope_values';

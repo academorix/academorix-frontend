@@ -18,7 +18,7 @@ namespace Stackra\Sentry\Facades;
 
 use Illuminate\Support\Facades\Facade;
 use Stackra\Sentry\Contracts\SentryContext;
-use Stackra\Sentry\Services\SentryContextRegistry;
+use Stackra\Sentry\Registry\SentryContextRegistry;
 use Sentry\State\Scope;
 
 /**

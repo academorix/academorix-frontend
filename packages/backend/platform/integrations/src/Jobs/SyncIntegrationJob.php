@@ -6,7 +6,7 @@ namespace Stackra\Integrations\Jobs;
 
 use Stackra\Integrations\Contracts\Data\TenantIntegrationInterface;
 use Stackra\Integrations\Contracts\Repositories\TenantIntegrationRepositoryInterface;
-use Stackra\Integrations\Contracts\Services\IntegrationRegistryInterface;
+use Stackra\Integrations\Contracts\Registry\IntegrationRegistryInterface;
 use Stackra\Integrations\Enums\IntegrationSyncStatus;
 use Stackra\Integrations\Events\IntegrationSyncCompleted;
 use Stackra\Integrations\Events\IntegrationSyncFailed;

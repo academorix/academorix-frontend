@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Webhook\Rules;
 
-use Stackra\Webhook\Contracts\Services\WebhookDestinationRegistryInterface;
+use Stackra\Webhook\Contracts\Registry\WebhookDestinationRegistryInterface;
 use Closure;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Validation\ValidationRule;

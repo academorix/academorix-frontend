@@ -1,7 +1,7 @@
 {
   "name": "stackra/integrations",
   "type": "library",
-  "description": "Third-party integration credentials per Tenant (Stripe, Slack, HubSpot, Zapier, OAuth2, SCIM, HRIS, LMS, ...). Extracted from tenants at v0.3 because integration credentials carry different sensitivity than a tenant's own configuration — they are encrypted at rest (Doppler-derived KMS key), rotate on their own schedule, and NEVER surface on the tenant-facing wire outside a redacted status shape.",
+  "description": "Third-party integration credentials per Tenant (Stripe, Slack, HubSpot, Zapier, OAuth2, SCIM, HRIS, LMS, ...). Extracted from tenants at v0.3 because integration credentials carry different sensitivity than a tenant's own configuration \u2014 they are encrypted at rest (Doppler-derived KMS key), rotate on their own schedule, and NEVER surface on the tenant-facing wire outside a redacted status shape.",
   "license": "proprietary",
   "keywords": [
     "stackra",
@@ -166,5 +166,17 @@
         "symlink": true
       }
     }
-  ]
+  ],
+  "scripts": {
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
+  }
 }

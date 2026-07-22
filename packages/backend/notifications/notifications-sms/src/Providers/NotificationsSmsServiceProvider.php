@@ -19,7 +19,7 @@
  *   - Observer: `#[ObservedBy]` on the model.
  *   - Policy: `#[UsePolicy]` on the model.
  *   - Provider drivers: `#[AsSmsProvider(name: '...')]` — populated into
- *     {@see \Stackra\Notifications\Sms\Contracts\Services\SmsOptOutRegistryInterface}
+ *     {@see \Stackra\Notifications\Sms\Contracts\Registry\SmsOptOutRegistryInterface}
  *     via `#[HydratesFrom]` on the registry's `register()`.
  *   - Service implementations: interfaces carry `#[Bind]` pointing at the
  *     default concrete; consumer apps override by binding their own concrete.

@@ -10,9 +10,11 @@ use Illuminate\Container\Attributes\Bind;
 use Stackra\Staff\Models\Staff;
 
 /**
- * Table shape for the `staffs` table.
+ * Table shape for the `staff` table.
  *
- * Employment record wrapping a User row.
+ * Employment record wrapping a User row. "staff" is already plural
+ * in English — no `-s` suffix. Every FK across the workspace uses
+ * `->on('staff')`; this constant matches.
  *
  * @category Staff
  *
@@ -24,7 +26,7 @@ interface StaffInterface
     /**
      * Table name.
      */
-    public const string TABLE = 'staffs';
+    public const string TABLE = 'staff';
 
     /**
      * Primary key column.

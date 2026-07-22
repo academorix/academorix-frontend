@@ -1,7 +1,0 @@
-{
-  "id": "stackra://modules/safeguarding/observers",
-  "$version": 1,
-  "title": "safeguarding — model observers",
-  "description": "Eloquent observers this module registers, wired via `#[ObservedBy]` on models.",
-  "observers": []
-}

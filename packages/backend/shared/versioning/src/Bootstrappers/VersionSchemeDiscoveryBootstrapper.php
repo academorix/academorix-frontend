@@ -6,7 +6,7 @@ namespace Stackra\Versioning\Bootstrappers;
 
 use Stackra\ServiceProvider\Attributes\AsBootstrapper;
 use Stackra\ServiceProvider\Bootstrappers\AbstractBootstrapper;
-use Stackra\Versioning\Contracts\Services\VersionSchemeRegistryInterface;
+use Stackra\Versioning\Contracts\Registry\VersionSchemeRegistryInterface;
 use Stackra\Versioning\Enums\VersionScheme;
 use Stackra\Versioning\Schemes\CalVerScheme;
 use Stackra\Versioning\Schemes\SemVerScheme;

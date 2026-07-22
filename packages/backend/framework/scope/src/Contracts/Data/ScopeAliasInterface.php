@@ -14,6 +14,9 @@ declare(strict_types=1);
 
 namespace Stackra\Scope\Contracts\Data;
 
+use Stackra\Scope\Models\ScopeAlias;
+use Illuminate\Container\Attributes\Bind;
+
 /**
  * Table shape for the `scope_aliases` table.
  *
@@ -21,7 +24,15 @@ namespace Stackra\Scope\Contracts\Data;
  *
  * `(owner_id, scope_slug)` is unique — one alias per slug per
  * owner. Absent alias = definition's original label is used.
+ *
+ * ## DI wiring
+ *
+ * `#[Bind(ScopeAlias::class)]` lets attribute-first repositories
+ * declare `#[UseModel(ScopeAliasInterface::class)]` and let the
+ * container resolve the concrete model at construction time
+ * (`.kiro/steering/php-attributes.md` § Stackra CRUD attributes).
  */
+#[Bind(ScopeAlias::class)]
 interface ScopeAliasInterface
 {
     public const string TABLE = 'scope_aliases';

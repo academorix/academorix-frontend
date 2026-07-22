@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Ai\Contracts\Services;
 
-use Stackra\Ai\Services\ToolDiscoveryBootstrapper;
+use Stackra\Ai\Bootstrappers\ToolDiscoveryBootstrapper;
 use Illuminate\Container\Attributes\Bind;
 
 /**

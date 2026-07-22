@@ -12,7 +12,7 @@ use Attribute;
  * Discovered at boot by the framework's generic hydration pump
  * ({@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper})
  * via the `#[HydratesFrom]` declaration on
- * {@see \Stackra\Localization\Contracts\Services\TranslatorDriverRegistryInterface::register()}.
+ * {@see \Stackra\Localization\Contracts\Registry\TranslatorDriverRegistryInterface::register()}.
  * Every class carrying this attribute lands in the registry and is
  * resolvable through
  * {@see \Stackra\Localization\Services\TranslatorDriverManager}

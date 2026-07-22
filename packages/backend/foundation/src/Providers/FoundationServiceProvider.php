@@ -21,13 +21,14 @@
  *     static accessor between requests so long-lived workers
  *     (Octane, Roadrunner, Horizon) never leak an id from one
  *     request into the next.
- *   - The `foundation::` view namespace, containing the shared
- *     `layouts.app` template used by the Blade error pages and any
- *     app-owned marketing / error views.
- *   - The `foundation::` translation namespace, containing the
- *     `errors.php` copy consumed by the Blade error pages.
- *   - Publishing tags so downstream apps can override views, lang
- *     strings, or the HeroUI theme CSS on a per-app basis.
+ *   - The `foundation::` translation namespace, which carries the
+ *     `errors.php` copy that feeds the shared Blade error pages.
+ *   - The `foundation::` view namespace — the shared
+ *     `layouts.app` template every package's error page extends.
+ *     Auto-loaded from `src/views/` via the parent's declarative
+ *     `$resources` array; no manual `loadViewsFrom` call needed.
+ *   - Publishing tags so downstream apps can override lang strings
+ *     or the HeroUI theme CSS on a per-app basis.
  *
  * ## Middleware placement
  *
@@ -42,8 +43,6 @@
  *
  * ## Publish tags
  *
- *   - `foundation-views`         — Copies Blade templates to
- *                                  `resources/views/vendor/foundation`.
  *   - `foundation-translations`  — Copies lang files to
  *                                  `lang/vendor/foundation/{locale}/*.php`.
  *   - `foundation-theme-css`     — Copies the HeroUI theme CSS to
@@ -95,17 +94,31 @@ final class FoundationServiceProvider extends AbstractModuleServiceProvider
     protected array $middlewareAliases = [];
 
     /**
-     * Boot-time work that doesn't fit the declarative shape:
-     * translation + view namespace loading, publishing groups, and
-     * the correlation-id cleanup listener.
+     * Declarative view + translation namespaces the parent's
+     * `boot()` walks and registers via `loadViewsFrom()` +
+     * `loadTranslationsFrom()`. Keeps the wiring in one place,
+     * no manual imperative call inside `bootBespoke()`.
      *
-     * Every operation is idempotent so re-running the boot (e.g.
-     * inside an Octane worker's boot cycle) is safe.
+     * @var array{views?: array<string, string>, translations?: array<string, string>}
+     */
+    protected array $resources = [
+        'views' => [
+            'foundation' => __DIR__ . '/../views',
+        ],
+        'translations' => [
+            'foundation' => __DIR__ . '/../../lang',
+        ],
+    ];
+
+    /**
+     * Boot-time work that doesn't fit the declarative shape:
+     * publishing groups + the correlation-id cleanup listener.
+     * View + translation registration lives on the declarative
+     * `$resources` array above.
      */
     protected function bootBespoke(): void
     {
         $this->registerCorrelationIdCleanup();
-        $this->registerResourceLoaders();
         $this->registerPublishing();
     }
 
@@ -137,33 +150,18 @@ final class FoundationServiceProvider extends AbstractModuleServiceProvider
     }
 
     /**
-     * Register the `foundation::` view + translation namespaces
-     * so consumers can reference `foundation::layouts.app` and
-     * `foundation::errors.500_title`.
-     */
-    private function registerResourceLoaders(): void
-    {
-        $this->loadViewsFrom(__DIR__ . '/../../views', 'foundation');
-        $this->loadTranslationsFrom(__DIR__ . '/../../lang', 'foundation');
-    }
-
-    /**
      * Expose publish groups so downstream apps can override
      * shipped resources without forking the package.
-     *
-     * The HeroUI theme CSS ships as a static asset because the
-     * shared Blade layout references it via `<link>` from
-     * `public/vendor/foundation/themes/heroui.css`.
      */
     private function registerPublishing(): void
     {
         $this->publishes([
-            __DIR__ . '/../../views' => $this->app->resourcePath('views/vendor/foundation'),
-        ], 'foundation-views');
-
-        $this->publishes([
             __DIR__ . '/../../lang' => $this->app->langPath('vendor/foundation'),
         ], 'foundation-translations');
+
+        $this->publishes([
+            __DIR__ . '/../views' => $this->app->resourcePath('views/vendor/foundation'),
+        ], 'foundation-views');
 
         $this->publishes([
             __DIR__ . '/../../resources/themes/heroui.css' => $this->app->publicPath('vendor/foundation/themes/heroui.css'),

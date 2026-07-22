@@ -14,7 +14,7 @@ use Attribute;
  * The build-time compiler discovers `#[ConsumesEntitlement]`-marked
  * classes via `Stackra\Foundation\Contracts\DiscoversAttributes`
  * and hands them to
- * {@see \Stackra\Entitlements\Services\EntitlementRegistry},
+ * {@see \Stackra\Entitlements\Registry\EntitlementRegistry},
  * which stores the shipped default value + kind + period so tenant
  * provisioning can create the row with the right shape.
  *

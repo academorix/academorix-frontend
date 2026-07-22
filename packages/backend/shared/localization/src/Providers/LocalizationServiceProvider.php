@@ -24,11 +24,11 @@
  *   - Translator drivers: `#[AsTranslatorDriver('name')]` on each
  *     driver class → discovered via
  *     `#[HydratesFrom]` on
- *     {@see \Stackra\Localization\Contracts\Services\TranslatorDriverRegistryInterface::register()}.
+ *     {@see \Stackra\Localization\Contracts\Registry\TranslatorDriverRegistryInterface::register()}.
  *   - Locale-resolution strategies: `#[AsLocaleResolutionStrategy('name')]`
  *     on each strategy class → discovered via
  *     `#[HydratesFrom]` on
- *     {@see \Stackra\Localization\Contracts\Services\LocaleResolutionStrategyRegistryInterface::register()}.
+ *     {@see \Stackra\Localization\Contracts\Registry\LocaleResolutionStrategyRegistryInterface::register()}.
  */
 
 declare(strict_types=1);

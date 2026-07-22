@@ -3,23 +3,57 @@
 declare(strict_types=1);
 
 /**
- * Sentry Service
+ * @file packages/backend/telemetry/sentry/src/Services/SentryService.php
  *
- * Core service providing Sentry operations for the Telemetry module.
- * Encapsulates business logic and coordinates with repositories and external systems.
+ * @description
+ * Request-scoped wrapper around the Sentry SDK. Reports errors,
+ * configures scope with user + request context, records
+ * breadcrumbs.
+ *
+ * ## Why request-scoped
+ *
+ * Under Octane the framework container stays alive across
+ * requests. A service that captures `Auth::user()`, `request()`,
+ * or `app()->environment()` MUST be `#[Scoped]` so the container
+ * disposes of it between requests. This class was previously a
+ * static-singleton that stashed the constructed object into a
+ * `private static ?self $instance` — request-1's authenticated
+ * user leaked into request-2's `configureScope()` call. Fixed
+ * on 2026-07-21 (Phase B R1 of the compliance sweep): the static
+ * locator is gone; every method is now an instance method;
+ * dependencies arrive through container attribute injection.
+ *
+ * ## Usage
+ *
+ * Inject via the container — never via a static call:
+ *
+ *     public function __construct(
+ *         private readonly SentryService $sentry,
+ *     ) {}
+ *
+ *     $this->sentry->captureException($e);
+ *     $this->sentry->configureScope();
+ *
+ * Under Octane the injected instance IS per-request (thanks to
+ * `#[Scoped]` on this class), so the request/user snapshot the
+ * scope carries is always fresh.
  *
  * @category Services
  *
  * @since    1.0.0
  */
+
 namespace Stackra\Sentry\Services;
 
+use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Container\Attributes\Auth as AuthAttr;
 use Illuminate\Container\Attributes\Scoped;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use Stackra\Attributes\Attributes\Parameters\Config;
 use Stackra\Foundation\Enums\ContainerToken;
 use Stackra\Support\Arr;
-use Stackra\Support\Reflection;
 
 use function Sentry\addBreadcrumb;
 
@@ -34,140 +68,119 @@ use Sentry\State\Scope;
 use Throwable;
 
 /**
- * Sentry Service.
+ * Instance service for Sentry integration.
  *
- * Provides a convenient wrapper around Sentry SDK for error tracking,
- * performance monitoring, and context management.
- *
- * ## Features:
- * - User context tracking
- * - Request context tracking
- * - Custom tags and context
- * - Breadcrumb tracking
- * - Message capture
- * - Exception capture
- *
- * ## Usage:
- * ```php
- * // Configure scope with user and request context
- * SentryService::configureScope();
- *
- * // Add breadcrumb
- * SentryService::addBreadcrumb('User clicked checkout button', [
- *     'cart_total' => 99.99,
- *     'items_count' => 3,
- * ], 'user_action');
- *
- * // Capture message
- * SentryService::captureMessage('Payment processing started', 'info');
- *
- * // Capture exception
- * try {
- *     // risky code
- * } catch (Exception $e) {
- *     SentryService::captureException($e);
- * }
- * ```
+ * Consumers inject the class; every method is an instance method.
+ * Under Octane the `#[Scoped]` binding guarantees one fresh
+ * instance per request — no cross-request state.
  */
 #[Scoped]
-class SentryService
+final class SentryService
 {
     /**
-     * Singleton instance.
-     */
-    private static ?self $instance = null;
-
-    /**
-     * Create a new SentryService instance.
-     *
-     * @param string|null $sentryDsn The Sentry DSN configuration
+     * @param  string|null   $sentryDsn  Sentry DSN from `config/sentry.php`; null means Sentry is off.
+     * @param  Application   $app        The Laravel application (for `bound()` + `environment()` + `version()`).
+     * @param  Guard         $auth       The default auth guard.
+     * @param  Container     $container  Container reference so calls can be reached from static bridge helpers if ever needed.
+     * @param  Request|null  $request    The current request. Nullable when the service is resolved outside a request (queue worker, console command).
      */
     public function __construct(
         #[Config('sentry.dsn')]
         protected readonly ?string $sentryDsn = null,
+        protected readonly ?Application $app = null,
+        #[AuthAttr]
+        protected readonly ?Guard $auth = null,
+        protected readonly ?Container $container = null,
+        protected readonly ?Request $request = null,
     ) {}
 
     /**
-     * Check if Sentry is enabled and configured.
+     * Check whether Sentry is enabled + configured.
      *
-     * @return bool True if Sentry is available
+     * Returns `true` only when both a DSN is present AND the SDK's
+     * hub is bound in the container. `false` (fail-soft) whenever
+     * anything is off — every other method short-circuits when
+     * this is false.
      */
-    public static function isEnabled(): bool
+    public function isEnabled(): bool
     {
-        return app()->bound(ContainerToken::SENTRY->value) && self::getInstance()->sentryDsn !== null;
+        return $this->sentryDsn !== null
+            && $this->app !== null
+            && $this->app->bound(ContainerToken::SENTRY->value);
     }
 
     /**
-     * Configure Sentry scope with user and context.
+     * Configure Sentry scope with request + user context.
      *
-     * This method sets up the Sentry scope with:
-     * - User information (if authenticated)
-     * - Environment tags
-     * - Request context
-     * - Custom application context
-     *
-     * Call this at the beginning of a request or before capturing exceptions
-     * to ensure all context is included.
+     * Idempotent within a request — calling twice adds the tags
+     * twice. Called by `captureException()` before every capture,
+     * plus manually by the `SentryContext` middleware once per
+     * request.
      */
-    public static function configureScope(): void
+    public function configureScope(): void
     {
-        if (! self::isEnabled()) {
+        if (! $this->isEnabled()) {
             return;
         }
 
         configureScope(function (Scope $scope): void {
-            // Set user context if authenticated
-            if (Auth::check()) {
-                $user = Auth::user();
-                if ($user) {
+            // User context — only when a caller is authenticated.
+            // `Guard::check()` short-circuits when the guard has
+            // no user, so this is cheap on public endpoints.
+            if ($this->auth !== null && $this->auth->check()) {
+                $user = $this->auth->user();
+                if ($user !== null) {
                     $scope->setUser([
-                        'id' => $user->id,
+                        'id' => $user->getAuthIdentifier(),
                         'email' => $user->email ?? null,
                         'username' => $user->name ?? null,
                     ]);
                 }
             }
 
-            // Set environment tags
-            $scope->setTag('environment', (string) app()->environment());
+            // Environment tags come from the application.
+            if ($this->app !== null) {
+                $scope->setTag('environment', (string) $this->app->environment());
+                $scope->setTag('laravel_version', (string) $this->app->version());
+            }
             $scope->setTag('php_version', PHP_VERSION);
-            $scope->setTag('laravel_version', (string) app()->version());
 
-            // Set request context
-            $request = request();
-            if ($request) {
-                $scope->setTag('request_method', $request->method());
-                $scope->setTag('request_path', $request->path());
+            // Request context — only when we're inside a request.
+            // Queue workers + console commands construct this class
+            // with `$request = null`; those paths still tag env +
+            // php + laravel_version but skip request-only fields.
+            if ($this->request !== null) {
+                $scope->setTag('request_method', $this->request->method());
+                $scope->setTag('request_path', $this->request->path());
 
                 $scope->setContext('request', [
-                    'url' => $request->fullUrl(),
-                    'method' => $request->method(),
-                    'ip' => $request->ip(),
-                    'user_agent' => $request->userAgent(),
-                    'request_id' => $request->header('X-Request-ID'),
+                    'url' => $this->request->fullUrl(),
+                    'method' => $this->request->method(),
+                    'ip' => $this->request->ip(),
+                    'user_agent' => $this->request->userAgent(),
+                    'request_id' => $this->request->header('X-Request-ID'),
                 ]);
             }
         });
     }
 
     /**
-     * Add a breadcrumb to Sentry.
+     * Add a breadcrumb.
      *
-     * Breadcrumbs are a trail of events that happened before an error.
-     * They help you understand what led to the error.
+     * Breadcrumbs are a trail of events leading up to an error.
      *
-     * @param string               $message  Breadcrumb message
-     * @param array<string, mixed> $data     Additional data
-     * @param string               $category Category (e.g., 'navigation', 'http', 'user_action')
-     * @param string               $level    Level (info, warning, error)
+     * @param  string                $message   Breadcrumb message.
+     * @param  array<string, mixed>  $data      Structured data attached to the crumb.
+     * @param  string                $category  Category label (e.g. `navigation`, `http`, `user_action`).
+     * @param  string                $level     Severity level (`debug`, `info`, `warning`, `error`, `fatal`).
      */
-    public static function addBreadcrumb(
+    public function addBreadcrumb(
         string $message,
         array $data = [],
         string $category = 'default',
-        string $level = 'info'
+        string $level = 'info',
     ): void {
-        if (! self::isEnabled()) {
+        if (! $this->isEnabled()) {
             return;
         }
 
@@ -185,23 +198,23 @@ class SentryService
             type: Breadcrumb::TYPE_DEFAULT,
             category: $category,
             message: $message,
-            metadata: $data
+            metadata: $data,
         );
 
         addBreadcrumb($breadcrumb);
     }
 
     /**
-     * Capture a message to Sentry.
+     * Capture a message.
      *
-     * Use this for logging important events that aren't exceptions.
+     * Use for important events that are not exceptions.
      *
-     * @param string $message Message to capture
-     * @param string $level   Severity level (debug, info, warning, error, fatal)
+     * @param  string  $message  The message.
+     * @param  string  $level    Severity (`debug`, `info`, `warning`, `error`, `fatal`).
      */
-    public static function captureMessage(string $message, string $level = 'info'): void
+    public function captureMessage(string $message, string $level = 'info'): void
     {
-        if (! self::isEnabled()) {
+        if (! $this->isEnabled()) {
             return;
         }
 
@@ -218,34 +231,34 @@ class SentryService
     }
 
     /**
-     * Capture an exception to Sentry.
+     * Capture an exception.
      *
-     * This method configures the scope and captures the exception.
-     * Use this when you want to manually report an exception.
+     * Configures the scope first so every capture carries the
+     * current request + user context.
      *
-     * @param Throwable $throwable The exception to capture
+     * @param  Throwable  $throwable  The exception to capture.
      */
-    public static function captureException(Throwable $throwable): void
+    public function captureException(Throwable $throwable): void
     {
-        if (! self::isEnabled()) {
+        if (! $this->isEnabled()) {
             return;
         }
 
-        self::configureScope();
+        $this->configureScope();
         captureException($throwable);
     }
 
     /**
-     * Set a custom tag in Sentry scope.
+     * Set a custom tag in the Sentry scope.
      *
-     * Tags are key-value pairs that help you filter and search errors.
+     * Tags are searchable key-value labels.
      *
-     * @param string $key   Tag key
-     * @param string $value Tag value
+     * @param  string  $key    Tag key.
+     * @param  string  $value  Tag value.
      */
-    public static function setTag(string $key, string $value): void
+    public function setTag(string $key, string $value): void
     {
-        if (! self::isEnabled()) {
+        if (! $this->isEnabled()) {
             return;
         }
 
@@ -255,16 +268,14 @@ class SentryService
     }
 
     /**
-     * Set custom context in Sentry scope.
+     * Set structured context data.
      *
-     * Context provides additional structured data about the error.
-     *
-     * @param string               $key  Context key
-     * @param array<string, mixed> $data Context data
+     * @param  string                $key   Context key.
+     * @param  array<string, mixed>  $data  Context payload.
      */
-    public static function setContext(string $key, array $data): void
+    public function setContext(string $key, array $data): void
     {
-        if (! self::isEnabled()) {
+        if (! $this->isEnabled()) {
             return;
         }
 
@@ -274,20 +285,20 @@ class SentryService
     }
 
     /**
-     * Set user context in Sentry scope.
+     * Set user context.
      *
-     * @param int|string           $id       User ID
-     * @param string|null          $email    User email
-     * @param string|null          $username User username
-     * @param array<string, mixed> $extra    Additional user data
+     * @param  int|string            $id        User ID.
+     * @param  string|null           $email     User email.
+     * @param  string|null           $username  User username.
+     * @param  array<string, mixed>  $extra     Additional user fields.
      */
-    public static function setUser(
+    public function setUser(
         int|string $id,
         ?string $email = null,
         ?string $username = null,
-        array $extra = []
+        array $extra = [],
     ): void {
-        if (! self::isEnabled()) {
+        if (! $this->isEnabled()) {
             return;
         }
 
@@ -298,17 +309,5 @@ class SentryService
                 'username' => $username,
             ], $extra));
         });
-    }
-
-    /**
-     * Get the singleton instance.
-     */
-    protected static function getInstance(): self
-    {
-        if (! self::$instance instanceof self || ! Reflection::implements(self::$instance, self::class)) {
-            self::$instance = resolve(self::class);
-        }
-
-        return self::$instance;
     }
 }

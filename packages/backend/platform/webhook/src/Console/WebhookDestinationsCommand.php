@@ -6,7 +6,7 @@ namespace Stackra\Webhook\Console;
 
 use Stackra\Console\Attributes\AsCommand;
 use Stackra\Console\Commands\BaseCommand;
-use Stackra\Webhook\Contracts\Services\WebhookDestinationRegistryInterface;
+use Stackra\Webhook\Contracts\Registry\WebhookDestinationRegistryInterface;
 
 /**
  * `php artisan webhook:destinations` — list every registered

@@ -1,7 +1,0 @@
-{
-  "id": "stackra://modules/safeguarding/broadcasts",
-  "$version": 1,
-  "title": "safeguarding — broadcast channels",
-  "description": "Channels this module publishes to for real-time UI updates.",
-  "channels": []
-}

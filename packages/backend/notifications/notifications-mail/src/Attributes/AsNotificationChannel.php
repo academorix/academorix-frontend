@@ -14,7 +14,7 @@ use Attribute;
  * event into its transport (Reverb broadcast, SMTP mail send, Twilio
  * SMS send, FCM push). Each concrete driver carries this attribute
  * so the framework's generic hydration pump can register it into
- * {@see \Stackra\Notifications\Contracts\Services\NotificationChannelRegistryInterface}
+ * {@see \Stackra\Notifications\Contracts\Registry\NotificationChannelRegistryInterface}
  * at boot.
  *
  * **Interop note.** This attribute intentionally MIRRORS the sibling

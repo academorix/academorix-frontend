@@ -13,8 +13,6 @@
   ],
   "require": {
     "php": "^8.4|^8.5",
-    "stackra/activity": "@dev",
-    "stackra/audit": "@dev",
     "stackra/crud": "@dev",
     "stackra/enum": "@dev",
     "stackra/events": "@dev",
@@ -68,20 +66,6 @@
   "repositories": [
     {
       "type": "path",
-      "url": "../../shared/activity",
-      "options": {
-        "symlink": true
-      }
-    },
-    {
-      "type": "path",
-      "url": "../../shared/audit",
-      "options": {
-        "symlink": true
-      }
-    },
-    {
-      "type": "path",
       "url": "../crud",
       "options": {
         "symlink": true
@@ -129,5 +113,17 @@
         "symlink": true
       }
     }
-  ]
+  ],
+  "scripts": {
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
+  }
 }

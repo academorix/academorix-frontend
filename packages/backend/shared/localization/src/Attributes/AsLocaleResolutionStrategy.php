@@ -12,7 +12,7 @@ use Attribute;
  * Discovered at boot by the framework's generic hydration pump
  * ({@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper})
  * via the `#[HydratesFrom]` declaration on
- * {@see \Stackra\Localization\Contracts\Services\LocaleResolutionStrategyRegistryInterface::register()}.
+ * {@see \Stackra\Localization\Contracts\Registry\LocaleResolutionStrategyRegistryInterface::register()}.
  * The
  * {@see \Stackra\Localization\Services\LocaleResolver} iterates
  * the config-declared chain and asks each named strategy in turn.

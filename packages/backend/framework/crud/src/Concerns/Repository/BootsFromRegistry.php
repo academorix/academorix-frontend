@@ -22,7 +22,7 @@ use Stackra\Crud\Attributes\UseQueryScope;
 use Stackra\Crud\Attributes\UseScope;
 use Stackra\Crud\Attributes\WithCount;
 use Stackra\Crud\Attributes\WithRelations;
-use Stackra\Crud\Registries\RepositoryConfigRegistry;
+use Stackra\Crud\Registry\RepositoryConfigRegistry;
 
 /**
  * BootsFromRegistry Trait.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Push\Services;
 
-use Stackra\Notifications\Push\Contracts\Services\PushSubscriptionRegistryInterface;
+use Stackra\Notifications\Push\Contracts\Registry\PushSubscriptionRegistryInterface;
 use Stackra\Notifications\Push\Contracts\Services\PushTransportInterface;
 use Stackra\Notifications\Push\Contracts\Services\PushTransportManagerInterface;
 use Stackra\Notifications\Push\Exceptions\PushProviderDisabledException;

@@ -9,7 +9,7 @@ use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Get;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
-use Stackra\Webhook\Contracts\Services\WebhookDestinationRegistryInterface;
+use Stackra\Webhook\Contracts\Registry\WebhookDestinationRegistryInterface;
 use Stackra\Webhook\Enums\WebhookPermission;
 
 /**

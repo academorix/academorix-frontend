@@ -9,7 +9,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 
 /**
  * Dispatched at boot every time
- * {@see \Stackra\Versioning\Services\PayloadTransformerRegistry::register()}
+ * {@see \Stackra\Versioning\Registry\PayloadTransformerRegistry::register()}
  * receives a `#[AsPayloadTransformer]` hit from the framework's
  * generic
  * {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}

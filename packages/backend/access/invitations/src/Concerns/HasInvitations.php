@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Stackra\Invitations\Concerns;
 
 use Stackra\Invitations\Contracts\Data\InvitationInterface;
-use Stackra\Invitations\Contracts\Services\InvitationTargetRegistryInterface;
+use Stackra\Invitations\Contracts\Registry\InvitationTargetRegistryInterface;
 use Stackra\Invitations\Enums\InvitationStatus;
 use Stackra\Invitations\Exceptions\InvitationStateTransitionForbiddenException;
 use Stackra\Invitations\Models\Invitation;

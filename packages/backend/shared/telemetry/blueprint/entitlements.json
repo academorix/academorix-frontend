@@ -1,9 +1,0 @@
-{
-  "id": "stackra://modules/telemetry/entitlements",
-  "$version": 1,
-  "title": "telemetry \u2014 declared entitlements",
-  "description": "None. Telemetry is platform-side; tenants don't consume span/metric/log quotas.",
-  "reference": { "publishedBy": "entitlements" },
-  "kinds": [],
-  "entitlements": []
-}

@@ -1,6 +1,6 @@
 {
   "name": "stackra/feature-flags-sdk",
-  "description": "Saloon SDK sibling for stackra/feature-flags. Ships wire-visible DTOs plus Saloon requests for cross-service consumers (ai-service, admin console, third-party integrations). Depends only on saloonphp/saloon + spatie/laravel-data — never on the parent package's Eloquent models.",
+  "description": "Saloon SDK sibling for stackra/feature-flags. Ships wire-visible DTOs plus Saloon requests for cross-service consumers (ai-service, admin console, third-party integrations). Depends only on saloonphp/saloon + spatie/laravel-data \u2014 never on the parent package's Eloquent models.",
   "type": "library",
   "keywords": [
     "stackra",
@@ -27,5 +27,17 @@
     }
   },
   "minimum-stability": "dev",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "scripts": {
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
+  }
 }

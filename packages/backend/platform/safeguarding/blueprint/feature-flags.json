@@ -1,7 +1,0 @@
-{
-  "id": "stackra://modules/safeguarding/feature-flags",
-  "$version": 1,
-  "title": "safeguarding — feature flags",
-  "description": "Kill switches + gradual-rollout flags this module publishes.",
-  "flags": []
-}

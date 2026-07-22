@@ -8,7 +8,7 @@ use Attribute;
 
 /**
  * Register a destination-driver class with
- * {@see \Stackra\Webhook\Services\WebhookDestinationRegistry}.
+ * {@see \Stackra\Webhook\Registry\WebhookDestinationRegistry}.
  *
  * A destination driver implements
  * {@see \Stackra\Webhook\Contracts\Services\WebhookDestinationInterface}

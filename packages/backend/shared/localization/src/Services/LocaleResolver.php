@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Localization\Services;
 
-use Stackra\Localization\Contracts\Services\LocaleResolutionStrategyRegistryInterface;
+use Stackra\Localization\Contracts\Registry\LocaleResolutionStrategyRegistryInterface;
 use Stackra\Localization\Contracts\Services\LocaleResolverInterface;
 use Stackra\Localization\Data\LocaleResolutionResultData;
 use Stackra\Localization\Enums\LocaleResolutionSource;

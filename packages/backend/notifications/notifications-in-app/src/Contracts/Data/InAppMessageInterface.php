@@ -56,7 +56,6 @@ interface InAppMessageInterface
 
     public const string ATTR_ID              = 'id';
     public const string ATTR_TENANT_ID       = 'tenant_id';
-    public const string ATTR_APPLICATION_ID  = 'application_id';
     public const string ATTR_NOTIFICATION_ID = 'notification_id';
     public const string ATTR_ADDRESSEE_ID    = 'addressee_id';
     public const string ATTR_ADDRESSEE_TYPE  = 'addressee_type';

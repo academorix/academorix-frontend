@@ -4,120 +4,117 @@ declare(strict_types=1);
 
 namespace Stackra\Exceptions\Formatters;
 
-use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Contracts\ErrorFormatterInterface;
 use Stackra\Exceptions\Support\ExceptionMapper;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 use Throwable;
 
 /**
- * Formatter that renders a full-page HTML response for browser
- * requests using the Blade error views shipped in
- * `packages/exceptions/views/errors/*.blade.php`.
+ * Formatter that renders Blade error pages for browser-navigation
+ * requests (non-API, non-XHR, `Accept: text/html`).
  *
  * ## When it fires
  *
- * {@see canFormat()} returns `true` when the request is NOT a JSON
- * / API / XHR request — i.e. the fall-through for browser navigation.
- * Because JsonErrorFormatter has higher priority (100 vs. 10), it
- * runs first for API traffic; this formatter only handles the
- * long-tail "user opened a broken URL in their browser" case.
+ * {@see canFormat()} returns `true` only when JSON's contract
+ * ({@see JsonErrorFormatter::canFormat()}) does NOT — i.e. the
+ * request is a browser navigation to a non-`/api/*` path with
+ * `Accept: text/html`. Priority is `10` so JSON's `100` beats it
+ * for every API call.
  *
- * ## View resolution
+ * ## What it renders
  *
- * Looks for `exceptions::errors.{status}` in the following order:
+ * Views under `resources/views/errors/{status}.blade.php` (published
+ * from `packages/backend/framework/exceptions/src/views/errors/`
+ * via the `exceptions::` view namespace). Each page extends
+ * `foundation::layouts.app`. When the exact status has no dedicated
+ * template we fall through to Laravel's default renderer — which
+ * itself renders the framework's minimal fallback page.
  *
- *   1. `exceptions::errors.{exact-status}` — e.g. `403`, `404`
- *   2. `exceptions::errors.{family}xx`     — e.g. `4xx`, `5xx`
- *   3. `exceptions::errors.500`            — the ultimate fallback
+ * ## Octane safety
  *
- * All three levels are provided out of the box; downstream apps
- * override individual pages by publishing:
+ * No mutable state. Every call reads the injected view factory +
+ * mapper freshly.
  *
- *     php artisan vendor:publish --tag=exceptions-views
+ * @category Formatters
  *
- * ## CSP handling
- *
- * The shipped views use CDN-hosted assets (Tailwind, Google Fonts).
- * The `Content-Security-Policy` header is stripped from every
- * response this formatter emits so those assets can load without
- * requiring the app to allowlist them globally.
+ * @since    0.1.0
  */
 final class HtmlErrorFormatter implements ErrorFormatterInterface
 {
+    /**
+     * @param  ExceptionMapper  $mapper  Maps arbitrary throwables to Stackra exceptions with an HTTP status.
+     * @param  ViewFactory      $views   The Blade factory (used to check `exists()` before render).
+     */
     public function __construct(
         private readonly ExceptionMapper $mapper,
         private readonly ViewFactory $views,
-    ) {
-    }
+    ) {}
 
+    /**
+     * Fire only for HTML browser navigation to non-API paths.
+     *
+     * Returning `false` lets the formatter chain fall through to
+     * {@see JsonErrorFormatter} for API traffic + to Laravel's
+     * default renderer for exotic content types.
+     */
     public function canFormat(Request $request): bool
     {
-        // JSON / API paths are handled by the higher-priority JSON
-        // formatter; anything else falls through to HTML.
-        return ! $request->expectsJson()
-            && ! $request->is('api/*')
-            && ! $request->ajax();
+        // JSON path always wins first — matches the API prefix + Accept.
+        if ($request->expectsJson()) {
+            return false;
+        }
+
+        if ($request->is('api/*')) {
+            return false;
+        }
+
+        if ($request->ajax()) {
+            return false;
+        }
+
+        return \str_contains((string) $request->header('Accept', ''), 'text/html')
+            || $request->header('Accept') === null
+            || $request->header('Accept') === '*/*';
     }
 
-    public function format(Request $request, Throwable $e): Response
+    /**
+     * Render the throwable as a Blade error page.
+     *
+     * When the exact status has no `errors/{status}.blade.php`
+     * template we return Laravel's default fallback (which renders
+     * a minimal HTML response) rather than crashing on a missing
+     * view.
+     */
+    public function format(Request $request, Throwable $e): HttpFoundationResponse
     {
         $mapped = $this->mapper->map($e);
         $status = $mapped->httpStatus();
-        $view = $this->resolveView($status);
+        $viewName = "exceptions::errors.{$status}";
 
-        $response = response()->view($view, [
-            'exception' => $mapped,
-            'status' => $status,
-            'title' => $mapped->userMessage() ?? $mapped->getMessage(),
-        ], $status);
-
-        // CSP would block the CDN Tailwind / Google Fonts assets our
-        // shipped views load. Strip it — the whole point of an
-        // error page is to render, not to be secure against
-        // asset-loading vectors.
-        $response->headers->remove('Content-Security-Policy');
-        $response->headers->remove('Content-Security-Policy-Report-Only');
-
-        if ($mapped->retryAfter() !== null) {
-            $response->headers->set('Retry-After', (string) $mapped->retryAfter());
+        if (! $this->views->exists($viewName)) {
+            // No dedicated template — throw back to Laravel's default
+            // render pipeline, which owns the ultimate HTML fallback.
+            throw $e;
         }
 
-        return $response;
+        $view = $this->views->make($viewName, [
+            'exception' => $e,
+            'mapped' => $mapped,
+            'status' => $status,
+        ]);
+
+        return new Response($view->render(), $status);
     }
 
+    /**
+     * Priority `10` — below JSON's `100` so API traffic never
+     * lands here.
+     */
     public function priority(): int
     {
         return 10;
-    }
-
-    // ---------------------------------------------------------------
-    // View resolution
-    // ---------------------------------------------------------------
-
-    /**
-     * Find the most specific error view available for the given
-     * status. Walks status → family → 500.
-     */
-    private function resolveView(int $status): string
-    {
-        $candidates = [
-            "exceptions::errors.{$status}",
-            'exceptions::errors.' . intdiv($status, 100) . 'xx',
-            'exceptions::errors.500',
-        ];
-
-        foreach ($candidates as $name) {
-            if ($this->views->exists($name)) {
-                return $name;
-            }
-        }
-
-        // Should never happen — we ship `errors/500.blade.php` — but
-        // if the views were somehow removed, fall back to a raw
-        // string via the plain response above the caller uses.
-        return $candidates[array_key_last($candidates)];
     }
 }

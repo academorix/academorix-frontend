@@ -8,7 +8,6 @@ use Stackra\Application\Contracts\Repositories\ApplicationRepositoryInterface;
 use Stackra\Application\Models\Application;
 use Stackra\Routing\Attributes\AsMiddleware;
 use Stackra\ServiceProvider\Dispatchers\TenancyHookDispatcher;
-use Stackra\ServiceProvider\Support\TenantHookContext;
 use Stackra\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
 use Stackra\Tenancy\Contracts\Services\TenantContextInterface;
 use Stackra\Tenancy\Models\Tenant;
@@ -94,17 +93,17 @@ final class ResolveTenant
         $this->tenantContext->setCurrent($tenant);
         \app()->instance('tenant.context', $this->tenantContext);
 
-        $ctx = new TenantHookContext(
-            container: \app(),
-            tenant: $tenant,
-        );
-        $this->hookDispatcher->fireInit($ctx);
+        // Fire every registered #[AsTenancyHook] — CachePrefixTenantHook +
+        // LogContextTenantHook depend on this. The dispatcher builds its
+        // own TenantHookContext internally per call; we pass the raw
+        // Tenant model.
+        $this->hookDispatcher->fireInit($tenant);
 
         try {
             $response = $next($request);
         } finally {
             // Terminate hooks — mirror the init in reverse priority.
-            $this->hookDispatcher->fireEnd($ctx);
+            $this->hookDispatcher->fireEnd($tenant);
             $this->tenantContext->setCurrent(null);
         }
 

@@ -1,7 +1,7 @@
 {
   "name": "stackra/authorization",
   "type": "library",
-  "description": "Attribute-driven controller authorization layer. Ships #[RequirePermission], #[RequireAnyPermission], #[RequireRole], #[RequireAnyRole], and #[AllowGuest] — enforced by a reflection-cached middleware that fails 401/403 BEFORE the controller body runs. Zero models, zero migrations, zero coupling to a specific permission backend — every domain package can require this without dragging spatie/laravel-permission's tables in. The heavier `packages/access` builds on top with roles + permissions + admin controllers.",
+  "description": "Attribute-driven controller authorization layer. Ships #[RequirePermission], #[RequireAnyPermission], #[RequireRole], #[RequireAnyRole], and #[AllowGuest] \u2014 enforced by a reflection-cached middleware that fails 401/403 BEFORE the controller body runs. Zero models, zero migrations, zero coupling to a specific permission backend \u2014 every domain package can require this without dragging spatie/laravel-permission's tables in. The heavier `packages/access` builds on top with roles + permissions + admin controllers.",
   "license": "proprietary",
   "keywords": [
     "stackra",
@@ -30,8 +30,8 @@
     "phpstan/phpstan": "^2.0"
   },
   "suggest": {
-    "stackra/database": "Required by SeedsPermissionEnum — provides the underlying Enumable trait.",
-    "spatie/laravel-permission": "Required by SeedsPermissionEnum — the permissions-table schema this trait writes to. Only needed by modules that project a PermissionEnum into the DB."
+    "stackra/database": "Required by SeedsPermissionEnum \u2014 provides the underlying Enumable trait.",
+    "spatie/laravel-permission": "Required by SeedsPermissionEnum \u2014 the permissions-table schema this trait writes to. Only needed by modules that project a PermissionEnum into the DB."
   },
   "autoload": {
     "psr-4": {
@@ -87,5 +87,17 @@
         "symlink": true
       }
     }
-  ]
+  ],
+  "scripts": {
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
+  }
 }

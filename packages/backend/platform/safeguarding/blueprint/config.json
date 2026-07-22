@@ -1,7 +1,0 @@
-{
-  "id": "stackra://modules/safeguarding/config",
-  "$version": 1,
-  "title": "safeguarding — config keys",
-  "description": "config/<module>.php shape + defaults.",
-  "keys": []
-}

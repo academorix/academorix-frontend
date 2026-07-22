@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Stackra\Requests\Contracts\Data\AccessRequestProjectionInterface;
 use Stackra\Requests\Database\Factories\AccessRequestProjectionFactory;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
@@ -49,5 +50,9 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 #[WithoutIncrementing]
 final class AccessRequestProjection extends Model implements AccessRequestProjectionInterface, AuditableContract
 {
+    // `BelongsToTenant` MUST come FIRST — per `.kiro/steering/hierarchy.md`
+    // §14 subsequent traits' `booted()` hooks depend on the tenant scope
+    // + auto-fill wired here (Phase E6, 2026-07-21).
+    use BelongsToTenant;
     use Auditable;
 }

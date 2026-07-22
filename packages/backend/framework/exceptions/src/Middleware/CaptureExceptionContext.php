@@ -70,10 +70,6 @@ final class CaptureExceptionContext
      */
     public const CONTEXT_KEY = 'stackra.exception_context';
 
-    public function __construct(private readonly Application $app)
-    {
-    }
-
     public function handle(Request $request, Closure $next): Response
     {
         $context = [

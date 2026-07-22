@@ -1,7 +1,7 @@
 {
   "name": "stackra/domains",
   "type": "library",
-  "description": "Domains domain module — owns the `Domain` aggregate (custom hostname bound to a Tenant) and `DomainRecord` (the expected DNS records diffed by the verification job). Publishes the `DomainVerifier` + `CertificateProvisioner` bindings every host-resolver + ACME consumer swaps at deploy. Extracted from tenants at v0.3 so long-running DNS + cert workflows own their module lifecycle.",
+  "description": "Domains domain module \u2014 owns the `Domain` aggregate (custom hostname bound to a Tenant) and `DomainRecord` (the expected DNS records diffed by the verification job). Publishes the `DomainVerifier` + `CertificateProvisioner` bindings every host-resolver + ACME consumer swaps at deploy. Extracted from tenants at v0.3 so long-running DNS + cert workflows own their module lifecycle.",
   "license": "proprietary",
   "keywords": [
     "stackra",
@@ -176,5 +176,17 @@
         "symlink": true
       }
     }
-  ]
+  ],
+  "scripts": {
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
+  }
 }

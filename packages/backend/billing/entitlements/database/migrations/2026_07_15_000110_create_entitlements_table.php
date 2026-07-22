@@ -22,6 +22,15 @@ return new class() extends Migration
         Schema::create(EntitlementInterface::TABLE, function (Blueprint $table): void {
             $table->string(EntitlementInterface::ATTR_ID, 64)->primary();
 
+            // `application_id` is required — Entitlements is one of the eight
+            // rows carrying it directly per `.kiro/steering/tenancy-columns.md`
+            // §2. Added on 2026-07-21 (Phase E8) — closes the tenancy-columns
+            // gap-register row "Add application_id to entitlements".
+            $table->uuid(EntitlementInterface::ATTR_APPLICATION_ID);
+            $table->foreign(EntitlementInterface::ATTR_APPLICATION_ID)
+                ->references('id')
+                ->on('applications');
+
             $table->string(EntitlementInterface::ATTR_TENANT_ID, 64);
 
             $table->string(EntitlementInterface::ATTR_KEY, 100);
@@ -53,6 +62,15 @@ return new class() extends Migration
             $table->index(
                 [EntitlementInterface::ATTR_TENANT_ID, EntitlementInterface::ATTR_KEY],
                 'entitlements_tenant_key_index',
+            );
+
+            // Composite (application, tenant) index — the canonical
+            // §2 shape for the eight application-scoped rows. Written
+            // in this order because most reads scope by application
+            // first, then tenant. Phase E8.
+            $table->index(
+                [EntitlementInterface::ATTR_APPLICATION_ID, EntitlementInterface::ATTR_TENANT_ID],
+                'entitlements_application_tenant_index',
             );
 
             $table->index(

@@ -11,7 +11,7 @@ use Attribute;
  *
  * The build-time compiler discovers `#[AsWebhookEvent]`-marked classes
  * via `Stackra\Foundation\Contracts\DiscoversAttributes` and hands
- * them to {@see \Stackra\Webhook\Services\WebhookRegistry}, which
+ * them to {@see \Stackra\Webhook\Registry\WebhookRegistry}, which
  * stores the event catalogue subscribers pick from when creating a
  * {@see \Stackra\Webhook\Models\WebhookSubscription}.
  *

@@ -1,7 +1,0 @@
-{
-  "id": "stackra://modules/telemetry/policies",
-  "$version": 1,
-  "title": "telemetry \u2014 authorization policies",
-  "description": "No entities \u2014 no policies. Authorization for the platform debug surface is enforced via the `platform.telemetry.view` + `platform.telemetry.manage` permissions (see permissions.json) applied on the route middleware. Marker file present to satisfy the standard blueprint layout.",
-  "policies": []
-}

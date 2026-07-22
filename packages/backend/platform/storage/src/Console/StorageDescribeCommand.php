@@ -6,7 +6,7 @@ namespace Stackra\Storage\Console;
 
 use Stackra\Console\Attributes\AsCommand;
 use Stackra\Console\Commands\BaseCommand;
-use Stackra\Storage\Contracts\Services\FileKindRegistryInterface;
+use Stackra\Storage\Contracts\Registry\FileKindRegistryInterface;
 
 /**
  * `php artisan storage:describe` — print the discovered

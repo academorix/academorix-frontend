@@ -52,10 +52,6 @@
  *     (`resource()`, `collection()`).
  *   - **InteractsWithResponse** — response builders (`ok()`,
  *     `created()`, `notFound()`, `noContent()`, ...).
- *   - **InteractsWithServices** — service-locator convenience
- *     (kept for legacy transition even though ADR 0016 bans a
- *     Services layer — the trait method is a no-op for pure
- *     actions).
  *   - **Macroable** — extend the surface at runtime via
  *     `SomeAction::macro('customMethod', fn () => ...)`.
  *   - **ValidatesRequests** — Laravel's request-validation
@@ -153,6 +149,13 @@ trait AsController
 {
     // ---------------------------------------------------------
     // Domain-specific concerns from the routing package.
+    //
+    // Note: `InteractsWithServices` was removed on 2026-07-21 —
+    // it depended on a `Stackra\Crud\Attributes\UseService`
+    // attribute that never shipped, and no action ever called
+    // `$this->service()`. ADR-0016 (Actions-only) makes the
+    // CRUD-service pattern the trait fronted unavailable, so
+    // removing it is the correct read.
     // ---------------------------------------------------------
     use InteractsWithApiVersion;
     use InteractsWithAuth;
@@ -162,7 +165,6 @@ trait AsController
     use InteractsWithRequest;
     use InteractsWithResources;
     use InteractsWithResponse;
-    use InteractsWithServices;
 
     // ---------------------------------------------------------
     // Laravel-shipped traits every controller / action expects.

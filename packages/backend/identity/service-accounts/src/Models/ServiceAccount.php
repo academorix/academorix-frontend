@@ -12,6 +12,7 @@ use Stackra\ServiceAccounts\Database\Factories\ServiceAccountFactory;
 use Stackra\ServiceAccounts\Enums\ServiceAccountStatus;
 use Stackra\ServiceAccounts\Observers\ServiceAccountObserver;
 use Stackra\ServiceAccounts\Policies\ServiceAccountPolicy;
+use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -25,7 +26,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Scout\Searchable;
-use Mattiverse\Userstamps\Traits\Userstamps;
+use Wildside\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -71,6 +72,10 @@ use Spatie\Activitylog\Traits\LogsActivity;
 #[WithoutIncrementing]
 final class ServiceAccount extends Model implements AuditableContract, ServiceAccountInterface
 {
+    // `BelongsToTenant` MUST come FIRST — per `.kiro/steering/hierarchy.md`
+    // §14 subsequent traits' `booted()` hooks depend on the tenant scope
+    // + auto-fill wired here (Phase E6, 2026-07-21).
+    use BelongsToTenant;
     use Auditable;
     use Filterable;
     use HasFactory;

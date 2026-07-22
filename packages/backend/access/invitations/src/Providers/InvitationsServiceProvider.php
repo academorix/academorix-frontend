@@ -22,7 +22,7 @@
  *   - Observers: `#[ObservedBy]` on the models.
  *   - Policies: `#[UsePolicy]` on the models.
  *   - Attribute registry: `#[HydratesFrom(Invitable::class)]` on
- *     {@see \Stackra\Invitations\Contracts\Services\InvitationTargetRegistryInterface::register()}
+ *     {@see \Stackra\Invitations\Contracts\Registry\InvitationTargetRegistryInterface::register()}
  *     — the framework's generic {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  *     scans every model carrying `#[Invitable]` and calls the
  *     registry's `register()` method on each hit.

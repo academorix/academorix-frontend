@@ -28,7 +28,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Scout\Searchable;
-use Mattiverse\Userstamps\Traits\Userstamps;
+use Wildside\Userstamps\Traits\Userstamps;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**

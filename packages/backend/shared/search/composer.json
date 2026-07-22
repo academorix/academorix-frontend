@@ -22,8 +22,6 @@
   ],
   "require": {
     "php": "^8.3",
-    "stackra/activity": "@dev",
-    "stackra/audit": "@dev",
     "stackra/authorization": "@dev",
     "stackra/console": "@dev",
     "stackra/crud": "@dev",
@@ -49,7 +47,7 @@
     "illuminate/routing": "^13.0",
     "illuminate/support": "^13.0",
     "laravel/scout": "^10.0",
-    "mattiverse/userstamps": "^1.0",
+    "wildside/userstamps": "^1.0",
     "olvlvl/composer-attribute-collector": "^2.0",
     "owen-it/laravel-auditing": "^13.0",
     "spatie/laravel-data": "^4.11"
@@ -95,20 +93,6 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "repositories": [
-    {
-      "type": "path",
-      "url": "../activity",
-      "options": {
-        "symlink": true
-      }
-    },
-    {
-      "type": "path",
-      "url": "../audit",
-      "options": {
-        "symlink": true
-      }
-    },
     {
       "type": "path",
       "url": "../../authorization",
@@ -221,5 +205,17 @@
         "symlink": true
       }
     }
-  ]
+  ],
+  "scripts": {
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
+  }
 }

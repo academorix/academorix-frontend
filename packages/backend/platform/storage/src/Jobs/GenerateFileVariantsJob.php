@@ -6,7 +6,7 @@ namespace Stackra\Storage\Jobs;
 
 use Stackra\Storage\Contracts\Data\FileInterface;
 use Stackra\Storage\Contracts\Repositories\FileRepositoryInterface;
-use Stackra\Storage\Contracts\Services\FileKindRegistryInterface;
+use Stackra\Storage\Contracts\Registry\FileKindRegistryInterface;
 use Stackra\Storage\Contracts\Services\VariantGeneratorInterface;
 use Stackra\Storage\Events\FileVariantsCompleted;
 use Illuminate\Bus\Queueable;

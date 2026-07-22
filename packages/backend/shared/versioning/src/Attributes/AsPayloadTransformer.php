@@ -8,7 +8,7 @@ use Attribute;
 
 /**
  * Register a class as a payload transformer with the
- * {@see \Stackra\Versioning\Services\PayloadTransformerRegistry}.
+ * {@see \Stackra\Versioning\Registry\PayloadTransformerRegistry}.
  *
  * A transformer is a pure function `transform(array $payload): array`
  * that converts a payload from `$from` to `$to` on a single surface

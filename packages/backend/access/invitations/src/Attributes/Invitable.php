@@ -12,7 +12,7 @@ use Attribute;
  * The build-time compiler discovers `#[Invitable]`-marked classes
  * via `Stackra\Foundation\Contracts\DiscoversAttributes` and
  * hands them to
- * {@see \Stackra\Invitations\Services\DefaultInvitationTargetRegistry}
+ * {@see \Stackra\Invitations\Registry\DefaultInvitationTargetRegistry}
  * so downstream consumers can send invitations against them without
  * this module ever name-dropping the concrete class.
  *

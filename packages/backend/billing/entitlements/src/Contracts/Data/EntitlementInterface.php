@@ -33,6 +33,7 @@ interface EntitlementInterface
     // ── Columns ───────────────────────────────────────────────
 
     public const string ATTR_ID                       = 'id';
+    public const string ATTR_APPLICATION_ID           = 'application_id';
     public const string ATTR_TENANT_ID                = 'tenant_id';
     public const string ATTR_KEY                      = 'key';
     public const string ATTR_KIND                     = 'kind';

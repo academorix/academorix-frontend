@@ -179,29 +179,12 @@ trait InteractsWithResponse
         return $this->response()->serverError($message);
     }
 
-    /**
-     * Render a Blade view.
-     *
-     * Deliberately NOT routed through the ResponseBuilder — views
-     * have their own rendering pipeline and don't belong in the
-     * JSON envelope. This helper exists so controllers that
-     * predominantly return JSON still have a one-liner for the
-     * occasional HTML page (marketing, mail preview, admin
-     * dashboards).
-     *
-     * @param  string                $view    Dotted view name.
-     * @param  array<string, mixed>  $data    View data.
-     * @param  int                   $status  HTTP status (defaults to 200).
-     */
-    protected function view(string $view, array $data = [], int $status = 200): \Illuminate\Contracts\View\View
-    {
-        // Delegates to Laravel's helper; the caller is expected to
-        // return the view directly. Status wiring for HTML
-        // responses happens via `response()->view(...)` when the
-        // caller needs a non-200 — kept out of the signature to
-        // avoid a status parameter no one uses.
-        unset($status); // documented for future use; suppress unused warning today.
-
-        return view($view, $data);
-    }
+    // The Blade `view()` helper that once lived here was removed on
+    // 2026-07-21 (Phase C1). The workspace is headless per ADR-0021 +
+    // `.kiro/steering/architecture.md` §Headless only — every
+    // controller returns JSON via the builder above. Rendering a
+    // Blade view from a controller is no longer supported at the
+    // trait surface; callers that genuinely need HTML render it
+    // outside the controller boundary and hand the string to
+    // `response()`.
 }

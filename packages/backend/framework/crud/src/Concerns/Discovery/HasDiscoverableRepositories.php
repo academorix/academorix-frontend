@@ -52,7 +52,7 @@ use Stackra\Crud\Attributes\UseQueryScope;
 use Stackra\Crud\Attributes\UseScope;
 use Stackra\Crud\Attributes\WithCount;
 use Stackra\Crud\Attributes\WithRelations;
-use Stackra\Crud\Registries\RepositoryConfigRegistry;
+use Stackra\Crud\Registry\RepositoryConfigRegistry;
 use Stackra\Database\Attributes\Searchable;
 use Stackra\Database\Attributes\Sortable;
 use Stackra\Database\Attributes\Translatable;

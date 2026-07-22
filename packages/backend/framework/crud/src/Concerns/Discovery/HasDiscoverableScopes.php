@@ -35,7 +35,7 @@ declare(strict_types=1);
 namespace Stackra\Crud\Concerns\Discovery;
 
 use Stackra\Crud\Attributes\AsScope;
-use Stackra\Crud\Registries\ScopeRegistry;
+use Stackra\Crud\Registry\ScopeRegistry;
 use Stackra\Foundation\Contracts\DiscoversAttributes;
 use Illuminate\Database\Eloquent\Scope;
 use Throwable;

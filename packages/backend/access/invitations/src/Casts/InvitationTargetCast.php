@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Invitations\Casts;
 
-use Stackra\Invitations\Contracts\Services\InvitationTargetRegistryInterface;
+use Stackra\Invitations\Contracts\Registry\InvitationTargetRegistryInterface;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 

@@ -1,7 +1,7 @@
 {
   "name": "stackra/notifications-mail",
   "type": "library",
-  "description": "Mail notification channel for Stackra. Registers the `mail` channel with the core NotificationChannelRegistry + subscribes to NotificationDispatched events. On dispatch: renders the template through Laravel Blade, injects CAN-SPAM + RFC 8058 List-Unsubscribe headers, hands off to Laravel Mail's MailManager, and captures the provider message id into a NotificationDelivery row. Ingests per-provider webhooks (Mailgun / SendGrid / AWS SES / Postmark / Resend) via the webhook module's InboundWebhookReceived event, normalises them into MailDelivered/Opened/Clicked/Bounced/Complaint events, and owns a MailSuppression aggregate for hard-bounced / complained / manually-blocked addresses. Priority 26 — loads after notifications core (20) and notifications-in-app (25).",
+  "description": "Mail notification channel for Stackra. Registers the `mail` channel with the core NotificationChannelRegistry + subscribes to NotificationDispatched events. On dispatch: renders the template through Laravel Blade, injects CAN-SPAM + RFC 8058 List-Unsubscribe headers, hands off to Laravel Mail's MailManager, and captures the provider message id into a NotificationDelivery row. Ingests per-provider webhooks (Mailgun / SendGrid / AWS SES / Postmark / Resend) via the webhook module's InboundWebhookReceived event, normalises them into MailDelivered/Opened/Clicked/Bounced/Complaint events, and owns a MailSuppression aggregate for hard-bounced / complained / manually-blocked addresses. Priority 26 \u2014 loads after notifications core (20) and notifications-in-app (25).",
   "license": "proprietary",
   "keywords": [
     "stackra",
@@ -195,5 +195,17 @@
         "symlink": true
       }
     }
-  ]
+  ],
+  "scripts": {
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
+  }
 }

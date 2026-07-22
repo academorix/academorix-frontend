@@ -28,7 +28,7 @@
  *     `#[Overrides(<Interface>::class)]` on their concrete.
  *   - Retention: `#[AsRetentionPolicy]` on File.
  *   - Attribute registry: `#[HydratesFrom(FileKind::class)]` on
- *     {@see \Stackra\Storage\Contracts\Services\FileKindRegistryInterface::register()}
+ *     {@see \Stackra\Storage\Contracts\Registry\FileKindRegistryInterface::register()}
  *     — the framework's
  *     {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  *     scans every class carrying `#[FileKind]` and calls

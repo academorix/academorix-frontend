@@ -11,8 +11,10 @@
  * ## What these tests protect
  *
  *   1. **`canFormat()` gating** — the formatter must fire for JSON /
- *      API / XHR clients and MUST NOT fire for browser HTML. HTML
- *      requests fall through to {@see HtmlErrorFormatter}.
+ *      API / XHR clients. Since the removal of the shipped Blade
+ *      views on 2026-07-21 (Phase C1) it is the sole formatter
+ *      in the workspace's default chain; the workspace is
+ *      headless per ADR-0021.
  *
  *   2. **Envelope shape** — every top-level key documented in
  *      `ErrorEnvelope::jsonSerialize()` is present; masked fields

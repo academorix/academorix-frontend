@@ -134,6 +134,12 @@ final class AuthorizeControllerAction
      *     allow_guest: bool,
      * }>
      */
+    // octane-safe: reflection-metadata cache keyed by class-string. Keys
+    //              are immutable (FQCNs); values are deterministic
+    //              (per-class attribute readouts). Safe across worker
+    //              reuse — same key ALWAYS resolves to the same
+    //              controller-attribute snapshot. Matches Laravel core's
+    //              `Reflector::isCallable()` pattern.
     private static array $cache = [];
 
     /**

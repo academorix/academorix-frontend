@@ -12,7 +12,7 @@ use Attribute;
  * Discovered at boot by the framework's generic hydration pump
  * ({@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper})
  * via the `#[HydratesFrom(SampleData::class)]` declaration on
- * {@see \Stackra\Transfer\Contracts\Services\EntityRegistryInterface::register()}.
+ * {@see \Stackra\Transfer\Contracts\Registry\EntityRegistryInterface::register()}.
  *
  * ## Example
  *

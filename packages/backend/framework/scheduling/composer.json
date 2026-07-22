@@ -1,7 +1,7 @@
 {
   "name": "stackra/scheduling",
   "type": "library",
-  "description": "Attribute-based task scheduling for the Stackra monorepo. Register schedules declaratively on Job and Command classes via #[Schedule], #[Cron], #[WithoutOverlapping], etc. — no more edits to app/Console/Kernel.php or routes/console.php.",
+  "description": "Attribute-based task scheduling for the Stackra monorepo. Register schedules declaratively on Job and Command classes via #[Schedule], #[Cron], #[WithoutOverlapping], etc. \u2014 no more edits to app/Console/Kernel.php or routes/console.php.",
   "license": "proprietary",
   "require": {
     "php": "^8.3",
@@ -53,5 +53,17 @@
         "symlink": true
       }
     }
-  ]
+  ],
+  "scripts": {
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
+  }
 }

@@ -1,8 +1,0 @@
-{
-  "id": "stackra://modules/safeguarding/attributes",
-  "$version": 1,
-  "title": "safeguarding — PHP attributes",
-  "description": "PHP attributes owned by this module. Empty at scaffold time; fill in with each new `#[As...]` class the module ships.",
-  "namespace": "Stackra\\\\Safeguarding\\\\Attributes",
-  "attributes": []
-}

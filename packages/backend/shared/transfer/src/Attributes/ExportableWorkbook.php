@@ -13,7 +13,7 @@ use Attribute;
  *
  * Discovered at boot by the framework's generic hydration pump via
  * the `#[HydratesFrom(ExportableWorkbook::class)]` declaration on
- * {@see \Stackra\Transfer\Contracts\Services\WorkbookRegistryInterface::register()}.
+ * {@see \Stackra\Transfer\Contracts\Registry\WorkbookRegistryInterface::register()}.
  *
  * @category Transfer
  *

@@ -12,7 +12,7 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
  * Metadata describing one registered form field type.
  *
  * Emitted by
- * {@see \Stackra\Forms\Services\FieldTypeRegistry::get} and
+ * {@see \Stackra\Forms\Registry\FieldTypeRegistry::get} and
  * consumed by the FormValidator (validation rules), the
  * FormRenderer (SDUI widget mapping), and the AnswerCipher
  * (sensitivity flag).

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Storage\Services;
 
-use Stackra\Storage\Contracts\Services\FileKindRegistryInterface;
+use Stackra\Storage\Contracts\Registry\FileKindRegistryInterface;
 use Stackra\Storage\Contracts\Services\MimeTypeAllowlistInterface;
 use Stackra\Storage\Enums\FileKind;
 use Illuminate\Container\Attributes\Singleton;

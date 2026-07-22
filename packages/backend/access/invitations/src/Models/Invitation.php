@@ -9,7 +9,7 @@ use Stackra\Database\Concerns\HasPrefixedUlid;
 use Stackra\Invitations\Casts\InvitationInviterCast;
 use Stackra\Invitations\Casts\InvitationTargetCast;
 use Stackra\Invitations\Contracts\Data\InvitationInterface;
-use Stackra\Invitations\Contracts\Services\InvitationTargetRegistryInterface;
+use Stackra\Invitations\Contracts\Registry\InvitationTargetRegistryInterface;
 use Stackra\Invitations\Database\Factories\InvitationFactory;
 use Stackra\Invitations\Enums\InvitationChannel;
 use Stackra\Invitations\Enums\InvitationStatus;
@@ -29,7 +29,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Mattiverse\Userstamps\Traits\Userstamps;
+use Wildside\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 

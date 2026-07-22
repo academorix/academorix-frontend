@@ -1,7 +1,7 @@
 {
   "name": "stackra/database",
   "type": "library",
-  "description": "Data-layer building blocks for every Stackra module: base Model + schema Blueprint macros + data-shaping attributes (Searchable, Translatable, Metadatable, Sluggable, Sortable, Taggable, UserStamped, UuidColumn, Archivable, StatusColumn) + model concern traits (HasArchive, HasSlug, HasSortOrder, HasStatus, HasTags, HasUserStamp, HasUuid, HasMetadata, HasTranslations, HasPrefixedUlid, HasSystemFlag, HasMockableStorage, InteractsWithMedia). Answers 'what the data IS' — pair with stackra/crud for 'how the data is QUERIED' and stackra/caching for tag-based invalidation.",
+  "description": "Data-layer building blocks for every Stackra module: base Model + schema Blueprint macros + data-shaping attributes (Searchable, Translatable, Metadatable, Sluggable, Sortable, Taggable, UserStamped, UuidColumn, Archivable, StatusColumn) + model concern traits (HasArchive, HasSlug, HasSortOrder, HasStatus, HasTags, HasUserStamp, HasUuid, HasMetadata, HasTranslations, HasPrefixedUlid, HasSystemFlag, HasMockableStorage, InteractsWithMedia). Answers 'what the data IS' \u2014 pair with stackra/crud for 'how the data is QUERIED' and stackra/caching for tag-based invalidation.",
   "license": "proprietary",
   "require": {
     "php": "^8.3",
@@ -10,7 +10,7 @@
     "illuminate/contracts": "^13.0",
     "illuminate/database": "^13.0",
     "illuminate/support": "^13.0",
-    "mattiverse/userstamps": "^1.0",
+    "wildside/userstamps": "^1.0",
     "olvlvl/composer-attribute-collector": "^2.0",
     "spatie/laravel-translatable": "^6.10"
   },
@@ -67,5 +67,17 @@
         "symlink": true
       }
     }
-  ]
+  ],
+  "scripts": {
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
+  }
 }

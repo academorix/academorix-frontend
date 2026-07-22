@@ -8,7 +8,7 @@ use Attribute;
 
 /**
  * Registers a file-kind config recipe with
- * {@see \Stackra\Storage\Contracts\Services\FileKindRegistryInterface}.
+ * {@see \Stackra\Storage\Contracts\Registry\FileKindRegistryInterface}.
  *
  * Not the same as the {@see \Stackra\Storage\Enums\FileKind}
  * enum — the enum is the shipped taxonomy, this attribute defines
@@ -17,7 +17,7 @@ use Attribute;
  * Scanned at boot by the framework's generic
  * {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  * — every class carrying `#[FileKind]` is pushed through
- * {@see \Stackra\Storage\Contracts\Services\FileKindRegistryInterface::register()}
+ * {@see \Stackra\Storage\Contracts\Registry\FileKindRegistryInterface::register()}
  * via the `#[HydratesFrom(FileKind::class)]` declaration on that
  * method.
  *

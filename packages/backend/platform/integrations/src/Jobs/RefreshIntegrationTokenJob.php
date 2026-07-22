@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Stackra\Integrations\Jobs;
 
 use Stackra\Integrations\Contracts\Repositories\TenantIntegrationRepositoryInterface;
-use Stackra\Integrations\Contracts\Services\IntegrationRegistryInterface;
+use Stackra\Integrations\Contracts\Registry\IntegrationRegistryInterface;
 use Stackra\Integrations\Events\IntegrationTokenRefreshed;
 use Stackra\Integrations\Models\TenantIntegration;
 use Illuminate\Bus\Queueable;

@@ -26,7 +26,7 @@
  *     binding their own concrete class through the same
  *     interface-side attribute.
  *   - Attribute registry: `#[HydratesFrom(Searchable::class)]` on
- *     the {@see \Stackra\Search\Contracts\Services\EngineRegistryInterface::register()}
+ *     the {@see \Stackra\Search\Contracts\Registry\EngineRegistryInterface::register()}
  *     method — the framework scans every model carrying `#[Searchable]`
  *     and calls the registry on each hit.
  */

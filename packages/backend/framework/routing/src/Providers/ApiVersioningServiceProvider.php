@@ -19,7 +19,7 @@ declare(strict_types=1);
  *
  *   - {@see \Stackra\Routing\Services\VersionComparator} —
  *     `#[Singleton]` (stateless).
- *   - {@see \Stackra\Routing\Support\ApiVersionRegistry} —
+ *   - {@see \Stackra\Routing\Registry\ApiVersionRegistry} —
  *     `#[Scoped]` (per-request state).
  *   - {@see \Stackra\Routing\Middleware\DetectApiVersion} —
  *     transient (default) with `#[Config('api-versioning')]`

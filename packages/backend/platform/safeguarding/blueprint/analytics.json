@@ -1,7 +1,0 @@
-{
-  "id": "stackra://modules/safeguarding/analytics",
-  "$version": 1,
-  "title": "safeguarding — product-analytics events",
-  "description": "PostHog / Mixpanel / Segment events this module emits.",
-  "events": []
-}

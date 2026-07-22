@@ -16,7 +16,7 @@ use Attribute;
  * resolved `File`.
  *
  * Applied on the class, the module scanner registers the kind with
- * {@see \Stackra\Storage\Contracts\Services\FileKindRegistryInterface}
+ * {@see \Stackra\Storage\Contracts\Registry\FileKindRegistryInterface}
  * so the API layer validates the upload MIME + size without
  * per-controller code.
  *

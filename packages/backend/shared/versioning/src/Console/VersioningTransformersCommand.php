@@ -6,7 +6,7 @@ namespace Stackra\Versioning\Console;
 
 use Stackra\Console\Attributes\AsCommand;
 use Stackra\Console\Commands\BaseCommand;
-use Stackra\Versioning\Contracts\Services\PayloadTransformerRegistryInterface;
+use Stackra\Versioning\Contracts\Registry\PayloadTransformerRegistryInterface;
 
 /**
  * `php artisan versioning:transformers` — table view of every

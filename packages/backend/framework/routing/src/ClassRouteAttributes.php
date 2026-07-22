@@ -11,6 +11,9 @@
  *
  * @since    1.0.0
  */
+
+declare(strict_types=1);
+
 namespace Stackra\Routing;
 
 use Stackra\Support\Arr;

@@ -17,9 +17,9 @@ declare(strict_types=1);
  * a `bindings()` method now carries `#[Singleton]` directly on
  * the concrete class:
  *
- *   - {@see \Stackra\Crud\Registries\CriteriaRegistry}
- *   - {@see \Stackra\Crud\Registries\ScopeRegistry}
- *   - {@see \Stackra\Crud\Registries\RepositoryConfigRegistry}
+ *   - {@see \Stackra\Crud\Registry\CriteriaRegistry}
+ *   - {@see \Stackra\Crud\Registry\ScopeRegistry}
+ *   - {@see \Stackra\Crud\Registry\RepositoryConfigRegistry}
  *
  * The container reads the attribute at resolution time and
  * caches one instance per worker — same behaviour the old

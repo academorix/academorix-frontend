@@ -1,8 +1,20 @@
 {
   "name": "stackra/foundation",
   "type": "library",
-  "description": "Shared kernel for every Stackra package: module service-provider base class, cross-cutting contracts, correlation-id middleware, guard clauses, testable clock.",
+  "description": "Shared kernel for every Stackra package: module service-provider base class, cross-cutting contracts, correlation-id middleware, guard clauses, testable clock. Also ships the workspace-wide composer script handlers under Stackra\\Foundation\\Scripts\\.",
   "license": "proprietary",
+  "scripts": {
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
+  },
   "require": {
     "php": "^8.3",
     "stackra/enum": "@dev",
@@ -22,7 +34,8 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Foundation\\": "src/"
+      "Stackra\\Foundation\\": "src/",
+      "Stackra\\Foundation\\Scripts\\": "scripts/"
     },
     "files": [
       "src/Support/helpers.php"

@@ -12,7 +12,7 @@ use Attribute;
  * The build-time compiler discovers `#[DsarExportable]`-marked
  * classes via `Stackra\Foundation\Contracts\DiscoversAttributes`
  * and hands them to the
- * {@see \Stackra\Compliance\Services\DefaultDsarContributorRegistry},
+ * {@see \Stackra\Compliance\Registry\DefaultDsarContributorRegistry},
  * which stores each contributor's subject column, include / exclude
  * glob, and priority so the assembler can walk them in the right
  * order.

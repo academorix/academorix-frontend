@@ -6,7 +6,7 @@ namespace Stackra\Compliance\Services;
 
 use Stackra\Compliance\Contracts\Data\SubprocessorInterface;
 use Stackra\Compliance\Contracts\Services\SubprocessorFeedRendererInterface;
-use Stackra\Compliance\Contracts\Services\SubprocessorRegistryInterface;
+use Stackra\Compliance\Contracts\Registry\SubprocessorRegistryInterface;
 use Stackra\Compliance\Enums\SubprocessorRole;
 use Stackra\Compliance\Models\Subprocessor;
 use Illuminate\Container\Attributes\Scoped;

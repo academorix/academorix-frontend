@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Sms\Services;
 
-use Stackra\Notifications\Sms\Contracts\Services\SmsOptOutRegistryInterface;
+use Stackra\Notifications\Sms\Contracts\Registry\SmsOptOutRegistryInterface;
 use Stackra\Notifications\Sms\Contracts\Services\SmsTransportInterface;
 use Stackra\Notifications\Sms\Contracts\Services\SmsTransportManagerInterface;
 use Stackra\Notifications\Sms\Exceptions\SmsProviderDisabledException;

@@ -6,7 +6,7 @@ namespace Stackra\Transfer\Console;
 
 use Stackra\Console\Attributes\AsCommand;
 use Stackra\Console\Commands\BaseCommand;
-use Stackra\Transfer\Contracts\Services\EntityRegistryInterface;
+use Stackra\Transfer\Contracts\Registry\EntityRegistryInterface;
 
 /**
  * `php artisan transfer:describe` — dump the EntityRegistry.

@@ -15,6 +15,9 @@ declare(strict_types=1);
 
 namespace Stackra\Scope\Contracts\Data;
 
+use Stackra\Scope\Models\ScopeNode;
+use Illuminate\Container\Attributes\Bind;
+
 /**
  * Table shape for the `scope_nodes` table.
  *
@@ -29,7 +32,15 @@ namespace Stackra\Scope\Contracts\Data;
  * Trade-off: writes are O(N) in the subtree size (moving a node
  * requires updating every descendant's path). Scope trees are
  * small and re-shaped rarely, so the read-side savings dominate.
+ *
+ * ## DI wiring
+ *
+ * `#[Bind(ScopeNode::class)]` wires the interface to its concrete
+ * Eloquent model so attribute-first repositories using
+ * `#[UseModel(ScopeNodeInterface::class)]` resolve at construction
+ * (`.kiro/steering/php-attributes.md` § Stackra CRUD attributes).
  */
+#[Bind(ScopeNode::class)]
 interface ScopeNodeInterface
 {
     public const string TABLE = 'scope_nodes';

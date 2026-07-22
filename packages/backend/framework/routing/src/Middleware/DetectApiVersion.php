@@ -6,7 +6,7 @@
  * @description
  * Request-scoped middleware that resolves the API version for the
  * current call and stamps it onto the
- * {@see \Stackra\Routing\Support\ApiVersionRegistry}. Runs
+ * {@see \Stackra\Routing\Registry\ApiVersionRegistry}. Runs
  * BEFORE controller resolution so the resolved version is visible
  * to concerns / traits inside the controller method.
  *
@@ -70,7 +70,7 @@ use Stackra\Routing\Http\Exceptions\MalformedApiVersionException;
 use Stackra\Routing\Http\Exceptions\SunsetApiVersionException;
 use Stackra\Routing\Http\Exceptions\UnsupportedApiVersionException;
 use Stackra\Routing\Services\VersionComparator;
-use Stackra\Routing\Support\ApiVersionRegistry;
+use Stackra\Routing\Registry\ApiVersionRegistry;
 use Closure;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -114,6 +114,10 @@ final class DetectApiVersion
      *     sunsets: Sunsets|null,
      * }>
      */
+    // octane-safe: reflection cache keyed by controller class-string.
+    //              Version attributes are compile-time metadata — same
+    //              FQCN always produces the same {versions,sunsets}
+    //              tuple across every worker cycle.
     private static array $attributeCache = [];
 
     /**

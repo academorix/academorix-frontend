@@ -1,7 +1,7 @@
 {
   "name": "stackra/tenancy",
   "type": "library",
-  "description": "Tenancy domain module — owns the `Tenant` aggregate (customer of an Stackra Application) and its named `TenantContact` roster (billing / legal / DPO / technical / support / owner). Every downstream module scopes rows to a Tenant via the `BelongsToTenant` / `BelongsToTenantOptional` traits + `tenantable()` blueprint macro published here. Ships the `resolve.tenant` / `tenant.user` / `platform.domain` middleware, two Octane-safe tenancy hooks (log-context, cache-prefix), and the tenant lifecycle events every subscriber (billing, webhook, notifications, compliance) listens for.",
+  "description": "Tenancy domain module \u2014 owns the `Tenant` aggregate (customer of an Stackra Application) and its named `TenantContact` roster (billing / legal / DPO / technical / support / owner). Every downstream module scopes rows to a Tenant via the `BelongsToTenant` / `BelongsToTenantOptional` traits + `tenantable()` blueprint macro published here. Ships the `resolve.tenant` / `tenant.user` / `platform.domain` middleware, two Octane-safe tenancy hooks (log-context, cache-prefix), and the tenant lifecycle events every subscriber (billing, webhook, notifications, compliance) listens for.",
   "license": "proprietary",
   "keywords": [
     "stackra",
@@ -165,5 +165,17 @@
         "symlink": true
       }
     }
-  ]
+  ],
+  "scripts": {
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
+  }
 }

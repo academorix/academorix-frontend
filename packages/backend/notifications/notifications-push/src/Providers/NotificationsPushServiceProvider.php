@@ -22,7 +22,7 @@
  *   - Observers: `#[ObservedBy]` on the model.
  *   - Policies: `#[UsePolicy]` on the model.
  *   - Provider drivers: `#[AsPushProvider(name: '...')]` — populated into
- *     {@see \Stackra\Notifications\Push\Contracts\Services\PushSubscriptionRegistryInterface}
+ *     {@see \Stackra\Notifications\Push\Contracts\Registry\PushSubscriptionRegistryInterface}
  *     via `#[HydratesFrom]` on the registry's `register()`.
  *   - Service implementations: interfaces carry `#[Bind]` pointing at the
  *     default concrete; consumer apps override by binding their own concrete

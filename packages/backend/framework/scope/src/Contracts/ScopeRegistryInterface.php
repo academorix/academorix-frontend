@@ -20,7 +20,7 @@ namespace Stackra\Scope\Contracts;
 use Stackra\Scope\Data\ScopeConsumerConfig;
 use Stackra\Scope\Exceptions\ScopeConflictException;
 use Stackra\Scope\Exceptions\ScopeValidationException;
-use Stackra\Scope\Services\ScopeRegistry;
+use Stackra\Scope\Registry\ScopeRegistry;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Singleton;
 

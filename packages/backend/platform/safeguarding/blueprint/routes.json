@@ -1,7 +1,0 @@
-{
-  "id": "stackra://modules/safeguarding/routes",
-  "$version": 1,
-  "title": "safeguarding — HTTP routes",
-  "description": "Routes grouped by host audience. Discovery is attribute-driven at boot; this file is the machine-readable inventory + admin-visible surface.",
-  "hosts": {}
-}

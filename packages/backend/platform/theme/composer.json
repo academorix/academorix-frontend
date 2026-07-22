@@ -26,9 +26,8 @@
     "stackra/exceptions": "@dev",
     "stackra/tenancy": "@dev",
     "stackra/user": "@dev",
-    "stackra-platform/theme-sdk": "@dev",
     "owen-it/laravel-auditing": "^13.0",
-    "mattiverse/userstamps": "^1.0"
+    "wildside/userstamps": "^1.0"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -58,11 +57,16 @@
     }
   },
   "scripts": {
-    "test": "./vendor/bin/pest",
-    "test:coverage": "./vendor/bin/pest --coverage --min=80",
-    "lint": "./vendor/bin/pint --test",
-    "format": "./vendor/bin/pint",
-    "analyse": "./vendor/bin/phpstan analyse --memory-limit=2G"
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
   },
   "config": {
     "sort-packages": true,

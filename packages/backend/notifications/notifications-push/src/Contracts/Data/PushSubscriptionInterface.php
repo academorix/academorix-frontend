@@ -36,7 +36,6 @@ interface PushSubscriptionInterface
 
     public const string ATTR_ID                        = 'id';
     public const string ATTR_TENANT_ID                 = 'tenant_id';
-    public const string ATTR_APPLICATION_ID            = 'application_id';
     public const string ATTR_USER_ID                   = 'user_id';
     public const string ATTR_PROVIDER                  = 'provider';
     public const string ATTR_PLATFORM                  = 'platform';

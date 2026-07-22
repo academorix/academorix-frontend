@@ -17,7 +17,7 @@ namespace Stackra\Crud\Concerns\Repository;
 use Stackra\Crud\Criteria\RequestFilterCriteria;
 use Stackra\Crud\Criteria\RequestSearchCriteria;
 use Stackra\Crud\Criteria\RequestSortCriteria;
-use Stackra\Crud\Registries\RepositoryConfigRegistry;
+use Stackra\Crud\Registry\RepositoryConfigRegistry;
 
 /**
  * HasRequestFiltering Trait.

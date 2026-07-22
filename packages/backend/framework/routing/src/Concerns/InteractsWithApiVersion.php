@@ -7,7 +7,7 @@
  * Controller-side accessors for the API version resolved by
  * {@see \Stackra\Routing\Middleware\DetectApiVersion}. Provides
  * ergonomic helpers on top of the
- * {@see \Stackra\Routing\Support\ApiVersionRegistry} scoped
+ * {@see \Stackra\Routing\Registry\ApiVersionRegistry} scoped
  * binding so controller code doesn't have to reach into the
  * container manually.
  *
@@ -45,7 +45,7 @@
  * }
  * ```
  *
- * @see \Stackra\Routing\Support\ApiVersionRegistry
+ * @see \Stackra\Routing\Registry\ApiVersionRegistry
  * @see \Stackra\Routing\Services\VersionComparator
  */
 
@@ -54,7 +54,7 @@ declare(strict_types=1);
 namespace Stackra\Routing\Concerns;
 
 use Stackra\Routing\Services\VersionComparator;
-use Stackra\Routing\Support\ApiVersionRegistry;
+use Stackra\Routing\Registry\ApiVersionRegistry;
 
 /**
  * Controller helpers that expose the resolved API version.

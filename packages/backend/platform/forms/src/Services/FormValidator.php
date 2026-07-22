@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Stackra\Forms\Services;
 
 use Stackra\Forms\Contracts\Data\FormVersionInterface;
-use Stackra\Forms\Contracts\Services\FieldTypeRegistryInterface;
+use Stackra\Forms\Contracts\Registry\FieldTypeRegistryInterface;
 use Stackra\Forms\Contracts\Services\FormValidatorInterface;
 use Stackra\Forms\Data\FieldTypeDefinitionData;
 use Stackra\Forms\Data\FormValidationResultData;

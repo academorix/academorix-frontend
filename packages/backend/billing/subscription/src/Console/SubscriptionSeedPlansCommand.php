@@ -6,7 +6,7 @@ namespace Stackra\Subscription\Console;
 
 use Stackra\Console\Attributes\AsCommand;
 use Stackra\Console\Commands\BaseCommand;
-use Stackra\Subscription\Contracts\Services\PlanRegistryInterface;
+use Stackra\Subscription\Contracts\Registry\PlanRegistryInterface;
 
 /**
  * `php artisan subscription:seed-plans` — print every discovered

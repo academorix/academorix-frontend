@@ -26,9 +26,9 @@
  *   - Signer / registries / sender / rotator / resolver: `#[Bind]` on
  *     the interfaces + `#[Singleton]` / `#[Scoped]` on the concretes.
  *   - Attribute registries: `#[HydratesFrom(AsWebhookEvent::class)]` on
- *     {@see \Stackra\Webhook\Contracts\Services\WebhookRegistryInterface::register()}
+ *     {@see \Stackra\Webhook\Contracts\Registry\WebhookRegistryInterface::register()}
  *     and `#[HydratesFrom(AsWebhookDestination::class)]` on
- *     {@see \Stackra\Webhook\Contracts\Services\WebhookDestinationRegistryInterface::register()}
+ *     {@see \Stackra\Webhook\Contracts\Registry\WebhookDestinationRegistryInterface::register()}
  *     — the framework's
  *     {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  *     scans every class carrying the source attribute and calls

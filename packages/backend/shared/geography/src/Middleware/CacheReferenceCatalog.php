@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Stackra\Geography\Middleware;
 
-use Stackra\Routing\Attributes\AsMiddleware;
 use Closure;
+use Illuminate\Contracts\Cache\Factory as CacheFactory;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
+use Stackra\Routing\Attributes\AsMiddleware;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -24,6 +24,23 @@ use Symfony\Component\HttpFoundation\Response;
  * request is not a GET. NEVER wraps `/geolocate` — that endpoint has
  * its own per-`(ip, locale)` cache inside the service.
  *
+ * ## Octane-safety note
+ *
+ * The middleware is instantiated as a shared class under Octane
+ * (Laravel resolves middlewares as singletons via the kernel). The
+ * dependency on the concrete cache store therefore MUST arrive via
+ * the container so the resolved repository is Octane-safe:
+ *
+ *   * `#[Cache]` (Laravel's contextual attribute) is the canonical
+ *     path, but it lives on constructor parameters + only fires under
+ *     make(). For middleware injected by Laravel's kernel, the
+ *     container makes the class + auto-wires by TYPE.
+ *   * Injecting `CacheFactory` (the manager) + calling `->store()` per
+ *     request is the Octane-safe pattern: the factory is stateless
+ *     (one per app), while `->store()` returns the correct repository
+ *     for the current worker's config cache. NO facades in the request
+ *     path — see `.kiro/steering/octane-first-di.md` §Rules — don't §2.
+ *
  * @category Geography
  *
  * @since    0.1.0
@@ -31,6 +48,16 @@ use Symfony\Component\HttpFoundation\Response;
 #[AsMiddleware(alias: 'geography.cache', priority: 45)]
 final class CacheReferenceCatalog
 {
+    /**
+     * @param  CacheFactory  $cacheFactory  Container-injected cache
+     *                                      manager. `->store()` resolves
+     *                                      the default store on each
+     *                                      request.
+     */
+    public function __construct(
+        private readonly CacheFactory $cacheFactory,
+    ) {}
+
     /**
      * Handle the incoming request.
      */
@@ -83,12 +110,16 @@ final class CacheReferenceCatalog
     }
 
     /**
-     * Resolve the cache store. Prefers a taggable store when
-     * available so listeners can flush by tag on write events.
+     * Resolve the cache store from the injected factory.
+     *
+     * Prefers a taggable store when available so listeners can flush
+     * by tag on write events. The factory returns the framework's
+     * default store; a package-level config knob can override the
+     * store name later without touching this middleware.
      */
     private function store(): Repository
     {
-        return Cache::store();
+        return $this->cacheFactory->store();
     }
 
     /**

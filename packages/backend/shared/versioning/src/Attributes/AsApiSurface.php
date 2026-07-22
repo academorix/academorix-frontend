@@ -12,7 +12,7 @@ use Attribute;
  * Hydrated at boot by the framework's generic
  * {@see \Stackra\ServiceProvider\Bootstrappers\HydrationBootstrapper}
  * via the `#[HydratesFrom]` declaration on
- * {@see \Stackra\Versioning\Contracts\Services\ApiVersionRegistryInterface::registerSurface()}.
+ * {@see \Stackra\Versioning\Contracts\Registry\ApiVersionRegistryInterface::registerSurface()}.
  * Used by build-time checks to guarantee every declared version has a
  * resolver / handler present. Also feeds the `versioning:list` admin
  * surface with the list of surfaces impacted by a given version.

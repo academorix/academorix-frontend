@@ -23,7 +23,7 @@ declare(strict_types=1);
  * @since    1.0.0
  *
  * @see \Stackra\Sentry\Compiler\SentryCompiler
- * @see \Stackra\Sentry\Services\SentryContextRegistry
+ * @see \Stackra\Sentry\Registry\SentryContextRegistry
  */
 
 namespace Stackra\Sentry\Providers;

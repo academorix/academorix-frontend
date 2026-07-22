@@ -40,7 +40,6 @@ interface RoleDelegationInterface
 
     public const string ATTR_ID              = 'id';
     public const string ATTR_TENANT_ID       = 'tenant_id';
-    public const string ATTR_APPLICATION_ID  = 'application_id';
     public const string ATTR_DELEGATOR_ID    = 'delegator_id';
     public const string ATTR_DELEGATE_ID     = 'delegate_id';
     public const string ATTR_ROLE_ID         = 'role_id';

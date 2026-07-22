@@ -21,9 +21,8 @@ use Throwable;
  * Shipped implementations:
  *
  *   - {@see \Stackra\Exceptions\Formatters\JsonErrorFormatter}
- *     — RFC 7807-flavoured envelope for API clients.
- *   - {@see \Stackra\Exceptions\Formatters\HtmlErrorFormatter}
- *     — Blade-rendered pages for browser navigation.
+ *     — RFC 7807-flavoured envelope. Sole shipped formatter; the
+ *     workspace is headless (JSON-only) per ADR-0021.
  *
  * Applications can register their own by tagging them
  * `stackra.exception.formatters` in the container:

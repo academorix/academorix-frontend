@@ -15,7 +15,7 @@ use Stackra\Enum\Enum;
  * The kind taxonomy the module ships. Downstream modules extend the
  * catalogue at runtime via the `#[FileKind]` class attribute, which
  * registers a per-key recipe with
- * {@see \Stackra\Storage\Contracts\Services\FileKindRegistryInterface}.
+ * {@see \Stackra\Storage\Contracts\Registry\FileKindRegistryInterface}.
  *
  * ## Cases
  *

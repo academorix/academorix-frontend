@@ -6,7 +6,14 @@
  * @description
  * Package entry point for `stackra/exceptions`. Wires the new
  * pluggable exception architecture into the host application's
- * container, router, config, translation loader, and view loader.
+ * container, router, config, and translation loader.
+ *
+ * JSON-first with Blade fallback: the workspace is API-first per
+ * ADR-0021 but ships Blade error pages under `src/views/errors/`
+ * for the rare browser-navigation edge case. The formatter chain
+ * picks JSON at priority 100 for every API request; the Blade
+ * `HtmlErrorFormatter` at priority 10 handles the browser
+ * fallback via `canFormat(Accept: text/html)`.
  *
  * ## What this provider is responsible for
  *
@@ -39,9 +46,10 @@
  *      {@see CaptureExceptionContext}. Routes attach it via
  *      `->middleware('exception-context')`.
  *
- *   6. **Loading translations + views** under the `exceptions`
- *      namespace, and exposing publish tags so downstream apps can
- *      override individual strings and templates.
+ *   6. **Loading translations** under the `exceptions` namespace
+ *      and exposing publish tags so downstream apps can override
+ *      individual strings. Views are no longer shipped — the
+ *      package emits JSON responses only.
  *
  *   7. **Wiring Spatie Ignition solution providers** when the SDK
  *      is loaded. Deterministic and AI-augmented solutions register
@@ -136,6 +144,26 @@ final class ExceptionsServiceProvider extends AbstractModuleServiceProvider
     protected array $middlewareAliases = [];
 
     /**
+     * Declarative view + translation namespaces walked by the
+     * parent's `boot()`. Registers:
+     *
+     *   - `exceptions::errors.{status}` Blade templates that back
+     *     the {@see HtmlErrorFormatter} browser-fallback path.
+     *   - `exceptions::*` translation strings the JSON envelope
+     *     renderers consume for humanised messages.
+     *
+     * @var array{views?: array<string, string>, translations?: array<string, string>}
+     */
+    protected array $resources = [
+        'views' => [
+            'exceptions' => __DIR__ . '/../views',
+        ],
+        'translations' => [
+            'exceptions' => __DIR__ . '/../../lang',
+        ],
+    ];
+
+    /**
      * Escape hatch for register-time work that doesn't fit the
      * declarative `$singletons` / `$bindings` / `$tags` shape.
      *
@@ -161,9 +189,10 @@ final class ExceptionsServiceProvider extends AbstractModuleServiceProvider
      */
     protected function bootBespoke(): void
     {
-        $this->loadTranslationsFrom(__DIR__ . '/../../lang', 'exceptions');
-        $this->loadViewsFrom(__DIR__ . '/../../views', 'exceptions');
-
+        // Views + translations register declaratively via the
+        // $resources array (see property above). Publish groups
+        // are still imperative because there is no declarative
+        // shape for them on the legacy base.
         $this->publishes([
             __DIR__ . '/../../config/exceptions.php' => $this->app->configPath('exceptions.php'),
         ], 'exceptions-config');
@@ -173,7 +202,7 @@ final class ExceptionsServiceProvider extends AbstractModuleServiceProvider
         ], 'exceptions-translations');
 
         $this->publishes([
-            __DIR__ . '/../../views' => $this->app->resourcePath('views/vendor/exceptions'),
+            __DIR__ . '/../views' => $this->app->resourcePath('views/vendor/exceptions'),
         ], 'exceptions-views');
 
         $this->registerIgnitionSolutions();
@@ -222,16 +251,20 @@ final class ExceptionsServiceProvider extends AbstractModuleServiceProvider
      * Register formatter singletons and tag them so the Handler
      * can iterate them via `->tagged(self::FORMATTERS_TAG)`.
      *
-     * Priorities are declared on the classes themselves — JSON
-     * runs at 100, HTML at 10. Custom formatters registered by
-     * apps just add themselves to the same tag with a priority
-     * that slots them into the desired position.
+     * Only JSON ships out of the box — the workspace is headless
+     * per ADR-0021 + `.kiro/steering/architecture.md` (§Headless
+     * only). Custom formatters registered by apps add themselves
+     * to the same tag with a priority that slots them into the
+     * desired position.
      */
     private function registerFormatters(): void
     {
         $this->app->singleton(JsonErrorFormatter::class, JsonErrorFormatter::class);
         $this->app->singleton(HtmlErrorFormatter::class, HtmlErrorFormatter::class);
 
+        // JSON (priority 100) wins for every API + XHR + Accept: application/json
+        // request. HTML (priority 10) picks up the browser-navigation
+        // fallback (Accept: text/html) so the Blade error pages ship.
         $this->app->tag([
             JsonErrorFormatter::class,
             HtmlErrorFormatter::class,

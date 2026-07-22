@@ -1,7 +1,7 @@
 {
   "name": "stackra/notifications-in-app",
   "type": "library",
-  "description": "In-app notification channel for Stackra. Registers the `in_app` channel with the core NotificationChannelRegistry + subscribes to NotificationDispatched events. On dispatch: writes a NotificationDelivery row (state=delivered) synchronously and emits a Reverb broadcast on `user.{id}.notifications` for live inbox updates. Owns two aggregates: `InAppMessage` (denormalised inbox row for the user's bell UI) and `InAppMessageRead` (per-view read/dismissed state). Attribute-driven channel discovery via `#[AsNotificationChannel]` on the driver class. Priority 25 — loads after notifications core (20).",
+  "description": "In-app notification channel for Stackra. Registers the `in_app` channel with the core NotificationChannelRegistry + subscribes to NotificationDispatched events. On dispatch: writes a NotificationDelivery row (state=delivered) synchronously and emits a Reverb broadcast on `user.{id}.notifications` for live inbox updates. Owns two aggregates: `InAppMessage` (denormalised inbox row for the user's bell UI) and `InAppMessageRead` (per-view read/dismissed state). Attribute-driven channel discovery via `#[AsNotificationChannel]` on the driver class. Priority 25 \u2014 loads after notifications core (20).",
   "license": "proprietary",
   "keywords": [
     "stackra",
@@ -183,5 +183,17 @@
         "symlink": true
       }
     }
-  ]
+  ],
+  "scripts": {
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
+  }
 }

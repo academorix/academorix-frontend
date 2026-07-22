@@ -12,7 +12,6 @@ use Illuminate\Foundation\Exceptions\Handler as LaravelHandler;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException as LaravelValidationException;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
 /**
@@ -30,15 +29,13 @@ use Throwable;
  *   2. **Render** — walk registered
  *      {@see ErrorFormatterInterface} implementations and delegate
  *      to the first whose `canFormat(request)` returns true. If
- *      none match, fall through to Laravel's own render pipeline —
- *      which in turn calls our overridden {@see renderHttpException()}
- *      for Blade-based error pages.
+ *      none match, fall through to Laravel's own render pipeline.
  *
- *   3. **Render HTTP exceptions via published Blade views** — checks
- *      `view()->exists("exceptions::errors.{$status}")` and renders
- *      the matching Blade template when available. Strips the CSP
- *      header so CDN-hosted assets (Tailwind, fonts) can load on
- *      error pages without a full app-CSP allowlist.
+ * The Blade-based `renderHttpException()` override was removed on
+ * 2026-07-21 (Phase C1) alongside the shipped Blade views. The
+ * workspace is headless per ADR-0021 + `.kiro/steering/architecture.md`
+ * §Headless only, so every response goes through the JSON
+ * formatter path.
  *
  * ## Octane safety
  *
@@ -140,10 +137,10 @@ class Handler extends LaravelHandler
      *
      * Iterates formatters in priority order and delegates to the
      * first formatter whose {@see ErrorFormatterInterface::canFormat()}
-     * returns `true`. Falls back to Laravel's default rendering
-     * (which routes through {@see renderHttpException()} below for
-     * `HttpExceptionInterface` throwables) when no formatter
-     * matches.
+     * returns `true`. Falls back to Laravel's default rendering when
+     * no formatter matches — since Phase C1 (2026-07-21) that
+     * fallback no longer routes through a Blade view; the workspace
+     * is headless per ADR-0021.
      *
      * @param  Request    $request  The incoming HTTP request.
      * @param  Throwable  $e        The exception to render.
@@ -158,40 +155,5 @@ class Handler extends LaravelHandler
         }
 
         return parent::render($request, $e);
-    }
-
-    /**
-     * Render an `HttpExceptionInterface` throwable using the
-     * package's shipped Blade views when available.
-     *
-     * Convention: each status code has an optional `exceptions::errors.{status}`
-     * view (published in `packages/exceptions/views/errors/*.blade.php`).
-     * When present, it wins; otherwise the framework renders its own
-     * default page.
-     *
-     * CSP is stripped on the response because error pages typically
-     * pull assets from CDNs (Tailwind CDN, Google Fonts) that the
-     * app's default CSP won't allowlist.
-     */
-    protected function renderHttpException(HttpExceptionInterface $e): Response
-    {
-        $status = $e->getStatusCode();
-        $view = "exceptions::errors.{$status}";
-
-        if (view()->exists($view)) {
-            $response = response()->view(
-                $view,
-                ['exception' => $e],
-                $status,
-                $e->getHeaders(),
-            );
-
-            $response->headers->remove('Content-Security-Policy');
-            $response->headers->remove('Content-Security-Policy-Report-Only');
-
-            return $response;
-        }
-
-        return parent::renderHttpException($e);
     }
 }

@@ -7,7 +7,7 @@ namespace Stackra\Versioning\Exceptions;
 use Stackra\Exceptions\Exception;
 
 /**
- * Raised when {@see \Stackra\Versioning\Contracts\Services\VersionSchemeRegistryInterface::resolve()}
+ * Raised when {@see \Stackra\Versioning\Contracts\Registry\VersionSchemeRegistryInterface::resolve()}
  * is called with a scheme name that isn't registered.
  *
  * Only reachable via a data-integrity bug (an `api_versions.scheme`

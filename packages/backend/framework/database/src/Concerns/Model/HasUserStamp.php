@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Database\Concerns\Model;
 
-use Mattiverse\Userstamps\Traits\Userstamps;
+use Wildside\Userstamps\Traits\Userstamps;
 
 /**
  * @file HasUserStamp.php
@@ -62,7 +62,7 @@ use Mattiverse\Userstamps\Traits\Userstamps;
  *
  * @since    3.0.0
  *
- * @see \Mattiverse\Userstamps\Traits\Userstamps
+ * @see \Wildside\Userstamps\Traits\Userstamps
  * @see \Stackra\Database\Schema\UserStampBlueprint
  */
 trait HasUserStamp

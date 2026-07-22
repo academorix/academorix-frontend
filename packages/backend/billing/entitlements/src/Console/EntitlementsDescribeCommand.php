@@ -6,7 +6,7 @@ namespace Stackra\Entitlements\Console;
 
 use Stackra\Console\Attributes\AsCommand;
 use Stackra\Console\Commands\BaseCommand;
-use Stackra\Entitlements\Contracts\Services\EntitlementRegistryInterface;
+use Stackra\Entitlements\Contracts\Registry\EntitlementRegistryInterface;
 
 /**
  * `php artisan entitlements:describe` — describe every registered

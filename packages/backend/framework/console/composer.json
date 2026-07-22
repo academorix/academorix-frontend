@@ -1,6 +1,6 @@
 {
   "name": "stackra/console",
-  "description": "Console framework — extended AsCommand attribute (with extension-registry support) plus a BaseCommand class that wires OmniTerm output, AOP before/after hooks, duration tracking, and per-command extension discovery. Every Stackra Artisan command extends this BaseCommand.",
+  "description": "Console framework \u2014 extended AsCommand attribute (with extension-registry support) plus a BaseCommand class that wires OmniTerm output, AOP before/after hooks, duration tracking, and per-command extension discovery. Every Stackra Artisan command extends this BaseCommand.",
   "type": "library",
   "keywords": [
     "stackra",
@@ -53,5 +53,17 @@
     "optimize-autoloader": true,
     "preferred-install": "dist",
     "sort-packages": true
+  },
+  "scripts": {
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
   }
 }

@@ -52,18 +52,14 @@ use Throwable;
  * }
  * ```
  *
- * TODO(phase-10-tenancy-init): the current tenancy module
- * (`apps/api/src/modules/tenancy/`) delegates tenancy resolution
- * to `stancl/tenancy` — the `InitializeTenancyByDomain` middleware
- * dispatches `Stancl\Tenancy\Events\TenancyInitialized` /
- * `TenancyEnded` events. Phase 10 (api tenancy modernization,
- * task 10.15) wires a listener that resolves this dispatcher and
- * calls `fireInit($event->tenancy->tenant)` /
- * `fireEnd($event->tenancy->tenant)` on those events. Until then,
- * per-tenant hook registrations WILL NOT FIRE — the framework
- * primitive exists but the invocation site is a Phase 10
- * deliverable. Phase 8 (ai-service tenancy module) mirrors the
- * same wiring for the AI service's tenancy middleware.
+ * The invocation site is
+ * {@see \Stackra\Tenancy\Middleware\ResolveTenant} —
+ * `resolve.tenant` middleware fires `fireInit($tenant)` after
+ * binding the tenant + `fireEnd($tenant)` in the `finally` block
+ * that unbinds it. `ResolveTenantOptional` deliberately does NOT
+ * fire hooks — best-effort binding on optional-tenant routes.
+ * A future `ai-service` tenancy middleware follows the same
+ * pattern.
  *
  * @see TenancyHookInterface  Contract for every registered hook.
  * @see TenancyHookRegistry   Registry iterated per fire.

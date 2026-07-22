@@ -1,7 +1,0 @@
-{
-  "id": "stackra://modules/safeguarding/commands",
-  "$version": 1,
-  "title": "safeguarding — Artisan commands",
-  "description": "Console commands this module ships.",
-  "commands": []
-}

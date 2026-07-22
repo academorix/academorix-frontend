@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Stackra\Versioning\Casts;
 
 use Stackra\Versioning\Contracts\Data\ApiVersionInterface;
-use Stackra\Versioning\Contracts\Services\VersionSchemeRegistryInterface;
+use Stackra\Versioning\Contracts\Registry\VersionSchemeRegistryInterface;
 use Stackra\Versioning\Exceptions\UnknownVersionSchemeException;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;

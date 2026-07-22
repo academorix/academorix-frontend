@@ -13,7 +13,7 @@ use Attribute;
  * The build-time compiler discovers `#[AsPlanTier]`-marked classes
  * via `Stackra\Foundation\Contracts\DiscoversAttributes` and
  * hands them to
- * {@see \Stackra\Subscription\Services\PlanRegistry}, which
+ * {@see \Stackra\Subscription\Registry\PlanRegistry}, which
  * stores the label + rank + bundled features so tenant provisioning
  * + the pricing UI can consult a single source of truth.
  *

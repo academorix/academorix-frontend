@@ -6,7 +6,7 @@ namespace Stackra\Search\Console;
 
 use Stackra\Console\Attributes\AsCommand;
 use Stackra\Console\Commands\BaseCommand;
-use Stackra\Search\Contracts\Services\EngineRegistryInterface;
+use Stackra\Search\Contracts\Registry\EngineRegistryInterface;
 
 /**
  * `php artisan search:describe` — print the compile-time inventory of

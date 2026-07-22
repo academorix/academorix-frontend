@@ -1,7 +1,7 @@
 {
   "name": "stackra/service-provider",
   "type": "library",
-  "description": "Attribute-driven module service provider for Laravel — declarative resource loading, olvlvl-cached discovery, lifecycle hooks. The enterprise-grade replacement for hand-rolled boot() / register() methods.",
+  "description": "Attribute-driven module service provider for Laravel \u2014 declarative resource loading, olvlvl-cached discovery, lifecycle hooks. The enterprise-grade replacement for hand-rolled boot() / register() methods.",
   "license": "proprietary",
   "keywords": [
     "stackra",
@@ -77,5 +77,17 @@
         "symlink": true
       }
     }
-  ]
+  ],
+  "scripts": {
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
+  }
 }

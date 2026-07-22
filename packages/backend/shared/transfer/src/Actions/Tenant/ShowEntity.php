@@ -9,7 +9,7 @@ use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Get;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
-use Stackra\Transfer\Contracts\Services\EntityRegistryInterface;
+use Stackra\Transfer\Contracts\Registry\EntityRegistryInterface;
 use Stackra\Transfer\Enums\TransferPermission;
 
 /**

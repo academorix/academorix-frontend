@@ -1,7 +1,0 @@
-{
-  "id": "stackra://modules/safeguarding/health",
-  "$version": 1,
-  "title": "safeguarding — health probes",
-  "description": "Health checks aggregated by foundation's /api/health.",
-  "checks": []
-}

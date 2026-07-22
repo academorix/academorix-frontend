@@ -35,7 +35,6 @@ interface NotificationInterface
 
     public const string ATTR_ID                        = 'id';
     public const string ATTR_TENANT_ID                 = 'tenant_id';
-    public const string ATTR_APPLICATION_ID            = 'application_id';
     public const string ATTR_TEMPLATE_ID               = 'template_id';
     public const string ATTR_CATEGORY_SLUG             = 'category_slug';
     public const string ATTR_TEMPLATE_KEY              = 'template_key';

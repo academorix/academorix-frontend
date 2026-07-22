@@ -40,7 +40,6 @@ interface RoleHasPermissionsInterface
 
     public const string ATTR_ROLE_ID        = 'role_id';
     public const string ATTR_PERMISSION_ID  = 'permission_id';
-    public const string ATTR_APPLICATION_ID = 'application_id';
     public const string ATTR_TENANT_ID      = 'tenant_id';
     public const string ATTR_CREATED_BY     = 'created_by';
     public const string ATTR_CREATED_AT     = 'created_at';

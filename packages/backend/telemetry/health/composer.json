@@ -1,7 +1,7 @@
 {
   "name": "stackra/health",
   "type": "library",
-  "description": "Attribute-driven health check discovery + notification routing for every Stackra app. Bridges Spatie\\Laravel-Health with a zero-boilerplate #[AsHealthCheck] attribute discovered at composer-dump time via olvlvl/composer-attribute-collector. Ships a HealthNotificationChannel enum so packages route to logical channels (SlackPlatformEng, PagerDuty, Email) without ever knowing the concrete notifiable — apps map channels to destinations via config.",
+  "description": "Attribute-driven health check discovery + notification routing for every Stackra app. Bridges Spatie\\Laravel-Health with a zero-boilerplate #[AsHealthCheck] attribute discovered at composer-dump time via olvlvl/composer-attribute-collector. Ships a HealthNotificationChannel enum so packages route to logical channels (SlackPlatformEng, PagerDuty, Email) without ever knowing the concrete notifiable \u2014 apps map channels to destinations via config.",
   "license": "proprietary",
   "require": {
     "php": "^8.3",
@@ -53,5 +53,17 @@
         "symlink": true
       }
     }
-  ]
+  ],
+  "scripts": {
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
+  }
 }

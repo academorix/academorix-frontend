@@ -35,14 +35,26 @@ use Symfony\Component\HttpFoundation\Response;
  * - Request context (URL, method, IP, etc.)
  * - Request breadcrumb (before processing)
  * - Response breadcrumb (after processing)
+ *
+ * The `SentryService` is injected via the container — under
+ * Octane the `#[Scoped]` binding on the service guarantees a
+ * fresh instance per request, so request-1's user + request
+ * context never leak into request-2.
  */
 #[AsMiddleware(
     alias: 'sentry',
     groups: ['api'],
     priority: 2,
 )]
-class SentryContext
+final class SentryContext
 {
+    /**
+     * @param  SentryService  $sentry  Request-scoped Sentry service.
+     */
+    public function __construct(
+        private readonly SentryService $sentry,
+    ) {}
+
     /**
      * Handle an incoming request.
      *
@@ -55,9 +67,9 @@ class SentryContext
      */
     public function handle(Request $request, Closure $next): Response
     {
-        SentryService::configureScope();
+        $this->sentry->configureScope();
 
-        SentryService::addBreadcrumb(
+        $this->sentry->addBreadcrumb(
             message: Str::format('%s %s', $request->method(), $request->path()),
             data: [
                 'url' => $request->fullUrl(),
@@ -66,19 +78,19 @@ class SentryContext
                 'request_id' => $request->header('X-Request-ID'),
             ],
             category: 'request',
-            level: 'info'
+            level: 'info',
         );
 
         $response = $next($request);
 
-        SentryService::addBreadcrumb(
+        $this->sentry->addBreadcrumb(
             message: Str::format('Response: %d', $response->getStatusCode()),
             data: [
                 'status_code' => $response->getStatusCode(),
                 'content_type' => $response->headers->get('Content-Type'),
             ],
             category: 'response',
-            level: $response->isSuccessful() ? 'info' : 'warning'
+            level: $response->isSuccessful() ? 'info' : 'warning',
         );
 
         return $response;

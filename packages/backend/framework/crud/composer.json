@@ -1,7 +1,7 @@
 {
   "name": "stackra/crud",
   "type": "library",
-  "description": "Attribute-driven repository/service/controller layer for every Stackra module. Ships #[AsRepository], #[UseModel], #[Filterable], #[Sortable], #[UseScope], #[UseCriteria], #[UseQueryScope], #[WithRelations], #[WithCount], #[OrderBy], #[UseRepository], #[UseService], #[UseResource], #[UseData], #[Cacheable] — discovered at composer-dump time via olvlvl/composer-attribute-collector, pre-resolved into a boot-time registry, then consumed by Repository / Service / CrudController base classes. Answers 'how the data is QUERIED and MANAGED' — pair with stackra/database for 'what the data IS'.",
+  "description": "Attribute-driven repository/service/controller layer for every Stackra module. Ships #[AsRepository], #[UseModel], #[Filterable], #[Sortable], #[UseScope], #[UseCriteria], #[UseQueryScope], #[WithRelations], #[WithCount], #[OrderBy], #[UseRepository], #[UseService], #[UseResource], #[UseData], #[Cacheable] \u2014 discovered at composer-dump time via olvlvl/composer-attribute-collector, pre-resolved into a boot-time registry, then consumed by Repository / Service / CrudController base classes. Answers 'how the data is QUERIED and MANAGED' \u2014 pair with stackra/database for 'what the data IS'.",
   "license": "proprietary",
   "require": {
     "php": "^8.3",
@@ -92,5 +92,17 @@
         "symlink": true
       }
     }
-  ]
+  ],
+  "scripts": {
+    "test": "Stackra\\Foundation\\Scripts\\TestScripts::run",
+    "test:coverage": "Stackra\\Foundation\\Scripts\\TestScripts::coverage",
+    "test:parallel": "Stackra\\Foundation\\Scripts\\TestScripts::parallel",
+    "test:filter": "Stackra\\Foundation\\Scripts\\TestScripts::filter",
+    "analyse": "Stackra\\Foundation\\Scripts\\AnalyseScripts::run",
+    "analyse:baseline": "Stackra\\Foundation\\Scripts\\AnalyseScripts::baseline",
+    "lint": "Stackra\\Foundation\\Scripts\\LintScripts::check",
+    "lint:fix": "Stackra\\Foundation\\Scripts\\LintScripts::fix",
+    "doppler:status": "Stackra\\Foundation\\Scripts\\DopplerScripts::status",
+    "doppler:setup": "Stackra\\Foundation\\Scripts\\DopplerScripts::setup"
+  }
 }

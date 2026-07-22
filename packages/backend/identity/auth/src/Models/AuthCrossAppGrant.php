@@ -16,7 +16,7 @@ use Stackra\Auth\Database\Factories\AuthCrossAppGrantFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Mattiverse\Userstamps\Traits\Userstamps;
+use Wildside\Userstamps\Traits\Userstamps;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**

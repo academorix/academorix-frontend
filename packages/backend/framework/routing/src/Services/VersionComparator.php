@@ -44,7 +44,7 @@
  * {@see \Stackra\Routing\Http\Exceptions\MalformedApiVersionException}.
  *
  * @see \Stackra\Routing\Middleware\DetectApiVersion  Primary consumer.
- * @see \Stackra\Routing\Support\ApiVersionRegistry    Uses this for satisfies() checks.
+ * @see \Stackra\Routing\Registry\ApiVersionRegistry    Uses this for satisfies() checks.
  */
 
 declare(strict_types=1);

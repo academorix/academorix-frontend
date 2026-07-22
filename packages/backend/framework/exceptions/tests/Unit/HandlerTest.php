@@ -22,10 +22,10 @@
  *      stop later reporters from running. Handler wraps each
  *      reporter call in try / catch and swallows failures.
  *
- *   4. **`renderHttpException()` view lookup + CSP stripping** — for
- *      any bare `Symfony\HttpExceptionInterface` throwable the
- *      handler prefers the shipped Blade view + strips CSP so CDN
- *      assets load.
+ * The former Blade-based `renderHttpException()` coverage was removed
+ * on 2026-07-21 (Phase C1) alongside the method itself — the workspace
+ * is headless per ADR-0021 so every response goes through the JSON
+ * formatter path.
  *
  * ## Why Testbench
  *
@@ -39,11 +39,9 @@ declare(strict_types=1);
 use Stackra\Exceptions\Contracts\ErrorFormatterInterface;
 use Stackra\Exceptions\Contracts\ExceptionReporterInterface;
 use Stackra\Exceptions\Handler;
-use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Http\Request;
 use Orchestra\Testbench\TestCase;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 uses(TestCase::class);
@@ -231,89 +229,11 @@ it('a reporter whose shouldReport returns false is not invoked', function (): vo
 });
 
 // -----------------------------------------------------------------
-// renderHttpException() — Blade view + CSP stripping
+// renderHttpException() — coverage removed 2026-07-21 (Phase C1).
+//
+// The Blade-view rendering override was deleted with the shipped
+// Blade error pages under the headless mandate (ADR-0021).
+// HTTP exceptions now flow through the parent's default render
+// pipeline; the JSON formatter has priority 100 so browser + API
+// traffic land on it before falling through.
 // -----------------------------------------------------------------
-
-it('renderHttpException uses exceptions::errors.{status} when the view exists', function (): void {
-    // Register a tiny fixture view under the `exceptions` namespace
-    // so the Handler's `view()->exists(...)` check finds it.
-    $dir = sys_get_temp_dir() . '/exceptions-handler-fixture-' . bin2hex(random_bytes(4));
-    mkdir($dir . '/errors', 0777, true);
-    file_put_contents($dir . '/errors/404.blade.php', 'FIXTURE 404 VIEW');
-
-    /** @var ViewFactory $views */
-    $views = app(ViewFactory::class);
-    $views->replaceNamespace('exceptions', $dir);
-
-    $handler = new Handler($this->app, [], []);
-    // Invoke via reflection because `renderHttpException` is
-    // protected — its callers are inside the framework, but our
-    // test needs direct access.
-    $method = new ReflectionMethod(Handler::class, 'renderHttpException');
-    $method->setAccessible(true);
-
-    /** @var Response $response */
-    $response = $method->invoke($handler, new NotFoundHttpException('not found'));
-
-    expect($response->getStatusCode())->toBe(404)
-        ->and($response->getContent())->toBe('FIXTURE 404 VIEW');
-});
-
-it('renderHttpException strips the Content-Security-Policy headers', function (): void {
-    // Every error-page response must lose the CSP so CDN assets
-    // can load.
-    $dir = sys_get_temp_dir() . '/exceptions-handler-csp-' . bin2hex(random_bytes(4));
-    mkdir($dir . '/errors', 0777, true);
-    file_put_contents($dir . '/errors/500.blade.php', 'FIXTURE 500 VIEW');
-
-    /** @var ViewFactory $views */
-    $views = app(ViewFactory::class);
-    $views->replaceNamespace('exceptions', $dir);
-
-    $handler = new Handler($this->app, [], []);
-    $method = new ReflectionMethod(Handler::class, 'renderHttpException');
-    $method->setAccessible(true);
-
-    // Any HTTP throwable whose status resolves to a shipped view.
-    $exception = new class extends RuntimeException implements HttpExceptionInterface
-    {
-        public function getStatusCode(): int
-        {
-            return 500;
-        }
-
-        /** @return array<string, string> */
-        public function getHeaders(): array
-        {
-            return [];
-        }
-    };
-
-    /** @var Response $response */
-    $response = $method->invoke($handler, $exception);
-
-    expect($response->headers->has('Content-Security-Policy'))->toBeFalse()
-        ->and($response->headers->has('Content-Security-Policy-Report-Only'))->toBeFalse()
-        ->and($response->getContent())->toBe('FIXTURE 500 VIEW');
-});
-
-it('renderHttpException falls back to the parent when no matching view exists', function (): void {
-    // Point the namespace at an empty directory — no `errors/*` files
-    // means the Handler drops to `parent::renderHttpException(...)`.
-    $dir = sys_get_temp_dir() . '/exceptions-handler-empty-' . bin2hex(random_bytes(4));
-    mkdir($dir . '/errors', 0777, true);
-
-    /** @var ViewFactory $views */
-    $views = app(ViewFactory::class);
-    $views->replaceNamespace('exceptions', $dir);
-
-    $handler = new Handler($this->app, [], []);
-    $method = new ReflectionMethod(Handler::class, 'renderHttpException');
-    $method->setAccessible(true);
-
-    /** @var Response $response */
-    $response = $method->invoke($handler, new NotFoundHttpException('missing'));
-
-    // Parent handler still honours the mapped status.
-    expect($response->getStatusCode())->toBe(404);
-});
