@@ -1,0 +1,67 @@
+{
+  "palette": {
+    "result_count_one": "نتيجة واحدة",
+    "result_count_other": "{{count}} نتائج"
+  },
+  "catalog": {
+    "scope_label": "النطاق · {{scope}}",
+    "or_separator": "أو"
+  },
+  "components": {
+    "command_palette": {
+      "search_for_products_customers_or_actions": "ابحث عن المنتجات أو العملاء أو الإجراءات...",
+      "no_results": "لا توجد نتائج",
+      "try_a_different_keyword_or_use_one_of_the_shortcuts_above": "جرّب كلمة أخرى أو استخدم أحد الاختصارات أعلاه.",
+      "application": "تطبيق",
+      "command": "أمر",
+      "open_application": "فتح التطبيق",
+      "actions": "الإجراءات",
+      "select_a_command": "اختر أمرًا لمعاينته.",
+      "current_page": "الصفحة الحالية",
+      "navigate": "تنقّل",
+      "open": "فتح",
+      "close": "إغلاق"
+    },
+    "command_trigger": {
+      "search": "بحث"
+    },
+    "keyboard_catalog": {
+      "keyboard_shortcuts": "اختصارات لوحة المفاتيح",
+      "subtitle": "تحرّك أسرع باستخدام لوحة المفاتيح.",
+      "search_placeholder": "البحث في الاختصارات...",
+      "search_shortcuts": "البحث في الاختصارات",
+      "no_shortcuts_match": "لا توجد اختصارات مطابقة",
+      "try_a_different_keyword_or_clear_the_search_to_see_everythin": "جرّب كلمة أخرى أو امسح البحث لعرض كل شيء.",
+      "all": "الكل",
+      "navigate": "تنقّل",
+      "close": "إغلاق",
+      "shortcut_count": "{{count}} اختصار"
+    },
+    "keyboard_catalog_trigger": {
+      "aria_label": "اختصارات لوحة المفاتيح"
+    },
+    "keyboard_hints_toggle": {
+      "aria_label": "تبديل تلميحات لوحة المفاتيح"
+    },
+    "shortcut_recorder": {
+      "record": "تسجيل",
+      "press_keys": "اضغط المفاتيح...",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "conflicts_with": "يتعارض مع"
+    }
+  },
+  "command_types": {
+    "navigation_label": "التنقّل",
+    "navigation_description": "التنقّل في التطبيق",
+    "action_label": "الإجراءات",
+    "action_description": "تنفيذ إجراء",
+    "entity_label": "السجلات",
+    "entity_description": "البحث في بياناتك",
+    "setting_label": "الإعدادات",
+    "setting_description": "التفضيلات والتكوين",
+    "tool_label": "الأدوات",
+    "tool_description": "الأدوات المساعدة",
+    "general_label": "عام"
+  }
+}

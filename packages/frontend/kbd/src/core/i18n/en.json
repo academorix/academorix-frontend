@@ -1,0 +1,67 @@
+{
+  "palette": {
+    "result_count_one": "{{count}} result",
+    "result_count_other": "{{count}} results"
+  },
+  "catalog": {
+    "scope_label": "scope · {{scope}}",
+    "or_separator": "or"
+  },
+  "components": {
+    "command_palette": {
+      "search_for_products_customers_or_actions": "Search for products, customers, or actions...",
+      "no_results": "No results",
+      "try_a_different_keyword_or_use_one_of_the_shortcuts_above": "Try a different keyword or use one of the shortcuts above.",
+      "application": "Application",
+      "command": "Command",
+      "open_application": "Open application",
+      "actions": "Actions",
+      "select_a_command": "Select a command to preview.",
+      "current_page": "Current page",
+      "navigate": "Navigate",
+      "open": "Open",
+      "close": "Close"
+    },
+    "command_trigger": {
+      "search": "Search"
+    },
+    "keyboard_catalog": {
+      "keyboard_shortcuts": "Keyboard shortcuts",
+      "subtitle": "Move faster with the keyboard.",
+      "search_placeholder": "Search shortcuts...",
+      "search_shortcuts": "Search shortcuts",
+      "no_shortcuts_match": "No shortcuts match",
+      "try_a_different_keyword_or_clear_the_search_to_see_everythin": "Try a different keyword or clear the search to see everything.",
+      "all": "All",
+      "navigate": "Navigate",
+      "close": "Close",
+      "shortcut_count": "{{count}} shortcuts"
+    },
+    "keyboard_catalog_trigger": {
+      "aria_label": "Keyboard shortcuts"
+    },
+    "keyboard_hints_toggle": {
+      "aria_label": "Toggle keyboard hints"
+    },
+    "shortcut_recorder": {
+      "record": "Record",
+      "press_keys": "Press keys...",
+      "save": "Save",
+      "cancel": "Cancel",
+      "conflicts_with": "Conflicts with"
+    }
+  },
+  "command_types": {
+    "navigation_label": "Navigation",
+    "navigation_description": "Move around the app",
+    "action_label": "Actions",
+    "action_description": "Perform an action",
+    "entity_label": "Records",
+    "entity_description": "Search across your data",
+    "setting_label": "Settings",
+    "setting_description": "Preferences and configuration",
+    "tool_label": "Tools",
+    "tool_description": "Utilities and helpers",
+    "general_label": "General"
+  }
+}
