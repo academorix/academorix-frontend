@@ -1,40 +1,156 @@
-# Vite & HeroUI Template
+# Stackra frontend
 
-This is a template for creating applications using Vite and HeroUI (v3).
+The Stackra frontend workspace — a pnpm + Turborepo monorepo shipping 42
+`@stackra/*` packages plus 5 shared config packages. Every package is DI-first
+(React Aria under HeroUI + a NestJS-compatible container), fully typed, and
+independently publishable through Changesets.
 
-[Try it on CodeSandbox](https://githubbox.com/heroui-inc/vite-template)
+## What's here
 
-## Technologies Used
+```
+apps/
+  academorix/            Content-only source (product modules, SDKs, blueprints)
+  vite-template/         Vite + React 19 starter (Doppler-wrapped)
+  react-native-template/ React Native starter (Doppler-wrapped)
+  laravel-template/      Laravel-backend starter (Doppler-wrapped)
 
-- [Vite](https://vitejs.dev/guide/)
-- [HeroUI v3](https://heroui.com)
-- [Tailwind CSS](https://tailwindcss.com)
-- [Tailwind Variants](https://tailwind-variants.org)
-- [TypeScript](https://www.typescriptlang.org)
+packages/
+  frontend/              42 @stackra/* packages (see catalogue below)
+  config/                5 shared config packages (eslint, prettier, tsconfig,
+                         tsup, typescript)
+  backend/               PHP framework packages (Composer)
+  sdk/                   Backend HTTP SDKs (Composer)
 
-## How to Use
-
-To clone the project, run the following command:
-
-```bash
-git clone https://github.com/heroui-inc/vite-template.git
+blueprints/              Cross-language module blueprints
+docs/                    Architecture + ADRs + contracts
+tools/                   Workspace CLIs (composer wiring, package audits)
 ```
 
-### Install dependencies
+## Package catalogue — `packages/frontend/**`
 
-You can use one of them `npm`, `yarn`, `pnpm`, `bun`, Example using `npm`:
+Every package publishes to npm as `@stackra/<name>`. Grouped by concern:
+
+**Framework core** `support`, `contracts`, `container`, `logger`, `error`,
+`events`, `pipeline`, `decorators`, `testing`, `console`
+
+**Cross-cutting services** `cache`, `queue`, `scheduler`, `coordinator`, `sync`,
+`storage`, `http`, `realtime`, `state`, `query`
+
+**Observability + safety** `analytics`, `monitoring`, `csp`, `consent`
+
+**UI + interaction** `ui`, `theming`, `notifications`, `kbd`, `sdui`,
+`dashboard`, `devtools`
+
+**Platform surfaces** `routing`, `scope`, `ai`, `actions`, `collaboration`,
+`pwa`, `settings`, `i18n`, `network`, `vite`, `config`
+
+## Quick start
 
 ```bash
-npm install
+# Node 22.x — pinned via .nvmrc
+nvm use
+
+# pnpm — pinned via packageManager in package.json
+pnpm install
 ```
 
-### Run the development server
+`pnpm install` runs `@heroui-pro/react`'s postinstall step, which authenticates
+against the private HeroUI Pro registry. You need a `HEROUI_AUTH_TOKEN` in your
+environment:
 
 ```bash
-npm run dev
+export HEROUI_AUTH_TOKEN="<your token>"
+pnpm install
 ```
+
+Without the token, the postinstall silently degrades or fails outright.
+
+### Common commands
+
+```bash
+# Every command works at the workspace root and fans out via Turborepo.
+pnpm build            # Build every publishable package
+pnpm typecheck        # tsc --noEmit across the workspace
+pnpm test             # Vitest suites in parallel
+pnpm test:coverage    # With coverage
+pnpm lint             # ESLint
+pnpm format           # Prettier
+pnpm knip             # Unused deps + exports
+
+# Filter to a single package or glob:
+pnpm --filter '@stackra/http' typecheck
+pnpm --filter './packages/frontend/**' build
+```
+
+## Working on a package
+
+Every package under `packages/frontend/**` follows the same shape (see
+`.kiro/steering/code-standards.md` for the enforcement):
+
+```
+packages/frontend/<name>/
+├── src/
+│   ├── core/              Platform-agnostic runtime
+│   │   ├── services/      @Injectable services
+│   │   ├── interfaces/    Package-owned interfaces (one per file)
+│   │   ├── types/         Package-owned type aliases
+│   │   ├── enums/         Package-owned enums
+│   │   ├── constants/     DEFAULT_<NAME>_CONFIG + tokens
+│   │   ├── events/        <package>.events.ts
+│   │   ├── errors/        Package-owned Error classes
+│   │   ├── i18n/          en.json + ar.json (source of truth)
+│   │   ├── index.ts       Public API barrel
+│   │   └── <name>.module.ts
+│   ├── react/             (multi-entry only) React bindings
+│   │   ├── components/<x>/x.component.tsx
+│   │   ├── providers/<x>/x.provider.tsx
+│   │   ├── contexts/<x>/x.context.ts
+│   │   ├── hooks/<x>/x.hook.ts
+│   │   └── index.ts
+│   ├── native/            (opt-in) React Native bindings
+│   └── testing/           (opt-in) In-memory doubles + TestProvider
+├── __tests__/             Vitest specs (@stackra/testing preset)
+├── package.json           publishConfig.access: public
+├── tsconfig.json          extends @stackra/config-tsconfig/base
+├── tsup.config.ts         defineBaseConfig(entries)
+├── vitest.config.ts       merged with @stackra/testing/preset
+├── catalog.json           Package metadata for the audit surface
+├── LICENSE                MIT
+├── README.md              Package overview + usage
+└── CHANGELOG.md           Auto-generated by changesets
+```
+
+Rules that apply everywhere — see `.kiro/steering/` for full list:
+
+- **One export per file** with a suffix that names the kind (`.service.ts`,
+  `.interface.ts`, `.enum.ts`, `.hook.ts`, ...).
+- **No default exports** anywhere under `src/**` (config files at package root
+  are the only grandfathered exception).
+- **No cross-package Node core imports** in browser-reachable entries.
+- **UI components** compose HeroUI primitives via `@stackra/ui/react` — never
+  `@heroui/react` directly.
+- **Framework hygiene** — no `class *Bootstrap`; use `OnModuleInit` /
+  `OnApplicationBootstrap`; `forFeature` routes through `createSeedLoader`.
+
+## Releases
+
+Changesets — every user-facing change lands with a `.changeset/*.md` file:
+
+```bash
+pnpm changeset          # Create a changeset (walkthrough)
+pnpm changeset status   # Preview pending version bumps
+```
+
+CI (`.github/workflows/release.yml`) opens a "Version Packages" PR that holds
+the pending bumps + regenerated `CHANGELOG.md` files. Merging that PR runs
+`pnpm changeset publish` — every bumped `@stackra/*` package ships to npm with
+matching git tags.
+
+Requires two repo secrets:
+
+- `NPM_TOKEN` — npm publish auth (write scope).
+- `HEROUI_AUTH_TOKEN` — `@heroui-pro/react` postinstall auth.
 
 ## License
 
-Licensed under the
-[MIT license](https://github.com/heroui-inc/vite-template/blob/main/LICENSE).
+MIT — see `LICENSE`.

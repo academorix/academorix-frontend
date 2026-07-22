@@ -1,6 +1,6 @@
 ---
 inclusion: fileMatch
-fileMatchPattern: "packages/framework/**/{composer.json,README.md,src/**/*.php}"
+fileMatchPattern: "packages/backend/framework/**/{composer.json,README.md,src/**/*.php}"
 ---
 
 # Frontend package mirror — backend → frontend one-to-one
@@ -388,6 +388,24 @@ suffix without the prefix (`FeatureGateProps`, `PinLockProps`).
 | Two components in one folder                                           | One folder per component                                              |
 
 ## 15. Architecture doctrine — DI-first, no refine.dev
+
+> **⚠️ TARGET STATE — sections 15–24 describe a forward-looking
+> `@stackra/data` + `IResourceProvider<T>` architecture that is NOT yet
+> shipping.**
+>
+> As of 2026-07-21 the workspace consumes `@stackra/query` (React Query
+> wrapper) + `@stackra/state` (TanStack Store bindings) directly. The
+> `@stackra/data` package DOES NOT EXIST. Consumer packages use per-domain hooks
+> (`useX` / `useCreateX` / `useUpdateX`) rather than the generic
+> `useResourceList(TOKEN)` shape described below.
+>
+> These sections stand as forward-looking design intent for a future refactor
+> that consolidates resource-shape hooks into `@stackra/data`. Do not treat
+> §15-24 as enforcement for new code — sections 1-14 above are the CURRENT
+> enforceable rules.
+>
+> Reviewer reference: `.kiro/reports/docs-changesets-2026-07-21.md`
+> §"Ambiguities flagged".
 
 Every frontend package builds on `@stackra/container` (a NestJS-compatible DI
 container living at `packages/foundation/container/`). Never adopt refine.dev,
