@@ -11,6 +11,10 @@
 export interface KeyboardHintsToggleProps {
   /** Optional class applied to the button. */
   className?: string;
-  /** Optional accessible label. */
+  /**
+   * Optional accessible label. When omitted, the component resolves
+   * the label from the i18n catalog key
+   * `kbd.components.keyboard_hints_toggle.aria_label`.
+   */
   ariaLabel?: string;
 }

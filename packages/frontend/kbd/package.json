@@ -46,6 +46,7 @@
   },
   "files": [
     "dist",
+    "src/core/i18n",
     "LICENSE",
     "README.md"
   ],

@@ -9,20 +9,29 @@
  * @category Components
  */
 
-import { type ReactElement } from "react";
+import { useI18n } from "@stackra/i18n/react";
 import { Button } from "@stackra/ui/react";
+import { type ReactElement } from "react";
+
+import { useKeyboardHints } from "../../hooks/use-keyboard-hints/use-keyboard-hints.hook";
 
 import type { KeyboardHintsToggleProps } from "../../interfaces/keyboard-hints-toggle-props.interface";
-import { useKeyboardHints } from "../../hooks/use-keyboard-hints/use-keyboard-hints.hook";
 
 /**
  * Icon toggle for the on-screen hints overlay.
+ *
+ * `ariaLabel` falls back to the localized
+ * `kbd.components.keyboard_hints_toggle.aria_label` catalog entry so
+ * screen readers speak the tenant/locale-appropriate label instead
+ * of a hardcoded English string.
  */
 export function KeyboardHintsToggle({
   className,
-  ariaLabel = "Toggle keyboard hints",
+  ariaLabel,
 }: KeyboardHintsToggleProps): ReactElement {
+  const { t } = useI18n();
   const { visible, toggle } = useKeyboardHints();
+  const resolvedAriaLabel = ariaLabel ?? t("kbd.components.keyboard_hints_toggle.aria_label");
   return (
     <Button
       variant={visible ? "secondary" : "ghost"}
@@ -31,7 +40,7 @@ export function KeyboardHintsToggle({
       onPress={toggle}
       className={className}
       aria-pressed={visible}
-      aria-label={ariaLabel}
+      aria-label={resolvedAriaLabel}
     >
       <Icon />
     </Button>

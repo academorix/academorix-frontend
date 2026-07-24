@@ -5,21 +5,30 @@
  * @category Components
  */
 
-import { type ReactElement } from "react";
+import { useI18n } from "@stackra/i18n/react";
 import { Button } from "@stackra/ui/react";
+import { type ReactElement } from "react";
+
+import { useKeyboardCatalog } from "../../hooks/use-keyboard-catalog/use-keyboard-catalog.hook";
 
 import type { KeyboardCatalogTriggerProps } from "../../interfaces/keyboard-catalog-trigger-props.interface";
-import { useKeyboardCatalog } from "../../hooks/use-keyboard-catalog/use-keyboard-catalog.hook";
 
 /**
  * Icon button that opens the {@link KeyboardCatalog} modal.
+ *
+ * `ariaLabel` falls back to the localized
+ * `kbd.components.keyboard_catalog_trigger.aria_label` catalog entry
+ * so screen readers speak the tenant/locale-appropriate label instead
+ * of a hardcoded English string.
  */
 export function KeyboardCatalogTrigger({
   className,
-  ariaLabel = "Keyboard shortcuts",
+  ariaLabel,
   icon,
 }: KeyboardCatalogTriggerProps): ReactElement {
+  const { t } = useI18n();
   const { open } = useKeyboardCatalog();
+  const resolvedAriaLabel = ariaLabel ?? t("kbd.components.keyboard_catalog_trigger.aria_label");
   return (
     <Button
       variant="ghost"
@@ -27,9 +36,9 @@ export function KeyboardCatalogTrigger({
       isIconOnly
       onPress={open}
       className={className}
-      aria-label={ariaLabel}
+      aria-label={resolvedAriaLabel}
       data-shortcut={JSON.stringify({ shift: true, key: "?" })}
-      data-shortcut-description={ariaLabel}
+      data-shortcut-description={resolvedAriaLabel}
     >
       {icon ?? <DefaultIcon />}
     </Button>
